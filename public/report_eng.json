@@ -1,0 +1,161 @@
+{
+  "ansar_in_guard_report": {
+    "report_header": "Ansar in guard",
+    "guard": {
+      "kpi_title": "Guard Detail",
+      "kpi_name": "Guard name",
+      "kpi_address": "Guard address",
+      "kpi_type": "Guard type",
+      "kpi_ansar_given": "Total given ansar",
+      "kpi_current_ansar": "Total current ansar"
+    },
+    "ansar": {
+      "ansar_title": "Ansar Detail",
+      "sl_no": "Sl. No.",
+      "id": "Ansar ID",
+      "name": "Name",
+      "rank": "Rank",
+      "district": "Own District",
+      "embodiment_date": "Embodiment date",
+      "join_date": "Joining date"
+    }
+  },
+  "ansar_service_report": {
+    "header": "Ansar service Report",
+    "ansar_detail": {
+      "name": "Name",
+      "rank": "Rank",
+      "bg": "Blood Group",
+      "district": "District"
+    },
+    "past": {
+      "header": "Details regarding previous employment",
+      "sl_no": "SL No.",
+      "jd": "Joining Date",
+      "rdmi": "Reporting memorandum & Date",
+      "dn": "Unit Name",
+      "kn": "Guard Name",
+      "dd": "Disembodiment Date",
+      "tsd": "Total Service Days",
+      "dr": "Reason of Disembodiment"
+    },
+    "current": {
+      "header": "Details regarding present employment",
+      "sl_no": "SL No.",
+      "jd": "Joining Date",
+      "rdmi": "Reporting memorandum & Date",
+      "dn": "Unit Name",
+      "kn": "Guard Name",
+      "dd": "Disembodiment Date",
+      "tsd": "Total Service Days",
+      "dr": "Reason of Disembodiment"
+    }
+  },
+  "ansar_id_card": {
+    "title": "Bangladesh Ansar and Village Defence Party",
+    "name": "Name",
+    "id_no": "ID NO",
+    "rank": "Rank",
+    "bg": "Blood Group",
+    "unit": "District",
+    "id": "Issue Date",
+    "ed": "Expire Date",
+    "bs": "Bearer`s Sign",
+    "is": "Issuer`s Sign",
+    "footer_title": "Issuing Authority: Bangladesh Ansar & VDP"
+  },
+  "ansar_disembodiment_report": {
+    "header": "Disembodied Ansar Info",
+    "ansar": {
+      "ansar_title": "Ansar Details",
+      "sl_no": "Sl. No.",
+      "id": "Ansar ID",
+      "name": "Name",
+      "rank": "Rank",
+      "district": "Own Unit",
+      "kpi_name": "KPI Name",
+      "reporting_date": "Reporting Date",
+      "joining_date": "Embodiment Date",
+      "disembodiment_reason": "Dismbodiment Reason",
+      "disembodiment_date": "Dismbodiment date",
+      "total_service_days": "Total Service Days"
+    }
+  },
+  "ansar_embodiment_report": {
+    "header": "Embodied Ansar Info",
+    "ansar": {
+      "ansar_title": "Ansar Details",
+      "sl_no": "Sl. No.",
+      "id": "Ansar ID",
+      "name": "Name",
+      "rank": "Rank",
+      "district": "Own Unit",
+      "kpi_name": "KPI Name",
+      "reporting_date": "Reporting Date",
+      "joining_date": "Embodiment Date",
+      "service_ended_date": "Service Ending date"
+    }
+  },
+  "blocklisted_ansar_report": {
+    "header": "Blocklisted Ansar Report",
+    "ansar": {
+      "ansar_title": "Ansar Details",
+      "sl_no": "Sl. No.",
+      "id": "Ansar ID",
+      "name": "Name",
+      "rank": "Rank",
+      "district": "Unit",
+      "date_of_birth": "Date of Birth",
+      "sex": "Sex",
+      "blocklisted_from_where": "Blocklisted from where",
+      "blocked_reason": "Blocklisted Reason",
+      "blocked_date": "Blocklisted Date"
+    }
+  },
+  "blacklisted_ansar_report": {
+    "header": "Blacklisted Ansar Report",
+    "ansar": {
+      "ansar_title": "Ansar Details",
+      "sl_no": "Sl. No.",
+      "id": "Ansar ID",
+      "name": "Name",
+      "rank": "Rank",
+      "district": "Unit",
+      "date_of_birth": "Date of Birth",
+      "sex": "Sex",
+      "blacklisted_from_where": "Blacklisted from where",
+      "blacked_reason": "Blacklisted Reason",
+      "blacked_date": "Blacklisted Date"
+    }
+  },
+  "three_years_over_ansar_report": {
+    "header": "3 Years Over Ansar Report",
+    "ansar": {
+      "ansar_title": "Ansar Details",
+      "sl_no": "Sl. No.",
+      "id": "Ansar ID",
+      "name": "Name",
+      "rank": "Rank",
+      "district": "Own Unit",
+      "kpi_name": "KPI Name",
+      "reporting_date": "Reporting Date",
+      "joining_date": "Embodiment Date",
+      "service_ended_date": "Service Ending date"
+    }
+  },
+  "service_record_unitwise": {
+    "header": "Ansar Service Record Unit Wise",
+    "ansar": {
+      "ansar_title": "Ansar Details",
+      "sl_no": "Sl. No.",
+      "id": "Ansar ID",
+      "name": "Name",
+      "rank": "Rank",
+      "kpi_name": "KPI Name",
+      "district": "Own Unit",
+      "reporting_date": "Reporting Date",
+      "joining_date": "Embodiment Date",
+      "service_ended_date": "Service Ending date"
+    }
+  }
+}

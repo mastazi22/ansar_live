@@ -1,0 +1,405 @@
+.bank-form {
+    width: 95%;
+    margin: 0 auto;
+    padding-top: 10px;
+}
+.bank-form-header{
+    width: 100%;
+    position: relative;
+    display: block;
+}
+.bank-form-header .header-top {
+    margin-top: 20px;
+    position: relative;
+}
+.bank-form-header .header-top::after {
+    content: '';
+    display: block;
+    clear: both;
+}
+.bank-form-header .header-top .logo {
+    position: relative;
+    display: inline-block;
+    width: 30%;
+    vertical-align: bottom;
+}
+
+.bank-form-header .header-top .mobile-logo {
+    width: 20%;
+    height: 100px;
+    margin-top: -30px;
+    position: relative;
+    display: inline-block;
+}
+.bank-form-header .header-top .title{
+    padding: 0 20px 0 40px;
+    font-size: 1.5em;
+    font-weight: bold;
+    display: inline-block;
+    position: relative;
+    width: 49%;
+}
+.bank-form-header .header-bottom{
+    position: relative;
+}
+.bank-form-header .header-bottom::after{
+    content: '';
+    display: block;
+    clear: both;
+}
+.bank-form-header .header-bottom .header-right{
+    float: right;
+}
+.bank-form-header .header-bottom .header-right span{
+    text-align: right;
+    display: block;
+    width: 350px;
+}
+.bank-form-header .header-bottom .header-middle{
+    float: right;
+    width: 234px;
+    text-align: left;
+}
+.bank-form-body{
+    width: 900px;
+    padding-top: 2px;
+    position: relative;
+}
+.bank-form-body::after{
+    content: '';
+    display: block;
+    clear: both;
+}
+.bank-form-body .form-body-left-side{
+    width: 540px;
+    float: left;
+    padding-right: 10px;
+    position: relative;
+    text-align: center;
+    display: block;
+}
+.bank-form-body .form-body-right-side{
+    width: 360px;
+    float: left;
+    position: relative;
+    display: block;
+    margin-top: 7px;
+}
+.bank-form-body .form-body-left-side h3{
+    color: #FFFFFF;
+    text-align: center;
+    margin-top: 13px;
+}
+.bank-form-body .form-body-left-side h4{
+    margin-top: 18px;
+    color: #FFFFFF;
+    text-align: center;
+}
+.bank-form-body .form-body-left-side h3 span{
+    color: #FFFFFF;
+    text-align: center;
+    padding: 5px;
+    background-color: #ab1f2f;
+    border-radius: 5px;
+}
+.bank-form-body .form-body-left-side h4 span{
+    color: #FFFFFF;
+    text-align: center;
+    padding: 5px;
+    background-color: #033a1e;
+    border-radius: 5px;
+}
+.bank-form-body .form-body-date,.bank-form-body .customer-type{
+    margin-top: 20px;
+    position: relative;
+    display: block;
+}
+.bank-form-body .form-body-date::after,.bank-form-body .customer-type::after{
+    content: '';
+    clear: both;
+    display: block;
+}
+.bank-form-body .customer-type{
+    margin-top: 10px;
+}
+.bank-form-body .form-body-date .form-body-date-label,.bank-form-body .customer-type .customer-label{
+    float: left;
+    display: block;
+    padding-right: 5px;
+}
+.form-body-date-label .type-eng,.customer-label .type-eng{
+    display: block;
+    text-align: right;
+    font-size: 1em;
+    font-weight: 600;
+}
+.form-body-date-label .type-bng,.customer-label .type-bng{
+    display: block;
+    text-align: right;
+    font-size: .9em;
+    font-weight: 600;
+}
+.bank-form-body .form-body-date .form-body-date-box,.bank-form-body .customer-type .customer-body{
+    float: left;
+    display: block;
+    position: relative;
+}
+.form-body-date-box ul,.customer-body ul{
+    list-style: none;
+    padding: 0;
+    margin-top: 6px;
+}
+.form-body-date-box ul li{
+    list-style: none;
+    display: inline-block;
+    border: 1px solid #000000;
+    padding: 1px 7px;
+    color: #CCCCCC;
+    font-size: 1.2em;
+    background-color: #FFFFFF;
+}
+.customer-body ul li{
+    list-style: none;
+    display: inline-block;
+    color: #CCCCCC;
+    font-size: 1.2em;
+    margin-left: 8px;
+}
+.customer-body ul li div{
+    margin-right: 2px;
+    text-align: right;
+    display: inline-block;
+    margin-top: -8px;
+}
+.customer-body ul li div span{
+    display: block;
+    text-align: right;
+    color: #000000;
+}
+.customer-body ul li div span:last-child{
+    font-size: .8em;
+    margin-top: -3px;
+}
+.differ-box{
+    margin-right: 4px;
+}
+.rect-box{
+    display: inline-block;
+    padding: 13px;
+    border: 1px solid #000000;
+    background-color: #FFFFFF;
+    position: relative;
+}
+.check-sign::after{
+    position: absolute;
+    content: '';
+    display: block;
+    width: 10px;
+    height: 33px;
+    border-bottom: 1px solid #000000;
+    border-right: 1px solid #000000;
+    transform: rotate(33deg);
+    -webkit-transform: rotate(33deg);
+    -o-transform: rotate(33deg);
+    -moz-transform: rotate(33deg);
+    left: 10px;
+    bottom: 2px;
+}
+.form-body-right-side .nominee-image,.form-body-right-side .my-image{
+    display: inline-block;
+    background-image: url("/dist/img/bank_image.png");
+    background-size: 100% 100%;
+    background-position: bottom;
+    background-repeat: no-repeat;
+    width: 166px;
+    height: 188px;
+    border: 1px solid #000000;
+    outline: 8px solid #cccccc;
+}
+.form-body-right-side .my-image{
+    margin-left: 20px;
+}
+.bank-form-body .form-body-middle .title{
+    font-size: .9em;
+}
+.form-body-common-block{
+    background: rgb(202,255,202);
+    margin-top: 3px;
+    position: relative;
+}
+.common-block-box{
+    padding: 1px 5px;
+    display: block;
+    position: relative;
+}
+.common-block-box::after{
+    content: '';
+    display: block;
+    clear: both;
+}
+.common-label{
+    display: inline-block;
+    width: auto;
+}
+.common-label span{
+    text-align: right;
+    display: block;
+    font-weight: 700;
+    font-size: 1em;
+}
+.common-label span:last-child{
+    font-size: .9em;
+}
+.common-line-rect-box{
+    display: inline-block;
+}
+.common-line-rect-box .num-box,.common-line-rect-box .check-box,.common-line-rect-box .date-box{
+    list-style: none;
+    margin: 0;
+    margin-left: 5px;
+    padding: 0;
+}
+.common-line-rect-box .num-box::after,.common-line-rect-box .check-box::after,.common-line-rect-box .date-box::after{
+    content: '';
+    display: block;
+    clear: both;
+}
+.common-line-rect-box .num-box.type-1 li{
+    float: left;
+    border: 1px solid #000000;
+    border-right: 0;
+    display: block;
+    box-sizing: border-box;
+    text-align: center;
+    width: 35px;
+    height: 30px;
+    padding: 4px;
+    font-size: 1.1em;
+    background-color: #FFFFFF;
+}
+.common-line-rect-box .num-box.type-2 li{
+    float: left;
+    border: 1px solid #000000;
+    border-right: 0;
+    display: block;
+    box-sizing: border-box;
+    text-align: center;
+    width: 25px;
+    height: 30px;
+    padding: 4px;
+    font-size: 1.1em;
+    background-color: #FFFFFF;
+}
+.common-line-rect-box .num-box.type-3 li{
+    float: left;
+    border: 1px solid #000000;
+    border-right: 0;
+    display: block;
+    box-sizing: border-box;
+    text-align: center;
+    width: 20px;
+    height: 30px;
+    padding: 4px;
+    font-size: 1.1em;
+    background-color: #FFFFFF;
+}
+.common-line-rect-box .num-box.type-4 li{
+    float: left;
+    border: 1px solid #000000;
+    border-right: 0;
+    display: block;
+    box-sizing: border-box;
+    text-align: center;
+    width: 25px;
+    height: 25px;
+    padding: 4px;
+    font-size: 1.1em;
+    background-color: transparent;
+}
+.common-line-rect-box .date-box li{
+    list-style: none;
+    display: block;
+    border: 1px solid #000000;
+    padding: 1px 7px;
+    margin-left: 1px;
+    color: #000000;
+    font-size: 1.2em;
+    float: left;
+    background-color: #FFFFFF;
+}
+.common-line-rect-box .check-box li{
+    display: inline-block;
+    border: none;
+}
+.common-line-rect-box .check-box li .text{
+    display: inline-block;
+    vertical-align: text-bottom;
+    font-size: 1em;
+    padding: 8px 0;
+}
+.common-line-rect-box .check-box li div{
+    display: inline-block;
+    font-size: 1em;
+    padding: 8px 0;
+}
+.common-line-rect-box .check-box li div span{
+    display: block;
+    text-align: right;
+    font-size: 1em;
+}
+.common-line-rect-box .check-box li:first-child{
+   margin-left: 8px;
+}
+.common-line-rect-box .num-box li:last-child{
+    border-right: 1px solid #000000;
+}
+.sss{
+    font-size: .8em !important;
+    margin-top: -1px;
+}
+@font-face {
+    font-family: 'BanglaFont';
+    src: url('/dist/fonts/Siyamrupali.ttf');
+}
+.bank-form-back{
+    page-break-before: always;
+    width: 900px;
+}
+.bank-form-back h4{
+    font-size: 1em;
+    background-color: #ab0400;
+    color: #FFFFFF;
+    padding: 5px 5px;
+}
+.bank-form-back .rules{
+    list-style: decimal outside;
+    padding: 5px;
+    margin: 0 0 0 17px;
+    font-size: 1em;
+
+}
+.rules ul{
+    list-style: lower-alpha outside;
+    padding: 0;
+    margin: 0 0 0 22px;
+    font-size: 1em;
+}
+.rules ul li{
+    padding: 0;
+    margin: 0;
+    font-size: 1em;
+}
+.rules li{
+    margin-bottom: 5px;
+    font-size: .9em;
+}
+.bank-form-back .declaration{
+    list-style:url('/dist/img/dash.png') outside ;
+    padding: 5px;
+    margin: 0 0 0 17px;
+    font-size: .9em;
+
+}
+.bank-form-back p{
+    font-size: .9em;
+}

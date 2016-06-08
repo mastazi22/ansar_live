@@ -1,0 +1,125 @@
+.notify-success,.notify-error {
+    position: fixed;
+    width: 310px;
+    border: 2px solid #65cc29;
+    background-color: #FFFFFF;
+    text-align: left;
+    word-wrap: break-word;
+    top: 5px;
+    left: 50%;
+    margin-left: -105px;
+    z-index: 20000;
+}
+.notify-error{
+    border: 2px solid #ab0400;
+}
+.notify-success .notify-body,.notify-error .notify-body {
+    position: relative;
+    padding: 20px;
+}
+
+.notify-body::after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.notify-body .close {
+    position: absolute;
+    border: 0;
+    outline: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-size: 1.2em;
+    top: 3px;
+    right: 4px;
+    background: 0 0;
+}
+
+.notify-success .notify-body p,.notify-error .notify-body p {
+    float: left;
+    width: 226px;
+    padding-left: 10px;
+    text-align: justify;
+    margin-bottom: 0;
+}
+.notify-error .notify-body p{
+    color: #e50e00;
+}
+.notify-body img {
+    float: left;
+    width: 32px;
+    height: auto;
+}
+.confirm-dialog-plugin {
+    position: fixed;
+    top: 5px;
+    left: 50%;
+    margin-left: -150px;
+    width: 300px;
+    z-index: 200000;
+    background: #ffffff;
+    border: 2px solid #000000;
+}
+@media (min-width: 768px) {
+    .confirm-dialog-plugin {
+        position: fixed;
+        top: 5px;
+        left: 50%;
+        margin-left: -200px;
+        width: 400px;
+        z-index: 200000;
+        background: #ffffff;
+        border: 2px solid #000000;
+    }
+}
+.confirm-dialog-plugin .confirm-dialog-body{
+    text-align: center;
+    padding: 20px 8px;
+    font-size: 1.2em;
+}
+.confirm-dialog-plugin .confirm-dialog-header{
+    font-size: 1.5em;
+    font-weight: bold;
+    border-bottom: 1px solid rgba(50, 95, 110, 0.84);
+    padding: 8px;
+}
+.confirm-dialog-header img{
+    width: 25px;
+    margin-right: 5px;
+    vertical-align: text-top;
+}
+.confirm-dialog-plugin .confirm-dialog-bottom{
+    padding: 8px;
+    text-align: center;
+}
+.confirm-dialog-bottom button{
+    border: none;
+    color: #eef6ff;
+    width: 48%;
+    padding: 10px 5px;
+    font-size: 1.1em;
+}
+.confirm-ok-button{
+    background-color: #488AC7;
+    margin-right: 5px;
+}
+.confirm-ok-button:hover{
+    background-color: #5E7D7E;
+}
+.confirm-cancel-button{
+    background-color: #F62217;
+}
+.confirm-cancel-button:hover{
+    background-color: #9F000F
+}
+.confirm-box-shadow{
+    position: fixed;
+    background: transparent;
+    width: 100%;
+    height: 100%;
+    z-index: 20000000;
+    left: 0;
+    top: 0;
+}

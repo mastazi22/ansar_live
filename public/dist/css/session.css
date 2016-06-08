@@ -1,0 +1,173 @@
+/*
+Stylesheet for Session, KPI, Panel
+By Shreya
+*/
+
+.table-striped > tbody > tr:nth-child(odd) > td,
+.table-striped > tbody > tr:nth-child(odd) > th {
+    background-color: #E6E6E6;
+}
+
+#example2 {
+    border: 1px solid #D8D8D8;
+}
+
+.table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
+    border: 1px solid #D8D8D8;
+}
+
+.label-session {
+    width: 500px;
+    height: auto;
+}
+
+.label-title {
+    float: left;
+    width: 200px;
+    height: 40px;
+    background-color: #fff;
+    border-top: 2px #fff solid;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    -webkit-border-top-left-radius: 10px;
+    -webkit-border-top-right-radius: 10px;
+    -moz-border-radius-topleft: 10px;
+    -moz-border-radius-topright: 10px;
+}
+
+.label-add {
+    margin-left: 5px;
+    float: left;
+    margin-top: 10px;
+}
+
+.label-add span {
+    float: left;
+}
+.col-centered{
+    float: none;
+    margin: 0 auto;
+}
+.label-title-session-entry{
+    width: 200px;
+    height: 40px;
+    background-color: #fff;
+    border-top: 2px #fff solid;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.table_pagination{
+    float: right;
+}
+.label-kpi {
+    width: 500px;
+    height: auto;
+}
+.label-add-kpi {
+    margin-left: 5px;
+    float: left;
+    /*margin-top: 10px;*/
+}
+.label-title-kpi {
+    float: left;
+    width: 200px;
+    height: 40px;
+    background-color: #fff;
+    border-top: 2px #fff solid;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    -webkit-border-top-left-radius: 10px;
+    -webkit-border-top-right-radius: 10px;
+    -moz-border-radius-topleft: 10px;
+    -moz-border-radius-topright: 10px;
+}
+.label-title-kpi-entry{
+    width: 200px;
+    height: 40px;
+    background-color: #fff;
+    border-top: 2px #fff solid;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.label-panel-entry {
+    width: 100%;
+    height: auto;
+}
+.label-title-panel-entry {
+    float: left;
+    width: 30%;
+    height: auto;
+}
+.label-add-panel-entry {
+    float: left;
+    width: 70%;
+}
+.label-box {
+    width: 100%;
+    height: auto;
+}
+
+.label-box-left {
+    float: left;
+    width: 50%;
+    height: auto;
+    background-color: #fff;
+}
+
+.label-box-right {
+    margin-left: 5px;
+    float: left;
+}
+
+.label-disembodiment {
+    width: 100%;
+    height: auto;
+}
+
+.label-title-disembodiment {
+    float: left;
+    width: 200px;
+}
+
+.label-add-disembodiment {
+     margin-left: 5px;
+     width: 200px;
+     float: left;
+ }
+.label-add-disembodiment-load {
+    float: right;
+}
+.label-hrm {
+    width: 100%;
+    height: auto;
+}
+
+.label-hrm-title {
+    float: left;
+    width: 85%;
+    height: 40px;
+}
+
+.label-hrm-calculation {
+    float: right;
+}
+.label-graph {
+    width: 100%;
+    height: auto;
+}
+
+.label-graph-title {
+    float: right;
+    width: 25%;
+    height: 20px;
+}
+
+.label-graph-name {
+    float: right;
+}
+.form-group.required .control-label:after {
+    content:" *";
+    color:red;
+}

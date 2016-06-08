@@ -1,0 +1,10 @@
+<?php
+Route::group(['prefix'=>'SD'],function(){
+    Route::group(['namespace'=>'\App\modules\SD\Controllers'],function(){
+        Route::get('/','SDController@index');
+        Route::get('/demandsheet','SDController@demandSheet');
+        Route::get('/attendancesheet','SDController@attendanceSheet');
+        Route::get('/sdconstant','SDController@sdConstant');
+        Route::get('/salarysheet','SDController@salarySheet');
+    });
+});

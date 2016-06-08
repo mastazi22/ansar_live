@@ -1,0 +1,125 @@
+#entryform .level-title-session-entry {
+
+    width: 200px;
+    height: 40px;
+    background-color: #fff;
+    border-top: 2px #fff solid;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+#entryform .box-info {
+    border-top-color: #00c0ef;
+}
+
+#entryform .box-info {
+    position: relative;
+    border-radius: 3px;
+    background: #ffffff;
+    border-top: 3px solid #A6B7DA;
+    margin-bottom: 20px;
+    width: 100%;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+#entryform .box-body {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    padding: 10px;
+}
+
+#entryform .control-label {
+    margin: .5em 0em;
+}
+#entryform .col-sm-10{
+    padding-top: .5em !important;
+    padding-bottom: .5em !important;
+}
+.table-not-submitted {
+    position: relative;
+    margin-right: -220px;
+    top: -26px;
+    left: 310%;
+}
+
+.not_submitted {
+    position: absolute;
+}
+
+.table-submitted {
+    position: relative;
+    margin-right: -220px;
+    top: -26px;
+    left: 520%;
+}
+
+.submitted {
+    position: absolute;
+}
+
+.table-search {
+    position: relative;
+    margin-right: 4.6%;
+}
+
+
+
+.loading-data {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: rgba(238, 246, 255, 0.4);
+    z-index: 4;
+    visibility: hidden;
+}
+
+.borderless td, .borderless th {
+    border: none !important;
+}
+
+.ansaradvancedselect{
+    border: 1px solid #ababab;
+    width:98%;
+    margin-right:2%;
+    box-shadow: none;
+    border-color: #d2d6de;
+    background-color: #fff;
+}
+.ansaradvancedname{
+    width:98%;
+    margin-right:2%;
+    margin-bottom:5px;
+    background-color: #fff;
+    border: 1px solid #ababab;
+}
+.height_search{
+    width:48%;
+    margin-right:2%;
+    margin-bottom:5px;
+    background-color: #fff;
+    border: 1px solid #ababab;
+    float:left;
+}
+.center-search{
+    width: 184px;
+   margin: 0 auto;
+}
+.fullinfo{
+ width:70%;
+ margin:0 auto;
+}
+.table-header{
+    padding:3px 10px;
+    background-color: #FFFFFF;
+    display :block; 
+    width: 100px;
+    float: left;
+  -webkit-border-top-left-radius: 5px; 
+  -moz-border-top-right-radius:5px; 
+  border-top-left-radius: 5px; 
+  border-top-right-radius:5px;
+}
