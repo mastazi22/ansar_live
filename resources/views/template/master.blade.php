@@ -369,6 +369,7 @@
     @if(empty(request()->route()->getPrefix()))
         @include('template.menu')
     @elseif(strcasecmp(request()->route()->getPrefix(),'SD')==0)
+        @include('SD::menu')
     @elseif(strcasecmp(request()->route()->getPrefix(),'HRM')==0)
     @endif
     <div class="content-wrapper">
