@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUsersTable extends Migration
+class DemandLog extends Migration
 {
     /**
      * Run the migrations.
@@ -12,12 +12,13 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        //
+        Schema::create('tbl_demand_log',function(Blueprint $table){
             $table->increments('id');
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->rememberToken();
+            $table->integer('kpi_id');
+            $table->longText('sheet_name');
+            $table->string('memorandum_no',255);
+            $table->dateTime('generated_date');
             $table->timestamps();
         });
     }
@@ -29,6 +30,7 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::drop('users');
+        //
+        Schema::drop('tbl_demand_log');
     }
 }
