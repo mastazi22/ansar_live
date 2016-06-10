@@ -14,3 +14,5 @@
 Route::get('/', function () {
     return view('template.index');
 });
+Route::get('/log_in', 'UserController@login');
+Route::post('/check_login', 'UserController@handleLogin');

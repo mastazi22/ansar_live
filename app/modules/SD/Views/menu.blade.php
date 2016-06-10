@@ -40,12 +40,12 @@
                 </a>
                 <ul class="treeview-menu">
                     <li class="">
-                        <a href="index.html">
+                        <a href="{{URL::to('SD/demandconstant')}}">
                             <i class="fa fa-cog"></i>Demand Constant
                         </a>
                     </li>
                     <li>
-                        <a href="index2.html"><i class="fa fa-file-pdf-o"></i>Generate Demand Sheet</a>
+                        <a href="{{URL::to('SD/demandsheet')}}"><i class="fa fa-file-pdf-o"></i>Generate Demand Sheet</a>
                     </li>
                     <li>
                         <a href="index2.html"><i class="fa fa-history"></i>Demand History</a>
