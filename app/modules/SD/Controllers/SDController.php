@@ -68,8 +68,10 @@ class SDController extends Controller
 
     function test()
     {
-        $pdf = new mPDF('utf-8','A4');
-        $pdf->WriteHTML("<h1 style='text-align: center;font-style: italic;font-weight: normal;text-transform: uppercase;font-family: aegyptus'>test</h1>");
+
+        $html = view('SD::demand_sheet_file')->render();
+        $pdf = new mPDF('','A4');
+        $pdf->WriteHTML($html);
         return response($pdf->Output('','s'),200,['Content-Type'=> 'application/pdf']);
     }
 }
