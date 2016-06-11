@@ -5,10 +5,10 @@ namespace App\modules\SD\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\modules\SD\Models\DemandConstant;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
-use mPDF;
 
 class SDController extends Controller
 {
@@ -68,10 +68,7 @@ class SDController extends Controller
 
     function test()
     {
-
-        $html = view('SD::demand_sheet_file')->render();
-        $pdf = new mPDF('','A4');
-        $pdf->WriteHTML($html);
-        return response($pdf->Output('','s'),200,['Content-Type'=> 'application/pdf']);
+        //return view('SD::test');
+        return SnappyPdf::loadView('SD::test')->stream();
     }
 }

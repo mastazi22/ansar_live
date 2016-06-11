@@ -51,8 +51,8 @@
                     ১। <span class="heading">দৈনিক ভাতাঃ-</span>
                 </h3>
                 <div style="padding-left: 15px">
-                    <p>(ক) <span class="subject">............</span> পিসি /এপিসি<span class="subject">.................</span> দিনের  ১৮৬.৫১ টাকা হিসাবে মোট টাকা <span class="subject">...............................................</span></p>
-                    <p>(খ) <span class="subject">............</span> আনসার<span class="subject" style="width: 100px">........................</span> দিনের  ১৮৬.৫১ টাকা হিসাবে মোট টাকা <span class="subject">...............................................</span></p>
+                    <td>(ক) <span class="subject">............</span> পিসি /এপিসি<span class="subject">.................</span> দিনের  ১৮৬.৫১ টাকা হিসাবে মোট টাকা <span class="subject">...............................................</span></td>
+                    <td>(খ) <span class="subject">............</span> আনসার<span class="subject" style="width: 100px">........................</span> দিনের  ১৮৬.৫১ টাকা হিসাবে মোট টাকা <span class="subject">...............................................</span></td>
 
                 </div>
             </div>
