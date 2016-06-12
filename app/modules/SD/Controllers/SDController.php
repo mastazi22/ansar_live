@@ -68,7 +68,7 @@ class SDController extends Controller
 
     function test()
     {
-        //return view('SD::test');
-        return SnappyPdf::loadView('SD::test')->stream();
+//        return view('SD::test');
+        return SnappyPdf::loadView('SD::test')->setPaper('a4')->setOption('margin-right',0)->setOption('margin-left',0)->stream();
     }
 }

@@ -7,6 +7,6 @@ Route::group(['prefix'=>'SD','middleware'=>['web','auth','permission'] ],functio
         Route::get('/demandconstant','SDController@demandConstant');
         Route::get('/salarysheet','SDController@salarySheet');
         Route::post('/updateconstant','SDController@updateConstant');
-        Route::get('test','SDController@test');
+        Route::get('/test','SDController@test');
     });
 });

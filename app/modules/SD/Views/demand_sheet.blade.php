@@ -26,7 +26,7 @@
                                 <input class="form-control dddd" id="to_date" name="to_date" type="text">
                             </div>
                             <div class="form-group">
-                                <label for="Other_date">Other date</label>
+                                <label for="Other_date">Request payment date</label>
                                 <input class="form-control dddd" id="Other_date" name="other_date" type="text">
                             </div>
                             <div class="form-group">
