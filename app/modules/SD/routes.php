@@ -8,5 +8,6 @@ Route::group(['prefix'=>'SD','middleware'=>['web','auth','permission'] ],functio
         Route::get('/salarysheet','SDController@salarySheet');
         Route::post('/updateconstant','SDController@updateConstant');
         Route::get('/test','SDController@test');
+        Route::post('/generatedemandsheet','SDController@generateDemandSheet');
     });
 });

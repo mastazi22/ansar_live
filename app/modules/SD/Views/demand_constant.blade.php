@@ -18,7 +18,7 @@
                     @foreach($constants as $constant)
                         <div class="form-group @if($errors->has($constant->cons_name))has-error @endif">
                             <label style="text-transform: capitalize" for="{{$constant->cons_name}}">{{implode(" ",explode("_",$constant->cons_name))}}</label>
-                            <input type="number" name="{{$constant->cons_name}}" class="form-control" value="{{Request::old($constant->cons_name)==''?$constant->cons_value:Request::old($constant->cons_name)}}" id="{{$constant->cons_name}}" placeholder="Enter a value">
+                            <input type="text" name="{{$constant->cons_name}}" class="form-control" value="{{Request::old($constant->cons_name)==''?$constant->cons_value:Request::old($constant->cons_name)}}" id="{{$constant->cons_name}}" placeholder="Enter a value">
                             @if($errors->has($constant->cons_name))
                                 <p class="help-block">{{$errors->first($constant->cons_name)}}</p>
                             @endif

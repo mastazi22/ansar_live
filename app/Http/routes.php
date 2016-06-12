@@ -10,9 +10,11 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-
+Route::get('/log_in', 'UserController@login');
+Route::post('/check_login', 'UserController@handleLogin');
 Route::get('/', function () {
     return view('template.index');
 });
-Route::get('/log_in', 'UserController@login');
-Route::post('/check_login', 'UserController@handleLogin');
+Route::get('image', 'UserController@getImage');
+Route::get('/logout', 'UserController@logout');
+Route::get('/view_profile/{id}', 'UserController@viewProfile');

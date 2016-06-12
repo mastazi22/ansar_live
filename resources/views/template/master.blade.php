@@ -323,41 +323,29 @@
                         </ul>
                     </li>
                     <!-- User Account: style can be found in dropdown.less -->
-                    <li class="dropdown user user-menu">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image"/>
-                            <span class="hidden-xs">Major General Md. Nazim Uddin</span>
+                    <li class="dropdown user user-menu"><a href="#" class="dropdown-toggle" data-toggle="dropdown"> <img
+                                    src="{{action('UserController@getImage',['file'=>auth()->user()->userProfile->profile_image])}}" class="user-image" alt="User Image"/>
+                            <span class="hidden-xs">{{Auth::user()->userProfile->first_name.' '.Auth::user()->userProfile->last_name}}</span>
                         </a>
                         <ul class="dropdown-menu">
                             <!-- User image -->
                             <li class="user-header">
-                                <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image"/>
+                                <img src="{{action('UserController@getImage',['file'=>auth()->user()->userProfile->profile_image])}}" class="img-circle" alt="User Image"/>
 
                                 <p>
-                                    Major General Md. Nazim Uddin - Director General
-                                    <small>Member since Nov. 2012</small>
+                                    {{Auth::user()->userProfile->first_name.' '.Auth::user()->userProfile->last_name}}
+                                    <br>
+                                    {{Auth::user()->userProfile->rank}}
+                                    {{--<small>Member since Nov. 2012</small>--}}
                                 </p>
-                            </li>
-                            <!-- Menu Body -->
-                            <li class="user-body">
-                                <div class="col-xs-4 text-center">
-                                    <a href="#">Followers</a>
-                                </div>
-                                <div class="col-xs-4 text-center">
-                                    <a href="#">Following</a>
-                                </div>
-                                <div class="col-xs-4 text-center">
-                                    <a href="#">Friends</a>
-                                </div>
                             </li>
                             <!-- Menu Footer-->
                             <li class="user-footer">
-                                <div class="pull-left">
-                                    <a href="#" class="btn btn-default btn-flat">Profile</a>
-                                </div>
-                                <div class="pull-right">
-                                    <a href="#" class="btn btn-default btn-flat">Sign out</a>
-                                </div>
+                                <div class="pull-left"><a
+                                            href="{{action('UserController@viewProfile',array('id'=>Auth::user()->id))}}"
+                                            class="btn btn-default btn-flat">Profile</a></div>
+                                <div class="pull-right"><a href="{{action('UserController@logout')}}"
+                                                           class="btn btn-default btn-flat">Sign out</a></div>
                             </li>
                         </ul>
                     </li>
