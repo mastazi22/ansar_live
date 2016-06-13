@@ -159,6 +159,9 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\modules\ModuleServiceProvider::class,
         Barryvdh\Snappy\ServiceProvider::class,
+        App\modules\SD\Provider\DemandConstantProvider::class,
+        \App\Providers\GlobalParameterProvider::class,
+        \App\Providers\LanguageConvertorProvider::class,
     ],
 
     /*
@@ -206,6 +209,9 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'PDF' => Barryvdh\Snappy\Facades\SnappyPdf::class,
         'Image' => Barryvdh\Snappy\Facades\SnappyImage::class,
+        'DC' => App\modules\SD\Helper\Facades\DemandConstantFacdes::class,
+        'GlobalParameter' => \App\Helper\Facades\GlobalParameterFacades::class,
+        'LanguageConverter' => \App\Helper\Facades\LanguageConverterFacades::class,
 
     ],
 

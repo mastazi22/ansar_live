@@ -80,14 +80,14 @@
             <td colspan="8">স্মারক নং-</td>
         </tr>
         <tr  style="text-align: right;">
-            <td colspan="8"><span class="value2">১২,জুন ২০১৬</span>তারিখঃ ................................. </td>
+            <td colspan="8"><span class="value2">{{LanguageConverter::engToBng(\Carbon\Carbon::now()->format('d-m-Y'))}}</span>তারিখঃ ................................. </td>
         </tr>
         <tr >
             <td style="vertical-align: top;width: 30px">প্রতিঃ</td>
             <td colspan="7">
                 <table  cellpadding="0" cellspacing="0">
                     <tr>
-                        <td>...................................................................................................</td>
+                        <td><span class="value1">{{$address}}</span>...................................................................................................</td>
                     </tr>
                     <tr style="height: 40px">
                         <td>....................................................................................................</td>
@@ -106,11 +106,11 @@
             <td colspan="7">
                 <table  cellpadding="0" cellspacing="0" style="width: 100%">
                     <tr style="">
-                        <td style="border-bottom: 1px solid #1b1b1b;padding-left: 5px"><span class="value1">২</span>.................</td>
+                        <td style="border-bottom: 1px solid #1b1b1b;padding-left: 5px"><span class="value1">{{LanguageConverter::engToBng($total_pc)}}</span>.................</td>
                         <td style="border-bottom: 1px solid #1b1b1b;">জন পিসি,</td>
-                        <td style="border-bottom: 1px solid #1b1b1b;"><span class="value1">২</span>................</td>
+                        <td style="border-bottom: 1px solid #1b1b1b;"><span class="value1">{{LanguageConverter::engToBng($total_apc)}}</span>................</td>
                         <td style="border-bottom: 1px solid #1b1b1b;">জন এপিসি ও</td>
-                        <td style="border-bottom: 1px solid #1b1b1b;"><span class="value1">২</span>................</td>
+                        <td style="border-bottom: 1px solid #1b1b1b;"><span class="value1">{{LanguageConverter::engToBng($total_ansar)}}</span>................</td>
                         <td style="border-bottom: 1px solid #1b1b1b;">জন আনসার এর অঙ্গীভূতকালীন সময়ের ভাতাদির প্রাক্কলন।</td>
                     </tr>
                 </table>
@@ -135,11 +135,11 @@
                     </tr>
                     <tr style="">
                         <td>(ক)</td>
-                        <td><span class="value1">২</span>............</td>
+                        <td><span class="value1">{{LanguageConverter::engToBng($total_pc+$total_apc)}}</span>............</td>
                         <td colspan="1"> পিসি /এপিসি</td>
-                        <td><span class="value1">২</span>............</td>
-                        <td>দিনের  ১৮৬.৫১ টাকা হিসাবে মোট টাকা</td>
-                        <td style="text-align: right"><span class="value3">২</span>.........................................................</td>
+                        <td><span class="value1">{{LanguageConverter::engToBng($total_day)}}</span>............</td>
+                        <td>দিনের  {{LanguageConverter::engToBng(DC::getValue('DPA')->cons_value)}} টাকা হিসাবে মোট টাকা</td>
+                        <td style="text-align: right"><span class="value3">{{LanguageConverter::engToBng($st1)}}</span>.........................................................</td>
                     </tr>
                     <tr>
                         <td style="padding: 5px"></td>
@@ -149,11 +149,11 @@
                     <tr>
                     <tr style="">
                         <td>(খ)</td>
-                        <td><span class="value1">২</span>............</td>
+                        <td><span class="value1">{{LanguageConverter::engToBng($total_ansar)}}</span>............</td>
                         <td> আনসার</td>
-                        <td><span class="value1">২</span>....................</td>
-                        <td>দিনের  ১৮৬.৫১ টাকা হিসাবে মোট টাকা</td>
-                        <td style="text-align: right"><span class="value3">২</span>.........................................................</td>
+                        <td><span class="value1">{{LanguageConverter::engToBng($total_day)}}</span>....................</td>
+                        <td>দিনের  {{LanguageConverter::engToBng(DC::getValue('DA')->cons_value)}} টাকা হিসাবে মোট টাকা</td>
+                        <td style="text-align: right"><span class="value3">{{LanguageConverter::engToBng($st2)}}</span>.........................................................</td>
                     </tr>
                     </tr>
                 </table>
@@ -164,7 +164,7 @@
             <td style="border-bottom: 1px solid #000000;width: 296px"></td>
         </tr>
         <tr style="">
-            <td colspan="8" style="text-align: right;padding-top: 20px"><span class="value4">২</span>মোট টাকা....................................................</td>
+            <td colspan="8" style="text-align: right;padding-top: 20px"><span class="value4">{{LanguageConverter::engToBng($st3)}}</span>মোট টাকা....................................................</td>
         </tr>
         <tr>
             <td colspan="8" style="padding-top: 40px;padding-bottom: 20px">
@@ -180,7 +180,7 @@
                             মোট দৈনিক ভাতার ২০%-১৫% হারে মোট টাকা
                         </td>
                         <td style="text-align: right">
-                            <span class="value3">২</span> =.........................................................
+                            <span class="value3">{{LanguageConverter::engToBng($st4)}}</span> =........................................................
                         </td>
                     </tr>
                 </table>
@@ -202,11 +202,11 @@
                     </tr>
                     <tr style="">
                         <td>(ক)</td>
-                        <td><span class="value1">২</span>............</td>
+                        <td><span class="value1">{{LanguageConverter::engToBng($total_ansar+$total_pc+$total_apc)}}</span>............</td>
                         <td colspan="1"> জন</td>
-                        <td><span class="value1">২</span>..................</td>
-                        <td>দিনের  ১৮৬.৫১ টাকা হিসাবে মোট টাকা</td>
-                        <td style="text-align: right"><span class="value3">২</span>=.........................................................</td>
+                        <td><span class="value1">{{LanguageConverter::engToBng($total_day)}}</span>..................</td>
+                        <td>দিনের  {{LanguageConverter::engToBng(DC::getValue('R')->cons_value)}} টাকা হিসাবে মোট টাকা</td>
+                        <td style="text-align: right"><span class="value3">{{LanguageConverter::engToBng($st5)}}</span>=.........................................................</td>
                     </tr>
                 </table>
             </td>
@@ -227,11 +227,11 @@
                     </tr>
                     <tr >
                         <td>(ক)</td>
-                        <td><span class="value1">২</span>............</td>
+                        <td><span class="value1">{{LanguageConverter::engToBng($total_ansar+$total_pc+$total_apc)}}</span>............</td>
                         <td colspan="1"> জন</td>
-                        <td><span class="value1">২</span>..................</td>
-                        <td>দিনের  ১৮৬.৫১ টাকা হিসাবে মোট টাকা</td>
-                        <td style="text-align: right"><span class="value3">২</span>=.........................................................</td>
+                        <td><span class="value1">{{LanguageConverter::engToBng($total_day)}}</span>..................</td>
+                        <td>দিনের  {{LanguageConverter::engToBng(DC::getValue('CB')->cons_value)}} টাকা হিসাবে মোট টাকা</td>
+                        <td style="text-align: right"><span class="value3">{{LanguageConverter::engToBng($st6)}}</span>=.........................................................</td>
                     </tr>
                 </table>
             </td>
@@ -252,11 +252,11 @@
                     </tr>
                     <tr  style="">
                         <td>(ক)</td>
-                        <td><span class="value1">২</span>............</td>
+                        <td><span class="value1">{{LanguageConverter::engToBng($total_ansar+$total_pc+$total_apc)}}</span>............</td>
                         <td colspan="1"> জন</td>
-                        <td><span class="value1">২</span>..................</td>
-                        <td>দিনের  ১৮৬.৫১ টাকা হিসাবে মোট টাকা</td>
-                        <td style="text-align: right"><span class="value3">২</span>=.........................................................</td>
+                        <td><span class="value1">{{LanguageConverter::engToBng($total_day)}}</span>..................</td>
+                        <td>দিনের  {{LanguageConverter::engToBng(DC::getValue('CV')->cons_value)}} টাকা হিসাবে মোট টাকা</td>
+                        <td style="text-align: right"><span class="value3">{{LanguageConverter::engToBng($st7)}}</span>=.........................................................</td>
                     </tr>
                 </table>
             </td>
@@ -277,11 +277,11 @@
                     </tr>
                     <tr >
                         <td>(ক)</td>
-                        <td><span class="value1">২</span>............</td>
+                        <td><span class="value1">{{LanguageConverter::engToBng($total_ansar+$total_pc+$total_apc)}}</span>............</td>
                         <td colspan="1"> জন</td>
-                        <td><span class="value1">২</span>..................</td>
-                        <td>দিনের  ১৮৬.৫১ টাকা হিসাবে মোট টাকা</td>
-                        <td style="text-align: right"><span class="value3">২</span>=.........................................................</td>
+                        <td><span class="value1">{{LanguageConverter::engToBng($total_day)}}</span>..................</td>
+                        <td>দিনের  {{LanguageConverter::engToBng(DC::getValue('DV')->cons_value)}} টাকা হিসাবে মোট টাকা</td>
+                        <td style="text-align: right"><span class="value3">{{LanguageConverter::engToBng($st8)}}</span>=.........................................................</td>
                     </tr>
                 </table>
             </td>
@@ -297,7 +297,7 @@
                             </span>
                         </th>
                         <td style="text-align: right">
-                            <span class="value3">২</span>=.........................................................
+                            <span class="value3">{{LanguageConverter::engToBng($st9)}}</span>=.........................................................
                         </td>
                     </tr>
                 </table>
@@ -308,14 +308,14 @@
             <td style="border-bottom: 1px solid #000000;width: 296px"></td>
         </tr>
         <tr>
-            <td colspan="8" style="text-align: right;padding-top: 20px"><span class="value4">২</span>সর্বমোট টাকা....................................................</td>
+            <td colspan="8" style="text-align: right;padding-top: 20px"><span class="value4">{{LanguageConverter::engToBng($st3+$st4+$st5+$st6+$st7+$st8+$st9)}}</span>সর্বমোট টাকা....................................................</td>
         </tr>
         <tr  style="">
             <td colspan="8" style="padding: 20px 0;line-height: 35px;text-align: justify;word-wrap: break-word;word-break: break-all">
-                <span style="position: absolute;top: 12px;left: 50px;">123</span>
-  <span style="position: absolute;top: 12px;left: 392px;">123</span>
-  <span style="position: absolute;top: 81px;left: 50px;">123</span>
-                <span style="position: absolute;top: 116px;left: 100px;">123</span>............................................তারিখ হইতে ............................................... তারিখ পর্যন্ত অঙ্গিভুতকালিন পিসি/এপিসি ও আনসারদের/মহিলা আনসারদের বেতন ভাতাদি ও আনুসাঙ্গিক এর টাকা সহ মোট টাকা ......................................................................................................................... ডিডি’র/পে অর্ডার এর মাধ্যমে জেলা কমান্ড্যন্ট,আনসার ও ভিডিপি ,গাজীপুর এর বরাবরে .............................তারিখের মধ্যে জমা দেওয়ার জন্য অনুরোধ করা হ’ল।
+                <span style="position: absolute;top: 12px;left: 50px;">{{LanguageConverter::engToBng($form)}}</span>
+  <span style="position: absolute;top: 12px;left: 392px;">{{LanguageConverter::engToBng($to)}}</span>
+  <span style="position: absolute;top: 81px;left: 50px;">{{LanguageConverter::engToBng($st3+$st4+$st5+$st6+$st7+$st8+$st9)}}</span>
+                <span style="position: absolute;top: 116px;left: 100px;">{{LanguageConverter::engToBng($p_date)}}</span>............................................তারিখ হইতে ............................................... তারিখ পর্যন্ত অঙ্গিভুতকালিন পিসি/এপিসি ও আনসারদের/মহিলা আনসারদের বেতন ভাতাদি ও আনুসাঙ্গিক এর টাকা সহ মোট টাকা ......................................................................................................................... ডিডি’র/পে অর্ডার এর মাধ্যমে জেলা কমান্ড্যন্ট,আনসার ও ভিডিপি ,গাজীপুর এর বরাবরে .............................তারিখের মধ্যে জমা দেওয়ার জন্য অনুরোধ করা হ’ল।
             </td>
         </tr>
         <tr>
