@@ -8,6 +8,7 @@ Route::group(['prefix'=>'SD','middleware'=>['web','auth','permission'] ],functio
         Route::get('/salarysheet','SDController@salarySheet');
         Route::post('/updateconstant','SDController@updateConstant');
         Route::get('/test','SDController@test');
+        Route::get('/download_demand_sheet/{id}','SDController@downloadDemandSheet')->where('id','[0-9]+');
         Route::post('/generatedemandsheet','SDController@generateDemandSheet');
     });
 });

@@ -20,7 +20,7 @@
 
                     <p style="margin-top: 20px">
                         We could not find the page you were looking for.
-                        Meanwhile, you may <a href="{{action('UserController@hrmDashboard')}}">return to dashboard</a>
+                        Meanwhile, you may <a href="{{URL::to('/')}}">return to dashboard</a>
                     </p>
 
                 </div>
