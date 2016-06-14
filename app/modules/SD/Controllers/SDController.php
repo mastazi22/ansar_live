@@ -44,10 +44,12 @@ class SDController extends Controller
             'form_date'=>'required|date_format:d-M-Y',
             'to_date'=>'required|date_format:d-M-Y|after:form_date',
             'other_date'=>'required|date_format:d-M-Y|after:form_date',
+            'mem_id'=>'required|unique:hrm.tbl_memorandum_id,memorandum_id'
         ];
         $messages = [
           'required'=>'This field is required',
           'date_format'=>'Invalid date format',
+            'unique'=>'This memorandum no already exist'
         ];
         $validator = Validator::make($request->all(),$rules,$messages);
         if($validator->fails()){
@@ -84,6 +86,9 @@ class SDController extends Controller
         $demandlog = new DemandLog();
         $demandlog->kpi_id = $request->get('kpi');
         $demandlog->sheet_name = $file_name;
+        $demandlog->form_date = Carbon::parse($request->get('form_date'))->format('Y-m-d');
+        $demandlog->to_date = Carbon::parse($request->get('to_date'))->format('Y-m-d');
+        $demandlog->request_payment_date = Carbon::parse($request->get('other_date'))->format('Y-m-d');
         $demandlog->generated_date = Carbon::now()->format('Y-m-d H:i:s');
         $demandlog->memorandum_no = 'not found';
         try{

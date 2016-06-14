@@ -13,7 +13,7 @@ class KpiPaymentLog extends Migration
     public function up()
     {
         //
-        Schema::create('tbl_kpi_payment_log',function(Blueprint $table){
+        Schema::connection('sd')->create('tbl_kpi_payment_log',function(Blueprint $table){
             $table->increments('id');
             $table->integer('kpi_id');
             $table->integer('amount');
@@ -30,6 +30,6 @@ class KpiPaymentLog extends Migration
     public function down()
     {
         //
-        Schema::drop('tbl_kpi_payment_log');
+        Schema::connection('sd')->drop('tbl_kpi_payment_log');
     }
 }

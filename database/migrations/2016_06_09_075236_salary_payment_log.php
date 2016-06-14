@@ -13,7 +13,7 @@ class SalaryPaymentLog extends Migration
     public function up()
     {
         //
-        Schema::create('tbl_salary_payment_log',function(Blueprint $table){
+        Schema::connection('sd')->create('tbl_salary_payment_log',function(Blueprint $table){
             $table->increments('id');
             $table->longText('sheet_name');
             $table->dateTime('generated_date');
@@ -29,6 +29,6 @@ class SalaryPaymentLog extends Migration
     public function down()
     {
         //
-        Schema::drop('tbl_salary_payment_log');
+        Schema::connection('sd')->drop('tbl_salary_payment_log');
     }
 }

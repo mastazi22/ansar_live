@@ -53,7 +53,7 @@
                             @if(isset($units))
                                 <div class="form-group">
                                     <label for="unit_list">Select District</label>
-                                    <select class="form-control" id="unit_list" name="kpi">
+                                    <select class="form-control" id="unit_list" name="unit">
                                         <option value="">--Select a unit--</option>
                                         @foreach($units as $unit)
                                             <option value="{{$unit->id}}">{{$unit->unit_name_bng}}</option>
@@ -73,6 +73,11 @@
                                     @endif
                                 </select>
                                 <p ng-if="errors.kpi!=undefined" class="text text-danger">[[errors.kpi[0] ]]</p>
+                            </div>
+                            <div class="form-group" ng-class="{'has-error':errors.mem_id!=undefined}">
+                                <label for="memid">Memorandum no.</label>
+                                <input class="form-control" id="memid" name="mem_id" type="text">
+                                <p ng-if="errors.mem_id!=undefined" class="text text-danger">[[errors.mem_id[0] ]]</p>
                             </div>
                             <div class="form-group" ng-class="{'has-error':errors.form_date!=undefined}">
                                 <label for="from_date">From date</label>
