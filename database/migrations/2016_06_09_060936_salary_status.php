@@ -12,7 +12,7 @@ class SalaryStatus extends Migration
      */
     public function up()
     {
-        Schema::create('tbl_salary_status', function (Blueprint $table) {
+        Schema::connection('sd')->create('tbl_salary_status', function (Blueprint $table) {
             //
             $table->increments('id');
             $table->integer('ansar_id');
@@ -28,6 +28,6 @@ class SalaryStatus extends Migration
      */
     public function down()
     {
-        Schema::drop('tbl_salary_status');
+        Schema::connection('sd')->drop('tbl_salary_status');
     }
 }

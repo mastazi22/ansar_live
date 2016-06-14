@@ -12,7 +12,7 @@ class AbsentDetail extends Migration
      */
     public function up()
     {
-        Schema::create('tbl_absent_detail', function (Blueprint $table) {
+        Schema::connection('sd')->create('tbl_absent_detail', function (Blueprint $table) {
             //
             $table->increments('id');
             $table->integer('ansar_id');
@@ -31,6 +31,6 @@ class AbsentDetail extends Migration
      */
     public function down()
     {
-        Schema::drop('tbl_absent_detail');
+        Schema::connection('sd')->drop('tbl_absent_detail');
     }
 }

@@ -13,12 +13,15 @@ class DemandLog extends Migration
     public function up()
     {
         //
-        Schema::create('tbl_demand_log',function(Blueprint $table){
+        Schema::connection('sd')->create('tbl_demand_log',function(Blueprint $table){
             $table->increments('id');
             $table->integer('kpi_id');
             $table->longText('sheet_name');
             $table->string('memorandum_no',255);
             $table->dateTime('generated_date');
+            $table->date('form_date');
+            $table->date('to_date');
+            $table->date('request_payment_date');
             $table->timestamps();
         });
     }
@@ -31,6 +34,6 @@ class DemandLog extends Migration
     public function down()
     {
         //
-        Schema::drop('tbl_demand_log');
+        Schema::connection('sd')->drop('tbl_demand_log');
     }
 }

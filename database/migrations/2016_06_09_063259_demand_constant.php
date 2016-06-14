@@ -12,7 +12,7 @@ class DemandConstant extends Migration
      */
     public function up()
     {
-        Schema::create('tbl_demand_constant', function (Blueprint $table) {
+        Schema::connection('sd')->create('tbl_demand_constant', function (Blueprint $table) {
             //
             $table->increments('id');
             $table->string('cons_name',255);
@@ -28,6 +28,6 @@ class DemandConstant extends Migration
      */
     public function down()
     {
-        Schema::drop('tbl_demand_constant');
+        Schema::connection('sd')->drop('tbl_demand_constant');
     }
 }
