@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Intervention\Image\Facades\Image;
@@ -43,7 +44,8 @@ class UserController extends Controller
             $user->userLog->last_login = Carbon::now()->addHours(6);
             if ($user->userLog->user_status == 0) $user->userLog->user_status = 1;
             $user->userLog->save();
-            return Redirect::to('/');
+            if(Session::get('redirect_url'))return Redirect::to(Session::get('redirect_url'));
+            else return Redirect::to('/');
         } else {
             return Redirect::action('UserController@login')->with('error', 'Invalid user name or password');
         }

@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 
 class CheckAuthentication
 {
@@ -18,6 +19,7 @@ class CheckAuthentication
     public function handle($request, Closure $next)
     {
         if (auth()->guest()) {
+            Session::flash('redirect_url',$request->url());
             If($request->ajax()){
                 return Response::json(['status'=>'logout','loc'=>action('UserController@login')]);
             }

@@ -11,5 +11,6 @@ Route::group(['prefix'=>'SD','middleware'=>['web','auth','permission'] ],functio
         Route::get('/download_demand_sheet/{id}','SDController@downloadDemandSheet')->where('id','[0-9]+');
         Route::post('/generatedemandsheet','SDController@generateDemandSheet');
         Route::get('/demandhistory','SDController@demandHistory');
+        Route::get('/viewdemandsheet/{id}','SDController@viewDemandSheet')->where('id','[0-9]+');
     });
 });

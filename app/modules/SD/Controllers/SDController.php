@@ -159,6 +159,17 @@ class SDController extends Controller
         //return SnappyPdf::loadView('SD::test')->setPaper('a4')->setOption('margin-right',0)->setOption('margin-left',0)->stream();
     }
     function demandHistory(){
-        return view('SD::Demand.demand_history');
+        $db1 = env('HRM','');
+        $db2 = env('SD','');
+        if($db1&&$db2){
+            $logs = DB::table("{$db1}.tbl_kpi_info")->join("{$db2}.tbl_demand_log","{$db1}.tbl_kpi_info.id",'=',"{$db2}.tbl_demand_log.kpi_id")->paginate(10);
+            return view('SD::Demand.demand_history',['logs'=>$logs]);
+        }
+        else{
+            abort(404);
+        }
+    }
+    function viewDemandSheet($id){
+        $log = DemandLog::find($id)->sheet_name;
     }
 }

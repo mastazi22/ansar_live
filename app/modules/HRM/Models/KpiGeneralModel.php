@@ -23,4 +23,7 @@ class KpiGeneralModel extends Model
 //    function freezing_info(){
 //        return $this->hasOne('App\models\FreezingInfoModel','kpi_id');
 //   }
+    function demand(){
+        $this->hasMany('App\modules\SD\Models\DemandLog','kpi_id');
+    }
 }
