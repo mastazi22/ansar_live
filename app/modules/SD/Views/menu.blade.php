@@ -48,7 +48,7 @@
                         <a href="{{URL::to('SD/demandsheet')}}"><i class="fa fa-file-pdf-o"></i>Generate Demand Sheet</a>
                     </li>
                     <li>
-                        <a href="index2.html"><i class="fa fa-history"></i>Demand History</a>
+                        <a href="{{URL::to('SD/demandhistory')}}"><i class="fa fa-history"></i>Demand History</a>
                     </li>
                 </ul>
             </li>

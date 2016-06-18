@@ -159,6 +159,6 @@ class SDController extends Controller
         //return SnappyPdf::loadView('SD::test')->setPaper('a4')->setOption('margin-right',0)->setOption('margin-left',0)->stream();
     }
     function demandHistory(){
-
+        return view('SD::Demand.demand_history');
     }
 }
