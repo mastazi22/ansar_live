@@ -77,7 +77,7 @@
             </th>
         </tr>
         <tr style="">
-            <td colspan="8">স্মারক নং-</td>
+            <td colspan="8">স্মারক নং-{{$mem_no}}</td>
         </tr>
         <tr  style="text-align: right;">
             <td colspan="8"><span class="value2">{{LanguageConverter::engToBng(\Carbon\Carbon::now()->format('d-m-Y'))}}</span>তারিখঃ ................................. </td>

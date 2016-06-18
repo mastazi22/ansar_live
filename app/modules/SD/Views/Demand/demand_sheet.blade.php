@@ -76,7 +76,7 @@
                             </div>
                             <div class="form-group" ng-class="{'has-error':errors.mem_id!=undefined}">
                                 <label for="memid">Memorandum no.</label>
-                                <input class="form-control" id="memid" name="mem_id" type="text">
+                                <input class="form-control" id="memid" name="mem_id" type="text" placeholder="Enter memorandum no">
                                 <p ng-if="errors.mem_id!=undefined" class="text text-danger">[[errors.mem_id[0] ]]</p>
                             </div>
                             <div class="form-group" ng-class="{'has-error':errors.form_date!=undefined}">

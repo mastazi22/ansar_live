@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\KpiDetailsModel;
 use App\modules\HRM\Models\KpiGeneralModel;
+use App\modules\HRM\Models\MemorandumModel;
 use App\modules\SD\Helper\Facades\DemandConstantFacdes;
 use App\modules\SD\Models\DemandConstant;
 use App\modules\SD\Models\DemandLog;
@@ -32,10 +33,10 @@ class SDController extends Controller
     {
         $user = auth()->user();
         if($user->type==22){
-            return view('SD::demand_sheet',['kpis'=>KpiGeneralModel::where('unit_id',$user->district_id)->select('id','kpi_name')->get()]);
+            return view('SD::Demand.demand_sheet',['kpis'=>KpiGeneralModel::where('unit_id',$user->district_id)->select('id','kpi_name')->get()]);
         }
         else{
-            return view('SD::demand_sheet',['units'=>District::all(['id','unit_name_bng'])]);
+            return view('SD::Demand.demand_sheet',['units'=>District::all(['id','unit_name_bng'])]);
         }
     }
     public function generateDemandSheet(Request $request){
@@ -82,17 +83,20 @@ class SDController extends Controller
         $path = storage_path('DemandSheet/'.$request->get('kpi'));
         $file_name = bcrypt(Carbon::now()->timestamp).'.pdf';
         if(!File::exists($path)) File::makeDirectory($path,0775,true);
-        SnappyPdf::loadView('SD::test',['address'=>$address,'total_pc'=>$total_pc,'total_apc'=>$total_apc,'total_ansar'=>$total_ansar,'to'=>$to,'form'=>$form,'p_date'=>$payment_date,'total_day'=>$total_days,'st1'=>$st1,'st2'=>$st2,'st3'=>$st3,'st4'=>$st4,'st5'=>$st5,'st6'=>$st6,'st7'=>$st7,'st8'=>$st8,'st9'=>$st9])->setOption('margin-left',0)->setOption('margin-right',0)->save($path.'/'.$file_name);
+        SnappyPdf::loadView('SD::Demand.test',['mem_no'=>$request->get('mem_id'),'address'=>$address,'total_pc'=>$total_pc,'total_apc'=>$total_apc,'total_ansar'=>$total_ansar,'to'=>$to,'form'=>$form,'p_date'=>$payment_date,'total_day'=>$total_days,'st1'=>$st1,'st2'=>$st2,'st3'=>$st3,'st4'=>$st4,'st5'=>$st5,'st6'=>$st6,'st7'=>$st7,'st8'=>$st8,'st9'=>$st9])->setOption('margin-left',0)->setOption('margin-right',0)->save($path.'/'.$file_name);
         $demandlog = new DemandLog();
+        $mem = new MemorandumModel();
         $demandlog->kpi_id = $request->get('kpi');
         $demandlog->sheet_name = $file_name;
         $demandlog->form_date = Carbon::parse($request->get('form_date'))->format('Y-m-d');
         $demandlog->to_date = Carbon::parse($request->get('to_date'))->format('Y-m-d');
         $demandlog->request_payment_date = Carbon::parse($request->get('other_date'))->format('Y-m-d');
         $demandlog->generated_date = Carbon::now()->format('Y-m-d H:i:s');
-        $demandlog->memorandum_no = 'not found';
+        $demandlog->memorandum_no = $request->get('mem_id');
+        $mem->memorandum_id = $request->get('mem_id');
         try{
             $demandlog->saveOrFail();
+            $mem->saveOrFail();
             return Response::json(['error'=>false,'status'=>true,'data'=>$demandlog->id]);
         }catch (Exception $e){
             return Response::json(['error'=>false,'status'=>false,'data'=>$e->getMessage()]);
@@ -105,7 +109,7 @@ class SDController extends Controller
 
     public function demandConstant()
     {
-        return view("SD::demand_constant")->with(['constants' => DemandConstant::all()]);
+        return view("SD::Demand.demand_constant")->with(['constants' => DemandConstant::all()]);
     }
 
     public function salarySheet()
@@ -153,5 +157,8 @@ class SDController extends Controller
 
 //        return view('SD::test');
         //return SnappyPdf::loadView('SD::test')->setPaper('a4')->setOption('margin-right',0)->setOption('margin-left',0)->stream();
+    }
+    function demandHistory(){
+
     }
 }
