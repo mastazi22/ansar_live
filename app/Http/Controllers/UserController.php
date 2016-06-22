@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\ActionUserEvent;
 use App\Http\Requests;
-use App\models\CustomQuery;
+use App\modules\HRM\Models\CustomQuery;
 use App\models\EmbodimentModel;
 use App\models\GlobalParameter;
 use App\models\MemorandumModel;
@@ -77,13 +77,13 @@ class UserController extends Controller
     function userRegistration()
     {
         $types = UserType::all();
-        return View::make('user_registration')->with('types', $types);
+        return View::make('User.user_registration')->with('types', $types);
     }
 
     function userManagement()
     {
         $users = User::count();
-        return View::make('user_management')->with('total_user', $users);
+        return View::make('User.user_management')->with('total_user', $users);
     }
 
     function handleRegister()
@@ -122,7 +122,7 @@ class UserController extends Controller
 
     function viewProfile($id)
     {
-        return View::make('user_profile')->with('user', User::find($id));
+        return View::make('User.user_profile')->with('user', User::find($id));
     }
 
     function updateProfile()
@@ -141,7 +141,7 @@ class UserController extends Controller
 
     function editUser($id)
     {
-        return View::make('edit_user')->with('id', $id);
+        return View::make('User.edit_user')->with('id', $id);
     }
 
     function changeUserName()
@@ -175,10 +175,11 @@ class UserController extends Controller
         }
         $rules = [
             'password' => 'required',
-            'c_password' => 'same:password'
+            'c_password' => 'required|same:password'
         ];
         $messages = [
-            'required' => 'New password is required',
+            'password.required' => 'New password is required',
+            'c_password.required' => 'Confirm password is required',
             'same' => 'Password mis-match'
         ];
         $valid = Validator::make(Input::all(), $rules, $messages);
@@ -227,7 +228,7 @@ class UserController extends Controller
         } else {
             $permission = 'all';
         }
-        return View::make('user_permission_view')->with(array('routes' => json_encode($routes), 'id' => $id, 'access' => json_encode($permission)));
+        return View::make('User.user_permission_view')->with(array('routes' => json_encode($routes), 'id' => $id, 'access' => json_encode($permission)));
     }
 
     function updatePermission($id)

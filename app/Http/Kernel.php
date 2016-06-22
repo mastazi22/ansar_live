@@ -33,7 +33,7 @@ class Kernel extends HttpKernel
         ],
         'auth'=>[\App\Http\Middleware\CheckAuthentication::class],
         'permission'=>[\App\Http\Middleware\CheckUserPermission::class],
-        'checkUser'=>[\App\Http\Middleware\CheckUserType::class],
+        'checkUserType'=>[\App\Http\Middleware\CheckUserType::class],
         'api' => [
             'throttle:60,1',
         ],

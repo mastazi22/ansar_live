@@ -7,6 +7,9 @@
     "require": {
         "php": ">=5.5.9",
         "laravel/framework": "5.2.*",
+        "intervention/image": "dev-master",
+        "milon/barcode": "^1.0",
+        "davejamesmiller/laravel-breadcrumbs": "^3.0",
         "wemersonjanuario/wkhtmltopdf-windows": "0.12.2.3",
         "barryvdh/laravel-snappy": "^0.3.0"
     },

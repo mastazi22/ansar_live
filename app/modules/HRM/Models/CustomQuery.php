@@ -764,7 +764,7 @@ class CustomQuery
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();
         //return DB::getQueryLog();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
 
     }
 
@@ -897,7 +897,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
     }
 
     public static function getTotalFreeAnsarCount($unit, $thana, $division = null)
@@ -1051,7 +1051,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_panel_info.created_at', 'tbl_panel_info.memorandum_id')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'pannel']);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'pannel']);
     }
 
     public static function getTotalPaneledAnsarCount($unit, $thana, $division = null)
@@ -1242,7 +1242,7 @@ class CustomQuery
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_sms_offer_info.sms_send_datetime')->skip($offset)->limit($limit)->get();
         //return DB::getQueryLog();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'offer']);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'offer']);
     }
 
     public static function getTotalOfferedAnsarCount($unit, $thana, $division = null)
@@ -1440,7 +1440,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_rest_info.rest_date')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'rest']);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'rest']);
     }
 
     public static function getTotalRestAnsarCount($unit, $thana, $division = null)
@@ -1597,7 +1597,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_freezing_info.freez_reason', 'tbl_freezing_info.freez_date')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'freeze']);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'freeze']);
     }
 
     public static function getTotalFreezedAnsarCount($unit, $thana, $division = null)
@@ -1761,7 +1761,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_blocklist_info.comment_for_block', 'tbl_blocklist_info.date_for_block')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'block']);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'block']);
     }
 
     public static function getTotalBlockedAnsarCount($unit, $thana, $division = null)
@@ -1936,7 +1936,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_ansar_parsonal_info.sex',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_blacklist_info.black_list_comment as reason', 'tbl_blacklist_info.black_listed_date as date')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'black']);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'black']);
 
     }
 
@@ -2106,7 +2106,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_kpi_info.kpi_name', 'tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
     }
 
     public static function getTotalEmbodiedAnsarCount($unit, $thana, $division = null)
@@ -2298,7 +2298,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_kpi_info.kpi_name', 'tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
     }
 
     public static function getTotalOwnEmbodiedAnsarCount($unit, $thana, $division = null)
@@ -2534,7 +2534,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_kpi_info.kpi_name', 'tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'diff_embodied']);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'diff_embodied']);
     }
 
     public static function getTotalDiffEmbodiedAnsarCount($unit, $thana, $division = null)
@@ -2745,7 +2745,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
     }
 
     public static function getTotalNotVerifiedAnsarCount($unit, $thana, $division = null)
@@ -3578,7 +3578,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
 
     }
 
@@ -3741,7 +3741,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
     }
 
     public static function getRecentTotalFreeAnsarCount($unit, $thana, $division = null)
@@ -3916,7 +3916,7 @@ class CustomQuery
             ->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
                 'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_panel_info.created_at', 'tbl_panel_info.memorandum_id')->skip($offset)->limit($limit)->get();
         //return DB::getQueryLog();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'pannel']);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'pannel']);
     }
 
     public static function getRecentTotalPaneledAnsarCount($unit, $thana, $division = null)
@@ -4083,7 +4083,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_units.unit_name_bng as unit')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
     }
 
     public static function getRecentTotalNotVerifiedAnsarCount($unit, $thana, $division = null)
@@ -4296,7 +4296,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_sms_offer_info.sms_send_datetime')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars,'type'=>'offer']);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars,'type'=>'offer']);
     }
 
     public static function getRecentTotalOfferedAnsarCount($unit, $thana, $division = null)
@@ -4498,7 +4498,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_rest_info.rest_date')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars,'type'=>'rest']);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars,'type'=>'rest']);
     }
 
     public static function getRecentTotalRestAnsarCount($unit, $thana, $division = null)
@@ -4675,7 +4675,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_freezing_info.freez_reason', 'tbl_freezing_info.freez_date')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars,'type'=>'freeze']);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars,'type'=>'freeze']);
     }
 
     public static function getRecentTotalFreezedAnsarCount($unit, $thana, $division = null)
@@ -4831,7 +4831,7 @@ class CustomQuery
         $ansars = $ansarQuery->whereBetween('tbl_blocklist_info.date_for_block', [$backtime, $now])
             ->distinct()->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
                 'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_blocklist_info.comment_for_block', 'tbl_blocklist_info.date_for_block')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars,'type'=>'block']);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars,'type'=>'block']);
     }
     public static function getRecentTotalBlockedAnsarCount($unit, $thana, $division = null)
     {
@@ -5000,7 +5000,7 @@ class CustomQuery
             ->distinct()
             ->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_blacklist_info.black_list_comment as reason', 'tbl_blacklist_info.black_listed_date as date')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars,'type'=>'black']);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars,'type'=>'black']);
     }
     public static function getRecentTotalBlackedAnsarCount($unit, $thana, $division = null)
     {
@@ -5172,7 +5172,7 @@ class CustomQuery
             ->distinct()
             ->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
                 'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id','tbl_kpi_info.kpi_name')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
     }
     public static function getRecentTotalEmbodiedAnsarCount($unit, $thana, $division = null)
     {
@@ -5368,7 +5368,7 @@ class CustomQuery
             ->distinct()
             ->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
                 'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id')->skip($offset)->limit($limit)->get();
-        return View::make('template.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
+        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
     }
     public static function getRecentTotalDiffEmbodiedAnsarCount($unit, $thana, $division = null)
     {

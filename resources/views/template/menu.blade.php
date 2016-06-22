@@ -51,6 +51,15 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Processing System</span>
                 </a>
             </li>
+            @if(auth()->user()->type==11)
+             <li>
+                <a href="{{URL::to('user_management')}}">
+                    <i class="fa fa-user"></i>
+                <span>Manage User</span>
+                </a>
+            </li>
+            @endif
+
             {{--<li>--}}
                 {{--<a href="pages/calendar.html">--}}
                     {{--<i class="fa fa-calendar"></i> <span>Calendar</span>--}}

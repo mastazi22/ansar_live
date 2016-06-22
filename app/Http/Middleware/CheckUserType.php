@@ -2,8 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use App\models\District;
-use App\models\Division;
+use App\modules\HRM\Models\District;
+use App\modules\HRM\Models\Division;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
