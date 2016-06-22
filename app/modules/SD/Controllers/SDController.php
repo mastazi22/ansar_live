@@ -170,6 +170,8 @@ class SDController extends Controller
         }
     }
     function viewDemandSheet($id){
-        $log = DemandLog::find($id)->sheet_name;
+        $log = DemandLog::find($id);
+        $path = storage_path('DemandSheet/'.$log->kpi_id.'/'.$log->sheet_name);
+        return response(file_get_contents($path),200,['content-type'=>'application/pdf','content-disposition'=>'inline;filename="'.$log->sheet_name.'"']);
     }
 }

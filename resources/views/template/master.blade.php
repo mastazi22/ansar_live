@@ -90,7 +90,16 @@
             })
         });
 
-
+        GlobalApp.controller('MenuController', function ($scope) {
+            $scope.menu = [];
+            var permission = '{{auth()->user()->userPermission->permission_list?auth()->user()->userPermission->permission_list:""}}'
+            var p_type = parseInt('{{auth()->user()->userPermission->permission_type}}')
+            if (permission)$scope.menu = JSON.parse(permission.replace(/&quot;/g, '"'))
+            //alert($scope.menu.indexOf('reduce_guard_strength')>=0||p_type==1)
+            $scope.checkMenu = function (value) {
+                return $scope.menu.indexOf(value) >= 0 || p_type == 1
+            }
+        })
     </script>
     <script src="{{asset('dist/js/app.min.js')}}" type="text/javascript"></script>
 
@@ -359,6 +368,7 @@
     @elseif(strcasecmp(request()->route()->getPrefix(),'SD')==0)
         @include('SD::menu')
     @elseif(strcasecmp(request()->route()->getPrefix(),'HRM')==0)
+        @include('HRM::menu')
     @endif
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->

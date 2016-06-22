@@ -15,6 +15,7 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
+
     ];
 
     /**
@@ -36,6 +37,7 @@ class Kernel extends HttpKernel
         'api' => [
             'throttle:60,1',
         ],
+        'manageDatabase'=>[\App\Http\Middleware\ManageDatabase::class]
     ];
 
     /**

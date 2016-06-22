@@ -27,7 +27,7 @@
                                 <td>{{\Carbon\Carbon::parse($log->to_date)->format('d M, Y')}}</td>
                                 <td>{{\Carbon\Carbon::parse($log->generated_date)->format('d M, Y')}}</td>
                                 <td>
-                                    <a href="#">
+                                    <a target="_blank" href="{{url('SD/viewdemandsheet',['id'=>$log->id])}}">
                                         <i class="fa fa-lg fa-file-pdf-o"></i>
                                     </a>
                                 </td>

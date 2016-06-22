@@ -33,7 +33,7 @@
             </li>
 
             <li>
-                <a href="pages/hrm.html">
+                <a href="{{URL::to('HRM')}}">
                     <i class="fa fa-users"></i>
                     <span>Human Resource Management</span>
                 </a>
