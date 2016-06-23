@@ -1,0 +1,462 @@
+<?php
+
+namespace App\modules\HRM\Controllers;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests;
+use App\models\AnsarIdCard;
+use App\models\CustomQuery;
+use App\models\EmbodimentLogModel;
+use App\models\EmbodimentModel;
+use App\models\OfferSmsLog;
+use App\models\RestInfoLogModel;
+use App\models\RestInfoModel;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\View;
+
+class ReportController extends Controller
+{
+    //
+    function reportGuardSearchView()
+    {
+        return View::make('report.report_guard_search');
+    }
+
+    function reportAllGuard()
+    {
+        //DB::enableQueryLog();
+        $ansar = DB::table('tbl_kpi_info')
+            ->join('tbl_embodiment', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
+            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+            ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
+            ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
+            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+            ->where('tbl_kpi_info.id', '=', Input::get('kpi_id'))
+            ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
+            ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_designations.name_bng',
+                'tbl_units.unit_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.joining_date')->get();
+        //return DB::getQueryLog();
+        $guards = DB::table('tbl_kpi_info')
+            ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
+            ->join('tbl_embodiment', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
+            ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
+            ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
+            ->where('tbl_kpi_info.id', '=', Input::get('kpi_id'))
+            ->select('tbl_kpi_info.kpi_name', 'tbl_kpi_info.kpi_address', 'tbl_kpi_detail_info.total_ansar_given', 'tbl_units.unit_name_bng', 'tbl_thana.thana_name_bng')->first();
+        return Response::json(['ansars' => $ansar, 'guard' => $guards]);
+    }
+
+    function localizeReport()
+    {
+        $s = file_get_contents(asset("report_" . Input::get('type') . ".json"));
+        return json_encode(json_decode($s, true)[Input::get('name')]);
+    }
+
+    function ansarServiceReportView()
+    {
+        return View::make('report.report_ansar_in_service');
+    }
+
+    function ansarServiceReport()
+    {
+        $ansar = DB::table('tbl_ansar_parsonal_info')
+            ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
+            ->join('tbl_blood_group', 'tbl_ansar_parsonal_info.blood_group_id', '=', 'tbl_blood_group.id')
+            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+            ->where('tbl_ansar_parsonal_info.ansar_id', '=', Input::get('ansar_id'))
+            ->select('tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_ansar_parsonal_info.profile_pic', 'tbl_designations.name_bng', 'tbl_units.unit_name_bng', 'tbl_blood_group.blood_group_name_bng')->first();
+        $ansarCurrentServiceRecord = DB::table('tbl_embodiment')
+            ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
+            ->where('tbl_embodiment.ansar_id', '=', Input::get('ansar_id'))
+            ->select('tbl_embodiment.joining_date', 'tbl_embodiment.reporting_date', 'tbl_embodiment.memorandum_id', 'tbl_embodiment.service_ended_date',
+                'tbl_units.unit_name_bng', 'tbl_kpi_info.kpi_name')->first();
+        $ansarPastServiceRecord = DB::table('tbl_embodiment_log')
+            ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
+            ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment_log.kpi_id')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
+            ->where('tbl_embodiment_log.ansar_id', '=', Input::get('ansar_id'))->orderBy('tbl_embodiment_log.id', 'desc')
+            ->select('tbl_embodiment_log.joining_date', 'tbl_embodiment_log.reporting_date', 'tbl_embodiment_log.old_memorandum_id',
+                'tbl_units.unit_name_bng', 'tbl_kpi_info.kpi_name', 'tbl_embodiment_log.release_date',
+                'tbl_disembodiment_reason.reason_in_bng', 'tbl_embodiment_log.joining_date')->get();
+        return Response::json(['ansar' => $ansar, 'current' => $ansarCurrentServiceRecord, 'past' => $ansarPastServiceRecord, 'pi' => file_exists($ansar->profile_pic)]);
+    }
+
+    function ansarPrintIdCardView()
+    {
+        return View::make('HRM::Report.ansar_id_card_view');
+    }
+
+    function printIdCard()
+    {
+        $id = Input::get('ansar_id');
+        $issue_date = Input::get('issue_date');
+        $expire_date = Input::get('expire_date');
+        $type = Input::get('type');
+        $report_data = $this->getReportData($type, 'ansar_id_card');
+        $ansar = DB::table('tbl_ansar_parsonal_info')
+            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+            ->join('tbl_division', 'tbl_division.id', '=', 'tbl_ansar_parsonal_info.division_id')
+            ->join('tbl_blood_group', 'tbl_blood_group.id', '=', 'tbl_ansar_parsonal_info.blood_group_id')
+            ->where('tbl_ansar_parsonal_info.ansar_id', '=', $id)
+            ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_' . $type . ' as name', 'tbl_designations.name_' . $type . ' as rank', 'tbl_blood_group.blood_group_name_' . $type . ' as blood_group', 'tbl_units.unit_name_' . $type . ' as unit_name', 'tbl_units.unit_code', 'tbl_division.division_code', 'tbl_ansar_parsonal_info.profile_pic')->first();
+        if ($ansar) {
+            $ansarIdHistory = AnsarIdCard::where('ansar_id', $id)->get();
+            $id_card = new AnsarIdCard;
+            $id_card->ansar_id = $id;
+            $id_card->issue_date = Carbon::createFromFormat('d-M-Y', $issue_date)->format("Y-m-d");
+            $id_card->expire_date = Carbon::createFromFormat('d-M-Y', $expire_date)->format("Y-m-d");
+            $id_card->type = strtoupper($type);
+            $id_card->status = 1;
+            if (!$id_card->saveOrFail()) {
+                return View::make('report.no_ansar_found')->with('id', $id);
+            }
+
+            return View::make('report.id_card_print')->with(['rd' => $report_data, 'ad' => $ansar, 'id' => Carbon::createFromFormat('d-M-Y', $issue_date)->format("d/m/Y"), 'ed' => Carbon::createFromFormat('d-M-Y', $expire_date)->format("d/m/Y"), 'type' => $type, 'history' => $ansarIdHistory]);
+        }
+        return View::make('report.no_ansar_found')->with('id', $id);
+    }
+
+    function getReportData($type, $name)
+    {
+        $s = file_get_contents(asset("report_" . $type . ".json"));
+        return json_decode($s, true)[$name];
+    }
+
+    public function ansarDisembodimentReportView()
+    {
+        return view('report.ansar_disembodiment_report_view');
+        //return view('report.disembodiment_rough');
+    }
+
+    public function disembodedAnsarInfo(Request $request)
+    {
+        $from = Input::get('from_date');
+        $from_date = Carbon::parse($from)->format('Y-m-d');
+        $to = Input::get('to_date');
+        $to_date = Carbon::parse($to)->format('Y-m-d');
+        $unit = $request->input('unit_id');
+        $thana = $request->input('thana_id');
+        $limit = Input::get('limit');
+        $offset = Input::get('offset');
+
+        $view = Input::get('view');
+        if (strcasecmp($view, 'view') == 0) {
+            return CustomQuery::disembodedAnsarListforReport($offset, $limit, $from_date, $to_date, $unit, $thana);
+        } else {
+            return CustomQuery::disembodedAnsarListforReportCount($from_date, $to_date, $unit, $thana);
+
+        }
+    }
+
+    public function blockListView()
+    {
+        return view('report.blocklist_view');
+    }
+
+    public function blockListedAnsarInfoDetails()
+    {
+        $limit = Input::get('limit');
+        $offset = Input::get('offset');
+        if ((Auth::user()->type) == 22) {
+            $unit = Auth::user()->district_id;
+        } else {
+            $unit = Input::get('unit');
+        }
+        $thana = Input::get('thana');
+        $view = Input::get('view');
+        if (strcasecmp($view, 'view') == 0) {
+
+            return CustomQuery::getBlocklistedAnsar($offset, $limit, $unit, $thana);
+        } else {
+
+            return CustomQuery::getTotalBlockedAnsarCount($unit, $thana);
+        }
+    }
+
+    public function blackListView()
+    {
+        return view('report.blacklist_view');
+    }
+
+    public function blackListedAnsarInfoDetails()
+    {
+        $limit = Input::get('limit');
+        $offset = Input::get('offset');
+        if ((Auth::user()->type) == 22) {
+            $unit = Auth::user()->district_id;
+        } else {
+            $unit = Input::get('unit');
+        }
+        $thana = Input::get('thana');
+        $view = Input::get('view');
+        if (strcasecmp($view, 'view') == 0) {
+
+            return CustomQuery::getBlacklistedAnsar($offset, $limit, $unit, $thana);
+        } else {
+
+            return CustomQuery::getTotalBlackedAnsarCount($unit, $thana);
+        }
+    }
+
+    public function getAnserTransferHistory()
+    {
+        DB::enableQueryLog();
+        $ansar_id = Input::get('ansar_id');
+        $transfer_history = DB::table('tbl_transfer_ansar')
+            ->join(DB::raw('tbl_kpi_info as pk'), 'tbl_transfer_ansar.present_kpi_id', '=', 'pk.id')
+            ->join(DB::raw('tbl_kpi_info as tk'), 'tbl_transfer_ansar.transfered_kpi_id', '=', 'tk.id')
+            ->join('tbl_units', 'pk.unit_id', '=', 'tbl_units.id')
+            ->join('tbl_thana', 'pk.thana_id', '=', 'tbl_thana.id')
+            ->where('tbl_transfer_ansar.ansar_id', $ansar_id)
+            ->select('tbl_transfer_ansar.present_kpi_join_date as joiningDate', 'tbl_transfer_ansar.transfered_kpi_join_date as transferDate',
+                'pk.kpi_name as FromkpiName', 'tk.kpi_name as TokpiName', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana');
+        //return DB::getQueryLog();
+        return $transfer_history->get();
+    }
+
+    public function ansarEmbodimentReportView()
+    {
+        return view('report.ansar_embodiment_report_view');
+//        return view('report.embodiment_rough');
+    }
+
+    public function embodedAnsarInfo()
+    {
+        $from = Input::get('from_date');
+        $from_date = Carbon::parse($from)->format('Y-m-d');
+        $to = Input::get('to_date');
+        $to_date = Carbon::parse($to)->format('Y-m-d');
+        $unit = Input::get('unit_id');
+        $thana = Input::get('thana_id');
+        $limit = Input::get('limit');
+        $offset = Input::get('offset');
+
+        $view = Input::get('view');
+        if (strcasecmp($view, 'view') == 0) {
+            return CustomQuery::embodedAnsarListforReport($offset, $limit, $from_date, $to_date, $unit, $thana);
+        } else {
+            return CustomQuery::embodedAnsarListforReportCount($from_date, $to_date, $unit, $thana);
+        }
+    }
+
+    public function threeYearsOverListView()
+    {
+        return view('report.three_years_over_report');
+    }
+
+    public function threeYearsOverAnsarInfo()
+    {
+        $limit = Input::get('limit');
+        $offset = Input::get('offset');
+//        if ((Auth::user()->type) == 22) {
+//            $unit = Auth::user()->district_id;
+//        } else {
+        $unit = Input::get('unit');
+//        }
+        $ansar_rank = Input::get('ansar_rank');
+        $ansar_sex = Input::get('ansar_sex');
+        //$thana = Input::get('thana');
+        $view = Input::get('view');
+        if (strcasecmp($view, 'view') == 0) {
+
+            return CustomQuery::threeYearsOverAnsarList($offset, $limit, $unit, $ansar_rank, $ansar_sex);
+        } else {
+
+            return CustomQuery::threeYearsOverAnsarCount($unit, $ansar_rank, $ansar_sex);
+        }
+    }
+
+    public function anserTransferHistory()
+    {
+        return View::make('report.ansar_transfer_history');
+
+    }
+
+    public function viewAnsarServiceRecord()
+    {
+        return View::make('report.ansar_service_record');
+    }
+
+    public function serviceRecordUnitWise()
+    {
+        return view('report.service_record_unitwise');
+    }
+
+    public function ansarInfoForServiceRecordUnitWise()
+    {
+        $unit=Input::get('unit');
+        $thana = Input::get('thana');
+        if(strcasecmp($unit, 'all')==0 && strcasecmp($thana, 'all')==0){
+            $ansar_details = DB::table('tbl_embodiment')
+                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
+                ->orderBy('tbl_embodiment.ansar_id', 'asc')
+                ->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
+                    'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')
+                ->get();
+            return Response::json($ansar_details);
+        }
+        if(strcasecmp($unit, 'all')!=0 && strcasecmp($thana, 'all')==0){
+            $ansar_details = DB::table('tbl_embodiment')
+                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
+                ->where('tbl_kpi_info.unit_id', '=', $unit)
+                ->orderBy('tbl_embodiment.ansar_id', 'asc')
+                ->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
+                    'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')
+                ->get();
+            return Response::json($ansar_details);
+        }
+        if(strcasecmp($unit, 'all')==0 && strcasecmp($thana, 'all')!=0){
+            $ansar_details = DB::table('tbl_embodiment')
+                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
+                ->where('tbl_kpi_info.thana_id', '=', $thana)
+                ->orderBy('tbl_embodiment.ansar_id', 'asc')
+                ->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
+                    'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')
+                ->get();
+            return Response::json($ansar_details);
+        }
+        if(strcasecmp($unit, 'all')!=0 && strcasecmp($thana, 'all')!=0){
+            $ansar_details = DB::table('tbl_embodiment')
+                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
+                ->where('tbl_kpi_info.unit_id', '=', $unit)
+                ->where('tbl_kpi_info.thana_id', '=', $thana)
+                ->orderBy('tbl_embodiment.ansar_id', 'asc')
+                ->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
+                    'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')
+                ->get();
+            return Response::json($ansar_details);
+        }
+    }
+
+    public function getPrintIdList()
+    {
+
+        $f_date = Carbon::createFromFormat("d-M-Y", Input::get('f_date'))->format("Y-m-d");
+        $t_date = Carbon::createFromFormat("d-M-Y", Input::get('t_date'))->format("Y-m-d");
+//        return Response::json(["f"=>$f_date,"t"=>$t_date]);
+        $ansars = AnsarIdCard::whereBetween('created_at', [$f_date, $t_date])->get();
+        return Response::json(['ansars' => $ansars]);
+    }
+
+    public function ansarCardStatusChange()
+    {
+        switch (Input::get('action')) {
+            case 'block':
+                $ansar = AnsarIdCard::where('ansar_id', Input::get('ansar_id'))->first();
+                $ansar->status = 0;
+                if ($ansar->save()) {
+                    return Response::json(['status' => 1]);
+                } else {
+                    return Response::json(['status' => 0]);
+                }
+                break;
+            case 'active':
+                $ansar = AnsarIdCard::where('ansar_id', Input::get('ansar_id'))->first();
+                $ansar->status = 1;
+                if ($ansar->save()) {
+                    return Response::json(['status' => 1]);
+                } else {
+                    return Response::json(['status' => 0]);
+                }
+                break;
+        }
+    }
+
+    public function printIdList()
+    {
+        return View::make('report.ansar_print_id_list');
+    }
+
+    public function checkFile()
+    {
+        return Response::json(['status' => file_exists(public_path() . '/' . Input::get('path'))]);
+    }
+
+    public function offerReportView()
+    {
+        return View::make('report.offer_report');
+    }
+
+    public function getOfferedAnsar()
+    {
+        $unit = Input::get('unit');
+        $past = Input::get('report_past');
+        $type = Input::get('type');
+        $c_date = Carbon::now();
+        switch ($type) {
+            case 0:
+            case 1:
+                $c_date = $c_date->subDays($past);
+                break;
+            case 2:
+                $c_date = $c_date->subMonths($past);
+                break;
+            case 3:
+                $c_date = $c_date->subYears($past);
+                break;
+        }
+        $offer_not_respond = DB::table('tbl_sms_offer_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
+            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')->where('tbl_sms_offer_info.sms_send_datetime', '>=', $c_date)->where('tbl_sms_offer_info.district_id', $unit)
+            ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_offer_info.sms_send_datetime')->unionAll(DB::table('tbl_sms_send_log')->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_send_log.ansar_id')
+                ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')->where('tbl_sms_send_log.action_date', '>=', $c_date)->where('tbl_sms_send_log.offered_district', $unit)->where('tbl_sms_send_log.reply_type', 'No Reply')
+                ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.offered_date as sms_send_datetime'))->get();
+
+        $offer_received = DB::table('tbl_sms_receive_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_receive_info.ansar_id')
+            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')->where('tbl_sms_receive_info.sms_received_datetime', '>=', $c_date)->where('tbl_sms_receive_info.offered_district', $unit)
+            ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_receive_info.sms_received_datetime')->unionAll(DB::table('tbl_sms_send_log')->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_send_log.ansar_id')
+                ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')->where('tbl_sms_send_log.action_date', '>=', $c_date)->where('tbl_sms_send_log.offered_district', $unit)->where('tbl_sms_send_log.reply_type', 'Yes')
+                ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.action_date as sms_received_datetime'))->get();
+        $offer_reject = DB::table('tbl_sms_send_log')->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_send_log.ansar_id')
+            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')->where('tbl_sms_send_log.action_date', '>=', $c_date)->where('tbl_sms_send_log.offered_district', $unit)->where('tbl_sms_send_log.reply_type', 'No')
+            ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.action_date as reject_date')->get();
+        return Response::json(['onr' => $offer_not_respond, 'or' => $offer_received, 'orj' => $offer_reject]);
+    }
+
+    public function rejectedOfferListView()
+    {
+        return View::make('offer.rejected_offer_list');
+    }
+
+    public function getRejectedAnsarList()
+    {
+        $fd = Carbon::createFromFormat("d-M-Y", Input::get('from_date'))->format("Y-m-d");
+        $td = Carbon::createFromFormat("d-M-Y", Input::get('to_date'))->format("Y-m-d");
+        $rejection_no = Input::get('rejection_no');
+        $ansars = [];
+        $rejected_ansar = OfferSmsLog::whereBetween('action_date', [$fd, $td])->whereIn('reply_type', ['No Reply', 'No'])->groupBy('ansar_id')->having(DB::raw('count(ansar_id)'), '>=', $rejection_no)->select('ansar_id', DB::raw('count(ansar_id)'))->get();
+        foreach ($rejected_ansar as $ra) {
+            $is_embodied = EmbodimentModel::where('ansar_id', $ra->ansar_id)->whereBetween('joining_date', [$fd, $td])->exists() || EmbodimentLogModel::where('ansar_id', $ra->ansar_id)->whereBetween('joining_date', [$fd, $td])->exists();
+            $is_rest = RestInfoModel::where('ansar_id', $ra->ansar_id)->whereBetween('rest_date', [$fd, $td])->exists() || RestInfoLogModel::where('ansar_id', $ra->ansar_id)->whereBetween('rest_date', [$fd, $td])->exists();
+            if (!$is_embodied && !$is_rest) {
+                $a = DB::table('tbl_ansar_parsonal_info')->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')->where('tbl_ansar_parsonal_info.ansar_id', $ra->ansar_id)
+                    ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_designations.name_bng', 'tbl_units.unit_name_bng', 'tbl_ansar_status_info.*')->first();
+                array_push($ansars, $a);
+            }
+            //return Response::json(['isEmbodied'=>$is_embodied,'isRest'=>$is_rest]);
+        }
+        return $ansars;
+    }
+}

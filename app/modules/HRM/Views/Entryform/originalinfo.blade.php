@@ -9,7 +9,7 @@
                     $scope.ID = id;
                     $scope.isSearching = true;
                     $http({
-                        url : "{{URL::to('idsearch')}}",
+                        url : "{{URL::to('HRM/idsearch')}}",
                         method: 'post',
                         data: {ansarId : id}
                     }).then(function(response){

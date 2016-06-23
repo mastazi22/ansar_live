@@ -96,6 +96,7 @@
                 <a href="#">
                     <i class="fa fa-users"></i>
                     <span>Personal info</span>
+                    <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
                     <li ng-if="checkMenu('anser_list')">
@@ -105,31 +106,31 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="{{URL::to('HRM/chunkverify')}}">
                             <i class="fa fa-users"></i>
                             <span>Verify Entry(Chunk)</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('entry_draft')">
-                        <a href="#">
+                        <a href="{{URL::to('HRM/entrydraft')}}">
                             <i class="fa fa-users"></i>
                             <span>Draft entry</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('entry_advanced_search')">
-                        <a href="#">
+                        <a href="{{URL::to('HRM/entryadvancedsearch')}}">
                             <i class="fa fa-users"></i>
                             <span>Advanced search</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('orginal_info')">
-                        <a href="#">
+                        <a href="{{URL::to('HRM/originalinfo')}}">
                             <i class="fa fa-users"></i>
                             <span>Orginal Info</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('print_card_id_view')">
-                        <a href="#">
+                        <a href="{{URL::to('HRM/print_card_id_view')}}">
                             <i class="fa fa-users"></i>
                             <span>Print Id Card</span>
                         </a>
@@ -478,12 +479,6 @@
                     <span>Admin</span>
                 </a>
                 <ul class="treeview-menu">
-                    <li>
-                        <a href="#">
-                            <i class="fa fa-users"></i>
-                            <span>Manage User</span>
-                        </a>
-                    </li>
                     <li>
                         <a href="#">
                             <i class="fa fa-users"></i>

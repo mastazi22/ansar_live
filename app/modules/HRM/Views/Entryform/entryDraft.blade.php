@@ -15,15 +15,15 @@
         GlobalApp.factory('getDraftService', function ($http) {
             return {
                 getAllDraftValues: function () {
-                    return $http.get("{{action('DraftController@getDraftList')}}");
+                    return $http.get("{{URL::to('HRM/getdraftlist')}}");
                 }
             }
         })
     </script>
-    <div class="content-wrapper" style="min-height: 590px; " ng-controller="draftController">
-        <div class="breadcrumbplace">
-            {!! Breadcrumbs::render('draft_entry') !!}
-        </div>
+    <div ng-controller="draftController">
+        {{--<div class="breadcrumbplace">--}}
+            {{--{!! Breadcrumbs::render('draft_entry') !!}--}}
+        {{--</div>--}}
         @if (Session::has('success'))
             <div style="width:87%;margin:0 auto;">
                 <div class="alert alert-success">
@@ -70,10 +70,10 @@
                             <td>[[ drafts.mobile_no_self ]]</td>
                             <td>
                                 <a class="btn btn-success btn-xs "
-                                   href="{{URL::to('singledraftedit')}}/[[ drafts.filename ]]" title="Edit"><span
+                                   href="{{URL::to('HRM/singledraftedit')}}/[[ drafts.filename ]]" title="Edit"><span
                                             class="glyphicon glyphicon-edit"></span></a>
                                 <a class="btn btn-danger btn-xs " title="Delete"
-                                   href="{{URL::to('draftdelete')}}/[[ drafts.filename ]]"><i
+                                   href="{{URL::to('HRM/draftdelete')}}/[[ drafts.filename ]]"><i
                                             class="glyphicon glyphicon-trash"></i></a></td>
                         </tr>
                     </table>

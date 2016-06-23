@@ -138,12 +138,12 @@ class EntryFormController extends Controller
 
     public function entryAdvancedSearch()
     {
-        return View::make('entryform.advancedsearch');
+        return View::make('HRM::Entryform.advancedsearch');
     }
 
     public function ansarOriginalInfo()
     {
-        return View::make('entryform/originalinfo');
+        return View::make('HRM::Entryform.originalinfo');
     }
 
     public function getAllEducation()

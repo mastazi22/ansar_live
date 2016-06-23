@@ -10,7 +10,7 @@
                 $scope.loading = true;
                 $http({
                     method: 'get',
-                    url: '{{action('FormSubmitHandler@getNotVerifiedAnsar')}}',
+                    url: '{{URL::to('HRM/getnotverifiedansar')}}',
                     params: {chunk: 'chunk', limit: $scope.showAnsar, offset: 0}
                 }).then(function (response) {
                     $scope.loading = false;
@@ -85,10 +85,10 @@
             })
         })
     </script>
-    <div class="content-wrapper" ng-controller="ChunkVerificationController">
-        <div class="breadcrumbplace">
-            {!! Breadcrumbs::render('chunk_verification') !!}
-        </div>
+    <div ng-controller="ChunkVerificationController">
+        {{--<div class="breadcrumbplace">--}}
+            {{--{!! Breadcrumbs::render('chunk_verification') !!}--}}
+        {{--</div>--}}
         <button id="button-top" class="btn btn-primary"
                 style="position: fixed;bottom: 10px;right: 20px;z-index: 1000000000000000;display: none">
             <i class="fa fa-arrow-up fa-2x"></i>
@@ -133,7 +133,7 @@
                                 </button>
                             </div>
                             <div class="table-responsive">
-                                <form id="not-verified-form" method="post" action="{{action('EntryFormController@entryVerify')}}">
+                                <form id="not-verified-form" method="post" action="{{URL::to('HRM/entryVerify')}}">
                                     <input type="hidden" name="chunk_verification" value="chunk_verification">
                                     <table class="table table-bordered">
                                         <tr>

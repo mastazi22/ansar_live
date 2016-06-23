@@ -1008,7 +1008,7 @@ class FormSubmitHandler extends Controller
 
     public function chunkVerify()
     {
-        return View::make('entryform.chunk_verification');
+        return View::make('HRM::Entryform.chunk_verification');
     }
 
     public function getAnsarRank()

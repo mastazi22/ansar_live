@@ -29,7 +29,7 @@
                     sd = "";
                 }
                 $http({
-                    url: "{{URL::to('advancedentrysearchsubmit')}}",
+                    url: "{{URL::to('HRM/advancedentrysearchsubmit')}}",
                     method: 'get',
                     params: {
                         name_type: $scope.name_type,
@@ -155,14 +155,14 @@
         GlobalApp.factory('getNameService', function ($http) {
             return {
                 getDivision: function () {
-                    return $http.get("{{action('FormSubmitHandler@DivisionName')}}");
+                    return $http.get("{{URL::to('HRM/DivisionName')}}");
                 },
                 getDistric: function (data) {
 
-                    return $http.get("{{action('FormSubmitHandler@DistrictName')}}", {params: {id: data}});
+                    return $http.get("{{URL::to('HRM/DistrictName')}}", {params: {id: data}});
                 },
                 getThana: function (data) {
-                    return $http.get("{{action('FormSubmitHandler@ThanaName')}}", {params: {id: data}});
+                    return $http.get("{{URL::to('HRM/ThanaName')}}", {params: {id: data}});
                 }
             }
         })
@@ -170,7 +170,7 @@
         GlobalApp.factory('getBloodService', function ($http) {
             return {
                 getAllBloodName: function () {
-                    return $http.get("{{url('getBloodName')}}")
+                    return $http.get("{{URL::to('HRM/getBloodName')}}")
                 }
             }
         });
@@ -181,10 +181,10 @@
     $allData = [];
     ?>
 
-    <div class="content-wrapper" style="min-height: 590px;" ng-controller="advancedEntrySearch">
-        <div class="breadcrumbplace">
-            {!! Breadcrumbs::render('entryadvancedsearch') !!}
-        </div>
+    <div ng-controller="advancedEntrySearch">
+        {{--<div class="breadcrumbplace">--}}
+            {{--{!! Breadcrumbs::render('entryadvancedsearch') !!}--}}
+        {{--</div>--}}
         <div class="loading-report animated" ng-show="loading">
             <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
             <h4>Loading...</h4>
@@ -404,7 +404,7 @@
 
                         <tr ng-repeat="ansar in alldata">
                             <td>[[currentPage?((currentPage*10)+$index+1):$index+1]]</td>
-                            <td><a href="{{ URL::to('/entryreport/') }}/[[ansar.ansar_id]]">[[ansar.ansar_id]]</a></td>
+                            <td><a href="{{ URL::to('HRM/entryreport/') }}/[[ansar.ansar_id]]">[[ansar.ansar_id]]</a></td>
                             <td>[[ansar.name_eng]]</td>
                             <td>[[ansar.ansar_name_eng]]</td>
                             <td>[[ansar.father_name_eng]]</td>
