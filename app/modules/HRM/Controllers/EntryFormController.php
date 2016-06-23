@@ -3,6 +3,7 @@
 namespace App\modules\HRM\Controllers;
 
 use App\Events\ActionUserEvent;
+use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\modules\HRM\Models\AllDisease;
 use App\modules\HRM\Models\AllEducationName;
@@ -36,13 +37,13 @@ class EntryFormController extends Controller
             $notVerified = PersonalInfo::where('verified', '1')->count('ansar_id');
             $Verified = Personalinfo::where('verified', '2')->where('user_id', Auth::user()->id)->count('ansar_id');
         }
-        return View::make('entryform/entrylist')->with(['notVerified' => $notVerified, 'Verified' => $Verified]);
+        return View::make('HRM::Entryform.entrylist')->with(['notVerified' => $notVerified, 'Verified' => $Verified]);
     }
 
     public function entryform()
     {
 
-        return View::make('entryform/entryform');
+        return View::make('HRM::Entryform.entryform');
     }
 
     public function ansarDetails($ansarid)

@@ -1,12 +1,6 @@
 @extends('template/master')
 @section('content')
     <script>
-        $(".treeview").each(function () {
-            $(this).removeClass("active treeview")
-        })
-        $('a[href="{{action('UserController@hrmDashboard')}}"]').parents('li').each(function () {
-            $(this).addClass("active treeview");
-        })
         GlobalApp.controller('userController', function ($scope, $http) {
             $scope.showDistrict = false;
             $scope.userType = []
@@ -18,28 +12,28 @@
             @foreach($types as $type)
              $scope.userType.push({code: '{{$type->type_code}}', name: '{{$type->type_name}}'})
             @endforeach
-            $scope.selectedUserType = '{{Input::old('user_type')}}'
+            $scope.selectedUserType = '{{Request::old('user_type')}}'
             $scope.onUserTypeChange = function () {
                 if ($scope.selectedUserType == 22) {
                     $scope.showDistrict = true;
                     $scope.showDivision = false;
                     $http({
-                        url: '{{action('FormSubmitHandler@DistrictName')}}',
+                        url: '{{URL::to('HRM/DistrictName')}}',
                         type: 'get'
                     }).then(function (response) {
                         $scope.allDistrict = response.data;
-                        $scope.district = '{{Input::old('district_name')}}'
+                        $scope.district = '{{Request::old('district_name')}}'
                     })
                 }
                 else if ($scope.selectedUserType == 66) {
                     $scope.showDivision = true
                     $scope.showDistrict = false;
                     $http({
-                        url: '{{action('FormSubmitHandler@DivisionName')}}',
+                        url: '{{URL::to('HRM/DivisionName')}}',
                         type: 'get'
                     }).then(function (response) {
                         $scope.allDivision = response.data;
-                        $scope.division = '{{Input::old('division_name')}}'
+                        $scope.division = '{{Request::old('division_name')}}'
                     })
                 }
                 else {
@@ -66,7 +60,7 @@
                                        style="text-align: left;padding-top:0">User Name</label>
 
                                 <div class="col-sm-9 @if($errors->has('user_name')) has-error @endif">
-                                    <input type="text" name="user_name" value="{{Input::old('user_name')}}"
+                                    <input type="text" name="user_name" value="{{Request::old('user_name')}}"
                                            class="form-control" placeholder="user_name"/>
                                     <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                                     @if($errors->has('user_name'))
@@ -110,6 +104,9 @@
                                         <option ng-repeat="u in userType" value="[[u.code]]">[[u.name]]</option>
 
                                     </select>
+                                    @if($errors->has('user_type'))
+                                        <p class="text-danger">{{$errors->first('r_password')}}</p>
+                                    @endif
                                 </div>
                             </div>
                             <div class="form-group has-feedback" ng-show="showDistrict">
@@ -123,6 +120,9 @@
                                             [[district.unit_name_eng]]
                                         </option>
                                     </select>
+                                    @if($errors->has('district_name'))
+                                        <p class="text-danger">{{$errors->first('district_name')}}</p>
+                                    @endif
                                 </div>
                             </div>
                             <div class="form-group has-feedback" ng-show="showDivision">
@@ -136,6 +136,9 @@
                                             [[division.division_name_eng]]
                                         </option>
                                     </select>
+                                    @if($errors->has('division_name'))
+                                        <p class="text-danger">{{$errors->first('division_name')}}</p>
+                                    @endif
                                 </div>
                             </div>
                             <div class="row">
@@ -153,7 +156,7 @@
                 <script src="../../plugins/iCheck/icheck.min.js" type="text/javascript"></script>
                 <script>
                     $(function () {
-                        $('input').iCheck({
+                        $('Request').iCheck({
                             checkboxClass: 'icheckbox_square-blue',
                             radioClass: 'iradio_square-blue',
                             increaseArea: '20%' // optional

@@ -301,7 +301,7 @@ class CustomQuery
 
     public static function getUserInformation($limit, $offset)
     {
-        $users = DB::table('tbl_user')
+        $users = DB::connection('hrm')->table('tbl_user')
             ->join('tbl_user_details', 'tbl_user_details.user_id', '=', 'tbl_user.id')
             ->join('tbl_user_log', 'tbl_user_log.user_id', '=', 'tbl_user.id')->skip($offset)->take($limit)
             ->select('tbl_user.id', 'tbl_user.user_name', 'tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.email', 'tbl_user_log.last_login', 'tbl_user_log.user_status', 'tbl_user.status')

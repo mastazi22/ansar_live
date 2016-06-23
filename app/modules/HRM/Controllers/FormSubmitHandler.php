@@ -526,7 +526,7 @@ class FormSubmitHandler extends Controller
     public function editEntry($ansarid)
     {
         $personalinfo = PersonalInfo::where('ansar_id', $ansarid)->first();
-        return View::make('entryform/entry_edit')->with('ansarAllDetails', $personalinfo);
+        return View::make('HRM::Entryform.entry_edit')->with('ansarAllDetails', $personalinfo);
     }
 
 

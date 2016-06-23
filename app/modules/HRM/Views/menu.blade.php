@@ -4,8 +4,8 @@
         <!-- Sidebar user panel -->
         <div class="user-panel" style="margin-top: 10px;margin-bottom: 0;">
 
-            <div class="pull-left" style="color: #FFFFFF;font-size: 16px;text-align: center">
-                <p style="padding: 0 !important;margin: 0;line-height: 1">Human Resource Management</p>
+            <div style="color: #FFFFFF;font-size: 16px;text-align: center">
+                <p class="full-header" style="padding: 0 !important;margin: 0;line-height: 1">Human Resource Management</p>
 
                 <p style="padding: 0 !important;margin: 0;">(HRM)</p>
             </div>
@@ -35,7 +35,7 @@
                     <i class="fa fa-users"></i>
                     <span>KPI Branch</span>
                 </a>
-                <ul class="sidebar-menu sidebar-menu-submenu animated">
+                <ul class="treeview-menu">
                     <li ng-if="checkMenu('kpi_view')">
                         <a href="#">
                             <i class="fa fa-users"></i>
@@ -97,9 +97,9 @@
                     <i class="fa fa-users"></i>
                     <span>Personal info</span>
                 </a>
-                <ul class="sidebar-menu sidebar-menu-submenu animated">
+                <ul class="treeview-menu">
                     <li ng-if="checkMenu('anser_list')">
-                        <a href="#">
+                        <a href="{{URL::to('HRM/entrylist')}}">
                             <i class="fa fa-users"></i>
                             <span>Entry</span>
                         </a>
@@ -141,7 +141,7 @@
                     <i class="fa fa-users"></i>
                     <span>Service</span>
                 </a>
-                <ul class="sidebar-menu sidebar-menu-submenu animated">
+                <ul class="treeview-menu">
                     {{--<li>--}}
                     {{--<a href="#">--}}
                     {{--<i class="fa fa-users"></i>--}}
@@ -171,7 +171,7 @@
                             <i class="fa fa-users"></i>
                             <span>Embodiment</span>
                         </a>
-                        <ul class="sidebar-menu-submenu sidebar-menu">
+                        <ul class="treeview-menu">
                             <li ng-if="checkMenu('go_to_new_embodiment_page')">
                                 <a href="#">
                                     <i class="fa fa-users"></i>
@@ -213,7 +213,7 @@
                                     <i class="fa fa-users"></i>
                                     <span>Freeze</span>
                                 </a>
-                                <ul class="sidebar-menu-submenu sidebar-menu">
+                                <ul class="treeview-menu">
                                     <li ng-if="checkMenu('freeze_view')">
                                         <a href="#">
                                             <i class="fa fa-users"></i>
@@ -235,7 +235,7 @@
                             <i class="fa fa-users"></i>
                             <span>BlackList</span>
                         </a>
-                        <ul class="sidebar-menu-submenu sidebar-menu">
+                        <ul class="treeview-menu">
                             <li ng-if="checkMenu('blacklist_entry_view')">
                                 <a href="#">
                                     <i class="fa fa-users"></i>
@@ -255,7 +255,7 @@
                             <i class="fa fa-users"></i>
                             <span>BlockList</span>
                         </a>
-                        <ul class="sidebar-menu-submenu sidebar-menu">
+                        <ul class="treeview-menu">
                             <li ng-if="checkMenu('blocklist_entry_view')">
                                 <a href="#">
                                     <i class="fa fa-users"></i>
@@ -283,7 +283,7 @@
                     <i class="fa fa-bar-chart"></i>
                     <span>Report</span>
                 </a>
-                <ul class="sidebar-menu-submenu sidebar-menu">
+                <ul class="treeview-menu">
                     <li ng-if="checkMenu('guard_report')">
                         <a href="#">
                             <i class="fa fa-users"></i>
@@ -375,7 +375,7 @@
                     <i class="fa fa-users"></i>
                     <span>DG Forms</span>
                 </a>
-                <ul class="sidebar-menu sidebar-menu-submenu animated">
+                <ul class="treeview-menu">
                     <li>
                         <a href="#">
                             <i class="fa fa-users"></i>
@@ -429,7 +429,7 @@
                             <i class="fa fa-users"></i>
                             <span>Direct BlockList</span>
                         </a>
-                        <ul class="sidebar-menu-submenu sidebar-menu">
+                        <ul class="treeview-menu">
                             <li>
                                 <a href="#">
                                     <i class="fa fa-users"></i>
@@ -449,7 +449,7 @@
                             <i class="fa fa-users"></i>
                             <span>Direct BlackList</span>
                         </a>
-                        <ul class="sidebar-menu-submenu sidebar-menu">
+                        <ul class="treeview-menu">
                             <li>
                                 <a href="#">
                                     <i class="fa fa-users"></i>
@@ -477,7 +477,7 @@
                     <i class="fa fa-users"></i>
                     <span>Admin</span>
                 </a>
-                <ul class="sidebar-menu-submenu sidebar-menu">
+                <ul class="treeview-menu">
                     <li>
                         <a href="#">
                             <i class="fa fa-users"></i>
@@ -515,7 +515,7 @@
                     <i class="fa fa-users"></i>
                     <span>General Setiings</span>
                 </a>
-                <ul class="sidebar-menu-submenu sidebar-menu">
+                <ul class="treeview-menu">
                     <li ng-if="checkMenu('view_session_list')">
                         <a href="#">
                             <i class="fa fa-users"></i>

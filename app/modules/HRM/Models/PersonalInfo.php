@@ -2,13 +2,14 @@
 
 namespace App\modules\HRM\Models;
 
+use App\models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class PersonalInfo extends Model
 {
     protected $connection = 'hrm';
-    protected  $table = 'tbl_ansar_parsonal_info';
-  
+    protected $table = 'tbl_ansar_parsonal_info';
+
 //    public function blood(){
 //        return $this->belongsTo('App\models\Blood','blood_group_id');
 //    }
@@ -21,24 +22,30 @@ class PersonalInfo extends Model
 //    public function thana(){
 //        return $this->belongsTo('App\models\Thana','thana_id');
 //    }
-//    public function education(){
-//        return $this->hasMany('App\models\Edication','ansar_id','ansar_id');
-//    }
-//    public function nominee(){
-//        return $this->hasMany('App\models\Nominee','annsar_id','ansar_id');
-//    }
-//    public function training(){
-//        return $this->hasMany('App\models\TrainingInfo','ansar_id','ansar_id');
-//    }
+    public function education()
+    {
+        return $this->hasMany(Edication::class, 'ansar_id', 'ansar_id');
+    }
+
+    public function nominee()
+    {
+        return $this->hasMany(Nominee::class, 'annsar_id', 'ansar_id');
+    }
+
+    public function training()
+    {
+        return $this->hasMany(TrainingInfo::class, 'ansar_id', 'ansar_id');
+    }
 //    function panel(){
 //        return $this->hasMany('App\models\PanelModel','ansar_id');
 //    }
-//    public function user(){
-//        return $this->belongsTo('App\models\User','user_id');
-//    }
-//    public function designation(){
-//        return $this->belongsTo('App\models\Designation','designation_id');
-//    }
+    public function user(){
+        return $this->belongsTo(User::class,'user_id');
+    }
+    public function designation()
+    {
+        return $this->belongsTo(Designation::class, 'designation_id');
+    }
 //    function embodiment(){
 //        return $this->belongsTo('App\models\EmbodimentModel','ansar_id','ansar_id');
 //    }
@@ -51,10 +58,10 @@ class PersonalInfo extends Model
 //    function offer_sms_info(){
 //        return $this->hasOne('App\models\OfferSMS','ansar_id', 'ansar_id');
 //    }
-//    function alldisease(){
-//        return $this->hasOne('App\models\AllDisease','disease_id');
-//    }
-//    function allskill(){
-//        return $this->hasOne('App\models\AllSkill','skill_id');
-//    }
+    function alldisease(){
+        return $this->hasOne(AllDisease::class,'disease_id');
+    }
+    function allskill(){
+        return $this->hasOne(AllSkill::class,'skill_id');
+    }
 }

@@ -105,7 +105,7 @@
 
 
 </head>
-<body class="skin-blue sidebar-mini" ng-app="GlobalApp"><!-- ./wrapper -->
+<body class="skin-blue sidebar-mini " ng-app="GlobalApp"><!-- ./wrapper -->
 
 <div class="wrapper" ng-app="GlobalApp">
     <header class="main-header">

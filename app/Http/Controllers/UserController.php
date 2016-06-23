@@ -88,11 +88,33 @@ class UserController extends Controller
 
     function handleRegister()
     {
-        $rules = array(
-            'user_name' => 'required|unique:tbl_user',
-            'password' => 'required|min:5|max:12',
-            'r_password' => 'required|same:password'
-        );
+
+        if(Input::get('user_type')==22) {
+            $rules = array(
+                'user_name' => 'required|unique:hrm.tbl_user',
+                'password' => 'required|min:5|max:12',
+                'r_password' => 'required|same:password',
+                'user_type' => 'required',
+                'district_name' => 'required'
+            );
+        }
+        else if(Input::get('user_type')==66) {
+            $rules = array(
+                'user_name' => 'required|unique:hrm.tbl_user',
+                'password' => 'required|min:5|max:12',
+                'r_password' => 'required|same:password',
+                'user_type' => 'required',
+                'division_name' => 'required'
+            );
+        }
+        else {
+            $rules = array(
+                'user_name' => 'required|unique:hrm.tbl_user',
+                'password' => 'required|min:5|max:12',
+                'r_password' => 'required|same:password',
+                'user_type' => 'required'
+            );
+        }
         $validation = Validator::make(Input::all(), $rules);
         if (!$validation->fails()) {
             $user = new User;
@@ -116,6 +138,7 @@ class UserController extends Controller
             $user_permission->save();
             return Redirect::action('UserController@userManagement')->with('success_message', 'New user created successfully');
         } else {
+//            return Response::json($validation->errors());
             return Redirect::action('UserController@userRegistration')->withInput(Input::except(array('password', 'r_password')))->withErrors($validation);
         }
     }

@@ -1,12 +1,6 @@
 @extends('template/master')
 @section('content')
     <script>
-        $(".treeview").each(function () {
-            $(this).removeClass("active treeview")
-        })
-        $('a[href="{{action('UserController@hrmDashboard')}}"]').parents('li').each(function () {
-            $(this).addClass("active treeview");
-        })
         $(document).ready(function () {
             $("#user-name-form").ajaxForm({
                 beforeSubmit: function (data) {

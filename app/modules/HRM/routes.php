@@ -1,7 +1,10 @@
 <?php
 
-Route::group(['prefix'=>'HRM','middleware'=>['web','manageDatabase','checkUserType'] ],function(){
+Route::group(['prefix'=>'HRM','middleware'=>['manageDatabase','checkUserType'] ],function(){
     Route::group(['namespace'=>'\App\modules\HRM\Controllers'],function(){
+
+        //DASHBOARD
+
         Route::get('/', 'HrmController@hrmDashboard');
         Route::get('/getTotalAnsar', ['as' => 'dashboard_total_ansar', 'uses' => 'HrmController@getTotalAnsar']);
         Route::get('/getrecentansar', ['as' => 'recent_ansar', 'uses' => 'HrmController@getRecentAnsar']);
@@ -21,7 +24,41 @@ Route::group(['prefix'=>'HRM','middleware'=>['web','manageDatabase','checkUserTy
         Route::get('/ansar_reached_fifty_details', ['as' => 'ansar_reached_fifty_details', 'uses' => 'HrmController@ansarReachedFiftyDetails']);
         Route::get('/show_recent_ansar_list/{type}', ['as' => 'show_recent_ansar_list', 'uses' => 'HrmController@showRecentAnsarList']);
         Route::get('/get_recent_ansar_list', 'HrmController@getRecentAnsarList');
+
+        //END DASHBOARD
+
+        //ANSAR ENTRY
+
+        Route::get('entrylist', ['as' => 'anser_list', 'uses' => 'EntryFormController@entrylist']);
         Route::get('/entryreport/{ansarid}', ['as' => 'entry_report', 'uses' => 'EntryFormController@entryReport']);
+        Route::get('entryform', ['as' => 'ansar_registration', 'uses' => 'EntryFormController@entryform']);
+        Route::get('ansar_rank', ['as' => 'ansar_rank', 'uses' => 'FormSubmitHandler@getAnsarRank']);
+        Route::post('handleregistration', 'FormSubmitHandler@handleregistration');
+        Route::post('submiteditentry', 'FormSubmitHandler@submitEditEntry');
+        Route::get('editEntry/{ansarid}', ['as' => 'editentry', 'uses' => 'FormSubmitHandler@editEntry']);
+        Route::post('entrysearch', 'FormSubmitHandler@EntrySearch');
+        Route::post('reject', 'EntryFormController@Reject');
+        route::get('getBloodName', ['as' => 'blood_name', 'uses' => 'FormSubmitHandler@getBloodName']);
+        Route::post('entryVerify', ['as' => 'entryverify', 'uses' => 'EntryFormController@entryVerify']);
+        Route::get('getnotverifiedansar', 'FormSubmitHandler@getNotVerifiedAnsar');
+        Route::get('getverifiedansar', 'FormSubmitHandler@getVerifiedAnsar');
+        Route::get('getDiseaseName', ['as' => 'get_disease_list', 'uses' => 'EntryFormController@getAllDisease']);
+        Route::get('getallskill', ['as' => 'get_skill_list', 'uses' => 'EntryFormController@getAllSkill']);
+        Route::get('/getalleducation', 'EntryFormController@getAllEducation');
+        //END ANSAR ENTRY
+
+        //SESSION
+
+        Route::get('/session', ['as' => 'create_session', 'uses' => 'SessionController@index']);
+        Route::post('/save-session-entry', 'SessionController@saveSessionEntry');
+        Route::get('/session_view', ['as' => 'view_session_list', 'uses' => 'SessionController@sessionView']);
+        Route::get('/session-delete/{id}', ['as' => 'delete_session', 'uses' => 'SessionController@sessionDelete']);
+        Route::get('/session-edit/{id}/{page}', ['as' => 'edit_session', 'uses' => 'SessionController@sessionEdit']);
+        Route::post('/session-update', 'SessionController@sessionUpdate');
+        route::get('/session_name', 'SessionController@SessionName');
+
+        //END SESSION
+
         Route::get('DistrictName', ['as' => 'district_name', 'uses' => 'FormSubmitHandler@DistrictName']);
         Route::get('DivisionName', ['as' => 'division_name', 'uses' => 'FormSubmitHandler@DivisionName']);
         Route::get('ThanaName', ['as' => 'thana_name', 'uses' => 'FormSubmitHandler@ThanaName']);
