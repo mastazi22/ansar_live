@@ -375,52 +375,41 @@
                 <a href="#">
                     <i class="fa fa-users"></i>
                     <span>DG Forms</span>
+                    <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
                     <li>
-                        <a href="#">
+                        <a href="{{URL::to('HRM/direct_offer')}}">
                             <i class="fa fa-users"></i>
                             <span>Direct offer</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
-                            <i class="fa fa-users"></i>
-                            <span>Direct offer from service info</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
+                        <a href="{{URL::to('HRM/direct_panel_view')}}">
                             <i class="fa fa-users"></i>
                             <span>Direct Panel</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="{{URL::to('HRM/direct_panel_cancel_view')}}">
                             <i class="fa fa-users"></i>
                             <span>Direct Cancel Panel</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
-                            <i class="fa fa-users"></i>
-                            <span>Direct Freeze for DG</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
+                        <a href="{{URL::to('HRM/direct_embodiment')}}">
                             <i class="fa fa-users"></i>
                             <span>Direct Embodiment</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="{{URL::to('HRM/direct_disembodiment')}}">
                             <i class="fa fa-users"></i>
                             <span>Direct Dis-embodiment</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="{{URL::route('direct_transfer')}}">
                             <i class="fa fa-send"></i>
                             <span>Direct Transfer</span>
                         </a>
@@ -429,6 +418,7 @@
                         <a href="#">
                             <i class="fa fa-users"></i>
                             <span>Direct BlockList</span>
+                            <i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
                             <li>
@@ -464,12 +454,6 @@
                                 </a>
                             </li>
                         </ul>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <i class="fa fa-users"></i>
-                            <span>Direct offer cancel</span>
-                        </a>
                     </li>
                 </ul>
             </li>

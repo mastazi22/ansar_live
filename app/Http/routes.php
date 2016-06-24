@@ -36,6 +36,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/edit_user_permission/{id}', ['as' => 'edit_user_permission', 'uses' => 'UserController@editUserPermission']);
     Route::get('/user_search', ['as' => 'user_search', 'uses' => 'UserController@userSearch']);
     Route::post('change_user_image', 'UserController@changeUserImage');
-
+    Route::post('/verify_memorandum_id', 'UserController@verifyMemorandumId');
     //end user route
 });

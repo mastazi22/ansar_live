@@ -351,7 +351,7 @@
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-left"><a
-                                            href="{{action('UserController@viewProfile',array('id'=>Auth::user()->id))}}"
+                                            href="{{request()->route()->getPrefix()?URL::to(request()->route()->getPrefix()."/view_profile",['id'=>Auth::user()->id]):URL::to('view_profile',['id'=>Auth::user()->id])}}"
                                             class="btn btn-default btn-flat">Profile</a></div>
                                 <div class="pull-right"><a href="{{action('UserController@logout')}}"
                                                            class="btn btn-default btn-flat">Sign out</a></div>

@@ -185,5 +185,31 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 ///Start Three Years Over Report
         Route::get('/three_year_over_report_view', ['as' => 'three_year_over_report_view', 'uses' => 'ReportController@threeYearsOverListView']);
         Route::get('/three_years_over_ansar_info', 'ReportController@threeYearsOverAnsarInfo');
+        //DG ROUTE
+
+        Route::get('/direct_offer', ['as' => 'direct_offer', 'uses' => 'DGController@directOfferView']);
+        Route::get('/direct_transfer', ['as' => 'direct_transfer', 'uses' => 'DGController@directTransferView']);
+        Route::get('/direct_embodiment', ['as' => 'direct_embodiment', 'uses' => 'DGController@directEmbodimentView']);
+        Route::get('/direct_offer_ansar_detail', 'DGController@loadAnsarDetail');
+        Route::post('/direct_embodiment_submit', ['as' => 'direct_embodiment_submit', 'uses' => 'DGController@directEmbodimentSubmit']);
+        Route::post('/direct_disembodiment_submit', ['as' => 'direct_disembodiment_submit', 'uses' => 'DGController@directDisEmbodimentSubmit']);
+        Route::post('/direct_transfer_submit', ['as' => 'direct_transfer_submit', 'uses' => 'DGController@directTransferSubmit']);
+        Route::get('/direct_disembodiment', ['as' => 'direct_disembodiment', 'uses' => 'DGController@directDisEmbodimentView']);
+        Route::get('/load_disembodiment_reason', ['as' => 'load_disembodiment_reason', 'uses' => 'DGController@loadDisembodimentReson']);
+        Route::get('/direct_panel_view', ['as' => 'direct_panel_view', 'uses' => 'DGController@directPanelView']);
+        Route::get('/direct_panel_ansar_details','DGController@loadAnsarDetailforDirectPanel');
+        Route::post('/direct_panel_entry', 'DGController@directPanelEntry');
+        Route::get('/direct_panel_cancel_view', ['as' => 'direct_panel_cancel_view', 'uses' => 'DGController@directCancelPanelView']);
+        Route::get('/cancel_panel_ansar_details', 'DGController@loadAnsarDetailforCancelPanel');
+        Route::post('/cancel_panel_entry_for_dg', 'DGController@cancelPanelEntry');
+        Route::get('/dg_blocklist_entry_view', ['as' => 'dg_blocklist_entry_view', 'uses' => 'DGController@blockListEntryView']);
+//Letter route by Arafat
+        Route::get('/transfer_letter_view', ['as' => 'transfer_letter_view', 'uses' => 'LetterController@transferLetterView']);
+        Route::get('/embodiment_letter_view', ['as' => 'embodiment_letter_view', 'uses' => 'LetterController@embodimentLetterView']);
+        Route::get('/disembodiment_letter_view', ['as' => 'disembodiment_letter_view', 'uses' => 'LetterController@disembodimentLetterView']);
+        Route::get('/print_letter', 'LetterController@printLetter');
+        Route::get('KPIName', ['as' => 'kpi_name', 'uses' => 'EmbodimentController@kpiName']);
+
     });
+    Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
 });
