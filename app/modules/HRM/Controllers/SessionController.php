@@ -21,7 +21,7 @@ class SessionController extends Controller
     }
     public function index()
     {
-        return view('session.session_entry');
+        return view('HRM::Session.session_entry');
     }
 
     public function saveSessionEntry(Request $request)
@@ -59,18 +59,18 @@ class SessionController extends Controller
     public function sessionView()
     {
         $session_info = SessionModel::paginate(10);
-        return view('session.session_view')->with('session_info', $session_info);
+        return view('HRM::Session.session_view')->with('session_info', $session_info);
     }
 
     public function sessionDelete($id)
     {
         SessionModel::find($id)->delete();
-        return redirect('/session_view');
+        return redirect('HRM/session_view');
     }
     public function sessionEdit($id, $page)
     {
         $session_info = SessionModel::find($id);
-        return view('session/session_edit', ['id' => $id, 'page' => $page])->with(['session_info'=> $session_info, 'page' => $page]);
+        return view('HRM::Session.session_edit', ['id' => $id, 'page' => $page])->with(['session_info'=> $session_info, 'page' => $page]);
     }
 
     public function sessionUpdate(Request $request)

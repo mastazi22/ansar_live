@@ -510,34 +510,35 @@
                 <a href="#">
                     <i class="fa fa-users"></i>
                     <span>General Setiings</span>
+                    <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
                     <li ng-if="checkMenu('view_session_list')">
-                        <a href="#">
+                        <a href="{{URL::to('HRM/session_view')}}">
                             <i class="fa fa-users"></i>
                             <span>Session Information</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('unit_view')">
-                        <a href="#">
+                        <a href="{{URL::to('HRM/unit_view')}}">
                             <i class="fa fa-users"></i>
                             <span>Unit Setting</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('thana_view')">
-                        <a href="#">
+                        <a href="{{URL::to('HRM/thana_view')}}">
                             <i class="fa fa-users"></i>
                             <span>Thana Setting</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('disease_view')">
-                        <a href="#">
+                        <a href="{{URL::to('HRM/disease_view')}}">
                             <i class="fa fa-users"></i>
                             <span>Disease Setting</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('skill_view')">
-                        <a href="#">
+                        <a href="{{URL::to('HRM/skill_view')}}">
                             <i class="fa fa-users"></i>
                             <span>Skill Setting</span>
                         </a>

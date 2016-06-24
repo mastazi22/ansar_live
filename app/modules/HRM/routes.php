@@ -112,6 +112,37 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         route::get('/session_name', 'SessionController@SessionName');
 
         //END SESSION
+        //GENERAL SETTING
+
+        Route::get('/unit_form', ['as' => 'unit_form', 'uses' => 'GeneralSettingsController@unitIndex']);
+        Route::get('/thana_form', ['as' => 'thana_form', 'uses' => 'GeneralSettingsController@thanaIndex']);
+        Route::get('/unit_view', ['as' => 'unit_view', 'uses' => 'GeneralSettingsController@unitView']);
+        Route::get('/unit_view_details', 'GeneralSettingsController@unitViewDetails');
+        Route::get('/thana_view', ['as' => 'thana_view', 'uses' => 'GeneralSettingsController@thanaView']);
+        Route::get('/thana_view_details', 'GeneralSettingsController@thanaViewDetails');
+        Route::post('/unit_entry', ['as' => 'unit_entry', 'uses' => 'GeneralSettingsController@unitEntry']);
+        Route::post('/thana_entry', 'GeneralSettingsController@thanaEntry');
+        Route::get('/unit_edit/{id}', ['as' => 'unit_edit', 'uses' => 'GeneralSettingsController@unitEdit']);
+        Route::get('/unit_delete/{id}', ['as' => 'unit_delete', 'uses' => 'GeneralSettingsController@unitDelete']);
+        Route::get('/thana_edit/{id}', ['as' => 'thana_edit', 'uses' => 'GeneralSettingsController@thanaEdit']);
+        Route::get('/thana_delete/{id}', ['as' => 'thana_delete', 'uses' => 'GeneralSettingsController@thanaDelete']);
+        Route::post('/unit_update', 'GeneralSettingsController@updateUnit');
+        Route::post('/thana_update', 'GeneralSettingsController@updateThana');
+
+        Route::get('/disease_view', ['as' => 'disease_view', 'uses' => 'GeneralSettingsController@diseaseView']);
+        Route::get('/add_disease', ['as' => 'disease_view', 'uses' => 'GeneralSettingsController@addDiseaseName']);
+        Route::post('disease_entry', ['as' => 'disease_entry', 'uses' => 'GeneralSettingsController@diseaseEntry']);
+        Route::get('/disease_edit/{id}', ['as' => 'disease_edit', 'uses' => 'GeneralSettingsController@diseaseEdit']);
+        Route::post('/disease_update', ['as' => 'disease_update', 'uses' => 'GeneralSettingsController@updateDisease']);
+
+
+        Route::get('/skill_view', ['as' => 'skill_view', 'uses' => 'GeneralSettingsController@skillView']);
+        Route::get('/add_skill', ['as' => 'skill_view', 'uses' => 'GeneralSettingsController@addSkillName']);
+        Route::post('skill_entry', ['as' => 'skill_entry', 'uses' => 'GeneralSettingsController@skillEntry']);
+        Route::get('/skill_edit/{id}', ['as' => 'skill_edit', 'uses' => 'GeneralSettingsController@skillEdit']);
+        Route::post('/skill_update', ['as' => 'skill_update', 'uses' => 'GeneralSettingsController@updateSkill']);
+
+        //END GENERAL SETTING
         //REPORT
 
         Route::get('/guard_report', ['as' => 'guard_report', 'uses' => 'ReportController@reportGuardSearchView']);

@@ -13,7 +13,8 @@
         "wemersonjanuario/wkhtmltopdf-windows": "0.12.2.3",
         "barryvdh/laravel-snappy": "^0.3.0",
         "maatwebsite/excel": "~2.0.0",
-        "nathanmac/Parser": "3.*"
+        "nathanmac/Parser": "3.*",
+        "laravelcollective/html": "5.2.*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
