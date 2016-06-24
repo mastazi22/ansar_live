@@ -1,6 +1,6 @@
 <?php
 
-Route::group(['prefix'=>'HRM','middleware'=>['manageDatabase','checkUserType'] ],function(){
+Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserType'] ],function(){
     Route::group(['namespace'=>'\App\modules\HRM\Controllers'],function(){
 
         //DASHBOARD
@@ -75,9 +75,32 @@ Route::group(['prefix'=>'HRM','middleware'=>['manageDatabase','checkUserType'] ]
 
         Route::get('/print_card_id_view', ['as' => 'print_card_id_view', 'uses' => 'ReportController@ansarPrintIdCardView']);
         Route::get('/print_card_id', ['as' => 'print_card_id', 'uses' => 'ReportController@printIdCard']);
+
         //END ANSAR ID CARD
         //END ANSAR ENTRY
 
+        //ADMIN ROUTE
+        Route::get('/print_id_list', ['as' => 'print_id_list', 'uses' => 'ReportController@printIdList']);
+        Route::get('/get_print_id_list', ['as' => 'get_print_id_list', 'uses' => 'ReportController@getPrintIdList']);
+        Route::post('/change_ansar_card_status', ['as' => 'change_ansar_card_status', 'uses' => 'ReportController@ansarCardStatusChange']);
+        Route::post('/global_parameter_update', ['as' => 'global_parameter_update', 'uses' => 'HrmController@updateGlobalParameter']);
+        Route::get('/global_parameter', ['as' => 'global_parameter', 'uses' => 'HrmController@globalParameterView']);
+        Route::get('/cancel_offer', ['as' => 'cancel_offer', 'uses' => 'OfferController@cancelOfferView']);
+        //END ADMIN ROUTE
+        //OFFER ROUTE
+        Route::get('/make_offer', ['as' => 'make_offer', 'uses' => 'OfferController@makeOffer']);
+        Route::get('/kpi_list', 'OfferController@getKpi');
+        Route::get('/get_offered_ansar_info', 'OfferController@getOfferedAnsar');
+        Route::post('/cancel_offer_handle', ['as' => 'cancel_offer_handle', 'uses' => 'OfferController@handleCancelOffer']);
+        Route::post('/send_offer', 'OfferController@sendOfferSMS');
+        Route::get('/get_offer_count', 'OfferController@getQuotaCount');
+        Route::get('/offer_quota', ['as' => 'offer_quota', 'uses' => 'OfferController@offerQuota']);
+        Route::get('/get_offer_quota', 'OfferController@getOfferQuota');
+        Route::get('/cancel_offer', ['as' => 'cancel_offer', 'uses' => 'OfferController@cancelOfferView']);
+        Route::post('/update_offer_quota', 'OfferController@updateOfferQuota');
+        Route::get('rejected_offer_list',['as'=>'rejected_offer_list','uses'=>'ReportController@rejectedOfferListView']);
+        Route::get('get_rejected_ansar_list','ReportController@getRejectedAnsarList');
+        //END OFFER ROUTE
         //SESSION
 
         Route::get('/session', ['as' => 'create_session', 'uses' => 'SessionController@index']);

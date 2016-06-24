@@ -5,6 +5,7 @@
             $scope.isLoading = false;
             $scope.reportType = 'eng';
             $scope.ansarId = ""
+            $scope.errors = ''
             $scope.id = moment().format("D-MMM-YYYY");
             $scope.ed = moment().add(10,'years').format("D-MMM-YYYY");
             $scope.isLoading = false;
@@ -15,7 +16,7 @@
                // alert(id.getDate()+'-'+((id.getMonth()+1)<10?'0'+(id.getMonth()+1):(id.getMonth()+1))+'-'+id.getFullYear())
                 $scope.isLoading = true;
                 $http({
-                    url:'{{action('ReportController@printIdCard')}}',
+                    url:'{{URL::to('HRM/print_card_id')}}',
                     method:'get',
                     params:{
                         ansar_id:$scope.ansarId,
@@ -24,16 +25,24 @@
                         expire_date:$scope.ed
                     }
                 }).then(function (response) {
-                    $scope.idCard = $sce.trustAsHtml(response.data);
                     $scope.isLoading = false;
-                    window.onbeforeunload = "Are you sure to leave this page before print id card."
+                    console.log(response.data);
+                    if(response.data.validation!=undefined&&response.data.validation==true){
+                        $scope.errors = response.data.messages;
+                    }
+                    else{
+                        $scope.errors = ''
+                        $scope.idCard = $sce.trustAsHtml(response.data);
+                        $scope.isLoading = false;
+                        window.onbeforeunload = "Are you sure to leave this page before print id card."
+                    }
                 })
             }
 
         })
         $(function () {
             $('body').on('click','#print-report', function (e) {
-                alert("pppp")
+//                alert("pppp")
                 e.preventDefault();
                 $('body').append('<div id="print-area" class="letter">'+$("#ansar_id_card").html()+'</div>')
                 window.print();
@@ -41,10 +50,10 @@
             })
         })
     </script>
-    <div class="content-wrapper" style="position: relative" ng-controller="printIdController">
-        <div class="breadcrumbplace">
-            {!! Breadcrumbs::render('print_card_id_view') !!}
-        </div>
+    <div ng-controller="printIdController">
+        {{--<div class="breadcrumbplace">--}}
+            {{--{!! Breadcrumbs::render('print_card_id_view') !!}--}}
+        {{--</div>--}}
         <div class="loading-report animated" ng-class="{fadeInDown:isLoading,fadeOutUp:!isLoading}">
             <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
             <h4>Loading...</h4>
@@ -66,14 +75,17 @@
                                         <label class="control-label">Enter a ansar id</label>
                                         <input type="text" class="form-control" ng-model="ansarId"
                                                placeholder="Ansar id">
+                                        <p class="text text-danger" ng-if="errors.ansar_id!=undefined">[[errors.ansar_id[0] ]]</p>
                                     </div>
                                     <div class="form-group">
                                         <Label class="control-label">Issue Date</Label>
                                         <input type="text" disabled id="issue_date" class="form-control" name="issue_date" ng-model="id">
+                                        <p class="text text-danger" ng-if="errors.issue_date!=undefined">[[errors.issue_date[0] ]]</p>
                                     </div>
                                     <div class="form-group">
                                         <Label class="control-label">Expire Date</Label>
                                         <input type="text" disabled id="expire_date" class="form-control" name="expire_date" ng-model="ed">
+                                        <p class="text text-danger" ng-if="errors.expire_date!=undefined">[[errors.expire_date[0] ]]</p>
                                     </div>
                                     <div class="form-group">
                                         <Label class="control-label">View ID Card in</Label>

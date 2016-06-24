@@ -14,7 +14,7 @@
             $scope.loadAnsar = function () {
                // alert(document.getElementById('from-date').value+" "+t)
                 $http({
-                    url:'{{action('ReportController@getPrintIdList')}}',
+                    url:'{{URL::to('HRM/get_print_id_list')}}',
                     method:'get',
                     params:{f_date:$scope.fromDate,t_date:$scope.toDate}
                 }).then(function (response) {
@@ -27,7 +27,7 @@
             $scope.blockAnsarCard = function (a) {
                 $scope.loading[a] = true;
                 $http({
-                    url:'{{action('ReportController@ansarCardStatusChange')}}',
+                    url:'{{URL::to('HRM/change_ansar_card_status')}}',
                     method:'post',
                     data:{action:'block',ansar_id: $scope.ansars[a].ansar_id}
                 }).then(function (response) {
@@ -40,7 +40,7 @@
             $scope.activeAnsarCard = function (a) {
                 $scope.loading[a] = true;
                 $http({
-                    url:'{{action('ReportController@ansarCardStatusChange')}}',
+                    url:'{{URL::to('HRM/change_ansar_card_status')}}',
                     method:'post',
                     data:{action:'active',ansar_id: $scope.ansars[a].ansar_id}
                 }).then(function (response) {
@@ -85,7 +85,7 @@
 
         })
     </script>
-    <div class="content-wrapper" ng-controller="AnsarIdCard">
+    <div ng-controller="AnsarIdCard">
         <section class="content">
             <div class="box box-solid">
                 <div class="nav-tabs-custom">

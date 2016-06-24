@@ -31,7 +31,6 @@ class Kernel extends HttpKernel
         'web' => [
 
         ],
-        'auth'=>[\App\Http\Middleware\CheckAuthentication::class],
         'permission'=>[\App\Http\Middleware\CheckUserPermission::class],
         'checkUserType'=>[\App\Http\Middleware\CheckUserType::class],
         'api' => [
@@ -48,7 +47,7 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-        'auth' => \App\Http\Middleware\Authenticate::class,
+        'auth'=>\App\Http\Middleware\CheckAuthentication::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'can' => \Illuminate\Foundation\Http\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,

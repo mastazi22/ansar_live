@@ -477,28 +477,29 @@
                 <a href="#">
                     <i class="fa fa-users"></i>
                     <span>Admin</span>
+                    <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
                     <li>
-                        <a href="#">
+                        <a href="{{URL::to('HRM/global_parameter')}}">
                             <i class="fa fa-users"></i>
                             <span>Global Parameter</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="{{URL::to('HRM/cancel_offer')}}">
                             <i class="fa fa-users"></i>
                             <span>Cancel Offer</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="{{URL::to('HRM/print_id_list')}}">
                             <i class="fa fa-users"></i>
                             <span>Ansar id list</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="{{URL::to('HRM/rejected_offer_list')}}">
                             <i class="fa fa-users"></i>
                             <span>Rejected offer list</span>
                         </a>

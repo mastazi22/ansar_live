@@ -162,6 +162,8 @@ return [
         App\modules\SD\Provider\DemandConstantProvider::class,
         \App\Providers\GlobalParameterProvider::class,
         \App\Providers\LanguageConvertorProvider::class,
+        Intervention\Image\ImageServiceProvider::class,
+        \Milon\Barcode\BarcodeServiceProvider::class,
     ],
 
     /*
@@ -208,10 +210,13 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'PDF' => Barryvdh\Snappy\Facades\SnappyPdf::class,
-        'Image' => Barryvdh\Snappy\Facades\SnappyImage::class,
+        'PDFImage' => Barryvdh\Snappy\Facades\SnappyImage::class,
         'DC' => App\modules\SD\Helper\Facades\DemandConstantFacdes::class,
         'GlobalParameter' => \App\Helper\Facades\GlobalParameterFacades::class,
         'LanguageConverter' => \App\Helper\Facades\LanguageConverterFacades::class,
+        'Image' => Intervention\Image\Facades\Image::class,
+        'DNS1D' => \Milon\Barcode\Facades\DNS1DFacade::class,
+        'DNS2D' => \Milon\Barcode\Facades\DNS2DFacade::class,
 
     ],
 

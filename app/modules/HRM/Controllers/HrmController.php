@@ -7,6 +7,7 @@ use App\Http\Requests;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\District;
+use App\modules\HRM\Models\GlobalParameter;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
@@ -446,5 +447,31 @@ class HrmController extends Controller
         }
 //        return DB::getQueryLog();
         return Response::json($allStatus);
+    }
+    function updateGlobalParameter()
+    {
+        $id = Input::get('id');
+        $pv = Input::get('pv');
+        $pd = Input::get('pd');
+        $pp = Input::get('pp');
+        $pu = Input::get('pu');
+        DB::beginTransaction();
+        try {
+            $gp = GlobalParameter::find($id);
+            $gp->param_value = $pv;
+            $gp->param_description = $pd;
+            $gp->param_piority = $pp;
+            $gp->param_unit = $pu;
+            $gp->save();
+            DB::commit();
+        } catch (Exception $e) {
+            return Response::json(['status' => false, 'data' => 'Unable to update. try again later']);
+        }
+
+        return Response::json(['status' => true, 'data' => 'Update complete successfully']);
+    }
+    function globalParameterView()
+    {
+        return View::make('HRM::global_perameter')->with('gp', GlobalParameter::all());
     }
 }

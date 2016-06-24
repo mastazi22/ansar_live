@@ -8,10 +8,12 @@
         "php": ">=5.5.9",
         "laravel/framework": "5.2.*",
         "intervention/image": "dev-master",
-        "milon/barcode": "^1.0",
+        "milon/barcode": "^5.2",
         "davejamesmiller/laravel-breadcrumbs": "^3.0",
         "wemersonjanuario/wkhtmltopdf-windows": "0.12.2.3",
-        "barryvdh/laravel-snappy": "^0.3.0"
+        "barryvdh/laravel-snappy": "^0.3.0",
+        "maatwebsite/excel": "~2.0.0",
+        "nathanmac/Parser": "3.*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

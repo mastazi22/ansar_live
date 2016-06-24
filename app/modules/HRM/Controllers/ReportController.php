@@ -4,20 +4,24 @@ namespace App\modules\HRM\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
-use App\models\AnsarIdCard;
-use App\models\CustomQuery;
-use App\models\EmbodimentLogModel;
-use App\models\EmbodimentModel;
-use App\models\OfferSmsLog;
-use App\models\RestInfoLogModel;
-use App\models\RestInfoModel;
+use App\modules\HRM\Models\AnsarIdCard;
+use App\modules\HRM\Models\CustomQuery;
+use App\modules\HRM\Models\EmbodimentLogModel;
+use App\modules\HRM\Models\EmbodimentModel;
+use App\modules\HRM\Models\OfferSmsLog;
+use App\modules\HRM\Models\RestInfoLogModel;
+use App\modules\HRM\Models\RestInfoModel;
+use Barryvdh\Snappy\Facades\SnappyImage;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
+use Intervention\Image\Facades\Image;
 
 class ReportController extends Controller
 {
@@ -98,6 +102,21 @@ class ReportController extends Controller
         $issue_date = Input::get('issue_date');
         $expire_date = Input::get('expire_date');
         $type = Input::get('type');
+        $rules = [
+          'ansar_id'=>'required|numeric|regex:/^[0-9]+$/',
+          'issue_date'=>'required|date_format:d-M-Y',
+          'expire_date'=>'required|date_format:d-M-Y',
+        ];
+        $message = [
+          'required'=>'This field is required',
+          'regex'=>'Enter a valid ansar id',
+          'numeric'=>'Ansar id must be numeric',
+          'date_format'=>'Invalid date format',
+        ];
+        $validation = Validator::make(Input::all(),$rules,$message);
+        if($validation->fails()){
+            return Response::json(['validation'=>true,'messages'=>$validation->messages()]);
+        }
         $report_data = $this->getReportData($type, 'ansar_id_card');
         $ansar = DB::table('tbl_ansar_parsonal_info')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
@@ -115,12 +134,17 @@ class ReportController extends Controller
             $id_card->type = strtoupper($type);
             $id_card->status = 1;
             if (!$id_card->saveOrFail()) {
-                return View::make('report.no_ansar_found')->with('id', $id);
+                return View::make('HRM::Report.no_ansar_found')->with('id', $id);
             }
-
-            return View::make('report.id_card_print')->with(['rd' => $report_data, 'ad' => $ansar, 'id' => Carbon::createFromFormat('d-M-Y', $issue_date)->format("d/m/Y"), 'ed' => Carbon::createFromFormat('d-M-Y', $expire_date)->format("d/m/Y"), 'type' => $type, 'history' => $ansarIdHistory]);
+            $path = public_path("{$id}.jpg");
+            SnappyImage::loadView('HRM::Report.ansar_id_card_font',['rd' => $report_data, 'ad' => $ansar, 'id' => Carbon::createFromFormat('d-M-Y', $issue_date)->format("d/m/Y"), 'ed' => Carbon::createFromFormat('d-M-Y', $expire_date)->format("d/m/Y"), 'type' => $type])->setOption('quality',100)
+                ->setOption('crop-x',0)->setOption('crop-y',0)->setOption('crop-h',292)->setOption('crop-w',390)->setOption('encoding','utf-8')->save($path);
+            $image =  Image::make($path)->encode('data-url');
+            File::delete($path);
+//            return View::make('HRM::Report.ansar_id_card_font',['rd' => $report_data, 'ad' => $ansar, 'id' => Carbon::createFromFormat('d-M-Y', $issue_date)->format("d/m/Y"), 'ed' => Carbon::createFromFormat('d-M-Y', $expire_date)->format("d/m/Y"), 'type' => $type]);
+            return View::make('HRM::Report.id_card_print')->with(['image'=>$image->encode('data-url'), 'history' => $ansarIdHistory]);
         }
-        return View::make('report.no_ansar_found')->with('id', $id);
+        return View::make('HRM::Report.no_ansar_found')->with('id', $id);
     }
 
     function getReportData($type, $name)
@@ -387,7 +411,7 @@ class ReportController extends Controller
 
     public function printIdList()
     {
-        return View::make('report.ansar_print_id_list');
+        return View::make('HRM::Report.ansar_print_id_list');
     }
 
     public function checkFile()
@@ -437,7 +461,7 @@ class ReportController extends Controller
 
     public function rejectedOfferListView()
     {
-        return View::make('offer.rejected_offer_list');
+        return View::make('HRM::Offer.rejected_offer_list');
     }
 
     public function getRejectedAnsarList()
