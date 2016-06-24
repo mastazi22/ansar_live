@@ -1162,7 +1162,7 @@ class DGController extends Controller
 
     public function unblackListEntryView()
     {
-        return view('dgview.direct_unblacklist_entry');
+        return view('HRM::Dgview.direct_unblacklist_entry');
     }
 
     public function loadAnsarDetailforUnblack()
