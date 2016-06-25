@@ -334,7 +334,7 @@ class HrmController extends Controller
     public function showAnsarForServiceEnded($count)
     {
         $pages = ceil($count / 10);
-        return View::make('template.ansar_service_ended_list')->with(['total' => $count, 'pages' => $pages, 'item_per_page' => 10]);
+        return View::make('HRM::Dashboard.ansar_service_ended_list')->with(['total' => $count, 'pages' => $pages, 'item_per_page' => 10]);
     }
 
     public function serviceEndedInfoDetails()
@@ -354,7 +354,7 @@ class HrmController extends Controller
     public function showAnsarForReachedFifty($count)
     {
         $pages = ceil($count / 10);
-        return View::make('template.ansar_fifty_age_list')->with(['total' => $count, 'pages' => $pages, 'item_per_page' => 10]);
+        return View::make('HRM::Dashboard.ansar_fifty_age_list')->with(['total' => $count, 'pages' => $pages, 'item_per_page' => 10]);
     }
 
     public function ansarReachedFiftyDetails()
@@ -373,7 +373,7 @@ class HrmController extends Controller
     public function showAnsarForNotInterested($count)
     {
         $pages = ceil($count / 10);
-        return View::make('template.ansar_not_interested')->with(['total' => $count, 'pages' => $pages, 'item_per_page' => 10]);
+        return View::make('HRM::Dashboard.ansar_not_interested')->with(['total' => $count, 'pages' => $pages, 'item_per_page' => 10]);
     }
 
     public function notInterestedInfoDetails()

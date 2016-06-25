@@ -34,58 +34,59 @@
                 <a href="#">
                     <i class="fa fa-users"></i>
                     <span>KPI Branch</span>
+                    <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
                     <li ng-if="checkMenu('kpi_view')">
-                        <a href="#">
+                        <a href="{{URL::route('kpi_view')}}">
                             <i class="fa fa-users"></i>
                             <span>KPI Information</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('ansar-withdraw-view')">
-                        <a href="#">
+                        <a href="{{URL::route('ansar-withdraw-view')}}">
                             <i class="fa fa-users"></i>
                             <span>Ansar Withdraw</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu(ansar_before_withdraw_view)">
-                        <a href="#">
+                        <a href="{{URL::route('ansar_before_withdraw_view')}}">
                             <i class="fa fa-users"></i>
                             <span>Ansar Before Withdraw List</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('reduce_guard_strength')">
-                        <a href="#">
+                        <a href="{{URL::route('reduce_guard_strength')}}">
                             <i class="fa fa-users"></i>
                             <span>Reduce Guard Strength</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('ansar_before_reduce_view')">
-                        <a href="#">
+                        <a href="{{URL::route('ansar_before_reduce_view')}}">
                             <i class="fa fa-users"></i>
                             <span>Ansar Before Reduce List</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('kpi-withdraw-view')">
-                        <a href="#">
+                        <a href="{{URL::route('kpi-withdraw-view')}}">
                             <i class="fa fa-users"></i>
                             <span>KPI Withdraw</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('withdrawn_kpi_list')">
-                        <a href="#">
+                        <a href="{{URL::route('withdrawn_kpi_view')}}">
                             <i class="fa fa-users"></i>
                             <span>KPI Withdraw Date Update</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('inactive_kpi_list')">
-                        <a href="#">
+                        <a href="{{URL::route('inactive_kpi_view')}}">
                             <i class="fa fa-users"></i>
                             <span>Inactive KPI List</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('kpi_withdraw_cancel_view')">
-                        <a href="#">
+                        <a href="{{URL::route('kpi_withdraw_cancel_view')}}">
                             <i class="fa fa-users"></i>
                             <span>KPI Withdraw Cancel</span>
                         </a>
