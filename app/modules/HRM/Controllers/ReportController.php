@@ -28,7 +28,7 @@ class ReportController extends Controller
     //
     function reportGuardSearchView()
     {
-        return View::make('report.report_guard_search');
+        return View::make('HRM::Report.report_guard_search');
     }
 
     function reportAllGuard()
@@ -63,7 +63,7 @@ class ReportController extends Controller
 
     function ansarServiceReportView()
     {
-        return View::make('report.report_ansar_in_service');
+        return View::make('HRM::Report.report_ansar_in_service');
     }
 
     function ansarServiceReport()
@@ -155,7 +155,7 @@ class ReportController extends Controller
 
     public function ansarDisembodimentReportView()
     {
-        return view('report.ansar_disembodiment_report_view');
+        return view('HRM::Report.ansar_disembodiment_report_view');
         //return view('report.disembodiment_rough');
     }
 
@@ -181,7 +181,7 @@ class ReportController extends Controller
 
     public function blockListView()
     {
-        return view('report.blocklist_view');
+        return view('HRM::Report.blocklist_view');
     }
 
     public function blockListedAnsarInfoDetails()
@@ -206,7 +206,7 @@ class ReportController extends Controller
 
     public function blackListView()
     {
-        return view('report.blacklist_view');
+        return view('HRM::Report.blacklist_view');
     }
 
     public function blackListedAnsarInfoDetails()
@@ -247,7 +247,7 @@ class ReportController extends Controller
 
     public function ansarEmbodimentReportView()
     {
-        return view('report.ansar_embodiment_report_view');
+        return view('HRM::Report.ansar_embodiment_report_view');
 //        return view('report.embodiment_rough');
     }
 
@@ -272,7 +272,7 @@ class ReportController extends Controller
 
     public function threeYearsOverListView()
     {
-        return view('report.three_years_over_report');
+        return view('HRM::Report.three_years_over_report');
     }
 
     public function threeYearsOverAnsarInfo()
@@ -299,18 +299,18 @@ class ReportController extends Controller
 
     public function anserTransferHistory()
     {
-        return View::make('report.ansar_transfer_history');
+        return View::make('HRM::Report.ansar_transfer_history');
 
     }
 
     public function viewAnsarServiceRecord()
     {
-        return View::make('report.ansar_service_record');
+        return View::make('HRM::Report.ansar_service_record');
     }
 
     public function serviceRecordUnitWise()
     {
-        return view('report.service_record_unitwise');
+        return view('HRM::Report.service_record_unitwise');
     }
 
     public function ansarInfoForServiceRecordUnitWise()
@@ -421,7 +421,7 @@ class ReportController extends Controller
 
     public function offerReportView()
     {
-        return View::make('report.offer_report');
+        return View::make('HRM::Report.offer_report');
     }
 
     public function getOfferedAnsar()

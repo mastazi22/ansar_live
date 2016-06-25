@@ -22,7 +22,7 @@
                 $scope.loadingUnit = true;
                 $http({
                     method: 'get',
-                    url: '{{action('FormSubmitHandler@DistrictName')}}'
+                    url: '{{URL::to('HRM/DistrictName')}}'
                 }).then(function (response) {
                     $scope.districts = response.data;
                     $scope.loadingUnit = false;
@@ -32,7 +32,7 @@
                 $scope.loadingThana = true;
                 $http({
                     method: 'get',
-                    url: '{{action('FormSubmitHandler@ThanaName')}}',
+                    url: '{{URL::to('HRM/ThanaName')}}',
                     params: {id: id}
                 }).then(function (response) {
                     $scope.thanas = response.data;
@@ -46,7 +46,7 @@
                 $scope.isLoading = true;
                 $http({
                     method: 'get',
-                    url: '{{action('ReportController@ansarInfoForServiceRecordUnitWise')}}',
+                    url: '{{URL::route('service_record_unitwise_info')}}',
                     params: {
                         unit:$scope.selectedDistrict,
                         thana:$scope.selectedThana,
@@ -60,7 +60,7 @@
             $scope.loadReportData = function (reportName, type) {
                 $http({
                     method: 'get',
-                    url: '{{action('ReportController@localizeReport')}}',
+                    url: '{{URL::route('localize_report')}}',
                     params: {name: reportName, type: type}
                 }).then(function (response) {
                     console.log(response.data)
@@ -113,7 +113,7 @@
             })
         })
     </script>
-    <div class="content-wrapper" style="min-height: 490px" ng-controller="ReportGuardSearchController">
+    <div ng-controller="ReportGuardSearchController">
         <div class="loading-report animated" ng-class="{fadeInDown:isLoading,fadeOutUp:!isLoading}">
             <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
             <h4>Loading...</h4>

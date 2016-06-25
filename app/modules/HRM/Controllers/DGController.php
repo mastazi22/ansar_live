@@ -468,7 +468,7 @@ class DGController extends Controller
 
     public function unblockListEntryView()
     {
-        return view('dgview.direct_unblocklist_entry');
+        return view('HRM::Dgview.direct_unblocklist_entry');
     }
 
     public function loadAnsarDetailforUnblock()
@@ -561,7 +561,7 @@ class DGController extends Controller
 
     public function blackListEntryView()
     {
-        return view('dgview.direct_blacklist_entry');
+        return view('HRM::Dgview.direct_blacklist_entry');
     }
 
     public function loadAnsarDetailforBlack()

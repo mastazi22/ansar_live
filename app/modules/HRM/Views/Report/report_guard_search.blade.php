@@ -21,7 +21,7 @@
                 $scope.loadingUnit = true;
                 $http({
                     method: 'get',
-                    url: '{{action('FormSubmitHandler@DistrictName')}}'
+                    url: '{{URL::to('HRM/DistrictName')}}'
                 }).then(function (response) {
                     $scope.districts = response.data;
                     $scope.loadingUnit = false;
@@ -33,7 +33,7 @@
                 $scope.loadingThana = true;
                 $http({
                     method: 'get',
-                    url: '{{action('FormSubmitHandler@ThanaName')}}',
+                    url: '{{URL::to('HRM/ThanaName')}}',
                     params: {id: id}
                 }).then(function (response) {
                     $scope.thanas = response.data;
@@ -45,7 +45,7 @@
                 $scope.loadingKpi = true;
                 $http({
                     method: 'get',
-                    url: '{{action('EmbodimentController@kpiName')}}',
+                    url: '{{URL::route('kpi_name')}}',
                     params: {id: id}
                 }).then(function (response) {
                     $scope.guards = response.data;
@@ -56,7 +56,7 @@
             $scope.loadAnsar = function (id) {
                 $http({
                     method: 'get',
-                    url: '{{action('ReportController@reportAllGuard')}}',
+                    url: '{{URL::route('guard_list')}}',
                     params: {kpi_id: id}
                 }).then(function (response) {
                     $scope.ansars = response.data.ansars;
@@ -66,7 +66,7 @@
             $scope.loadReportData = function (reportName, type) {
                 $http({
                     method: 'get',
-                    url: '{{action('ReportController@localizeReport')}}',
+                    url: '{{URL::route('localize_report')}}',
                     params: {name: reportName, type: type}
                 }).then(function (response) {
                     console.log(response.data)
@@ -105,7 +105,7 @@
             })
         })
     </script>
-    <div class="content-wrapper" style="min-height: 490px" ng-controller="ReportGuardSearchController">
+    <div ng-controller="ReportGuardSearchController">
         <section class="content">
             <div class="box box-solid">
                 <div class="nav-tabs-custom" style="background-color: transparent">
@@ -251,7 +251,7 @@
                                                 [[$index+1]]
                                             </td>
                                             <td>
-                                                <a href="{{URL::to('/entryreport')}}/[[a.ansar_id]]">[[a.ansar_id]]</a>
+                                                <a href="{{URL::to('HRM/entryreport')}}/[[a.ansar_id]]">[[a.ansar_id]]</a>
                                             </td>
                                             <td>
                                                 [[a.name_bng]]

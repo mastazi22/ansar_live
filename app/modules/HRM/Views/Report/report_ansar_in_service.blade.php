@@ -14,7 +14,7 @@
                 $scope.isLoading = true;
                 $http({
                     method:'get',
-                    url:'{{action('ReportController@ansarServiceReport')}}',
+                    url:'{{URL::route('ansar_service_report')}}',
                     params:{ansar_id:$scope.ansarId}
                 }).then(function (response) {
                     $scope.current = response.data.current;
@@ -44,7 +44,7 @@
                 $scope.isLoading = true;
                 $http({
                     method:'get',
-                    url:'{{action('ReportController@localizeReport')}}',
+                    url:'{{URL::route('localize_report')}}',
                     params:{name:reportName,type:type}
                 }).then(function(response){
                     console.log(response.data)
@@ -66,7 +66,7 @@
             })
         })
     </script>
-    <div class="content-wrapper" style="position: relative" ng-controller="serviceRecordController">
+    <div ng-controller="serviceRecordController">
         <div class="loading-report animated" ng-class="{fadeInDown:isLoading,fadeOutUp:!isLoading}">
            <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
             <h4>Loading...</h4>

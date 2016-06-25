@@ -7,7 +7,7 @@
             $scope.loadTransferHistory = function (ansar_id) {
                 $scope.isLoading = true;
                 $http({
-                    url:'{{action('ReportController@getAnserTransferHistory')}}',
+                    url:'{{URL::route('get_transfer_ansar_history')}}',
                     method:'get',
                     params:{ansar_id:ansar_id}
                 }).then(function (response) {
@@ -21,7 +21,7 @@
                 if($event.keyCode==13) {
                     $scope.isLoading = true;
                     $http({
-                        url: '{{action('ReportController@getAnserTransferHistory')}}',
+                        url: '{{URL::route('get_transfer_ansar_history')}}',
                         method: 'get',
                         params: {ansar_id: ansar_id}
                     }).then(function (response) {
@@ -47,7 +47,7 @@
         })
 
     </script>
-    <div class="content-wrapper" ng-controller="TransferController">
+    <div ng-controller="TransferController">
         <div class="loading-report animated" ng-class="{fadeInDown:isLoading,fadeOutUp:!isLoading}">
             <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
             <h4>Loading...</h4>

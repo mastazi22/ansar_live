@@ -3456,7 +3456,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_blocklist_info.*', 'tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_ansar_parsonal_info.sex',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();
-        return View::make('report.selected_blocklist_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
+        return View::make('HRM::Report.selected_blocklist_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
     }
 
     public static function getBlacklistedAnsar($offset, $limit, $unit, $thana)
@@ -3500,7 +3500,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_blacklist_info.*', 'tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_ansar_parsonal_info.sex',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();
-        return View::make('report.selected_blacklist_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
+        return View::make('HRM::Report.selected_blacklist_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
     }
 
 
@@ -5513,7 +5513,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date',
             'tbl_embodiment.service_ended_date as se_date', 'tbl_kpi_info.kpi_name as kpi', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_units.unit_name_bng as unit', 'tbl_designations.name_bng as rank')->skip($offset)->limit($limit)->get();
-        return View::make('report.selected_three_years_over_list_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
+        return View::make('HRM::Report.selected_three_years_over_list_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
 
     }
 
@@ -5588,7 +5588,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_embodiment_log.ansar_id as id', 'tbl_embodiment_log.reporting_date as r_date', 'tbl_embodiment_log.joining_date as j_date', 'tbl_embodiment_log.release_date as re_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
             'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi', 'tbl_disembodiment_reason.reason_in_bng as reason')->skip($offset)->limit($limit)->get();
-        return View::make('report.selected_ansar_disembodiment_report')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
+        return View::make('HRM::Report.selected_ansar_disembodiment_report')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
     }
 
     public static function disembodedAnsarListforReportCount($from_date, $to_date, $unit, $thana)
@@ -5685,7 +5685,7 @@ class CustomQuery
 
         $ansars = $ansarQuery->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
             'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')->skip($offset)->limit($limit)->get();
-        return View::make('report.selected_ansar_embodiment_report')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
+        return View::make('HRM::Report.selected_ansar_embodiment_report')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
     }
 
     public static function embodedAnsarListforReportCount($from_date, $to_date, $unit, $thana)

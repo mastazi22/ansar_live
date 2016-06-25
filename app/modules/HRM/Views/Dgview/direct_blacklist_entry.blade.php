@@ -20,7 +20,7 @@
                 $scope.loadingAnsar = true;
                 $http({
                     method:'get',
-                    url:'{{action('DGController@loadAnsarDetailforBlack')}}',
+                    url:'{{URL::route('dg_blacklist_ansar_details')}}',
                     params:{ansar_id:id}
                 }).then(function (response) {
                     $scope.ansarDetail = response.data
@@ -43,7 +43,7 @@
         })
     </script>
 
-    <div class="content-wrapper" ng-controller="DGBlockController">
+    <div ng-controller="DGBlockController">
         @if(Session::has('success_message'))
             <div style="padding: 10px 20px 0 20px;">
                 <div class="alert alert-success">
@@ -52,7 +52,7 @@
                 </div>
             </div>
         @endif
-        {!! Form::open(array('url' => 'dg_blacklist_entry', 'id' => 'black_entry_for_dg')) !!}
+        {!! Form::open(array('route' => 'dg_blacklist_entry', 'id' => 'black_entry_for_dg')) !!}
         <section class="content" style="position: relative;" >
             <notify></notify>
             <div class="box box-solid">

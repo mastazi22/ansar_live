@@ -40,7 +40,7 @@
                 $scope.currentPage = page.pageNum;
                 $scope.loadingPage[page.pageNum]=true;
                 $http({
-                    url: '{{action('ReportController@blockListedAnsarInfoDetails')}}',
+                    url: '{{URL::route('blocklisted_ansar_info')}}',
                     method: 'get',
                     params: {
                         offset: page.offset,
@@ -57,7 +57,7 @@
             $scope.loadTotal = function () {
                 $scope.isLoading = true;
                 $http({
-                    url: '{{action('ReportController@blockListedAnsarInfoDetails')}}',
+                    url: '{{URL::route('blocklisted_ansar_info')}}',
                     method: 'get',
                     params: {
                         unit:$scope.selectedDistrict,
@@ -98,7 +98,7 @@
             $scope.loadDistrict = function () {
                 $http({
                     method: 'get',
-                    url: '{{action('FormSubmitHandler@DistrictName')}}'
+                    url: '{{URL::to('HRM/DistrictName')}}'
                 }).then(function (response) {
                     $scope.districts = response.data;
                     $scope.loadingDistrict = false;
@@ -108,7 +108,7 @@
                 $scope.loadingThana = true;
                 $http({
                     method: 'get',
-                    url: '{{action('FormSubmitHandler@ThanaName')}}',
+                    url: '{{URL::to('HRM/ThanaName')}}',
                     params: {id: d_id}
                 }).then(function (response) {
                     $scope.thanas = response.data;
@@ -120,7 +120,7 @@
             $scope.loadReportData = function (reportName,type) {
                 $http({
                     method:'get',
-                    url:'{{action('ReportController@localizeReport')}}',
+                    url:'{{URL::route('localize_report')}}',
                     params:{name:reportName,type:type}
                 }).then(function(response){
                     console.log(response.data)
@@ -147,7 +147,7 @@
             })
         })
     </script>
-    <div class="content-wrapper" ng-controller="BlockListReportController">
+    <div ng-controller="BlockListReportController">
         <div class="loading-report animated" ng-class="{fadeInDown:isLoading,fadeOutUp:!isLoading}">
             <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
             <h4>Loading...</h4>

@@ -24,7 +24,7 @@
                 $scope.loadingUnit = true;
                 $http({
                     method: 'get',
-                    url: '{{action('FormSubmitHandler@DistrictName')}}'
+                    url: '{{URL::to('HRM/DistrictName')}}'
                 }).then(function (response) {
                     $scope.districts = response.data;
                     $scope.loadingUnit = false;
@@ -34,7 +34,7 @@
                 $scope.loadingThana = true;
                 $http({
                     method: 'get',
-                    url: '{{action('FormSubmitHandler@ThanaName')}}',
+                    url: '{{URL::to('HRM/ThanaName')}}',
                     params: {id: id}
                 }).then(function (response) {
                     $scope.thanas = response.data;
@@ -60,7 +60,7 @@
                 }
                 $http({
                     method: 'get',
-                    url: '{{action('ReportController@getOfferedAnsar')}}',
+                    url: '{{URL::route('get_offered_ansar')}}',
                     params: data
                 }).then(function (response) {
                     $scope.onr = response.data.onr
@@ -71,7 +71,7 @@
             $scope.loadReportData = function (reportName, type) {
                 $http({
                     method: 'get',
-                    url: '{{action('ReportController@localizeReport')}}',
+                    url: '{{URL::route('localize_report')}}',
                     params: {name: reportName, type: type}
                 }).then(function (response) {
                     console.log(response.data)
@@ -108,7 +108,7 @@
             })
         })
     </script>
-    <div class="content-wrapper" style="min-height: 490px" ng-controller="ReportGuardSearchController">
+    <div ng-controller="ReportGuardSearchController">
         <section class="content">
             <div class="box box-solid">
                 <div class="nav-tabs-custom" style="background-color: transparent">

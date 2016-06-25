@@ -146,10 +146,10 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         //REPORT
 
         Route::get('/guard_report', ['as' => 'guard_report', 'uses' => 'ReportController@reportGuardSearchView']);
-        Route::get('/guard_list', 'ReportController@reportAllGuard');
-        Route::get('/localize_report', 'ReportController@localizeReport');
+        Route::get('/guard_list', ['as'=>'guard_list','uses'=>'ReportController@reportAllGuard']);
+        Route::get('/localize_report', ['as'=>'localize_report','uses'=>'ReportController@localizeReport']);
         Route::get('/ansar_service_report_view', ['as' => 'ansar_service_report_view', 'uses' => 'ReportController@ansarServiceReportView']);
-        Route::get('/ansar_service_report', 'ReportController@ansarServiceReport');
+        Route::get('/ansar_service_report', ['as'=>'ansar_service_report','uses'=>'ReportController@ansarServiceReport']);
         Route::get('DistrictName', ['as' => 'district_name', 'uses' => 'FormSubmitHandler@DistrictName']);
         Route::get('DivisionName', ['as' => 'division_name', 'uses' => 'FormSubmitHandler@DivisionName']);
         Route::get('ThanaName', ['as' => 'thana_name', 'uses' => 'FormSubmitHandler@ThanaName']);
@@ -161,36 +161,36 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/print_id_list', ['as' => 'print_id_list', 'uses' => 'ReportController@printIdList']);
         Route::get('/check_file', 'ReportController@checkFile');
         Route::get('/blocklist_view', ['as' => 'blocklist_view', 'uses' => 'ReportController@blockListView']);
-        Route::get('/blocklisted_ansar_info', 'ReportController@blockListedAnsarInfoDetails');
+        Route::get('/blocklisted_ansar_info', ['as'=>'blocklisted_ansar_info','uses'=>'ReportController@blockListedAnsarInfoDetails']);
 
         Route::get('/blacklist_view', ['as' => 'blacklist_view', 'uses' => 'ReportController@blackListView']);
-        Route::get('/blacklisted_ansar_info', 'ReportController@blackListedAnsarInfoDetails');
+        Route::get('/blacklisted_ansar_info', ['as'=>'blacklisted_ansar_info','uses'=>'ReportController@blackListedAnsarInfoDetails']);
 //End Block and BlackList Report
 
 ////Start Disembodiment Report
         Route::get('/disembodiment_report_view', ['as' => 'disembodiment_report_view', 'uses' => 'ReportController@ansarDisembodimentReportView']);
-        Route::get('/disemboded_ansar_info', 'ReportController@disembodedAnsarInfo');
+        Route::get('/disemboded_ansar_info', ['as'=>'disemboded_ansar_info','uses'=>'ReportController@disembodedAnsarInfo']);
 //End Disembodiment Report
 
 ///Start Embodiment Report
         Route::get('/embodiment_report_view', ['as' => 'embodiment_report_view', 'uses' => 'ReportController@ansarEmbodimentReportView']);
-        Route::get('/emboded_ansar_info', 'ReportController@embodedAnsarInfo');
+        Route::get('/emboded_ansar_info', ['as'=>'emboded_ansar_info','uses'=>'ReportController@embodedAnsarInfo']);
 //End Embodiment Report
 
 ///Start Service Record Report
         Route::get('/service_record_unitwise_view', ['as' => 'service_record_unitwise_view', 'uses' => 'ReportController@serviceRecordUnitWise']);
-        Route::get('/service_record_unitwise_info', 'ReportController@ansarInfoForServiceRecordUnitWise');
+        Route::get('/service_record_unitwise_info', ['as'=>'service_record_unitwise_info','uses'=>'ReportController@ansarInfoForServiceRecordUnitWise']);
 //End Service Record Report
 
 ///Start Three Years Over Report
         Route::get('/three_year_over_report_view', ['as' => 'three_year_over_report_view', 'uses' => 'ReportController@threeYearsOverListView']);
-        Route::get('/three_years_over_ansar_info', 'ReportController@threeYearsOverAnsarInfo');
+        Route::get('/three_years_over_ansar_info', ['as'=>'three_years_over_ansar_info','uses'=>'ReportController@threeYearsOverAnsarInfo']);
         //DG ROUTE
 
         Route::get('/direct_offer', ['as' => 'direct_offer', 'uses' => 'DGController@directOfferView']);
         Route::get('/direct_transfer', ['as' => 'direct_transfer', 'uses' => 'DGController@directTransferView']);
         Route::get('/direct_embodiment', ['as' => 'direct_embodiment', 'uses' => 'DGController@directEmbodimentView']);
-        Route::get('/direct_offer_ansar_detail', 'DGController@loadAnsarDetail');
+        Route::get('/direct_offer_ansar_detail', ['as'=>'ansar_detail_info','uses'=>'DGController@loadAnsarDetail']);
         Route::post('/direct_embodiment_submit', ['as' => 'direct_embodiment_submit', 'uses' => 'DGController@directEmbodimentSubmit']);
         Route::post('/direct_disembodiment_submit', ['as' => 'direct_disembodiment_submit', 'uses' => 'DGController@directDisEmbodimentSubmit']);
         Route::post('/direct_transfer_submit', ['as' => 'direct_transfer_submit', 'uses' => 'DGController@directTransferSubmit']);
@@ -203,13 +203,36 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/cancel_panel_ansar_details', 'DGController@loadAnsarDetailforCancelPanel');
         Route::post('/cancel_panel_entry_for_dg', 'DGController@cancelPanelEntry');
         Route::get('/dg_blocklist_entry_view', ['as' => 'dg_blocklist_entry_view', 'uses' => 'DGController@blockListEntryView']);
+
+        //Start Block and Black list for DG
+        Route::get('/dg_blocklist_entry_view', ['as' => 'dg_blocklist_entry_view', 'uses' => 'DGController@blockListEntryView']);
+        Route::get('/dg_blocklist_ansar_details', ['as'=>'dg_blocklist_ansar_details','uses'=>'DGController@loadAnsarDetailforBlock']);
+        Route::post('/dg_blocklist_entry', ['as'=>'dg_blocklist_entry','uses'=>'DGController@blockListEntry']);
+
+        Route::get('/dg_unblocklist_entry_view', ['as' => 'dg_unblocklist_entry_view', 'uses' => 'DGController@unblockListEntryView']);
+        Route::get('/dg_unblocklist_ansar_details', ['as'=>'dg_unblocklist_ansar_details','uses'=>'DGController@loadAnsarDetailforUnblock']);
+        Route::post('/dg_unblocklist_entry', ['as'=>'dg_unblocklist_entry','uses'=>'DGController@unblockListEntry']);
+
+        Route::get('/dg_blacklist_entry_view', ['as' => 'dg_blacklist_entry_view', 'uses' => 'DGController@blackListEntryView']);
+        Route::get('/dg_blacklist_ansar_details', ['as'=>'dg_blacklist_ansar_details','uses'=>'DGController@loadAnsarDetailforBlack']);
+        Route::post('/dg_blacklist_entry', ['as'=>'dg_blacklist_entry','uses'=>'DGController@blackListEntry']);
+
+        Route::get('/dg_unblacklist_entry_view', ['as' => 'dg_unblacklist_entry_view', 'uses' => 'DGController@unblackListEntryView']);
+        Route::get('/dg_unblacklist_ansar_details', ['as'=>'dg_unblacklist_ansar_details','uses'=>'DGController@loadAnsarDetailforUnblack']);
+        Route::post('/dg_unblacklist_entry', ['as'=>'dg_unblacklist_entry','uses'=>'DGController@unblackListEntry']);
+//End Block and Black list for DG
+
 //Letter route by Arafat
         Route::get('/transfer_letter_view', ['as' => 'transfer_letter_view', 'uses' => 'LetterController@transferLetterView']);
         Route::get('/embodiment_letter_view', ['as' => 'embodiment_letter_view', 'uses' => 'LetterController@embodimentLetterView']);
         Route::get('/disembodiment_letter_view', ['as' => 'disembodiment_letter_view', 'uses' => 'LetterController@disembodimentLetterView']);
-        Route::get('/print_letter', 'LetterController@printLetter');
+        Route::get('/print_letter', ['as'=>'print_letter','uses'=>'LetterController@printLetter']);
         Route::get('KPIName', ['as' => 'kpi_name', 'uses' => 'EmbodimentController@kpiName']);
-
+    //REPORT ROUTE
+        Route::get('/guard_report', ['as' => 'guard_report', 'uses' => 'ReportController@reportGuardSearchView']);
+        Route::get('offer_report',['as'=>'offer_report','uses'=>'ReportController@offerReportView']);
+        Route::get('get_offered_ansar',['as'=>'get_offered_ansar','uses'=>'ReportController@getOfferedAnsar']);
+        //END REPORT ROUTE
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
 });

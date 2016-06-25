@@ -283,88 +283,89 @@
                 <a href="#">
                     <i class="fa fa-bar-chart"></i>
                     <span>Report</span>
+                    <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
                     <li ng-if="checkMenu('guard_report')">
-                        <a href="#">
+                        <a href="{{URL::route('guard_report')}}">
                             <i class="fa fa-users"></i>
                             <span>View Ansar in Guard</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('transfer_ansar_history')">
-                        <a href="#">
+                        <a href="{{URL::route('transfer_ansar_history')}}">
                             <i class="fa fa-users"></i>
                             <span>Ansar Transfer History</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('view_ansar_service_record')">
-                        <a href="#">
+                        <a href="{{URL::route('view_ansar_service_record')}}">
                             <i class="fa fa-users"></i>
                             <span>Ansar Service Record</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('ansar_service_report_view')">
-                        <a href="#">
+                        <a href="{{URL::route('ansar_service_report_view')}}">
                             <i class="fa fa-users"></i>
                             <span>View Ansar Service Report</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('embodiment_report_view')">
-                        <a href="#">
+                        <a href="{{URL::route('embodiment_report_view')}}">
                             <i class="fa fa-users"></i>
                             <span>View Embodied Ansar Report</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('disembodiment_report_view')">
-                        <a href="#">
+                        <a href="{{URL::route('disembodiment_report_view')}}">
                             <i class="fa fa-users"></i>
                             <span>View Disembodied Ansar Report</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('blocklist_view')">
-                        <a href="#">
+                        <a href="{{URL::route('blocklist_view')}}">
                             <i class="fa fa-users"></i>
                             <span>Blocklist Information</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('blacklist_view')">
-                        <a href="#">
+                        <a href="{{URL::route('blacklist_view')}}">
                             <i class="fa fa-users"></i>
                             <span>Blacklist Information</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('three_year_over_report_view')">
-                        <a href="#">
+                        <a href="{{URL::route('three_year_over_report_view')}}">
                             <i class="fa fa-users"></i>
                             <span>Three Years Over List</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('service_record_unitwise_view')">
-                        <a href="#">
+                        <a href="{{URL::route('service_record_unitwise_view')}}">
                             <i class="fa fa-users"></i>
                             <span>Ansar Service Record Unit Wise</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('transfer_letter_view')">
-                        <a href="#">
+                        <a href="{{URL::route('transfer_letter_view')}}">
                             <i class="fa fa-envelope"></i>
                             <span>Print Transfer Letter</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('transfer_letter_view')">
-                        <a href="#">
+                        <a href="{{URL::route('offer_report')}}">
                             <i class="fa fa-envelope"></i>
                             <span>Offer Report</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('embodiment_letter_view')">
-                        <a href="#">
+                        <a href="{{URL::route('embodiment_letter_view')}}">
                             <i class="fa fa-envelope"></i>
                             <span>Print Embodiment Letter</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('disembodiment_letter_view')">
-                        <a href="#">
+                        <a href="{{URL::route('disembodiment_letter_view')}}">
                             <i class="fa fa-envelope"></i>
                             <span>Print Dis-Embodiment Letter</span>
                         </a>
@@ -422,13 +423,13 @@
                         </a>
                         <ul class="treeview-menu">
                             <li>
-                                <a href="#">
+                                <a href="{{URL::route('dg_blocklist_entry_view')}}">
                                     <i class="fa fa-users"></i>
                                     <span>Add Ansar in Blocklist</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="{{URL::route('dg_unblocklist_entry_view')}}">
                                     <i class="fa fa-users"></i>
                                     <span>Remove Ansar from Blocklist</span>
                                 </a>
@@ -439,16 +440,17 @@
                         <a href="#">
                             <i class="fa fa-users"></i>
                             <span>Direct BlackList</span>
+                            <i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
                             <li>
-                                <a href="#">
+                                <a href="{{URL::route('dg_blacklist_entry_view')}}">
                                     <i class="fa fa-users"></i>
                                     <span>Add Ansar in Blacklist</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="{{URL::route('dg_unblacklist_entry_view')}}">
                                     <i class="fa fa-users"></i>
                                     <span>Remove Ansar from Blacklist</span>
                                 </a>

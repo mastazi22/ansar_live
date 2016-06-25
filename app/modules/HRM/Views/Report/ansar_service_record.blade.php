@@ -9,7 +9,7 @@
                 $scope.isLoading = true;
                 $http({
                     method: 'get',
-                    url: '{{action('DGController@loadAnsarDetail')}}',
+                    url: '{{URL::route('ansar_detail_info')}}',
                     params: {ansar_id: id}
                 }).then(function (response) {
                     $scope.ansarDetail = response.data
@@ -23,7 +23,7 @@
                     $scope.isLoading = true;
                     $http({
                         method: 'get',
-                        url: '{{action('DGController@loadAnsarDetail')}}',
+                        url: '{{URL::route('ansar_detail_info')}}',
                         params: {ansar_id: ansar_id}
                     }).then(function (response) {
                         $scope.ansarDetail = response.data
@@ -82,7 +82,7 @@
             window.onafterprint = afterPrint;
         })
     </script>
-    <div class="content-wrapper" ng-controller="TransferController">
+    <div ng-controller="TransferController">
         <div class="loading-report animated" ng-class="{fadeInDown:isLoading,fadeOutUp:!isLoading}">
             <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
             <h4>Loading...</h4>
