@@ -26,7 +26,12 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/get_recent_ansar_list', 'HrmController@getRecentAnsarList');
 
         //END DASHBOARD
-
+//Start Panel
+        Route::get('/panel_view', ['as' => 'view_panel_list', 'uses' => 'PanelController@panelView']);
+        Route::post('/save-panel-entry', ['as'=>'save-panel-entry','uses'=>'PanelController@savePanelEntry']);
+        Route::get('/search_panel_by_id', ['as' => 'search_panel', 'uses' => 'PanelController@searchPanelByID']);
+        Route::get('/select_status', ['as'=>'select_status','uses'=>'PanelController@statusSelection']);
+        //end Panel
         //ANSAR ENTRY
 
         Route::get('entrylist', ['as' => 'anser_list', 'uses' => 'EntryFormController@entrylist']);
@@ -95,9 +100,9 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('/send_offer', 'OfferController@sendOfferSMS');
         Route::get('/get_offer_count', 'OfferController@getQuotaCount');
         Route::get('/offer_quota', ['as' => 'offer_quota', 'uses' => 'OfferController@offerQuota']);
-        Route::get('/get_offer_quota', 'OfferController@getOfferQuota');
+        Route::get('/get_offer_quota', ['as'=>'get_offer_quota','uses'=>'OfferController@getOfferQuota']);
         Route::get('/cancel_offer', ['as' => 'cancel_offer', 'uses' => 'OfferController@cancelOfferView']);
-        Route::post('/update_offer_quota', 'OfferController@updateOfferQuota');
+        Route::any('/update_offer_quota', ['as'=>'update_offer_quota','uses'=>'OfferController@updateOfferQuota']);
         Route::get('rejected_offer_list',['as'=>'rejected_offer_list','uses'=>'ReportController@rejectedOfferListView']);
         Route::get('get_rejected_ansar_list','ReportController@getRejectedAnsarList');
         //END OFFER ROUTE
@@ -238,7 +243,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/kpi', ['as' => 'go_to_kpi_page', 'uses' => 'KpiController@kpiIndex']);
         Route::get('/kpi_view', ['as' => 'kpi_view', 'uses' => 'KpiController@kpiView']);
         Route::get('/kpi_view_details', ['as'=>'kpi_view_details','uses'=>'KpiController@kpiViewDetails']);
-        Route::post('/save-kpi', 'KpiController@saveKpiInfo');
+        Route::post('/save-kpi', ['as'=>'save-kpi','uses'=>'KpiController@saveKpiInfo']);
         Route::get('/kpi-delete/{id}', ['as' => 'kpi_delete', 'uses' => 'KpiController@delete']);
         Route::get('/kpi-edit/{id}', ['as' => 'Kpi_edit', 'uses' => 'KpiController@edit']);
         Route::get('/kpi_verify/{id}', ['as' => 'kpi_verify', 'uses' => 'KpiController@kpiVerify']);
@@ -256,7 +261,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/load_ansar_before_reduce', ['as' => 'load_ansar_before_reduce', 'uses' => 'KpiController@loadAnsarsForBeforeReduce']);
 
         Route::post('/ansar-withdraw-update', ['as'=>'ansar-withdraw-update','uses'=>'KpiController@ansarWithdrawUpdate']);
-        Route::post('/kpi-update', 'KpiController@updateKpi');
+        Route::post('/kpi-update', ['as'=>'kpi-update','uses'=>'KpiController@updateKpi']);
         Route::get('/ansar-reduce-update', ['as'=>'ansar-reduce-update','uses'=>'KpiController@ansarReduceUpdate']);
 
         Route::get('/kpi-withdraw-view', ['as' => 'kpi-withdraw-view', 'uses' => 'KpiController@kpiWithdrawView']);

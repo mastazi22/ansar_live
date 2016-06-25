@@ -239,7 +239,7 @@
 
 
     </script>
-    <div class="content-wrapper" ng-controller="OfferController" close-modal style="min-height: 590px">
+    <div ng-controller="OfferController" close-modal style="min-height: 590px">
         {{--<div class="breadcrumbplace">--}}
             {{--{!! Breadcrumbs::render('offer_information') !!}--}}
         {{--</div>--}}

@@ -142,6 +142,7 @@
                 <a href="#">
                     <i class="fa fa-users"></i>
                     <span>Service</span>
+                    <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
                     {{--<li>--}}
@@ -151,19 +152,19 @@
                     {{--</a>--}}
                     {{--</li>--}}
                     <li ng-if="checkMenu('view_panel_list')">
-                        <a href="#">
+                        <a href="{{URL::route('view_panel_list')}}">
                             <i class="fa fa-users"></i>
                             <span>Panel</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('make_offer')">
-                        <a href="#">
+                        <a href="{{URL::route('make_offer')}}">
                             <i class="fa fa-users"></i>
                             <span>Offer</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('offer_quota')">
-                        <a href="#">
+                        <a href="{{URL::route('offer_quota')}}">
                             <i class="fa fa-users"></i>
                             <span>Offer Quota</span>
                         </a>
@@ -172,6 +173,7 @@
                         <a href="#">
                             <i class="fa fa-users"></i>
                             <span>Embodiment</span>
+                            <i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
                             <li ng-if="checkMenu('go_to_new_embodiment_page')">

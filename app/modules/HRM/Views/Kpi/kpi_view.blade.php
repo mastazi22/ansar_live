@@ -282,7 +282,7 @@
                                         </td>
                                         <td>
                                             <div class="col-xs-1">
-                                                <a href="{{URL::to('/kpi-edit/'.'[[a.id]]')}}"
+                                                <a href="{{URL::to('HRM/kpi-edit/'.'[[a.id]]')}}"
                                                    class="btn btn-primary btn-xs" title="Edit"><span
                                                             class="glyphicon glyphicon-edit"></span></a>
                                             </div>

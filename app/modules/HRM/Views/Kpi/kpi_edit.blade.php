@@ -72,26 +72,26 @@
         GlobalApp.factory('getNameService', function ($http) {
             return {
                 getDivision: function () {
-                    return $http.get("{{action('FormSubmitHandler@DivisionName')}}");
+                    return $http.get("{{URL::to('HRM/DivisionName')}}");
                 },
                 getDistric: function (data) {
 
-                    return $http.get("{{action('FormSubmitHandler@DistrictName')}}", {params: {id: data}});
+                    return $http.get("{{URL::to('HRM/DistrictName')}}", {params: {id: data}});
                 },
                 getThana: function (data) {
-                    return $http.get("{{action('FormSubmitHandler@ThanaName')}}", {params: {id: data}});
+                    return $http.get("{{URL::to('HRM/ThanaName')}}", {params: {id: data}});
                 }
             }
 
         });
 
     </script>
-    <div class="content-wrapper" style="position: relative; padding-bottom: 30px">
-        {!! Form::open(array('url' => 'kpi-update', 'class' => 'form-horizontal', 'name' => 'kpiForm', 'id'=> 'kpi-form', 'ng-controller' => 'KPIController', 'ng-app' => 'myValidateApp', 'novalidate')) !!}
+    <div>
+        {!! Form::open(array('route' => 'kpi-update', 'class' => 'form-horizontal', 'name' => 'kpiForm', 'id'=> 'kpi-form', 'ng-controller' => 'KPIController', 'ng-app' => 'myValidateApp', 'novalidate')) !!}
 
-        <div class="breadcrumbplace">
-            {!! Breadcrumbs::render('kpi_edit') !!}
-        </div>
+        {{--<div class="breadcrumbplace">--}}
+            {{--{!! Breadcrumbs::render('kpi_edit') !!}--}}
+        {{--</div>--}}
         <section class="content">
 
             <div class="col-lg-8 col-centered">

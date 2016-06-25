@@ -28,13 +28,13 @@
                     $scope.thanaLoad = false;
                 })
             }
-            @if(!is_null(Input::old('division_name_eng')))
-            $scope.SelectedDivision = parseInt('{{Input::old('division_name_eng')}}');
+            @if(!is_null(Request::old('division_name_eng')))
+            $scope.SelectedDivision = parseInt('{{Request::old('division_name_eng')}}');
             $scope.SelectedItemChanged();
             @endif
 
-                @if(!is_null(Input::old('unit_name_eng')))
-                $scope.SelectedDistrict = parseInt('{{Input::old('unit_name_eng')}}');
+                @if(!is_null(Request::old('unit_name_eng')))
+                $scope.SelectedDistrict = parseInt('{{Request::old('unit_name_eng')}}');
             $scope.SelectedDistrictChanged();
             @endif
             $scope.submit = function ($event) {
@@ -45,14 +45,14 @@
         GlobalApp.factory('getNameService', function ($http) {
             return {
                 getDivision: function () {
-                    return $http.get("{{action('FormSubmitHandler@DivisionName')}}");
+                    return $http.get("{{URL::to('HRM/DivisionName')}}");
                 },
                 getDistric: function (data) {
 
-                    return $http.get("{{action('FormSubmitHandler@DistrictName')}}", {params: {id: data}});
+                    return $http.get("{{URL::to('HRM/DistrictName')}}", {params: {id: data}});
                 },
                 getThana: function (data) {
-                    return $http.get("{{action('FormSubmitHandler@ThanaName')}}", {params: {id: data}});
+                    return $http.get("{{URL::to('HRM/ThanaName')}}", {params: {id: data}});
                 }
             }
 
@@ -64,12 +64,12 @@
         /*background:url('http://www.hsi.com.hk/HSI-Net/pages/images/en/share/ajax-loader.gif') no-repeat;*/
         /*}*/
     </style>
-    <div class="content-wrapper" style="position: relative; padding-bottom: 30px">
-        {!! Form::open(array('url' => 'save-kpi', 'class' => 'form-horizontal', 'name' => 'kpiForm', 'id'=> 'kpi-form', 'ng-controller' => 'DivisionController', 'ng-app' => 'myValidateApp', 'novalidate')) !!}
+    <div style="position: relative; padding-bottom: 30px">
+        {!! Form::open(array('route' => 'save-kpi', 'class' => 'form-horizontal', 'name' => 'kpiForm', 'id'=> 'kpi-form', 'ng-controller' => 'DivisionController', 'ng-app' => 'myValidateApp', 'novalidate')) !!}
 
-        <div class="breadcrumbplace">
-            {!! Breadcrumbs::render('kpi') !!}
-        </div>
+        {{--<div class="breadcrumbplace">--}}
+            {{--{!! Breadcrumbs::render('kpi') !!}--}}
+        {{--</div>--}}
         <section class="content">
 
             <div class="col-lg-8 col-centered">

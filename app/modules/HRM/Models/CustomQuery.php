@@ -275,8 +275,8 @@ class CustomQuery
     public static function offerQuota()
     {
         $offer_quota = DB::table('tbl_offer_quota')
-            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_offer_quota.unit_id')
-            ->select('tbl_units.unit_name_eng', 'tbl_offer_quota.quota', 'tbl_offer_quota.id')->get();
+            ->rightJoin('tbl_units', 'tbl_units.id', '=', 'tbl_offer_quota.unit_id')
+            ->select('tbl_units.unit_name_eng','tbl_units.id as unit', 'tbl_offer_quota.quota', 'tbl_offer_quota.id')->get();
         return $offer_quota;
     }
 

@@ -9,5 +9,5 @@ class OfferQuota extends Model
     //
     protected $connection = 'hrm';
     protected $table = 'tbl_offer_quota';
-    protected $fillable = ['quota'];
+    protected $fillable = ['unit_id','quota'];
 }

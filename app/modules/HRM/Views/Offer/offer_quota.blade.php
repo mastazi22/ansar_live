@@ -4,7 +4,7 @@
         GlobalApp.controller('QuotaController', function ($scope, $http) {
             $scope.saveOrUpdating = [];
             $http({
-                url: '{{action('OfferController@getOfferQuota')}}',
+                url: '{{URL::route('get_offer_quota')}}',
                 method: 'get'
             }).then(function (response) {
                 $scope.districts = response.data;
@@ -28,20 +28,20 @@
                     error: function (response,status,xhr) {
                         console.log(response)
                         $('#update-quota').children('i').addClass('fa-save').removeClass('fa-spinner fa-pulse');
-                        $('body').notifyDialog({type: 'error', message: "An server error occur.Please contact with your server Administration.Error Code:"+response.statusCode}).showDialog()
+                        $('body').notifyDialog({type: 'error', message: "An server error occur.Please contact with your server Administration.Error Code:"+response.status}).showDialog()
                     }
                 })
             })
         })
     </script>
-    <div class="content-wrapper" style="min-height: 490px" ng-controller="QuotaController">
-        <div class="breadcrumbplace">
-            {!! Breadcrumbs::render('offer_quota') !!}
-        </div>
+    <div ng-controller="QuotaController">
+        {{--<div class="breadcrumbplace">--}}
+            {{--{!! Breadcrumbs::render('offer_quota') !!}--}}
+        {{--</div>--}}
         <section class="content">
             <div class="box box-solid">
                 <div class="box-body" style="width: 70%;margin: 0 auto">
-                    <form id="offer-quota-form" action="{{action('OfferController@updateOfferQuota')}}" method="post">
+                    <form id="offer-quota-form" action="{{URL::route('update_offer_quota')}}" method="post">
                         {{csrf_field()}}
                         <div class="row margin-bottom-input form-group" ng-repeat="district in districts">
                             <div class="col-sm-4">
@@ -49,7 +49,7 @@
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group">
-                                    <input type="hidden" name="quota_id[]" value="[[district.id]]">
+                                    <input type="hidden" name="quota_id[]" value="[[district.unit]]">
                                     <input type="text"  class="form-control" name="quota_value[]"
                                            placeholder="Enter quota" ng-model="district.quota">
                                 </div>
