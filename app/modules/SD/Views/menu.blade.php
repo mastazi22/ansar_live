@@ -2,13 +2,12 @@
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
         <!-- Sidebar user panel -->
-        <div class="user-panel">
-            <div class="pull-left image">
-                <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image"/>
-            </div>
-            <div class="pull-left info">
-                <p>Md. Nazim Uddin</p>
-                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+        <div class="user-panel" style="margin-top: 10px;margin-bottom: 0;">
+
+            <div style="color: #FFFFFF;font-size: 16px;text-align: center">
+                <p class="full-header" style="padding: 0 !important;margin: 0;line-height: 1">Salary Disbursement</p>
+
+                <p style="padding: 0 !important;margin: 0;">(SD)</p>
             </div>
         </div>
         <!-- search form -->
