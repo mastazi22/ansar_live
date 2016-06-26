@@ -165,6 +165,7 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         \Milon\Barcode\BarcodeServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
+        DaveJamesMiller\Breadcrumbs\ServiceProvider::class,
     ],
 
     /*
@@ -220,6 +221,7 @@ return [
         'DNS2D' => \Milon\Barcode\Facades\DNS2DFacade::class,
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
+        'Breadcrumbs' => DaveJamesMiller\Breadcrumbs\Facade::class,
     ],
 
 ];

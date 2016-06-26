@@ -372,6 +372,13 @@
     @endif
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                @yield('title')
+                <small>@yield('small_title')</small>
+            </h1>
+            @yield('breadcrumb')
+        </section>
         @yield('content')
     </div>
 

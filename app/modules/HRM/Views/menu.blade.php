@@ -380,7 +380,7 @@
             </li>
             <li style="@if(!(Auth::user()->type==11||Auth::user()->type==33)) display:none @endif">
                 <a href="#">
-                    <i class="fa fa-users"></i>
+                    <i class="fa fa-user"></i>
                     <span>DG Forms</span>
                     <i class="fa fa-angle-left pull-right"></i>
                 </a>
@@ -467,7 +467,7 @@
             </li>
             <li style="@if(Auth::user()->type!=11) display:none @endif">
                 <a href="#">
-                    <i class="fa fa-users"></i>
+                    <i class="fa fa-user"></i>
                     <span>Admin</span>
                     <i class="fa fa-angle-left pull-right"></i>
                 </a>
@@ -500,7 +500,7 @@
             </li>
             <li>
                 <a href="#">
-                    <i class="fa fa-users"></i>
+                    <i class="fa fa-cog"></i>
                     <span>General Setiings</span>
                     <i class="fa fa-angle-left pull-right"></i>
                 </a>

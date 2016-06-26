@@ -14,6 +14,6 @@
     @endforeach
 @else
     <tr>
-        <td class="warning" colspan="7">No Ansar Found</td>
+        <td class="warning" colspan="8">No Ansar Found</td>
     </tr>
 @endif

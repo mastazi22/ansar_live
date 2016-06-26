@@ -1,4 +1,9 @@
 @extends('template.master')
+        @section('title','Dashboard')
+        @section('small_title','Human Resource Management')
+        @section('breadcrumb')
+        {!! Breadcrumbs::render('hrm') !!}
+        @endsection
 @section('content')
         <!-- Content Wrapper. Contains page content -->
 <script>

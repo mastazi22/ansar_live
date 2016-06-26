@@ -200,7 +200,7 @@ class HrmController extends Controller
 
     public function showRecentAnsarList($type)
     {
-        return View::make('template.view_recent_ansar_list')->with(['type' => $type]);
+        return View::make('HRM::Dashboard.view_recent_ansar_list')->with(['type' => $type]);
     }
 
     public function getAnsarList()
