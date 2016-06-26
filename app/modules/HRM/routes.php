@@ -208,7 +208,18 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/cancel_panel_ansar_details', 'DGController@loadAnsarDetailforCancelPanel');
         Route::post('/cancel_panel_entry_for_dg', 'DGController@cancelPanelEntry');
         Route::get('/dg_blocklist_entry_view', ['as' => 'dg_blocklist_entry_view', 'uses' => 'DGController@blockListEntryView']);
+        Route::get('/blocklist_entry_view', ['as' => 'blocklist_entry_view', 'uses' => 'BlockBlackController@blockListEntryView']);
+        Route::get('/blocklist_ansar_details', ['as'=>'blocklist_ansar_details','uses'=>'BlockBlackController@loadAnsarDetailforBlock']);
+        Route::post('/blocklist_entry', ['as'=>'blocklist_entry','uses'=>'BlockBlackController@blockListEntry']);
 
+
+        Route::get('/unblocklist_entry_view', ['as' => 'unblocklist_entry_view', 'uses' => 'BlockBlackController@unblockListEntryView']);
+        Route::get('/unblocklist_ansar_details', ['as'=>'unblocklist_ansar_details','uses'=>'BlockBlackController@loadAnsarDetailforUnblock']);
+        Route::post('/unblocklist_entry', ['as'=>'unblocklist_entry','uses'=>'BlockBlackController@unblockListEntry']);
+        //TRANSFER
+        Route::get('/transfer_process', ['as' => 'transfer_process', 'uses' => 'EmbodimentController@transferProcessView']);
+        Route::get('/get_embodied_ansar', ['as'=>'get_embodied_ansar','uses'=>'EmbodimentController@getEmbodiedAnsarOfKpi']);
+        Route::post('/complete_transfer_process', ['as'=>'complete_transfer_process','uses'=>'EmbodimentController@completeTransferProcess']);
         //Start Block and Black list for DG
         Route::get('/dg_blocklist_entry_view', ['as' => 'dg_blocklist_entry_view', 'uses' => 'DGController@blockListEntryView']);
         Route::get('/dg_blocklist_ansar_details', ['as'=>'dg_blocklist_ansar_details','uses'=>'DGController@loadAnsarDetailforBlock']);
@@ -238,8 +249,57 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('offer_report',['as'=>'offer_report','uses'=>'ReportController@offerReportView']);
         Route::get('get_offered_ansar',['as'=>'get_offered_ansar','uses'=>'ReportController@getOfferedAnsar']);
         //END REPORT ROUTE
+//Start Embodiment
+        Route::get('/new_embodiment', ['as' => 'go_to_new_embodiment_page', 'uses' => 'EmbodimentController@newEmbodimentView']);
+        Route::get('KPIName', ['as' => 'kpi_name', 'uses' => 'EmbodimentController@kpiName']);
+        Route::get('/embodiment_view', ['as' => 'go_to_embodiment_view_page', 'uses' => 'EmbodimentController@embodimentListView']);
+        Route::get('/disembodiment_view', ['as' => 'go_to_disembodiment_view_page', 'uses' => 'EmbodimentController@disembodimentListView']);
+        Route::get('/check-ansar', ['as'=>'check-ansar','uses'=>'EmbodimentController@loadAnsarForEmbodiment']);
+        Route::post('/new-embodiment-entry', ['as'=>'new-embodiment-entry','uses'=>'EmbodimentController@newEmbodimentEntry']);
+        Route::get('/new_disembodiment', ['as' => 'go_to_new_disembodiment_page', 'uses' => 'EmbodimentController@newDisembodimentView']);
+        Route::get('/load_ansar', ['as'=>'load_ansar','uses'=>'EmbodimentController@loadAnsarForDisembodiment']);
+        Route::get('/confirm_disembodiment', 'EmbodimentController@confirmDisembodiment');
+        Route::post('/disembodiment-entry', ['as'=>'disembodiment-entry','uses'=>'EmbodimentController@disembodimentEntry']);
+        Route::get('/service_extension_view', ['as' => 'service_extension_view', 'uses' => 'EmbodimentController@serviceExtensionView']);
+        Route::get('/load_ansar_for_service_extension',['as'=>'load_ansar_for_service_extension','uses'=>'EmbodimentController@loadAnsarDetail']);
+        Route::post('/service_extension_entry', ['as'=>'service_extension_entry','uses'=>'EmbodimentController@serviceExtensionEntry']);
+        Route::get('/get_ansar', 'EmbodimentController@getEmbodiedAnsarOfKpiV');
+        Route::get('/download_bank_form/{id}', 'EmbodimentController@downloadBankForm');
+        Route::get('/generate_bank_form', 'EmbodimentController@generateBankForm');
+        Route::get('/make_zip_all_bank_form', 'EmbodimentController@makingZipAllBankForm');
+        Route::get('/download_all_bank_form', 'EmbodimentController@downloadAllBankForm');
+        Route::get('/bank_recipt', ['as' => 'bank_recipt', 'uses' => 'EmbodimentController@bankRecipt']);
 
+        Route::get('/disembodiment_date_correction_view', ['as' => 'disembodiment_date_correction_view', 'uses' => 'EmbodimentController@disembodimentDateCorrectionView']);
+        Route::get('/load_ansar_for_disembodiment_date_correction', ['as'=>'load_ansar_for_disembodiment_date_correction','uses'=>'EmbodimentController@loadAnsarForDisembodimentDateCorrection']);
+        Route::post('/new-disembodiment-date-entry', ['as'=>'new-disembodiment-date-entry','uses'=>'EmbodimentController@newDisembodimentDateEntry']);
+        Route::get('/kpi_detail',['as'=>'kpi_detail','uses'=>'EmbodimentController@getKpiDetail']);
+        Route::get('/embodiment_memorandum_id_correction_view', ['as' => 'embodiment_memorandum_id_correction_view', 'uses' => 'EmbodimentController@embodimentMemorandumIdCorrectionView']);
+        Route::get('/load_ansar_for_embodiment_memorandum_id_correction', ['as'=>'load_ansar_for_embodiment_memorandum_id_correction','uses'=>'EmbodimentController@loadAnsarForEmbodimentMemorandumIdCorrection']);
+        Route::post('/new_embodiment_memorandum_id_update', ['as'=>'new_embodiment_memorandum_id_update','uses'=>'EmbodimentController@newMemorandumIdCorrectionEntry']);
+//End Embodiment
+        Route::get('freeze_view', ['as' => 'freeze_view', 'uses' => 'FreezeController@freezeView']);
+        Route::get('load_ansar_for_freeze', ['as'=>'load_ansar_for_freeze','uses'=>'FreezeController@loadAnsarDetailforFreeze']);
+        Route::post('freeze_entry', ['as'=>'freeze_entry','uses'=>'FreezeController@freezeEntry']);
+        //freeze list
+        Route::get('freezelist', ['as' => 'freeze_list', 'uses' => 'FreezeController@freezeList']);
+        Route::get('getfreezelist', ['as'=>'getfreezelist','uses'=>'FreezeController@getfreezelist']);
+        Route::post('transfer_freezed_ansar',['as'=>'transfer_freezed_ansar','uses'=>'FreezeController@transferFreezedAnsar']);
+        //  reembodied
+        Route::get('freezeRembodied/{ansarid}', ['as'=>'freezeRembodied','uses'=>'FreezeController@freezeRembodied']);
+        //  disembodied
+        Route::post('freezeDisEmbodied/{ansarid}', ['as'=>'freezeDisEmbodied','uses'=>'FreezeController@freezeDisEmbodied']);
+        //  Black from freeze
+        Route::post('freezeblack/{ansarid}', ['as'=>'freezeblack','uses'=>'FreezeController@freezeBlack']);
         //Start KPI
+        Route::get('/blacklist_entry_view', ['as' => 'blacklist_entry_view', 'uses' => 'BlockBlackController@blackListEntryView']);
+        Route::get('/blacklist_ansar_details', ['as'=>'blacklist_ansar_details','uses'=>'BlockBlackController@loadAnsarDetailforBlack']);
+        Route::post('/blacklist_entry', ['as'=>'blacklist_entry','uses'=>'BlockBlackController@blackListEntry']);
+
+        Route::get('/unblacklist_entry_view', ['as' => 'unblacklist_entry_view', 'uses' => 'BlockBlackController@unblackListEntryView']);
+        Route::get('/unblacklist_ansar_details', ['as'=>'unblacklist_ansar_details','uses'=>'BlockBlackController@loadAnsarDetailforUnblack']);
+        Route::post('/unblacklist_entry', ['as'=>'unblacklist_entry','uses'=>'BlockBlackController@unblackListEntry']);
+
         Route::get('/kpi', ['as' => 'go_to_kpi_page', 'uses' => 'KpiController@kpiIndex']);
         Route::get('/kpi_view', ['as' => 'kpi_view', 'uses' => 'KpiController@kpiView']);
         Route::get('/kpi_view_details', ['as'=>'kpi_view_details','uses'=>'KpiController@kpiViewDetails']);

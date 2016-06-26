@@ -32,7 +32,7 @@ class BlockBlackController extends Controller
 {
     public function blockListEntryView()
     {
-        return view('blackblock_view.blocklist_entry');
+        return view('HRM::Blackblock_view.blocklist_entry');
     }
 
     public function loadAnsarDetailforBlock()
@@ -232,7 +232,7 @@ class BlockBlackController extends Controller
 
     public function unblockListEntryView()
     {
-        return view('blackblock_view.unblocklist_entry');
+        return view('HRM::Blackblock_view.unblocklist_entry');
     }
 
     public function loadAnsarDetailforUnblock()
@@ -299,7 +299,7 @@ class BlockBlackController extends Controller
 
     public function blackListEntryView()
     {
-        return view('blackblock_view.blacklist_entry');
+        return view('HRM::Blackblock_view.blacklist_entry');
     }
 
     public function loadAnsarDetailforBlack()
@@ -873,7 +873,7 @@ class BlockBlackController extends Controller
 
     public function unblackListEntryView()
     {
-        return view('blackblock_view.unblacklist_entry');
+        return view('HRM::Blackblock_view.unblacklist_entry');
     }
 
     public function loadAnsarDetailforUnblack()

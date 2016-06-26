@@ -177,13 +177,13 @@
                         </a>
                         <ul class="treeview-menu">
                             <li ng-if="checkMenu('go_to_new_embodiment_page')">
-                                <a href="#">
+                                <a href="{{URL::route('go_to_new_embodiment_page')}}">
                                     <i class="fa fa-users"></i>
                                     <span>Embodiment Entry</span>
                                 </a>
                             </li>
                             <li ng-if="checkMenu('go_to_new_disembodiment_page')">
-                                <a href="#">
+                                <a href="{{URL::route('go_to_new_disembodiment_page')}}">
                                     <i class="fa fa-users"></i>
                                     <span>Dis-Embodiment</span>
                                 </a>
@@ -192,7 +192,7 @@
                             if($user_type == 11 || $user_type == 33){
                             ?>
                             <li ng-if="checkMenu('service_extension_view')">
-                                <a href="#">
+                                <a href="{{URL::route('service_extension_view')}}">
                                     <i class="fa fa-users"></i>
                                     <span>Service Extension</span>
                                 </a>
@@ -201,13 +201,13 @@
                             }
                             ?>
                             <li ng-if="checkMenu('disembodiment_date_correction_view')">
-                                <a href="#">
+                                <a href="{{URL::route('disembodiment_date_correction_view')}}">
                                     <i class="fa fa-users"></i>
                                     <span>Disembodiment Date Correction</span>
                                 </a>
                             </li>
                             <li ng-if="checkMenu('embodiment_memorandum_id_correction_view')">
-                                <a href="#">
+                                <a href="{{URL::route('embodiment_memorandum_id_correction_view')}}">
                                     <i class="fa fa-users"></i>
                                     <span>Embodiment Mem. ID Correction</span>
                                 </a>
@@ -216,16 +216,17 @@
                                 <a href="#">
                                     <i class="fa fa-users"></i>
                                     <span>Freeze</span>
+                                    <i class="fa fa-angle-left pull-right"></i>
                                 </a>
                                 <ul class="treeview-menu">
                                     <li ng-if="checkMenu('freeze_view')">
-                                        <a href="#">
+                                        <a href="{{URL::route('freeze_view')}}">
                                             <i class="fa fa-users"></i>
                                             <span>Freeze for Disciplinary Action</span>
                                         </a>
                                     </li>
                                     <li ng-if="checkMenu('freeze_list')">
-                                        <a href="#">
+                                        <a href="{{URL::route('freeze_list')}}">
                                             <i class="fa fa-users"></i>
                                             <span>After Result of Freeze</span>
                                         </a>
@@ -238,16 +239,17 @@
                         <a href="#">
                             <i class="fa fa-users"></i>
                             <span>BlackList</span>
+                            <i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
                             <li ng-if="checkMenu('blacklist_entry_view')">
-                                <a href="#">
+                                <a href="{{URL::route('blacklist_entry_view')}}">
                                     <i class="fa fa-users"></i>
                                     <span>Add Ansar in Blacklist</span>
                                 </a>
                             </li>
                             <li ng-if="checkMenu('unblacklist_entry_view')">
-                                <a href="#">
+                                <a href="{{URL::route('unblacklist_entry_view')}}">
                                     <i class="fa fa-users"></i>
                                     <span>Remove Ansar from Blacklist</span>
                                 </a>
@@ -258,16 +260,17 @@
                         <a href="#">
                             <i class="fa fa-users"></i>
                             <span>BlockList</span>
+                            <i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
                             <li ng-if="checkMenu('blocklist_entry_view')">
-                                <a href="#">
+                                <a href="{{URL::route('blocklist_entry_view')}}">
                                     <i class="fa fa-users"></i>
                                     <span>Add Ansar in Blocklist</span>
                                 </a>
                             </li>
                             <li ng-if="checkMenu('unblocklist_entry_view')">
-                                <a href="#">
+                                <a href="{{URL::route('unblocklist_entry_view')}}">
                                     <i class="fa fa-users"></i>
                                     <span>Remove Ansar from Blocklist</span>
                                 </a>
@@ -275,7 +278,7 @@
                         </ul>
                     </li>
                     <li ng-if="checkMenu('transfer_process')">
-                        <a href="#">
+                        <a href="{{URL::route('transfer_process')}}">
                             <i class="fa fa-users"></i>
                             <span>Ansar Transfer</span>
                         </a>
