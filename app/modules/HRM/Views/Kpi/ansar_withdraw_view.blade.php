@@ -3,6 +3,10 @@
 {{--Time: 10:49 AM--}}
 
 @extends('template.master')
+@section('title','Ansar Withdraw')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('ansar_withdraw_view') !!}
+    @endsection
 @section('content')
     <script>
         $(document).ready(function () {
@@ -147,87 +151,78 @@
         @endif
         <section class="content">
             <div class="box box-solid">
-                <div class="nav-tabs-custom" style="background-color: transparent">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a href="#">Ansar Withdraw</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active">
-                            <div class="row">
-                                <div class="col-sm-4" ng-show="isAdmin==11">
-                                    <div class="form-group">
-                                        <label class="control-label">
-                                            Select a District&nbsp;&nbsp;
-                                            <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                                 ng-show="loadingUnit">
-                                        </label>
-                                        <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                                ng-model="selectedDistrict"
-                                                ng-change="loadThana(selectedDistrict)">
-                                            <option value="">--Select a District--</option>
-                                            <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label class="control-label">
-                                            Select a Thana&nbsp;&nbsp;
-                                            <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                                 ng-show="loadingThana">
-                                        </label>
-                                        <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                                ng-model="selectedThana"
-                                                ng-change="loadGuard(selectedThana)">
-                                            <option value="">--Select a Thana--</option>
-                                            <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label class="control-label">
-                                            Select a Guard&nbsp;&nbsp;
-                                            <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                                 ng-show="loadingKpi">
-                                        </label>
-                                        <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                                ng-model="selectedKPI"
-                                                id="kpi_name_list" name="kpi_name_list">
-                                            <option value="">--Select a Guard--</option>
-                                            <option ng-repeat="d in guards" value="[[d.id]]">[[d.kpi_name]]
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered" id="pc-table">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-sm-4" ng-show="isAdmin==11">
+                            <div class="form-group">
+                                <label class="control-label">
+                                    Select a District&nbsp;&nbsp;
+                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
+                                         ng-show="loadingUnit">
+                                </label>
+                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
+                                        ng-model="selectedDistrict"
+                                        ng-change="loadThana(selectedDistrict)">
+                                    <option value="">--Select a District--</option>
+                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">
+                                    Select a Thana&nbsp;&nbsp;
+                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
+                                         ng-show="loadingThana">
+                                </label>
+                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
+                                        ng-model="selectedThana"
+                                        ng-change="loadGuard(selectedThana)">
+                                    <option value="">--Select a Thana--</option>
+                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">
+                                    Select a Guard&nbsp;&nbsp;
+                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
+                                         ng-show="loadingKpi">
+                                </label>
+                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
+                                        ng-model="selectedKPI"
+                                        id="kpi_name_list" name="kpi_name_list">
+                                    <option value="">--Select a Guard--</option>
+                                    <option ng-repeat="d in guards" value="[[d.id]]">[[d.kpi_name]]
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="pc-table">
 
-                                            <tr class="info">
-                                                <th>Sl No.</th>
-                                                <th>Ansar ID</th>
-                                                <th>Ansar Name</th>
-                                                <th>Ansar Designation</th>
-                                                <th>Ansar Sex</th>
-                                                <th>KPI Name</th>
-                                                <th>KPI District</th>
-                                                <th>KPI Unit</th>
-                                                <th>Reporting Date</th>
-                                                <th>Embodiment Date</th>
-                                            </tr>
-                                            <tbody id="ansar-all" class="status">
-                                            <tr colspan="10" class="warning" id="not-find-info">
-                                                <td colspan="10">No Ansar Found to Withdraw</td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                                    <tr class="info">
+                                        <th>Sl No.</th>
+                                        <th>Ansar ID</th>
+                                        <th>Ansar Name</th>
+                                        <th>Ansar Designation</th>
+                                        <th>Ansar Sex</th>
+                                        <th>KPI Name</th>
+                                        <th>KPI District</th>
+                                        <th>KPI Unit</th>
+                                        <th>Reporting Date</th>
+                                        <th>Embodiment Date</th>
+                                    </tr>
+                                    <tbody id="ansar-all" class="status">
+                                    <tr colspan="10" class="warning" id="not-find-info">
+                                        <td colspan="10">No Ansar Found to Withdraw</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

@@ -30,55 +30,55 @@ Breadcrumbs::register('dashboard_menu_not_interested', function($breadcrumbs,$to
 });
 
 //KPI Branch
-//Breadcrumbs::register('kpi_list', function($breadcrumbs) {
-//    $breadcrumbs->parent('home');
-//    $breadcrumbs->push('KPI Information', URL::route('kpi_view'));
-//});
-//Breadcrumbs::register('kpi', function($breadcrumbs) {
-//    $breadcrumbs->parent('kpi_list');
-//    $breadcrumbs->push('Add New KPI', URL::to('kpi'));
-//});
-//Breadcrumbs::register('kpi_edit', function($breadcrumbs) {
-//    $breadcrumbs->parent('kpi_list');
-//    $breadcrumbs->push('KPI Update', URL::to('kpi_edit'));
-//});
-//Breadcrumbs::register('ansar_withdraw_view', function($breadcrumbs) {
-//    $breadcrumbs->parent('home');
-//    $breadcrumbs->push('Ansar Withdraw', URL::to('ansar-withdraw-view'));
-//});
-//Breadcrumbs::register('ansar_before_withdraw_list', function($breadcrumbs) {
-//    $breadcrumbs->parent('home');
-//    $breadcrumbs->push('Ansar Before Withdraw List', URL::to('ansar_before_withdraw_view'));
-//});
-//Breadcrumbs::register('reduce_guard_strength', function($breadcrumbs) {
-//    $breadcrumbs->parent('home');
-//    $breadcrumbs->push('Reduce Guard Strength', URL::to('reduce_guard_strength'));
-//});
-//Breadcrumbs::register('ansar_before_reduce_list', function($breadcrumbs) {
-//    $breadcrumbs->parent('home');
-//    $breadcrumbs->push('Ansar Before Reduce List', URL::to('ansar_before_reduce_view'));
-//});
-//Breadcrumbs::register('withdraw_kpi', function($breadcrumbs) {
-//    $breadcrumbs->parent('home');
-//    $breadcrumbs->push('KPI Withdraw', URL::to('kpi-withdraw-view'));
-//});
-//Breadcrumbs::register('withdrawn_kpi_list', function($breadcrumbs) {
-//    $breadcrumbs->parent('home');
-//    $breadcrumbs->push('KPI Withdraw Date Update', URL::to('withdrawn_kpi_view'));
-//});
-//Breadcrumbs::register('withdraw_date_update', function($breadcrumbs) {
-//    $breadcrumbs->parent('withdrawn_kpi_list');
-//    $breadcrumbs->push('Update Withdraw Date', URL::to('withdraw-date-edit'));
-//});
-//Breadcrumbs::register('inactive_kpi_list', function($breadcrumbs) {
-//    $breadcrumbs->parent('home');
-//    $breadcrumbs->push('Inactive KPI List', URL::to('inactive_kpi_view'));
-//});
-////Personal Info
-//Breadcrumbs::register('entry_list', function($breadcrumbs) {
-//    $breadcrumbs->parent('home');
-//    $breadcrumbs->push('Entry List', URL::to('entrylist'));
-//});
+Breadcrumbs::register('kpi_view', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('KPI Information', URL::route('kpi_view'));
+});
+Breadcrumbs::register('new_kpi', function($breadcrumbs) {
+    $breadcrumbs->parent('kpi_view');
+    $breadcrumbs->push('Add New KPI', URL::route('go_to_kpi_page'));
+});
+Breadcrumbs::register('kpi_edit', function($breadcrumbs,$id) {
+    $breadcrumbs->parent('kpi_view');
+    $breadcrumbs->push('KPI Update', URL::route('Kpi_edit',['id'=>$id]));
+});
+Breadcrumbs::register('ansar_withdraw_view', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Ansar Withdraw', URL::route('ansar-withdraw-view'));
+});
+Breadcrumbs::register('ansar_before_withdraw_list', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Ansar Before Withdraw List', URL::route('ansar_before_withdraw_view'));
+});
+Breadcrumbs::register('reduce_guard_strength', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Reduce Guard Strength', URL::route('reduce_guard_strength'));
+});
+Breadcrumbs::register('ansar_before_reduce_list', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Ansar Before Reduce List', URL::route('ansar_before_reduce_view'));
+});
+Breadcrumbs::register('withdraw_kpi', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('KPI Withdraw', URL::route('kpi-withdraw-view'));
+});
+Breadcrumbs::register('withdrawn_kpi_list', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('KPI Withdraw Date Update', URL::route('withdrawn_kpi_view'));
+});
+Breadcrumbs::register('kpi_withdraw_cancel', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Kpi Withdraw Cancel', URL::to('kpi_withdraw_cancel_view'));
+});
+Breadcrumbs::register('inactive_kpi_list', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Inactive KPI List', URL::route('inactive_kpi_view'));
+});
+//Personal Info
+Breadcrumbs::register('entry_list', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Entry List', URL::route('anser_list'));
+});
 //Breadcrumbs::register('entryform', function($breadcrumbs) {
 //    $breadcrumbs->parent('entry_list');
 //    $breadcrumbs->push('Add new entry', URL::to('entryform'));

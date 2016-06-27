@@ -4,6 +4,10 @@
 
 
 @extends('template.master')
+@section('title','Kpi Withdraw Cancel')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('kpi_withdraw_cancel') !!}
+@endsection
 @section('content')
     <script>
         GlobalApp.controller('KpiWithdrawCancelController', function ($scope, $http) {
@@ -79,108 +83,99 @@
         <section class="content">
             <notify></notify>
             <div class="box box-solid">
-                <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a>KPI Withdraw Cancel</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label for="e_unit" class="control-label">Select a unit&nbsp;
-                                            <img ng-show="loadingUnit" src="{{asset('dist/img/facebook.gif')}}"
-                                                 width="16"></label>
-                                        <select ng-disabled="loadingUnit" id="e_unit" class="form-control"
-                                                ng-model="selectedUnit" ng-change="loadThana(selectedUnit)">
-                                            <option value="">--Select a unit--</option>
-                                            <option ng-repeat="u in units" value="[[u.id]]">[[u.unit_name_eng]]</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="e_thana" class="control-label">Select a thana&nbsp;
-                                            <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
-                                                 width="16"></label>
-                                        <select ng-disabled="loadingThana" id="e_thana" class="form-control"
-                                                ng-model="selectedThana" ng-change="loadKpi(selectedThana)">
-                                            <option value="">--Select a thana--</option>
-                                            <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_eng]]
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="e_kpi" class="control-label">Select a KPI&nbsp;
-                                            <img ng-show="loadingKpi" src="{{asset('dist/img/facebook.gif')}}"
-                                                 width="16"></label>
-                                        <select ng-disabled="loadingKpi" id="e_kpi" class="form-control"
-                                                ng-model="selectedKpi" ng-change="loadKpiDetail(selectedKpi)" name="kpi_id">
-                                            <option value="">--Select a KPI--</option>
-                                            <option ng-repeat="k in kpis" value="[[k.id]]">[[k.kpi_name]]</option>
-                                        </select>
-                                    </div>
-                                    <button id="cancel-withdraw-kpi" class="btn btn-primary"
-                                            ng-disabled="!selectedUnit||!selectedThana||!selectedKpi">
-                                        Cancel Withdraw
-                                    </button>
-                                </div>
-                                <div class="col-sm-8"
-                                     style="min-height: 400px;border-left: 1px solid #CCCCCC">
-                                    <div id="loading-box" ng-if="loadingAnsar">
-                                    </div>
-                                    <div ng-if="!kpiDetail">
-                                        <h3 style="text-align: center">No KPI Information Found</h3>
-                                    </div>
-                                    <div ng-if="kpiDetail">
-                                        <div class="form-group">
-                                            <div class="col-sm-8 col-sm-offset-2">
-                                                <h3 style="text-align: center">KPI Information</h3>
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered">
-                                                        <tr>
-                                                            <th>KPI Name</th>
-                                                            <td>[[kpiDetail.kpi]]</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Division</th>
-                                                            <td>[[kpiDetail.division]]</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Unit</th>
-                                                            <td>[[kpiDetail.unit]]</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Thana</th>
-                                                            <td>[[kpiDetail.thana]]</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Total Ansar Request</th>
-                                                            <td>[[kpiDetail.tar]]</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Total Ansar Given</th>
-                                                            <td>[[kpiDetail.tag]]</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Weapon Number</th>
-                                                            <td>[[kpiDetail.weapon]]</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Number of Bullets</th>
-                                                            <td>[[kpiDetail.bullet]]</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Activation Date</th>
-                                                            <td>[[kpiDetail.a_date]]</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>KPI Withdraw Date</th>
-                                                            <td>[[kpiDetail.w_date]]</td>
-                                                        </tr>
-                                                    </table>
-                                                </div>
-                                            </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="e_unit" class="control-label">Select a unit&nbsp;
+                                    <img ng-show="loadingUnit" src="{{asset('dist/img/facebook.gif')}}"
+                                         width="16"></label>
+                                <select ng-disabled="loadingUnit" id="e_unit" class="form-control"
+                                        ng-model="selectedUnit" ng-change="loadThana(selectedUnit)">
+                                    <option value="">--Select a unit--</option>
+                                    <option ng-repeat="u in units" value="[[u.id]]">[[u.unit_name_eng]]</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="e_thana" class="control-label">Select a thana&nbsp;
+                                    <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
+                                         width="16"></label>
+                                <select ng-disabled="loadingThana" id="e_thana" class="form-control"
+                                        ng-model="selectedThana" ng-change="loadKpi(selectedThana)">
+                                    <option value="">--Select a thana--</option>
+                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_eng]]
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="e_kpi" class="control-label">Select a KPI&nbsp;
+                                    <img ng-show="loadingKpi" src="{{asset('dist/img/facebook.gif')}}"
+                                         width="16"></label>
+                                <select ng-disabled="loadingKpi" id="e_kpi" class="form-control"
+                                        ng-model="selectedKpi" ng-change="loadKpiDetail(selectedKpi)" name="kpi_id">
+                                    <option value="">--Select a KPI--</option>
+                                    <option ng-repeat="k in kpis" value="[[k.id]]">[[k.kpi_name]]</option>
+                                </select>
+                            </div>
+                            <button id="cancel-withdraw-kpi" class="btn btn-primary"
+                                    ng-disabled="!selectedUnit||!selectedThana||!selectedKpi">
+                                Cancel Withdraw
+                            </button>
+                        </div>
+                        <div class="col-sm-8"
+                             style="min-height: 400px;border-left: 1px solid #CCCCCC">
+                            <div id="loading-box" ng-if="loadingAnsar">
+                            </div>
+                            <div ng-if="!kpiDetail">
+                                <h3 style="text-align: center">No KPI Information Found</h3>
+                            </div>
+                            <div ng-if="kpiDetail">
+                                <div class="form-group">
+                                    <div class="col-sm-8 col-sm-offset-2">
+                                        <h3 style="text-align: center">KPI Information</h3>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <tr>
+                                                    <th>KPI Name</th>
+                                                    <td>[[kpiDetail.kpi]]</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Division</th>
+                                                    <td>[[kpiDetail.division]]</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Unit</th>
+                                                    <td>[[kpiDetail.unit]]</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Thana</th>
+                                                    <td>[[kpiDetail.thana]]</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Total Ansar Request</th>
+                                                    <td>[[kpiDetail.tar]]</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Total Ansar Given</th>
+                                                    <td>[[kpiDetail.tag]]</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Weapon Number</th>
+                                                    <td>[[kpiDetail.weapon]]</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Number of Bullets</th>
+                                                    <td>[[kpiDetail.bullet]]</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Activation Date</th>
+                                                    <td>[[kpiDetail.a_date]]</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>KPI Withdraw Date</th>
+                                                    <td>[[kpiDetail.w_date]]</td>
+                                                </tr>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>

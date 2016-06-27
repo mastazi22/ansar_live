@@ -92,7 +92,7 @@ class KpiController extends Controller
             DB::rollback();
             return $e->getMessage();
         }
-        return Redirect::action('KpiController@kpiView')->with('success_message', 'New KPI is Entered successfully');
+        return Redirect::route('kpi_view')->with('success_message', 'New KPI is Entered successfully');
     }
 
     public function edit($id)
@@ -151,7 +151,7 @@ class KpiController extends Controller
             DB::rollback();
             return $e->getMessage();
         }
-        return Redirect::action('KpiController@kpiView')->with('success_message', 'New KPI is Updated successfully');
+        return Redirect::route('kpi_view')->with('success_message', 'New KPI is Updated successfully');
     }
 
     public function delete($id)
@@ -254,7 +254,7 @@ class KpiController extends Controller
             DB::rollback();
             return $e->getMessage();
         }
-        return Redirect::action('KpiController@ansarWithdrawView')->with('success_message', 'Ansar/s Withdrawn successfully');
+        return Redirect::route('ansar-withdraw-view')->with('success_message', 'Ansar/s Withdrawn successfully');
     }
 
     public function reduceGuardStrength()
@@ -439,7 +439,7 @@ class KpiController extends Controller
             DB::rollback();
             return $e->getMessage();
         }
-        return Redirect::action('KpiController@kpiWithdrawView')->with('success_message', 'KPI withdraw date is saved successfully');
+        return Redirect::route('kpi-withdraw-view')->with('success_message', 'KPI withdraw date is saved successfully');
     }
     public function withdrawnKpiView()
     {
@@ -463,7 +463,7 @@ class KpiController extends Controller
     {
         $kpi_details = KpiDetailsModel::where('kpi_id', $id)->first();
         $kpi_info=KpiGeneralModel::find($id);
-        return view('kpi/kpi_withdraw_date_edit', ['id' => $id])->with(['kpi_info'=> $kpi_info, 'kpi_details'=> $kpi_details]);
+        return view('HRM::Kpi.kpi_withdraw_date_edit', ['id' => $id])->with(['kpi_info'=> $kpi_info, 'kpi_details'=> $kpi_details]);
     }
 
     public function kpiWithdrawDateUpdate(Request $request)
@@ -484,7 +484,7 @@ class KpiController extends Controller
             DB::rollback();
 //            return Response::json(['status' => false, 'message' => "Date not Updated"]);
         }
-        return Redirect::action('KpiController@withdrawnKpiView')->with('success_message', 'KPI withdraw date is updated successfully');
+        return Redirect::route('withdrawn_kpi_view')->with('success_message', 'KPI withdraw date is updated successfully');
     }
     public function inactiveKpiView()
     {
@@ -513,7 +513,7 @@ class KpiController extends Controller
             DB::rollback();
             return $e->getMessage();
         }
-        return Redirect::action('KpiController@inactiveKpiView')->with('success_message', 'KPI is Active Successfully!');
+        return Redirect::route('kpi_view')->with('success_message', 'KPI is Active Successfully!');
     }
 
     public function withdrawnKpiName(Request $request)
@@ -567,7 +567,7 @@ class KpiController extends Controller
             DB::rollback();
             return $e->getMessage();
         }
-        return Redirect::action('KpiController@kpiWithdrawCancelView')->with('success_message', 'KPI withdrawal cancelled successfully');
+        return Redirect::route('kpi_withdraw_cancel_view')->with('success_message', 'KPI withdrawal cancelled successfully');
     }
 }
 

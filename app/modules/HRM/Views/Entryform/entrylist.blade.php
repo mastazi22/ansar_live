@@ -1,4 +1,12 @@
 @extends('template/master')
+@section('title','Entry List')
+@section('small_title')
+    <a href="{{URL::to('HRM/entryform')}}" class="btn btn-info btn-sm"><span
+                class="glyphicon glyphicon-user"></span> Add New</a>
+    @endsection
+@section('breadcrumb')
+    {!! Breadcrumbs::render('entry_list') !!}
+    @endsection
 @section('content')
     <script>
         GlobalApp.controller('AnsarController', function ($scope, $http) {
@@ -219,29 +227,17 @@
                     <button ng-click="searchId(null,Id)" class="btn btn-primary btn-sm"><i class="fa fa-search"></i></button>
                 </div>
             </div>
-            <div class="box table-list">
-
-                <div class="table-list-title">Entry List
-                    <div class="table-list-add-button">
-                        <a href="{{URL::to('HRM/entryform')}}" class="btn btn-primary btn-sm"><span
-                                    class="glyphicon glyphicon-user"></span> Add New</a>
-
-                    </div>
-                    <div class="table-not-submitted">
-                        <label for="not_submitted" class="not_submitted">
-                            <input type="radio" ng-model="loadType" class="radio-inline" checked="checked"
+            <div class="box box-solid">
+                    <div>
+                        <label for="not_submitted">
+                            <input type="radio" id="not_submitted" ng-model="loadType" class="radio-inline" checked="checked"
                                    ng-value=0 style="margin: 0px 4px;"/>Not Verified
                         </label>
-                    </div>
-                    <div class="table-submitted">
-                        <label for="submitted" class="submitted">
-                            <input type="radio" ng-model="loadType" class="radio-inline"
+                        <label for="submitted">
+                            <input type="radio" id="submitted" ng-model="loadType" class="radio-inline"
                                    ng-value=1 style="margin: 0px 4px;"/>Verified
                         </label>
                     </div>
-
-                </div>
-
                 <div class="box-body" id="change-body">
                     <div class="loading-data"><i class="fa fa-4x fa-refresh fa-spin loading-icon"></i>
                     </div>

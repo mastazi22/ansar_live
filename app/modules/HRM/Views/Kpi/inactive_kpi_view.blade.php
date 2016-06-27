@@ -3,6 +3,10 @@
 {{--Time: 01:58 PM--}}
 
 @extends('template.master')
+@section('title','Inactive Kpi List')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('inactive_kpi_list') !!}
+@endsection
 @section('content')
     <script>
         GlobalApp.controller('KpiViewController', function ($scope, $http, $sce, $compile) {
@@ -131,121 +135,111 @@
         </div>
         <section class="content">
             <div class="box box-solid">
-                <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a>Inactive KPI List</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label class="control-label">Select a unit&nbsp;
-                                            <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
-                                                 width="16"></label>
-                                        <select class="form-control" ng-model="selectedDistrict"
-                                                ng-disabled="loadingDistrict||loadingThana"
-                                                ng-change="loadThana(selectedDistrict)">
-                                            <option value="all">All</option>
-                                            <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label class="control-label">Select a Thana&nbsp;
-                                            <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
-                                                 width="16">
-                                        </label>
-                                        <select class="form-control" ng-model="selectedThana"
-                                                ng-change="loadTotal()" ng-disabled="loadingDistrict||loadingThana">
-                                            <option value="all">All</option>
-                                            <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">Select a unit&nbsp;
+                                    <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
+                                         width="16"></label>
+                                <select class="form-control" ng-model="selectedDistrict"
+                                        ng-disabled="loadingDistrict||loadingThana"
+                                        ng-change="loadThana(selectedDistrict)">
+                                    <option value="all">All</option>
+                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
+                                    </option>
+                                </select>
                             </div>
-                            <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <tr>
-                                        <th>SL. No</th>
-                                        <th>KPI Name</th>
-                                        <th>Division</th>
-                                        <th>Unit</th>
-                                        <th>Thana</th>
-                                        <th>Withdrawn Date</th>
-                                        <th>Action</th>
-                                    </tr>
-                                    <tbody>
-                                    <tr ng-if="kpis.length==0">
-                                        <td colspan="8" class="warning no-ansar">
-                                            No kpi available to see
-                                        </td>
-                                    </tr>
-                                    <tr ng-if="kpis.length>0" ng-repeat="a in kpis">
-                                        <td>
-                                            [[((currentPage)*itemPerPage)+$index+1]]
-                                        </td>
-                                        {{--<td>--}}
-                                        {{--<a href="{{URL::to('/entryreport')}}/[[a.ansar_id]]">[[a.ansar_id]]</a>--}}
-                                        {{--</td>--}}
-                                        <td>
-                                            [[a.kpi]]
-                                        </td>
-                                        <td>
-                                            [[a.division]]
-                                        </td>
-                                        <td>
-                                            [[a.unit]]
-                                        </td>
-                                        <td>
-                                            [[a.thana]]
-                                        </td>
-                                        <td>
-                                            [[dateConvert(a.date)]]
-                                        </td>
-                                        <td>
-                                            <div class="col-xs-1">
-                                                <a href="{{URL::to('HRM/active_kpi/'.'[[a.id]]')}}" class="btn btn-success btn-xs verification" title="Active KPI"><span
-                                                            class="fa fa-check"></span>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                                <div class="table_pagination" ng-if="pages.length>1">
-                                    <ul class="pagination">
-                                        <li ng-class="{disabled:currentPage == 0}">
-                                            <a href="#" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>
-                                        </li>
-                                        <li ng-class="{disabled:currentPage == 0}">
-                                            <a href="#" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
-                                        </li>
-                                        <li ng-repeat="page in pages|filter:filterMiddlePage"
-                                            ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
-                                            <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
-                                            <a href="#" ng-click="loadPage(page,$event)"
-                                               ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">Select a Thana&nbsp;
+                                    <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
+                                         width="16">
+                                </label>
+                                <select class="form-control" ng-model="selectedThana"
+                                        ng-change="loadTotal()" ng-disabled="loadingDistrict||loadingThana">
+                                    <option value="all">All</option>
+                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>SL. No</th>
+                                <th>KPI Name</th>
+                                <th>Division</th>
+                                <th>Unit</th>
+                                <th>Thana</th>
+                                <th>Withdrawn Date</th>
+                                <th>Action</th>
+                            </tr>
+                            <tbody>
+                            <tr ng-if="kpis.length==0">
+                                <td colspan="8" class="warning no-ansar">
+                                    No kpi available to see
+                                </td>
+                            </tr>
+                            <tr ng-if="kpis.length>0" ng-repeat="a in kpis">
+                                <td>
+                                    [[((currentPage)*itemPerPage)+$index+1]]
+                                </td>
+                                {{--<td>--}}
+                                {{--<a href="{{URL::to('/entryreport')}}/[[a.ansar_id]]">[[a.ansar_id]]</a>--}}
+                                {{--</td>--}}
+                                <td>
+                                    [[a.kpi]]
+                                </td>
+                                <td>
+                                    [[a.division]]
+                                </td>
+                                <td>
+                                    [[a.unit]]
+                                </td>
+                                <td>
+                                    [[a.thana]]
+                                </td>
+                                <td>
+                                    [[dateConvert(a.date)]]
+                                </td>
+                                <td>
+                                    <div class="col-xs-1">
+                                        <a href="{{URL::to('HRM/active_kpi/'.'[[a.id]]')}}" class="btn btn-success btn-xs verification" title="Active KPI"><span
+                                                    class="fa fa-check"></span>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="table_pagination" ng-if="pages.length>1">
+                            <ul class="pagination">
+                                <li ng-class="{disabled:currentPage == 0}">
+                                    <a href="#" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>
+                                </li>
+                                <li ng-class="{disabled:currentPage == 0}">
+                                    <a href="#" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
+                                </li>
+                                <li ng-repeat="page in pages|filter:filterMiddlePage"
+                                    ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
+                                    <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
+                                    <a href="#" ng-click="loadPage(page,$event)"
+                                       ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
                                             <span ng-show="loadingPage[page.pageNum]" style="position: relative"><i
                                                         class="fa fa-spinner fa-pulse"
                                                         style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
-                                        </li>
-                                        <li ng-class="{disabled:currentPage==pages.length-1}">
-                                            <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
-                                        </li>
-                                        <li ng-class="{disabled:currentPage==pages.length-1}">
-                                            <a href="#"
-                                               ng-click="loadPage(pages[pages.length-1],$event)">&raquo;&raquo;</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
+                                </li>
+                                <li ng-class="{disabled:currentPage==pages.length-1}">
+                                    <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
+                                </li>
+                                <li ng-class="{disabled:currentPage==pages.length-1}">
+                                    <a href="#"
+                                       ng-click="loadPage(pages[pages.length-1],$event)">&raquo;&raquo;</a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
