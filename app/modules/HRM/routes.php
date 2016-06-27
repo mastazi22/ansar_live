@@ -43,24 +43,23 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('editEntry/{ansarid}', ['as' => 'editentry', 'uses' => 'FormSubmitHandler@editEntry']);
         Route::post('entrysearch', 'FormSubmitHandler@EntrySearch');
         Route::get('chunkverify', ['as' => 'chunk_verify', 'uses' => 'FormSubmitHandler@chunkVerify']);
-        Route::post('reject', 'EntryFormController@Reject');
+        Route::post('reject', ['as'=>'reject','uses'=>'EntryFormController@Reject']);
         route::get('getBloodName', ['as' => 'blood_name', 'uses' => 'FormSubmitHandler@getBloodName']);
         Route::post('entryVerify', ['as' => 'entryverify', 'uses' => 'EntryFormController@entryVerify']);
-        Route::get('getnotverifiedansar', 'FormSubmitHandler@getNotVerifiedAnsar');
-        route::post('entryVerify', ['as' => 'entryverify', 'uses' => 'EntryFormController@entryVerify']);
+        Route::get('getnotverifiedansar', ['as'=>'getnotverifiedansar','uses'=>'FormSubmitHandler@getNotVerifiedAnsar']);
         Route::get('getverifiedansar', 'FormSubmitHandler@getVerifiedAnsar');
         Route::get('getDiseaseName', ['as' => 'get_disease_list', 'uses' => 'EntryFormController@getAllDisease']);
         Route::get('getallskill', ['as' => 'get_skill_list', 'uses' => 'EntryFormController@getAllSkill']);
-        Route::get('/getalleducation', 'EntryFormController@getAllEducation');
+        Route::get('/getalleducation', ['as'=>'getalleducation','uses'=>'EntryFormController@getAllEducation']);
 
         //Draft entry
         Route::get('entrydraft', ['as' => 'entry_draft', 'uses' => 'DraftController@draftList']);
-        Route::get('entrysingledraft', 'DraftController@entrySingleDraft');
+//        Route::get('entrysingledraft', ['as'=>'entrysingledraft','uses'=>'DraftController@entrySingleDraft']);
         Route::get('draftdelete/{draftid}', ['as' => 'draftDelete', 'uses' => 'DraftController@draftDelete']);
-        Route::get('getdraftlist', 'DraftController@getDraftList');
+        Route::get('getdraftlist', ['as'=>'getdraftlist','uses'=>'DraftController@getDraftList']);
         Route::get('singledraftedit/{id}', ['as' => 'draftEdit', 'uses' => 'DraftController@singleDraftEdit']);
-        Route::get('entrysingledraft/{id}', 'DraftController@entrySingleDraft');
-        Route::post('editdraft/{id}', 'DraftController@editDraft');
+        Route::get('entrysingledraft/{id}', ['as'=>'entrysingledraft','uses'=>'DraftController@entrySingleDraft']);
+        Route::post('editdraft/{id}', ['as'=>'editdraft','uses'=>'DraftController@editDraft']);
 
         //END Draft entry
 

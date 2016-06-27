@@ -79,22 +79,37 @@ Breadcrumbs::register('entry_list', function($breadcrumbs) {
     $breadcrumbs->parent('hrm');
     $breadcrumbs->push('Entry List', URL::route('anser_list'));
 });
-//Breadcrumbs::register('entryform', function($breadcrumbs) {
-//    $breadcrumbs->parent('entry_list');
-//    $breadcrumbs->push('Add new entry', URL::to('entryform'));
-//});
-//Breadcrumbs::register('editentryform', function($breadcrumbs) {
-//    $breadcrumbs->parent('entry_list');
-//    $breadcrumbs->push('Update entry', URL::to('editEntry'));
-//});
-//Breadcrumbs::register('chunk_verification', function($breadcrumbs) {
-//    $breadcrumbs->parent('home');
-//    $breadcrumbs->push('Verify Entry(Chunk)', URL::to('chunkverify'));
-//});
-//Breadcrumbs::register('draft_entry', function($breadcrumbs) {
-//    $breadcrumbs->parent('home');
-//    $breadcrumbs->push('Draft entry', URL::to('entrydraft'));
-//});
+Breadcrumbs::register('entry_report', function($breadcrumbs,$id) {
+    $breadcrumbs->parent('entry_list');
+    $breadcrumbs->push('Entry Report', URL::route('entry_report',['id'=>$id]));
+});
+
+Breadcrumbs::register('entryform', function($breadcrumbs) {
+    $breadcrumbs->parent('entry_list');
+    $breadcrumbs->push('Add new entry', URL::route('ansar_registration'));
+});
+Breadcrumbs::register('entry_edit', function($breadcrumbs,$id) {
+    $breadcrumbs->parent('entry_list');
+    $breadcrumbs->push('Edit entry', URL::route('editentry',['ansarid'=>$id]));
+});
+Breadcrumbs::register('chunk_verification', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Verify Entry(Chunk)', URL::route('chunk_verify'));
+});
+Breadcrumbs::register('draft_list', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Entry Draft List', URL::route('entry_draft'));
+});
+
+Breadcrumbs::register('draft_edit', function($breadcrumbs,$id) {
+    $breadcrumbs->parent('draft_list');
+    $breadcrumbs->push('Edit Draft', URL::route('draftEdit',['id'=>$id]));
+});
+Breadcrumbs::register('orginal_info', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Orginal Info', URL::route('orginal_info'));
+});
+
 //Breadcrumbs::register('entryadvancedsearch', function($breadcrumbs) {
 //    $breadcrumbs->parent('home');
 //    $breadcrumbs->push('Advanced search', URL::to('entryadvancedsearch'));

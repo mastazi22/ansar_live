@@ -1,5 +1,8 @@
-@extends('template/master')
-
+@extends('template.master')
+@section('title','Edit Ansar Entry')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('entry_edit',$ansarAllDetails->ansar_id) !!}
+    @endsection
 @section('content')
 
 

@@ -56,7 +56,6 @@ class EntryFormController extends Controller
     {
 
         $usertype = Auth::user()->type;
-        $verifyid = $request->input('verified_id');
         if ($request->exists('chunk_verification')) {
             $ids = $request->input('not_verified');
             DB::beginTransaction();
@@ -75,6 +74,10 @@ class EntryFormController extends Controller
             }
             return Response::json(['status' => true, 'messege' => 'Ansar Verification Complete Successfully']);
         }
+        $verifyid = $request->input('verified_id');
+        $ansar = PersonalInfo::where('ansar_id',$verifyid)->first();
+        if(empty($ansar->mobile_no_self)||!preg_match('/^[0-9]+$/',$ansar->mobile_no_self))
+            return Response::json(['status'=>false,'message'=>'This ansar can`t be verified. Because this ansar`s mobile no is empty or invalid']);
         if ($usertype == 55) {
             $success = PersonalInfo::where('ansar_id', $verifyid)->update(['verified' => 1]);
             if ($success) {
@@ -116,7 +119,7 @@ class EntryFormController extends Controller
     public function entryReport($ansarid)
     {
         $ansardetails = PersonalInfo::where('ansar_id', $ansarid)->first();
-        return View::make('entryform/reportEntryForm')->with('ansarAllDetails', $ansardetails);
+        return View::make('HRM::Entryform/reportEntryForm')->with('ansarAllDetails', $ansardetails);
     }
 
     public function getfreezelist()

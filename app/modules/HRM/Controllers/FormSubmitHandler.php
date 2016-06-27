@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Intervention\Image\Facades\Image;
@@ -128,7 +129,7 @@ class FormSubmitHandler extends Controller
 
                 }
                 Session::flash('add_success', 'Draft Added Successfully');
-                return Response::json(['status' => true, 'url' => action('DraftController@draftList')]);
+                return Response::json(['status' => true, 'url' => URL::route('entry_draft')]);
             } else {
 
 

@@ -1,5 +1,8 @@
 @extends('template/master')
-
+@section('title','Entry Report')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('entry_report',$ansarAllDetails->ansar_id) !!}
+    @endsection
 @section('content')
 
     <script>
@@ -19,7 +22,7 @@
         })
     </script>
 
-    <div class="content-wrapper" ng-controller="EntryReportController">
+    <div ng-controller="EntryReportController">
         <section class="content">
             <div class="row " id="entry-report">
                 <div class="box box-solid" style="width:70%;margin:0 auto;">

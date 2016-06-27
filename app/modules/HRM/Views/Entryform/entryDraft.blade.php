@@ -1,5 +1,8 @@
 @extends('template/master')
-
+@section('title','Entry Draft List')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('draft_list') !!}
+    @endsection
 @section('content')
     <script>
         GlobalApp.controller('draftController', function ($scope, getDraftService) {
@@ -40,17 +43,14 @@
                 </div>
             </div>
         @endif
-        <section class="content" style="width: 90%;">
+        <section class="content">
 
-            <div class="box table-list">
-
-                <div class="table-list-title">Draft entry list</div>
-
+            <div class="box box-solid">
                 <div class="box-body" id="change-body">
                     <div class="loading-data"><i class="fa fa-4x fa-refresh fa-spin loading-icon"></i>
                     </div>
 
-                    <table class="table table-bordered table-striped" id="ansar-table">
+                    <table class="table table-bordered" id="ansar-table">
 
                         <tr>
 

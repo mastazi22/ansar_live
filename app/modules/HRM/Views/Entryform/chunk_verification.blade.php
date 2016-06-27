@@ -1,4 +1,9 @@
 @extends('template.master')
+@section('title','Ansar Verification')
+@section('small_title','Chunk verification')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('chunk_verification') !!}
+    @endsection
 @section('content')
     <script>
         GlobalApp.controller('ChunkVerificationController', function ($scope, $http, $interval) {
@@ -98,75 +103,65 @@
             <h4>Loading...</h4>
         </div>
         <section class="content" ng-init="loadAnsar()">
-            <div class="nav-tabs-custom">
-                <ul class="nav nav-tabs">
-                    <li class="active">
-                        <a>Ansar Verification</a>
-                    </li>
-                </ul>
-                <div class="tab-content">
-                    <div class="tab-pane active">
-                        <div class="box box-solid">
-                            <div id="ppp" style="margin-right: 0" class="row margin-bottom">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label">Show Ansar :</label>
+            <div class="box box-solid">
+                <div class="box-body">
+                    <div id="ppp" style="margin-right: 0" class="row margin-bottom">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Show Ansar :</label>
 
-                                        <div class="col-sm-9">
-                                            <select class="form-control" ng-model="showAnsar" ng-change="loadAnsar()">
-                                                <option value="10">10</option>
-                                                <option value="20">20</option>
-                                                <option value="30">30</option>
-                                                <option value="40">40</option>
-                                                <option value="50">50</option>
-                                                <option value="60">60</option>
-                                                <option value="70">70</option>
-                                                <option value="80">90</option>
-                                                <option value="90">90</option>
-                                                <option value="100">100</option>
-                                            </select>
-                                        </div>
-                                    </div>
+                                <div class="col-sm-9">
+                                    <select class="form-control" ng-model="showAnsar" ng-change="loadAnsar()">
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="30">30</option>
+                                        <option value="40">40</option>
+                                        <option value="50">50</option>
+                                        <option value="60">60</option>
+                                        <option value="70">70</option>
+                                        <option value="80">90</option>
+                                        <option value="90">90</option>
+                                        <option value="100">100</option>
+                                    </select>
                                 </div>
-                                <button class="btn btn-primary pull-right" id="verify-ansar" form-submit>
-                                    <i class="fa fa-check"></i>&nbsp;Verify Ansar
-                                </button>
-                            </div>
-                            <div class="table-responsive">
-                                <form id="not-verified-form" method="post" action="{{URL::to('HRM/entryVerify')}}">
-                                    <input type="hidden" name="chunk_verification" value="chunk_verification">
-                                    <table class="table table-bordered">
-                                        <tr>
-                                            <th>SL. No</th>
-                                            <th>Ansar Id</th>
-                                            <th>Ansar Name</th>
-                                            <th>Ansar District</th>
-                                            <th>Ansar Thana</th>
-                                            <th>Rank</th>
-                                            <th>Sex</th>
-                                            <th><input type="checkbox" ng-model="selectAll"
-                                                       ng-change="changeSelectedAll()" value="all" name="select_all">
-                                            </th>
-                                        </tr>
-                                        <tr ng-if="ansars.length==0">
-                                            <td class="warning" colspan="8">No Not Verified Ansar Found</td>
-                                        </tr>
-                                        <tr ng-repeat="a in ansars" ng-if="ansars.length>0">
-                                            <td>[[$index+1]]</td>
-                                            <td>[[a.ansar_id]]</td>
-                                            <td>[[a.ansar_name_bng]]</td>
-                                            <td>[[a.unit_name_bng]]</td>
-                                            <td>[[a.thana_name_bng]]</td>
-                                            <td>[[a.name_bng]]</td>
-                                            <td>[[a.sex]]</td>
-                                            <td><input type="checkbox" ng-model="selected[$index]"
-                                                       value="[[a.ansar_id]]" name="not_verified[]"></td>
-                                        </tr>
-                                    </table>
-                                </form>
                             </div>
                         </div>
-
+                        <button class="btn btn-primary pull-right" id="verify-ansar" form-submit>
+                            <i class="fa fa-check"></i>&nbsp;Verify Ansar
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <form id="not-verified-form" method="post" action="{{URL::to('HRM/entryVerify')}}">
+                            <input type="hidden" name="chunk_verification" value="chunk_verification">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>SL. No</th>
+                                    <th>Ansar Id</th>
+                                    <th>Ansar Name</th>
+                                    <th>Ansar District</th>
+                                    <th>Ansar Thana</th>
+                                    <th>Rank</th>
+                                    <th>Sex</th>
+                                    <th><input type="checkbox" ng-model="selectAll"
+                                               ng-change="changeSelectedAll()" value="all" name="select_all">
+                                    </th>
+                                </tr>
+                                <tr ng-if="ansars.length==0">
+                                    <td class="warning" colspan="8">No Not Verified Ansar Found</td>
+                                </tr>
+                                <tr ng-repeat="a in ansars" ng-if="ansars.length>0">
+                                    <td>[[$index+1]]</td>
+                                    <td>[[a.ansar_id]]</td>
+                                    <td>[[a.ansar_name_bng]]</td>
+                                    <td>[[a.unit_name_bng]]</td>
+                                    <td>[[a.thana_name_bng]]</td>
+                                    <td>[[a.name_bng]]</td>
+                                    <td>[[a.sex]]</td>
+                                    <td><input type="checkbox" ng-model="selected[$index]"
+                                               value="[[a.ansar_id]]" name="not_verified[]"></td>
+                                </tr>
+                            </table>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -10,18 +10,18 @@ class PersonalInfo extends Model
     protected $connection = 'hrm';
     protected $table = 'tbl_ansar_parsonal_info';
 
-//    public function blood(){
-//        return $this->belongsTo('App\models\Blood','blood_group_id');
-//    }
-//    public function division(){
-//        return $this->belongsTo('App\models\Division','division_id');
-//    }
-//    public function district(){
-//        return $this->belongsTo('App\models\District','unit_id');
-//    }
-//    public function thana(){
-//        return $this->belongsTo('App\models\Thana','thana_id');
-//    }
+    public function blood(){
+        return $this->belongsTo(Blood::class,'blood_group_id');
+    }
+    public function division(){
+        return $this->belongsTo(Division::class,'division_id');
+    }
+    public function district(){
+        return $this->belongsTo(District::class,'unit_id');
+    }
+    public function thana(){
+        return $this->belongsTo(Thana::class,'thana_id');
+    }
     public function education()
     {
         return $this->hasMany(Edication::class, 'ansar_id', 'ansar_id');
@@ -36,9 +36,9 @@ class PersonalInfo extends Model
     {
         return $this->hasMany(TrainingInfo::class, 'ansar_id', 'ansar_id');
     }
-//    function panel(){
-//        return $this->hasMany('App\models\PanelModel','ansar_id');
-//    }
+    function panel(){
+        return $this->hasMany(PanelModel::class,'ansar_id');
+    }
     public function user(){
         return $this->belongsTo(User::class,'user_id');
     }
@@ -46,18 +46,18 @@ class PersonalInfo extends Model
     {
         return $this->belongsTo(Designation::class, 'designation_id');
     }
-//    function embodiment(){
-//        return $this->belongsTo('App\models\EmbodimentModel','ansar_id','ansar_id');
-//    }
-//    function embodiment_log(){
-//        return $this->hasOne('App\models\EmbodimentLogModel','ansar_id', 'ansar_id');
-//    }
-//    function freezing_info(){
-//        return $this->hasOne('App\models\EmbodimentLogModel','ansar_id', 'ansar_id');
-//    }
-//    function offer_sms_info(){
-//        return $this->hasOne('App\models\OfferSMS','ansar_id', 'ansar_id');
-//    }
+    function embodiment(){
+        return $this->belongsTo(EmbodimentModel::class,'ansar_id','ansar_id');
+    }
+    function embodiment_log(){
+        return $this->hasOne(EmbodimentLogModel::class,'ansar_id', 'ansar_id');
+    }
+    function freezing_info(){
+        return $this->hasOne(EmbodimentLogModel::class,'ansar_id', 'ansar_id');
+    }
+    function offer_sms_info(){
+        return $this->hasOne(OfferSMS::class,'ansar_id', 'ansar_id');
+    }
     function alldisease(){
         return $this->hasOne(AllDisease::class,'disease_id');
     }

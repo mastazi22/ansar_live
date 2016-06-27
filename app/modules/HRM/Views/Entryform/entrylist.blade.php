@@ -88,7 +88,16 @@
                     data: {verified_id: id},
                     method: 'post'
                 }).then(function (response) {
-                    alert(JSON.stringify(response.data));
+                    console.log(JSON.stringify(response.data));
+                    if(response.data.status!=undefined&&response.data.status==false){
+//                        alert(response.data.message);
+                        $('body').notifyDialog({
+                            type:'error',
+                            message:response.data.message
+                        }).showDialog()
+                        $scope.verifying[i] = false;
+                        return;
+                    }
                     $scope.loadType =0;
                     //$scope.loadAnsar();
                     $scope.verifying[i] = false;
@@ -189,6 +198,41 @@
             })
         })
     </script>
+    <style>
+        .radio-label{
+            padding: 10px 25px;
+            position: relative;
+            cursor: pointer;
+        }
+        .radio-label::before{
+            content: '';
+            display: block;
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 10px;
+            left: 0;
+            border: 1px solid #111111;
+        }
+        .radio-inline:checked+.radio-label::before{
+            background: #028cab;
+        }
+        .search-field{
+            display: block;
+            padding: 5px 30px 5px 10px;
+            border: 1px solid #111111;
+            border-radius: 25px;
+            outline: none;
+            width: 100%;
+        }
+        .clear-search{
+            position: absolute;
+            right: 15px;
+            border-radius: 15px;
+            top: 15px;
+        }
+    </style>
+
     <?php
     $user = Auth::user();
     $userType = $user->type;
@@ -218,25 +262,33 @@
         </div>
         @endif
         <section class="content">
-            <div style="position: relative;bottom: 5px;margin-right: 10px" class="pull-right">
-                <button id="show-search-dialog" class="btn btn-primary btn-sm"><i class="fa fa-search"></i>&nbsp;Search</button>
-                <div id="search-dialog">
-                    <input  ng-keypress="searchId($event,Id)" ng-model="Id" type="text" class="form-control search-field" name="table-search" id="entry-search"
-                           placeholder="Search by id" value=""/>
-                    <button ng-click="clearSearch()" class="btn btn-danger btn-sm"><i class="fa fa-close"></i></button>
-                    <button ng-click="searchId(null,Id)" class="btn btn-primary btn-sm"><i class="fa fa-search"></i></button>
-                </div>
-            </div>
+
             <div class="box box-solid">
-                    <div>
-                        <label for="not_submitted">
-                            <input type="radio" id="not_submitted" ng-model="loadType" class="radio-inline" checked="checked"
-                                   ng-value=0 style="margin: 0px 4px;"/>Not Verified
-                        </label>
-                        <label for="submitted">
-                            <input type="radio" id="submitted" ng-model="loadType" class="radio-inline"
-                                   ng-value=1 style="margin: 0px 4px;"/>Verified
-                        </label>
+                    <div class="row" style="margin: 0">
+                       <div class="col-sm-9">
+                           <input type="radio" id="not_submitted" ng-model="loadType" class="radio-inline" checked="checked"
+                                  ng-value=0 style="display: none"/>
+                           <label class="radio-label" for="not_submitted">
+                               Not Verified
+                           </label>
+                           <input type="radio"  id="submitted" ng-model="loadType" class="radio-inline"
+                                  ng-value=1 style="display: none"/>
+                           <label class="radio-label" for="submitted">
+                               Verified
+                           </label>
+                       </div>
+                        <div class="col-sm-3">
+                            <div style="padding: 10px;position: relative">
+                                <button ng-click="clearSearch()" class="btn btn-danger btn-xs clear-search"><i class="fa fa-close"></i></button>
+                                <input class="search-field"  ng-keypress="searchId($event,Id)" ng-model="Id" type="text"  name="table-search" id="entry-search" placeholder="Search by id" value=""/>
+                            </div>
+                            <div id="search-dialog">
+
+
+                                <button ng-click="searchId(null,Id)" class="btn btn-primary btn-sm"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+
                     </div>
                 <div class="box-body" id="change-body">
                     <div class="loading-data"><i class="fa fa-4x fa-refresh fa-spin loading-icon"></i>
