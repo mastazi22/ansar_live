@@ -69,7 +69,7 @@ return [
             'driver' => 'mysql',
             'host' => '43.224.119.54',
             'port' => '3306',
-            'database' => 'test_amis',
+            'database' => 'db_amis',
             'username' => 'root',
             'password' => 'sm#123#321',
             'charset' => 'utf8',
