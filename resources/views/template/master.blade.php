@@ -351,7 +351,7 @@
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-left"><a
-                                            href="{{request()->route()->getPrefix()?URL::to(request()->route()->getPrefix()."/view_profile",['id'=>Auth::user()->id]):URL::to('view_profile',['id'=>Auth::user()->id])}}"
+                                            href="{{request()->route()?(request()->route()->getPrefix()?URL::to(request()->route()->getPrefix()."/view_profile",['id'=>Auth::user()->id]):URL::to('view_profile',['id'=>Auth::user()->id])):URL::to('view_profile',['id'=>Auth::user()->id])}}"
                                             class="btn btn-default btn-flat">Profile</a></div>
                                 <div class="pull-right"><a href="{{action('UserController@logout')}}"
                                                            class="btn btn-default btn-flat">Sign out</a></div>
@@ -363,7 +363,9 @@
         </nav>
     </header>
     <!-- Left side column. contains the logo and sidebar -->
-    @if(empty(request()->route()->getPrefix()))
+    @if(is_null(request()->route()))
+        @include('template.menu')
+    @elseif(is_null(request()->route())||empty(request()->route()->getPrefix()))
         @include('template.menu')
     @elseif(strcasecmp(request()->route()->getPrefix(),'SD')==0)
         @include('SD::menu')

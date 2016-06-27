@@ -1,6 +1,6 @@
-@extends('template/master')
+@extends('template.master')
 @section('content')
-    <div class="content-wrapper" style="min-height: 590px">
+    <div>
         <!-- Content Header (Page header) -->
 
         <!-- Main content -->

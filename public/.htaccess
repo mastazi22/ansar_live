@@ -14,7 +14,3 @@
     RewriteRule ^ index.php [L]
 </IfModule>
 Options -Indexes
-<Directory  "\.git">
-Order allow,deny
-Deny from all
-</Directory>
