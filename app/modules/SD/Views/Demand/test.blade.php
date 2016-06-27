@@ -65,6 +65,14 @@
         }
         tr>td{
             position: relative;
+            font-size: 15px;
+        }
+        .footer{
+            border-bottom: 1px dotted #000000;
+            width: 236px;
+            vertical-align: text-bottom;
+            display: inline-block;
+            text-align: center;
         }
     </style>
 </head>
@@ -311,11 +319,11 @@
             <td colspan="8" style="text-align: right;padding-top: 20px"><span class="value4">{{LanguageConverter::engToBng($st3+$st4+$st5+$st6+$st7+$st8+$st9)}}</span>সর্বমোট টাকা....................................................</td>
         </tr>
         <tr  style="">
-            <td colspan="8" style="padding: 20px 0;line-height: 35px;text-align: justify;word-wrap: break-word;word-break: break-all">
-                <span style="position: absolute;top: 12px;left: 50px;">{{LanguageConverter::engToBng($form)}}</span>
-  <span style="position: absolute;top: 12px;left: 392px;">{{LanguageConverter::engToBng($to)}}</span>
-  <span style="position: absolute;top: 81px;left: 50px;">{{LanguageConverter::engToBng($st3+$st4+$st5+$st6+$st7+$st8+$st9)}}</span>
-                <span style="position: absolute;top: 116px;left: 100px;">{{LanguageConverter::engToBng($p_date)}}</span>............................................তারিখ হইতে ............................................... তারিখ পর্যন্ত অঙ্গিভুতকালিন পিসি/এপিসি ও আনসারদের/মহিলা আনসারদের বেতন ভাতাদি ও আনুসাঙ্গিক এর টাকা সহ মোট টাকা ......................................................................................................................... ডিডি’র/পে অর্ডার এর মাধ্যমে জেলা কমান্ড্যন্ট,আনসার ও ভিডিপি ,গাজীপুর এর বরাবরে .............................তারিখের মধ্যে জমা দেওয়ার জন্য অনুরোধ করা হ’ল।
+            <td colspan="8" style="padding: 20px 0;line-height: normal;text-align: justify;word-wrap: break-word;word-break: break-all">
+
+
+
+                <span class="footer">{{LanguageConverter::engToBng($form)}}</span>তারিখ হইতে <span class="footer">{{LanguageConverter::engToBng($to)}}</span> তারিখ পর্যন্ত অঙ্গিভুতকালিন পিসি/এপিসি ও আনসারদের/মহিলা আনসারদের বেতন ভাতাদি ও আনুসাঙ্গিক এর টাকা সহ মোট টাকা <span class="footer" style="width: 400px">{{LanguageConverter::engToBng($st3+$st4+$st5+$st6+$st7+$st8+$st9)}}</span> ডিডি’র/পে অর্ডার এর মাধ্যমে জেলা কমান্ড্যন্ট,আনসার ও ভিডিপি ,গাজীপুর এর বরাবরে <span class="footer">{{LanguageConverter::engToBng($p_date)}}</span>তারিখের মধ্যে জমা দেওয়ার জন্য অনুরোধ করা হ’ল।
             </td>
         </tr>
         <tr>

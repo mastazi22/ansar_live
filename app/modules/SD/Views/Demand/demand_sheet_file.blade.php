@@ -4,6 +4,10 @@
 <head>
     <meta charset="utf-8">
     <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
         @font-face{
             font-family: syamrupali;
             src: url('{{asset('dist/fonts/Siyamrupali.ttf')}}');
@@ -49,6 +53,7 @@
         }
         tr>td{
             position: relative;
+            font-size: 14px;
         }
     </style>
 </head>

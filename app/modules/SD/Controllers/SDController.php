@@ -83,7 +83,7 @@ class SDController extends Controller
         $path = storage_path('DemandSheet/'.$request->get('kpi'));
         $file_name = bcrypt(Carbon::now()->timestamp).'.pdf';
         if(!File::exists($path)) File::makeDirectory($path,0775,true);
-        SnappyPdf::loadView('SD::Demand.test',['mem_no'=>$request->get('mem_id'),'address'=>$address,'total_pc'=>$total_pc,'total_apc'=>$total_apc,'total_ansar'=>$total_ansar,'to'=>$to,'form'=>$form,'p_date'=>$payment_date,'total_day'=>$total_days,'st1'=>$st1,'st2'=>$st2,'st3'=>$st3,'st4'=>$st4,'st5'=>$st5,'st6'=>$st6,'st7'=>$st7,'st8'=>$st8,'st9'=>$st9])->setOption('margin-left',0)->setOption('margin-right',0)->save($path.'/'.$file_name);
+        SnappyPdf::loadView('SD::Demand.test',['mem_no'=>$request->get('mem_id'),'address'=>$address,'total_pc'=>$total_pc,'total_apc'=>$total_apc,'total_ansar'=>$total_ansar,'to'=>$to,'form'=>$form,'p_date'=>$payment_date,'total_day'=>$total_days,'st1'=>$st1,'st2'=>$st2,'st3'=>$st3,'st4'=>$st4,'st5'=>$st5,'st6'=>$st6,'st7'=>$st7,'st8'=>$st8,'st9'=>$st9])->save($path.'/'.$file_name);
         $demandlog = new DemandLog();
         $mem = new MemorandumModel();
         $demandlog->kpi_id = $request->get('kpi');
