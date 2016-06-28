@@ -1,6 +1,7 @@
 <html>
 <head>
     <link rel="stylesheet" href="{{asset('dist/css/id-card.css')}}">
+    <link href="{{asset('dist/css/AdminLTE.min.css')}}" rel="stylesheet" type="text/css"/>
     <style>
         @font-face {
             font-family: banglFont;

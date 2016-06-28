@@ -114,10 +114,10 @@ Breadcrumbs::register('orginal_info', function($breadcrumbs) {
 //    $breadcrumbs->parent('home');
 //    $breadcrumbs->push('Advanced search', URL::to('entryadvancedsearch'));
 //});
-//Breadcrumbs::register('print_card_id_view', function($breadcrumbs) {
-//    $breadcrumbs->parent('home');
-//    $breadcrumbs->push('Print ID card', URL::to('print_card_id_view'));
-//});
+Breadcrumbs::register('print_card_id_view', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Print ID card', URL::route('print_card_id_view'));
+});
 ////Service
 ////Panel
 //Breadcrumbs::register('panel_information', function($breadcrumbs) {

@@ -1,4 +1,8 @@
 @extends('template.master')
+@section('title','Print Ansar Id Card')
+    @section('breadcrumb')
+        {!! Breadcrumbs::render('print_card_id_view') !!}
+        @endsection
 @section('content')
     <script>
         GlobalApp.controller('printIdController', function ($scope, $http, $sce) {
@@ -61,48 +65,39 @@
         <section class="content">
 
             <div class="box box-solid">
-                <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a>Print ID Card</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label class="control-label">Enter a ansar id</label>
-                                        <input type="text" class="form-control" ng-model="ansarId"
-                                               placeholder="Ansar id">
-                                        <p class="text text-danger" ng-if="errors.ansar_id!=undefined">[[errors.ansar_id[0] ]]</p>
-                                    </div>
-                                    <div class="form-group">
-                                        <Label class="control-label">Issue Date</Label>
-                                        <input type="text" disabled id="issue_date" class="form-control" name="issue_date" ng-model="id">
-                                        <p class="text text-danger" ng-if="errors.issue_date!=undefined">[[errors.issue_date[0] ]]</p>
-                                    </div>
-                                    <div class="form-group">
-                                        <Label class="control-label">Expire Date</Label>
-                                        <input type="text" disabled id="expire_date" class="form-control" name="expire_date" ng-model="ed">
-                                        <p class="text text-danger" ng-if="errors.expire_date!=undefined">[[errors.expire_date[0] ]]</p>
-                                    </div>
-                                    <div class="form-group">
-                                        <Label class="control-label">View ID Card in</Label>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">Enter a ansar id</label>
+                                <input type="text" class="form-control" ng-model="ansarId"
+                                       placeholder="Ansar id">
+                                <p class="text text-danger" ng-if="errors.ansar_id!=undefined">[[errors.ansar_id[0] ]]</p>
+                            </div>
+                            <div class="form-group">
+                                <Label class="control-label">Issue Date</Label>
+                                <input type="text" disabled id="issue_date" class="form-control" name="issue_date" ng-model="id">
+                                <p class="text text-danger" ng-if="errors.issue_date!=undefined">[[errors.issue_date[0] ]]</p>
+                            </div>
+                            <div class="form-group">
+                                <Label class="control-label">Expire Date</Label>
+                                <input type="text" disabled id="expire_date" class="form-control" name="expire_date" ng-model="ed">
+                                <p class="text text-danger" ng-if="errors.expire_date!=undefined">[[errors.expire_date[0] ]]</p>
+                            </div>
+                            <div class="form-group">
+                                <Label class="control-label">View ID Card in</Label>
                                         <span class="control-label" style="padding: 5px 8px">
                                             <input type="radio" class="radio-inline" style="margin: 0 !important;" value="eng" ng-model="reportType">&nbsp;<b>English</b>
                                 &nbsp;<input type="radio" class="radio-inline" style="margin: 0 !important;" value="bng"
                                              ng-model="reportType">&nbsp;<b>বাংলা</b>
                             </span>
-                                    </div>
-                                    <div class="form-group">
-                                        <button ng-click="generateIdCard()" class="btn btn-default">Generate Id Card</button>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6 col-sm-offset-1" style="overflow: auto;z-index: 5" ng-bind-html="idCard">
-
-                                </div>
                             </div>
+                            <div class="form-group">
+                                <button ng-click="generateIdCard()" class="btn btn-default">Generate Id Card</button>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-sm-offset-1" style="overflow: auto;z-index: 5" ng-bind-html="idCard">
+
                         </div>
                     </div>
                 </div>

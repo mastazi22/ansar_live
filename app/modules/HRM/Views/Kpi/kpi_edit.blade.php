@@ -21,14 +21,14 @@
             $scope.SelectedDistrict='{{$kpi_info->unit_id}}';
             $scope.ThanaModel='{{$kpi_info->thana_id}}';
             $scope.kpi_name = '{{$kpi_info->kpi_name}}';
-            $scope.kpi_address = '{{$kpi_info->kpi_address}}';
-            $scope.kpi_contact_no = '{{$kpi_info->kpi_contact_no}}';
+            $scope.kpi_address = `{{$kpi_info->kpi_address}}`;
+            $scope.kpi_contact_no = `{{$kpi_info->kpi_contact_no}}`;
             $scope.total_ansar_request = '{{$kpi_details->total_ansar_request}}';
             $scope.total_ansar_given = '{{$kpi_details->total_ansar_given}}';
             $scope.with_weapon = '{{$kpi_details->with_weapon}}';
             $scope.weapon_count = '{{$kpi_details->weapon_count}}';
             $scope.bullet_no = '{{$kpi_details->bullet_no}}';
-            $scope.weapon_description = '{{$kpi_details->weapon_description}}';
+            $scope.weapon_description = `{{$kpi_details->weapon_description}}`;
             $scope.activation_date ='{{$kpi_details->activation_date}}';
             $scope.withdraw_date = ('{{$kpi_details->withdraw_date}}');
             $scope.no_of_ansar = '{{$kpi_details->no_of_ansar}}';
