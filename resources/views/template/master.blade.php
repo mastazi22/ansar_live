@@ -84,6 +84,9 @@
                             location.assign(response.data.loc);
                             return;
                         }
+                        else if(response.data.status=='forbidden'){
+
+                        }
                         return response;
                     }
                 }

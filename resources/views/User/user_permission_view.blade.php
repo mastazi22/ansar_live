@@ -1,4 +1,8 @@
 @extends('template.master')
+@section('title','User Permission')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('user_permission',$id) !!}
+    @endsection
 @section('content')
     <script>
         $(document).ready(function (e) {
@@ -53,9 +57,9 @@
     <div  ng-controller="UserPermission">
         <form action="{{action('UserController@updatePermission',['id'=>$id])}}" method="post">
             {{csrf_field()}}
-            <section class="content-header">
-                <div class="box" style="margin-left: 40px;width: 96%;">
-                    <div class="box-body">
+            <section class="content">
+                <div class="box box-solid">
+                    <div class="box-header">
                         <p>Edit permission of : <strong>{{\App\models\User::find($id)->user_name}}</strong></p>
                         <label class="control-label">
                             Grant All Permission &nbsp;
@@ -69,77 +73,76 @@
                             <i class="fa fa-save"></i> Save Permission
                         </button>
                     </div>
-                </div>
-            </section>
-            <section class="content">
-
-                <div class="row" style="margin-left: 25px">
-                    <div class=" col-lg-4" >
-                        <div style="margin-top: 5px" ng-repeat="route in routes" ng-if="$index%3==0">
-                            <div class="legend">
-                                [[route.controller.name]]
-                                <button class="btn btn-default btn-xs pull-right toggle-view">
-                                    <img src="{{asset('dist/img/down_icon.png')}}" class="rotate-img-up" style="width: 18px;height: 20px;">
-                                </button>
+                    <div class="box-body">
+                        <div class="row" style="">
+                            <div class=" col-lg-4" >
+                                <div style="margin-top: 5px" ng-repeat="route in routes" ng-if="$index%3==0">
+                                    <div class="legend">
+                                        [[route.controller.name]]
+                                        <button class="btn btn-default btn-xs pull-right toggle-view">
+                                            <img src="{{asset('dist/img/down_icon.png')}}" class="rotate-img-up" style="width: 18px;height: 20px;">
+                                        </button>
+                                    </div>
+                                    <div class="box-body p_continer" style="background-color: #FFFFFF;">
+                                        <ul class="permission-list">
+                                            <li ng-repeat="p in route.routes">
+                                                <label class="control-label">
+                                                    <div class="styled-checkbox">
+                                                        <input permission-check type="checkbox" id="p_[[$parent.$index]]_[[$index]]" ng-model="permissionList[$parent.$index][$index]" ng-change=""  name="permission[]" value="[[p.value]]">
+                                                        <label for="p_[[$parent.$index]]_[[$index]]"></label>
+                                                    </div>
+                                                    [[p.name]]
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="box-body p_continer" style="background-color: #FFFFFF;">
-                                <ul class="permission-list">
-                                    <li ng-repeat="p in route.routes">
-                                        <label class="control-label">
-                                            <div class="styled-checkbox">
-                                                <input permission-check type="checkbox" id="p_[[$parent.$index]]_[[$index]]" ng-model="permissionList[$parent.$index][$index]" ng-change=""  name="permission[]" value="[[p.value]]">
-                                                <label for="p_[[$parent.$index]]_[[$index]]"></label>
-                                            </div>
-                                             [[p.name]]
-                                        </label>
-                                    </li>
-                                </ul>
+                            <div class=" col-lg-4" >
+                                <div style="margin-top: 5px" ng-repeat="route in routes" ng-if="$index%3==2">
+                                    <div class="legend">
+                                        [[route.controller.name]]
+                                        <button class="btn btn-default btn-xs pull-right toggle-view">
+                                            <img src="{{asset('dist/img/down_icon.png')}}" class="rotate-img-up" style="width: 18px;height: 20px;">
+                                        </button>
+                                    </div>
+                                    <div class="box-body p_continer" style="background-color: #ffffff">
+                                        <ul class="permission-list">
+                                            <li ng-repeat="p in route.routes">
+                                                <label class="control-label">
+                                                    <div class="styled-checkbox">
+                                                        <input permission-check type="checkbox" id="[[p.value]]" ng-model="permissionList[$parent.$index][$index]" name="permission[]" value="[[p.value]]">
+                                                        <label for="[[p.value]]"></label>
+                                                    </div>
+                                                    [[p.name]]
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class=" col-lg-4" >
-                        <div style="margin-top: 5px" ng-repeat="route in routes" ng-if="$index%3==2">
-                            <div class="legend">
-                                [[route.controller.name]]
-                                <button class="btn btn-default btn-xs pull-right toggle-view">
-                                    <img src="{{asset('dist/img/down_icon.png')}}" class="rotate-img-up" style="width: 18px;height: 20px;">
-                                </button>
-                            </div>
-                            <div class="box-body p_continer" style="background-color: #ffffff">
-                                <ul class="permission-list">
-                                    <li ng-repeat="p in route.routes">
-                                        <label class="control-label">
-                                            <div class="styled-checkbox">
-                                                <input permission-check type="checkbox" id="[[p.value]]" ng-model="permissionList[$parent.$index][$index]" name="permission[]" value="[[p.value]]">
-                                                <label for="[[p.value]]"></label>
-                                            </div>
-                                            [[p.name]]
-                                        </label>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class=" col-lg-4" >
-                        <div style="margin-top: 5px" ng-repeat="route in routes" ng-if="$index%3==1">
-                            <div class="legend">
-                                [[route.controller.name]]
-                                <button class="btn btn-default btn-xs pull-right toggle-view">
-                                    <img src="{{asset('dist/img/down_icon.png')}}" class="rotate-img-up" style="width: 18px;height: 20px;">
-                                </button>
-                            </div>
-                            <div class="box-body p_continer" style="background-color: #FFFFFF;">
-                                <ul class="permission-list">
-                                    <li ng-repeat="p in route.routes">
-                                        <label class="control-label">
-                                            <div class="styled-checkbox">
-                                                <input permission-check type="checkbox" id="[[p.value]]" ng-model="permissionList[$parent.$index][$index]" name="permission[]" value="[[p.value]]">
-                                                <label for="[[p.value]]"></label>
-                                            </div>
-                                            [[p.name]]
-                                        </label>
-                                    </li>
-                                </ul>
+                            <div class=" col-lg-4" >
+                                <div style="margin-top: 5px" ng-repeat="route in routes" ng-if="$index%3==1">
+                                    <div class="legend">
+                                        [[route.controller.name]]
+                                        <button class="btn btn-default btn-xs pull-right toggle-view">
+                                            <img src="{{asset('dist/img/down_icon.png')}}" class="rotate-img-up" style="width: 18px;height: 20px;">
+                                        </button>
+                                    </div>
+                                    <div class="box-body p_continer" style="background-color: #FFFFFF;">
+                                        <ul class="permission-list">
+                                            <li ng-repeat="p in route.routes">
+                                                <label class="control-label">
+                                                    <div class="styled-checkbox">
+                                                        <input permission-check type="checkbox" id="[[p.value]]" ng-model="permissionList[$parent.$index][$index]" name="permission[]" value="[[p.value]]">
+                                                        <label for="[[p.value]]"></label>
+                                                    </div>
+                                                    [[p.name]]
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

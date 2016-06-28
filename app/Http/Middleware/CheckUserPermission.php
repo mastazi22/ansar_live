@@ -19,7 +19,7 @@ class CheckUserPermission
         if($request->route()->getPrefix()=='SD'&&!($user->type==11||$user->type==22)) return response()->view('errors.401');
         if($user->userPermission->permission_type==0){
             if(is_null($user->userPermission->permission_list)){
-                if($request->ajax()) return response()->json([]);
+                if($request->ajax()) return response()->json(['status'=>'forbidden','url'=>$request->fullUrl()]);
                 return response()->view('errors.401');
             }
             else{

@@ -65,7 +65,7 @@
             <td>{{\Carbon\Carbon::createFromFormat('Y-m-d',$ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
-            <td>{{\Carbon\Carbon::parse($ansar->send_sms_datetime)->format('d-M-Y h:i:s')}}</td>
+            <td>{{\Carbon\Carbon::parse($ansar->sms_send_datetime)->format('d-M-Y h:i:s')}}</td>
         </tr>
     @empty
         <tr>

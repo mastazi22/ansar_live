@@ -118,6 +118,19 @@ Breadcrumbs::register('print_card_id_view', function($breadcrumbs) {
     $breadcrumbs->parent('hrm');
     $breadcrumbs->push('Print ID card', URL::route('print_card_id_view'));
 });
+Breadcrumbs::register('all_user', function($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('User Management', URL::route('view_user_list'));
+});
+Breadcrumbs::register('edit_user', function($breadcrumbs,$id) {
+    $breadcrumbs->parent('all_user');
+    $breadcrumbs->push('Edit User', URL::route('edit_user',['id'=>$id]));
+});
+Breadcrumbs::register('user_permission', function($breadcrumbs,$id) {
+    $breadcrumbs->parent('all_user');
+    $breadcrumbs->push('User Permission', URL::route('edit_user_permission',['id'=>$id]));
+});
+
 ////Service
 ////Panel
 //Breadcrumbs::register('panel_information', function($breadcrumbs) {

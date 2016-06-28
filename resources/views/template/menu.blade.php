@@ -38,14 +38,14 @@
                     <span>Human Resource Management</span>
                 </a>
             </li>
-            <li>
+            <li class="disable_menu">
                 <a href="{{URL::to('SD')}}">
                     <i class="fa  fa-money"></i>
                     <span>Salary Disbursement</span>
                 </a>
             </li>
-            <li>
-                <a href="pages/adaps.html">
+            <li class="disable_menu">
+                <a href="#">
                     <i class="fa fa-gears"></i>
                 <span>Ansar Deployment Application<br/>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Processing System</span>

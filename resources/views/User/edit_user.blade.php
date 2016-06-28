@@ -1,4 +1,8 @@
 @extends('template.master')
+@section('title','Edit User')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('edit_user',$id) !!}
+@endsection
 @section('content')
     <script>
         $(document).ready(function () {
@@ -69,70 +73,61 @@
         })
     </script>
     <section class="content">
-        <div class="nav-tabs-custom">
-            <ul class="nav nav-tabs">
-                <li class="active">
-                    <a>Edit User</a>
-                </li>
-            </ul>
-            <div class="tab-content">
-                <div class="tab-pane active">
-                    <div class="box box-solid">
-                        <div class="row">
-                            <div class="col-sm-4 col-sm-offset-4">
-                                <h4 style="border-bottom: 1px solid #ababab">Change user name</h4>
-                                <form id="user-name-form" action="{{action('UserController@changeUserName')}}" method="post">
-                                    <input type="hidden" name="user_id"  value="{{$id}}">
-                                    <div class="form-group has-feedback">
-                                        <input type="text" name="user_name" value="" class="form-control" placeholder="user name"/>
-                                        <span class="glyphicon glyphicon-user form-control-feedback"></span>
-                                        <p style="display: none" class="alert-danger-custom"><i class="fa fa-warning"></i><span>This user name already exists</span></p>
-                                    </div>
-                                    <div>
-                                        <button type="submit" class="btn btn-primary">
-                                            <div class="submit">
-                                                Change
-                                            </div>
-                                            <div class="submitting">
-                                                <i class="fa fa-spinner fa-spin"></i><span class="blink-animation">Changing...</span>
-                                            </div>
-                                        </button>
-                                        <div class="clearfix"></div>
-                                    </div>
-                                </form>
+        <div class="box box-solid">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-sm-4 col-sm-offset-4">
+                        <h4 style="border-bottom: 1px solid #ababab">Change user name</h4>
+                        <form id="user-name-form" action="{{action('UserController@changeUserName')}}" method="post">
+                            <input type="hidden" name="user_id"  value="{{$id}}">
+                            <div class="form-group has-feedback">
+                                <input type="text" name="user_name" value="" class="form-control" placeholder="user name"/>
+                                <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                                <p style="display: none" class="alert-danger-custom"><i class="fa fa-warning"></i><span>This user name already exists</span></p>
                             </div>
-                        </div>
-                        <div class="row" >
-                            <div class="col-sm-4 col-sm-offset-4" style="margin-bottom: 20px">
-                                <h4 style="border-bottom: 1px solid #ababab">Change user password</h4>
-                                <form id="user-password-form" action="{{action('UserController@changeUserPassword')}}" method="post">
-                                    <input type="hidden" name="user_id" value="{{$id}}">
-                                    <div class="form-group has-feedback">
-                                        <input type="password" name="password" value="" class="form-control" placeholder="Enter password"/>
-                                        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-                                        <p style="display: none" class="alert-danger-custom"><i class="fa fa-warning"></i><span>Password mis-match</span></p>
+                            <div>
+                                <button type="submit" class="btn btn-primary">
+                                    <div class="submit">
+                                        Change
                                     </div>
-                                    <div class="form-group has-feedback">
-                                        <input type="password" name="c_password" value="" class="form-control" placeholder="Type password again"/>
-                                        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-                                        <p style="display: none" class="alert-danger-custom"><i class="fa fa-warning"></i><span>Password mis-match</span></p>
+                                    <div class="submitting">
+                                        <i class="fa fa-spinner fa-spin"></i><span class="blink-animation">Changing...</span>
                                     </div>
-                                    <div>
-                                        <button type="submit" class="btn btn-primary">
-                                            <div class="submit">
-                                                Change
-                                            </div>
-                                            <div class="submitting">
-                                                <i class="fa fa-spinner fa-spin"></i><span class="blink-animation">Changing...</span>
-                                            </div>
-                                        </button>
-                                        <div class="clearfix"></div>
-                                    </div>
-                                </form>
+                                </button>
+                                <div class="clearfix"></div>
                             </div>
-
-                        </div>
+                        </form>
                     </div>
+                </div>
+                <div class="row" >
+                    <div class="col-sm-4 col-sm-offset-4" style="margin-bottom: 20px">
+                        <h4 style="border-bottom: 1px solid #ababab">Change user password</h4>
+                        <form id="user-password-form" action="{{action('UserController@changeUserPassword')}}" method="post">
+                            <input type="hidden" name="user_id" value="{{$id}}">
+                            <div class="form-group has-feedback">
+                                <input type="password" name="password" value="" class="form-control" placeholder="Enter password"/>
+                                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                                <p style="display: none" class="alert-danger-custom"><i class="fa fa-warning"></i><span>Password mis-match</span></p>
+                            </div>
+                            <div class="form-group has-feedback">
+                                <input type="password" name="c_password" value="" class="form-control" placeholder="Type password again"/>
+                                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                                <p style="display: none" class="alert-danger-custom"><i class="fa fa-warning"></i><span>Password mis-match</span></p>
+                            </div>
+                            <div>
+                                <button type="submit" class="btn btn-primary">
+                                    <div class="submit">
+                                        Change
+                                    </div>
+                                    <div class="submitting">
+                                        <i class="fa fa-spinner fa-spin"></i><span class="blink-animation">Changing...</span>
+                                    </div>
+                                </button>
+                                <div class="clearfix"></div>
+                            </div>
+                        </form>
+                    </div>
+
                 </div>
             </div>
         </div>

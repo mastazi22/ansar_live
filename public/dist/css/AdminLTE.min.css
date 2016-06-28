@@ -4405,3 +4405,12 @@ table.text-center, table.text-center td, table.text-center th {
     background: #ababab !important;
     pointer-events: none;
 }
+.disable_menu{
+    background: #cccccc;
+    color: #ffffff;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+.disable_menu>a{
+    color: #ffffff !important;
+}

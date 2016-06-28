@@ -1,4 +1,13 @@
-@extends('template/master')
+@extends('template.master')
+@section('title','User Management')
+@section('small_title')
+    <a href="{{action('UserController@userRegistration')}}" class="btn btn-primary btn-sm">
+        <span class="glyphicon glyphicon-user"></span> Add New User
+    </a>
+    @endsection
+@section('breadcrumb')
+    {!! Breadcrumbs::render('all_user') !!}
+    @endsection
 @section('content')
     <style>
         .content-header h1::after{
@@ -124,126 +133,121 @@
                 </div>
             </div>
         @endif
-            <section class="content-header">
-                <h1>Demand Constant
-                    <a href="{{action('UserController@userRegistration')}}" class="btn btn-primary btn-sm">
-                        <span class="glyphicon glyphicon-user"></span> Add New User
-                    </a>
-                    <div class="table-search pull-right" style="right:-5%;">
-
-                        <form method="get">
-                            <label for="submitted">
-                                <input style="padding: 6px 34px 5px 10px;border: 1px solid;font-size: 16px;font-weight: normal;/* border-radius: 5px; */" ng-keypress="searchId($event,userName)" ng-model="userName" type="text" class="ng-valid ng-dirty ng-valid-parse ng-touched ng-empty" name="table-search" id="entry-search" placeholder="Search by Username" value="">
-                                <button class="btn btn-sm btn-info" style="right: 0px;position: absolute;top: 0px;border-radius: 0;">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                            </label>
-                        </form>
-
-                    </div>
-                </h1>
-            </section>
         <section class="content">
-            <div class="box box-primary" style="padding: 10px 20px;overflow: hidden">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-condensed" id="user-table">
+            <div class="box box-primary" style="overflow: hidden">
+                <div style="overflow: hidden;padding: 5px">
 
-                        <tr>
-                            <th>SL. No</th>
-                            <th>User Name</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Activity</th>
-                            <th>Action</th>
-                        </tr>
-                        <tr ng-show="isSearching&&searchedUser.length==0">
-                            <td colspan="7">No user found</td>
-                        </tr>
-                        <tr ng-show="isSearching&&searchedUser.length!=0" ng-repeat="user in searchedUser">
-                            <td>[[$index+1]]</td>
-                            <td>[[user.user_name]]</td>
-                            <td>
-                                [[user.first_name+" "+user.last_name]]
-                            </td>
-                            <td>[[user.email]]</td>
-                            <td ng-switch on="user.user_status">
-                                <span ng-switch-when="0"> New. Not login yet</span>
-                                <span ng-switch-when="1"> Last Login at&nbsp;[[user.last_login]]</span>
-                                <span ng-switch-default>Blocked</span>
-                            </td>
-                            <td style="width: 100px">
-                                <div class="row" style="margin-right: 0;min-width: 100px">
-                                    <div class="col-xs-1">
-                                        <a class="btn btn-primary btn-xs" href="{{URL::to('/edit_user')}}/[[user.id]]" title="edit"><span
-                                                    class="glyphicon glyphicon-edit"></span></a>
-                                    </div>
+                    <form method="get" class="pull-right">
+                        <label for="submitted" style="position: relative">
+                            <input style="padding: 4px 34px 4px 10px;border: 1px solid;font-size: 16px;font-weight: normal;/* border-radius: 5px; */" ng-keypress="searchId($event,userName)" ng-model="userName" type="text" class="ng-valid ng-dirty ng-valid-parse ng-touched ng-empty" name="table-search" id="entry-search" placeholder="Search by Username" value="">
+                            <button class="btn btn-sm btn-info" style="right: 1px;position: absolute;top: 1px;border-radius: 0;">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </label>
+                    </form>
 
-                                    <div class="col-xs-1">
-                                        <a class="btn btn-danger btn-xs" ng-show="blockStatus[$index]" confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"block"}'  class="block-user" title="block">
-                                            <span  class="fa fa-ban"></span>
-                                        </a>
-                                        <a  ng-show="!blockStatus[$index]" class="btn btn-success btn-xs" confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"unblock"}'  class="block-user" title="unblock">
-                                            <span class="fa fa-unlock"></span>
-                                        </a>
-                                    </div>
-                                    <div class="col-xs-1">
-                                        <a class="btn btn-success btn-xs" href="{{URL::to('/edit_user_permission')}}/[[user.id]]" title="edit permission"><span
-                                                    class="glyphicon glyphicon-lock"></span></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr ng-show="!isSearching" ng-repeat="user in users">
-                            <td>[[$index+1]]</td>
-                            <td>[[user.user_name]]</td>
-                            <td>
-                                [[user.first_name+" "+user.last_name]]
-                            </td>
-                            <td>[[user.email]]</td>
-                            <td ng-switch on="user.user_status">
-                                <span ng-switch-when="0"> New. Not login yet</span>
-                                <span ng-switch-when="1"> Last Login at&nbsp;[[user.last_login]]</span>
-                                <span ng-switch-default>Blocked</span>
-                            </td>
-                            <td style="width: 100px">
-                                <div class="row" style="margin-right: 0;min-width: 100px">
-                                    <div class="col-xs-1">
-                                        <a class="btn btn-primary btn-xs" href="{{URL::to('/edit_user')}}/[[user.id]]" title="edit"><span
-                                                    class="glyphicon glyphicon-edit"></span></a>
-                                    </div>
-
-                                    <div class="col-xs-1">
-                                        <a class="btn btn-danger btn-xs" ng-show="blockStatus[$index]" confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"block"}'  class="block-user" title="block">
-                                            <span  class="fa fa-ban"></span>
-                                        </a>
-                                        <a  ng-show="!blockStatus[$index]" class="btn btn-success btn-xs" confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"unblock"}'  class="block-user" title="unblock">
-                                            <span class="fa fa-unlock"></span>
-                                        </a>
-                                    </div>
-                                    <div class="col-xs-1">
-                                        <a class="btn btn-success btn-xs" href="{{URL::to('/edit_user_permission')}}/[[user.id]]" title="edit permission"><span
-                                                    class="glyphicon glyphicon-lock"></span></a>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
                 </div>
-                <div class="table_pagination" ng-show="totalPages>1&& !searchedUser">
-                    <ul class="pagination">
-                        <li ng-class="{disabled:currentPage==0}">
-                            <span ng-show="currentPage==0">&laquo;</span>
-                            <a href="#" ng-click="loadPage(currentPage-1,$event)" ng-hide="currentPage==0">&laquo;</a>
-                        </li>
-                        <li ng-repeat="page in pages" ng-class="{active:currentPage==page.pageNum}">
-                            <span ng-show="currentPage==page.pageNum">[[page.pageNum+1]]</span>
-                            <a href="#" ng-click="loadPage(page.pageNum,$event)" ng-hide="currentPage==page.pageNum">[[page.pageNum+1]]</a>
-                        </li>
-                        <li ng-class="{disabled:currentPage==totalPages-1}">
-                            <span ng-show="currentPage==totalPages-1">&raquo;</span>
-                            <a href="#" ng-click="loadPage(currentPage+1,$event)" ng-hide="currentPage==totalPages-1">&raquo;</a>
-                        </li>
-                    </ul>
+                <div class="box-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-condensed" id="user-table">
+
+                            <tr>
+                                <th>SL. No</th>
+                                <th>User Name</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Activity</th>
+                                <th>Action</th>
+                            </tr>
+                            <tr ng-show="isSearching&&searchedUser.length==0">
+                                <td colspan="7">No user found</td>
+                            </tr>
+                            <tr ng-show="isSearching&&searchedUser.length!=0" ng-repeat="user in searchedUser">
+                                <td>[[$index+1]]</td>
+                                <td>[[user.user_name]]</td>
+                                <td>
+                                    [[user.first_name+" "+user.last_name]]
+                                </td>
+                                <td>[[user.email]]</td>
+                                <td ng-switch on="user.user_status">
+                                    <span ng-switch-when="0"> New. Not login yet</span>
+                                    <span ng-switch-when="1"> Last Login at&nbsp;[[user.last_login]]</span>
+                                    <span ng-switch-default>Blocked</span>
+                                </td>
+                                <td style="width: 100px">
+                                    <div class="row" style="margin-right: 0;min-width: 100px">
+                                        <div class="col-xs-1">
+                                            <a class="btn btn-primary btn-xs" href="{{URL::to('/edit_user')}}/[[user.id]]" title="edit"><span
+                                                        class="glyphicon glyphicon-edit"></span></a>
+                                        </div>
+
+                                        <div class="col-xs-1">
+                                            <a class="btn btn-danger btn-xs" ng-show="blockStatus[$index]" confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"block"}'  class="block-user" title="block">
+                                                <span  class="fa fa-ban"></span>
+                                            </a>
+                                            <a  ng-show="!blockStatus[$index]" class="btn btn-success btn-xs" confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"unblock"}'  class="block-user" title="unblock">
+                                                <span class="fa fa-unlock"></span>
+                                            </a>
+                                        </div>
+                                        <div class="col-xs-1">
+                                            <a class="btn btn-success btn-xs" href="{{URL::to('/edit_user_permission')}}/[[user.id]]" title="edit permission"><span
+                                                        class="glyphicon glyphicon-lock"></span></a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr ng-show="!isSearching" ng-repeat="user in users">
+                                <td>[[$index+1]]</td>
+                                <td>[[user.user_name]]</td>
+                                <td>
+                                    [[user.first_name+" "+user.last_name]]
+                                </td>
+                                <td>[[user.email]]</td>
+                                <td ng-switch on="user.user_status">
+                                    <span ng-switch-when="0"> New. Not login yet</span>
+                                    <span ng-switch-when="1"> Last Login at&nbsp;[[user.last_login]]</span>
+                                    <span ng-switch-default>Blocked</span>
+                                </td>
+                                <td style="width: 100px">
+                                    <div class="row" style="margin-right: 0;min-width: 100px">
+                                        <div class="col-xs-1">
+                                            <a class="btn btn-primary btn-xs" href="{{URL::to('/edit_user')}}/[[user.id]]" title="edit"><span
+                                                        class="glyphicon glyphicon-edit"></span></a>
+                                        </div>
+
+                                        <div class="col-xs-1">
+                                            <a class="btn btn-danger btn-xs" ng-show="blockStatus[$index]" confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"block"}'  class="block-user" title="block">
+                                                <span  class="fa fa-ban"></span>
+                                            </a>
+                                            <a  ng-show="!blockStatus[$index]" class="btn btn-success btn-xs" confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"unblock"}'  class="block-user" title="unblock">
+                                                <span class="fa fa-unlock"></span>
+                                            </a>
+                                        </div>
+                                        <div class="col-xs-1">
+                                            <a class="btn btn-success btn-xs" href="{{URL::to('/edit_user_permission')}}/[[user.id]]" title="edit permission"><span
+                                                        class="glyphicon glyphicon-lock"></span></a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="table_pagination" ng-show="totalPages>1&& !searchedUser">
+                        <ul class="pagination">
+                            <li ng-class="{disabled:currentPage==0}">
+                                <span ng-show="currentPage==0">&laquo;</span>
+                                <a href="#" ng-click="loadPage(currentPage-1,$event)" ng-hide="currentPage==0">&laquo;</a>
+                            </li>
+                            <li ng-repeat="page in pages" ng-class="{active:currentPage==page.pageNum}">
+                                <span ng-show="currentPage==page.pageNum">[[page.pageNum+1]]</span>
+                                <a href="#" ng-click="loadPage(page.pageNum,$event)" ng-hide="currentPage==page.pageNum">[[page.pageNum+1]]</a>
+                            </li>
+                            <li ng-class="{disabled:currentPage==totalPages-1}">
+                                <span ng-show="currentPage==totalPages-1">&raquo;</span>
+                                <a href="#" ng-click="loadPage(currentPage+1,$event)" ng-hide="currentPage==totalPages-1">&raquo;</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>
