@@ -311,9 +311,9 @@
             
             <section class="content">
 
-                <div class="row">
+                <div>
 
-                    <div style="width:80%;margin:0 auto;">
+                    <div>
 
                         <div>
                             <div class="alert alert-success" ng-show="formSubmitResult.status==true">

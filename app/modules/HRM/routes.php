@@ -39,7 +39,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('entryform', ['as' => 'ansar_registration', 'uses' => 'EntryFormController@entryform']);
         Route::get('ansar_rank', ['as' => 'ansar_rank', 'uses' => 'FormSubmitHandler@getAnsarRank']);
         Route::post('handleregistration', 'FormSubmitHandler@handleregistration');
-        Route::post('submiteditentry', 'FormSubmitHandler@submitEditEntry');
+        Route::post('submiteditentry', ['as'=>'submiteditentry','uses'=>'FormSubmitHandler@submitEditEntry']);
         Route::get('editEntry/{ansarid}', ['as' => 'editentry', 'uses' => 'FormSubmitHandler@editEntry']);
         Route::post('entrysearch', 'FormSubmitHandler@EntrySearch');
         Route::get('chunkverify', ['as' => 'chunk_verify', 'uses' => 'FormSubmitHandler@chunkVerify']);

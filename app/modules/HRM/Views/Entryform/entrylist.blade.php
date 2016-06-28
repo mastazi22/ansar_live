@@ -246,7 +246,7 @@
             <h4>Loading...</h4>
         </div>
         @if (Session::has('edit_success')) 
-        <div style="width:87%;margin:0 auto;">
+        <div style="padding: 20px 10px">
                         <div class="alert alert-success">
                                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                                 <span class="glyphicon glyphicon-ok"></span>Ansar with ID: {{Session::get('edit_success')}} Edited successfully
@@ -254,7 +254,7 @@
         </div>
         @endif
         @if (Session::has('add_success')) 
-        <div style="width:87%;margin:0 auto;">
+        <div style="padding: 20px 10px">
                         <div class="alert alert-success">
                                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                                 <span class="glyphicon glyphicon-ok"></span> Ansar with ID: {{Session::get('add_success')}} Added Successfully

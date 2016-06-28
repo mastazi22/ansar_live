@@ -476,7 +476,7 @@
 
                         <div id="entryform">
                             <form id="pppp" class="form-horizontal" enctype="multipart/form-data" id="myForm"
-                                  method="post" action="{{URL::to('HRM/submitEditEntry')}}">
+                                  method="post" action="{{URL::route('submiteditentry')}}">
                                 {!! csrf_field() !!}
                                 <fieldset>
                                     <div class="level-title-session-entry">
