@@ -7,7 +7,6 @@
 @section('breadcrumb')
     {!! Breadcrumbs::render('dashboard_menu_50_year',$total) !!}
 @endsection
-@extends('template.master')
 @section('content')
     <script>
         GlobalApp.controller('AnsarFiftyYearsReachedListController', function ($scope, $http,$sce) {
