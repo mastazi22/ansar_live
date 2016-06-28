@@ -1,4 +1,8 @@
 @extends('template/master')
+@section('title','Advance Search')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('entryadvancedsearch') !!}
+@endsection
 @section('content')
     <script>
         $(document).ready(function () {
@@ -183,29 +187,28 @@
 
     <div ng-controller="advancedEntrySearch">
         {{--<div class="breadcrumbplace">--}}
-            {{--{!! Breadcrumbs::render('entryadvancedsearch') !!}--}}
+        {{--{!! Breadcrumbs::render('entryadvancedsearch') !!}--}}
         {{--</div>--}}
         <div class="loading-report animated" ng-show="loading">
             <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
             <h4>Loading...</h4>
         </div>
-        <section class="content" style="width: 90%;">
-            <div class="box table-list">
-
-                <div class="table-list-title">Advanced Ansar Search</div>
-
+        <section class="content">
+            <div class="box box-solid">
                 <div class="box-body" id="change-body">
                     <div class="loading-data"><i class="fa fa-4x fa-refresh fa-spin loading-icon"></i>
                     </div>
                     <form method="post">
                         <div class="table-responsive">
-                            <table style="width:100%;">
+                            <table class="table table-condensed table-sm">
 
+                                <thead class="thead-inverse">
                                 <tr>
                                     <th style="width:16%;">Search Name</th>
                                     <th style="width:44%;"> Search Type</th>
                                     <th style="width:40%;">Search Value</th>
                                 </tr>
+                                </thead>
                                 <tr>
                                     <td>Division</td>
                                     <td>
@@ -340,7 +343,8 @@
                                     </td>
                                     <td>
                                         <input class="ansaradvancedname" name="mobile_no_self" type="text"
-                                               ng-model="mobile_no_self" placeholder="Enter mobile number; Example: 01710000000"/>
+                                               ng-model="mobile_no_self"
+                                               placeholder="Enter mobile number; Example: 01710000000"/>
                                     </td>
                                 </tr>
                                 <tr>
@@ -353,7 +357,8 @@
                                     </td>
                                     <td>
                                         <input class="ansaradvancedname" name="mobile_no_request" type="text"
-                                               ng-model="mobile_no_request" placeholder="Enter mobile number; Example: 01710000000"/>
+                                               ng-model="mobile_no_request"
+                                               placeholder="Enter mobile number; Example: 01710000000"/>
                                     </td>
                                 </tr>
                                 <tr>
@@ -379,11 +384,9 @@
                     </form>
                 </div>
             </div>
+            <div class="box box-solid">
 
-            <div class="clearfix"></div>
-            <div class="box table-list">
-
-                <div class="table-list-title">Search Result</div>
+                <div class="box-header"><h3>Search Result</h3></div>
 
                 <div class="box-body" id="change-body">
                     <div class="loading-data"><i class="fa fa-4x fa-refresh fa-spin loading-icon"></i>
@@ -404,7 +407,8 @@
 
                         <tr ng-repeat="ansar in alldata">
                             <td>[[currentPage?((currentPage*10)+$index+1):$index+1]]</td>
-                            <td><a href="{{ URL::to('HRM/entryreport/') }}/[[ansar.ansar_id]]">[[ansar.ansar_id]]</a></td>
+                            <td><a href="{{ URL::to('HRM/entryreport/') }}/[[ansar.ansar_id]]">[[ansar.ansar_id]]</a>
+                            </td>
                             <td>[[ansar.name_eng]]</td>
                             <td>[[ansar.ansar_name_eng]]</td>
                             <td>[[ansar.father_name_eng]]</td>

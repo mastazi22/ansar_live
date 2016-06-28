@@ -110,10 +110,10 @@ Breadcrumbs::register('orginal_info', function($breadcrumbs) {
     $breadcrumbs->push('Orginal Info', URL::route('orginal_info'));
 });
 
-//Breadcrumbs::register('entryadvancedsearch', function($breadcrumbs) {
-//    $breadcrumbs->parent('home');
-//    $breadcrumbs->push('Advanced search', URL::to('entryadvancedsearch'));
-//});
+Breadcrumbs::register('entryadvancedsearch', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Advanced search', URL::route('entry_advanced_search'));
+});
 Breadcrumbs::register('print_card_id_view', function($breadcrumbs) {
     $breadcrumbs->parent('hrm');
     $breadcrumbs->push('Print ID card', URL::route('print_card_id_view'));
