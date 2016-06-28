@@ -4393,3 +4393,15 @@ table.text-center, table.text-center td, table.text-center th {
         white-space: normal !important
     }
 }
+
+.disable-module{
+    background: #cccccc;
+    cursor: not-allowed;
+}
+.disable-module .inner{
+    background: #cccccc;
+}
+.disable-module a{
+    background: #ababab !important;
+    pointer-events: none;
+}

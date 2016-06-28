@@ -17,7 +17,7 @@
                     <div class="icon">
                         <i class="fa fa-users"></i>
                     </div>
-                    <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    <a href="{{URL::to('HRM')}}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
             <!-- ./col -->
@@ -38,7 +38,7 @@
             <!-- ./col -->
             <div class="col-lg-4 col-xs-6">
                 <!-- small box -->
-                <div class="small-box bg-yellow">
+                <div class="small-box bg-yellow disable-module">
                     <div class="inner">
                         <h3>SD</h3>
 
@@ -53,7 +53,7 @@
             <!-- ./col -->
             <div class="col-lg-4 col-xs-6">
                 <!-- small box -->
-                <div class="small-box bg-red">
+                <div class="small-box bg-red disable-module">
                     <div class="inner">
                         <h3>ADAPS</h3>
 
