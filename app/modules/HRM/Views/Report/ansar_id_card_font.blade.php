@@ -6,19 +6,23 @@
     <style>
         @font-face {
             font-family: banglFont;
-            src: url('{{asset('dist/fonts/Verdana.ttf')}}');
+            src: url('{{asset('dist/fonts/SolaimanLipi.ttf')}}');
+        }
+        @font-face {
+            font-family: engFont;
+            src: url('{{asset('dist/fonts/LiberationSerif-Regular.ttf')}}');
         }
     </style>
 </head>
 <body>
-<div id="ansar-id-card-front" @if($type=='bng') style="font-family: banglFont" @endif >
+<div id="ansar-id-card-front" @if($type=='bng') style="font-family: banglFont" @else style="font-family: engFont" @endif >
 
     <div class="card-header">
         <div class="card-header-left-part">
             <img src="{{asset('dist/img/ansar-vdp.png')}}" class="img-responsive">
         </div>
         <div class="card-header-right-part">
-            <h4 style="@if($type=='bng') font-size: 1.5em @elseif($type=='eng') font-size:1em; @endif">{{$rd['title']}}</h4>
+            <h4 style="@if($type=='bng') font-size: 1.2em @elseif($type=='eng') font-size:1em; @endif">{{$rd['title']}}</h4>
             <h5 style="font-size: 13px">{{$rd['id_no']}}
                 : {{strcasecmp($type,'bng')==0?LanguageConverter::engToBng($ad->division_code.$ad->unit_code.$ad->ansar_id):$ad->division_code.$ad->unit_code.$ad->ansar_id}}</h5>
         </div>

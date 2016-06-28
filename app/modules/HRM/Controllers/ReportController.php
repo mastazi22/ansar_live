@@ -138,7 +138,7 @@ class ReportController extends Controller
             }
             $path = public_path("{$id}.jpg");
             SnappyImage::loadView('HRM::Report.ansar_id_card_font',['rd' => $report_data, 'ad' => $ansar, 'id' => Carbon::createFromFormat('d-M-Y', $issue_date)->format("d/m/Y"), 'ed' => Carbon::createFromFormat('d-M-Y', $expire_date)->format("d/m/Y"), 'type' => $type])->setOption('quality',100)
-                ->setOption('crop-x',0)->setOption('crop-y',0)->setOption('crop-h',292)->setOption('crop-w',380)->setOption('encoding','utf-8')->save($path);
+                ->setOption('crop-x',0)->setOption('crop-y',0)->setOption('crop-h',292)->setOption('crop-w',340)->setOption('encoding','utf-8')->save($path);
             $image =  Image::make($path)->encode('data-url');
             File::delete($path);
 //            return View::make('HRM::Report.ansar_id_card_font',['rd' => $report_data, 'ad' => $ansar, 'id' => Carbon::createFromFormat('d-M-Y', $issue_date)->format("d/m/Y"), 'ed' => Carbon::createFromFormat('d-M-Y', $expire_date)->format("d/m/Y"), 'type' => $type]);
