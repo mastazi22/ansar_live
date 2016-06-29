@@ -281,7 +281,7 @@ class UserController extends Controller
     function verifyMemorandumId()
     {
         $rule = [
-            'memorandum_id' => 'required|unique:tbl_memorandum_id'
+            'memorandum_id' => 'required|unique:hrm.tbl_memorandum_id'
         ];
         $v = Validator::make(Input::all(), $rule);
         return Response::json(array('status' => $v->fails()));
