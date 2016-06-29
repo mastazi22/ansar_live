@@ -1,5 +1,5 @@
 <?php
-Route::group(['prefix'=>'HRM','middleware'=>'manageDatabase'],function (){
+Route::group(['prefix'=>'HRM','middleware'=>'manageDatabase','namespace'=>'\App\modules\HRM\Controllers'],function (){
     Route::any('/send_sms', 'SMSController@sendSMS');
     Route::post('/receive_sms', ['as'=>'receive_sms','uses'=>'SMSController@receiveSMS']);
     Route::post('/get_sms_status', 'SMSController@getSMSStatus');
