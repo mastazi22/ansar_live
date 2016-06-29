@@ -334,6 +334,26 @@ class UserController extends Controller
         //return $image;
         return Image::make($image)->response();
     }
+    public function getSingImage()
+    {
+        $image = storage_path(Input::get('file'));
+        if(!Input::exists('file')) return Image::make(storage_path('data/signature/no-signature.jpg'))->response();
+        if (is_null($image) || !File::exists($image)|| File::isDirectory($image)) {
+            return Image::make(storage_path('data/signature/no-signature.jpg'))->response();
+        }
+        //return $image;
+        return Image::make($image)->response();
+    }
+    public function getThumbImage()
+    {
+        $image = storage_path(Input::get('file'));
+        if(!Input::exists('file')) return Image::make(storage_path('data/fingerprint/no-thumb.jpg'))->response();
+        if (is_null($image) || !File::exists($image)|| File::isDirectory($image)) {
+            return Image::make(storage_path('data/fingerprint/no-thumb.jpg'))->response();
+        }
+        //return $image;
+        return Image::make($image)->response();
+    }
 } 
 
 

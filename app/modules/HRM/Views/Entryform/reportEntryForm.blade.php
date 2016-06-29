@@ -314,7 +314,7 @@
                             <fieldset class="fieldset">
                                 <legend class="legend">Sign image</legend>
                                 <img class="img-thumbnail"
-                                     src="{{action('UserController@getImage',['file'=>$ansarAllDetails->sign_pic])}}"
+                                     src="{{action('UserController@getSingImage',['file'=>$ansarAllDetails->sign_pic])}}"
                                      style="height:80px;width:100%;"/>
                             </fieldset>
                         </div>
@@ -322,7 +322,7 @@
                             <fieldset class="fieldset">
                                 <legend class="legend">Thumb image</legend>
                                 <img class="img-thumbnail"
-                                     src="{{action('UserController@getImage',['file'=>$ansarAllDetails->thumb_pic])}}"
+                                     src="{{action('UserController@getThumbImage',['file'=>$ansarAllDetails->thumb_pic])}}"
                                      style="height:80px;width:100%;"/>
                             </fieldset>
                         </div>
