@@ -123,7 +123,7 @@
                                 </select>
                             </div>
                             <button id="cancel-withdraw-kpi" class="btn btn-primary"
-                                    ng-disabled="!selectedUnit||!selectedThana||!selectedKpi">
+                                    ng-disabled="isEmpty(kpiDetail)">
                                 Cancel Withdraw
                             </button>
                         </div>
