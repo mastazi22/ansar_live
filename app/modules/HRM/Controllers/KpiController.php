@@ -551,6 +551,10 @@ class KpiController extends Controller
 
     public function kpiWithdrawCancelUpdate(Request $request){
         $kpi_id = $request->input('kpi_id');
+        $kpi_withdraw_date_cancel = KpiDetailsModel::where('kpi_id', $kpi_id)->first();
+        if(empty($kpi_withdraw_date_cancel->kpi_withdraw_date)){
+            return Redirect::route('kpi_withdraw_cancel_view')->with('error_message', 'This kpi not in withdraw list');
+        }
         DB::beginTransaction();
         try {
             $kpi_withdraw_date_cancel = KpiDetailsModel::where('kpi_id', $kpi_id)->first();
