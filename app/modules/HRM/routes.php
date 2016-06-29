@@ -1,5 +1,9 @@
 <?php
-
+Route::group(['prefix'=>'HRM','middleware'=>'manageDatabase'],function (){
+    Route::any('/send_sms', 'SMSController@sendSMS');
+    Route::post('/receive_sms', 'SMSController@receiveSMS');
+    Route::post('/get_sms_status', 'SMSController@getSMSStatus');
+});
 Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserType'] ],function(){
     Route::group(['namespace'=>'\App\modules\HRM\Controllers'],function(){
 
