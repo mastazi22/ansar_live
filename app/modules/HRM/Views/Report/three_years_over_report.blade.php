@@ -3,6 +3,10 @@
 {{--Time: 2:46 PM--}}
 
 @extends('template.master')
+@section('title','Three Years Over Ansar Report')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('three_year_over_report_view') !!}
+@endsection
 @section('content')
     <script>
         GlobalApp.controller('ReportThreeYearsOverList', function ($scope, $http, $sce) {
@@ -135,12 +139,8 @@
         </div>
         <section class="content">
             <div class="box box-solid">
-                <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a>[[report.header]]</a>
-                        </li>
-                        <li class="pull-right">
+                <div class="box-body">
+                    <div class="pull-right">
                             <span class="control-label" style="padding: 5px 8px">
                                 View report in&nbsp;&nbsp;&nbsp;<input type="radio" class="radio-inline"
                                                                        style="margin: 0 !important;" value="eng"
@@ -151,97 +151,92 @@
                                              class="radio-inline" style="margin: 0 !important;" value="bng"
                                              ng-model="reportType">&nbsp;<b>বাংলা</b>
                             </span>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group required">
-                                        <label class="control-label">Select a unit&nbsp;
-                                            <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
-                                                 width="16"></label>
-                                        <select class="form-control" ng-model="selectedDistrict" ng-change="resetValues()">
-                                            <option value="">--Select--</option>
-                                            <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group required">
-                                        <label class="control-label">
-                                            Select Rank
-                                        </label>
-                                        <select name="ansar_rank" class="form-control" ng-model="selectedRank">
-                                            <option value="" disabled>--Select--</option>
-                                            <option value="3">Ansar</option>
-                                            <option value="2">APC</option>
-                                            <option value="1">PC</option>
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group required">
-                                        <label class="control-label">
-                                            Select Sex
-                                        </label>
-                                        <select name="ansar_sex" class="form-control" ng-model="selectedSex"
-                                                ng-change="loadTotal(selectedDistrict,selectedRank,selectedSex)">
-                                            <option value="" disabled>--Select--</option>
-                                            <option value="Male">Male</option>
-                                            <option value="Female">Female</option>
-                                            <option value="Other">Other</option>
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
+                    </div><br>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group required">
+                                <label class="control-label">Select a unit&nbsp;
+                                    <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
+                                         width="16"></label>
+                                <select class="form-control" ng-model="selectedDistrict" ng-change="resetValues()">
+                                    <option value="">--Select--</option>
+                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
+                                    </option>
+                                </select>
                             </div>
-                            <div id="print-three_years_over_ansar_report">
-                                <h3 style="text-align: center" id="report-header">[[report.ansar.ansar_title]]&nbsp;&nbsp;
-                                    <a href="#" title="print" id="print-report">
-                                        <span class="glyphicon glyphicon-print"></span>
-                                    </a></h3>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group required">
+                                <label class="control-label">
+                                    Select Rank
+                                </label>
+                                <select name="ansar_rank" class="form-control" ng-model="selectedRank">
+                                    <option value="" disabled>--Select--</option>
+                                    <option value="3">Ansar</option>
+                                    <option value="2">APC</option>
+                                    <option value="1">PC</option>
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group required">
+                                <label class="control-label">
+                                    Select Sex
+                                </label>
+                                <select name="ansar_sex" class="form-control" ng-model="selectedSex"
+                                        ng-change="loadTotal(selectedDistrict,selectedRank,selectedSex)">
+                                    <option value="" disabled>--Select--</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="print-three_years_over_ansar_report">
+                        <h3 style="text-align: center" id="report-header">[[report.ansar.ansar_title]]&nbsp;&nbsp;
+                            <a href="#" title="print" id="print-report">
+                                <span class="glyphicon glyphicon-print"></span>
+                            </a></h3>
 
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <tr>
-                                            <th>[[report.ansar.sl_no]]</th>
-                                            <th>[[report.ansar.id]]</th>
-                                            <th>[[report.ansar.rank]]</th>
-                                            <th>[[report.ansar.name]]</th>
-                                            <th>[[report.ansar.district]]</th>
-                                            <th>[[report.ansar.kpi_name]]</th>
-                                            <th>[[report.ansar.reporting_date]]</th>
-                                            <th>[[report.ansar.joining_date]]</th>
-                                            <th>[[report.ansar.service_ended_date]]</th>
-                                        </tr>
-                                        <tbody ng-bind-html="ansars"></tbody>
-                                    </table>
-                                    <div class="table_pagination" ng-if="pages.length>1">
-                                        <ul class="pagination">
-                                            <li ng-class="{disabled:currentPage == 0}">
-                                                <a href="#" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>
-                                            </li>
-                                            <li ng-class="{disabled:currentPage == 0}">
-                                                <a href="#" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
-                                            </li>
-                                            <li ng-repeat="page in pages|filter:filterMiddlePage"
-                                                ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
-                                                <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
-                                                <a href="#" ng-click="loadPage(page,$event)" ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
-                                                <span ng-show="loadingPage[page.pageNum]"  style="position: relative"><i class="fa fa-spinner fa-pulse" style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
-                                            </li>
-                                            <li ng-class="{disabled:currentPage==pages.length-1}">
-                                                <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
-                                            </li>
-                                            <li ng-class="{disabled:currentPage==pages.length-1}">
-                                                <a href="#" ng-click="loadPage(pages[pages.length-1],$event)">&raquo;&raquo;</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>[[report.ansar.sl_no]]</th>
+                                    <th>[[report.ansar.id]]</th>
+                                    <th>[[report.ansar.rank]]</th>
+                                    <th>[[report.ansar.name]]</th>
+                                    <th>[[report.ansar.district]]</th>
+                                    <th>[[report.ansar.kpi_name]]</th>
+                                    <th>[[report.ansar.reporting_date]]</th>
+                                    <th>[[report.ansar.joining_date]]</th>
+                                    <th>[[report.ansar.service_ended_date]]</th>
+                                </tr>
+                                <tbody ng-bind-html="ansars"></tbody>
+                            </table>
+                            <div class="table_pagination" ng-if="pages.length>1">
+                                <ul class="pagination">
+                                    <li ng-class="{disabled:currentPage == 0}">
+                                        <a href="#" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>
+                                    </li>
+                                    <li ng-class="{disabled:currentPage == 0}">
+                                        <a href="#" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
+                                    </li>
+                                    <li ng-repeat="page in pages|filter:filterMiddlePage"
+                                        ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
+                                        <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
+                                        <a href="#" ng-click="loadPage(page,$event)" ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
+                                        <span ng-show="loadingPage[page.pageNum]"  style="position: relative"><i class="fa fa-spinner fa-pulse" style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
+                                    </li>
+                                    <li ng-class="{disabled:currentPage==pages.length-1}">
+                                        <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
+                                    </li>
+                                    <li ng-class="{disabled:currentPage==pages.length-1}">
+                                        <a href="#" ng-click="loadPage(pages[pages.length-1],$event)">&raquo;&raquo;</a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>

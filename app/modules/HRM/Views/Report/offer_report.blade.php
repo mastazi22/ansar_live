@@ -1,4 +1,8 @@
 @extends('template.master')
+@section('title','Offer Report')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('offer_report') !!}
+@endsection
 @section('content')
     <script>
         GlobalApp.controller('ReportGuardSearchController', function ($scope, $http) {
@@ -111,12 +115,8 @@
     <div ng-controller="ReportGuardSearchController">
         <section class="content">
             <div class="box box-solid">
-                <div class="nav-tabs-custom" style="background-color: transparent">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a href="#">Offer Report</a>
-                        </li>
-                        <li class="pull-right">
+                <div class="box-body">
+                    <div class="pull-right">
                             <span class="control-label" style="padding: 5px 8px">
                                 View report in&nbsp;&nbsp;&nbsp;<input type="radio" class="radio-inline"
                                                                        style="margin: 0 !important;" value="eng"
@@ -126,147 +126,142 @@
                                              class="radio-inline" style="margin: 0 !important;" value="bng"
                                              ng-model="reportType">&nbsp;<b>বাংলা</b>
                             </span>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active">
-                            <div class="row">
-                                <div class="col-sm-4" ng-if="!isDc">
-                                    <div class="form-group">
-                                        <label class="control-label">
-                                            Select a District&nbsp;&nbsp;
-                                            <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                                 ng-show="loadingUnit">
-                                        </label>
-                                        <select class="form-control" ng-disabled="loadingUnit"
-                                                ng-model="unit.selectedDistrict">
-                                            <option value="">--Select a District--</option>
-                                            <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
-                                            </option>
-                                        </select>
-                                    </div>
+                    </div><br>
+                    <div class="row">
+                        <div class="col-sm-4" ng-if="!isDc">
+                            <div class="form-group">
+                                <label class="control-label">
+                                    Select a District&nbsp;&nbsp;
+                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
+                                         ng-show="loadingUnit">
+                                </label>
+                                <select class="form-control" ng-disabled="loadingUnit"
+                                        ng-model="unit.selectedDistrict">
+                                    <option value="">--Select a District--</option>
+                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">
+                                    Select a Option&nbsp;&nbsp;
+                                </label>
+                                <select class="form-control" ng-disabled="loadingUnit"
+                                        ng-model="selectedDate">
+                                    <option value="2">Past 2 days</option>
+                                    <option value="3">Past 3 days</option>
+                                    <option value="5">Past 5 days</option>
+                                    <option value="7">Past 7 days</option>
+                                    <option value="0">Custom</option>
+                                </select>
+                            </div>
+                            <div class="form-group row" ng-if="selectedDate==0">
+                                <div class="col-xs-7">
+                                    <input type="text" class="form-control" ng-model="unit.custom"
+                                           placeholder="No of day,month or year">
                                 </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label class="control-label">
-                                            Select a Option&nbsp;&nbsp;
-                                        </label>
-                                        <select class="form-control" ng-disabled="loadingUnit"
-                                                ng-model="selectedDate">
-                                            <option value="2">Past 2 days</option>
-                                            <option value="3">Past 3 days</option>
-                                            <option value="5">Past 5 days</option>
-                                            <option value="7">Past 7 days</option>
-                                            <option value="0">Custom</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group row" ng-if="selectedDate==0">
-                                        <div class="col-xs-7">
-                                            <input type="text" class="form-control" ng-model="unit.custom"
-                                                   placeholder="No of day,month or year">
-                                        </div>
-                                        <div class="col-xs-5" style="padding-left: 0;">
-                                            <select class="form-control" ng-model="unit.type">
-                                                <option value="1">Days</option>
-                                                <option value="2">Months</option>
-                                                <option value="3">Years</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <label class="control-label">&nbsp;</label>
-
-                                    <div class="form-control" style="padding: 0;border:none;">
-                                        <button class="btn btn-primary" ng-click="loadAnsar()"><i
-                                                    class="fa fa-download"></i>&nbsp;View Offer Report
-                                        </button>
-                                    </div>
+                                <div class="col-xs-5" style="padding-left: 0;">
+                                    <select class="form-control" ng-model="unit.type">
+                                        <option value="1">Days</option>
+                                        <option value="2">Months</option>
+                                        <option value="3">Years</option>
+                                    </select>
                                 </div>
                             </div>
-                            <div id="print-guard-in-ansar-report" style="margin-top: 10px">
-                                <div class="nav-tabs-custom">
-                                    <ul class="nav nav-tabs">
-                                        <li class="active">
-                                            <a data-toggle="tab" href="#offer_not_respond">Offer Not Respond</a>
-                                        </li>
-                                        <li>
-                                            <a data-toggle="tab" href="#offer_send">Offer Accepted</a>
-                                        </li>
-                                        <li>
-                                            <a data-toggle="tab" href="#offer_reject">Offer Reject</a>
-                                        </li>
-                                    </ul>
-                                    <div class="tab-content">
-                                        <div id="offer_not_respond" class="tab-pane active">
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered">
-                                                    <tr>
-                                                        <th>SL. No</th>
-                                                        <th>Ansar Id</th>
-                                                        <th>Name</th>
-                                                        <th>Rank</th>
-                                                        <th>Offered Date</th>
-                                                    </tr>
-                                                    <tr ng-if="onr.length<=0">
-                                                        <th class="warning" colspan="5">No Ansar Found</th>
-                                                    </tr>
-                                                    <tr ng-if="onr.length>0" ng-repeat="a in onr">
-                                                        <td>[[$index+1]]</td>
-                                                        <td>[[a.ansar_id]]</td>
-                                                        <td>[[a.ansar_name_eng]]</td>
-                                                        <td>[[a.code]]</td>
-                                                        <td>[[a.sms_send_datetime]]</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div id="offer_send" class="tab-pane">
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered">
-                                                    <tr>
-                                                        <th>SL. No</th>
-                                                        <th>Ansar Id</th>
-                                                        <th>Name</th>
-                                                        <th>Rank</th>
-                                                        <th>Offer Accepted Date</th>
-                                                    </tr>
-                                                    <tr ng-if="or.length<=0">
-                                                        <th class="warning" colspan="5">No Ansar Found</th>
-                                                    </tr>
-                                                    <tr ng-if="or.length>0" ng-repeat="a in or">
-                                                        <td>[[$index+1]]</td>
-                                                        <td>[[a.ansar_id]]</td>
-                                                        <td>[[a.ansar_name_eng]]</td>
-                                                        <td>[[a.code]]</td>
-                                                        <td>[[a.sms_received_datetime]]</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div id="offer_reject" class="tab-pane">
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered">
-                                                    <tr>
-                                                        <th>SL. No</th>
-                                                        <th>Ansar Id</th>
-                                                        <th>Name</th>
-                                                        <th>Rank</th>
-                                                        <th>Reject Date</th>
-                                                    </tr>
-                                                    <tr ng-if="orj.length<=0">
-                                                        <th class="warning" colspan="5">No Ansar Found</th>
-                                                    </tr>
-                                                    <tr ng-if="orj.length>0" ng-repeat="a in orj">
-                                                        <td>[[$index+1]]</td>
-                                                        <td>[[a.ansar_id]]</td>
-                                                        <td>[[a.ansar_name_eng]]</td>
-                                                        <td>[[a.code]]</td>
-                                                        <td>[[a.reject_date]]</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="control-label">&nbsp;</label>
+
+                            <div class="form-control" style="padding: 0;border:none;">
+                                <button class="btn btn-primary" ng-click="loadAnsar()"><i
+                                            class="fa fa-download"></i>&nbsp;View Offer Report
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="print-guard-in-ansar-report" style="margin-top: 10px">
+                        <div class="nav-tabs-custom">
+                            <ul class="nav nav-tabs">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#offer_not_respond">Offer Not Respond</a>
+                                </li>
+                                <li>
+                                    <a data-toggle="tab" href="#offer_send">Offer Accepted</a>
+                                </li>
+                                <li>
+                                    <a data-toggle="tab" href="#offer_reject">Offer Reject</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div id="offer_not_respond" class="tab-pane active">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <th>SL. No</th>
+                                                <th>Ansar Id</th>
+                                                <th>Name</th>
+                                                <th>Rank</th>
+                                                <th>Offered Date</th>
+                                            </tr>
+                                            <tr ng-if="onr.length<=0">
+                                                <th class="warning" colspan="5">No Ansar Found</th>
+                                            </tr>
+                                            <tr ng-if="onr.length>0" ng-repeat="a in onr">
+                                                <td>[[$index+1]]</td>
+                                                <td>[[a.ansar_id]]</td>
+                                                <td>[[a.ansar_name_eng]]</td>
+                                                <td>[[a.code]]</td>
+                                                <td>[[a.sms_send_datetime]]</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div id="offer_send" class="tab-pane">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <th>SL. No</th>
+                                                <th>Ansar Id</th>
+                                                <th>Name</th>
+                                                <th>Rank</th>
+                                                <th>Offer Accepted Date</th>
+                                            </tr>
+                                            <tr ng-if="or.length<=0">
+                                                <th class="warning" colspan="5">No Ansar Found</th>
+                                            </tr>
+                                            <tr ng-if="or.length>0" ng-repeat="a in or">
+                                                <td>[[$index+1]]</td>
+                                                <td>[[a.ansar_id]]</td>
+                                                <td>[[a.ansar_name_eng]]</td>
+                                                <td>[[a.code]]</td>
+                                                <td>[[a.sms_received_datetime]]</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div id="offer_reject" class="tab-pane">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <tr>
+                                                <th>SL. No</th>
+                                                <th>Ansar Id</th>
+                                                <th>Name</th>
+                                                <th>Rank</th>
+                                                <th>Reject Date</th>
+                                            </tr>
+                                            <tr ng-if="orj.length<=0">
+                                                <th class="warning" colspan="5">No Ansar Found</th>
+                                            </tr>
+                                            <tr ng-if="orj.length>0" ng-repeat="a in orj">
+                                                <td>[[$index+1]]</td>
+                                                <td>[[a.ansar_id]]</td>
+                                                <td>[[a.ansar_name_eng]]</td>
+                                                <td>[[a.code]]</td>
+                                                <td>[[a.reject_date]]</td>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </div>
                             </div>

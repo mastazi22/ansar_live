@@ -3,6 +3,10 @@
 {{--Time: 11:40 AM--}}
 
 @extends('template.master')
+@section('title','Disembodied Ansar Info')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('disembodiment_report_view') !!}
+@endsection
 @section('content')
     <script>
         $(document).ready(function () {
@@ -16,18 +20,18 @@
             $scope.selectedDistrict = "all";
             $scope.selectedThana = "all";
             $scope.districts = [];
-            $scope.thanas= [];
+            $scope.thanas = [];
             $scope.itemPerPage = 10;
             $scope.currentPage = 0;
             $scope.ansars = $sce.trustAsHtml("");
             $scope.pages = [];
             $scope.isLoading = false;
             $scope.loadingDistrict = true;
-            $scope.loadingThana=false;
+            $scope.loadingThana = false;
             $scope.loadingPage = [];
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
-            $scope.from_date=moment().subtract(1,'years').format("D-MMM-YYYY");
-            $scope.to_date=moment().format("D-MMM-YYYY");
+            $scope.from_date = moment().subtract(1, 'years').format("D-MMM-YYYY");
+            $scope.to_date = moment().format("D-MMM-YYYY");
 
             $scope.loadPagination = function () {
                 $scope.pages = [];
@@ -52,10 +56,10 @@
                     params: {
                         offset: page.offset,
                         limit: page.limit,
-                        unit_id:$scope.selectedDistrict,
+                        unit_id: $scope.selectedDistrict,
                         thana_id: $scope.selectedThana,
-                        from_date:$scope.from_date,
-                        to_date:$scope.to_date,
+                        from_date: $scope.from_date,
+                        to_date: $scope.to_date,
                         view: 'view'
                     }
                 }).then(function (response) {
@@ -71,10 +75,10 @@
                     url: '{{URL::route('disemboded_ansar_info')}}',
                     method: 'get',
                     params: {
-                        unit_id:$scope.selectedDistrict,
+                        unit_id: $scope.selectedDistrict,
                         thana_id: $scope.selectedThana,
-                        from_date:$scope.from_date,
-                        to_date:$scope.to_date,
+                        from_date: $scope.from_date,
+                        to_date: $scope.to_date,
                         view: 'count'
                     }
                 }).then(function (response) {
@@ -89,8 +93,8 @@
                 })
             }
             $scope.filterMiddlePage = function (value, index, array) {
-                var minPage = $scope.currentPage-3<0?0:($scope.currentPage>array.length-4?array.length-8:$scope.currentPage-3);
-                var maxPage = minPage+7;
+                var minPage = $scope.currentPage - 3 < 0 ? 0 : ($scope.currentPage > array.length - 4 ? array.length - 8 : $scope.currentPage - 3);
+                var maxPage = minPage + 7;
                 if (value.pageNum >= minPage && value.pageNum <= maxPage) {
                     return true;
                 }
@@ -106,7 +110,7 @@
 
             })
             $scope.loadThana = function (id) {
-                $scope.loadingThana=true;
+                $scope.loadingThana = true;
                 $http({
                     method: 'get',
                     url: '{{URL::to('HRM/ThanaName')}}',
@@ -114,29 +118,29 @@
                 }).then(function (response) {
                     $scope.thanas = response.data;
                     $scope.selectedThana = "";
-                    $scope.loadingThana=false;
+                    $scope.loadingThana = false;
                 })
             }
-            $scope.resetValues=function(){
+            $scope.resetValues = function () {
                 $scope.selectedRank = "";
                 $scope.selectedSex = "";
             }
 
-            $scope.loadReportData = function (reportName,type) {
+            $scope.loadReportData = function (reportName, type) {
                 $http({
-                    method:'get',
-                    url:'{{URL::route('localize_report')}}',
-                    params:{name:reportName,type:type}
-                }).then(function(response){
+                    method: 'get',
+                    url: '{{URL::route('localize_report')}}',
+                    params: {name: reportName, type: type}
+                }).then(function (response) {
                     console.log(response.data)
                     $scope.report = response.data;
                 })
             }
-            $scope.resetValues=function(){
+            $scope.resetValues = function () {
                 $scope.selectedDistrict = "";
                 $scope.selectedThana = "";
             }
-            $scope.loadReportData("ansar_disembodiment_report","eng")
+            $scope.loadReportData("ansar_disembodiment_report", "eng")
             $scope.loadTotal();
 
         })
@@ -156,12 +160,8 @@
         </div>
         <section class="content">
             <div class="box box-solid">
-                <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a>[[report.header]]</a>
-                        </li>
-                        <li class="pull-right">
+                <div class="box-body">
+                    <div class="pull-right">
                             <span class="control-label" style="padding: 5px 8px">
                                 View report in&nbsp;&nbsp;&nbsp;<input type="radio" class="radio-inline"
                                                                        style="margin: 0 !important;" value="eng"
@@ -172,110 +172,110 @@
                                              class="radio-inline" style="margin: 0 !important;" value="bng"
                                              ng-model="reportType">&nbsp;<b>বাংলা</b>
                             </span>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group required">
-                                        <label class="control-label">
-                                            Enter Date Range
-                                        </label></br>
-                                        <div class="col-md-6" style="margin-left: 0px; padding-left: 0px; margin-right: 0px; padding-right: 0px">
-                                            <input type="text" name="from_date" id="from_date" class="form-control"
-                                                   placeholder="From Date" ng-model="from_date" ng-change="resetValues()"><br>
-                                        </div>
-                                        <div class="col-md-6" style="margin-left: 0px; padding-left: 0px; margin-right: 0px; padding-right: 0px">
-                                            <input type="text" name="to_date" id="to_date" class="form-control"
-                                                   placeholder="To Date" ng-model="to_date" ng-change="resetValues()">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group required">
-                                        <label class="control-label">
-                                            Select a Unit
-                                            <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
-                                                 width="16"></label>
-                                        </label>
-                                        <select name="unit_id" class="form-control" ng-model="selectedDistrict"
-                                                ng-change="loadThana(selectedDistrict)">
-                                            <option value="" disabled>--Select a Unit--</option>
-                                            <option value="all">All</option>
-                                            <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_eng]]
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group required">
-                                        <label class="control-label">
-                                            Select a Thana
-                                            <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
-                                                 width="16">
-                                        </label>
-                                        <select name="thana_id" class="form-control" ng-model="selectedThana" ng-change="loadTotal(selectedDistrict,selectedThana,to_date,from_date)">
-                                            <option value="" disabled>--Select a Thana--</option>
-                                            <option value="all">All</option>
-                                            <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_eng]]
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="print_ansar_disembodiment_report">
-                                <h3 style="text-align: center" id="report-header">[[report.header]]&nbsp;&nbsp;
-                                    <a href="#" title="print" id="print-report">
-                                        <span class="glyphicon glyphicon-print"></span>
-                                    </a></h3>
+                    </div>
+                    <br>
 
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <tr>
-                                            <th>[[report.ansar.sl_no]]</th>
-                                            <th>[[report.ansar.id]]</th>
-                                            <th>[[report.ansar.rank]]</th>
-                                            <th>[[report.ansar.name]]</th>
-                                            <th>[[report.ansar.kpi_name]]</th>
-                                            <th>[[report.ansar.district]]</th>
-                                            <th>[[report.ansar.reporting_date]]</th>
-                                            <th>[[report.ansar.joining_date]]</th>
-                                            <th>[[report.ansar.disembodiment_reason]]</th>
-                                            <th>[[report.ansar.disembodiment_date]]</th>
-                                        </tr>
-                                        <tbody ng-bind-html="ansars"></tbody>
-                                    </table>
-
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group required">
+                                <label class="control-label">
+                                    Enter Date Range
+                                </label></br>
+                                <div class="col-md-6"
+                                     style="margin-left: 0px; padding-left: 0px; margin-right: 0px; padding-right: 0px">
+                                    <input type="text" name="from_date" id="from_date" class="form-control"
+                                           placeholder="From Date" ng-model="from_date" ng-change="resetValues()"><br>
                                 </div>
-                            </div>
-                            <div class="table_pagination" ng-if="pages.length>1">
-                                <ul class="pagination" style="margin-bottom: 20px">
-                                    <li ng-class="{disabled:currentPage == 0}">
-                                        <a href="#" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>
-                                    </li>
-                                    <li ng-class="{disabled:currentPage == 0}">
-                                        <a href="#" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
-                                    </li>
-                                    <li ng-repeat="page in pages|filter:filterMiddlePage"
-                                        ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
-                                        <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
-                                        <a href="#" ng-click="loadPage(page,$event)" ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
-                                        <span ng-show="loadingPage[page.pageNum]"  style="position: relative"><i class="fa fa-spinner fa-pulse" style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
-                                    </li>
-                                    <li ng-class="{disabled:currentPage==pages.length-1}">
-                                        <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
-                                    </li>
-                                    <li ng-class="{disabled:currentPage==pages.length-1}">
-                                        <a href="#" ng-click="loadPage(pages[pages.length-1],$event)">&raquo;&raquo;</a>
-                                    </li>
-                                </ul>
+                                <div class="col-md-6"
+                                     style="margin-left: 0px; padding-left: 0px; margin-right: 0px; padding-right: 0px">
+                                    <input type="text" name="to_date" id="to_date" class="form-control"
+                                           placeholder="To Date" ng-model="to_date" ng-change="resetValues()">
+                                </div>
                             </div>
                         </div>
-
-
+                        <div class="col-sm-4">
+                            <div class="form-group required">
+                                <label class="control-label">
+                                    Select a Unit
+                                    <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
+                                         width="16"></label>
+                                </label>
+                                <select name="unit_id" class="form-control" ng-model="selectedDistrict"
+                                        ng-change="loadThana(selectedDistrict)">
+                                    <option value="" disabled>--Select a Unit--</option>
+                                    <option value="all">All</option>
+                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_eng]]
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group required">
+                                <label class="control-label">
+                                    Select a Thana
+                                    <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
+                                         width="16">
+                                </label>
+                                <select name="thana_id" class="form-control" ng-model="selectedThana"
+                                        ng-change="loadTotal(selectedDistrict,selectedThana,to_date,from_date)">
+                                    <option value="" disabled>--Select a Thana--</option>
+                                    <option value="all">All</option>
+                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_eng]]
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
+                    <div id="print_ansar_disembodiment_report">
+                        <h3 style="text-align: center" id="report-header">[[report.header]]&nbsp;&nbsp;
+                            <a href="#" title="print" id="print-report">
+                                <span class="glyphicon glyphicon-print"></span>
+                            </a></h3>
 
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>[[report.ansar.sl_no]]</th>
+                                    <th>[[report.ansar.id]]</th>
+                                    <th>[[report.ansar.rank]]</th>
+                                    <th>[[report.ansar.name]]</th>
+                                    <th>[[report.ansar.kpi_name]]</th>
+                                    <th>[[report.ansar.district]]</th>
+                                    <th>[[report.ansar.reporting_date]]</th>
+                                    <th>[[report.ansar.joining_date]]</th>
+                                    <th>[[report.ansar.disembodiment_reason]]</th>
+                                    <th>[[report.ansar.disembodiment_date]]</th>
+                                </tr>
+                                <tbody ng-bind-html="ansars"></tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                    <div class="table_pagination" ng-if="pages.length>1">
+                        <ul class="pagination" style="margin-bottom: 20px">
+                            <li ng-class="{disabled:currentPage == 0}">
+                                <a href="#" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>
+                            </li>
+                            <li ng-class="{disabled:currentPage == 0}">
+                                <a href="#" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
+                            </li>
+                            <li ng-repeat="page in pages|filter:filterMiddlePage"
+                                ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
+                                <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
+                                <a href="#" ng-click="loadPage(page,$event)"
+                                   ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
+                                <span ng-show="loadingPage[page.pageNum]" style="position: relative"><i
+                                            class="fa fa-spinner fa-pulse"
+                                            style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
+                            </li>
+                            <li ng-class="{disabled:currentPage==pages.length-1}">
+                                <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
+                            </li>
+                            <li ng-class="{disabled:currentPage==pages.length-1}">
+                                <a href="#" ng-click="loadPage(pages[pages.length-1],$event)">&raquo;&raquo;</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>

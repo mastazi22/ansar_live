@@ -1,4 +1,8 @@
 @extends('template.master')
+@section('title','Ansar Transfer Report')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('transfer_ansar_history') !!}
+@endsection
 @section('content')
     <script>
         GlobalApp.controller('TransferController', function ($scope,$http) {
@@ -54,58 +58,49 @@
         </div>
         <section class="content">
             <div class="box box-solid">
-                <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a>Ansar Transfer Report</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active">
-                            <div class="row">
-                                <div class="col-sm-4 col-sm-offset-4">
-                                    <div class="form-group">
-                                        <label class="control-label">
-                                            Enter Ansar Id
-                                        </label>
-                                        <input type="text" ng-model="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-keypress="loadTransferHistoryOnKeyPress(ansar_id,$event)">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-sm-4 col-sm-offset-4">
+                            <div class="form-group">
+                                <label class="control-label">
+                                    Enter Ansar Id
+                                </label>
+                                <input type="text" ng-model="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-keypress="loadTransferHistoryOnKeyPress(ansar_id,$event)">
 
-                                    </div>
-                                    <button class="btn btn-primary" ng-click="loadTransferHistory(ansar_id)">Generate Transfer Report</button>
-                                </div>
                             </div>
-                            <div class="row">
-                                <div class="col-sm-12" id="ansar_transfer_history">
-                                    <h3 style="text-align: center">Ansar Transfer History&nbsp;<a href="#" id="print-report"><span class="glyphicon glyphicon-print"></span></a></h3>
+                            <button class="btn btn-primary" ng-click="loadTransferHistory(ansar_id)">Generate Transfer Report</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12" id="ansar_transfer_history">
+                            <h3 style="text-align: center">Ansar Transfer History&nbsp;<a href="#" id="print-report"><span class="glyphicon glyphicon-print"></span></a></h3>
 
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered">
-                                            <tr>
-                                                <th>SL. No</th>
-                                                <th>From KPI</th>
-                                                <th>To KPI</th>
-                                                <th>District</th>
-                                                <th>Thana</th>
-                                                <th>Joining Date</th>
-                                                <th>Transfer Date</th>
-                                            </tr>
-                                            <tr ng-show="ansars.length==0">
-                                                <td colspan="7" class="warning">
-                                                    No ansar found
-                                                </td>
-                                            </tr>
-                                            <tr ng-repeat="a in ansars" ng-show="ansars.length>0">
-                                                <td>[[$index+1]]</td>
-                                                <td>[[a.FromkpiName]]</td>
-                                                <td>[[a.TokpiName]]</td>
-                                                <td>[[a.unit]]</td>
-                                                <td>[[a.thana]]</td>
-                                                <td>[[convertDate(a.joiningDate)]]</td>
-                                                <td>[[convertDate(a.transferDate)]]</td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                </div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th>SL. No</th>
+                                        <th>From KPI</th>
+                                        <th>To KPI</th>
+                                        <th>District</th>
+                                        <th>Thana</th>
+                                        <th>Joining Date</th>
+                                        <th>Transfer Date</th>
+                                    </tr>
+                                    <tr ng-show="ansars.length==0">
+                                        <td colspan="7" class="warning">
+                                            No ansar found
+                                        </td>
+                                    </tr>
+                                    <tr ng-repeat="a in ansars" ng-show="ansars.length>0">
+                                        <td>[[$index+1]]</td>
+                                        <td>[[a.FromkpiName]]</td>
+                                        <td>[[a.TokpiName]]</td>
+                                        <td>[[a.unit]]</td>
+                                        <td>[[a.thana]]</td>
+                                        <td>[[convertDate(a.joiningDate)]]</td>
+                                        <td>[[convertDate(a.transferDate)]]</td>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
                     </div>

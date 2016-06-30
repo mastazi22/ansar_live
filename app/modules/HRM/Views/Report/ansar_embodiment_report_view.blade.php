@@ -3,6 +3,10 @@
 {{--Time: 11:54 AM--}}
 
 @extends('template.master')
+@section('title','Embodied Ansar Info')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('embodiment_report_view') !!}
+@endsection
 @section('content')
     <script>
         $(document).ready(function () {
@@ -154,12 +158,8 @@
         </div>
         <section class="content">
             <div class="box box-solid">
-                <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a>[[report.header]]</a>
-                        </li>
-                        <li class="pull-right">
+                <div class="box-body">
+                    <div class="pull-right">
                             <span class="control-label" style="padding: 5px 8px">
                                 View report in&nbsp;&nbsp;&nbsp;<input type="radio" class="radio-inline"
                                                                        style="margin: 0 !important;" value="eng"
@@ -170,102 +170,97 @@
                                              class="radio-inline" style="margin: 0 !important;" value="bng"
                                              ng-model="reportType">&nbsp;<b>বাংলা</b>
                             </span>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group required">
-                                        <label class="control-label">
-                                            Enter Date Range
-                                        </label></br>
-                                        <div class="col-md-6" style="margin-left: 0px; padding-left: 0px; margin-right: 0px; padding-right: 0px">
-                                            <input type="text" name="from_date" id="from_date" class="form-control"
-                                                   placeholder="From Date" ng-model="from_date" ng-change="resetValues()"><br>
-                                        </div>
-                                        <div class="col-md-6" style="margin-left: 0px; padding-left: 0px; margin-right: 0px; padding-right: 0px">
-                                            <input type="text" name="to_date" id="to_date" class="form-control"
-                                                   placeholder="To Date" ng-model="to_date" ng-change="resetValues()">
-                                        </div>
-                                    </div>
+                    </div><br>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group required">
+                                <label class="control-label">
+                                    Enter Date Range
+                                </label></br>
+                                <div class="col-md-6" style="margin-left: 0px; padding-left: 0px; margin-right: 0px; padding-right: 0px">
+                                    <input type="text" name="from_date" id="from_date" class="form-control"
+                                           placeholder="From Date" ng-model="from_date" ng-change="resetValues()"><br>
                                 </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group required">
-                                        <label class="control-label">
-                                            Select a Unit
-                                            <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
-                                                 width="16"></label>
-                                        </label>
-                                        <select name="unit_id" class="form-control" ng-model="selectedDistrict"
-                                                ng-change="loadThana(selectedDistrict)">
-                                            <option value="" disabled>--Select Unit--</option>
-                                            <option value="all">All</option>
-                                            <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_eng]]
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group required">
-                                        <label class="control-label">
-                                            Select a Thana
-                                            <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
-                                                 width="16">
-                                        </label>
-                                        <select name="thana_id" class="form-control" ng-model="selectedThana" ng-change="loadTotal(selectedDistrict,selectedThana,to_date,from_date)">
-                                            <option value="" disabled>--Select Thana--</option>
-                                            <option value="all">All</option>
-                                            <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_eng]]
-                                            </option>
-                                        </select>
-                                    </div>
+                                <div class="col-md-6" style="margin-left: 0px; padding-left: 0px; margin-right: 0px; padding-right: 0px">
+                                    <input type="text" name="to_date" id="to_date" class="form-control"
+                                           placeholder="To Date" ng-model="to_date" ng-change="resetValues()">
                                 </div>
                             </div>
-                            <div id="print_ansar_embodiment_report">
-                                <h3 style="text-align: center" id="report-header">[[report.header]]&nbsp;&nbsp;
-                                    <a href="#" title="print" id="print-report">
-                                        <span class="glyphicon glyphicon-print"></span>
-                                    </a></h3>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group required">
+                                <label class="control-label">
+                                    Select a Unit
+                                    <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
+                                         width="16"></label>
+                                </label>
+                                <select name="unit_id" class="form-control" ng-model="selectedDistrict"
+                                        ng-change="loadThana(selectedDistrict)">
+                                    <option value="" disabled>--Select Unit--</option>
+                                    <option value="all">All</option>
+                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_eng]]
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group required">
+                                <label class="control-label">
+                                    Select a Thana
+                                    <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
+                                         width="16">
+                                </label>
+                                <select name="thana_id" class="form-control" ng-model="selectedThana" ng-change="loadTotal(selectedDistrict,selectedThana,to_date,from_date)">
+                                    <option value="" disabled>--Select Thana--</option>
+                                    <option value="all">All</option>
+                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_eng]]
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="print_ansar_embodiment_report">
+                        <h3 style="text-align: center" id="report-header">[[report.header]]&nbsp;&nbsp;
+                            <a href="#" title="print" id="print-report">
+                                <span class="glyphicon glyphicon-print"></span>
+                            </a></h3>
 
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <tr>
-                                            <th>[[report.ansar.sl_no]]</th>
-                                            <th>[[report.ansar.id]]</th>
-                                            <th>[[report.ansar.rank]]</th>
-                                            <th>[[report.ansar.name]]</th>
-                                            <th>[[report.ansar.kpi_name]]</th>
-                                            <th>[[report.ansar.district]]</th>
-                                            <th>[[report.ansar.reporting_date]]</th>
-                                            <th>[[report.ansar.joining_date]]</th>
-                                            <th>[[report.ansar.service_ended_date]]</th>
-                                        </tr>
-                                        <tbody ng-bind-html="ansars"></tbody>
-                                    </table>
-                                    <div class="table_pagination" ng-if="pages.length>1">
-                                        <ul class="pagination">
-                                            <li ng-class="{disabled:currentPage == 0}">
-                                                <a href="#" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>
-                                            </li>
-                                            <li ng-class="{disabled:currentPage == 0}">
-                                                <a href="#" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
-                                            </li>
-                                            <li ng-repeat="page in pages|filter:filterMiddlePage"
-                                                ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
-                                                <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
-                                                <a href="#" ng-click="loadPage(page,$event)" ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
-                                                <span ng-show="loadingPage[page.pageNum]"  style="position: relative"><i class="fa fa-spinner fa-pulse" style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
-                                            </li>
-                                            <li ng-class="{disabled:currentPage==pages.length-1}">
-                                                <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
-                                            </li>
-                                            <li ng-class="{disabled:currentPage==pages.length-1}">
-                                                <a href="#" ng-click="loadPage(pages[pages.length-1],$event)">&raquo;&raquo;</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>[[report.ansar.sl_no]]</th>
+                                    <th>[[report.ansar.id]]</th>
+                                    <th>[[report.ansar.rank]]</th>
+                                    <th>[[report.ansar.name]]</th>
+                                    <th>[[report.ansar.kpi_name]]</th>
+                                    <th>[[report.ansar.district]]</th>
+                                    <th>[[report.ansar.reporting_date]]</th>
+                                    <th>[[report.ansar.joining_date]]</th>
+                                    <th>[[report.ansar.service_ended_date]]</th>
+                                </tr>
+                                <tbody ng-bind-html="ansars"></tbody>
+                            </table>
+                            <div class="table_pagination" ng-if="pages.length>1">
+                                <ul class="pagination">
+                                    <li ng-class="{disabled:currentPage == 0}">
+                                        <a href="#" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>
+                                    </li>
+                                    <li ng-class="{disabled:currentPage == 0}">
+                                        <a href="#" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
+                                    </li>
+                                    <li ng-repeat="page in pages|filter:filterMiddlePage"
+                                        ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
+                                        <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
+                                        <a href="#" ng-click="loadPage(page,$event)" ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
+                                        <span ng-show="loadingPage[page.pageNum]"  style="position: relative"><i class="fa fa-spinner fa-pulse" style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
+                                    </li>
+                                    <li ng-class="{disabled:currentPage==pages.length-1}">
+                                        <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
+                                    </li>
+                                    <li ng-class="{disabled:currentPage==pages.length-1}">
+                                        <a href="#" ng-click="loadPage(pages[pages.length-1],$event)">&raquo;&raquo;</a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>

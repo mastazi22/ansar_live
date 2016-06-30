@@ -1,4 +1,8 @@
 @extends('template.master')
+@section('title','Ansar in guard Report')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('guard_report') !!}
+@endsection
 @section('content')
     <script>
         GlobalApp.controller('ReportGuardSearchController', function ($scope, $http) {
@@ -108,12 +112,8 @@
     <div ng-controller="ReportGuardSearchController">
         <section class="content">
             <div class="box box-solid">
-                <div class="nav-tabs-custom" style="background-color: transparent">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a href="#">Guard</a>
-                        </li>
-                        <li class="pull-right">
+                <div class="box-body">
+                    <div class="pull-right">
                             <span class="control-label" style="padding: 5px 8px">
                                 View report in&nbsp;&nbsp;&nbsp;<input type="radio" class="radio-inline"
                                                                        style="margin: 0 !important;" value="eng"
@@ -123,155 +123,150 @@
                                              class="radio-inline" style="margin: 0 !important;" value="bng"
                                              ng-model="reportType">&nbsp;<b>বাংলা</b>
                             </span>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active">
-                            <div class="row">
-                                <div class="col-sm-4" ng-show="isAdmin==11">
-                                    <div class="form-group">
-                                        <label class="control-label">
-                                            Select a District&nbsp;&nbsp;
-                                            <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                                 ng-show="loadingUnit">
-                                        </label>
-                                        <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                                ng-model="selectedDistrict"
-                                                ng-change="loadThana(selectedDistrict)">
-                                            <option value="">--Select a District--</option>
-                                            <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
-                                            </option>
-                                        </select>
+                    </div><br>
+                    <div class="row">
+                        <div class="col-sm-4" ng-show="isAdmin==11">
+                            <div class="form-group">
+                                <label class="control-label">
+                                    Select a District&nbsp;&nbsp;
+                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
+                                         ng-show="loadingUnit">
+                                </label>
+                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
+                                        ng-model="selectedDistrict"
+                                        ng-change="loadThana(selectedDistrict)">
+                                    <option value="">--Select a District--</option>
+                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">
+                                    Select a Thana&nbsp;&nbsp;
+                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
+                                         ng-show="loadingThana">
+                                </label>
+                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
+                                        ng-model="selectedThana"
+                                        ng-change="loadGuard(selectedThana)">
+                                    <option value="">--Select a Thana--</option>
+                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">
+                                    Select a Guard&nbsp;&nbsp;
+                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
+                                         ng-show="loadingKpi">
+                                </label>
+                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
+                                        ng-model="selectedKPI"
+                                        ng-change="loadAnsar(selectedKPI)">
+                                    <option value="">--Select a Guard--</option>
+                                    <option ng-repeat="d in guards" value="[[d.id]]">[[d.kpi_name]]
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="print-guard-in-ansar-report">
+                        <h3 style="text-align: center" id="report-header">[[report.report_header]]&nbsp;&nbsp;
+                            <a href="#" title="print" id="print-report">
+                                <span class="glyphicon glyphicon-print"></span>
+                            </a></h3>
+
+                        <div class="report-heading">
+                            <div class="report-heading-body">
+                                <div class="report-heading-guard">
+                                    <h4>[[report.guard.kpi_title]]</h4>
+
+                                    <div>
+                                        <ul class="guard-detail">
+                                            <li class="guard-list-item-header">[[report.guard.kpi_name]]</li>
+                                            <li>[[guardDetail.kpi_name]]&nbsp;</li>
+                                        </ul>
                                     </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label class="control-label">
-                                            Select a Thana&nbsp;&nbsp;
-                                            <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                                 ng-show="loadingThana">
-                                        </label>
-                                        <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                                ng-model="selectedThana"
-                                                ng-change="loadGuard(selectedThana)">
-                                            <option value="">--Select a Thana--</option>
-                                            <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
-                                            </option>
-                                        </select>
+                                    <div>
+                                        <ul class="guard-detail">
+                                            <li class="guard-list-item-header">[[report.guard.kpi_address]]</li>
+                                            <li>[[guardDetail.kpi_address]], [[guardDetail.thana_name_bng]], [[guardDetail.unit_name_bng]]&nbsp;</li>
+                                        </ul>
                                     </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label class="control-label">
-                                            Select a Guard&nbsp;&nbsp;
-                                            <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                                 ng-show="loadingKpi">
-                                        </label>
-                                        <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                                ng-model="selectedKPI"
-                                                ng-change="loadAnsar(selectedKPI)">
-                                            <option value="">--Select a Guard--</option>
-                                            <option ng-repeat="d in guards" value="[[d.id]]">[[d.kpi_name]]
-                                            </option>
-                                        </select>
+                                    <div>
+                                        <ul class="guard-detail">
+                                            <li class="guard-list-item-header">[[report.guard.kpi_type]]</li>
+                                            <li>--</li>
+                                        </ul>
                                     </div>
+                                    <div>
+                                        <ul class="guard-detail">
+                                            <li class="guard-list-item-header">
+                                                [[report.guard.kpi_ansar_given]]
+                                            </li>
+                                            <li>[[guardDetail.total_ansar_given]]&nbsp;</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <ul class="guard-detail">
+                                            <li class="guard-list-item-header">
+                                                [[report.guard.kpi_current_ansar]]
+                                            </li>
+                                            <li>[[ansars.length]]&nbsp;</li>
+                                        </ul>
+                                    </div>
+
                                 </div>
                             </div>
-                            <div id="print-guard-in-ansar-report">
-                                <h3 style="text-align: center" id="report-header">[[report.report_header]]&nbsp;&nbsp;
-                                    <a href="#" title="print" id="print-report">
-                                        <span class="glyphicon glyphicon-print"></span>
-                                    </a></h3>
-
-                                <div class="report-heading">
-                                    <div class="report-heading-body">
-                                        <div class="report-heading-guard">
-                                            <h4>[[report.guard.kpi_title]]</h4>
-
-                                            <div>
-                                                <ul class="guard-detail">
-                                                    <li class="guard-list-item-header">[[report.guard.kpi_name]]</li>
-                                                    <li>[[guardDetail.kpi_name]]&nbsp;</li>
-                                                </ul>
-                                            </div>
-                                            <div>
-                                                <ul class="guard-detail">
-                                                    <li class="guard-list-item-header">[[report.guard.kpi_address]]</li>
-                                                    <li>[[guardDetail.kpi_address]], [[guardDetail.thana_name_bng]], [[guardDetail.unit_name_bng]]&nbsp;</li>
-                                                </ul>
-                                            </div>
-                                            <div>
-                                                <ul class="guard-detail">
-                                                    <li class="guard-list-item-header">[[report.guard.kpi_type]]</li>
-                                                    <li>--</li>
-                                                </ul>
-                                            </div>
-                                            <div>
-                                                <ul class="guard-detail">
-                                                    <li class="guard-list-item-header">
-                                                        [[report.guard.kpi_ansar_given]]
-                                                    </li>
-                                                    <li>[[guardDetail.total_ansar_given]]&nbsp;</li>
-                                                </ul>
-                                            </div>
-                                            <div>
-                                                <ul class="guard-detail">
-                                                    <li class="guard-list-item-header">
-                                                        [[report.guard.kpi_current_ansar]]
-                                                    </li>
-                                                    <li>[[ansars.length]]&nbsp;</li>
-                                                </ul>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <caption class="table-caption"
-                                                 style="text-align: center;font-size: 1.5em;font-weight: bold">
-                                            [[report.ansar.ansar_title]]
-                                        </caption>
-                                        <tr>
-                                            <th>[[report.ansar.sl_no]]</th>
-                                            <th>[[report.ansar.id]]</th>
-                                            <th>[[report.ansar.rank]]</th>
-                                            <th>[[report.ansar.name]]</th>
-                                            <th>[[report.ansar.district]]</th>
-                                            <th>[[report.ansar.embodiment_date]]</th>
-                                            <th>[[report.ansar.join_date]]</th>
-                                        </tr>
-                                        <tr ng-show="ansars.length==0">
-                                            <td colspan="8" class="warning no-ansar">
-                                                No available available to see
-                                            </td>
-                                        </tr>
-                                        <tr ng-show="ansars.length>0" ng-repeat="a in ansars">
-                                            <td>
-                                                [[$index+1]]
-                                            </td>
-                                            <td>
-                                                <a href="{{URL::to('HRM/entryreport')}}/[[a.ansar_id]]">[[a.ansar_id]]</a>
-                                            </td>
-                                            <td>
-                                                [[a.name_bng]]
-                                            </td>
-                                            <td>
-                                                [[a.ansar_name_bng]]
-                                            </td>
-                                            <td>
-                                                [[a.unit_name_bng]]
-                                            </td>
-                                            <td>
-                                                [[dateConvert(a.reporting_date)]]
-                                            </td>
-                                            <td>
-                                                [[dateConvert(a.joining_date)]]
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <caption class="table-caption"
+                                         style="text-align: center;font-size: 1.5em;font-weight: bold">
+                                    [[report.ansar.ansar_title]]
+                                </caption>
+                                <tr>
+                                    <th>[[report.ansar.sl_no]]</th>
+                                    <th>[[report.ansar.id]]</th>
+                                    <th>[[report.ansar.rank]]</th>
+                                    <th>[[report.ansar.name]]</th>
+                                    <th>[[report.ansar.district]]</th>
+                                    <th>[[report.ansar.embodiment_date]]</th>
+                                    <th>[[report.ansar.join_date]]</th>
+                                </tr>
+                                <tr ng-show="ansars.length==0">
+                                    <td colspan="8" class="warning no-ansar">
+                                        No available available to see
+                                    </td>
+                                </tr>
+                                <tr ng-show="ansars.length>0" ng-repeat="a in ansars">
+                                    <td>
+                                        [[$index+1]]
+                                    </td>
+                                    <td>
+                                        <a href="{{URL::to('HRM/entryreport')}}/[[a.ansar_id]]">[[a.ansar_id]]</a>
+                                    </td>
+                                    <td>
+                                        [[a.name_bng]]
+                                    </td>
+                                    <td>
+                                        [[a.ansar_name_bng]]
+                                    </td>
+                                    <td>
+                                        [[a.unit_name_bng]]
+                                    </td>
+                                    <td>
+                                        [[dateConvert(a.reporting_date)]]
+                                    </td>
+                                    <td>
+                                        [[dateConvert(a.joining_date)]]
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                 </div>

@@ -3,6 +3,10 @@
 {{--Time: 3:16 PM--}}
 
 @extends('template.master')
+@section('title','Blacklisted Ansar Report')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('blacklist_view') !!}
+@endsection
 @section('content')
     <script>
         GlobalApp.controller('BlackListReportController', function ($scope, $http,$sce) {
@@ -160,12 +164,8 @@
         </div>
         <section class="content">
             <div class="box box-solid">
-                <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a>[[report.header]]</a>
-                        </li>
-                        <li class="pull-right">
+                <div class="box-body">
+                    <div class="pull-right">
                             <span class="control-label" style="padding: 5px 8px">
                                 View report in&nbsp;&nbsp;&nbsp;<input type="radio" class="radio-inline"
                                                                        style="margin: 0 !important;" value="eng"
@@ -175,98 +175,93 @@
                                              class="radio-inline" style="margin: 0 !important;" value="bng"
                                              ng-model="reportType">&nbsp;<b>বাংলা</b>
                             </span>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active">
-                            <div class="row">
-                                <div class="col-sm-4" ng-show="isAdmin==11">
-                                    <div class="form-group">
-                                        <label class="control-label">Select unit&nbsp;
-                                            <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
-                                                 width="16"></label>
-                                        <select class="form-control" ng-model="selectedDistrict"
-                                                ng-change="loadThana(selectedDistrict)">
-                                            <option value="all">All</option>
-                                            <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label class="control-label">
-                                            Select Thana
-                                        </label>
-                                        <select class="form-control" ng-model="selectedThana"
-                                                ng-change="loadTotal(selectedThana)">
-                                            <option value="all">All</option>
-                                            <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
+                    </div><br>
+                    <div class="row">
+                        <div class="col-sm-4" ng-show="isAdmin==11">
+                            <div class="form-group">
+                                <label class="control-label">Select unit&nbsp;
+                                    <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
+                                         width="16"></label>
+                                <select class="form-control" ng-model="selectedDistrict"
+                                        ng-change="loadThana(selectedDistrict)">
+                                    <option value="all">All</option>
+                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
+                                    </option>
+                                </select>
                             </div>
-                            <div id="print-blacklisted-ansar-report">
-                                <h3 style="text-align: center" id="report-header">[[report.ansar.ansar_title]]&nbsp;&nbsp;
-                                    <a href="#" title="print" id="print-report">
-                                        <span class="glyphicon glyphicon-print"></span>
-                                    </a></h3>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <tr>
-                                            <th>[[report.ansar.sl_no]]</th>
-                                            <th>[[report.ansar.id]]</th>
-                                            <th>[[report.ansar.name]]</th>
-                                            <th>[[report.ansar.rank]]</th>
-                                            <th>[[report.ansar.district]]</th>
-                                            {{--<th>[[report.ansar.thana]]</th>--}}
-                                            <th>[[report.ansar.date_of_birth]]</th>
-                                            <th>[[report.ansar.sex]]</th>
-                                            <th>[[report.ansar.blacklisted_from_where]]</th>
-                                            <th>[[report.ansar.blacked_reason]]</th>
-                                            <th>[[report.ansar.blacked_date]]</th>
-                                        </tr>
-                                        <tbody ng-bind-html="ansars"></tbody>
-                                    </table>
-                                    <div class="table_pagination" ng-if="pages.length>1">
-                                        <ul class="pagination">
-                                            <li ng-class="{disabled:currentPage == 0}">
-                                                <a href="#" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
-                                            </li>
-                                            <li ng-repeat="page in pages|filter:filterFirstPage"
-                                                ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
-                                                <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
-                                                <a href="#" ng-click="loadPage(page,$event)" ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
-                                                <span ng-show="loadingPage[page.pageNum]"  style="position: relative"><i class="fa fa-spinner fa-pulse" style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
-                                            </li>
-                                            <li ng-class="{disabled:currentPage >5}" ng-show="currentPage >5&&pages.length>8">
-                                                <span>...</span>
-                                                {{--<a href="#" ng-click="loadAnsar(currentPage - 1)" ng-hide="currentPage == 0">&laquo;</a>--}}
-                                            </li>
-                                            <li ng-repeat="page in pages|filter:filterMiddlePage"
-                                                ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
-                                                <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
-                                                <a href="#" ng-click="loadPage(page,$event)" ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
-                                                <span ng-show="loadingPage[page.pageNum]"  style="position: relative"><i class="fa fa-spinner fa-pulse" style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
-                                            </li>
-                                            <li ng-class="{disabled:currentPage <pages.length-6}"
-                                                ng-show="pages.length>8&&currentPage<pages.length-6">
-                                                <span>...</span>
-                                                {{--<a href="#" ng-click="loadAnsar(currentPage - 1)" ng-hide="currentPage == 0">&laquo;</a>--}}
-                                            </li>
-                                            <li ng-repeat="page in pages|filter:filterLastPage"
-                                                ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
-                                                <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
-                                                <a href="#" ng-click="loadPage(page,$event)" ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
-                                                <span ng-show="loadingPage[page.pageNum]"  style="position: relative"><i class="fa fa-spinner fa-pulse" style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
-                                            </li>
-                                            <li ng-class="{disabled:currentPage==pages.length-1}">
-                                                <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">
+                                    Select Thana
+                                </label>
+                                <select class="form-control" ng-model="selectedThana"
+                                        ng-change="loadTotal(selectedThana)">
+                                    <option value="all">All</option>
+                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="print-blacklisted-ansar-report">
+                        <h3 style="text-align: center" id="report-header">[[report.ansar.ansar_title]]&nbsp;&nbsp;
+                            <a href="#" title="print" id="print-report">
+                                <span class="glyphicon glyphicon-print"></span>
+                            </a></h3>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>[[report.ansar.sl_no]]</th>
+                                    <th>[[report.ansar.id]]</th>
+                                    <th>[[report.ansar.name]]</th>
+                                    <th>[[report.ansar.rank]]</th>
+                                    <th>[[report.ansar.district]]</th>
+                                    {{--<th>[[report.ansar.thana]]</th>--}}
+                                    <th>[[report.ansar.date_of_birth]]</th>
+                                    <th>[[report.ansar.sex]]</th>
+                                    <th>[[report.ansar.blacklisted_from_where]]</th>
+                                    <th>[[report.ansar.blacked_reason]]</th>
+                                    <th>[[report.ansar.blacked_date]]</th>
+                                </tr>
+                                <tbody ng-bind-html="ansars"></tbody>
+                            </table>
+                            <div class="table_pagination" ng-if="pages.length>1">
+                                <ul class="pagination">
+                                    <li ng-class="{disabled:currentPage == 0}">
+                                        <a href="#" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
+                                    </li>
+                                    <li ng-repeat="page in pages|filter:filterFirstPage"
+                                        ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
+                                        <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
+                                        <a href="#" ng-click="loadPage(page,$event)" ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
+                                        <span ng-show="loadingPage[page.pageNum]"  style="position: relative"><i class="fa fa-spinner fa-pulse" style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
+                                    </li>
+                                    <li ng-class="{disabled:currentPage >5}" ng-show="currentPage >5&&pages.length>8">
+                                        <span>...</span>
+                                        {{--<a href="#" ng-click="loadAnsar(currentPage - 1)" ng-hide="currentPage == 0">&laquo;</a>--}}
+                                    </li>
+                                    <li ng-repeat="page in pages|filter:filterMiddlePage"
+                                        ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
+                                        <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
+                                        <a href="#" ng-click="loadPage(page,$event)" ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
+                                        <span ng-show="loadingPage[page.pageNum]"  style="position: relative"><i class="fa fa-spinner fa-pulse" style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
+                                    </li>
+                                    <li ng-class="{disabled:currentPage <pages.length-6}"
+                                        ng-show="pages.length>8&&currentPage<pages.length-6">
+                                        <span>...</span>
+                                        {{--<a href="#" ng-click="loadAnsar(currentPage - 1)" ng-hide="currentPage == 0">&laquo;</a>--}}
+                                    </li>
+                                    <li ng-repeat="page in pages|filter:filterLastPage"
+                                        ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
+                                        <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
+                                        <a href="#" ng-click="loadPage(page,$event)" ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
+                                        <span ng-show="loadingPage[page.pageNum]"  style="position: relative"><i class="fa fa-spinner fa-pulse" style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
+                                    </li>
+                                    <li ng-class="{disabled:currentPage==pages.length-1}">
+                                        <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>

@@ -211,8 +211,66 @@ Breadcrumbs::register('offer_quota', function($breadcrumbs) {
 //    $breadcrumbs->push('Ansar Transfer', URL::to('transfer_process'));
 //});
 //Report
-
-
+Breadcrumbs::register('offer_report', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Offer Report', URL::route('offer_report'));
+});
+Breadcrumbs::register('disembodiment_report_view', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Dis-embodiment Letter', URL::route('disembodiment_report_view'));
+});
+Breadcrumbs::register('embodiment_letter_view', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Embodiment Letter', URL::route('embodiment_letter_view'));
+});
+Breadcrumbs::register('transfer_letter_view', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Transfer Letter', URL::route('transfer_letter_view'));
+});
+Breadcrumbs::register('service_record_unitwise_view', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Ansar Service Record Unit Wise', URL::route('service_record_unitwise_view'));
+});
+Breadcrumbs::register('three_year_over_report_view', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Transfer Letter', URL::route('three_year_over_report_view'));
+});
+Breadcrumbs::register('three_year_over_report_view', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Three Years Over Ansar Report', URL::route('three_year_over_report_view'));
+});
+Breadcrumbs::register('guard_report', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Ansar in guard Report', URL::route('guard_report'));
+});
+Breadcrumbs::register('blacklist_view', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Blacklisted Ansar Report', URL::route('blacklist_view'));
+});
+Breadcrumbs::register('blocklist_view', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Blocklisted Ansar Report', URL::route('blocklist_view'));
+});
+Breadcrumbs::register('disembodiment_report_view', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Disembodied Ansar Info', URL::route('disembodiment_report_view'));
+});
+Breadcrumbs::register('embodiment_report_view', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Embodied Ansar Info', URL::route('embodiment_report_view'));
+});
+Breadcrumbs::register('ansar_service_report_view', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Ansar Service Report', URL::route('ansar_service_report_view'));
+});
+Breadcrumbs::register('view_ansar_service_record', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Ansar Service Record', URL::route('view_ansar_service_record'));
+});
+Breadcrumbs::register('transfer_ansar_history', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Ansar Transfer Report', URL::route('transfer_ansar_history'));
+});
 //DG Forms
 
 

@@ -1,4 +1,8 @@
 @extends('template.master')
+@section('title','Dis-embodiment Letter')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('disembodiment_report_view') !!}
+@endsection
 @section('content')
     <script>
         $(function () {
@@ -48,36 +52,27 @@
     </script>
     <div ng-controller="DisEmbodiedLetterController">
         <section class="content">
-            <div class="nav-tabs-custom">
-                <ul class="nav nav-tabs">
-                    <li class="active">
-                        <a>Dis-Embodiment Letter</a>
-                    </li>
-                </ul>
-                <div class="tab-content">
-                    <div class="tab-pane active">
-                        <div class="box box-solid">
-                            <div class="row">
-                                <div class="col-sm-4 col-sm-offset-4">
-                                    <div class="form-group">
-                                        <label class="control-label">Enter Memorandum No.</label>
-                                        <input class="form-control" ng-model="memId" type="text" placeholder="Memorandum No">
-                                    </div>
-                                    <div class="form-group" ng-if="!isDc">
-                                        <label class="control-label">Select district</label>
-                                        <select class="form-control" ng-model="unit.selectedUnit" ng-disabled="units.length==0">
-                                            <option value="">--Select a district--</option>
-                                            <option ng-repeat="u in units" value="[[u.id]]">[[u.unit_name_bng]]</option>
-                                        </select>
-                                    </div>
-                                    <button class="btn btn-primary" ng-click="generateLetter(memId)" ng-disabled="isGenerating">
-                                        <i ng-show="isGenerating " class="fa fa-spinner fa-spin"></i><span ng-class="{'blink-animation':isGenerating}">Generate Dis-Embodiment Letter</span>
-                                    </button>
-                                </div>
+            <div class="box box-solid">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-sm-4 col-sm-offset-4">
+                            <div class="form-group">
+                                <label class="control-label">Enter Memorandum No.</label>
+                                <input class="form-control" ng-model="memId" type="text" placeholder="Memorandum No">
                             </div>
-                            <div ng-bind-html="letterPrintView"></div>
+                            <div class="form-group" ng-if="!isDc">
+                                <label class="control-label">Select district</label>
+                                <select class="form-control" ng-model="unit.selectedUnit" ng-disabled="units.length==0">
+                                    <option value="">--Select a district--</option>
+                                    <option ng-repeat="u in units" value="[[u.id]]">[[u.unit_name_bng]]</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" ng-click="generateLetter(memId)" ng-disabled="isGenerating">
+                                <i ng-show="isGenerating " class="fa fa-spinner fa-spin"></i><span ng-class="{'blink-animation':isGenerating}">Generate Dis-Embodiment Letter</span>
+                            </button>
                         </div>
                     </div>
+                    <div ng-bind-html="letterPrintView"></div>
                 </div>
             </div>
         </section>
