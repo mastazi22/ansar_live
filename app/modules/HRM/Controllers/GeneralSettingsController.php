@@ -62,7 +62,7 @@ class GeneralSettingsController extends Controller
             DB::rollback();
             return $e->getMessage();
         }
-        return Redirect::action('GeneralSettingsController@unitView')->with('success_message', 'New Unit Entered Successfully!');
+        return Redirect::route('unit_view')->with('success_message', 'New Unit Entered Successfully!');
     }
 
     public function thanaIndex()
@@ -118,7 +118,7 @@ class GeneralSettingsController extends Controller
             DB::rollback();
             return $e->getMessage();
         }
-        return Redirect::action('GeneralSettingsController@thanaView')->with('success_message', 'New Thana Entered Successfully!');
+        return Redirect::route('thana_view')->with('success_message', 'New Thana Entered Successfully!');
     }
 
     public function unitEdit($id)
@@ -157,7 +157,7 @@ class GeneralSettingsController extends Controller
             return $e->getMessage();
         }
 
-        return Redirect::action('GeneralSettingsController@unitView')->with('success_message', 'Unit Updated Successfully!');
+        return Redirect::route('unit_view')->with('success_message', 'Unit Updated Successfully!');
 
     }
 
@@ -178,17 +178,17 @@ class GeneralSettingsController extends Controller
             DB::rollback();
             return $e->getMessage();
         }
-        return Redirect::action('GeneralSettingsController@thanaView')->with('success_message', 'Thana Updated Successfully!');
+        return Redirect::route('thana_view')->with('success_message', 'Thana Updated Successfully!');
     }
     public function unitDelete($id){
         $unit_info=District::find($id);
         $unit_info->delete();
-        return Redirect::action('GeneralSettingsController@unitView')->with('success_message', 'Unit Deleted Successfully!');
+        return Redirect::route('unit_view')->with('success_message', 'Unit Deleted Successfully!');
     }
     public function thanaDelete($id){
         $thana_info=Thana::find($id);
         $thana_info->delete();
-        return Redirect::action('GeneralSettingsController@thanaView')->with('success_message', 'Thana Deleted Successfully!');
+        return Redirect::route('thana_view')->with('success_message', 'Thana Deleted Successfully!');
     }
     public function diseaseView()
     {
@@ -214,13 +214,13 @@ class GeneralSettingsController extends Controller
         $validation = Validator::make(Input::all(), $rules, $messages);
 
         if ($validation->fails()) {
-            return Redirect::action('GeneralSettingsController@addDiseaseName')->withInput(Input::all())->withErrors($validation);
+            return Redirect::route('add_disease_view')->withInput(Input::all())->withErrors($validation);
         } else {
             $disease_info = new AllDisease();
             $disease_info->disease_name_eng = $request->input('disease_name_eng');
             $disease_info->disease_name_bng = $request->input('disease_name_bng');
             $disease_info->save();
-            return Redirect::action('GeneralSettingsController@diseaseView')->with('success_message', 'New Disease Added Successfully!');
+            return Redirect::route('disease_view')->with('success_message', 'New Disease Added Successfully!');
         }
     }
 
@@ -243,13 +243,13 @@ class GeneralSettingsController extends Controller
         $validation = Validator::make(Input::all(), $rules, $messages);
 
         if ($validation->fails()) {
-            return Redirect::action('GeneralSettingsController@diseaseEdit')->withInput(Input::all())->withErrors($validation);
+            return Redirect::route('disease_edit')->withInput(Input::all())->withErrors($validation);
         } else {
             $disease_info = AllDisease::find($id);
             $disease_info->disease_name_eng = $request->input('disease_name_eng');
             $disease_info->disease_name_bng = $request->input('disease_name_bng');
             $disease_info->save();
-            return Redirect::action('GeneralSettingsController@diseaseView')->with('success_message', 'Disease Updated Successfully!');
+            return Redirect::route('disease_view')->with('success_message', 'Disease Updated Successfully!');
         }
     }
 
@@ -278,13 +278,13 @@ class GeneralSettingsController extends Controller
         $validation = Validator::make(Input::all(), $rules, $messages);
 
         if ($validation->fails()) {
-            return Redirect::action('GeneralSettingsController@addSkillName')->withInput(Input::all())->withErrors($validation);
+            return Redirect::route('add_skill_view')->withInput(Input::all())->withErrors($validation);
         } else {
             $skill_info = new AllSkill();
             $skill_info->skill_name_eng = $request->input('skill_name_eng');
             $skill_info->skill_name_bng = $request->input('skill_name_bng');
             $skill_info->save();
-            return Redirect::action('GeneralSettingsController@skillView')->with('success_message', 'New Skill Added Successfully!');
+            return Redirect::route('add_skill_view')->with('success_message', 'New Skill Added Successfully!');
         }
     }
 
@@ -307,13 +307,13 @@ class GeneralSettingsController extends Controller
         $validation = Validator::make(Input::all(), $rules, $messages);
 
         if ($validation->fails()) {
-            return Redirect::action('GeneralSettingsController@skillEdit')->withInput(Input::all())->withErrors($validation);
+            return Redirect::back()->withInput(Input::all())->withErrors($validation);
         } else {
             $skill_info = AllSkill::find($id);
             $skill_info->skill_name_eng = $request->input('skill_name_eng');
             $skill_info->skill_name_bng = $request->input('skill_name_bng');
             $skill_info->save();
-            return Redirect::action('GeneralSettingsController@skillView')->with('success_message', 'Skill Updated Successfully!');
+            return Redirect::route('skill_view')->with('success_message', 'Skill Updated Successfully!');
         }
     }
 }

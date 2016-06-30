@@ -138,14 +138,14 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('/thana_update', 'GeneralSettingsController@updateThana');
 
         Route::get('/disease_view', ['as' => 'disease_view', 'uses' => 'GeneralSettingsController@diseaseView']);
-        Route::get('/add_disease', ['as' => 'disease_view', 'uses' => 'GeneralSettingsController@addDiseaseName']);
+        Route::get('/add_disease', ['as' => 'add_disease_view', 'uses' => 'GeneralSettingsController@addDiseaseName']);
         Route::post('disease_entry', ['as' => 'disease_entry', 'uses' => 'GeneralSettingsController@diseaseEntry']);
         Route::get('/disease_edit/{id}', ['as' => 'disease_edit', 'uses' => 'GeneralSettingsController@diseaseEdit']);
         Route::post('/disease_update', ['as' => 'disease_update', 'uses' => 'GeneralSettingsController@updateDisease']);
 
 
         Route::get('/skill_view', ['as' => 'skill_view', 'uses' => 'GeneralSettingsController@skillView']);
-        Route::get('/add_skill', ['as' => 'skill_view', 'uses' => 'GeneralSettingsController@addSkillName']);
+        Route::get('/add_skill', ['as' => 'add_skill_view', 'uses' => 'GeneralSettingsController@addSkillName']);
         Route::post('skill_entry', ['as' => 'skill_entry', 'uses' => 'GeneralSettingsController@skillEntry']);
         Route::get('/skill_edit/{id}', ['as' => 'skill_edit', 'uses' => 'GeneralSettingsController@skillEdit']);
         Route::post('/skill_update', ['as' => 'skill_update', 'uses' => 'GeneralSettingsController@updateSkill']);
