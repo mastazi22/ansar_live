@@ -3,6 +3,10 @@
 {{--Time: 11:02 AM--}}
 
 @extends('template.master')
+@section('title','Dis-Embodiment Date Correction')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('disembodiment_date_correction') !!}
+@endsection
 @section('content')
 
     <script>
@@ -55,80 +59,72 @@
                 </div>
             </div>
         @endif
-        {!! Form::open(array('route' => 'new-disembodiment-date-entry', 'id' => 'new-disembodiment-date-entry')) !!}
+
         <section class="content" style="position: relative;" >
             <notify></notify>
             <div class="box box-solid">
-                <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a>Dis-Embodiment Date Correction</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label for="ansar_id" class="control-label">Ansar ID (Comes from Rest)</label>
-                                        <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-model="ansarId" ng-change="makeQueue(ansarId)">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="new_disembodiment_date" class="control-label">New Dis-Embodiment Date</label>
-                                        <input type="text" name="new_disembodiment_date" id="new_disembodiment_date" class="form-control" ng-model="new_disembodiment_date">
-                                    </div>
-                                    <button id="confirm-new-disembodiment-date" class="btn btn-primary" ng-disabled="!ansarDetail.name||!new_disembodiment_date||!ansarId"><img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16" style="margin-top: -2px">Correct Date</button>
+                {!! Form::open(array('route' => 'new-disembodiment-date-entry', 'id' => 'new-disembodiment-date-entry')) !!}
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="ansar_id" class="control-label">Ansar ID (Comes from Rest)</label>
+                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-model="ansarId" ng-change="makeQueue(ansarId)">
+                            </div>
+                            <div class="form-group">
+                                <label for="new_disembodiment_date" class="control-label">New Dis-Embodiment Date</label>
+                                <input type="text" name="new_disembodiment_date" id="new_disembodiment_date" class="form-control" ng-model="new_disembodiment_date">
+                            </div>
+                            <button id="confirm-new-disembodiment-date" class="btn btn-primary" ng-disabled="!ansarDetail.name||!new_disembodiment_date||!ansarId"><img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16" style="margin-top: -2px">Correct Date</button>
+                        </div>
+                        <div class="col-sm-6 col-sm-offset-2" style="min-height: 400px;border-left: 1px solid #CCCCCC">
+                            <div id="loading-box" ng-if="loadingAnsar">
+                            </div>
+                            <div ng-if="ansarDetail.name==undefined">
+                                <h3 style="text-align: center">No Ansar Found</h3>
+                            </div>
+                            <div ng-if="ansarDetail.name!=undefined">
+                                <div class="form-group">
+                                    <label class="control-label">Name</label>
+                                    <p>
+                                        [[ansarDetail.name]]
+                                    </p>
                                 </div>
-                                <div class="col-sm-6 col-sm-offset-2" style="min-height: 400px;border-left: 1px solid #CCCCCC">
-                                    <div id="loading-box" ng-if="loadingAnsar">
-                                    </div>
-                                    <div ng-if="ansarDetail.name==undefined">
-                                        <h3 style="text-align: center">No Ansar Found</h3>
-                                    </div>
-                                    <div ng-if="ansarDetail.name!=undefined">
-                                        <div class="form-group">
-                                            <label class="control-label">Name</label>
-                                            <p>
-                                                [[ansarDetail.name]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Rank</label>
-                                            <p>
-                                                [[ansarDetail.rank]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Sex</label>
-                                            <p>
-                                                [[ansarDetail.sex]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Date of Birth</label>
-                                            <p>
-                                                [[ansarDetail.dob]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Own Unit</label>
-                                            <p>
-                                                [[ansarDetail.unit]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Own Thana</label>
-                                            <p>
-                                                [[ansarDetail.thana]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Dis-Embodiment Date</label>
-                                            <p>
-                                                [[ansarDetail.r_date]]
-                                            </p>
-                                        </div>
-                                    </div>
+                                <div class="form-group">
+                                    <label class="control-label">Rank</label>
+                                    <p>
+                                        [[ansarDetail.rank]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Sex</label>
+                                    <p>
+                                        [[ansarDetail.sex]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Date of Birth</label>
+                                    <p>
+                                        [[ansarDetail.dob]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Own Unit</label>
+                                    <p>
+                                        [[ansarDetail.unit]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Own Thana</label>
+                                    <p>
+                                        [[ansarDetail.thana]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Dis-Embodiment Date</label>
+                                    <p>
+                                        [[ansarDetail.r_date]]
+                                    </p>
                                 </div>
                             </div>
                         </div>

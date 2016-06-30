@@ -155,47 +155,52 @@ Breadcrumbs::register('offer_quota2', function($breadcrumbs) {
 //    $breadcrumbs->parent('home');
 //    $breadcrumbs->push('Embodiment', URL::to('#'));
 //});
-//Breadcrumbs::register('embodiment_entry', function($breadcrumbs) {
-//    $breadcrumbs->parent('embodiment');
-//    $breadcrumbs->push('Embodiment Entry', URL::to('new_embodiment'));
-//});
-//Breadcrumbs::register('disembodiment_entry', function($breadcrumbs) {
-//    $breadcrumbs->parent('embodiment');
-//    $breadcrumbs->push('Dis-Embodiment', URL::to('new_disembodiment'));
-//});
-//Breadcrumbs::register('service_extension', function($breadcrumbs) {
-//    $breadcrumbs->parent('embodiment');
-//    $breadcrumbs->push('Service Extension', URL::to('service_extension_view'));
-//});
-//Breadcrumbs::register('disembodiment_date_correction', function($breadcrumbs) {
-//    $breadcrumbs->parent('embodiment');
-//    $breadcrumbs->push('Disembodiment Date Correction', URL::to('disembodiment_date_correction_view'));
-//});
-//Breadcrumbs::register('freeze', function($breadcrumbs) {
-//    $breadcrumbs->parent('embodiment');
-//    $breadcrumbs->push('Freeze', URL::to('#'));
-//});
+Breadcrumbs::register('embodiment_entry', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Embodiment Entry', URL::route('go_to_new_embodiment_page'));
+});
+Breadcrumbs::register('disembodiment_entry', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Dis-Embodiment Entry', URL::route('go_to_new_disembodiment_page'));
+});
+Breadcrumbs::register('service_extension', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Service Extension', URL::route('service_extension_view'));
+});
+Breadcrumbs::register('disembodiment_date_correction', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Disembodiment Date Correction', URL::to('disembodiment_date_correction_view'));
+});
+Breadcrumbs::register('embodiment_memorandum_id_correction_view', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Embodiment Memorandum Id Correction', URL::to('embodiment_memorandum_id_correction_view'));
+});
+
+Breadcrumbs::register('freeze', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Freeze for disciplinary action', URL::route('freeze_view'));
+});
 //Breadcrumbs::register('freeze_view', function($breadcrumbs) {
 //    $breadcrumbs->parent('freeze');
 //    $breadcrumbs->push('Freeze for Disciplinary Action', URL::to('freeze_view'));
 //});
-//Breadcrumbs::register('freezelist', function($breadcrumbs) {
-//    $breadcrumbs->parent('freeze');
-//    $breadcrumbs->push('After Result of Freeze', URL::to('freezelist'));
-//});
+Breadcrumbs::register('freezelist', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('After Result of Freeze', URL::route('freeze_list'));
+});
 ////Blocklist
 //Breadcrumbs::register('blocklist', function($breadcrumbs) {
 //    $breadcrumbs->parent('home');
 //    $breadcrumbs->push('Blocklist', URL::to('#'));
 //});
-//Breadcrumbs::register('add_to_blocklist', function($breadcrumbs) {
-//    $breadcrumbs->parent('blocklist');
-//    $breadcrumbs->push('Add Ansar in Blocklist', URL::to('blocklist_entry_view'));
-//});
-//Breadcrumbs::register('cancel_blocklist', function($breadcrumbs) {
-//    $breadcrumbs->parent('blocklist');
-//    $breadcrumbs->push('Remove Ansar from Blocklist', URL::to('unblocklist_entry_view'));
-//});
+Breadcrumbs::register('add_to_blocklist', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Ansar blocklist entry', URL::route('blocklist_entry_view'));
+});
+Breadcrumbs::register('unblock_ansar', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Remove Ansar from Blocklist', URL::route('unblocklist_entry_view'));
+});
 ////Blacklist
 //Breadcrumbs::register('blacklist', function($breadcrumbs) {
 //    $breadcrumbs->parent('home');

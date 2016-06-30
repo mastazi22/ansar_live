@@ -3,6 +3,10 @@
 {{--Time: 6:17 PM--}}
 
 @extends('template.master')
+@section('title','Unblock Ansar')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('add_to_blocklist') !!}
+@endsection
 @section('content')
 
     <script>

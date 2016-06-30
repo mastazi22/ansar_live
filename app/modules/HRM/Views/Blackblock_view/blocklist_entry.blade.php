@@ -3,6 +3,10 @@
 {{--Time: 11:28 AM--}}
 
 @extends('template.master')
+@section('title','Ansar Block List Entry')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('add_to_blocklist') !!}
+@endsection
 @section('content')
 
     <script>
@@ -41,95 +45,87 @@
                 </div>
             </div>
         @endif
-        {!! Form::open(array('route' => 'blocklist_entry', 'id' =>'block_entry')) !!}
+
         <section class="content" style="position: relative;">
             <notify></notify>
             <div class="box box-solid">
-                <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a>Block Ansar</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label for="ansar_id" class="control-label">Ansar ID</label>
-                                        <input type="text" name="ansar_id" id="ansar_id" class="form-control"
-                                               placeholder="Enter Ansar Id" ng-model="ansarId"
-                                               ng-change="loadAnsarDetail(ansarId)">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="block_date" class="control-label">Blocking Date</label>
-                                        <input type="text" name="block_date" id="block_date" class="form-control"
-                                               ng-model="block_date">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="block_comment" class="control-label">Comment for Blocking</label>
-                                        {!! Form::textarea('block_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'block_comment', 'size' => '30x4', 'placeholder' => "Write any comment", 'ng-model' => 'block_comment')) !!}
-                                    </div>
-                                    <button id="block-ansar" class="btn btn-primary"
-                                            ng-disabled="!block_date||!ansarId||!block_comment"><img
-                                                ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}"
-                                                width="16" style="margin-top: -2px">Block Ansar
-                                    </button>
+                {!! Form::open(array('route' => 'blocklist_entry', 'id' =>'block_entry')) !!}
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="ansar_id" class="control-label">Ansar ID</label>
+                                <input type="text" name="ansar_id" id="ansar_id" class="form-control"
+                                       placeholder="Enter Ansar Id" ng-model="ansarId"
+                                       ng-change="loadAnsarDetail(ansarId)">
+                            </div>
+                            <div class="form-group">
+                                <label for="block_date" class="control-label">Blocking Date</label>
+                                <input type="text" name="block_date" id="block_date" class="form-control"
+                                       ng-model="block_date">
+                            </div>
+                            <div class="form-group">
+                                <label for="block_comment" class="control-label">Comment for Blocking</label>
+                                {!! Form::textarea('block_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'block_comment', 'size' => '30x4', 'placeholder' => "Write any comment", 'ng-model' => 'block_comment')) !!}
+                            </div>
+                            <button id="block-ansar" class="btn btn-primary"
+                                    ng-disabled="!block_date||!ansarId||!block_comment"><img
+                                        ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}"
+                                        width="16" style="margin-top: -2px">Block Ansar
+                            </button>
+                        </div>
+                        <div class="col-sm-6 col-sm-offset-2"
+                             style="min-height: 400px;border-left: 1px solid #CCCCCC">
+                            <div id="loading-box" ng-if="loadingAnsar">
+                            </div>
+                            <div ng-if="ansarDetail.ansar_details.ansar_name_eng==undefined">
+                                <h3 style="text-align: center">No Ansar Found</h3>
+                            </div>
+                            <div ng-if="ansarDetail.ansar_details.ansar_name_eng!=undefined">
+                                <div class="form-group">
+                                    <label class="control-label">Name</label>
+
+                                    <p>
+                                        [[ansarDetail.ansar_details.ansar_name_eng]]
+                                    </p>
                                 </div>
-                                <div class="col-sm-6 col-sm-offset-2"
-                                     style="min-height: 400px;border-left: 1px solid #CCCCCC">
-                                    <div id="loading-box" ng-if="loadingAnsar">
-                                    </div>
-                                    <div ng-if="ansarDetail.ansar_details.ansar_name_eng==undefined">
-                                        <h3 style="text-align: center">No Ansar Found</h3>
-                                    </div>
-                                    <div ng-if="ansarDetail.ansar_details.ansar_name_eng!=undefined">
-                                        <div class="form-group">
-                                            <label class="control-label">Name</label>
+                                <div class="form-group">
+                                    <label class="control-label">Rank</label>
 
-                                            <p>
-                                                [[ansarDetail.ansar_details.ansar_name_eng]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Rank</label>
-
-                                            <p>
-                                                [[ansarDetail.ansar_details.name_eng]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Unit</label>
-
-                                            <p>
-                                                [[ansarDetail.ansar_details.unit_name_eng]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Sex</label>
-
-                                            <p>
-                                                [[ansarDetail.ansar_details.sex]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Date of Birth</label>
-
-                                            <p>
-                                                [[ansarDetail.ansar_details.data_of_birth]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Current Status</label>
-
-                                            <p>
-                                                [[ansarDetail.status]]
-                                            </p>
-                                        </div>
-                                        <input type="hidden" name="ansar_status" value="[[ansarDetail.status]]">
-                                        <input type="hidden" name="from_id" value="[[ansarDetail.ansar_details.id]]">
-                                    </div>
+                                    <p>
+                                        [[ansarDetail.ansar_details.name_eng]]
+                                    </p>
                                 </div>
+                                <div class="form-group">
+                                    <label class="control-label">Unit</label>
+
+                                    <p>
+                                        [[ansarDetail.ansar_details.unit_name_eng]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Sex</label>
+
+                                    <p>
+                                        [[ansarDetail.ansar_details.sex]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Date of Birth</label>
+
+                                    <p>
+                                        [[ansarDetail.ansar_details.data_of_birth]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Current Status</label>
+
+                                    <p>
+                                        [[ansarDetail.status]]
+                                    </p>
+                                </div>
+                                <input type="hidden" name="ansar_status" value="[[ansarDetail.status]]">
+                                <input type="hidden" name="from_id" value="[[ansarDetail.ansar_details.id]]">
                             </div>
                         </div>
                     </div>
