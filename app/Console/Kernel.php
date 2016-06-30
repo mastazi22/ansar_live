@@ -42,7 +42,7 @@ class Kernel extends ConsoleKernel
         $schedule->call(function (){
             Log::info('ok');
         })->everyMinute();
-        /*$schedule->call(function () {
+        $schedule->call(function () {
             Log::info("called");
             //return;
             $user = env('SSL_USER_ID');
@@ -158,6 +158,6 @@ class Kernel extends ConsoleKernel
                     }
                 }
             }
-        })->dailyAt("00:00");*/
+        })->dailyAt("00:00");
     }
 }

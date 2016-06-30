@@ -166,6 +166,7 @@ return [
         \Milon\Barcode\BarcodeServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         DaveJamesMiller\Breadcrumbs\ServiceProvider::class,
+        \Nathanmac\Utilities\Parser\ParserServiceProvider::class,
     ],
 
     /*

@@ -1,4 +1,8 @@
 @extends('template.master')
+@section('title','Offer List')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('offer_information') !!}
+    @endsection
 @section('content')
     <script>
 
@@ -239,7 +243,7 @@
 
 
     </script>
-    <div ng-controller="OfferController" close-modal style="min-height: 590px">
+    <div ng-controller="OfferController" close-modal>
         {{--<div class="breadcrumbplace">--}}
             {{--{!! Breadcrumbs::render('offer_information') !!}--}}
         {{--</div>--}}
@@ -249,188 +253,147 @@
                 <br>Redirect in ...<span class="text-danger" ng-init="startCountDown()">[[countDown]]</span> Second
                 </h3>
             @else
-                <div class="box box-solid" style="min-height: 200px;">
-                    <div class="nav-tabs-custom">
-                        <ul class="nav nav-tabs">
-                            <li class="active">
-                                <a data-toggle="tab" href="#pc">Offer List</a>
-                            </li>
-                            {{--<li class="pull-right">--}}
-                            {{--<a class="btn btn-primary option" data-toggle="modal" data-target="#offer-option"><i--}}
-                            {{--class="fa fa-download"></i> Load Ansar For Offer</a>--}}
-                            {{--</li>--}}
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane active" id="offer-table">
-                                <div class="row">
-                                    <div class="col-md-8  col-sm-offset-2">
-                                        <div class="row" ng-show="isAdmin" style="margin: 0 !important;">
-                                            <div class="col-sm-5">
-                                                <div class="form-group">
-                                                    <label class="control-label"> Select District</label>
-                                                    <select name="district" ng-model="selectedDistrict"
-                                                            class="form-control" multiple>
-                                                        <option ng-repeat="district in allDistrict"
-                                                                value=[[$index]]>
-                                                            [[district.unit_name_eng]]
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-2" style="margin-right: -15px">
-                                                <div class="form-group">
-                                                    <label class="control-label"
-                                                           style="visibility: hidden">Action</label>
-                                                    <ul style="list-style: none;padding: 0;margin: 0 ">
-                                                        <li style="padding-top: 6px;padding-left: 10px">
-                                                            <button class="btn btn-default" ng-click="addDistrict()">
-                                                                <i class="fa fa-long-arrow-right"></i>
-                                                            </button>
-                                                        </li>
-                                                        <li style="padding-top: 6px;padding-left: 10px">
-                                                            <button class="btn btn-default" ng-click="removeDistrict()">
-                                                                <i class="fa fa-long-arrow-left"></i>
-                                                            </button>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-5">
-                                                <div class="form-group">
-                                                    <label class="control-label"> Selected District</label>
-                                                    <select name="district" ng-model="removedDistrict"
-                                                            class="form-control" multiple>
-                                                        <option ng-repeat="district in updatedDistrict"
-                                                                value=[[$index]]>
-                                                            [[district.unit_name_eng]]
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8 col-sm-offset-2">
-                                        <h4 ng-if="!isAdmin">You have total <span style="text-decoration: underline"
-                                                                                  ng-class="{'text-green':offerQuota>50,'text-danger':offerQuota<=10}">[[offerQuota]]</span>
-                                            offer left</h4>
-                                        <ul style="list-style: none;margin-left: -15px !important;padding: 0"
-                                            class="row">
-                                            <li class="col-md-4">
-                                                <fieldset class="fieldset ">
-                                                    <legend class="legend">PC</legend>
-                                                    <div class="input-group margin-bottom-input">
-                                                            <span class="input-group-addon">
-                                                                <i class="fa fa-male"></i>
-                                                            </span>
-                                                        <input type="text" ng-model="kpiPCMale"
-                                                               ng-change="kpiPCMale=kpiPCMale==''?0:getInt(kpiPCMale)"
-                                                               placeholder="Male"
-                                                               class="form-control">
-                                                    </div>
-                                                    <div class="input-group">
-                                                            <span class="input-group-addon">
-                                                                <i class="fa fa-female"></i>
-                                                            </span>
-                                                        <input type="text" ng-model="kpiPCFemale"
-                                                               placeholder="Female"
-                                                               class="form-control">
-                                                    </div>
-                                                </fieldset>
-                                            </li>
-                                            <li class="form-group col-md-4">
-                                                <fieldset class="fieldset ">
-                                                    <legend class="legend">APC</legend>
-                                                    <div class="input-group margin-bottom-input">
-                                                            <span class="input-group-addon">
-                                                                <i class="fa fa-male"></i>
-                                                            </span>
-                                                        <input type="text" ng-model="kpiAPCMale" placeholder="Male"
-                                                               class="form-control">
-                                                    </div>
-                                                    <div class="input-group">
-                                                            <span class="input-group-addon">
-                                                                <i class="fa fa-female"></i>
-                                                            </span>
-                                                        <input type="text" ng-model="kpiAPCFemale"
-                                                               placeholder="Female"
-                                                               class="form-control">
-                                                    </div>
-                                                </fieldset>
-                                            </li>
-                                            <li class="form-group col-md-4">
-                                                <fieldset class="fieldset ">
-                                                    <legend class="legend">Ansar</legend>
-                                                    <div class="input-group margin-bottom-input">
-                                                            <span class="input-group-addon">
-                                                                <i class="fa fa-male"></i>
-                                                            </span>
-                                                        <input type="text" ng-model="kpiAnsarMale"
-                                                               placeholder="Male"
-                                                               class="form-control">
-                                                    </div>
-                                                    <div class="input-group">
-                                                            <span class="input-group-addon">
-                                                                <i class="fa fa-female"></i>
-                                                            </span>
-                                                        <input type="text" ng-model="kpiAnsarFemale"
-                                                               placeholder="Female"
-                                                               class="form-control">
-                                                    </div>
-                                                </fieldset>
-                                            </li>
-                                        </ul>
-                                        <div>
-                                            <span> <i class="fa fa-male"></i>-&nbsp;Male(পুরুষ)</span>&nbsp;&nbsp;
-                                            <span> <i class="fa fa-female"></i>-&nbsp;Female(মহিলা)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                {{--<div class="table-responsive" style="max-height: 370px">--}}
-
-                                {{--<table ng-show="isAdmin" class="table table-bordered" id="pc-table">--}}
-                                {{--<tr class="info">--}}
-                                {{--<th>ID</th>--}}
-                                {{--<th>Name</th>--}}
-                                {{--<th>Division</th>--}}
-                                {{--<th>District</th>--}}
-                                {{--<th>Thana</th>--}}
-                                {{--<th>Sex</th>--}}
-                                {{--<th>Designation</th>--}}
-                                {{--</tr>--}}
-                                {{--<tbody>--}}
-                                {{--<tr ng-show="noAnsar" class="warning">--}}
-                                {{--<td colspan="7">No Ansar Found to Send Offer</td>--}}
-                                {{--</tr>--}}
-                                {{--<tr ng-repeat="ansar in selectedAnsar" ng-hide="noAnsar">--}}
-                                {{--<td>[[ansar.ansar_id]]</td>--}}
-                                {{--<td>[[ansar.ansar_name_bng]]</td>--}}
-                                {{--<td>[[ansar.division_name_eng]]</td>--}}
-                                {{--<td>[[ansar.unit_name_eng]]</td>--}}
-                                {{--<td>[[ansar.thana_name_eng]]</td>--}}
-                                {{--<td>[[ansar.sex]]</td>--}}
-                                {{--<td>[[ansar.name_bng]]</td>--}}
-                                {{--</tr>--}}
-                                {{--</tbody>--}}
-                                {{--</table>--}}
-                                {{--</div>--}}
-                                <div class="form-group" ng-if="isAdmin" style="margin-top: 10px">
-                                    <div class="row">
-                                        <div class="col-sm-2 col-sm-offset-2">
-                                            <label class="control-label">
-                                                District to send offer
-                                            </label>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <select class="form-control" ng-change="checkChange()"
-                                                    ng-model="data.offeredDistrict">
-                                                <option value="">--Select a district to send offer--</option>
-                                                <option ng-repeat="district in offeredDistrictList"
-                                                        ng-disabled="checkDistrict(updatedDistrict,district)"
-                                                        value="[[district.id]]">[[district.unit_name_eng]]
+                <div class="box box-solid">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-8  col-sm-offset-2">
+                                <div class="row" ng-show="isAdmin" style="margin: 0 !important;">
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                            <label class="control-label"> Select District</label>
+                                            <select name="district" ng-model="selectedDistrict"
+                                                    class="form-control" multiple>
+                                                <option ng-repeat="district in allDistrict"
+                                                        value=[[$index]]>
+                                                    [[district.unit_name_eng]]
                                                 </option>
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="col-sm-2" style="margin-right: -15px">
+                                        <div class="form-group">
+                                            <label class="control-label"
+                                                   style="visibility: hidden">Action</label>
+                                            <ul style="list-style: none;padding: 0;margin: 0 ">
+                                                <li style="padding-top: 6px;padding-left: 10px">
+                                                    <button class="btn btn-default" ng-click="addDistrict()">
+                                                        <i class="fa fa-long-arrow-right"></i>
+                                                    </button>
+                                                </li>
+                                                <li style="padding-top: 6px;padding-left: 10px">
+                                                    <button class="btn btn-default" ng-click="removeDistrict()">
+                                                        <i class="fa fa-long-arrow-left"></i>
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                            <label class="control-label"> Selected District</label>
+                                            <select name="district" ng-model="removedDistrict"
+                                                    class="form-control" multiple>
+                                                <option ng-repeat="district in updatedDistrict"
+                                                        value=[[$index]]>
+                                                    [[district.unit_name_eng]]
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-8 col-sm-offset-2">
+                                <h4 ng-if="!isAdmin">You have total <span style="text-decoration: underline"
+                                                                          ng-class="{'text-green':offerQuota>50,'text-danger':offerQuota<=10}">[[offerQuota]]</span>
+                                    offer left</h4>
+                                <ul style="list-style: none;margin-left: -15px !important;padding: 0"
+                                    class="row">
+                                    <li class="col-md-4">
+                                        <fieldset class="fieldset ">
+                                            <legend class="legend">PC</legend>
+                                            <div class="input-group margin-bottom-input">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-male"></i>
+                                                            </span>
+                                                <input type="text" ng-model="kpiPCMale"
+                                                       ng-change="kpiPCMale=kpiPCMale==''?0:getInt(kpiPCMale)"
+                                                       placeholder="Male"
+                                                       class="form-control">
+                                            </div>
+                                            <div class="input-group">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-female"></i>
+                                                            </span>
+                                                <input type="text" ng-model="kpiPCFemale"
+                                                       placeholder="Female"
+                                                       class="form-control">
+                                            </div>
+                                        </fieldset>
+                                    </li>
+                                    <li class="form-group col-md-4">
+                                        <fieldset class="fieldset ">
+                                            <legend class="legend">APC</legend>
+                                            <div class="input-group margin-bottom-input">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-male"></i>
+                                                            </span>
+                                                <input type="text" ng-model="kpiAPCMale" placeholder="Male"
+                                                       class="form-control">
+                                            </div>
+                                            <div class="input-group">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-female"></i>
+                                                            </span>
+                                                <input type="text" ng-model="kpiAPCFemale"
+                                                       placeholder="Female"
+                                                       class="form-control">
+                                            </div>
+                                        </fieldset>
+                                    </li>
+                                    <li class="form-group col-md-4">
+                                        <fieldset class="fieldset ">
+                                            <legend class="legend">Ansar</legend>
+                                            <div class="input-group margin-bottom-input">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-male"></i>
+                                                            </span>
+                                                <input type="text" ng-model="kpiAnsarMale"
+                                                       placeholder="Male"
+                                                       class="form-control">
+                                            </div>
+                                            <div class="input-group">
+                                                            <span class="input-group-addon">
+                                                                <i class="fa fa-female"></i>
+                                                            </span>
+                                                <input type="text" ng-model="kpiAnsarFemale"
+                                                       placeholder="Female"
+                                                       class="form-control">
+                                            </div>
+                                        </fieldset>
+                                    </li>
+                                </ul>
+                                <div>
+                                    <span> <i class="fa fa-male"></i>-&nbsp;Male(পুরুষ)</span>&nbsp;&nbsp;
+                                    <span> <i class="fa fa-female"></i>-&nbsp;Female(মহিলা)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-if="isAdmin" style="margin-top: 10px">
+                            <div class="row">
+                                <div class="col-sm-2 col-sm-offset-2">
+                                    <label class="control-label">
+                                        District to send offer
+                                    </label>
+                                </div>
+                                <div class="col-sm-4">
+                                    <select class="form-control" ng-change="checkChange()"
+                                            ng-model="data.offeredDistrict">
+                                        <option value="">--Select a district to send offer--</option>
+                                        <option ng-repeat="district in offeredDistrictList"
+                                                ng-disabled="checkDistrict(updatedDistrict,district)"
+                                                value="[[district.id]]">[[district.unit_name_eng]]
+                                        </option>
+                                    </select>
                                 </div>
                             </div>
                         </div>

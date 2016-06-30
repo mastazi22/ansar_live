@@ -3,6 +3,13 @@
 {{--Time: 10:49 AM--}}
 
 @extends('template.master')
+@section('title','Panel Information')
+@section('small_title')
+    <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#panel-modal"><span class="glyphicon glyphicon-save"></span> Load for panel</button>
+    @endsection
+@section('breadcrumb')
+    {!! Breadcrumbs::render('panel_information') !!}
+    @endsection
 @section('content')
     <script>
         GlobalApp.controller("PanelController", function ($scope, $window, $http, $timeout) {
@@ -84,90 +91,71 @@
         <section class="content">
 
             <div class="box box-solid" style="min-height: 200px;">
-                <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a data-toggle="tab" href="#pc">Panel Information</a>
-                        </li>
-                        <li>
-                            <a class="btn btn-primary pull-right" data-toggle="modal"
-                               data-target="#panel-modal" style="margin-bottom: 10px; background: #3c8dbc; color: #FFFFFF"><span
-                                        class="glyphicon glyphicon-save"> Load for Panel</span></a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active">
-                            <div class="row" style="margin-left:0; margin-right: 0;padding-bottom: 10px">
-                                <div class="col-md-6" id="show-ansar" style="display: none;">
-                                    <div class="form-group">
-                                        <label class="col-sm-4 control-label">Select Ansar Number:</label>
+                <div class="box-body">
+                    <div class="row" >
+                        <div class="col-md-6" id="show-ansar" style="display: none;">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">Select Ansar Number:</label>
 
-                                        <div class="col-md-6">
-                                            <select class="form-control" id="count-ansar">
-                                                <option value="">--Select--</option>
-                                                <option value="10">10</option>
-                                                <option value="20">20</option>
-                                                <option value="30">30</option>
-                                                <option value="40">40</option>
-                                                <option value="50">50</option>
-                                                <option value="60">60</option>
-                                                <option value="70">70</option>
-                                                <option value="80">80</option>
-                                                <option value="90">90</option>
-                                                <option value="100">100</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                {{--<div class="col-md-4 pull-right">--}}
-                                    {{----}}
-                                {{--</div>--}}
-                                <div class="col-md-12">
-                                    <br>
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered" id="pc-table">
-
-                                            <tr class="info">
-                                                <th>Ansar ID</th>
-                                                <th>Ansar Name</th>
-                                                <th>Ansar Rank</th>
-                                                <th>Ansar Unit</th>
-                                                <th>Ansar Thana</th>
-                                                <th>Date of Birth</th>
-                                                <th>Sex</th>
-                                                <th>Merit List</th>
-                                                <th>
-                                                    <div class="styled-checkbox">
-                                                        <input type="checkbox" id="check-all-panel">
-                                                        <label for="check-all-panel"></label>
-                                                    </div>
-                                                </th>
-                                                {{--<th><input type="checkbox" id="select-all-panel" name="" value=""--}}
-                                                {{--style="height: 20px; width: 25px"> Select All--}}
-                                                {{--</th>--}}
-                                            </tr>
-                                            <tbody id="status-all" class="status">
-                                            <tr colspan="11" class="warning" id="not-find-info">
-                                                <td colspan="11">No Ansar Found to add to Panel</td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                <div class="col-md-6">
+                                    <select class="form-control" id="count-ansar">
+                                        <option value="">--Select--</option>
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="30">30</option>
+                                        <option value="40">40</option>
+                                        <option value="50">50</option>
+                                        <option value="60">60</option>
+                                        <option value="70">70</option>
+                                        <option value="80">80</option>
+                                        <option value="90">90</option>
+                                        <option value="100">100</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
+                        {{--<div class="col-md-4 pull-right">--}}
+                        {{----}}
+                        {{--</div>--}}
+                        <div class="col-md-12">
+                            <br>
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="pc-table">
 
+                                    <tr class="info">
+                                        <th>Ansar ID</th>
+                                        <th>Ansar Name</th>
+                                        <th>Ansar Rank</th>
+                                        <th>Ansar Unit</th>
+                                        <th>Ansar Thana</th>
+                                        <th>Date of Birth</th>
+                                        <th>Sex</th>
+                                        <th>Merit List</th>
+                                        <th>
+                                            <div class="styled-checkbox">
+                                                <input type="checkbox" id="check-all-panel">
+                                                <label for="check-all-panel"></label>
+                                            </div>
+                                        </th>
+                                        {{--<th><input type="checkbox" id="select-all-panel" name="" value=""--}}
+                                        {{--style="height: 20px; width: 25px"> Select All--}}
+                                        {{--</th>--}}
+                                    </tr>
+                                    <tbody id="status-all" class="status">
+                                    <tr colspan="11" class="warning" id="not-find-info">
+                                        <td colspan="11">No Ansar Found to add to Panel</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
+                    <button class="btn btn-info btn-sm pull-right" id="confirm-panel" open-hide-modal disabled>Add to Panel
+                    </button>
                 </div>
             </div>
             <!-- /.box
             -footer -->
-            <div class="row">
-                <div class="col-md-12">
-                    <button class="btn btn-primary pull-right" id="confirm-panel" open-hide-modal disabled>Add to Panel
-                    </button>
-                </div>
-            </div>
             <!--Modal Open-->
             <div id="panel-modal" class="modal fade" role="dialog">
                 <div class="modal-dialog">

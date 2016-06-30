@@ -66,7 +66,7 @@
                 </div>
             </div>
         @endif
-        {!! Form::open(array('url' => 'direct_panel_entry', 'id' => 'direct_panel_entry')) !!}
+        {!! Form::open(array('route' => 'direct_panel_entry', 'id' => 'direct_panel_entry')) !!}
         <section class="content" style="position: relative;">
             <notify></notify>
             <div class="box box-solid">

@@ -1,4 +1,8 @@
 @extends('template.master')
+@section('title','Offer Quota')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('offer_quota') !!}
+    @endsection
 @section('content')
     <script>
         GlobalApp.controller('QuotaController', function ($scope, $http) {

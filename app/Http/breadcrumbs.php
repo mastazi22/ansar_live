@@ -133,19 +133,19 @@ Breadcrumbs::register('user_permission', function($breadcrumbs,$id) {
 
 ////Service
 ////Panel
-//Breadcrumbs::register('panel_information', function($breadcrumbs) {
-//    $breadcrumbs->parent('home');
-//    $breadcrumbs->push('Panel', URL::to('panel_view'));
-//});
+Breadcrumbs::register('panel_information', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Panel', URL::route('view_panel_list'));
+});
 ////Offer
-//Breadcrumbs::register('offer_information', function($breadcrumbs) {
-//    $breadcrumbs->parent('home');
-//    $breadcrumbs->push('Offer', URL::to('make_offer'));
-//});
-//Breadcrumbs::register('offer_quota', function($breadcrumbs) {
-//    $breadcrumbs->parent('home');
-//    $breadcrumbs->push('Offer Quota', URL::to('offer_quota'));
-//});
+Breadcrumbs::register('offer_information', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Offer', URL::route('make_offer'));
+});
+Breadcrumbs::register('offer_quota', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Offer Quota', URL::route('offer_quota'));
+});
 ////Embodiment
 //Breadcrumbs::register('embodiment', function($breadcrumbs) {
 //    $breadcrumbs->parent('home');
