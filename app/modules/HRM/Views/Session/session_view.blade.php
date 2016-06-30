@@ -48,6 +48,10 @@
                             </tr>
                             </thead>
                             <tbody>
+                            @if(count($session_info) <= 0)
+                                <tr class="warning">
+                                    <td colspan="5">No information found</td>
+                                </tr>
                             @foreach($session_info as $session_infos)
                                 <tr>
                                     <td>{{ $session_infos->session_year }}</td>
@@ -60,6 +64,7 @@
                                     </td>
                                 </tr>
                             @endforeach
+                            @endif
                             </tbody>
                         </table>
                     </div>
