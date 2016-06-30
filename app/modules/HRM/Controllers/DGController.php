@@ -1359,7 +1359,7 @@ class DGController extends Controller
         $direct_panel_date = $request->input('direct_panel_date');
         $modified_direct_panel_date = Carbon::parse($direct_panel_date)->format('Y-m-d');
         $direct_panel_comment = $request->input('direct_panel_comment');
-
+        
         DB::beginTransaction();
         try {
             $memorandum_id_save = new MemorandumModel();

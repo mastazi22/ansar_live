@@ -473,7 +473,7 @@ class EmbodimentController extends Controller
             ->select('tbl_kpi_info.kpi_name', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_units.unit_name_bng', 'tbl_thana.thana_name_bng', 'tbl_designations.name_bng')
             ->get();
         if (count($ansar_infos) <= 0) return Response::json(array('result' => true));
-        return view('embodiment.selected_view_disembodiment')->with(['ansar_infos' => $ansar_infos, 'type' => 1, 'reasons' => $reasons]);
+        return view('HRM::Embodiment.selected_view_disembodiment')->with(['ansar_infos' => $ansar_infos, 'type' => 1, 'reasons' => $reasons]);
 //        }
     }
 
