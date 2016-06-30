@@ -2,7 +2,11 @@
 {{--Date: 10/14/2015--}}
 {{--Time: 12:00 PM--}}
 
-@extends('template/master')
+@extends('template.master')
+@section('title','Session Form')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('session_information_entry') !!}
+@endsection
 @section('content')
 
     <div>
@@ -14,17 +18,8 @@
             <div class="row">
                 <!-- left column -->
                 <div class="col-lg-8 col-centered">
-                    <div class="label-title-session-entry">
-                        <h4 style="text-align:center; padding:2px">Session Form</h4>
-                    </div>
-                    <!-- general form elements -->
-
-                    <!-- Request addon -->
-
                     <div class="box box-info">
-
                         <div class="box-body">
-
                             {!! Form::open(array('url' => 'HRM/save-session-entry', 'class' => 'form-horizontal')) !!}
                             <div class="box-body">
 

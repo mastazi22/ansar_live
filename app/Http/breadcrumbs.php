@@ -233,3 +233,7 @@ Breadcrumbs::register('session_information_edit', function($breadcrumbs,$id,$pag
     $breadcrumbs->parent('hrm');
     $breadcrumbs->push('Session Information Edit', URL::route('edit_session',['id'=>$id, 'page'=>$page]));
 });
+Breadcrumbs::register('session_information_entry', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Session Information Entry', URL::route('create_session'));
+});
