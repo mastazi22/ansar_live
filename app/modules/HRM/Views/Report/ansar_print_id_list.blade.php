@@ -1,4 +1,8 @@
 @extends('template.master')
+@section('title','Printed ID Card List')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('id_card') !!}
+@endsection
 @section('content')
     <script>
         $(document).ready(function () {
@@ -88,67 +92,58 @@
     <div ng-controller="AnsarIdCard">
         <section class="content">
             <div class="box box-solid">
-                <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a>ansar List</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label class="control-label">
-                                            From Date
-                                        </label>
-                                        <input type="text" ng-model="fromDate" id="from-date" class="form-control" placeholder="From Date">
-                                    </div>
-
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label class="control-label">
-                                            To Date
-                                        </label>
-                                        <input type="text" ng-model="toDate"  id="to-date" class="form-control" placeholder="To Date">
-                                    </div>
-                                </div>
-                            </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-sm-4">
                             <div class="form-group">
-                                <button class="btn btn-primary"  ng-click="loadAnsar()">View Printed ID Card List</button>
+                                <label class="control-label">
+                                    From Date
+                                </label>
+                                <input type="text" ng-model="fromDate" id="from-date" class="form-control" placeholder="From Date">
+                            </div>
+
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">
+                                    To Date
+                                </label>
+                                <input type="text" ng-model="toDate"  id="to-date" class="form-control" placeholder="To Date">
                             </div>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <tr>
-                                    <th>SL. No</th>
-                                    <th>Ansar ID</th>
-                                    <th>Issue Date</th>
-                                    <th>Expire Date</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                                <tr ng-show="ansars.length<=0">
-                                    <td colspan="6" class="warning">No List Found</td>
-                                </tr>
-                                <tr ng-show="ansars.length>0" ng-repeat="a in ansars">
-                                    <td>[[$index+1]]</td>
-                                    <td>[[a.ansar_id]]</td>
-                                    <td>[[a.issue_date]]</td>
-                                    <td>[[a.expire_date]]</td>
-                                    <td>[[a.status==1?'Active':'Blocked']]</td>
-                                    <td>
-                                        <button class="btn btn-danger btn-xs" ng-if="a.status==1" confirm-dialog='{"a":[[$index]],"type":"block"}'>
-                                            <span class="fa fa-ban" ng-show="!loading[$index]"></span><span class="fa fa-spinner fa-pulse" ng-show="loading[$index]"></span>Block
-                                        </button>
-                                        <button class="btn btn-success btn-xs" ng-if="a.status==0" confirm-dialog='{"a":[[$index]],"type":"active"}'>
-                                            <span class="fa fa-check" ng-show="!loading[$index]"></span><span class="fa fa-spinner fa-pulse" ng-show="loading[$index]"></span>Active
-                                        </button>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary"  ng-click="loadAnsar()">View Printed ID Card List</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>SL. No</th>
+                                <th>Ansar ID</th>
+                                <th>Issue Date</th>
+                                <th>Expire Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                            <tr ng-show="ansars.length<=0">
+                                <td colspan="6" class="warning">No List Found</td>
+                            </tr>
+                            <tr ng-show="ansars.length>0" ng-repeat="a in ansars">
+                                <td>[[$index+1]]</td>
+                                <td>[[a.ansar_id]]</td>
+                                <td>[[a.issue_date]]</td>
+                                <td>[[a.expire_date]]</td>
+                                <td>[[a.status==1?'Active':'Blocked']]</td>
+                                <td>
+                                    <button class="btn btn-danger btn-xs" ng-if="a.status==1" confirm-dialog='{"a":[[$index]],"type":"block"}'>
+                                        <span class="fa fa-ban" ng-show="!loading[$index]"></span><span class="fa fa-spinner fa-pulse" ng-show="loading[$index]"></span>Block
+                                    </button>
+                                    <button class="btn btn-success btn-xs" ng-if="a.status==0" confirm-dialog='{"a":[[$index]],"type":"active"}'>
+                                        <span class="fa fa-check" ng-show="!loading[$index]"></span><span class="fa fa-spinner fa-pulse" ng-show="loading[$index]"></span>Active
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
             </div>

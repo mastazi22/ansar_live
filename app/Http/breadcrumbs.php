@@ -277,10 +277,65 @@ Breadcrumbs::register('transfer_ansar_history', function($breadcrumbs) {
     $breadcrumbs->push('Ansar Transfer Report', URL::route('transfer_ansar_history'));
 });
 //DG Forms
+Breadcrumbs::register('direct_offer', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Direct Offer', URL::route('direct_offer'));
+});
+Breadcrumbs::register('direct_panel', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Direct Panel', URL::route('direct_panel_view'));
+});
+Breadcrumbs::register('direct_cancel_panel', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Direct Cancel Panel', URL::route('direct_panel_cancel_view'));
+});
+Breadcrumbs::register('direct_embodiment', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Direct Embodiment', URL::route('direct_embodiment'));
+});
+Breadcrumbs::register('direct_disembodiment', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Direct Dis-Embodiment', URL::route('direct_disembodiment'));
+});
+Breadcrumbs::register('direct_transfer', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Direct Transfer', URL::route('direct_transfer'));
+});
+Breadcrumbs::register('direct_block', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Direct Block', URL::route('blocklist_entry_view'));
+});
+Breadcrumbs::register('direct_black', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Direct Black', URL::route('dg_blacklist_entry_view'));
+});
+Breadcrumbs::register('direct_unblock', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Direct Remove From Block', URL::route('dg_unblocklist_entry_view'));
+});
+Breadcrumbs::register('direct_unblack', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Direct Remove From Black', URL::route('dg_unblacklist_entry_view'));
+});
 
 
 //Admin
-
+Breadcrumbs::register('global_parameter', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Global Parameter', URL::route('global_parameter'));
+});
+Breadcrumbs::register('offer_cancel', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Offer Cancel', URL::route('cancel_offer'));
+});
+Breadcrumbs::register('id_card', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Printed ID Card List', URL::route('print_id_list'));
+});
+Breadcrumbs::register('rejected_offer_list', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Rejected Offer List', URL::route('rejected_offer_list'));
+});
 
 //General Setting
 Breadcrumbs::register('session_information_list', function($breadcrumbs) {

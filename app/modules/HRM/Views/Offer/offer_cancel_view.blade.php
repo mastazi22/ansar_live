@@ -1,6 +1,10 @@
 {{--Offer Cancel Complete--}}
 
 @extends('template.master')
+@section('title','Offer Cancel')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('offer_cancel') !!}
+@endsection
 @section('content')
     <script>
         GlobalApp.controller('OfferCancelController', function ($scope, $http) {
@@ -112,69 +116,60 @@
     </script>
     <div notification-message ng-controller="OfferCancelController">
         <section class="content">
-            <div class="box box-solid" style="min-height: 200px; max-height: 490px">
-                <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a data-toggle="tab" href="#pc">Cancel Offer</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="offer-table">
-                            <div class="row" style="padding-bottom: 10px">
-                                <div class="col-md-4">
-                                    <label class="control-label"> Select a district to cancel offer&nbsp;&nbsp;&nbsp;<i
-                                                class="fa fa-spinner fa-pulse" ng-show="loadingAnsar"></i></label>
-                                    <select class="form-control" ng-model="selectedDistrict"
-                                            ng-disabled="loadingAnsar||loadingUnit" ng-change="loadAnsar()">
-                                        <option value="">--Select a District--</option>
-                                        <option ng-repeat="d in allDistrict" value="[[d.id]]">[[d.unit_name_bng]]
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="pc-table">
-                                    <tr class="info">
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Offer Send Date</th>
-                                        <th>Offer Expire Date</th>
-                                        <th>District</th>
-                                        <th>Sex</th>
-                                        <th>Designation</th>
-                                        <th>
-                                            <div class="styled-checkbox">
-                                                <input type="checkbox" id="all" ng-model="selectAll"
-                                                       ng-click="updateSelected()">
-                                                <label for="all"></label>
-                                            </div>
-                                            &nbsp;&nbsp<span>Select All</span>
-                                        </th>
-                                    </tr>
-                                    <tr ng-show="noAnsar" class="warning">
-                                        <td colspan="8">No Ansar Found to Send Offer</td>
-                                    </tr>
-                                    <tr ng-repeat="ansar in selectedAnsar" ng-hide="noAnsar">
-                                        <td ansar-id="[[ansar.ansar_id]]">[[ansar.ansar_id]]</td>
-                                        <td>[[ansar.ansar_name_bng]]</td>
-                                        <td>[[ansar.sms_send_datetime]]</td>
-                                        <td>[[ansar.sms_end_datetime]]</td>
-                                        <td>[[ansar.unit_name_bng]]</td>
-                                        <td>[[ansar.sex]]</td>
-                                        <td>[[ansar.name_bng]]</td>
-                                        <td>
-                                            <div class="styled-checkbox">
-                                                <input type="checkbox" ng-model="selectAnsar[$index]"
-                                                       value="[[ansar.ansar_id]]" id="s_[[$index]]"
-                                                       ng-change="updateValue([[ansar.ansar_id]],selectAnsar[$index])">
-                                                <label for="s_[[$index]]"></label>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
+            <div class="box box-solid">
+                <div class="box-body">
+                    <div class="row" style="padding-bottom: 10px">
+                        <div class="col-md-4">
+                            <label class="control-label"> Select a district to cancel offer&nbsp;&nbsp;&nbsp;<i
+                                        class="fa fa-spinner fa-pulse" ng-show="loadingAnsar"></i></label>
+                            <select class="form-control" ng-model="selectedDistrict"
+                                    ng-disabled="loadingAnsar||loadingUnit" ng-change="loadAnsar()">
+                                <option value="">--Select a District--</option>
+                                <option ng-repeat="d in allDistrict" value="[[d.id]]">[[d.unit_name_bng]]
+                                </option>
+                            </select>
                         </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="pc-table">
+                            <tr class="info">
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Offer Send Date</th>
+                                <th>Offer Expire Date</th>
+                                <th>District</th>
+                                <th>Sex</th>
+                                <th>Designation</th>
+                                <th>
+                                    <div class="styled-checkbox">
+                                        <input type="checkbox" id="all" ng-model="selectAll"
+                                               ng-click="updateSelected()">
+                                        <label for="all"></label>
+                                    </div>
+                                    &nbsp;&nbsp<span>Select All</span>
+                                </th>
+                            </tr>
+                            <tr ng-show="noAnsar" class="warning">
+                                <td colspan="8">No Ansar Found to Send Offer</td>
+                            </tr>
+                            <tr ng-repeat="ansar in selectedAnsar" ng-hide="noAnsar">
+                                <td ansar-id="[[ansar.ansar_id]]">[[ansar.ansar_id]]</td>
+                                <td>[[ansar.ansar_name_bng]]</td>
+                                <td>[[ansar.sms_send_datetime]]</td>
+                                <td>[[ansar.sms_end_datetime]]</td>
+                                <td>[[ansar.unit_name_bng]]</td>
+                                <td>[[ansar.sex]]</td>
+                                <td>[[ansar.name_bng]]</td>
+                                <td>
+                                    <div class="styled-checkbox">
+                                        <input type="checkbox" ng-model="selectAnsar[$index]"
+                                               value="[[ansar.ansar_id]]" id="s_[[$index]]"
+                                               ng-change="updateValue([[ansar.ansar_id]],selectAnsar[$index])">
+                                        <label for="s_[[$index]]"></label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
             </div>

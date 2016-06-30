@@ -1,4 +1,9 @@
 @extends('template.master')
+@section('title','Direct Dis-Embodiment')
+@section('small_title','DG')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('direct_disembodiment') !!}
+@endsection
 @section('content')
     <script>
         $(document).ready(function () {
@@ -156,154 +161,145 @@
         <section class="content">
             <notify></notify>
             <div class="box box-solid">
-                <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a>Direct Dis-Embodiment(DG)</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label for="ansar_id" class="control-label">Ansar Id to Disembodied</label>
-                                        <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-model="ansarId" ng-change="makeQueue(ansarId)">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="ansar_id" class="control-label">Ansar Id to Disembodied</label>
+                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-model="ansarId" ng-change="makeQueue(ansarId)">
+                            </div>
+                            <div class="form-group">
+                                <label for="mem_id" class="control-label">Memorandum Id&nbsp;<i class="fa fa-spinner fa-pulse" ng-show="isVerifying"></i>
+                                    <span class="text-danger" ng-if="isVerified">This id already taken</span>
+                                </label>
+                                <input type="text" name="mem_id" id="mem_id" class="form-control" placeholder="Memorandum Id" ng-model="memorandumId" ng-blur="verifyMemorandumId()">
+                            </div>
+                            <div class="form-group">
+                                <label for="dis_date" class="control-label">Dis-Embodiment Date</label>
+                                <input type="text" id="dis_date" class="form-control" ng-model="dis_date">
+                            </div>
+                            <div class="form-group">
+                                <label for="dis-reason" class="control-label">Dis-embodiment Reason&nbsp;
+                                    <img ng-show="loadingReason" src="{{asset('dist/img/facebook.gif')}}" width="16"></label>
+                                <select ng-disabled="loadingReason" id="dis-reason" class="form-control" ng-model="selectedReason" ng-change="loadThana(selectedReason)">
+                                    <option value="">--Select a Reason--</option>
+                                    <option ng-repeat="u in disEmbodimentReason" value="[[u.id]]">[[u.reason_in_bng]]</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="comment" class="control-label">Comment for dis-embodiment</label>
+                                <input type="text" name="comment" id="comment" class="form-control" placeholder="Enter your comment" ng-model="comment">
+                            </div>
+                            <button class="btn btn-primary" ng-disabled="!dis_date||!ansarId||!selectedReason||isVerified||isVerifying" confirm-dialog><img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16" style="margin-top: -2px">Dis-Embodied Ansar</button>
+                        </div>
+                        <div class="col-sm-8" style="min-height: 400px;border-left: 1px solid #CCCCCC">
+                            <div id="loading-box" ng-if="loadingAnsar">
+                            </div>
+                            <div ng-if="!ansarDetail.apid">
+                                <h3 style="text-align: center">No Ansar Found</h3>
+                            </div>
+                            <div ng-if="ansarDetail.apid">
+                                <div class="form-group">
+                                    <div class="col-sm-8 col-sm-offset-2">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <tr>
+                                                    <td rowspan="4"  style="vertical-align: middle;width: 130px;height: 150px">
+                                                        <img  style="width: 120px;height: 150px" src="{{URL::to('image').'?file='}}[[ansarDetail.apid.profile_pic]]" alt="">
+                                                    </td>
+                                                    <th>Name</th>
+                                                    <td>[[ansarDetail.apid.ansar_name_bng]]</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Rank</th>
+                                                    <td>[[ansarDetail.apid.name_bng]]</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Mobile No.</th>
+                                                    <td>[[ansarDetail.apid.mobile_no_self]]</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Home District</th>
+                                                    <td>[[ansarDetail.apid.unit_name_bng]]</td>
+                                                </tr>
+                                            </table>
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="mem_id" class="control-label">Memorandum Id&nbsp;<i class="fa fa-spinner fa-pulse" ng-show="isVerifying"></i>
-                                            <span class="text-danger" ng-if="isVerified">This id already taken</span>
-                                        </label>
-                                        <input type="text" name="mem_id" id="mem_id" class="form-control" placeholder="Memorandum Id" ng-model="memorandumId" ng-blur="verifyMemorandumId()">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="dis_date" class="control-label">Dis-Embodiment Date</label>
-                                        <input type="text" id="dis_date" class="form-control" ng-model="dis_date">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="dis-reason" class="control-label">Dis-embodiment Reason&nbsp;
-                                            <img ng-show="loadingReason" src="{{asset('dist/img/facebook.gif')}}" width="16"></label>
-                                        <select ng-disabled="loadingReason" id="dis-reason" class="form-control" ng-model="selectedReason" ng-change="loadThana(selectedReason)">
-                                            <option value="">--Select a Reason--</option>
-                                            <option ng-repeat="u in disEmbodimentReason" value="[[u.id]]">[[u.reason_in_bng]]</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="comment" class="control-label">Comment for dis-embodiment</label>
-                                        <input type="text" name="comment" id="comment" class="form-control" placeholder="Enter your comment" ng-model="comment">
-                                    </div>
-                                    <button class="btn btn-primary" ng-disabled="!dis_date||!ansarId||!selectedReason||isVerified||isVerifying" confirm-dialog><img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16" style="margin-top: -2px">Dis-Embodied Ansar</button>
                                 </div>
-                                <div class="col-sm-8" style="min-height: 400px;border-left: 1px solid #CCCCCC">
-                                    <div id="loading-box" ng-if="loadingAnsar">
-                                    </div>
-                                    <div ng-if="!ansarDetail.apid">
-                                        <h3 style="text-align: center">No Ansar Found</h3>
-                                    </div>
-                                    <div ng-if="ansarDetail.apid">
-                                        <div class="form-group">
-                                            <div class="col-sm-8 col-sm-offset-2">
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered">
-                                                        <tr>
-                                                            <td rowspan="4"  style="vertical-align: middle;width: 130px;height: 150px">
-                                                                <img  style="width: 120px;height: 150px" src="{{URL::to('image').'?file='}}[[ansarDetail.apid.profile_pic]]" alt="">
-                                                            </td>
-                                                            <th>Name</th>
-                                                            <td>[[ansarDetail.apid.ansar_name_bng]]</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Rank</th>
-                                                            <td>[[ansarDetail.apid.name_bng]]</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Mobile No.</th>
-                                                            <td>[[ansarDetail.apid.mobile_no_self]]</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Home District</th>
-                                                            <td>[[ansarDetail.apid.unit_name_bng]]</td>
-                                                        </tr>
-                                                    </table>
-                                                </div>
-                                            </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <caption>প্যানেলভুক্তির  ও অফারের বিবরণ</caption>
+                                                <tr>
+                                                    <td>প্যানেলভুক্তির তারিখ</td>
+                                                    <td>প্যানেল আইডি নং</td>
+                                                    <td>বর্তমান অবস্থা</td>
+                                                    <td>অফারের তারিখ</td>
+                                                    <td>অফারের জেলা</td>
+                                                    <td>অফারের বাতিলের তারিখ</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>[[ansarDetail.api.panel_date?ansarDetail.api.panel_date:"N/A"]]</td>
+                                                    <td>[[ansarDetail.api.memorandum_id?ansarDetail.api.memorandum_id:"N/A"]]</td>
+                                                    <td ng-if="1==ansarDetail.asi.block_list_status">Blocked</td>
+                                                    <td ng-if="0==ansarDetail.asi.block_list_status">
+                                                        <span ng-if="1==ansarDetail.asi.free_status">Free</span>
+                                                        <span ng-if="1==ansarDetail.asi.pannel_status">Panel</span>
+                                                        <span ng-if="1==ansarDetail.asi.offer_sms_status">Offered</span>
+                                                        <span ng-if="1==ansarDetail.asi.embodied_status">Embodied</span>
+                                                        <span ng-if="1==ansarDetail.asi.freezing_status">Freeze</span>
+                                                        <span ng-if="1==ansarDetail.asi.early_retierment_statBlockedus">Early retirement</span>
+                                                        <span ng-if="1==ansarDetail.asi.block_list_status"></span>
+                                                        <span ng-if="1==ansarDetail.asi.black_list_status">Blacked</span>
+                                                        <span ng-if="1==ansarDetail.asi.rest_status">Rest</span>
+                                                        <span ng-if="1==ansarDetail.asi.retierment_status">Retirement</span>
+                                                    </td>
+                                                    <td>[[ansarDetail.aod.offerDate?ansarDetail.aod.offerDate:'N/A']]</td>
+                                                    <td>[[ansarDetail.aod.offerUnit?ansarDetail.aod.offerUnit:'N/A']]</td>
+                                                    <td>[[ansarDetail.aoci.offerCancel?ansarDetail.aoci.offerCancel:'N\A']]</td>
+                                                </tr>
+                                            </table>
                                         </div>
-                                        <div class="form-group">
-                                            <div class="col-sm-12">
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered">
-                                                        <caption>প্যানেলভুক্তির  ও অফারের বিবরণ</caption>
-                                                        <tr>
-                                                            <td>প্যানেলভুক্তির তারিখ</td>
-                                                            <td>প্যানেল আইডি নং</td>
-                                                            <td>বর্তমান অবস্থা</td>
-                                                            <td>অফারের তারিখ</td>
-                                                            <td>অফারের জেলা</td>
-                                                            <td>অফারের বাতিলের তারিখ</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>[[ansarDetail.api.panel_date?ansarDetail.api.panel_date:"N/A"]]</td>
-                                                            <td>[[ansarDetail.api.memorandum_id?ansarDetail.api.memorandum_id:"N/A"]]</td>
-                                                            <td ng-if="1==ansarDetail.asi.block_list_status">Blocked</td>
-                                                            <td ng-if="0==ansarDetail.asi.block_list_status">
-                                                                <span ng-if="1==ansarDetail.asi.free_status">Free</span>
-                                                                <span ng-if="1==ansarDetail.asi.pannel_status">Panel</span>
-                                                                <span ng-if="1==ansarDetail.asi.offer_sms_status">Offered</span>
-                                                                <span ng-if="1==ansarDetail.asi.embodied_status">Embodied</span>
-                                                                <span ng-if="1==ansarDetail.asi.freezing_status">Freeze</span>
-                                                                <span ng-if="1==ansarDetail.asi.early_retierment_statBlockedus">Early retirement</span>
-                                                                <span ng-if="1==ansarDetail.asi.block_list_status"></span>
-                                                                <span ng-if="1==ansarDetail.asi.black_list_status">Blacked</span>
-                                                                <span ng-if="1==ansarDetail.asi.rest_status">Rest</span>
-                                                                <span ng-if="1==ansarDetail.asi.retierment_status">Retirement</span>
-                                                            </td>
-                                                            <td>[[ansarDetail.aod.offerDate?ansarDetail.aod.offerDate:'N/A']]</td>
-                                                            <td>[[ansarDetail.aod.offerUnit?ansarDetail.aod.offerUnit:'N/A']]</td>
-                                                            <td>[[ansarDetail.aoci.offerCancel?ansarDetail.aoci.offerCancel:'N\A']]</td>
-                                                        </tr>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-sm-12">
-                                                <div class="table-responsive">
-                                                    <table class="table table-bordered">
-                                                        <tr>
-                                                            <td>
-                                                                <table class="table table-bordered">
-                                                                    <caption>অঙ্গিভুতির বিবরণ</caption>
-                                                                    <tr>
-                                                                        <td>অঙ্গিভুতির  তারিখ</td>
-                                                                        <td>অঙ্গিভুতির আইডি নং</td>
-                                                                        <td>জেলার নাম</td>
-                                                                        <td>অঙ্গিভুতির সংস্থা</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>[[ansarDetail.aei.joining_date?ansarDetail.aei.joining_date:"N/A"]]</td>
-                                                                        <td>[[ansarDetail.aei.memorandum_id?ansarDetail.aei.memorandum_id:"N/A"]]</td>
-                                                                        <td>[[ansarDetail.aei.kpi_name?ansarDetail.aei.kpi_name:"N/A"]]</td>
-                                                                        <td>[[ansarDetail.aei.unit_name_bng?ansarDetail.aei.unit_name_bng:"N/A"]]</td>
-                                                                    </tr>
-                                                                </table>
-                                                            </td>
-                                                            <td>
-                                                                <table class="table table-bordered">
-                                                                    <caption>অ-অঙ্গিভুতির বিবরণ</caption>
-                                                                    <tr>
-                                                                        <td>অ-অঙ্গিভুতির  তারিখ</td>
-                                                                        <td>অ-অঙ্গিভুতির কারন</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>[[ansarDetail.adei.disembodiedDate?ansarDetail.adei.disembodiedDate:"N/A"]]</td>
-                                                                        <td>[[ansarDetail.adei.disembodiedReason?ansarDetail.adei.disembodiedReason:"N/A"]]</td>
-                                                                    </tr>
-                                                                </table>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                </div>
-                                            </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <tr>
+                                                    <td>
+                                                        <table class="table table-bordered">
+                                                            <caption>অঙ্গিভুতির বিবরণ</caption>
+                                                            <tr>
+                                                                <td>অঙ্গিভুতির  তারিখ</td>
+                                                                <td>অঙ্গিভুতির আইডি নং</td>
+                                                                <td>জেলার নাম</td>
+                                                                <td>অঙ্গিভুতির সংস্থা</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>[[ansarDetail.aei.joining_date?ansarDetail.aei.joining_date:"N/A"]]</td>
+                                                                <td>[[ansarDetail.aei.memorandum_id?ansarDetail.aei.memorandum_id:"N/A"]]</td>
+                                                                <td>[[ansarDetail.aei.kpi_name?ansarDetail.aei.kpi_name:"N/A"]]</td>
+                                                                <td>[[ansarDetail.aei.unit_name_bng?ansarDetail.aei.unit_name_bng:"N/A"]]</td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                    <td>
+                                                        <table class="table table-bordered">
+                                                            <caption>অ-অঙ্গিভুতির বিবরণ</caption>
+                                                            <tr>
+                                                                <td>অ-অঙ্গিভুতির  তারিখ</td>
+                                                                <td>অ-অঙ্গিভুতির কারন</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>[[ansarDetail.adei.disembodiedDate?ansarDetail.adei.disembodiedDate:"N/A"]]</td>
+                                                                <td>[[ansarDetail.adei.disembodiedReason?ansarDetail.adei.disembodiedReason:"N/A"]]</td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
