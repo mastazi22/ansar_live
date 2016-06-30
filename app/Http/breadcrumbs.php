@@ -146,6 +146,10 @@ Breadcrumbs::register('offer_quota', function($breadcrumbs) {
     $breadcrumbs->parent('hrm');
     $breadcrumbs->push('Offer Quota', URL::route('offer_quota'));
 });
+Breadcrumbs::register('offer_quota2', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Offer Quota', URL::route('offer_quota'));
+});
 ////Embodiment
 //Breadcrumbs::register('embodiment', function($breadcrumbs) {
 //    $breadcrumbs->parent('home');
