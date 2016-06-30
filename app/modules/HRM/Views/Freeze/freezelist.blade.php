@@ -1,5 +1,8 @@
 @extends('template.master')
-
+@section('title','Freeze list')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('freezelist') !!}
+@endsection
 @section('content')
 
     <script>
@@ -312,109 +315,98 @@
                 <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
                 <h4>Loading...</h4>
             </div>
-            <div class="row">
-                <div style="width:90%;margin:0 auto;">
-                    <div class="row">
-                        <div style="width: 97%;margin:0 auto;">
-                            <div class="table-header">
-                                <h4>Freeze list</h4>
-                            </div>
+                <div>
+                    <div class="box box-solid">
+                        <div class="box-body">
+                            <div class="box-body" id="change-body">
+                                <div class="form-group">
+                                    <h5 class="pull-left" style="padding-right:5px; ;"><b>Filter by: </b></h5>
+                                    <select ng-model="filter_name" name="filter_name" class="form-control"
+                                            style="width:75%;" ng-change="getFreezeList()">
+                                        <option value="">--Select freeze reason--</option>
+                                        <option value="0">All</option>
+                                        <option value="1">Guard Withdraw</option>
+                                        <option value="2">Guard Reduce</option>
+                                        <option value="3">Disciplinary Actions</option>
+                                    </select>
+                                </div>
+                                <div class="loading-data"><i class="fa fa-4x fa-refresh fa-spin loading-icon"></i>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table  table-bordered table-striped" id="ansar-table">
 
-                        </div>
-                    </div>
-                    <div class="clearfix"></div>
-                    <div class="box table-list" style="margin-top: 0px;">
-                        <div class="pull-left form-group" style="margin: 10px 0 0 10px;">
-                            <h5 class="pull-left" style="padding-right:5px; ;"><b>Filter by: </b></h5>
-                            <select ng-model="filter_name" name="filter_name" class="form-control pull-left"
-                                    style="width:75%;" ng-change="getFreezeList()">
-                                <option value="">--Select freeze reason--</option>
-                                <option value="0">All</option>
-                                <option value="1">Guard Withdraw</option>
-                                <option value="2">Guard Reduce</option>
-                                <option value="3">Disciplinary Actions</option>
-                            </select>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="box-body" id="change-body">
-                            <div class="loading-data"><i class="fa fa-4x fa-refresh fa-spin loading-icon"></i>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table  table-bordered table-striped" id="ansar-table">
+                                        <tr>
+                                            <th class="text-center"> ক্রঃ নং</th>
+                                            <th class="text-center">আইডি</th>
+                                            <th class="text-center">পদবি</th>
+                                            <th class="text-center">নাম</th>
+                                            <th class="text-center">নিজ জেলা</th>
+                                            <th class="text-center">অঙ্গীভূত তারিখ</th>
+                                            <th class="text-center">ফ্রিজ করনের তারিখ</th>
+                                            <th class="text-center">ফ্রিজকালীন ক্যাম্পের নাম</th>
+                                            <th class="text-center">ফ্রিজকরনের কারণ</th>
+                                            <th class="text-center" style="width:100px;">কার্যক্রম/Action</th>
 
-                                    <tr>
-                                        <th class="text-center"> ক্রঃ নং</th>
-                                        <th class="text-center">আইডি</th>
-                                        <th class="text-center">পদবি</th>
-                                        <th class="text-center">নাম</th>
-                                        <th class="text-center">নিজ জেলা</th>
-                                        <th class="text-center">অঙ্গীভূত তারিখ</th>
-                                        <th class="text-center">ফ্রিজ করনের তারিখ</th>
-                                        <th class="text-center">ফ্রিজকালীন ক্যাম্পের নাম</th>
-                                        <th class="text-center">ফ্রিজকরনের কারণ</th>
-                                        <th class="text-center" style="width:100px;">কার্যক্রম/Action</th>
+                                        </tr>
+                                        <tr ng-show="allFreezeAnsar.length>0" ng-repeat="freezeAnsar in allFreezeAnsar">
+                                            <td>[[$index+1]]</td>
+                                            <td>
+                                                <a href="{{ URL::to('/entryreport/') }}/[[freezeAnsar.ansar_id]]">[[freezeAnsar.ansar_id]]</a>
+                                            </td>
+                                            <td>[[freezeAnsar.name_bng]]</td>
+                                            <td>[[freezeAnsar.ansar_name_bng]]</td>
+                                            <td>[[freezeAnsar.unit_name_bng]]</td>
+                                            <td>[[convertDate(freezeAnsar.reporting_date)]]</td>
+                                            <td>[[convertDate(freezeAnsar.freez_date)]]</td>
+                                            <td>[[freezeAnsar.kpi_name]]</td>
+                                            <td>[[freezeAnsar.freez_reason]]</td>
+                                            <td>
+                                                <a id="action-freeze" class="btn btn-success btn-xs verification"
+                                                   title="Re-embodied">
+                                                    <span class="fa fa-check"></span>
+                                                    <!--<i class="fa fa-spinner fa-pulse"></i>-->
+                                                </a>
 
-                                    </tr>
-                                    <tr ng-show="allFreezeAnsar.length>0" ng-repeat="freezeAnsar in allFreezeAnsar">
-                                        <td>[[$index+1]]</td>
-                                        <td>
-                                            <a href="{{ URL::to('/entryreport/') }}/[[freezeAnsar.ansar_id]]">[[freezeAnsar.ansar_id]]</a>
-                                        </td>
-                                        <td>[[freezeAnsar.name_bng]]</td>
-                                        <td>[[freezeAnsar.ansar_name_bng]]</td>
-                                        <td>[[freezeAnsar.unit_name_bng]]</td>
-                                        <td>[[convertDate(freezeAnsar.reporting_date)]]</td>
-                                        <td>[[convertDate(freezeAnsar.freez_date)]]</td>
-                                        <td>[[freezeAnsar.kpi_name]]</td>
-                                        <td>[[freezeAnsar.freez_reason]]</td>
-                                        <td>
-                                            <a id="action-freeze" class="btn btn-success btn-xs verification"
-                                               title="Re-embodied">
-                                                <span class="fa fa-check"></span>
-                                                <!--<i class="fa fa-spinner fa-pulse"></i>-->
-                                            </a>
-
-                                            <div class="test-dropdown-below">
-                                                <ul>
-                                                    <li>
-                                                        <button class="btn btn-primary"
-                                                                confirm-dialog='{"ansarid":"[[freezeAnsar.ansar_id]]","index":"[[$index]]","action":"continue"}'>
-                                                            Continue
-                                                        </button>
-                                                    </li>
-                                                    <li>
-                                                        <button class="btn btn-primary" id="reEmbodied"
-                                                                ng-click="modal($index)">Re Emodied
-                                                        </button>
-                                                    </li>
-                                                </ul>
+                                                <div class="test-dropdown-below">
+                                                    <ul>
+                                                        <li>
+                                                            <button class="btn btn-primary"
+                                                                    confirm-dialog='{"ansarid":"[[freezeAnsar.ansar_id]]","index":"[[$index]]","action":"continue"}'>
+                                                                Continue
+                                                            </button>
+                                                        </li>
+                                                        <li>
+                                                            <button class="btn btn-primary" id="reEmbodied"
+                                                                    ng-click="modal($index)">Re Emodied
+                                                            </button>
+                                                        </li>
+                                                    </ul>
 
 
-                                            </div>
-                                            <button class="btn btn-danger btn-xs verification" title="Dis-embodied"
-                                                    data-toggle="modal" data-target="#myModal"
-                                                    ng-click="modal($index)">
-                                                <span class="fa fa-retweet"></span>
-                                                <!--<i class="fa fa-spinner fa-pulse"></i>-->
-                                            </button>
-                                            <a class="btn btn-danger btn-xs verification" title="Black"
-                                               data-toggle="modal" data-target="#blackModal" ng-click="modal($index)">
-                                                <span class="fa fa-remove"></span>
-                                                <!--<i class="fa fa-spinner fa-pulse"></i>-->
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    <tr ng-show="allFreezeAnsar.length==0">
-                                        <td class="warning" colspan="10">No ansar found</td>
-                                    </tr>
-                                </table>
+                                                </div>
+                                                <button class="btn btn-danger btn-xs verification" title="Dis-embodied"
+                                                        data-toggle="modal" data-target="#myModal"
+                                                        ng-click="modal($index)">
+                                                    <span class="fa fa-retweet"></span>
+                                                    <!--<i class="fa fa-spinner fa-pulse"></i>-->
+                                                </button>
+                                                <a class="btn btn-danger btn-xs verification" title="Black"
+                                                   data-toggle="modal" data-target="#blackModal" ng-click="modal($index)">
+                                                    <span class="fa fa-remove"></span>
+                                                    <!--<i class="fa fa-spinner fa-pulse"></i>-->
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr ng-show="allFreezeAnsar.length==0">
+                                            <td class="warning" colspan="10">No ansar found</td>
+                                        </tr>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-
                     </div>
 
                 </div>
-            </div>
         </section>
         <div id="myModal" class="modal fade" role="dialog">
             <div class="modal-dialog">
