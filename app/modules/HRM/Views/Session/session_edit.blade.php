@@ -5,7 +5,7 @@
 @extends('template.master')
 @section('title','Session Form')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('session_information_edit') !!}
+    {!! Breadcrumbs::render('session_information_edit',$id,$page) !!}
 @endsection
 @section('content')
 
