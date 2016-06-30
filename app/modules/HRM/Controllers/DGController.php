@@ -1327,12 +1327,12 @@ class DGController extends Controller
                 $status = "Panelled";
 
             } elseif ($ansar_details->offer_sms_status == 1) {
-                $status = "Offered SMS";
-
-            } elseif ($ansar_details->offered_status == 1) {
                 $status = "Offered";
 
-            } elseif ($ansar_details->embodied_status == 1) {
+            } /*elseif ($ansar_details->offered_status == 1) {
+                $status = "Offered";
+
+            } */elseif ($ansar_details->embodied_status == 1) {
                 $status = "Embodded";
 
             } elseif ($ansar_details->freezing_status) {
