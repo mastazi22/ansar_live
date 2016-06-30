@@ -2,7 +2,11 @@
 {{--Date: 12/5/2015--}}
 {{--Time: 12:23 PM--}}
 
-@extends('template/master')
+@extends('template.master')
+@section('title','Unit Information Edit')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('unit_information_edit',$id) !!}
+@endsection
 @section('content')
     <script>
         GlobalApp.controller('UnitEditController', function ($scope) {
@@ -12,7 +16,7 @@
         })
     </script>
     <div>
-        {!! Form::open(array('url' => 'unit_update', 'class' => 'form-horizontal', 'ng-controller' => 'UnitEditController','name' => 'unitForm',)) !!}
+        {!! Form::open(array('route' => 'unit_update', 'class' => 'form-horizontal', 'ng-controller' => 'UnitEditController','name' => 'unitForm',)) !!}
                 <!-- Content Header (Page header) -->
 
         <!-- Main content -->

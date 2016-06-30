@@ -3,6 +3,17 @@
 {{--Time: 12:34 PM--}}
 
 @extends('template.master')
+@section('title','Unit Information')
+@section('small_title')
+    <a style="background: #3c8dbc; color: #FFFFFF;" class="btn btn-primary btn-sm"
+       href="{{URL::to('HRM/unit_form')}}">
+        <span class="glyphicon glyphicon-plus"></span> Add New Unit
+    </a>
+
+@endsection
+@section('breadcrumb')
+    {!! Breadcrumbs::render('unit_information_list') !!}
+@endsection
 @section('content')
     <script>
         GlobalApp.controller('UnitViewController', function ($scope, $http, $sce, $compile) {
@@ -106,16 +117,6 @@
             <div class="box box-solid">
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a> Unit Information</a>
-                        </li>
-                        <li>
-                            <a style="background: #3c8dbc; color: #FFFFFF;" class="btn btn-primary btn-sm"
-                               href="{{URL::to('HRM/unit_form')}}">
-                                <span class="glyphicon glyphicon-plus"></span> Add New Unit
-                            </a>
-                            {{--<a data-toggle="tab" href="#pc">Transfer Ansar</a>--}}
-                        </li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active">
@@ -180,9 +181,9 @@
                                                             class="glyphicon glyphicon-edit"></span></a>
                                             </div>
                                             <div class="col-xs-1">
-                                                <a href="{{URL::to('HRM/unit_delete/'.'[[a.id]]')}}"
+                                                {{--<a href="{{URL::to('HRM/unit_delete/'.'[[a.id]]')}}"
                                                    class="btn btn-primary btn-xs" title="Delete" style="background: #a41a20; border-color: #80181E"><span
-                                                            class="glyphicon glyphicon-trash"></span></a>
+                                                            class="glyphicon glyphicon-trash"></span></a>--}}
                                             </div>
                                         </td>
                                     </tr>

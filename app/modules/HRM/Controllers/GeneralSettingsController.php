@@ -126,7 +126,7 @@ class GeneralSettingsController extends Controller
         $unit_info = District::find($id);
         $division_id = $unit_info->division_id;
         $division = DB::table('tbl_division')->where('id', $division_id)->select('tbl_division.division_name_eng')->first();
-        return view('HRM::GeneralSettings.unit_edit')->with(['unit_info' => $unit_info, 'division' => $division]);
+        return view('HRM::GeneralSettings.unit_edit')->with(['unit_info' => $unit_info, 'division' => $division,'id' => $id]);
     }
 
     public function thanaEdit($id)

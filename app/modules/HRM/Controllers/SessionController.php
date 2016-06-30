@@ -50,9 +50,9 @@ class SessionController extends Controller
                 return $e->getMessage();
             }
 
-            return Redirect::action('SessionController@sessionView')->with('success_message', 'New Session is Entered successfully');
+            return Redirect::route('view_session_list')->with('success_message', 'New Session is Entered successfully');
         } else {
-            return Redirect::action('SessionController@index')->withInput(Input::all())->withErrors($validation);
+            return Redirect::route('create_session')->withInput(Input::all())->withErrors($validation);
         }
     }
 
@@ -70,7 +70,7 @@ class SessionController extends Controller
     public function sessionEdit($id, $page)
     {
         $session_info = SessionModel::find($id);
-        return view('HRM::Session.session_edit', ['id' => $id, 'page' => $page])->with(['session_info'=> $session_info, 'page' => $page]);
+        return view('HRM::Session.session_edit', ['id' => $id, 'page' => $page])->with(['session_info'=> $session_info, 'page' => $page, 'id' => $id]);
     }
 
     public function sessionUpdate(Request $request)
@@ -104,9 +104,9 @@ class SessionController extends Controller
                 DB::rollback();
                 return $e->getMessage();
             }
-            return Redirect::to('session_view?page=' . $request->input('page'))->with('success_message', 'New Session is Updated successfully');
+            return Redirect::to('HRM/session_view?page=' . $request->input('page'))->with('success_message', 'New Session is Updated successfully');
         } else {
-            return Redirect::action('SessionController@sessionEdit', ['id' => $id])->withInput(Input::all())->withErrors($validation);
+            return Redirect::back()->withInput(Input::all())->withErrors($validation);
         }
     }
 }

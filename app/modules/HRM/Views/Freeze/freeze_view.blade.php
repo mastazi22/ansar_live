@@ -3,6 +3,10 @@
 {{--Time: 2:17 PM--}}
 
 @extends('template.master')
+@section('title','Freeze for disciplinary action')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('freeze') !!}
+@endsection
 @section('content')
     <script>
         $(document).ready(function () {
@@ -79,122 +83,114 @@
                 </div>
             </div>
         @endif
-        {!! Form::open(array('route' => 'freeze_entry', 'id' => 'freeze_entry')) !!}
+
         <section class="content" style="position: relative;">
             <notify></notify>
             <div class="box box-solid">
-                <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a>Freeze for disciplinary action</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label for="ansar_id" class="control-label">Ansar ID to Freeze</label>
-                                        <input type="text" name="ansar_id" id="ansar_id" class="form-control"
-                                               placeholder="Enter Ansar Id" ng-model="ansarId"
-                                               ng-change="makeQueue(ansarId)">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="memorandum_id" class="control-label">Memorandum ID<span
-                                                    ng-show="isVerifying"><i class="fa fa-spinner fa-pulse"></i>Verifying</span><span
-                                                    class="text-danger" ng-if="isVerified"> This id already taken</span></label>
-                                        <input ng-blur="verifyMemorandumId()" ng-model="memorandumId" type="text"
-                                               class="form-control" name="memorandum_id"
-                                               placeholder="Enter memorandum id">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="freeze_date" class="control-label">Freeze date</label>
-                                        <input type="text" name="freeze_date" id="freeze_date"
-                                               class="form-control" ng-model="freeze_date">
-                                        <span ng-if="verifyDate(ansarDetail.j_date,freeze_date)" class="text-danger">Freeze date must be bigger then joining date</span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="freeze_comment" class="control-label">Comment for Freezing the Ansar</label>
-                                        {!! Form::textarea('freeze_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'freeze_comment', 'size' => '30x4', 'placeholder' => "Write any comment", 'ng-model' => 'freeze_comment')) !!}
-                                    </div>
-                                    <button id="confirm-freeze" class="btn btn-primary"
-                                            ng-disabled="!freeze_date||!ansarId||!freeze_comment||verifyDate(ansarDetail.j_date,freeze_date)"><img
-                                                ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}"
-                                                width="16" style="margin-top: -2px">Freeze
-                                    </button>
+                {!! Form::open(array('route' => 'freeze_entry', 'id' => 'freeze_entry')) !!}
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="ansar_id" class="control-label">Ansar ID to Freeze</label>
+                                <input type="text" name="ansar_id" id="ansar_id" class="form-control"
+                                       placeholder="Enter Ansar Id" ng-model="ansarId"
+                                       ng-change="makeQueue(ansarId)">
+                            </div>
+                            <div class="form-group">
+                                <label for="memorandum_id" class="control-label">Memorandum ID<span
+                                            ng-show="isVerifying"><i class="fa fa-spinner fa-pulse"></i>Verifying</span><span
+                                            class="text-danger" ng-if="isVerified"> This id already taken</span></label>
+                                <input ng-blur="verifyMemorandumId()" ng-model="memorandumId" type="text"
+                                       class="form-control" name="memorandum_id"
+                                       placeholder="Enter memorandum id">
+                            </div>
+                            <div class="form-group">
+                                <label for="freeze_date" class="control-label">Freeze date</label>
+                                <input type="text" name="freeze_date" id="freeze_date"
+                                       class="form-control" ng-model="freeze_date">
+                                <span ng-if="verifyDate(ansarDetail.j_date,freeze_date)" class="text-danger">Freeze date must be bigger then joining date</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="freeze_comment" class="control-label">Comment for Freezing the Ansar</label>
+                                {!! Form::textarea('freeze_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'freeze_comment', 'size' => '30x4', 'placeholder' => "Write any comment", 'ng-model' => 'freeze_comment')) !!}
+                            </div>
+                            <button id="confirm-freeze" class="btn btn-primary"
+                                    ng-disabled="!freeze_date||!ansarId||!freeze_comment||verifyDate(ansarDetail.j_date,freeze_date)"><img
+                                        ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}"
+                                        width="16" style="margin-top: -2px">Freeze
+                            </button>
+                        </div>
+                        <div class="col-sm-6 col-sm-offset-2"
+                             style="min-height: 400px;border-left: 1px solid #CCCCCC">
+                            <div id="loading-box" ng-if="loadingAnsar">
+                            </div>
+                            <div ng-if="ansarDetail.name==undefined">
+                                <h3 style="text-align: center">No Ansar Found</h3>
+                            </div>
+                            <div ng-if="ansarDetail.name!=undefined">
+                                <div class="form-group">
+                                    <label class="control-label">Name</label>
+
+                                    <p>
+                                        [[ansarDetail.name]]
+                                    </p>
                                 </div>
-                                <div class="col-sm-6 col-sm-offset-2"
-                                     style="min-height: 400px;border-left: 1px solid #CCCCCC">
-                                    <div id="loading-box" ng-if="loadingAnsar">
-                                    </div>
-                                    <div ng-if="ansarDetail.name==undefined">
-                                        <h3 style="text-align: center">No Ansar Found</h3>
-                                    </div>
-                                    <div ng-if="ansarDetail.name!=undefined">
-                                        <div class="form-group">
-                                            <label class="control-label">Name</label>
+                                <div class="form-group">
+                                    <label class="control-label">Rank</label>
 
-                                            <p>
-                                                [[ansarDetail.name]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Rank</label>
+                                    <p>
+                                        [[ansarDetail.rank]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">KPI Name</label>
 
-                                            <p>
-                                                [[ansarDetail.rank]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">KPI Name</label>
+                                    <p>
+                                        [[ansarDetail.kpi]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">KPI Unit</label>
 
-                                            <p>
-                                                [[ansarDetail.kpi]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">KPI Unit</label>
+                                    <p>
+                                        [[ansarDetail.unit]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">KPI Thana</label>
 
-                                            <p>
-                                                [[ansarDetail.unit]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">KPI Thana</label>
+                                    <p>
+                                        [[ansarDetail.thana]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Sex</label>
 
-                                            <p>
-                                                [[ansarDetail.thana]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Sex</label>
+                                    <p>
+                                        [[ansarDetail.sex]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Date of Birth</label>
 
-                                            <p>
-                                                [[ansarDetail.sex]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Date of Birth</label>
+                                    <p>
+                                        [[convertDate(ansarDetail.dob)]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label status-check">Reporting Date</label>
 
-                                            <p>
-                                                [[convertDate(ansarDetail.dob)]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label status-check">Reporting Date</label>
+                                    <p>
+                                        [[convertDate(ansarDetail.r_date)]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label status-check">Joining Date</label>
 
-                                            <p>
-                                                [[convertDate(ansarDetail.r_date)]]
-                                            </p>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label status-check">Joining Date</label>
-
-                                            <p>
-                                                [[convertDate(ansarDetail.j_date)]]
-                                            </p>
-                                        </div>
-                                    </div>
+                                    <p>
+                                        [[convertDate(ansarDetail.j_date)]]
+                                    </p>
                                 </div>
                             </div>
                         </div>
