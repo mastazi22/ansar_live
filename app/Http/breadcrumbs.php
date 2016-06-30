@@ -237,3 +237,8 @@ Breadcrumbs::register('session_information_entry', function($breadcrumbs) {
     $breadcrumbs->parent('hrm');
     $breadcrumbs->push('Session Information Entry', URL::route('create_session'));
 });
+
+Breadcrumbs::register('unit_information_list', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Unit Information Entry', URL::route('unit_view'));
+});
