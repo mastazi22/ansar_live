@@ -40,7 +40,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->call(function () {
-            Log::info("called");
+//            Log::info("called");
             //return;
             $user = env('SSL_USER_ID');
             $pass = env('SSL_PASSWORD');
@@ -105,6 +105,7 @@ class Kernel extends ConsoleKernel
 
         })->everyMinute();
         $schedule->call(function () {
+            Log::info("CALLED END");
             $offeredAnsars = OfferSMS::where('sms_end_datetime', '<=', Carbon::now())->get();
             foreach ($offeredAnsars as $ansar) {
                 $offer_log = new OfferSmsLog;
