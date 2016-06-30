@@ -230,7 +230,7 @@ class EmbodimentController extends Controller
             DB::rollback();
             return $e->getMessage();
         }
-        return Redirect::action('EmbodimentController@newEmbodimentView')->with('success_message', 'Ansar is Emboded successfully');
+        return Redirect::route('go_to_new_embodiment_page')->with('success_message', 'Ansar is Emboded successfully');
     }
 
     public function transferProcessView()
@@ -620,7 +620,7 @@ class EmbodimentController extends Controller
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        return Redirect::action('EmbodimentController@serviceExtensionView')->with('success_message', 'Service Date for Ansar Extended successfully');
+        return Redirect::route('service_extension_view')->with('success_message', 'Service Date for Ansar Extended successfully');
     }
 
     public function disembodimentDateCorrectionView()
@@ -677,7 +677,7 @@ class EmbodimentController extends Controller
             return $e->getMessage();
         }
 
-        return Redirect::action('EmbodimentController@disembodimentDateCorrectionView')->with('success_message', 'Dis-Embodiment Date is corrected Successfully!');
+        return Redirect::route('disembodiment_date_correction_view')->with('success_message', 'Dis-Embodiment Date is corrected Successfully!');
     }
 
     public function embodimentMemorandumIdCorrectionView()
@@ -722,7 +722,7 @@ class EmbodimentController extends Controller
             DB::rollback();
             return $e->getMessage();
         }
-        return Redirect::action('EmbodimentController@embodimentMemorandumIdCorrectionView')->with('success_message', 'Memorandum ID Corrected Successfully');
+        return Redirect::route('embodiment_memorandum_id_correction_view')->with('success_message', 'Memorandum ID Corrected Successfully');
     }
 
     public function getKpiDetail()
