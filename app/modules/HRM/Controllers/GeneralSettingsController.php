@@ -284,7 +284,7 @@ class GeneralSettingsController extends Controller
             $skill_info->skill_name_eng = $request->input('skill_name_eng');
             $skill_info->skill_name_bng = $request->input('skill_name_bng');
             $skill_info->save();
-            return Redirect::route('add_skill_view')->with('success_message', 'New Skill Added Successfully!');
+            return Redirect::route('skill_view')->with('success_message', 'New Skill Added Successfully!');
         }
     }
 
