@@ -2,7 +2,11 @@
 {{--Date: 12/3/2015--}}
 {{--Time: 1:22 PM--}}
 
-@extends('template/master')
+@extends('template.master')
+@section('title','Unit Information Entry')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('unit_information_entry') !!}
+@endsection
 @section('content')
     <script>
         GlobalApp.controller('UnitEntryController', function () {

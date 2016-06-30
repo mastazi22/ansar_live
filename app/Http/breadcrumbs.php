@@ -240,5 +240,15 @@ Breadcrumbs::register('session_information_entry', function($breadcrumbs) {
 
 Breadcrumbs::register('unit_information_list', function($breadcrumbs) {
     $breadcrumbs->parent('hrm');
-    $breadcrumbs->push('Unit Information Entry', URL::route('unit_view'));
+    $breadcrumbs->push('Unit Information List', URL::route('unit_view'));
+});
+
+Breadcrumbs::register('unit_information_edit', function($breadcrumbs,$id) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Unit Information Edit', URL::route('unit_edit',['id'=>$id]));
+});
+
+Breadcrumbs::register('unit_information_entry', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Unit Information Entry', URL::route('unit_form'));
 });

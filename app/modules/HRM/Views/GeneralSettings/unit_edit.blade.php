@@ -2,7 +2,11 @@
 {{--Date: 12/5/2015--}}
 {{--Time: 12:23 PM--}}
 
-@extends('template/master')
+@extends('template.master')
+@section('title','Unit Information Edit')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('unit_information_edit',$id) !!}
+@endsection
 @section('content')
     <script>
         GlobalApp.controller('UnitEditController', function ($scope) {
