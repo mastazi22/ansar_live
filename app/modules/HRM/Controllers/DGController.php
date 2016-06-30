@@ -1326,8 +1326,8 @@ class DGController extends Controller
             } elseif ($ansar_details->pannel_status == 1) {
                 $status = "Panelled";
 
-//        } elseif ($ansar_details->offer_sms_status == 1) {
-//            $status = "Offered SMS";
+            } elseif ($ansar_details->offer_sms_status == 1) {
+                $status = "Offered SMS";
 
             } elseif ($ansar_details->offered_status == 1) {
                 $status = "Offered";
