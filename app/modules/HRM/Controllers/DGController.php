@@ -463,7 +463,7 @@ class DGController extends Controller
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        return Redirect::action('DGController@blockListEntryView')->with('success_message', 'Ansar Blocked successfully');
+        return Redirect::route('dg_blocklist_entry_view')->with('success_message', 'Ansar Blocked successfully');
     }
 
     public function unblockListEntryView()
@@ -556,7 +556,7 @@ class DGController extends Controller
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        return Redirect::action('DGController@unblockListEntryView')->with('success_message', 'Ansar Unblocked successfully');
+        return Redirect::route('unblocklist_entry_view')->with('success_message', 'Ansar Unblocked successfully');
     }
 
     public function blackListEntryView()
@@ -1157,7 +1157,7 @@ class DGController extends Controller
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        return Redirect::action('BlockBlackController@blackListEntryView')->with('success_message', 'Ansar Blacked successfully');
+        return Redirect::route('blacklist_entry_view')->with('success_message', 'Ansar Blacked successfully');
     }
 
     public function unblackListEntryView()
@@ -1218,7 +1218,7 @@ class DGController extends Controller
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        return Redirect::action('DGController@unblackListEntryView')->with('success_message', 'Ansar removed from Blacklist successfully');
+        return Redirect::route('dg_unblacklist_entry_view')->with('success_message', 'Ansar removed from Blacklist successfully');
     }
 
     public function directCancelPanelView()
@@ -1286,7 +1286,7 @@ class DGController extends Controller
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        return Redirect::action('DGController@directCancelPanelView')->with('success_message', 'Ansar Canceled from Panel successfully');
+        return Redirect::route('direct_panel_cancel_view')->with('success_message', 'Ansar Canceled from Panel successfully');
     }
 
     public function directPanelView()
@@ -1480,6 +1480,6 @@ class DGController extends Controller
             return $e->getMessage();
         }
 
-        return Redirect::action('DGController@directPanelView')->with('success_message', 'Ansar Added in the Panel successfully');
+        return Redirect::route('direct_panel_view')->with('success_message', 'Ansar Added in the Panel successfully');
     }
 }
