@@ -1,6 +1,10 @@
 {{--Ansar Transfer Complete--}}
 
 @extends('template.master')
+@section('title','Ansar Transfer')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('transfer') !!}
+@endsection
 @section('content')
     <script>
         GlobalApp.controller("TransferController", function ($scope, $http, $timeout) {
@@ -367,104 +371,92 @@
 
         </div>
         <section class="content">
-            <div class="box box-solid" style="min-height: 200px;">
-                <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
-                        <li class="active">
-                            <a data-toggle="tab" href="#pc">Transfer Ansar</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="offer-table">
-
-                            <div class="row" style="padding-bottom: 10px">
-                                <div class="col-md-4">
-                                    <label class="control-label"> Select a district&nbsp;&nbsp;&nbsp;<i
-                                                class="fa fa-spinner fa-pulse" ng-show="loadingThana[0]"></i></label>
-                                    <select class="form-control" ng-model="selectedDistrict[0]"
-                                            ng-disabled="loadingAnsar||loadingThana[0]||loadingKPI[0]"
-                                            ng-change="loadThana()">
-                                        <option value="">--Select a District--</option>
-                                        <option ng-repeat="d in allDistrict[0]" value="[[d.id]]">[[d.unit_name_bng]]
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="control-label"> Select a Thana&nbsp;&nbsp;&nbsp;<i
-                                                class="fa fa-spinner fa-pulse" ng-show="loadingKPI[0]"></i></label>
-                                    <select class="form-control" ng-model="selectedThana[0]"
-                                            ng-disabled="loadingAnsar||loadingThana[0]||loadingKPI[0]"
-                                            ng-change="loadKpi()">
-                                        <option value="">--Select a Thana--</option>
-                                        <option ng-repeat="d in allThana[0]" value="[[d.id]]">[[d.thana_name_bng]]
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="control-label"> Select a Kpi&nbsp;&nbsp;&nbsp;<i
-                                                class="fa fa-spinner fa-pulse" ng-show="loadingAnsar"></i></label>
-                                    <select class="form-control"
-                                            ng-disabled="loadingAnsar||loadingThana[0]||loadingKPI[0]"
-                                            ng-model="selectedKPI[0]" ng-change="loadAnsar()">
-                                        <option value="">--Select a Kpi--</option>
-                                        <option ng-repeat="d in allKPI[0]" value="[[d.id]]">[[d.kpi_name]]
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="pc-table">
-                                    <tr class="info">
-                                        <th>SL. No</th>
-                                        <th>ID</th>
-                                        <th>Designation</th>
-                                        <th>Name</th>
-                                        <th>Division</th>
-                                        <th>District</th>
-                                        <th>Kpi Name</th>
-                                        <th>Joining Date</th>
-                                        <th>
-                                            <div class="styled-checkbox">
-                                                <input ng-disabled="ansars.length<=0" type="checkbox" id="all"
-                                                       ng-change="changeSelectAll()" ng-model="selectAll">
-                                                <label for="all"></label>
-                                            </div>
-                                        </th>
-                                    </tr>
-                                    <tr class="warning" ng-if="ansars.length<=0">
-                                        <td colspan="9">No Ansar Found to Transfer</td>
-                                    </tr>
-                                    <tr ng-repeat="ansar in ansars" ng-if="ansars.length>0">
-                                        <td>[[$index+1]]</td>
-                                        <td>[[ansar.ansar_id]]</td>
-                                        <td>[[ansar.name_bng]]</td>
-                                        <td>[[ansar.ansar_name_bng]]</td>
-                                        <td>[[ansar.division_name_bng]]</td>
-                                        <td>[[ansar.unit_name_bng]]</td>
-                                        <td>[[ansar.kpi_name]]</td>
-                                        <td>[[formatDate(ansar.transfered_date)]]</td>
-                                        <td>
-                                            <div class="styled-checkbox">
-                                                <input type="checkbox" id="a_[[ansar.ansar_id]]"
-                                                       ng-change="changeSelectAnsar($index)"
-                                                       ng-model="selectAnsar[$index]">
-                                                <label for="a_[[ansar.ansar_id]]"></label>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div>
-                                <button class="pull-right btn btn-primary" open-hide-modal
-                                        ng-click="modalOpen = true">
-                                    <i class="fa fa-send"></i>&nbsp;&nbsp;Transfer
-                                </button>
-                                <div class="clearfix"></div>
-                            </div>
+            <div class="box box-solid">
+                <div class="box-body">
+                    <div class="row" style="padding-bottom: 10px">
+                        <div class="col-md-4">
+                            <label class="control-label"> Select a district&nbsp;&nbsp;&nbsp;<i
+                                        class="fa fa-spinner fa-pulse" ng-show="loadingThana[0]"></i></label>
+                            <select class="form-control" ng-model="selectedDistrict[0]"
+                                    ng-disabled="loadingAnsar||loadingThana[0]||loadingKPI[0]"
+                                    ng-change="loadThana()">
+                                <option value="">--Select a District--</option>
+                                <option ng-repeat="d in allDistrict[0]" value="[[d.id]]">[[d.unit_name_bng]]
+                                </option>
+                            </select>
                         </div>
-
+                        <div class="col-md-4">
+                            <label class="control-label"> Select a Thana&nbsp;&nbsp;&nbsp;<i
+                                        class="fa fa-spinner fa-pulse" ng-show="loadingKPI[0]"></i></label>
+                            <select class="form-control" ng-model="selectedThana[0]"
+                                    ng-disabled="loadingAnsar||loadingThana[0]||loadingKPI[0]"
+                                    ng-change="loadKpi()">
+                                <option value="">--Select a Thana--</option>
+                                <option ng-repeat="d in allThana[0]" value="[[d.id]]">[[d.thana_name_bng]]
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="control-label"> Select a Kpi&nbsp;&nbsp;&nbsp;<i
+                                        class="fa fa-spinner fa-pulse" ng-show="loadingAnsar"></i></label>
+                            <select class="form-control"
+                                    ng-disabled="loadingAnsar||loadingThana[0]||loadingKPI[0]"
+                                    ng-model="selectedKPI[0]" ng-change="loadAnsar()">
+                                <option value="">--Select a Kpi--</option>
+                                <option ng-repeat="d in allKPI[0]" value="[[d.id]]">[[d.kpi_name]]
+                                </option>
+                            </select>
+                        </div>
                     </div>
-
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="pc-table">
+                            <tr class="info">
+                                <th>SL. No</th>
+                                <th>ID</th>
+                                <th>Designation</th>
+                                <th>Name</th>
+                                <th>Division</th>
+                                <th>District</th>
+                                <th>Kpi Name</th>
+                                <th>Joining Date</th>
+                                <th>
+                                    <div class="styled-checkbox">
+                                        <input ng-disabled="ansars.length<=0" type="checkbox" id="all"
+                                               ng-change="changeSelectAll()" ng-model="selectAll">
+                                        <label for="all"></label>
+                                    </div>
+                                </th>
+                            </tr>
+                            <tr class="warning" ng-if="ansars.length<=0">
+                                <td colspan="9">No Ansar Found to Transfer</td>
+                            </tr>
+                            <tr ng-repeat="ansar in ansars" ng-if="ansars.length>0">
+                                <td>[[$index+1]]</td>
+                                <td>[[ansar.ansar_id]]</td>
+                                <td>[[ansar.name_bng]]</td>
+                                <td>[[ansar.ansar_name_bng]]</td>
+                                <td>[[ansar.division_name_bng]]</td>
+                                <td>[[ansar.unit_name_bng]]</td>
+                                <td>[[ansar.kpi_name]]</td>
+                                <td>[[formatDate(ansar.transfered_date)]]</td>
+                                <td>
+                                    <div class="styled-checkbox">
+                                        <input type="checkbox" id="a_[[ansar.ansar_id]]"
+                                               ng-change="changeSelectAnsar($index)"
+                                               ng-model="selectAnsar[$index]">
+                                        <label for="a_[[ansar.ansar_id]]"></label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <button class="pull-right btn btn-primary" open-hide-modal
+                                ng-click="modalOpen = true">
+                            <i class="fa fa-send"></i>&nbsp;&nbsp;Transfer
+                        </button>
+                        <div class="clearfix"></div>
+                    </div>
                 </div>
 
             </div>
