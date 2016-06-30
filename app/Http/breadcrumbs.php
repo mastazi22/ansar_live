@@ -225,3 +225,7 @@ Breadcrumbs::register('unblock_ansar', function($breadcrumbs) {
 
 
 //General Setting
+Breadcrumbs::register('session_information_list', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Session Information List', URL::route('view_session_list'));
+});

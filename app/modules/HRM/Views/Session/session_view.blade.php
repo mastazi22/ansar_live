@@ -2,8 +2,19 @@
 {{--Date: 10/14/2015--}}
 {{--Time: 11:00 AM--}}
 
-@extends('template/master')
+@extends('template.master')
+@section('title','Session Information')
+@section('small_title')
+    <a class="btn btn-primary btn-sm" href="{{URL::to('HRM/session')}}">
+        <span class="glyphicon glyphicon-plus"></span> Add new Session
+    </a>
+
+    @endsection
+@section('breadcrumb')
+    {!! Breadcrumbs::render('session_information_list') !!}
+@endsection
 @section('content')
+
 
     <div>
         @if(Session::has('success_message'))
@@ -18,40 +29,20 @@
 
         <!-- Main content -->
         <section class="content">
+            <div class="box box-solid">
 
-            <div class="row" style="margin-left: 20px; margin-right: 20px">
-
-                <div class="label-session">
-                    <div class="label-title">
-                        <h4 style="text-align:center; padding:2px; color: #000">Session Information</h4>
-                    </div>
-
-                    <div class="label-add">
-                        <a class="btn btn-primary btn-sm" href="{{URL::to('HRM/session')}}">
-                            <span class="glyphicon glyphicon-plus"></span> Add new Session
-                        </a>
-                    </div>
-                    <br style="clear: left;"/>
-                </div>
-
-                <div class="box">
-
-                    <div class="box-body">
-                        <table id="example2" class="table table-bordered table-hover table-striped">
-                            <thead>
-                            <tr>
-                                <th>Session Year</th>
-                                <th>Starting Session Month</th>
-                                <th>Ending Session Month</th>
-                                <th>Session Name</th>
-                                <th>Action</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @if(count($session_info) <= 0)
-                                <tr class="warning">
-                                    <td colspan="5">No information found</td>
-                                </tr>
+                <div class="box-body">
+                    <table id="example2" class="table table-bordered table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <th>Session Year</th>
+                            <th>Starting Session Month</th>
+                            <th>Ending Session Month</th>
+                            <th>Session Name</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
                             @foreach($session_info as $session_infos)
                                 <tr>
                                     <td>{{ $session_infos->session_year }}</td>
@@ -64,16 +55,13 @@
                                     </td>
                                 </tr>
                             @endforeach
-                            @endif
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- /.box-body -->
-                    <div class="table_pagination">
-                        {!! $session_info->render() !!}
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
-                <!-- /.box -->
+                <!-- /.box-body -->
+                <div class="table_pagination">
+                    {!! $session_info->render() !!}
+                </div>
             </div>
             <!-- /.row -->
         </section>

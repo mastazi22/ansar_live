@@ -3,6 +3,10 @@
 {{--Time: 12:00 PM--}}
 
 @extends('template.master')
+@section('title','Session Form')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('session_information_edit') !!}
+@endsection
 @section('content')
 
     <div>
@@ -17,7 +21,7 @@
                 <!-- left column -->
                 <div class="col-lg-6 col-centered">
                     <div class="label-title-session-entry">
-                        <h4 style="text-align:center; padding:2px">Session Form</h4>
+                        <h4 style="text-align:center; padding:2px"></h4>
                     </div>
                     <!-- general form elements -->
 
