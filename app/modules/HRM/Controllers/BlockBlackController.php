@@ -227,7 +227,7 @@ class BlockBlackController extends Controller
         if ($request->ajax()) {
             return Response::json(['status' => true]);
         }
-        return Redirect::action('BlockBlackController@blockListEntryView')->with('success_message', 'Ansar Blocked Successfully');
+        return Redirect::route('blocklist_entry_view')->with('success_message', 'Ansar Blocked Successfully');
     }
 
     public function unblockListEntryView()
@@ -294,7 +294,7 @@ class BlockBlackController extends Controller
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        return Redirect::action('BlockBlackController@unblockListEntryView')->with('success_message', 'Ansar Removed from Blocklist Successfully');
+        return Redirect::route('unblocklist_entry_view')->with('success_message', 'Ansar Removed from Blocklist Successfully');
     }
 
     public function blackListEntryView()
@@ -868,7 +868,7 @@ class BlockBlackController extends Controller
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        return Redirect::action('BlockBlackController@blackListEntryView')->with('success_message', 'Ansar Blacklisted Successfully');
+        return Redirect::route('blacklist_entry_view')->with('success_message', 'Ansar Blacklisted Successfully');
     }
 
     public function unblackListEntryView()
@@ -926,6 +926,6 @@ class BlockBlackController extends Controller
         } catch (Exception $e) {
             return $e->getMessage();
         }
-        return Redirect::action('DGController@unblackListEntryView')->with('success_message', 'Ansar removed from Blacklist Successfully');
+        return Redirect::route('dg_unblacklist_entry_view')->with('success_message', 'Ansar removed from Blacklist Successfully');
     }
 }
