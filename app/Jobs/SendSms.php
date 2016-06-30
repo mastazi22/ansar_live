@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\models\PersonalInfo;
+use App\modules\HRM\Models\PersonalInfo;
 use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
