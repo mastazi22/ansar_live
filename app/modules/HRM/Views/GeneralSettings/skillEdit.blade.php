@@ -20,7 +20,7 @@
                     <div class="box box-info">
                         <div class="box-body">
 
-                            {!! Form::open(array('url' => 'skill_update', 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('route' => 'skill_update', 'class' => 'form-horizontal')) !!}
                             <div class="box-body">
                                 
                                 <input type="hidden" name="id" class="form-control" value="{{ $skill_infos->id }}">

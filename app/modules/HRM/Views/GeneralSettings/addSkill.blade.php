@@ -33,7 +33,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    {!! Form::label('skill_name_bng', 'অসুখের নাম:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
+                                    {!! Form::label('skill_name_bng', 'দক্ষতার নাম:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                     <div class="col-sm-8 @if($errors->has('skill_name_bng')) has-error @endif">
                                         {!! Form::text('skill_name_bng', $value = Request::old('skill_name_bng'), $attributes = array('class' => 'form-control', 'id' => 'skill_name_bng', 'placeholder' => 'দক্ষতার নাম লিখুন বাংলায়')) !!}
                                         @if($errors->has('skill_name_bng'))

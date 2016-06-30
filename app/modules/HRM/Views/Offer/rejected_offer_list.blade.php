@@ -31,7 +31,7 @@
                 $scope.isBlocking[i] = true;
                 $http({
                     method:'post',
-                    url:"{{action('BlockBlackController@blockListEntry')}}",
+                    url:"{{URL::route('blocklist_entry')}}",
                     data:{
                         ansar_status:$scope.status,
                         ansar_id:id,
@@ -52,7 +52,7 @@
             $(".showdate").datePicker(true)
         })
     </script>
-    <div class="content-wrapper" style="min-height: 490px" ng-controller="ReportGuardSearchController">
+    <div ng-controller="ReportGuardSearchController">
         <section class="content">
             <div class="box box-solid">
                 <div class="nav-tabs-custom" style="background-color: transparent">
