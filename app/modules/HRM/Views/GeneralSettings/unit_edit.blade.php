@@ -12,7 +12,7 @@
         })
     </script>
     <div>
-        {!! Form::open(array('url' => 'unit_update', 'class' => 'form-horizontal', 'ng-controller' => 'UnitEditController','name' => 'unitForm',)) !!}
+        {!! Form::open(array('route' => 'unit_update', 'class' => 'form-horizontal', 'ng-controller' => 'UnitEditController','name' => 'unitForm',)) !!}
                 <!-- Content Header (Page header) -->
 
         <!-- Main content -->

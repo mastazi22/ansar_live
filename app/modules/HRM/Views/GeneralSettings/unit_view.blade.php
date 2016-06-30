@@ -180,9 +180,9 @@
                                                             class="glyphicon glyphicon-edit"></span></a>
                                             </div>
                                             <div class="col-xs-1">
-                                                <a href="{{URL::to('HRM/unit_delete/'.'[[a.id]]')}}"
+                                                {{--<a href="{{URL::to('HRM/unit_delete/'.'[[a.id]]')}}"
                                                    class="btn btn-primary btn-xs" title="Delete" style="background: #a41a20; border-color: #80181E"><span
-                                                            class="glyphicon glyphicon-trash"></span></a>
+                                                            class="glyphicon glyphicon-trash"></span></a>--}}
                                             </div>
                                         </td>
                                     </tr>

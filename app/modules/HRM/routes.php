@@ -129,13 +129,13 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/thana_view', ['as' => 'thana_view', 'uses' => 'GeneralSettingsController@thanaView']);
         Route::get('/thana_view_details', 'GeneralSettingsController@thanaViewDetails');
         Route::post('/unit_entry', ['as' => 'unit_entry', 'uses' => 'GeneralSettingsController@unitEntry']);
-        Route::post('/thana_entry', 'GeneralSettingsController@thanaEntry');
+        Route::post('/thana_entry', ['as'=>'thana_entry','uses'=>'GeneralSettingsController@thanaEntry']);
         Route::get('/unit_edit/{id}', ['as' => 'unit_edit', 'uses' => 'GeneralSettingsController@unitEdit']);
         Route::get('/unit_delete/{id}', ['as' => 'unit_delete', 'uses' => 'GeneralSettingsController@unitDelete']);
         Route::get('/thana_edit/{id}', ['as' => 'thana_edit', 'uses' => 'GeneralSettingsController@thanaEdit']);
         Route::get('/thana_delete/{id}', ['as' => 'thana_delete', 'uses' => 'GeneralSettingsController@thanaDelete']);
-        Route::post('/unit_update', 'GeneralSettingsController@updateUnit');
-        Route::post('/thana_update', 'GeneralSettingsController@updateThana');
+        Route::post('/unit_update', ['as'=>'unit_update','uses'=>'GeneralSettingsController@updateUnit']);
+        Route::post('/thana_update', ['as'=>'thana_update','uses'=>'GeneralSettingsController@updateThana']);
 
         Route::get('/disease_view', ['as' => 'disease_view', 'uses' => 'GeneralSettingsController@diseaseView']);
         Route::get('/add_disease', ['as' => 'add_disease_view', 'uses' => 'GeneralSettingsController@addDiseaseName']);
@@ -167,7 +167,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/get_print_id_list', ['as' => 'get_print_id_list', 'uses' => 'ReportController@getPrintIdList']);
         Route::post('/change_ansar_card_status', ['as' => 'change_ansar_card_status', 'uses' => 'ReportController@ansarCardStatusChange']);
         Route::get('/print_id_list', ['as' => 'print_id_list', 'uses' => 'ReportController@printIdList']);
-        Route::get('/check_file', 'ReportController@checkFile');
+        Route::get('/check_file', ['as' => 'check_file', 'uses' => 'ReportController@checkFile']);
         Route::get('/blocklist_view', ['as' => 'blocklist_view', 'uses' => 'ReportController@blockListView']);
         Route::get('/blocklisted_ansar_info', ['as'=>'blocklisted_ansar_info','uses'=>'ReportController@blockListedAnsarInfoDetails']);
 
