@@ -21,6 +21,7 @@ use App\modules\HRM\Models\RestInfoModel;
 use App\modules\HRM\Models\ServiceExtensionModel;
 use App\modules\HRM\Models\SmsReceiveInfoModel;
 use App\modules\HRM\Models\Thana;
+use App\modules\HRM\Models\TransferAnsar;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
