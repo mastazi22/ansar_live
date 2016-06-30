@@ -39,9 +39,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call(function (){
-            Log::info('ok');
-        })->everyMinute();
         $schedule->call(function () {
             Log::info("called");
             //return;
@@ -67,6 +64,7 @@ class Kernel extends ConsoleKernel
                 $response = curl_exec($crl);
                 curl_close($crl);
                 $r = Parser::xml($response);
+                Log::info(json_encode($r));
                 $offer->sms_try += 1;
                 if (strcasecmp($r['PARAMETER'], 'OK') == 0) {
                     $offer->sms_status = 'Send';

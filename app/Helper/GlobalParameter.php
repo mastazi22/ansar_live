@@ -15,7 +15,7 @@ class GlobalParameter
      */
     public function __construct()
     {
-        $this->globalParameter = \App\models\GlobalParameter::all();
+        $this->globalParameter = \App\modules\HRM\Models\GlobalParameter::all();
     }
 
     public function getValue($type)

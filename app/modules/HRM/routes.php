@@ -98,7 +98,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         //OFFER ROUTE
         Route::get('/make_offer', ['as' => 'make_offer', 'uses' => 'OfferController@makeOffer']);
         Route::get('/kpi_list', 'OfferController@getKpi');
-        Route::get('/get_offered_ansar_info', 'OfferController@getOfferedAnsar');
+        Route::get('/get_offered_ansar_info', ['as'=>'get_offered_ansar_info','uses'=>'OfferController@getOfferedAnsar']);
         Route::post('/cancel_offer_handle', ['as' => 'cancel_offer_handle', 'uses' => 'OfferController@handleCancelOffer']);
         Route::post('/send_offer', 'OfferController@sendOfferSMS');
         Route::get('/get_offer_count', 'OfferController@getQuotaCount');
