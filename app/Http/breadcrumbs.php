@@ -202,19 +202,19 @@ Breadcrumbs::register('unblock_ansar', function($breadcrumbs) {
 //    $breadcrumbs->parent('home');
 //    $breadcrumbs->push('Blacklist', URL::to('#'));
 //});
-//Breadcrumbs::register('add_to_blacklist', function($breadcrumbs) {
-//    $breadcrumbs->parent('blacklist');
-//    $breadcrumbs->push('Add Ansar in Blacklist', URL::to('blacklist_entry_view'));
-//});
-//Breadcrumbs::register('cancel_blacklist', function($breadcrumbs) {
-//    $breadcrumbs->parent('blacklist');
-//    $breadcrumbs->push('Remove Ansar from Blacklist', URL::to('unblacklist_entry_view'));
-//});
+Breadcrumbs::register('add_to_blacklist', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Add Ansar in Blacklist', URL::route('blacklist_entry_view'));
+});
+Breadcrumbs::register('cancel_blacklist', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Remove Ansar from Blacklist', URL::route('unblacklist_entry_view'));
+});
 ////Transfer
-//Breadcrumbs::register('transfer', function($breadcrumbs) {
-//    $breadcrumbs->parent('home');
-//    $breadcrumbs->push('Ansar Transfer', URL::to('transfer_process'));
-//});
+Breadcrumbs::register('transfer', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Ansar Transfer', URL::route('transfer_process'));
+});
 //Report
 
 
