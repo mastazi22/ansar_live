@@ -76,6 +76,7 @@
         var GlobalApp = angular.module('GlobalApp', ['angular.filter'], function ($interpolateProvider, $httpProvider) {
             $interpolateProvider.startSymbol('[[');
             $interpolateProvider.endSymbol(']]');
+            $httpProvider.useApplyAsync(true)
             $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
             $httpProvider.interceptors.push(function () {
                 return {

@@ -107,7 +107,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/cancel_offer', ['as' => 'cancel_offer', 'uses' => 'OfferController@cancelOfferView']);
         Route::any('/update_offer_quota', ['as'=>'update_offer_quota','uses'=>'OfferController@updateOfferQuota']);
         Route::get('rejected_offer_list',['as'=>'rejected_offer_list','uses'=>'ReportController@rejectedOfferListView']);
-        Route::get('get_rejected_ansar_list','ReportController@getRejectedAnsarList');
+        Route::get('get_rejected_ansar_list',['as'=>'get_rejected_ansar_list','uses'=>'ReportController@getRejectedAnsarList']);
         //END OFFER ROUTE
         //SESSION
 
