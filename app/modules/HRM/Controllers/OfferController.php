@@ -22,7 +22,6 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\View;
 use Mockery\Exception;
 use Monolog\Handler\Curl;
-use Psy\Exception\ErrorException;
 
 class OfferController extends Controller
 {
@@ -31,24 +30,26 @@ class OfferController extends Controller
     function makeOffer()
     {
         $dis = Auth::user()->district_id;
-        if($dis)return View::make('HRM::Offer.offer_view')->with(['isFreeze'=>CustomQuery::isAnsarFreezeInDistrict($dis)]);
-        else return View::make('HRM::Offer.offer_view')->with(['isFreeze'=>false]);
+        if ($dis) return View::make('HRM::Offer.offer_view')->with(['isFreeze' => CustomQuery::isAnsarFreezeInDistrict($dis)]);
+        else return View::make('HRM::Offer.offer_view')->with(['isFreeze' => false]);
     }
-    function getQuotaCount(){
+
+    function getQuotaCount()
+    {
         $id = Auth::user()->district_id;
 
-        if($id){
-            $offered = OfferSMS::where('district_id',$id)->count('ansar_id');
-            $totalEmbodiedAnsar = DB::table('tbl_embodiment')->join('tbl_kpi_info','tbl_kpi_info.id','=','tbl_embodiment.kpi_id')->where('tbl_kpi_info.unit_id',$id)->count('tbl_embodiment.ansar_id');
-            $quota = OfferQuota::where('unit_id',$id)->select('quota')->first();
-            if($totalEmbodiedAnsar&&$offered&&$quota) $total = ceil(($totalEmbodiedAnsar*$quota->quota)/100)-$offered;
-            else $total = 0;
-            return Response::json(['total_offer'=>$total]);
-        }
-        else{
-            return Response::json(['total_offer'=>'unlimited']);
+        if ($id) {
+            $offered = OfferSMS::where('district_id', $id)->count('ansar_id');
+            $totalEmbodiedAnsar = DB::table('tbl_embodiment')->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')->where('tbl_kpi_info.unit_id', $id)->count('tbl_embodiment.ansar_id');
+            $quota = OfferQuota::where('unit_id', $id)->select('quota')->first();
+//            return Response::json(['e'=>$totalEmbodiedAnsar,'q'=>$quota,'o'=>$offered]);
+            $total = ceil(($totalEmbodiedAnsar * $quota->quota) / 100) - $offered;
+            return Response::json(['total_offer' => $total]);
+        } else {
+            return Response::json(['total_offer' => 'unlimited']);
         }
     }
+
     function getKpi()
     {
         $ansar_info = json_decode(Input::get('ansar_info'));
@@ -66,7 +67,7 @@ class OfferController extends Controller
 //        }
         //return $ansar_ids;
         $result = array('success' => 0, 'fail' => 0);
-        $user=[];
+        $user = [];
         if (is_array($ansar_ids)) {
             DB::beginTransaction();
             try {
@@ -78,21 +79,20 @@ class OfferController extends Controller
                     $offer->district_id = $district_id;
                     $offer->come_from = $type;
                     $offer->action_user_id = auth()->user()->id;
-                    if(!$offer->save()) throw new Exception("An Error Occur While Send Offer. Please Try Again Later");
+                    if (!$offer->save()) throw new Exception("An Error Occur While Send Offer. Please Try Again Later");
                     $this->removeFromPanel($ansar_ids[$i]);
-                    array_push($user,['ansar_id'=>$ansar_ids[$i],'action_type'=>'SEND OFFER','from_state'=>'PANEL','to_state'=>'OFFER','action_by'=>auth()->user()->id]);
+                    array_push($user, ['ansar_id' => $ansar_ids[$i], 'action_type' => 'SEND OFFER', 'from_state' => 'PANEL', 'to_state' => 'OFFER', 'action_by' => auth()->user()->id]);
                     $result['success']++;
 
                 }
                 DB::commit();
-                CustomQuery::addActionlog($user,true);
+                CustomQuery::addActionlog($user, true);
             } catch (Exception $e) {
                 DB::rollback();
-                return Response::json(['status'=>false,'message'=>$e->getMessage()]);
+                return Response::json(['status' => false, 'message' => $e->getMessage()]);
             }
-            return Response::json(['status'=>true,'message'=>"Offer Send Successfully"]);
-        }
-        else {
+            return Response::json(['status' => true, 'message' => "Offer Send Successfully"]);
+        } else {
             DB::beginTransaction();
             try {
                 $offer = new OfferSMS;
@@ -101,8 +101,8 @@ class OfferController extends Controller
                 $offer->sms_end_datetime = Carbon::now()->addHours(48);
                 $offer->district_id = $district_id;
                 $offer->come_from = $type;
-                if(!$offer->save()) throw new Exception("An Error Occur While Send Offer. Please Try Again Later");
-                switch($type){
+                if (!$offer->save()) throw new Exception("An Error Occur While Send Offer. Please Try Again Later");
+                switch ($type) {
                     case 'panel':
                         $this->removeFromPanel($ansar_ids);
                         break;
@@ -112,8 +112,8 @@ class OfferController extends Controller
 
                 }
                 DB::commit();
-                CustomQuery::addActionlog(['ansar_id'=>$ansar_ids,'action_type'=>'SEND OFFER','from_state'=>'PANEL','to_state'=>'OFFER','action_by'=>auth()->user()->id]);
-                CustomQuery::addDGlog(['ansar_id'=>$ansar_ids,'action_type'=>'SEND OFFER','from_state'=>'PANEL','to_state'=>'OFFER']);
+                CustomQuery::addActionlog(['ansar_id' => $ansar_ids, 'action_type' => 'SEND OFFER', 'from_state' => 'PANEL', 'to_state' => 'OFFER', 'action_by' => auth()->user()->id]);
+                CustomQuery::addDGlog(['ansar_id' => $ansar_ids, 'action_type' => 'SEND OFFER', 'from_state' => 'PANEL', 'to_state' => 'OFFER']);
             } catch (Exception $e) {
                 DB::rollback();
                 return Response::json(['status' => false, 'message' => $e->getMessage()]);
@@ -121,31 +121,36 @@ class OfferController extends Controller
             return Response::json(['status' => true, 'data' => "Offer send successfully"]);
         }
     }
-    function removeFromPanel($ansar_ids){
-        $pa = PanelModel::where('ansar_id',$ansar_ids)->first();
-        $as = AnsarStatusInfo::where('ansar_id',$ansar_ids)->first();
-        $as->pannel_status=0;
-        $as->offer_sms_status=1;
+
+    function removeFromPanel($ansar_ids)
+    {
+        $pa = PanelModel::where('ansar_id', $ansar_ids)->first();
+        $as = AnsarStatusInfo::where('ansar_id', $ansar_ids)->first();
+        $as->pannel_status = 0;
+        $as->offer_sms_status = 1;
         $as->save();
-        if($pa){
+        if ($pa) {
             $pl = new PanelInfoLogModel;
-            $pl->panel_id_old=$pa->id;
+            $pl->panel_id_old = $pa->id;
             $pl->ansar_id = $pa->ansar_id;
-            $pl->merit_list=$pa->ansar_merit_list;
+            $pl->merit_list = $pa->ansar_merit_list;
             $pl->panel_date = $pa->panel_date;
-            $pl->old_memorandum_id=!$pa->memorandum_id?"N\A":$pa->memorandum_id;
-            $pl->movement_date=Carbon::today()->addHour(6);
+            $pl->old_memorandum_id = !$pa->memorandum_id ? "N\A" : $pa->memorandum_id;
+            $pl->movement_date = Carbon::today()->addHour(6);
             $pl->come_from = $pa->come_from;
             $pl->move_to = 'Offer';
             $pl->save();
             $pa->delete();
         }
     }
-    function removeFromRest($ansar_ids){
-        $as = AnsarStatusInfo::where('ansar_id',$ansar_ids)->first();
-        $as->offer_sms_status=1;
+
+    function removeFromRest($ansar_ids)
+    {
+        $as = AnsarStatusInfo::where('ansar_id', $ansar_ids)->first();
+        $as->offer_sms_status = 1;
         return $as->save();
     }
+
     function offerQuota()
     {
         return View::make('HRM::Offer.offer_quota');
@@ -163,12 +168,12 @@ class OfferController extends Controller
         $quota = Input::get('quota_value');
         $success = true;
         //return $id;
-        for($i=0;$i<count($id);$i++){
+        for ($i = 0; $i < count($id); $i++) {
 
             try {
                 $offer_quota = OfferQuota::where('unit_id', $id[$i])->firstOrFail();
                 $offer_quota->update(['quota' => $quota[$i]]);
-            }catch (ModelNotFoundException $e){
+            } catch (ModelNotFoundException $e) {
                 //return $e->getMessage();
                 $offer_quota = new OfferQuota;
                 $offer_quota->unit_id = $id[$i];
@@ -176,9 +181,9 @@ class OfferController extends Controller
                 $offer_quota->saveOrFail();
 //                $offer_quota->fill(['unit_id'=>$id[$i],'quota' => $quota[$i]]);
             }
-            if(!$offer_quota) $success=false;
+            if (!$offer_quota) $success = false;
         }
-        return Response::json(['status'=>$success]);
+        return Response::json(['status' => $success]);
     }
 
     function handleCancelOffer()
@@ -191,11 +196,11 @@ class OfferController extends Controller
             DB::beginTransaction();
             try {
                 $offered_ansar = OfferSMS::where('ansar_id', $ansar_ids[$i])->first();
-                if(!$offered_ansar) $received_ansar = ReceiveSMSModel::where('ansar_id', $ansar_ids[$i])->first();
+                if (!$offered_ansar) $received_ansar = ReceiveSMSModel::where('ansar_id', $ansar_ids[$i])->first();
                 $offer_log = new OfferSmsLog;
                 $offer_cancel = new OfferCancel;
                 $status_info = AnsarStatusInfo::where('ansar_id', $ansar_ids[$i])->first();
-                $panel_log = PanelInfoLogModel::where('ansar_id',$ansar_ids[$i])->select('old_memorandum_id')->first();
+                $panel_log = PanelInfoLogModel::where('ansar_id', $ansar_ids[$i])->select('old_memorandum_id')->first();
                 $panel_info = new PanelModel;
                 $panel_info->ansar_id = $ansar_ids[$i];
                 $panel_info->memorandum_id = $panel_log->old_memorandum_id;
@@ -210,7 +215,7 @@ class OfferController extends Controller
                 $offer_cancel->ansar_id = $ansar_ids[$i];
                 $offer_cancel->offer_cancel_date = Carbon::now();
                 $offer_cancel->save();
-                if($offered_ansar) {
+                if ($offered_ansar) {
                     $offer_log->ansar_id = $ansar_ids[$i];
                     $offer_log->offered_date = $offered_ansar->sms_send_datetime;
                     $offer_log->reply_type = 'No Reply';
@@ -219,8 +224,7 @@ class OfferController extends Controller
                     $offer_log->action_user_id = auth()->user()->id;
                     $offer_log->save();
                     $offered_ansar->delete();
-                }
-                else{
+                } else {
                     $offer_log->ansar_id = $ansar_ids[$i];
                     $offer_log->reply_type = 'Yes';
                     $offer_log->offered_date = $received_ansar->sms_send_datetime;
@@ -230,7 +234,7 @@ class OfferController extends Controller
                     $received_ansar->delete();
                 }
                 DB::commit();
-                CustomQuery::addActionlog(['ansar_id'=>$ansar_ids[$i],'action_type'=>'CANCEL OFFER','from_state'=>'OFFER','to_state'=>'PANEL','action_by'=>auth()->user()->id]);
+                CustomQuery::addActionlog(['ansar_id' => $ansar_ids[$i], 'action_type' => 'CANCEL OFFER', 'from_state' => 'OFFER', 'to_state' => 'PANEL', 'action_by' => auth()->user()->id]);
                 $result['success']++;
             } catch (Exception $e) {
                 DB::rollback();

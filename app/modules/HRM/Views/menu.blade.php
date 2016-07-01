@@ -106,7 +106,7 @@
                             <span>Entry</span>
                         </a>
                     </li>
-                    <li>
+                    <li ng-if="checkMenu('chunk_verify')">
                         <a href="{{URL::to('HRM/chunkverify')}}">
                             <i class="fa fa-users"></i>
                             <span>Verify Entry(Chunk)</span>
@@ -378,7 +378,8 @@
                     </li>
                 </ul>
             </li>
-            <li style="@if(!(Auth::user()->type==11||Auth::user()->type==33)) display:none @endif">
+            @if((Auth::user()->type==11||Auth::user()->type==33))
+            <li>
                 <a href="#">
                     <i class="fa fa-user"></i>
                     <span>DG Forms</span>
@@ -465,7 +466,9 @@
                     </li>
                 </ul>
             </li>
-            <li style="@if(Auth::user()->type!=11) display:none @endif">
+            @endif
+            @if(Auth::user()->type==11)
+            <li>
                 <a href="#">
                     <i class="fa fa-user"></i>
                     <span>Admin</span>
@@ -498,6 +501,7 @@
                     </li>
                 </ul>
             </li>
+            @endif
             <li>
                 <a href="#">
                     <i class="fa fa-cog"></i>
@@ -540,4 +544,24 @@
         </ul>
     </section>
     <!-- /.sidebar -->
+    <script>
+        $(document).ready(function(){
+            var l = $('.sidebar-menu').children('li');
+            function removeMenu(m){
+
+                m.each(function () {
+                    //alert($(this).children('ul').length+" "+$(this).children('ul').children('li').length)
+                    if($(this).children('ul').length>0&&$(this).children('ul').children('li').length>0){
+                      //  alert('nnnn')
+                        removeMenu($(this).children('ul').children('li'));
+                    }
+                    else if($(this).children('ul').length>0&&$(this).children('ul').children('li').length<=0){
+                       // alert(m.length)
+                        $(this).remove();
+                    }
+                })
+            }
+            removeMenu(l)
+        })
+    </script>
 </aside>
