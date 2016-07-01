@@ -13,7 +13,7 @@
 
                     <p style="margin-top: 20px">
                         You currently not authorized to view this page
-                        Meanwhile, you may <a href="{{action('UserController@hrmDashboard')}}">return to dashboard</a>
+                        Meanwhile, you may <a href="{{URL::to('HRM')}}">return to dashboard</a>
                     </p>
 
                 </div>

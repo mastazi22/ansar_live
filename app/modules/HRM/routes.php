@@ -4,7 +4,7 @@ Route::group(['prefix'=>'HRM','middleware'=>'manageDatabase','namespace'=>'\App\
     Route::post('/receive_sms', ['as'=>'receive_sms','uses'=>'SMSController@receiveSMS']);
     Route::post('/get_sms_status', 'SMSController@getSMSStatus');
 });
-Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserType'] ],function(){
+Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserType','permission'] ],function(){
     Route::group(['namespace'=>'\App\modules\HRM\Controllers'],function(){
 
         //DASHBOARD
