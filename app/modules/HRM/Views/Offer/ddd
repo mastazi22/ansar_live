@@ -1,0 +1,44 @@
+<div class="row" ng-if="isAdmin" style="margin: 0 !important;">
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                            <label class="control-label"> Select District</label>
+                                            <select name="district" ng-model="selectedDistrict"
+                                                    class="form-control" multiple>
+                                                <option ng-repeat="district in allDistrict"
+                                                        value=[[$index]]>
+                                                    [[district.unit_name_eng]]
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2" style="margin-right: -15px">
+                                        <div class="form-group">
+                                            <label class="control-label"
+                                                   style="visibility: hidden">Action</label>
+                                            <ul style="list-style: none;padding: 0;margin: 0 ">
+                                                <li style="padding-top: 6px;padding-left: 10px">
+                                                    <button class="btn btn-default" ng-click="addDistrict()">
+                                                        <i class="fa fa-long-arrow-right"></i>
+                                                    </button>
+                                                </li>
+                                                <li style="padding-top: 6px;padding-left: 10px">
+                                                    <button class="btn btn-default" ng-click="removeDistrict()">
+                                                        <i class="fa fa-long-arrow-left"></i>
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <div class="form-group">
+                                            <label class="control-label"> Selected District</label>
+                                            <select name="district" ng-model="removedDistrict"
+                                                    class="form-control" multiple>
+                                                <option ng-repeat="district in updatedDistrict"
+                                                        value=[[$index]]>
+                                                    [[district.unit_name_eng]]
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>

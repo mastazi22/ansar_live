@@ -60,7 +60,7 @@ class UserController extends Controller
 
     function login()
     {
-        if (Auth::check()) return Redirect::action('UserController@hrmDashboard');
+        if (Auth::check()) return Redirect::to('/');
         return View::make('login_screen');
     }
 
