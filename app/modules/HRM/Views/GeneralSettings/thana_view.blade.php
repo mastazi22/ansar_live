@@ -4,8 +4,7 @@
 @extends('template.master')
 @section('title','Thana Information')
 @section('small_title')
-    <a style="background: #3c8dbc; color: #FFFFFF;" class="btn btn-primary btn-sm"
-       href="{{URL::to('HRM/thana_form')}}">
+    <a style="background: #3c8dbc; color: #FFFFFF;" class="btn btn-primary btn-sm" href="{{URL::to('HRM/thana_form')}}">
         <span class="glyphicon glyphicon-plus"></span> Add New Thana
     </a>
 

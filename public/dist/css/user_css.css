@@ -397,6 +397,7 @@
     width: 200px;
     padding: 20px;
     margin-top: 20px;
+    display: none;
     left: 50%;
     margin-left: -100px;
     background: #FFFFFF;
