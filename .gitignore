@@ -3,6 +3,9 @@
 /public/storage
 Homestead.yaml
 Homestead.json
-.env
 storage/DemandSheet/
 /.idea/
+storage/drafts/
+storage/user/img/14.jpg
+storage/user/img/33.jpg
+vendor.zip
