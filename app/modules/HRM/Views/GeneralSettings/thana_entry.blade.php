@@ -1,10 +1,12 @@
 {{--User: Shreya--}}
 {{--Date: 12/3/2015--}}
 {{--Time: 1:23 PM--}}
-
-@extends('template/master')
+@extends('template.master')
+@section('title','Thana Information Entry')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('thana_information_entry') !!}
+@endsection
 @section('content')
-
     <script>
 
         GlobalApp.controller('ThanaEntryController', function ($scope, getNameService) {
@@ -46,9 +48,9 @@
             <div class="row">
                 <!-- left column -->
                 <div class="col-lg-6 col-centered">
-                    <div class="label-title-session-entry">
+                    {{--<div class="label-title-session-entry">
                         <h4 style="text-align:center; padding:2px">Thana Form</h4>
-                    </div>
+                    </div>--}}
                     <!-- general form elements -->
 
                     <!-- Input addon -->

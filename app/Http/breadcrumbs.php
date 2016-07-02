@@ -375,3 +375,23 @@ Breadcrumbs::register('thana_information_edit', function($breadcrumbs,$id) {
     $breadcrumbs->parent('hrm');
     $breadcrumbs->push('Thana Information Edit', URL::route('thana_edit',['id'=>$id]));
 });
+
+Breadcrumbs::register('thana_information_entry', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Thana Information Entry', URL::route('thana_form'));
+});
+
+Breadcrumbs::register('disease_information_list', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Disease Information List', URL::route('disease_entry'));
+});
+
+Breadcrumbs::register('disease_information_edit', function($breadcrumbs,$id) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Disease Information Edit', URL::route('disease_edit',['id'=>$id]));
+});
+
+Breadcrumbs::register('disease_information_entry', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Disease Information Entry', URL::route('add_disease_view'));
+});

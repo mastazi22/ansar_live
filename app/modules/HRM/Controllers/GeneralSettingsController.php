@@ -227,7 +227,7 @@ class GeneralSettingsController extends Controller
     public function diseaseEdit($id)
     {
         $unit_infos = AllDisease::find($id);
-        return view('HRM::GeneralSettings.diseaseEdit')->with(['disease_infos' => $unit_infos]);
+        return view('HRM::GeneralSettings.diseaseEdit')->with(['disease_infos' => $unit_infos, 'id'=>$id]);
     }
 
     public function updateDisease(Request $request)

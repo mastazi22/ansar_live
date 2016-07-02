@@ -1,5 +1,16 @@
-@extends('template/master')
+@extends('template.master')
+@section('title','Disease Information List')
+@section('small_title')
+    <a class="btn btn-primary" href="{{URL::to('HRM/add_disease')}}">
+        <span class="glyphicon glyphicon-plus"></span> Add New Unit
+    </a>
+
+@endsection
+@section('breadcrumb')
+    {!! Breadcrumbs::render('disease_information_list') !!}
+@endsection
 @section('content')
+
 <?php $i = 1; ?>
     <div>
         @if(Session::has('success_message'))
@@ -17,14 +28,11 @@
             <div class="row" style="margin-left: 20px; margin-right: 20px">
 
                 <div class="row">
-                    <div style="margin:0 16px;">
+                    {{--<div style="margin:0 16px;">
                         <div class="table-header">
                             <h5>Disease list</h5>
                         </div>
-                    </div>
-                    <div style="float:left;padding: 3px 5px;">
-                           <a class="btn btn-primary" href="{{URL::to('HRM/add_disease')}}">Add new Disease</a>
-                    </div>
+                    </div>--}}
                 </div>
                 <div class="box">
 

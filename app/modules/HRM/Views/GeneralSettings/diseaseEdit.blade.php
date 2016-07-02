@@ -1,8 +1,10 @@
 @extends('template.master')
+@section('title','Disease Information Edit')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('disease_information_edit',$id) !!}
+@endsection
 @section('content')
-
     <div>
-
         <!-- Content Header (Page header) -->
 
         <!-- Main content -->
@@ -10,9 +12,9 @@
             <div class="row">
                 <!-- left column -->
                 <div class="col-lg-6 col-centered">
-                    <div class="label-title-session-entry">
+                    {{--<div class="label-title-session-entry">
                         <h4 style="text-align:center; padding:2px">Edit Disease Form</h4>
-                    </div>
+                    </div>--}}
                     <!-- general form elements -->
 
                     <!-- Input addon -->
