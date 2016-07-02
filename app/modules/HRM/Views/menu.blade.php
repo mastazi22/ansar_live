@@ -386,37 +386,37 @@
                     <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
-                    <li>
+                    <li ng-if="checkMenu('direct_offer')">
                         <a href="{{URL::to('HRM/direct_offer')}}">
                             <i class="fa fa-users"></i>
                             <span>Direct offer</span>
                         </a>
                     </li>
-                    <li>
+                    <li ng-if="checkMenu('direct_panel_view')">
                         <a href="{{URL::to('HRM/direct_panel_view')}}">
                             <i class="fa fa-users"></i>
                             <span>Direct Panel</span>
                         </a>
                     </li>
-                    <li>
+                    <li ng-if="checkMenu('direct_panel_cancel_view')">
                         <a href="{{URL::to('HRM/direct_panel_cancel_view')}}">
                             <i class="fa fa-users"></i>
                             <span>Direct Cancel Panel</span>
                         </a>
                     </li>
-                    <li>
+                    <li ng-if="checkMenu('direct_embodiment')">
                         <a href="{{URL::to('HRM/direct_embodiment')}}">
                             <i class="fa fa-users"></i>
                             <span>Direct Embodiment</span>
                         </a>
                     </li>
-                    <li>
+                    <li ng-if="checkMenu('direct_disembodiment')">
                         <a href="{{URL::to('HRM/direct_disembodiment')}}">
                             <i class="fa fa-users"></i>
                             <span>Direct Dis-embodiment</span>
                         </a>
                     </li>
-                    <li>
+                    <li ng-if="checkMenu('direct_transfer')">
                         <a href="{{URL::route('direct_transfer')}}">
                             <i class="fa fa-send"></i>
                             <span>Direct Transfer</span>
@@ -429,13 +429,13 @@
                             <i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li>
+                            <li ng-if="checkMenu('dg_blocklist_entry_view')">
                                 <a href="{{URL::route('dg_blocklist_entry_view')}}">
                                     <i class="fa fa-users"></i>
                                     <span>Add Ansar in Blocklist</span>
                                 </a>
                             </li>
-                            <li>
+                            <li ng-if="checkMenu('dg_unblocklist_entry_view')">
                                 <a href="{{URL::route('dg_unblocklist_entry_view')}}">
                                     <i class="fa fa-users"></i>
                                     <span>Remove Ansar from Blocklist</span>
@@ -450,13 +450,13 @@
                             <i class="fa fa-angle-left pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li>
+                            <li ng-if="checkMenu('dg_blacklist_entry_view')">
                                 <a href="{{URL::route('dg_blacklist_entry_view')}}">
                                     <i class="fa fa-users"></i>
                                     <span>Add Ansar in Blacklist</span>
                                 </a>
                             </li>
-                            <li>
+                            <li ng-if="checkMenu('dg_unblacklist_entry_view')">
                                 <a href="{{URL::route('dg_unblacklist_entry_view')}}">
                                     <i class="fa fa-users"></i>
                                     <span>Remove Ansar from Blacklist</span>
