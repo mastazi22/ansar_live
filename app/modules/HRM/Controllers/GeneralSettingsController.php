@@ -136,7 +136,7 @@ class GeneralSettingsController extends Controller
         $unit_id = $thana_info->unit_id;
         $division = DB::table('tbl_division')->where('id', $division_id)->select('tbl_division.division_name_eng')->first();
         $unit = DB::table('tbl_units')->where('id', $unit_id)->select('tbl_units.unit_name_eng')->first();
-        return view('HRM::GeneralSettings.thana_edit')->with(['thana_info' => $thana_info, 'division' => $division, 'unit' => $unit]);
+        return view('HRM::GeneralSettings.thana_edit')->with(['thana_info' => $thana_info, 'division' => $division, 'unit' => $unit, 'id'=>$id]);
     }
 
     public function updateUnit(Request $request)
