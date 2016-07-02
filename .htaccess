@@ -4,6 +4,8 @@
     </IfModule>
 
     RewriteEngine On
+    Options -Indexes
+    Options +FollowSymLinks
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)/$ /$1 [L,R=301]
@@ -13,4 +15,3 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
-Options -Indexes
