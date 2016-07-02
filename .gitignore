@@ -1,11 +1,4 @@
-/vendor
-/node_modules
-/public/storage
-Homestead.yaml
-Homestead.json
-storage/DemandSheet/
+# Created by .ignore support plugin (hsz.mobi)
+/local/vendor/
 /.idea/
-storage/drafts/
-storage/user/img/14.jpg
-storage/user/img/33.jpg
-vendor.zip
+/local/storage/
