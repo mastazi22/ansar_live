@@ -1,8 +1,18 @@
 {{--User: Shreya--}}
 {{--Date: 12/3/2015--}}
 {{--Time: 12:34 PM--}}
-
 @extends('template.master')
+@section('title','Thana Information')
+@section('small_title')
+    <a style="background: #3c8dbc; color: #FFFFFF;" class="btn btn-primary btn-sm"
+       href="{{URL::to('HRM/thana_form')}}">
+        <span class="glyphicon glyphicon-plus"></span> Add New Thana
+    </a>
+
+@endsection
+@section('breadcrumb')
+    {!! Breadcrumbs::render('thana_information_list') !!}
+@endsection
 @section('content')
     <script>
         GlobalApp.controller('ThanaViewController', function ($scope, $http, $sce, $compile) {
@@ -125,7 +135,7 @@
         <section class="content">
             <div class="box box-solid">
                 <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
+                    {{--<ul class="nav nav-tabs">
                         <li class="active">
                             <a> Thana Information</a>
                         </li>
@@ -134,9 +144,9 @@
                                href="{{URL::to('HRM/thana_form')}}">
                                 <span class="glyphicon glyphicon-plus"></span> Add New Thana
                             </a>
-                            {{--<a data-toggle="tab" href="#pc">Transfer Ansar</a>--}}
+                            --}}{{--<a data-toggle="tab" href="#pc">Transfer Ansar</a>--}}{{--
                         </li>
-                    </ul>
+                    </ul>--}}
                     <div class="tab-content">
                         <div class="tab-pane active">
                             <div class="row">

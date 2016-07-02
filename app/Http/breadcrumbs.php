@@ -365,3 +365,13 @@ Breadcrumbs::register('unit_information_entry', function($breadcrumbs) {
     $breadcrumbs->parent('hrm');
     $breadcrumbs->push('Unit Information Entry', URL::route('unit_form'));
 });
+
+Breadcrumbs::register('thana_information_list', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Thana Information List', URL::route('thana_view'));
+});
+
+Breadcrumbs::register('thana_information_edit', function($breadcrumbs,$id) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Thana Information Edit', URL::route('thana_edit',['id'=>$id]));
+});
