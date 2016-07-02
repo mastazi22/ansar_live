@@ -51,7 +51,7 @@ $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 $response = $kernel->handle(
     $request = Illuminate\Http\Request::capture()
 );
-echo config('app.log');die;
+//echo config('app.log');die;
 $response->send();
 
 $kernel->terminate($request, $response);
