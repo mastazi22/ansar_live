@@ -46,13 +46,13 @@ $app = require_once __DIR__.'/../bootstrap/app.php';
 | and wonderful application we have prepared for them.
 |
 */
-echo env('APP_LOG','daily');die;
+
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 
 $response = $kernel->handle(
     $request = Illuminate\Http\Request::capture()
 );
-//echo config('app.log');die;
+echo env('DB_HOST');die;
 $response->send();
 
 $kernel->terminate($request, $response);
