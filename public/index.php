@@ -52,7 +52,7 @@ $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 $response = $kernel->handle(
     $request = Illuminate\Http\Request::capture()
 );
-echo env('DB_HOST','aSSasaS');die;
+echo env('HRM','aSSasaS');die;
 $response->send();
 
 $kernel->terminate($request, $response);
