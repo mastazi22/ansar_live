@@ -133,7 +133,7 @@
         })
     </script>
     <div ng-controller="ReportThreeYearsOverList">
-        <div class="loading-report animated" ng-class="{fadeInDown:isLoading,fadeOutUp:!isLoading}">
+        <div class="loading-report animated" ng-show="isLoading" ng-class="{'fadeInDown visible':isLoading,fadeOutUp:!isLoading}">
             <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
             <h4>Loading...</h4>
         </div>
@@ -153,19 +153,19 @@
                             </span>
                     </div><br>
                     <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-group required">
-                                <label class="control-label">Select a unit&nbsp;
+                                <label class="control-label">Select Unit&nbsp;
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
-                                <select class="form-control" ng-model="selectedDistrict" ng-change="resetValues()">
+                                <select class="form-control" ng-model="selectedDistrict">
                                     <option value="">--Select--</option>
                                     <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
                                     </option>
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-group required">
                                 <label class="control-label">
                                     Select Rank
@@ -179,13 +179,12 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-group required">
                                 <label class="control-label">
                                     Select Sex
                                 </label>
-                                <select name="ansar_sex" class="form-control" ng-model="selectedSex"
-                                        ng-change="loadTotal(selectedDistrict,selectedRank,selectedSex)">
+                                <select name="ansar_sex" class="form-control" ng-model="selectedSex">
                                     <option value="" disabled>--Select--</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
@@ -193,6 +192,9 @@
                                     </option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="col-md-3 col-sm-12 col-xs-12" style="margin-top: 25px">
+                            <a class="btn btn-primary pull-right" ng-click="loadTotal(selectedDistrict,selectedRank,selectedSex)">Load Result</a>
                         </div>
                     </div>
                     <div id="print-three_years_over_ansar_report">
