@@ -134,10 +134,10 @@
                              style="min-height: 400px;border-left: 1px solid #CCCCCC">
                             <div id="loading-box" ng-if="loadingAnsar">
                             </div>
-                            <div ng-if="!kpiDetail">
+                            <div ng-if="!kpiDetail.kpi">
                                 <h3 style="text-align: center">No KPI Information Found</h3>
                             </div>
-                            <div ng-if="kpiDetail">
+                            <div ng-if="kpiDetail.kpi">
                                 <div class="form-group">
                                     <div class="col-sm-8 col-sm-offset-2">
                                         <h3 style="text-align: center">KPI Information</h3>

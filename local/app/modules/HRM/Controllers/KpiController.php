@@ -417,6 +417,7 @@ class KpiController extends Controller
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
             ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
             ->where('tbl_kpi_info.id', '=', $kpi_id)
+            ->whereNull('tbl_kpi_detail_info.kpi_withdraw_date')
             ->select('tbl_kpi_info.kpi_name as kpi', 'tbl_kpi_detail_info.total_ansar_request as tar', 'tbl_kpi_detail_info.total_ansar_given as tag', 'tbl_kpi_detail_info.weapon_count as weapon','tbl_kpi_detail_info.bullet_no as bullet', 'tbl_kpi_detail_info.activation_date as a_date',  'tbl_division.division_name_eng as division', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana')
             ->first();
         return Response::json($kpi_info);
