@@ -2,3 +2,4 @@
 /local/vendor/
 /.idea/
 /local/storage/
+/local/config/database.php
