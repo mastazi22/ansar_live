@@ -652,12 +652,15 @@ a:hover, a:active, a:focus {
     .sidebar-mini.sidebar-collapse .main-header .logo {
         width: 50px
     }
-    .sidebar-mini.sidebar-collapse .main-sidebar>.sidebar >.user-panel .full-header{
+
+    .sidebar-mini.sidebar-collapse .main-sidebar > .sidebar > .user-panel .full-header {
         display: none;
     }
-    .sidebar-mini.sidebar-collapse .main-sidebar>.sidebar >.user-panel{
+
+    .sidebar-mini.sidebar-collapse .main-sidebar > .sidebar > .user-panel {
         padding: 5px !important;
     }
+
     .sidebar-mini.sidebar-collapse .main-header .logo > .logo-mini {
         display: block;
         margin-left: -15px;
@@ -2111,7 +2114,7 @@ a:hover, a:active, a:focus {
     text-align: center;
     font-size: 45px;
     line-height: 90px;
-    background: rgba(0, 0, 0, 0.2)
+    /*background: rgba(0, 0, 0, 0.2)*/
 }
 
 .info-box-icon > img {
@@ -2119,8 +2122,9 @@ a:hover, a:active, a:focus {
 }
 
 .info-box-content {
-    padding: 5px 10px;
-    margin-left: 90px
+    padding: 6px 10px;
+    margin-left: 90px;
+    background: rgba(0, 0, 0, 0.2)
 }
 
 .info-box-number {
@@ -4394,38 +4398,45 @@ table.text-center, table.text-center td, table.text-center th {
     }
 }
 
-.disable-module{
+.disable-module {
     background: #cccccc;
     cursor: not-allowed;
 }
-.disable-module .inner{
+
+.disable-module .inner {
     background: #cccccc;
 }
-.disable-module a{
+
+.disable-module a {
     background: #ababab !important;
     pointer-events: none;
 }
-.disable_menu{
+
+.disable_menu {
     background: #cccccc;
     color: #ffffff;
     pointer-events: none;
     cursor: not-allowed;
 }
-.disable_menu>a{
+
+.disable_menu > a {
     color: #ffffff !important;
 }
-.offer-district{
+
+.offer-district {
     list-style: none;
     max-height: 530px;
     overflow-y: scroll;
 }
-.offer-district>li{
+
+.offer-district > li {
     position: relative;
 }
-.check-label{
+
+.check-label {
     display: block;
     padding: 5px 15px;
-    margin: 5px 15px 5px 0 ;
+    margin: 5px 15px 5px 0;
     border-radius: 5px;
     background: #ff851b;
     color: #ffffff;
@@ -4433,9 +4444,11 @@ table.text-center, table.text-center td, table.text-center th {
     box-shadow: 1px 1px 1px 1px #cccccc;
     cursor: pointer;
 }
-.check-boxx{
+
+.check-boxx {
     display: none;
 }
-.check-boxx:checked+.check-label{
+
+.check-boxx:checked + .check-label {
     background: green;
 }
