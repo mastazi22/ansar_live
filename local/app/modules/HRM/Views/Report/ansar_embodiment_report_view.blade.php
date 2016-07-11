@@ -66,7 +66,7 @@
                 }).then(function (response) {
                     $scope.ansars = $sce.trustAsHtml(response.data);
                     $scope.loadingPage[page.pageNum] = false;
-                    console.log(response.data)
+
                 })
             }
             $scope.loadTotal = function () {
@@ -87,7 +87,7 @@
                     $scope.total = response.data.total;
                     $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
                     $scope.loadPagination();
-                    console.log($scope.total);
+                    //console.log($scope.total);
 //                    $scope.selectedDistrict = [];
 //                    $scope.selectedRank = [];
 //                    $scope.selectedSex = '';
@@ -118,13 +118,13 @@
                     params: {id: id}
                 }).then(function (response) {
                     $scope.thanas = response.data;
-                    $scope.selectedThana = "";
+                    $scope.selectedThana = "all";
                     $scope.loadingThana=false;
                 })
             }
             $scope.resetValues=function(){
-                $scope.selectedDistrict = "";
-                $scope.selectedThana = "";
+                $scope.selectedDistrict = "all";
+                $scope.selectedThana = "all";
             }
 
             $scope.loadReportData = function (reportName,type) {
@@ -133,7 +133,6 @@
                     url:'{{URL::route('localize_report')}}',
                     params:{name:reportName,type:type}
                 }).then(function(response){
-                    console.log(response.data)
                     $scope.report = response.data;
                 })
             }
@@ -152,7 +151,7 @@
 
     </script>
     <div ng-controller="ReportAnsarEmbodiment">
-        <div class="loading-report animated" ng-class="{fadeInDown:isLoading,fadeOutUp:!isLoading}">
+        <div class="loading-report animated" ng-show="isLoading" ng-class="{'fadeInDown visible':isLoading,fadeOutUp:!isLoading}">
             <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
             <h4>Loading...</h4>
         </div>
@@ -172,51 +171,54 @@
                             </span>
                     </div><br>
                     <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-sm-4 col-sm-12 col-xs-12">
                             <div class="form-group required">
                                 <label class="control-label">
                                     Enter Date Range
                                 </label></br>
-                                <div class="col-md-6" style="margin-left: 0px; padding-left: 0px; margin-right: 0px; padding-right: 0px">
+                                <div class="col-md-6 col-sm-12 col-xs-12" style="margin-left: 0px; padding-left: 0px; margin-right: 0px; padding-right: 0px">
                                     <input type="text" name="from_date" id="from_date" class="form-control"
                                            placeholder="From Date" ng-model="from_date" ng-change="resetValues()"><br>
                                 </div>
-                                <div class="col-md-6" style="margin-left: 0px; padding-left: 0px; margin-right: 0px; padding-right: 0px">
+                                <div class="col-md-6 col-sm-12 col-xs-12" style="margin-left: 0px; padding-left: 0px; margin-right: 0px; padding-right: 0px">
                                     <input type="text" name="to_date" id="to_date" class="form-control"
                                            placeholder="To Date" ng-model="to_date" ng-change="resetValues()">
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3 col-sm-12 col-xs-12">
                             <div class="form-group required">
                                 <label class="control-label">
-                                    Select a Unit
+                                    Select Unit
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 </label>
                                 <select name="unit_id" class="form-control" ng-model="selectedDistrict"
                                         ng-change="loadThana(selectedDistrict)">
-                                    <option value="" disabled>--Select Unit--</option>
+                                    {{--<option value="" disabled>--Select Unit--</option>--}}
                                     <option value="all">All</option>
                                     <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_eng]]
                                     </option>
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3 col-sm-12 col-xs-12">
                             <div class="form-group required">
                                 <label class="control-label">
-                                    Select a Thana
+                                    Select Thana
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16">
                                 </label>
-                                <select name="thana_id" class="form-control" ng-model="selectedThana" ng-change="loadTotal(selectedDistrict,selectedThana,to_date,from_date)">
-                                    <option value="" disabled>--Select Thana--</option>
+                                <select name="thana_id" class="form-control" ng-model="selectedThana">
+                                    {{--<option value="" disabled>--Select Thana--</option>--}}
                                     <option value="all">All</option>
                                     <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_eng]]
                                     </option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="col-md-2 col-sm-12 col-xs-12" style="margin-top: 25px">
+                            <a class="btn btn-primary pull-right" ng-click="loadTotal(selectedDistrict,selectedThana,to_date,from_date)">Load Result</a>
                         </div>
                     </div>
                     <div id="print_ansar_embodiment_report">
