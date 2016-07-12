@@ -193,7 +193,7 @@ class GeneralSettingsController extends Controller
     public function diseaseView()
     {
 
-        $disease_infos = DB::table('tbl_long_term_disease')->where('id', '>', 1)->paginate(10);
+        $disease_infos = DB::table('tbl_long_term_disease')->where('id', '>', 0)->paginate(10);
         return view('HRM::GeneralSettings.allDiseaseView')->with('disease_infos', $disease_infos);
     }
 
