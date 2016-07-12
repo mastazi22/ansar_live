@@ -153,7 +153,7 @@
                             </span>
                     </div><br>
                     <div class="row">
-                        <div class="col-sm-3">
+                        <div class="col-md-3">
                             <div class="form-group required">
                                 <label class="control-label">Select Unit&nbsp;
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
@@ -165,7 +165,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-md-3">
                             <div class="form-group required">
                                 <label class="control-label">
                                     Select Rank
@@ -179,7 +179,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-md-3">
                             <div class="form-group required">
                                 <label class="control-label">
                                     Select Sex
