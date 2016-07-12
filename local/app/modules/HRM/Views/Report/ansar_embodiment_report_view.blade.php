@@ -171,10 +171,10 @@
                             </span>
                     </div><br>
                     <div class="row">
-                        <div class="col-sm-4 col-sm-12 col-xs-12">
+                        <div class="col-md-4 col-sm-12 col-xs-12">
                             <div class="form-group required">
                                 <label class="control-label">
-                                    Enter Date Range
+                                    Select Date Range
                                 </label></br>
                                 <div class="col-md-6 col-sm-12 col-xs-12" style="margin-left: 0px; padding-left: 0px; margin-right: 0px; padding-right: 0px">
                                     <input type="text" name="from_date" id="from_date" class="form-control"
@@ -186,7 +186,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-3 col-sm-12 col-xs-12">
+                        <div class="col-md-3 col-sm-12 col-xs-12">
                             <div class="form-group required">
                                 <label class="control-label">
                                     Select Unit
@@ -202,7 +202,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-3 col-sm-12 col-xs-12">
+                        <div class="col-md-3 col-sm-12 col-xs-12">
                             <div class="form-group required">
                                 <label class="control-label">
                                     Select Thana
