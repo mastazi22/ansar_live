@@ -357,7 +357,14 @@
             })
             $('#ansar-all-modal').html(innerHtml)
         });
-
+        $(document).on('change', 'select[name="dis-reason"]', function () {
+            if(!$(this).val()){
+                $(this).parents('tr').find('.ansar-check').prop('disabled',true)
+            }
+            else{
+                $(this).parents('tr').find('.ansar-check').prop('disabled',false)
+            }
+        })
         $(document).on('change', '.ansar-check', function () {
             selectedAnsars = [];
             $('.ansar-check:checked').each(function () {
