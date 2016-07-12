@@ -5502,7 +5502,7 @@ class CustomQuery
             ->where('tbl_kpi_info.unit_id', '=', $unit)
             ->where('tbl_ansar_parsonal_info.sex', '=', $ansar_sex)
             ->where('tbl_designations.id', '=', $ansar_rank)
-            ->where('tbl_embodiment.service_ended_date', '<', Carbon::today())
+            ->where('tbl_embodiment.service_ended_date', '<', Carbon::now())
             ->where('tbl_embodiment.emboded_status', '=', 'Emboded');
 //        }
         $ansars = $ansarQuery->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date',
@@ -5514,26 +5514,27 @@ class CustomQuery
     public static function threeYearsOverAnsarCount($unit, $ansar_rank, $ansar_sex)
     {
         DB::enableQueryLog();
-        if (is_null($unit) && is_null($ansar_rank) && is_null($ansar_sex)) {
-            $ansarQuery = DB::table('tbl_embodiment')
-                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                ->where('tbl_embodiment.service_ended_date', '<', Carbon::today()->addHours(6))
-                ->where('tbl_embodiment.emboded_status', '=', 'Emboded');
-        } else {
-            $ansarQuery = DB::table('tbl_embodiment')
-                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                ->where('tbl_kpi_info.unit_id', '=', $unit)
-                ->where('tbl_ansar_parsonal_info.sex', '=', $ansar_sex)
-                ->where('tbl_designations.id', '=', $ansar_rank)
-                ->where('tbl_embodiment.service_ended_date', '<', Carbon::today()->addHours(6))
-                ->where('tbl_embodiment.emboded_status', '=', 'Emboded');
-        }
+//        if (is_null($unit) && is_null($ansar_rank) && is_null($ansar_sex)) {
+//            $ansarQuery = DB::table('tbl_embodiment')
+//                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+//                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+//                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
+//                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+//                ->where('tbl_embodiment.service_ended_date', '<', Carbon::today()->addHours(6))
+//                ->where('tbl_embodiment.emboded_status', '=', 'Emboded');
+//        } else {
+
+        $ansarQuery = DB::table('tbl_embodiment')
+            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+            ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+            ->where('tbl_kpi_info.unit_id', '=', $unit)
+            ->where('tbl_ansar_parsonal_info.sex', '=', $ansar_sex)
+            ->where('tbl_designations.id', '=', $ansar_rank)
+            ->where('tbl_embodiment.service_ended_date', '<', Carbon::now())
+            ->where('tbl_embodiment.emboded_status', '=', 'Emboded');
+//        }
         $total = $ansarQuery->count('tbl_embodiment.ansar_id');
 //        print_r(DB::getQueryLog());
         return Response::json(['total' => $total]);

@@ -172,9 +172,9 @@
                                 </label>
                                 <select name="ansar_rank" class="form-control" ng-model="selectedRank">
                                     <option value="" disabled>--Select--</option>
-                                    <option value="3">Ansar</option>
+                                    <option value="1">Ansar</option>
                                     <option value="2">APC</option>
-                                    <option value="1">PC</option>
+                                    <option value="3">PC</option>
                                     </option>
                                 </select>
                             </div>
