@@ -142,7 +142,7 @@
                             </table>
                         </div>
                         <div class="table-responsive">
-                            <h4 style="text-align: center;text-decoration: underline">[[report.current.header]]</h4>
+                            <h4 style="text-align: center;">[[report.current.header]]</h4>
                             <table class="table table-bordered">
                                 <tr>
                                     <th>[[report.current.jd]]</th>
@@ -169,7 +169,7 @@
                             </table>
                         </div>
                         <div class="table-responsive">
-                            <h4 style="text-align: center;text-decoration: underline">[[report.past.header]]</h4>
+                            <h4 style="text-align: center;">[[report.past.header]]</h4>
                             <table class="table table-bordered">
                                 <tr>
                                     <th>[[report.past.sl_no]]</th>
