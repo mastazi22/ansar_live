@@ -337,14 +337,14 @@
                         </div>
 
                         <div class="label-hrm-calculation">
-                                <span class="info-box-number" style="color: #00733e"><a href="{{URL::to('HRM/service_ended_in_three_years')}}/[[progressInfo.totalServiceEndedInThreeYears]]" class="btn-link">[[progressInfo.totalServiceEndedInThreeYears]]</a><img src="{{asset('dist/img/facebook.gif')}}" width="20" ng-show="loadingProgressInfo">
+                                <span class="info-box-number" style="color: #00733e;white-space: normal;overflow: auto;text-overflow: initial"><a href="{{URL::to('HRM/service_ended_in_three_years')}}/[[progressInfo.totalServiceEndedInThreeYears]]" class="btn-link">[[progressInfo.totalServiceEndedInThreeYears]]</a><img src="{{asset('dist/img/facebook.gif')}}" width="20" ng-show="loadingProgressInfo">
                                      </span>
                         </div>
                         <br style="clear: left;"/>
                     </div>
                     <div class="label-hrm">
                         <div class="label-hrm-title">
-                            <span class="info-box-text" style="color: #880000">Total Ansar will reached 50 years of age within 3 month</span>
+                            <span class="info-box-text" style="color: #880000;white-space: normal;overflow: auto;text-overflow: initial">Total Ansar will reached 50 years of age within 3 month</span>
                         </div>
 
                         <div class="label-hrm-calculation">
@@ -354,7 +354,7 @@
                     </div>
                     <div class="label-hrm">
                         <div class="label-hrm-title">
-                            <span class="info-box-text" style="color: #00517e">Total list of member who are not interested for more than 10 times</span>
+                            <span class="info-box-text" style="color: #00517e;white-space: normal;overflow: auto;text-overflow: initial">Total list of member who are not interested for more than 10 times</span>
                         </div>
 
                         <div class="label-hrm-calculation">
