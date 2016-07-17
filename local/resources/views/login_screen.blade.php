@@ -140,7 +140,7 @@
         <form action="{{action('UserController@handleLogin')}}" method="post">
             {{csrf_field()}}
             <div class="form-group has-feedback">
-                <input type="text" name="user_name" class="form-control" value="root" placeholder="User Name"/>
+                <input type="text" name="user_name" class="form-control" value="" placeholder="User Name"/>
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
             </div>
             <div class="form-group has-feedback">
