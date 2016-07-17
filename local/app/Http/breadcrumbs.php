@@ -374,11 +374,11 @@ Breadcrumbs::register('session_information_list', function($breadcrumbs) {
     $breadcrumbs->push('Session Information List', URL::route('view_session_list'));
 });
 Breadcrumbs::register('session_information_edit', function($breadcrumbs,$id,$page) {
-    $breadcrumbs->parent('gs');
+    $breadcrumbs->parent('session_information_list');
     $breadcrumbs->push('Session Information Edit', URL::route('edit_session',['id'=>$id, 'page'=>$page]));
 });
 Breadcrumbs::register('session_information_entry', function($breadcrumbs) {
-    $breadcrumbs->parent('gs');
+    $breadcrumbs->parent('session_information_list');
     $breadcrumbs->push('Session Information Entry', URL::route('create_session'));
 });
 
@@ -388,12 +388,12 @@ Breadcrumbs::register('unit_information_list', function($breadcrumbs) {
 });
 
 Breadcrumbs::register('unit_information_edit', function($breadcrumbs,$id) {
-    $breadcrumbs->parent('gs');
+    $breadcrumbs->parent('unit_information_list');
     $breadcrumbs->push('Unit Information Edit', URL::route('unit_edit',['id'=>$id]));
 });
 
 Breadcrumbs::register('unit_information_entry', function($breadcrumbs) {
-    $breadcrumbs->parent('gs');
+    $breadcrumbs->parent('unit_information_list');
     $breadcrumbs->push('Unit Information Entry', URL::route('unit_form'));
 });
 
@@ -403,12 +403,12 @@ Breadcrumbs::register('thana_information_list', function($breadcrumbs) {
 });
 
 Breadcrumbs::register('thana_information_edit', function($breadcrumbs,$id) {
-    $breadcrumbs->parent('hrm');
+    $breadcrumbs->parent('thana_information_list');
     $breadcrumbs->push('Thana Information Edit', URL::route('thana_edit',['id'=>$id]));
 });
 
 Breadcrumbs::register('thana_information_entry', function($breadcrumbs) {
-    $breadcrumbs->parent('gs');
+    $breadcrumbs->parent('thana_information_list');
     $breadcrumbs->push('Thana Information Entry', URL::route('thana_form'));
 });
 
@@ -418,11 +418,11 @@ Breadcrumbs::register('disease_information_list', function($breadcrumbs) {
 });
 
 Breadcrumbs::register('disease_information_edit', function($breadcrumbs,$id) {
-    $breadcrumbs->parent('gs');
+    $breadcrumbs->parent('disease_information_list');
     $breadcrumbs->push('Disease Information Edit', URL::route('disease_edit',['id'=>$id]));
 });
 
 Breadcrumbs::register('disease_information_entry', function($breadcrumbs) {
-    $breadcrumbs->parent('gs');
+    $breadcrumbs->parent('disease_information_list');
     $breadcrumbs->push('Disease Information Entry', URL::route('add_disease_view'));
 });
