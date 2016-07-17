@@ -333,7 +333,7 @@
                 <div class="box-body">
                     <div class="label-hrm">
                         <div class="label-hrm-title">
-                            <span class="info-box-text" style="color: #00733e">Total Ansar will complete 3 years cycle within 2 month</span>
+                            <span class="info-box-text" style="color: #00733e;white-space: normal;overflow: auto;text-overflow: initial">Total Ansar will complete 3 years cycle within 2 month</span>
                         </div>
 
                         <div class="label-hrm-calculation">
@@ -342,7 +342,7 @@
                         </div>
                         <br style="clear: left;"/>
                     </div>
-                    <div class="label-hrm">
+                    <div class="label-hrm" style="background: #E6E6E6">
                         <div class="label-hrm-title">
                             <span class="info-box-text" style="color: #880000;white-space: normal;overflow: auto;text-overflow: initial">Total Ansar will reached 50 years of age within 3 month</span>
                         </div>
