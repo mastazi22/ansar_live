@@ -14,21 +14,23 @@
             $scope.past = [];
             $scope.ansar = ""
             $scope.pi = false;
-            $scope.loadAnsarServiceRecord = function () {
-                $scope.isLoading = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::route('ansar_service_report')}}',
-                    params: {ansar_id: $scope.ansarId}
-                }).then(function (response) {
-                    $scope.current = response.data.current;
-                    $scope.past = response.data.past;
-                    $scope.ansar = response.data.ansar;
-                    $scope.pi = response.data.pi;
-                    console.log(response.data)
-                    $scope.isLoading = false;
-                    $scope.currentServiceDate = getCurrentServiceDate(new Date($scope.current.joining_date), new Date())
-                })
+            $scope.loadAnsarServiceRecord = function (event) {
+                if(event==undefined||event.keyCode==13) {
+                    $scope.isLoading = true;
+                    $http({
+                        method: 'get',
+                        url: '{{URL::route('ansar_service_report')}}',
+                        params: {ansar_id: $scope.ansarId}
+                    }).then(function (response) {
+                        $scope.current = response.data.current;
+                        $scope.past = response.data.past;
+                        $scope.ansar = response.data.ansar;
+                        $scope.pi = response.data.pi;
+                        console.log(response.data)
+                        $scope.isLoading = false;
+                        $scope.currentServiceDate = getCurrentServiceDate(new Date($scope.current.joining_date), new Date())
+                    })
+                }
             }
             function getCurrentServiceDate(c, d) {
                 var _MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -97,7 +99,7 @@
                         <div class="col-sm-offset-4 col-sm-4">
                             <div class="form-group">
                                 <label class="control-label">Enter a ansar id</label>
-                                <input type="text" class="form-control" ng-model="ansarId" placeholder="Ansar id">
+                                <input type="text" class="form-control" ng-keypress="loadAnsarServiceRecord($event)" ng-model="ansarId" placeholder="Ansar id">
                                 <button class="btn btn-default" style="margin-top: 10px"
                                         ng-click="loadAnsarServiceRecord()">
                                     View Ansar Service Record
