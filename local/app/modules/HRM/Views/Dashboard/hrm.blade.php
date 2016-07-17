@@ -330,7 +330,7 @@
                     <h3 class="box-title">Progress Info</h3>
                 </div>
                 <!-- /.box-header -->
-                <div class="box-body">
+                <div class="box-body" style="padding-left: 0;padding-right: 0">
                     <div class="label-hrm">
                         <div class="label-hrm-title">
                             <span class="info-box-text" style="color: #00733e;white-space: normal;overflow: auto;text-overflow: initial">Total Ansar will complete 3 years cycle within 2 month</span>
