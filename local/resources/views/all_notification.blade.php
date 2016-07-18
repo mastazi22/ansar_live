@@ -34,14 +34,12 @@
                     <ul style="list-style: none">
                         @forelse(Notification::getAllNotification() as $notification)
                             <li style="padding: 10px">
-                                <a href="#">
-                                    <i class="fa fa-users text-aqua"></i>
-                                    <blockquote>{{$notification->user_name}}</blockquote>
-                                    forget password. Change his password
-                                </a>
+                                <span style="color: #000000;font-size: 1.5em;">{{$notification->user_name}}</span>
+                                    forgets password. <a href="#">Change his password</a>
+
                             </li>
                             @empty
-                            <li>No forget password available</li>
+                            <li style="padding: 10px">No forget password available</li>
                         @endforelse
                     </ul>
                 </div>

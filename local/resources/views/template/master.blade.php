@@ -226,10 +226,10 @@
                                     <ul class="menu">
                                         @foreach(Notification::getNotification() as $notification)
                                             <li>
-                                                <a href="#">
+                                                <a href="#" style="white-space: normal !important;overflow: auto !important;text-overflow: initial !important;">
                                                     <i class="fa fa-users text-aqua"></i>
-                                                    <blockquote>{{$notification->user_name}}</blockquote>
-                                                    forget password. Change his password
+                                                    <span style="color: #000000;font-size: 1.3em;">{{$notification->user_name}}</span>
+                                                    forgets password. Change his password
                                                 </a>
                                             </li>
                                         @endforeach
