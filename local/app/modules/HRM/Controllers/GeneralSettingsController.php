@@ -193,7 +193,7 @@ class GeneralSettingsController extends Controller
     public function diseaseView()
     {
 
-        $disease_infos = DB::table('tbl_long_term_disease')->where('id', '>', 0)->paginate(20);
+        $disease_infos = DB::table('tbl_long_term_disease')->where('id', '>', 0)->paginate(config('app.item_per_page'));
         return view('HRM::GeneralSettings.allDiseaseView')->with('disease_infos', $disease_infos);
     }
 
@@ -257,7 +257,7 @@ class GeneralSettingsController extends Controller
     public function skillView()
     {
 
-        $skill_infos = DB::table('tbl_particular_skill')->where('id', '>', 1)->paginate(20);
+        $skill_infos = DB::table('tbl_particular_skill')->where('id', '>', 1)->paginate(config('app.item_per_page'));
         return view('HRM::GeneralSettings.allSkillView')->with('skill_infos', $skill_infos);
     }
 

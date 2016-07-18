@@ -58,7 +58,7 @@ class SessionController extends Controller
 
     public function sessionView()
     {
-        $session_info = SessionModel::paginate(10);
+        $session_info = SessionModel::paginate(config('app.item_per_page'));
         return view('HRM::Session.session_view')->with('session_info', $session_info);
     }
 
