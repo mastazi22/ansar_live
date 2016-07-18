@@ -371,58 +371,74 @@ Breadcrumbs::register('gs', function($breadcrumbs) {
 });
 Breadcrumbs::register('session_information_list', function($breadcrumbs) {
     $breadcrumbs->parent('gs');
-    $breadcrumbs->push('Session Information List', URL::route('view_session_list'));
+    $breadcrumbs->push('Session Information', URL::route('view_session_list'));
 });
 Breadcrumbs::register('session_information_edit', function($breadcrumbs,$id,$page) {
     $breadcrumbs->parent('session_information_list');
-    $breadcrumbs->push('Session Information Edit', URL::route('edit_session',['id'=>$id, 'page'=>$page]));
+    $breadcrumbs->push('Edit Session Information', URL::route('edit_session',['id'=>$id, 'page'=>$page]));
 });
 Breadcrumbs::register('session_information_entry', function($breadcrumbs) {
     $breadcrumbs->parent('session_information_list');
-    $breadcrumbs->push('Session Information Entry', URL::route('create_session'));
+    $breadcrumbs->push('Entry of Session Information', URL::route('create_session'));
 });
 
 Breadcrumbs::register('unit_information_list', function($breadcrumbs) {
     $breadcrumbs->parent('gs');
-    $breadcrumbs->push('Unit Information List', URL::route('unit_view'));
+    $breadcrumbs->push('Unit Information', URL::route('unit_view'));
 });
 
 Breadcrumbs::register('unit_information_edit', function($breadcrumbs,$id) {
     $breadcrumbs->parent('unit_information_list');
-    $breadcrumbs->push('Unit Information Edit', URL::route('unit_edit',['id'=>$id]));
+    $breadcrumbs->push('Edit Unit Information', URL::route('unit_edit',['id'=>$id]));
 });
 
 Breadcrumbs::register('unit_information_entry', function($breadcrumbs) {
     $breadcrumbs->parent('unit_information_list');
-    $breadcrumbs->push('Unit Information Entry', URL::route('unit_form'));
+    $breadcrumbs->push('Entry of Unit Information', URL::route('unit_form'));
 });
 
 Breadcrumbs::register('thana_information_list', function($breadcrumbs) {
     $breadcrumbs->parent('gs');
-    $breadcrumbs->push('Thana Information List', URL::route('thana_view'));
+    $breadcrumbs->push('Thana Information', URL::route('thana_view'));
 });
 
 Breadcrumbs::register('thana_information_edit', function($breadcrumbs,$id) {
     $breadcrumbs->parent('thana_information_list');
-    $breadcrumbs->push('Thana Information Edit', URL::route('thana_edit',['id'=>$id]));
+    $breadcrumbs->push('Edit Thana Information', URL::route('thana_edit',['id'=>$id]));
 });
 
 Breadcrumbs::register('thana_information_entry', function($breadcrumbs) {
     $breadcrumbs->parent('thana_information_list');
-    $breadcrumbs->push('Thana Information Entry', URL::route('thana_form'));
+    $breadcrumbs->push('Entry of Thana Information', URL::route('thana_form'));
 });
 
 Breadcrumbs::register('disease_information_list', function($breadcrumbs) {
     $breadcrumbs->parent('gs');
-    $breadcrumbs->push('Disease Information List', URL::route('disease_entry'));
+    $breadcrumbs->push('Disease Information', URL::route('disease_view'));
 });
 
 Breadcrumbs::register('disease_information_edit', function($breadcrumbs,$id) {
     $breadcrumbs->parent('disease_information_list');
-    $breadcrumbs->push('Disease Information Edit', URL::route('disease_edit',['id'=>$id]));
+    $breadcrumbs->push('Edit Disease Information', URL::route('disease_edit',['id'=>$id]));
 });
 
 Breadcrumbs::register('disease_information_entry', function($breadcrumbs) {
     $breadcrumbs->parent('disease_information_list');
-    $breadcrumbs->push('Disease Information Entry', URL::route('add_disease_view'));
+    $breadcrumbs->push('Entry of Disease Information', URL::route('disease_entry'));
+});
+
+Breadcrumbs::register('skill_information_list', function($breadcrumbs) {
+    $breadcrumbs->parent('gs');
+    $breadcrumbs->push('Skill Information', URL::route('skill_view'));
+});
+
+Breadcrumbs::register('skill_information_edit', function($breadcrumbs,$id) {
+    $breadcrumbs->parent('skill_information_list');
+    $breadcrumbs->push('Edit Skill Information', URL::route('skill_edit',['id'=>$id]));
+});
+
+
+Breadcrumbs::register('skill_information_entry', function($breadcrumbs) {
+    $breadcrumbs->parent('skill_information_list');
+    $breadcrumbs->push('Entry of Skill Information', URL::route('skill_entry'));
 });

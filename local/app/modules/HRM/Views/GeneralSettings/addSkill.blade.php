@@ -1,6 +1,9 @@
-@extends('template/master')
+@extends('template.master')
+@section('title','Entry of Skill Information')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('skill_information_entry') !!}
+@endsection
 @section('content')
-
     <div>
 
         <!-- Content Header (Page header) -->
@@ -10,9 +13,6 @@
             <div class="row">
                 <!-- left column -->
                 <div class="col-lg-6 col-centered">
-                    <div class="label-title-session-entry">
-                        <h4 style="text-align:center; padding:2px">Add Skill</h4>
-                    </div>
                     <!-- general form elements -->
 
                     <!-- Input addon -->
@@ -22,7 +22,6 @@
 
                             {!! Form::open(array('url' => 'HRM/skill_entry', 'class' => 'form-horizontal','method' => 'post')) !!}
                             <div class="box-body">
-                                
                                 <div class="form-group">
                                     {!! Form::label('skill_name_eng', 'Skill Name:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                     <div class="col-sm-8 @if($errors->has('skill_name_eng')) has-error @endif">

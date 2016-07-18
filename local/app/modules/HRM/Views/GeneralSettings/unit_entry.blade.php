@@ -3,7 +3,7 @@
 {{--Time: 1:22 PM--}}
 
 @extends('template.master')
-@section('title','Unit Information Entry')
+@section('title','Entry of Unit Information')
 @section('breadcrumb')
     {!! Breadcrumbs::render('unit_information_entry') !!}
 @endsection

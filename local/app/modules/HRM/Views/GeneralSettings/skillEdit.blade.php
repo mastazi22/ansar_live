@@ -1,8 +1,10 @@
-@extends('template/master')
+@extends('template.master')
+@section('title','Edit Skill Information')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('skill_information_edit',$id) !!}
+@endsection
 @section('content')
-
     <div>
-
         <!-- Content Header (Page header) -->
 
         <!-- Main content -->
@@ -10,9 +12,9 @@
             <div class="row">
                 <!-- left column -->
                 <div class="col-lg-6 col-centered">
-                    <div class="label-title-session-entry">
-                        <h4 style="text-align:center; padding:2px">Edit Skill</h4>
-                    </div>
+                    {{--<div class="label-title-session-entry">
+                        <h4 style="text-align:center; padding:2px">Edit Disease Form</h4>
+                    </div>--}}
                     <!-- general form elements -->
 
                     <!-- Input addon -->
@@ -22,7 +24,6 @@
 
                             {!! Form::open(array('route' => 'skill_update', 'class' => 'form-horizontal')) !!}
                             <div class="box-body">
-                                
                                 <input type="hidden" name="id" class="form-control" value="{{ $skill_infos->id }}">
                                 <div class="form-group">
                                     {!! Form::label('skill_name_eng', 'Skill Name:', $attributes = array('class' => 'col-sm-4 control-label')) !!}

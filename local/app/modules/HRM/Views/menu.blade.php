@@ -518,25 +518,25 @@
                     <li ng-if="checkMenu('unit_view')">
                         <a href="{{URL::to('HRM/unit_view')}}">
                             <i class="fa fa-users"></i>
-                            <span>Unit Setting</span>
+                            <span>Unit Information</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('thana_view')">
                         <a href="{{URL::to('HRM/thana_view')}}">
                             <i class="fa fa-users"></i>
-                            <span>Thana Setting</span>
+                            <span>Thana Information</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('disease_view')">
                         <a href="{{URL::to('HRM/disease_view')}}">
                             <i class="fa fa-users"></i>
-                            <span>Disease Setting</span>
+                            <span>Disease Information</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('skill_view')">
                         <a href="{{URL::to('HRM/skill_view')}}">
                             <i class="fa fa-users"></i>
-                            <span>Skill Setting</span>
+                            <span>Skill Information</span>
                         </a>
                     </li>
                 </ul>

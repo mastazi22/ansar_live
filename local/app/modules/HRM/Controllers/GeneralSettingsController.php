@@ -291,7 +291,7 @@ class GeneralSettingsController extends Controller
     public function skillEdit($id)
     {
         $unit_infos = AllSkill::find($id);
-        return view('HRM::GeneralSettings.skillEdit')->with(['skill_infos' => $unit_infos]);
+        return view('HRM::GeneralSettings.skillEdit')->with(['skill_infos' => $unit_infos, 'id' => $id]);
     }
 
     public function updateSkill(Request $request)

@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','Disease Information Entry')
+@section('title','Entry of Disease Information')
 @section('breadcrumb')
     {!! Breadcrumbs::render('disease_information_entry') !!}
 @endsection

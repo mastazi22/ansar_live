@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','Disease Information List')
+@section('title','Disease Information')
 @section('small_title')
     <a class="btn btn-primary" href="{{URL::to('HRM/add_disease')}}">
         <span class="glyphicon glyphicon-plus"></span> Add New Unit
