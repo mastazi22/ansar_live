@@ -23,7 +23,7 @@
             $scope.isLoading = false;
             $scope.division = [];
             $scope.units = [];
-            $scope.itemPerPage = 10;
+            $scope.itemPerPage = 20;
             $scope.currentPage = 0;
             $scope.pages = [];
             $scope.loadingDivision = true;
