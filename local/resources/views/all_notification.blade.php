@@ -31,9 +31,9 @@
 
             <div class="box box-solid">
                 <div class="box-body">
-                    <ul>
+                    <ul style="list-style: none">
                         @forelse(Notification::getAllNotification() as $notification)
-                            <li>
+                            <li style="padding: 10px">
                                 <a href="#">
                                     <i class="fa fa-users text-aqua"></i>
                                     <blockquote>{{$notification->user_name}}</blockquote>
