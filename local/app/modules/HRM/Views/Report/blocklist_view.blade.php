@@ -17,7 +17,7 @@
             $scope.selectedThana = "all";
             $scope.districts = [];
             $scope.thanas = [];
-            $scope.itemPerPage = 10
+            $scope.itemPerPage = 20
             $scope.currentPage = 0;
             $scope.ansars = $sce.trustAsHtml("");
             $scope.pages = [];
