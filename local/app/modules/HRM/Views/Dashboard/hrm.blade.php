@@ -327,7 +327,7 @@
         <div class="col-sm-12 col-md-4 col-xs-12">
             <div class="box box-solid" style="margin-top: 30px">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Progress Info</h3>
+                    <h3 class="box-title">Progress Information</h3>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body" style="padding-left: 0;padding-right: 0">
@@ -389,8 +389,8 @@
         <div class="col-sm-12 col-md-8 col-xs-12">
             <div class="box box-solid">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Total number of Ansars who have been Embodied and Disembodied in recent years</h3>
-                    <div id="graph-level" class="col-md-8 col-sm-6 col-xs-8" style="float: right">
+                    <h3 class="box-title" style="font-size: 17px;">Total number of Ansars who have been Embodied and Disembodied in recent years</h3>
+                    <div id="graph-level" class="col-md-8 col-sm-6 col-xs-8" style="float: left">
                         <div class="label-graph">
                             <div class="label-graph-title">
                                 <span class="info-box-text" style="color: #000000; margin-left: 10px">Embodied</span>
