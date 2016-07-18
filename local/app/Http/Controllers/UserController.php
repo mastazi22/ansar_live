@@ -10,7 +10,9 @@ use App\models\UserLog;
 use App\models\UserPermission;
 use App\models\UserProfile;
 use App\models\UserType;
+use App\modules\HRM\Models\ForgetPasswordRequest;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -349,6 +351,32 @@ class UserController extends Controller
         }
         //return $image;
         return Image::make($image)->response();
+    }
+    function forgetPasswordRequest(){
+        return view('forget_password');
+    }
+    function handleForgetRequest(Request $request){
+        $rules = [
+          'user_name'=>'required'
+        ];
+        $message = [
+          'required'=>'User name can`t be empty'
+        ];
+        $valid = Validator::make($request->all(),$rules,$message);
+        //return $valid->fails()?'true':'false';
+        if($valid->fails()){
+            return Redirect::back()->withInputs($request->accepts(['_token']))->withErrors($valid);
+        }
+        else{
+            $user = User::where('user_name',$request->get('user_name'));
+            if(!$user->exists()){
+                return Redirect::back()->withInputs($request->accepts(['_token']))->with('error','This user name doesn`t exists');
+            }
+            $fpr = new ForgetPasswordRequest;
+            $fpr->user_name = $request->get('user_name');
+            $fpr->save();
+        }
+        return Redirect::back()->with('success','Password change request send successfully');
     }
 } 
 

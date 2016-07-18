@@ -155,7 +155,7 @@
                 <!-- /.col -->
             </div>
         </form>
-        <a href="#">I forgot my password</a><br>
+        <a href="{{URL::route('forget_password_request')}}">I forgot my password</a><br>
 
     </div>
     <!-- /.login-box-body -->

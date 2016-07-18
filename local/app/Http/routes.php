@@ -10,7 +10,9 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-Route::get('/log_in', 'UserController@login');
+Route::get('/log_in', ['as'=>'login','uses'=>'UserController@login']);
+Route::get('/forget_password_request', ['as'=>'forget_password_request','uses'=>'UserController@forgetPasswordRequest']);
+Route::post('/forget_password_request_handle', ['as'=>'forget_password_request_handle','uses'=>'UserController@handleForgetRequest']);
 Route::post('/check_login', 'UserController@handleLogin');
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', function () {
