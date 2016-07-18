@@ -17,7 +17,7 @@
             $scope.selectedThana = "all";
             $scope.districts = [];
             $scope.thanas = [];
-            $scope.itemPerPage = 20
+            $scope.itemPerPage = parseInt("{{config('app.item_per_page')}}");
             $scope.currentPage = 0;
             $scope.ansars = $sce.trustAsHtml("");
             $scope.pages = [];

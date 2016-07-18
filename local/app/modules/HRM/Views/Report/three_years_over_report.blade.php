@@ -16,7 +16,7 @@
             $scope.selectedRank = "";
             $scope.selectedSex= "";
             $scope.districts = [];
-            $scope.itemPerPage = 20;
+            $scope.itemPerPage = parseInt("{{config('app.item_per_page')}}");
             $scope.currentPage = 0;
             $scope.ansars = $sce.trustAsHtml("");
             $scope.pages = [];

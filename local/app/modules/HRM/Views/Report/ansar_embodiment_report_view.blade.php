@@ -22,7 +22,7 @@
             $scope.districts = [];
             $scope.thanas= [];
             $scope.isLoading = false;
-            $scope.itemPerPage = 10;
+            $scope.itemPerPage = parseInt("{{config('app.item_per_page')}}");
             $scope.currentPage = 0;
             $scope.ansars = $sce.trustAsHtml("");
             $scope.pages = [];
