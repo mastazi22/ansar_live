@@ -80,7 +80,7 @@ class BlockBlackController extends Controller
                         'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
                     ->first();
 
-                $status = "Panneled";
+                $status = "Paneled";
 
             } elseif ($ansar_check->offer_sms_status == 1 && $ansar_check->block_list_status == 0 && $ansar_check->black_list_status == 0) {
                 $ansar_details = DB::table('tbl_ansar_parsonal_info')
@@ -104,7 +104,7 @@ class BlockBlackController extends Controller
                         'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
                     ->first();
 
-                $status = "Embodded";
+                $status = "Embodied";
 
             } elseif ($ansar_check->rest_status == 1 && $ansar_check->block_list_status == 0 && $ansar_check->black_list_status == 0) {
                 $ansar_details = DB::table('tbl_ansar_parsonal_info')
@@ -162,7 +162,7 @@ class BlockBlackController extends Controller
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'FREE', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                     break;
 
-                case "Panneled":
+                case "Paneled":
                     $blocklist_entry = new BlockListModel();
                     $blocklist_entry->ansar_id = $ansar_id;
                     $blocklist_entry->block_list_from = "Panel";
@@ -188,7 +188,7 @@ class BlockBlackController extends Controller
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'OFFER', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                     break;
 
-                case "Embodded":
+                case "Embodied":
                     $blocklist_entry = new BlockListModel();
                     $blocklist_entry->ansar_id = $ansar_id;
                     $blocklist_entry->block_list_from = "Embodiment";
@@ -371,7 +371,7 @@ class BlockBlackController extends Controller
                             'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
                         ->first();
 
-                    $status = "Panneled";
+                    $status = "Paneled";
                 }
             } elseif ($ansar_check->offer_sms_status == 1 && $ansar_check->black_list_status == 0) {
                 if ($ansar_check->block_list_status == 1) {
@@ -420,7 +420,7 @@ class BlockBlackController extends Controller
                             'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
                         ->first();
 
-                    $status = "Embodded";
+                    $status = "Embodied";
                 }
 
 
@@ -522,7 +522,7 @@ class BlockBlackController extends Controller
 
                     break;
 
-                case "Panneled":
+                case "Paneled":
                     $blacklist_entry = new BlackListModel();
                     $blacklist_entry->ansar_id = $ansar_id;
                     $blacklist_entry->black_list_from = "Panel";
@@ -605,7 +605,7 @@ class BlockBlackController extends Controller
 
                     break;
 
-                case "Embodded":
+                case "Embodied":
                     $blacklist_entry = new BlackListModel();
                     $blacklist_entry->ansar_id = $ansar_id;
                     $blacklist_entry->black_list_from = "Embodiment";

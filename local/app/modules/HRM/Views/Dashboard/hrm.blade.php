@@ -333,7 +333,7 @@
                 <div class="box-body" style="padding-left: 0;padding-right: 0">
                     <div class="label-hrm">
                         <div class="label-hrm-title">
-                            <span class="info-box-text" style="color: #00733e;white-space: normal;overflow: auto;text-overflow: initial">Total Ansar will complete 3 years cycle within 2 month</span>
+                            <span class="info-box-text" style="color: #00733e;white-space: normal;overflow: auto;text-overflow: initial">Total number of Ansars who will complete 3 years of service within the next 2 months</span>
                         </div>
 
                         <div class="label-hrm-calculation">
@@ -344,7 +344,7 @@
                     </div>
                     <div class="label-hrm" style="background: #E6E6E6">
                         <div class="label-hrm-title">
-                            <span class="info-box-text" style="color: #880000;white-space: normal;overflow: auto;text-overflow: initial">Total Ansar will reached 50 years of age within 3 month</span>
+                            <span class="info-box-text" style="color: #880000;white-space: normal;overflow: auto;text-overflow: initial">Total number of Ansars who will reach 50 years of age within next 3 months</span>
                         </div>
 
                         <div class="label-hrm-calculation">
@@ -354,7 +354,7 @@
                     </div>
                     <div class="label-hrm">
                         <div class="label-hrm-title">
-                            <span class="info-box-text" style="color: #00517e;white-space: normal;overflow: auto;text-overflow: initial">Total list of member who are not interested for more than 10 times</span>
+                            <span class="info-box-text" style="color: #00517e;white-space: normal;overflow: auto;text-overflow: initial">Total number of Ansars who are not interested to join after more than 10 reminders </span>
                         </div>
 
                         <div class="label-hrm-calculation">
@@ -389,17 +389,17 @@
         <div class="col-sm-12 col-md-8 col-xs-12">
             <div class="box box-solid">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Total Ansar Emboded and Disemboded in recent Year</h3>
+                    <h3 class="box-title">Total number of Ansars who have been Embodied and Disembodied in recent years</h3>
                     <div id="graph-level" class="col-md-8 col-sm-6 col-xs-8" style="float: right">
                         <div class="label-graph">
                             <div class="label-graph-title">
-                                <span class="info-box-text" style="color: #000000">Emboded</span>
+                                <span class="info-box-text" style="color: #000000; margin-left: 10px">Embodied</span>
                             </div>
                             <div class="label-graph-name">
                                 <div style="background-color: rgba(0,60,100,1); border-radius:50%; width: 20px; height: 20px; padding-right: 5px"></div>
                             </div>
                             <div class="label-graph-title">
-                                <span class="info-box-text" style="color: #000000">Disemboded</span>
+                                <span class="info-box-text" style="color: #000000; margin-left: 10px">Disembodied</span>
                             </div>
                             <div class="label-graph-name">
                                 <div style="background-color: rgba(151,187,205,0.5); border-radius:50%; width: 20px; height: 20px; padding-right: 5px"></div>

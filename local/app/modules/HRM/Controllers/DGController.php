@@ -301,7 +301,7 @@ class DGController extends Controller
                         'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
                     ->first();
 
-                $status = "Panneled";
+                $status = "Paneled";
 
             } elseif ($ansar_check->offer_sms_status == 1 && $ansar_check->block_list_status == 0 && $ansar_check->black_list_status == 0) {
                 $ansar_details = DB::table('tbl_ansar_parsonal_info')
@@ -325,7 +325,7 @@ class DGController extends Controller
                         'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
                     ->first();
 
-                $status = "Embodded";
+                $status = "Embodied";
 
             } elseif ($ansar_check->rest_status == 1 && $ansar_check->block_list_status == 0 && $ansar_check->black_list_status == 0) {
                 $ansar_details = DB::table('tbl_ansar_parsonal_info')
@@ -390,7 +390,7 @@ class DGController extends Controller
 
                     break;
 
-                case "Panneled":
+                case "Paneled":
                     $blocklist_entry = new BlockListModel();
                     $blocklist_entry->ansar_id = $ansar_id;
                     $blocklist_entry->block_list_from = "Panel";
@@ -423,7 +423,7 @@ class DGController extends Controller
 
                     break;
 
-                case "Embodded":
+                case "Embodied":
                     $blocklist_entry = new BlockListModel();
                     $blocklist_entry->ansar_id = $ansar_id;
                     $blocklist_entry->block_list_from = "Embodiment";
@@ -633,7 +633,7 @@ class DGController extends Controller
                             'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
                         ->first();
 
-                    $status = "Panneled";
+                    $status = "Paneled";
                 }
             } elseif ($ansar_check->offer_sms_status == 1 && $ansar_check->black_list_status == 0) {
                 if ($ansar_check->block_list_status == 1) {
@@ -682,7 +682,7 @@ class DGController extends Controller
                             'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
                         ->first();
 
-                    $status = "Embodded";
+                    $status = "Embodied";
                 }
 
 
@@ -791,7 +791,7 @@ class DGController extends Controller
                     CustomQuery::addDGlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLACKED', 'from_state' => 'FREE', 'to_state' => 'BLACKED']);
                     break;
 
-                case "Panneled":
+                case "Paneled":
                     $blacklist_entry = new BlackListModel();
                     $blacklist_entry->ansar_id = $ansar_id;
                     $blacklist_entry->black_list_from = "Panel";
@@ -879,7 +879,7 @@ class DGController extends Controller
                     CustomQuery::addDGlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLACKED', 'from_state' => 'OFFER', 'to_state' => 'BLACKED']);
                     break;
 
-                case "Embodded":
+                case "Embodied":
                     $blacklist_entry = new BlackListModel();
                     $blacklist_entry->ansar_id = $ansar_id;
                     $blacklist_entry->black_list_from = "Embodiment";
@@ -1324,7 +1324,7 @@ class DGController extends Controller
                 $status = "Free";
 
             } elseif ($ansar_details->pannel_status == 1) {
-                $status = "Panelled";
+                $status = "Paneled";
 
             } elseif ($ansar_details->offer_sms_status == 1) {
                 $status = "Offered";
@@ -1333,7 +1333,7 @@ class DGController extends Controller
                 $status = "Offered";
 
             } */elseif ($ansar_details->embodied_status == 1) {
-                $status = "Embodded";
+                $status = "Embodied";
 
             } elseif ($ansar_details->freezing_status) {
                 $status = "Freeze";
