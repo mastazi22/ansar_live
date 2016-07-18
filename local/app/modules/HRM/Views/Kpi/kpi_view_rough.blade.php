@@ -29,7 +29,7 @@
             $scope.thanas = [];
             $scope.guards = [];
             $scope.kpis = [];
-            $scope.itemPerPage = 20;
+            $scope.itemPerPage = parseInt("{{config('app.item_per_page')}}");
             $scope.currentPage = 0;
             $scope.pages = [];
             $scope.loadingDistrict = true;

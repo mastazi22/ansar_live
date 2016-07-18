@@ -84,7 +84,7 @@ Breadcrumbs::register('pi', function($breadcrumbs) {
     $breadcrumbs->push('Personal Info', '#');
 });
 Breadcrumbs::register('entry_list', function($breadcrumbs) {
-    $breadcrumbs->parent('hrm');
+    $breadcrumbs->parent('pi');
     $breadcrumbs->push('Entry List', URL::route('anser_list'));
 });
 Breadcrumbs::register('entry_report', function($breadcrumbs,$id) {

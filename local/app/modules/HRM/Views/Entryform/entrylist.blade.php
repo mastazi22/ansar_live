@@ -16,7 +16,7 @@
             $scope.notVerified = parseInt("{{$notVerified}}");
             $scope.Verified = parseInt("{{$Verified}}");
             $scope.numOfPage = 0
-            $scope.Item = 20;
+            $scope.Item = parseInt("{{config('app.item_per_page')}}");
             $scope.currentPage = 0;
             $scope.pages = [];
             $scope.isSearching = false;
