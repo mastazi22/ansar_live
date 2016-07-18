@@ -23,7 +23,7 @@
         <!-- /.search form -->
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu">
-            <li class="header">MAIN NAVIGATION</li>
+            {{--<li class="header">MAIN NAVIGATION</li>--}}
             <li>
                 <a href="{{URL::to('HRM')}}">
                     <i class="fa fa-dashboard"></i>
@@ -34,7 +34,7 @@
                 <a href="#">
                     <i class="fa fa-users"></i>
                     <span>KPI Branch</span>
-                    <i class="fa fa-angle-left pull-right"></i>
+                    <i class="fa fa-angle-right pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
                     <li ng-if="checkMenu('kpi_view')">
@@ -97,7 +97,7 @@
                 <a href="#">
                     <i class="fa fa-users"></i>
                     <span>Personal info</span>
-                    <i class="fa fa-angle-left pull-right"></i>
+                    <i class="fa fa-angle-right pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
                     <li ng-if="checkMenu('anser_list')">
@@ -142,7 +142,7 @@
                 <a href="#">
                     <i class="fa fa-users"></i>
                     <span>Service</span>
-                    <i class="fa fa-angle-left pull-right"></i>
+                    <i class="fa fa-angle-right pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
                     {{--<li>--}}
@@ -173,7 +173,7 @@
                         <a href="#">
                             <i class="fa fa-users"></i>
                             <span>Embodiment</span>
-                            <i class="fa fa-angle-left pull-right"></i>
+                            <i class="fa fa-angle-right pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
                             <li ng-if="checkMenu('go_to_new_embodiment_page')">
@@ -216,7 +216,7 @@
                                 <a href="#">
                                     <i class="fa fa-users"></i>
                                     <span>Freeze</span>
-                                    <i class="fa fa-angle-left pull-right"></i>
+                                    <i class="fa fa-angle-right pull-right"></i>
                                 </a>
                                 <ul class="treeview-menu">
                                     <li ng-if="checkMenu('freeze_view')">
@@ -239,7 +239,7 @@
                         <a href="#">
                             <i class="fa fa-users"></i>
                             <span>BlackList</span>
-                            <i class="fa fa-angle-left pull-right"></i>
+                            <i class="fa fa-angle-right pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
                             <li ng-if="checkMenu('blacklist_entry_view')">
@@ -260,7 +260,7 @@
                         <a href="#">
                             <i class="fa fa-users"></i>
                             <span>BlockList</span>
-                            <i class="fa fa-angle-left pull-right"></i>
+                            <i class="fa fa-angle-right pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
                             <li ng-if="checkMenu('blocklist_entry_view')">
@@ -289,7 +289,7 @@
                 <a href="#">
                     <i class="fa fa-bar-chart"></i>
                     <span>Report</span>
-                    <i class="fa fa-angle-left pull-right"></i>
+                    <i class="fa fa-angle-right pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
                     <li ng-if="checkMenu('guard_report')">
@@ -383,7 +383,7 @@
                 <a href="#">
                     <i class="fa fa-user"></i>
                     <span>DG Forms</span>
-                    <i class="fa fa-angle-left pull-right"></i>
+                    <i class="fa fa-angle-right pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
                     <li ng-if="checkMenu('direct_offer')">
@@ -426,7 +426,7 @@
                         <a href="#">
                             <i class="fa fa-users"></i>
                             <span>Direct BlockList</span>
-                            <i class="fa fa-angle-left pull-right"></i>
+                            <i class="fa fa-angle-right pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
                             <li ng-if="checkMenu('dg_blocklist_entry_view')">
@@ -447,7 +447,7 @@
                         <a href="#">
                             <i class="fa fa-users"></i>
                             <span>Direct BlackList</span>
-                            <i class="fa fa-angle-left pull-right"></i>
+                            <i class="fa fa-angle-right pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
                             <li ng-if="checkMenu('dg_blacklist_entry_view')">
@@ -472,7 +472,7 @@
                 <a href="#">
                     <i class="fa fa-user"></i>
                     <span>Admin</span>
-                    <i class="fa fa-angle-left pull-right"></i>
+                    <i class="fa fa-angle-right pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
                     <li>
@@ -506,7 +506,7 @@
                 <a href="#">
                     <i class="fa fa-cog"></i>
                     <span>General Setiings</span>
-                    <i class="fa fa-angle-left pull-right"></i>
+                    <i class="fa fa-angle-right pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
                     <li ng-if="checkMenu('view_session_list')">

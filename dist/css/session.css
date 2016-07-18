@@ -149,7 +149,7 @@ By Shreya
 .label-hrm-title {
     float: left;
     width: 85%;
-    height: 40px;
+    height: auto;
 }
 
 .label-hrm-calculation {

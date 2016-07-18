@@ -132,7 +132,8 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
-    font-family: 'Source Sans Pro', sans-serif
+    font-family: 'Source Sans Pro', sans-serif;
+    color: #000000;
 }
 
 a {
@@ -307,7 +308,8 @@ a:hover, a:active, a:focus {
     font-size: 15px;
     display: inline-block;
     padding-left: 4px;
-    font-weight: 300
+    font-weight: 400;
+    color: #000000;
 }
 
 .content-header > .breadcrumb {
@@ -324,7 +326,7 @@ a:hover, a:active, a:focus {
 }
 
 .content-header > .breadcrumb > li > a {
-    color: #444;
+    color: #000000;
     text-decoration: none;
     display: inline-block
 }
@@ -334,7 +336,8 @@ a:hover, a:active, a:focus {
 }
 
 .content-header > .breadcrumb > li + li:before {
-    content: '>\00a0'
+    content: '>\00a0';
+    color: #000000;
 }
 
 @media (max-width: 991px) {
@@ -539,7 +542,7 @@ a:hover, a:active, a:focus {
     font-size: 12px
 }
 
-.sidebar-menu li > a > .fa-angle-left {
+.sidebar-menu li > a > .fa-angle-right {
     width: auto;
     height: auto;
     padding: 0;
@@ -547,11 +550,11 @@ a:hover, a:active, a:focus {
     margin-top: 3px
 }
 
-.sidebar-menu li.active > a > .fa-angle-left {
-    -webkit-transform: rotate(-90deg);
-    -ms-transform: rotate(-90deg);
-    -o-transform: rotate(-90deg);
-    transform: rotate(-90deg)
+.sidebar-menu li.active > a > .fa-angle-right {
+    -webkit-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    transform: rotate(90deg)
 }
 
 .sidebar-menu li.active > .treeview-menu {
@@ -2142,7 +2145,8 @@ a:hover, a:active, a:focus {
 }
 
 .info-box-text {
-    text-transform: uppercase
+    //text-transform: uppercase;
+    //margin-left: 10px;
 }
 
 .info-box-more {
@@ -2730,7 +2734,8 @@ a:hover, a:active, a:focus {
 }
 
 .table-bordered > thead > tr > th, .table-bordered > tbody > tr > th, .table-bordered > tfoot > tr > th, .table-bordered > thead > tr > td, .table-bordered > tbody > tr > td, .table-bordered > tfoot > tr > td {
-    border: 1px solid #f4f4f4
+    border: 1px solid #f4f4f4;
+    color: #000000;
 }
 
 .table-bordered > thead > tr > th, .table-bordered > thead > tr > td {

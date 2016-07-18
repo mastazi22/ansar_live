@@ -179,7 +179,7 @@
                 if (status === "Free" || status === "Offered" || status === "Rest") {
                     $("#direct_panel_entry").submit();
 
-                } else if ( status==="Panelled" ){
+                } else if ( status==="Paneled" ){
                     // element.hideConfirmDialog();
                     $('body').notifyDialog(
                             {

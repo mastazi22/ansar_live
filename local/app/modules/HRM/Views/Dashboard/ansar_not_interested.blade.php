@@ -4,7 +4,7 @@
 
 @extends('template.master')
 @section('title','Ansar List')
-@section('small_title','Not interested more then 10 times')
+@section('small_title','Total number of Ansars who are not interested to join after more than 10 reminders ')
 @section('breadcrumb')
     {!! Breadcrumbs::render('dashboard_menu_not_interested',$total) !!}
 @endsection
@@ -108,11 +108,9 @@
         })
     </script>
     <div ng-controller="AnsarNotInterestedListController">
-        <div style="position:absolute;width: 100%;height: 100%;background-color: rgba(255, 255, 255, 0.27);z-index: 100"
-             ng-show="allLoading">
+        <div style="position:absolute;width: 100%;height: 100%;background-color: rgba(255, 255, 255, 0.27);z-index: 100" ng-show="allLoading">
             <div style="position: relative;width: 20%;height: auto;margin: 20% auto;text-align: center;background: #FFFFFF">
-                <img class="img-responsive" src="{{asset('dist/img/loading-data.gif')}}"
-                     style="position: relative;margin: 0 auto">
+                <img class="img-responsive" src="{{asset('dist/img/loading-data.gif')}}" style="position: relative;margin: 0 auto">
                 <h4>Loading....</h4>
             </div>
 
