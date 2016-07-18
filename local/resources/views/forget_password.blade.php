@@ -153,7 +153,7 @@
             </div>
             <button type="submit" class="btn btn-primary btn-block btn-flat">Submit password change request</button>
         </form>
-        <a class="btn btn-link" style="padding-left: 0"><i class="fa fa-angle-left"></i> &nbsp;&nbsp;Back to login</a>
+        <a class="btn btn-link" href="{{URL::route('login')}}" style="padding-left: 0"><i class="fa fa-angle-left"></i> &nbsp;&nbsp;Back to login</a>
     </div>
 
 </div>

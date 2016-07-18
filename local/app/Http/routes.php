@@ -18,6 +18,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/', function () {
         return view('template.index');
     });
+    Route::get('/all_notification', function () {
+        return view('all_notification');
+    });
+
     Route::get('image', ['as'=>'profile_image','uses'=>'UserController@getImage']);
     Route::get('sign_image', ['as'=>'sign_image','uses'=>'UserController@getSingImage']);
     Route::get('thumb_image', ['as'=>'thumb_image','uses'=>'UserController@getThumbImage']);

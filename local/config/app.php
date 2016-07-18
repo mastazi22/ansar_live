@@ -172,6 +172,7 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         DaveJamesMiller\Breadcrumbs\ServiceProvider::class,
         \Nathanmac\Utilities\Parser\ParserServiceProvider::class,
+        \App\Providers\NotificationProvider::class,
     ],
 
     /*
@@ -228,6 +229,7 @@ return [
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
         'Breadcrumbs' => DaveJamesMiller\Breadcrumbs\Facade::class,
+        'Notification'=>\App\Helper\Facades\ForgetPasswordFacedes::class,
     ],
 
 ];
