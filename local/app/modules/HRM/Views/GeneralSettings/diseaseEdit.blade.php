@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','Disease Information Edit')
+@section('title','Edit Disease Information')
 @section('breadcrumb')
     {!! Breadcrumbs::render('disease_information_edit',$id) !!}
 @endsection

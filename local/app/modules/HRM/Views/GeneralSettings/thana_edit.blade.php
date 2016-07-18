@@ -2,7 +2,7 @@
 {{--Date: 12/5/2015--}}
 {{--Time: 12:23 PM--}}
 @extends('template.master')
-@section('title','Thana Information Edit')
+@section('title','Edit Thana Information')
 @section('breadcrumb')
     {!! Breadcrumbs::render('thana_information_edit',$id) !!}
 @endsection

@@ -3,7 +3,7 @@
 {{--Time: 12:00 PM--}}
 
 @extends('template.master')
-@section('title','Session Form')
+@section('title','Entry of Session Information')
 @section('breadcrumb')
     {!! Breadcrumbs::render('session_information_entry') !!}
 @endsection
