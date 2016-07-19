@@ -25,6 +25,7 @@ class HrmController extends Controller
             return View::make('HRM::Dashboard.hrm');
         }
     }
+
     function progressInfo()
     {
         DB::enableQueryLog();
@@ -39,20 +40,19 @@ class HrmController extends Controller
                 ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)')->count('tbl_embodiment.ansar_id');
             $arfyoa = DB::table("tbl_ansar_parsonal_info")->where('division_id', Input::get('division_id'))->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50)->count('tbl_ansar_parsonal_info.ansar_id');
             $tnimutt = DB::table('tbl_sms_offer_info')
-                ->join('tbl_ansar_parsonal_info','tbl_ansar_parsonal_info.ansar_id','=','tbl_sms_offer_info.ansar_id')
+                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
                 ->where('tbl_ansar_parsonal_info.division_id', Input::get('division_id'))
                 ->havingRaw('count(tbl_sms_offer_info.ansar_id)>10')->groupBy('tbl_sms_offer_info.ansar_id')
                 ->get();
-            $i=0;
-            $uiui=array();
-            foreach($tnimutt as $tttt){
+            $i = 0;
+            $uiui = array();
+            foreach ($tnimutt as $tttt) {
 
-                $uiui[$i]=$tttt->ansar_id;
+                $uiui[$i] = $tttt->ansar_id;
                 $i++;
             }
 //            return $tseity;
-        }
-        else if (Input::exists('district_id')) {
+        } else if (Input::exists('district_id')) {
             $tseity = DB::table('tbl_embodiment')
                 ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
                 ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
@@ -63,20 +63,19 @@ class HrmController extends Controller
                 ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)')->count('tbl_embodiment.ansar_id');
             $arfyoa = DB::table("tbl_ansar_parsonal_info")->where('unit_id', Input::get('district_id'))->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50)->count('tbl_ansar_parsonal_info.ansar_id');
             $tnimutt = DB::table('tbl_sms_offer_info')
-                ->join('tbl_ansar_parsonal_info','tbl_ansar_parsonal_info.ansar_id','=','tbl_sms_offer_info.ansar_id')
+                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
                 ->where('tbl_ansar_parsonal_info.unit_id', Input::get('district_id'))
                 ->havingRaw('count(tbl_sms_offer_info.ansar_id)>10')->groupBy('tbl_sms_offer_info.ansar_id')
                 ->get();
 //            return $tseity;
-            $i=0;
-            $uiui=array();
-            foreach($tnimutt as $tttt){
+            $i = 0;
+            $uiui = array();
+            foreach ($tnimutt as $tttt) {
 
-                $uiui[$i]=$tttt->ansar_id;
+                $uiui[$i] = $tttt->ansar_id;
                 $i++;
             }
-        }
-        else{
+        } else {
             $tseity = DB::table('tbl_embodiment')
                 ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
                 ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
@@ -89,18 +88,18 @@ class HrmController extends Controller
                 ->havingRaw('count(tbl_sms_offer_info.ansar_id)>10')->groupBy('tbl_sms_offer_info.ansar_id')
                 ->get();
             //return $tnimutt;
-            $i=0;
-            $uiui=array();
-            foreach($tnimutt as $tttt){
+            $i = 0;
+            $uiui = array();
+            foreach ($tnimutt as $tttt) {
 
-                $uiui[$i]=$tttt->ansar_id;
+                $uiui[$i] = $tttt->ansar_id;
                 $i++;
             }
         }
 
 //return $tnimutt;
         //return (DB::getQueryLog());
-       // $t = DB::select(DB::raw("(SELECT count(ansar_id) as t FROM tbl_embodiment WHERE emboded_status = 'Emboded' AND service_ended_date BETWEEN NOW() AND DATE_ADD(NOW(),INTERVAL 2 MONTH)) UNION ALL (SELECT count(ansar_id) as t FROM tbl_ansar_parsonal_info WHERE TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())>=50) UNION ALL (SELECT IFNULL((SELECT count(ansar_id) as t FROM tbl_sms_offer_info  GROUP BY ansar_id HAVING count(ansar_id)>10),0))"));
+        // $t = DB::select(DB::raw("(SELECT count(ansar_id) as t FROM tbl_embodiment WHERE emboded_status = 'Emboded' AND service_ended_date BETWEEN NOW() AND DATE_ADD(NOW(),INTERVAL 2 MONTH)) UNION ALL (SELECT count(ansar_id) as t FROM tbl_ansar_parsonal_info WHERE TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())>=50) UNION ALL (SELECT IFNULL((SELECT count(ansar_id) as t FROM tbl_sms_offer_info  GROUP BY ansar_id HAVING count(ansar_id)>10),0))"));
         $progressInfo = array(
             'totalServiceEndedInThreeYears' => $tseity,
             'totalAnsarReachedFiftyYearsOfAge' => $arfyoa,
@@ -115,7 +114,7 @@ class HrmController extends Controller
         $embodied_ansars = DB::select(DB::raw('SELECT count(ansar_id) as total,DATE_FORMAT(joining_date,"%b,%y") as month FROM tbl_embodiment_log WHERE joining_date BETWEEN DATE_SUB(NOW(),INTERVAL 1 YEAR) AND NOW() GROUP BY MONTH(joining_date) ORDER BY YEAR(joining_date) ASC,MONTH(joining_date) ASC'));
         $disembodied_ansars = DB::select(DB::raw('SELECT count(ansar_id) as total,DATE_FORMAT(release_date,"%b,%y") as month FROM tbl_embodiment_log WHERE release_date BETWEEN DATE_SUB(NOW(),INTERVAL 1 YEAR) AND NOW() GROUP BY MONTH(release_date)'));
 //        return $ansars;
-        return Response::json(["ea"=>$embodied_ansars,'da'=>$disembodied_ansars]);
+        return Response::json(["ea" => $embodied_ansars, 'da' => $disembodied_ansars]);
     }
 
     public function graphDisembodiment()
@@ -195,7 +194,29 @@ class HrmController extends Controller
 
     public function showAnsarList($type)
     {
-        return View::make('HRM::Dashboard.view_ansar_list')->with(['type' => $type]);
+        $pageTitle = '';
+        if (strcasecmp($type, 'all_ansar') == 0) {
+            $pageTitle = "Total number of Ansars";
+        } elseif (strcasecmp($type, 'not_verified_ansar') == 0) {
+            $pageTitle = "Total number of Unverified Ansars";
+        } elseif (strcasecmp($type, 'offerred_ansar') == 0) {
+            $pageTitle = "Total number of Offered Ansars";
+        } elseif (strcasecmp($type, 'freezed_ansar') == 0) {
+            $pageTitle = "Total number of Frozen Ansars";
+        } elseif (strcasecmp($type, 'free_ansar') == 0) {
+            $pageTitle = "Total number of Free Ansars";
+        } elseif (strcasecmp($type, 'paneled_ansar') == 0) {
+            $pageTitle = "Total number of Paneled Ansars";
+        } elseif (strcasecmp($type, 'rest_ansar') == 0) {
+            $pageTitle = "Total number of Resting Ansars";
+        } elseif (strcasecmp($type, 'blocked_ansar') == 0) {
+            $pageTitle = "Total number of Block-listed Ansars";
+        } elseif (strcasecmp($type, 'blacked_ansar') == 0) {
+            $pageTitle = "Total number of Blacklisted Ansars";
+        } elseif (strcasecmp($type, 'embodied_ansar') == 0) {
+            $pageTitle = "Total number of Embodied Ansars";
+        }
+        return View::make('HRM::Dashboard.view_ansar_list')->with(['type' => $type, 'pageTitle' => $pageTitle]);
     }
 
     public function showRecentAnsarList($type)
@@ -370,6 +391,7 @@ class HrmController extends Controller
             return CustomQuery::getansarWithFiftyYearsCount($unit, $thana);
         }
     }
+
     public function showAnsarForNotInterested($count)
     {
         $pages = ceil($count / 10);
@@ -389,6 +411,7 @@ class HrmController extends Controller
             return CustomQuery::getansarForNotInterestedCount($unit, $thana);
         }
     }
+
     public function getTotalAnsar()
     {
 //        return "pppp";
@@ -408,7 +431,7 @@ class HrmController extends Controller
                 //'offerReceived' => DB::table('tbl_sms_receive_info')->join('tbl_sms_offer_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('tbl_sms_receive_info.sms_status', 'ACCEPTED')->whereIn('tbl_sms_offer_info.district_id', $unit)->count(),
                 'totalEmbodied' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('embodied_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
                 'totalEmbodiedOwn' => DB::table('tbl_ansar_status_info')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1)->whereIn('tbl_kpi_info.unit_id', $unit)->distinct()->count('tbl_embodiment.ansar_id'),
-                'totalEmbodiedDiff' => DB::table('tbl_ansar_status_info')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1)->whereIn('tbl_kpi_info.unit_id','!=', $unit)->distinct()->count('tbl_embodiment.ansar_id'),
+                'totalEmbodiedDiff' => DB::table('tbl_ansar_status_info')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1)->whereIn('tbl_kpi_info.unit_id', '!=', $unit)->distinct()->count('tbl_embodiment.ansar_id'),
                 'totalFreeze' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('freezing_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
                 'totalBlockList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 1)->where('division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
                 'totalBlackList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('black_list_status', 1)->where('division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
@@ -448,6 +471,7 @@ class HrmController extends Controller
 //        return DB::getQueryLog();
         return Response::json($allStatus);
     }
+
     function updateGlobalParameter()
     {
         $id = Input::get('id');
@@ -470,6 +494,7 @@ class HrmController extends Controller
 
         return Response::json(['status' => true, 'data' => 'Update complete successfully']);
     }
+
     function globalParameterView()
     {
         return View::make('HRM::global_perameter')->with('gp', GlobalParameter::all());
