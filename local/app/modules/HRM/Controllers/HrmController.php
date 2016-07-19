@@ -7,10 +7,12 @@ use App\Http\Requests;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\District;
+use App\modules\HRM\Models\ForgetPasswordRequest;
 use App\modules\HRM\Models\GlobalParameter;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\View;
 
@@ -18,10 +20,12 @@ class HrmController extends Controller
 {
     function hrmDashboard()
     {
+       // return $optional.' '.$type;
         $type = auth()->user()->type;
         if ($type == 22 || $type == 66) {
             return View::make('HRM::Dashboard.hrm-rc-dc');
         } else {
+
             return View::make('HRM::Dashboard.hrm');
         }
     }

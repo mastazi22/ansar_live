@@ -21,6 +21,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/all_notification', function () {
         return view('all_notification');
     });
+ Route::get('/change_password/{user}', ['as'=>'change_password','uses'=>'UserController@changeForgetPassword']);
+    Route::get('/remove_request/{user}', 'UserController@removePasswordRequest');
+ Route::post('/handle_change_password', ['as'=>'handle_change_password','uses'=>'UserController@handleChangeForgetPassword']);
 
     Route::get('image', ['as'=>'profile_image','uses'=>'UserController@getImage']);
     Route::get('sign_image', ['as'=>'sign_image','uses'=>'UserController@getSingImage']);

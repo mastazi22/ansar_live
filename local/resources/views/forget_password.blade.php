@@ -140,13 +140,13 @@
         @endif
         @if(Session::has('success'))
             <p class="text text-success"
-               style="text-align: center;text-transform: uppercase">{{Session::get('error')}}</p>
+               style="text-align: center;text-transform: uppercase"><i class="fa fa-check"></i>&nbsp;&nbsp;{{Session::get('success')}}</p>
         @endif
         <form action="{{URL::route('forget_password_request_handle')}}" method="post">
             {{csrf_field()}}
             <div class="form-group">
                 <label>Enter your user name</label>
-                <input type="text" name="user_name" class="form-control" value="" placeholder="User Name"/>
+                <input type="text" name="user_name" class="form-control" value="{{Request::old('user_name')}}" placeholder="User Name"/>
                 @if($errors->has('user_name'))
                     <p class="text text-danger">{{$errors->first('user_name')}}</p>
                 @endif
