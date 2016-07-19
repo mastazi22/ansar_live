@@ -312,7 +312,7 @@
                             </div>
                             <button class="btn btn-primary"
                                     ng-disabled="!ansarDetail.aoi.ansar_id||!joining_date||!ansarId||!selectedUnit||!selectedThana||!selectedKpi||msg||!memorandumId||isVerified||isVerifying||!isAnsarAvailable">
-                                Embodiment
+                                Embodied
                             </button>
                         </div>
                         <div class="col-sm-8" style="min-height: 400px;border-left: 1px solid #CCCCCC">

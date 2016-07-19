@@ -4,7 +4,7 @@
 
 @extends('template.master')
 @section('title','Ansar List')
-@section('small_title','Total number of Ansars who are not interested to join after more than 10 reminders ')
+@section('small_title','Total number of Ansars who are not interested to join after more than 10 reminders')
 @section('breadcrumb')
     {!! Breadcrumbs::render('dashboard_menu_not_interested',$total) !!}
 @endsection

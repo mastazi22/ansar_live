@@ -1,8 +1,10 @@
 @extends('template.master')
 @section('title','Ansar List')
-@section('small_title',ucfirst(implode(' ',explode('_',$type))))
+{{--@section('small_title',ucfirst(implode(' ',explode('_',$type))))--}}
+@section('small_title', $pageTitle)
 @section('breadcrumb')
-    {!! Breadcrumbs::render('dashboard_menu',ucwords(implode(' ',explode('_',$type))),$type) !!}
+{{--    {!! Breadcrumbs::render('dashboard_menu',ucwords(implode(' ',explode('_',$type))),$type) !!}--}}
+    {!! Breadcrumbs::render('dashboard_menu', $pageTitle, $type) !!}
 @endsection
 @section('content')
     <script>

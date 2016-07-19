@@ -228,7 +228,7 @@
         <div class="col-md-3 line-bar-middle col-sm-6 col-xs-12">
             <div class="info-box bg-aqua"><span class="info-box-icon"><i class="fa fa-bed"></i></span>
 
-                <div class="info-box-content"><span class="info-box-text">Total Rested</span> <span
+                <div class="info-box-content"><span class="info-box-text">Total Resting</span> <span
                             class="info-box-number"><a href="{{URL::to('HRM/show_ansar_list')}}/rest_ansar" class="btn-link" style="color: #FFFFFF !important;">[[allAnsar.totalRest]]</a>
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar"></span>
 
@@ -244,7 +244,7 @@
         <div class="col-md-3 line-bar-middle col-sm-6 col-xs-12">
             <div class="info-box bg-aqua"><span class="info-box-icon"><img src="{{asset('dist/img/blocklist.png')}}"></span>
 
-                <div class="info-box-content"><span class="info-box-text">Total Blocklisted</span> <span
+                <div class="info-box-content"><span class="info-box-text">Total Block-listed</span> <span
                             class="info-box-number"><a href="{{URL::to('HRM/show_ansar_list')}}/blocked_ansar" class="btn-link" style="color: #FFFFFF !important;">[[allAnsar.totalBlockList]]</a>
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar"></span>
 
@@ -274,7 +274,7 @@
             <div class="line-bar-bottom"></div>
             <div class="info-box bg-aqua"><span class="info-box-icon"><img src="{{asset('dist/img/queue.png')}}"></span>
 
-                <div class="info-box-content"><span class="info-box-text">Total Panelled</span> <span
+                <div class="info-box-content"><span class="info-box-text">Total Paneled</span> <span
                             class="info-box-number"><a href="{{URL::to('HRM/show_ansar_list')}}/paneled_ansar" class="btn-link" style="color: #FFFFFF !important;">[[allAnsar.totalPanel]]</a>
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar"></span>
 

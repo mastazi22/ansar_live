@@ -18,15 +18,15 @@ Breadcrumbs::register('dashboard_menu_recent', function($breadcrumbs,$title,$typ
 });
 Breadcrumbs::register('dashboard_menu_service_ended_2_month', function($breadcrumbs,$total) {
     $breadcrumbs->parent('hrm');
-    $breadcrumbs->push('Ansars whom service ended 2 month', URL::route('service_ended_in_three_years',['count'=>$total]));
+    $breadcrumbs->push('Progress Information', URL::route('service_ended_in_three_years',['count'=>$total]));
 });
 Breadcrumbs::register('dashboard_menu_50_year', function($breadcrumbs,$total) {
     $breadcrumbs->parent('hrm');
-    $breadcrumbs->push('Ansars will reached 50 yeaars within 3 months', URL::route('ansar_reached_fifty_years',['count'=>$total]));
+    $breadcrumbs->push('Progress Information', URL::route('ansar_reached_fifty_years',['count'=>$total]));
 });
 Breadcrumbs::register('dashboard_menu_not_interested', function($breadcrumbs,$total) {
     $breadcrumbs->parent('hrm');
-    $breadcrumbs->push('Ansars not interested more then 10 times', URL::route('ansar_not_interested',['count'=>$total]));
+    $breadcrumbs->push('Progress Information', URL::route('ansar_not_interested',['count'=>$total]));
 });
 
 //KPI Branch
