@@ -39,7 +39,7 @@ class UserController extends Controller
                 Auth::logout();
                 return Redirect::action('UserController@login')->with('error', 'Your blocked. Please contact with administrator');
             }
-            $user->userLog->last_login = Carbon::now()->addHours(6);
+            $user->userLog->last_login = Carbon::now();
             if ($user->userLog->user_status == 0) $user->userLog->user_status = 1;
             $user->userLog->save();
             if(Session::get('redirect_url'))return Redirect::to(Session::get('redirect_url'));
@@ -372,12 +372,59 @@ class UserController extends Controller
             if(!$user->exists()){
                 return Redirect::back()->withInputs($request->accepts(['_token']))->with('error','This user name doesn`t exists');
             }
-            $fpr = new ForgetPasswordRequest;
-            $fpr->user_name = $request->get('user_name');
-            $fpr->save();
+            try {
+                $fpr = ForgetPasswordRequest::findOrFail($request->get('user_name'));
+                return Redirect::back()->withInput($request->all())->with('error','This user name already has a pending password change request');
+            }catch(\Exception $e){
+                $fpr = new ForgetPasswordRequest;
+                $fpr->user_name = $request->get('user_name');
+                $fpr->save();
+            }
+
         }
         return Redirect::back()->with('success','Password change request send successfully');
     }
+    public function changeForgetPassword($user){
+        return view('User.change_password',['user'=>$user]);
+    }
+    public function handleChangeForgetPassword(Request $request){
+        $user = User::where('user_name',$request->get('user'))->first();
+        $fpr = ForgetPasswordRequest::find($request->get('user'));
+        if(!$user||!$fpr){
+            return Redirect::back()->with('error','User does not exists with this user name');
+        }
+        $rules = [
+            'password' => 'required',
+            'c_password' => 'required|same:password'
+        ];
+        $messages = [
+            'password.required' => 'New password is required',
+            'c_password.required' => 'Confirm password is required',
+            'same' => 'Password mis-match'
+        ];
+        $valid = Validator::make($request->all(), $rules, $messages);
+        if ($valid->fails()) {
+            return Redirect::back()->withErrors($valid);
+        } else {
+            $user->password = Hash::make(Input::get('password'));
+            if ($user->save()) {
+                $fpr->delete();
+                return Redirect::back()->with('success','Password change successfully');
+            } else {
+                return Redirect::back()->with('error','An error occur while password changing. Please try again later');
+            }
+        }
+    }
+    public function removePasswordRequest($user){
+        try{
+            $frp = ForgetPasswordRequest::findOrFail($user);
+            $frp->delete();
+            return Redirect::back()->with('success',$user.' request remove successfully');
+        }catch (\Exception $e){
+            return Redirect::back()->with('error',$user.' does not exists');
+        }
+    }
+
 } 
 
 

@@ -347,4 +347,9 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 //End KPI
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
+    Route::get('/all_notification', function () {
+        return view('all_notification');
+    });
+    Route::get('/change_password/{user}', '\App\Http\Controllers\UserController@changeForgetPassword');
+    Route::get('/remove_request/{user}', '\App\Http\Controllers\UserController@removePasswordRequest');
 });

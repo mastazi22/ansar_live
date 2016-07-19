@@ -19,29 +19,46 @@
         <!-- Content Header (Page header) -->
 
         <!-- Main content -->
-        @if(Session::has('success_message'))
+        @if(Session::has('success'))
             <div style="padding: 10px 20px 0 20px;">
                 <div class="alert alert-success">
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <span class="glyphicon glyphicon-ok"></span> {{Session::get('success_message')}}
+                    <span class="glyphicon glyphicon-ok"></span> {{Session::get('success')}}
+                </div>
+            </div>
+        @endif
+        @if(Session::has('error'))
+            <div style="padding: 10px 20px 0 20px;">
+                <div class="alert alert-danger">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <span class="glyphicon glyphicon-warning-sign"></span> {{Session::get('error')}}
                 </div>
             </div>
         @endif
         <section class="content">
-
+            <?php $i=1; ?>
             <div class="box box-solid">
                 <div class="box-body">
-                    <ul style="list-style: none">
+                    <table class="table table-stripped table-bordered">
+                        <tr>
+                            <th>Sl. no</th>
+                            <th>User</th>
+                            <th>Request Date</th>
+                            <th>Action</th>
+                        </tr>
                         @forelse(Notification::getAllNotification() as $notification)
-                            <li style="padding: 10px">
-                                <span style="color: #000000;font-size: 1.5em;">{{$notification->user_name}}</span>
-                                    forgets password. <a href="#">Change his password</a>
-
-                            </li>
+                            <tr>
+                                <td>{{$i++}}</td>
+                                <td>{{$notification->user_name}}</td>
+                                <td>{{\Carbon\Carbon::parse($notification->created_at)->format('d M, y')}}</td>
+                                <td><a href="{{URL::to((request()->route()?request()->route()->getPrefix():'').'/change_password/'.$notification->user_name)}}" class="btn btn-info btn-xs">Change password</a> or <a href="{{URL::to((request()->route()?request()->route()->getPrefix():'').'/remove_request/'.$notification->user_name)}}" class="btn btn-xs btn-danger">Remove request</a>
+                            </tr>
                             @empty
-                            <li style="padding: 10px">No forget password available</li>
+                            <tr>
+                                <td colspan="4">No request available</td>
+                            </tr>
                         @endforelse
-                    </ul>
+                    </table>
                 </div>
             </div>
             <!-- /.box

@@ -235,7 +235,7 @@
                                         @endforeach
                                     </ul>
                                 </li>
-                                <li class="footer"><a href="{{URL::to('all_notification')}}">View all</a></li>
+                                <li class="footer"><a href="{{URL::to((request()->route()?request()->route()->getPrefix():'')."/all_notification")}}">View all</a></li>
                             </ul>
                         </li>
                         @endif

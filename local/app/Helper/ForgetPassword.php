@@ -20,7 +20,7 @@ class ForgetPassword
      */
     public function __construct()
     {
-        $this->notification = ForgetPasswordRequest::all(['user_name']);
+        $this->notification = ForgetPasswordRequest::all(['user_name','created_at']);
     }
     public function getTotal(){
         return $this->notification->count();
