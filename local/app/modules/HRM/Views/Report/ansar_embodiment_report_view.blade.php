@@ -3,7 +3,7 @@
 {{--Time: 11:54 AM--}}
 
 @extends('template.master')
-@section('title','Embodied Ansar Info')
+@section('title','Embodied Ansar Report')
 @section('breadcrumb')
     {!! Breadcrumbs::render('embodiment_report_view') !!}
 @endsection
@@ -172,7 +172,7 @@
                     </div><br>
                     <div class="row">
                         <div class="col-md-4 col-sm-12 col-xs-12">
-                            <div class="form-group required">
+                            <div class="form-group">
                                 <label class="control-label">
                                     Select Date Range
                                 </label></br>
@@ -191,7 +191,7 @@
                             </div>
                         </div>
                         <div class="col-md-3 col-sm-12 col-xs-12">
-                            <div class="form-group required">
+                            <div class="form-group">
                                 <label class="control-label">
                                     Select Unit
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
@@ -207,7 +207,7 @@
                             </div>
                         </div>
                         <div class="col-md-3 col-sm-12 col-xs-12">
-                            <div class="form-group required">
+                            <div class="form-group">
                                 <label class="control-label">
                                     Select Thana
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"

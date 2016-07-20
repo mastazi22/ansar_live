@@ -319,13 +319,13 @@
                     <li ng-if="checkMenu('embodiment_report_view')">
                         <a href="{{URL::route('embodiment_report_view')}}">
                             <i class="fa fa-users"></i>
-                            <span>View Embodied Ansar Report</span>
+                            <span>Embodied Ansar Report</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('disembodiment_report_view')">
                         <a href="{{URL::route('disembodiment_report_view')}}">
                             <i class="fa fa-users"></i>
-                            <span>View Disembodied Ansar Report</span>
+                            <span>Disembodied Ansar Report</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('blocklist_view')">
