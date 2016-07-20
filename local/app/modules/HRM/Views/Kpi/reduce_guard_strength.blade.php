@@ -325,12 +325,12 @@
 //                    alert(data)
 //
                     if (data.result == undefined) {
-                        $('#reduce-guard-strength-confirmation').prop('disabled', false);
+                        //$('#reduce-guard-strength-confirmation').prop('disabled', false);
                         $("#ansar-all-for-reduce").html(data);
                         //h = data;
                     }
                     else {
-                        $('#reduce-guard-strength-confirmation').prop('disabled', true);
+                        //$('#reduce-guard-strength-confirmation').prop('disabled', true);
 //                        alert($("#status-all").html())
                         $("#ansar-all-for-reduce").html('<tr colspan="11" class="warning" id="not-find-info"> <td colspan="11">No Ansar is available for Reduction</td> </tr>');
                     }
@@ -356,6 +356,12 @@
             $('.reduce-guard-strength-check:checked').each(function () {
                 selectedAnsars.push($(this).parents('tr'))
             })
+            if(selectedAnsars.length==0) {
+                $("#reduce-guard-strength-confirmation").prop('disabled',true)
+            }
+            else{
+                $("#reduce-guard-strength-confirmation").prop('disabled',false)
+            }
         });
         $('#reduce-confirm').click(function (e) {
             $("#all-loading").css('display', 'block');
