@@ -4,7 +4,7 @@
 
 @extends('template.master')
 @section('title','Direct Block')
-@section('small_title','DG')
+{{--@section('small_title','DG')--}}
 @section('breadcrumb')
     {!! Breadcrumbs::render('direct_block') !!}
 @endsection

@@ -4,7 +4,7 @@
 
 @extends('template.master')
 @section('title','Ansar List')
-@section('small_title','Total number of Ansars who will complete 3 years of service within the next 2 months')
+{{--@section('small_title','Total number of Ansars who will complete 3 years of service within the next 2 months')--}}
 @section('breadcrumb')
     {!! Breadcrumbs::render('dashboard_menu_service_ended_2_month',$total) !!}
 @endsection

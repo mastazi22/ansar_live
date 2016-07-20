@@ -1,6 +1,6 @@
 @extends('template.master')
 @section('title','Direct Transfer')
-@section('small_title','DG')
+{{--@section('small_title','DG')--}}
 @section('breadcrumb')
     {!! Breadcrumbs::render('direct_transfer') !!}
 @endsection

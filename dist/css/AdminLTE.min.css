@@ -346,11 +346,13 @@ a:hover, a:active, a:focus {
         margin-top: 5px;
         top: 0;
         right: 0;
-        float: none;
+        float: none !important;
         background: #d2d6de;
         padding-left: 10px
     }
+    .brdcum{
 
+    }
     .content-header > .breadcrumb li:before {
         color: #97a0b3
     }
@@ -2145,8 +2147,8 @@ a:hover, a:active, a:focus {
 }
 
 .info-box-text {
-    //text-transform: uppercase;
-    //margin-left: 10px;
+/ / text-transform: uppercase;
+/ / margin-left: 10 px;
 }
 
 .info-box-more {
@@ -4456,4 +4458,28 @@ table.text-center, table.text-center td, table.text-center th {
 
 .check-boxx:checked + .check-label {
     background: green;
+}
+
+.header-title {
+    float: left;
+    padding: 12px 0;
+    margin: 0;
+    color: #ffffff;
+}
+.brdcum{
+    float: left !important;
+    position: relative !important;
+    right:0 !important;
+    top: 0 !important;
+    margin-bottom: 10px !important;
+    /*padding-top: 0 !important;*/
+}
+.small-title{
+    float: right;
+}
+.sh{
+    overflow: hidden;
+}
+.box-info,.box-solid{
+    border-top: 3px solid forestgreen !important;
 }

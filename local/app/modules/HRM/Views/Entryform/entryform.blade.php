@@ -1,6 +1,6 @@
 @extends('template/master')
 @section('title','Entry Form')
-@section('small_title','Add new ansar')
+{{--@section('small_title','Add new ansar')--}}
 @section('breadcrumb')
     {!! Breadcrumbs::render('entryform') !!}
     @endsection

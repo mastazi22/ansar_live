@@ -2,7 +2,8 @@
 {{--Date: 11/05/2015--}}
 {{--Time: 11:00 AM--}}
 
-@extends('template.master')@section('title','List of Ansar before Withdrawal')
+@extends('template.master')
+@section('title','List of Ansar before Withdrawal')
 @section('breadcrumb')
     {!! Breadcrumbs::render('ansar_before_withdraw_list') !!}
 @endsection
