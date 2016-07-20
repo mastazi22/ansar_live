@@ -1,7 +1,7 @@
 @extends('template.master')
-@section('title','Ansar List')
+@section('title',$pageTitle)
 {{--@section('small_title',ucfirst(implode(' ',explode('_',$type))))--}}
-@section('small_title', $pageTitle)
+{{--@section('small_title', $pageTitle)--}}
 @section('breadcrumb')
 {{--    {!! Breadcrumbs::render('dashboard_menu',ucwords(implode(' ',explode('_',$type))),$type) !!}--}}
     {!! Breadcrumbs::render('dashboard_menu', $pageTitle, $type) !!}
@@ -160,7 +160,7 @@
                             </div>
                         </div>
                     </div>
-                    <h4>Total Ansar( [[pageTitle]]):[[total]]</h4>
+                    <h4>Total Ansar :[[total]]</h4>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr>

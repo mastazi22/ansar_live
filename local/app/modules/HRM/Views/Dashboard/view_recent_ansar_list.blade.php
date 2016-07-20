@@ -1,8 +1,8 @@
 @extends('template.master')
-@section('title','Total Ansar (Recent)')
+@section('title',$pageTitle)
 {{--@section('small_title',ucfirst(implode(' ',explode('_',$type))))--}}
 @section('breadcrumb')
-    {!! Breadcrumbs::render('dashboard_menu_recent',ucwords(implode(' ',explode('_',$type))),$type) !!}
+    {!! Breadcrumbs::render('dashboard_menu_recent',$pageTitle,$type) !!}
 @endsection
 @section('content')
     <script>
@@ -139,7 +139,7 @@
                             </div>
                         </div>
                     </div>
-                    <h4>Total Ansar( [[pageTitle]]):[[total]]</h4>
+                    <h4>{{$pageTitle}}:[[total]]</h4>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr>

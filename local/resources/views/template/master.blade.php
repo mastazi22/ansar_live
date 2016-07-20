@@ -390,7 +390,7 @@
         if(p.length>0) {
             //console.log({beforeurl:$.cookie('ftt')})
             $.cookie('ftt', null);
-            //$.cookie('ftt', url);
+            $.cookie('ftt', url);
 
             console.log({afterurl:$.cookie()})
             //console.log({afterurl:url})
