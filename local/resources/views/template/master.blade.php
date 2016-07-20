@@ -237,8 +237,13 @@
         }
         //alert(p.text())
         p.parents('li').eq(0).parents('ul').eq(0).addClass('menu-open').css('display','block');
-        p.parents('li').eq(0).addClass('active-submenu');
-        p.parents('li').not(':eq(0)').addClass('active');
+        if(p.parents('li').length>1){
+            p.parents('li').eq(0).addClass('active-submenu');
+            p.parents('li').not(':eq(0)').addClass('active');
+        }
+        else{
+            p.parents('li').addClass('active');
+        }
     })
 </script>
 </div>
