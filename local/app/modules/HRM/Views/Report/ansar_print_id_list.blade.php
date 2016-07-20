@@ -103,6 +103,10 @@
                             </div>
 
                         </div>
+                        <div class="col-sm-1" style="    text-align: center;font-size: 1.2em;padding: 0;width: auto;">
+                            <label class="control-label" style="display: block">&nbsp;</label>
+                            to
+                        </div>
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label class="control-label">
@@ -111,9 +115,13 @@
                                 <input type="text" ng-model="toDate"  id="to-date" class="form-control" placeholder="To Date">
                             </div>
                         </div>
+                        <div class="col-sm-3">
+                            <label class="control-label" style="display: block">&nbsp;</label>
+                            <button class="btn btn-primary"  ng-click="loadAnsar()">View Printed ID Card List</button>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <button class="btn btn-primary"  ng-click="loadAnsar()">View Printed ID Card List</button>
+
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered">

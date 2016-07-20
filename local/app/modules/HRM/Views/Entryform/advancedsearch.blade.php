@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','Advance Search')
+@section('title','Advanced Search')
 @section('breadcrumb')
     {!! Breadcrumbs::render('entryadvancedsearch') !!}
 @endsection

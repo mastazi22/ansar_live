@@ -3,7 +3,7 @@
 {{--Time: 11:28 AM--}}
 
 @extends('template.master')
-@section('title','Direct Block')
+@section('title','Direct Blocklist Entry')
 {{--@section('small_title','DG')--}}
 @section('breadcrumb')
     {!! Breadcrumbs::render('direct_block') !!}

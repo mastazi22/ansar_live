@@ -3,7 +3,7 @@
 {{--Time: 6:17 PM--}}
 
 @extends('template.master')
-@section('title','Direct Unblock')
+@section('title','Direct Remove From Blocklist')
 {{--@section('small_title','DG')--}}
 @section('breadcrumb')
     {!! Breadcrumbs::render('direct_unblock') !!}

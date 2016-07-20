@@ -2,7 +2,7 @@
 {{--Date: 12/24/2015--}}
 {{--Time: 5:43 PM--}}
 @extends('template.master')
-@section('title','Ansar List')
+@section('title','Total number of Ansars who will reach 50 years of age within next 3 months')
 {{--@section('small_title','Total number of Ansars who will reach 50 years of age within next 3 months')--}}
 @section('breadcrumb')
     {!! Breadcrumbs::render('dashboard_menu_50_year',$total) !!}

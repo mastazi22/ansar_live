@@ -205,7 +205,7 @@
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="pc-table">
 
-                                    <tr class="info">
+                                    <tr>
                                         <th>Sl No.</th>
                                         <th>Ansar ID</th>
                                         <th>Ansar Name</th>

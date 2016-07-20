@@ -3,7 +3,7 @@
 {{--Time: 5:39 PM--}}
 
 @extends('template.master')
-@section('title','Direct Remove From Black')
+@section('title','Direct Remove From Blacklist')
 {{--@section('small_title','DG')--}}
 @section('breadcrumb')
     {!! Breadcrumbs::render('direct_unblack') !!}

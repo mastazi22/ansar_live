@@ -1,7 +1,7 @@
 {{--Offer Cancel Complete--}}
 
 @extends('template.master')
-@section('title','Offer Cancel')
+@section('title','Cancel Offer')
 @section('breadcrumb')
     {!! Breadcrumbs::render('offer_cancel') !!}
 @endsection
@@ -132,7 +132,7 @@
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered" id="pc-table">
-                            <tr class="info">
+                            <tr>
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Offer Send Date</th>

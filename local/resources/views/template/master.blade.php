@@ -127,7 +127,7 @@
             <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
                 <span class="sr-only">Toggle navigation</span>
             </a>
-            <h3 class="header-title">@yield('title')</h3>
+            <h4 class="header-title">@yield('title')</h4>
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
                     <!-- Messages: style can be found in dropdown.less-->
@@ -388,11 +388,20 @@
         var url = '{{request()->url()}}'
         var p = $('a[href="'+url+'"]');
         if(p.length>0) {
-            $.cookie('ftt', url);
+            //console.log({beforeurl:$.cookie('ftt')})
+            $.cookie('ftt', null);
+            //$.cookie('ftt', url);
+
+            console.log({afterurl:$.cookie()})
+            //console.log({afterurl:url})
         }
         else{
-            p = $('a[href="'+$.cookie('ftt')+'"]')
+            var s = $.cookie();
+            p = $('a[href="'+ s.ftt+'"]')
+            console.log($.cookie())
+            console.log({sss: s.ftt})
         }
+        //alert(p.text())
         p.parents('li').addClass('active');
     })
 </script>

@@ -1,5 +1,5 @@
 @extends('template/master')
-@section('title','Entry List')
+@section('title','Entry')
 @section('small_title')
     <a href="{{URL::to('HRM/entryform')}}" class="btn btn-info btn-sm"><span
                 class="glyphicon glyphicon-user"></span> Add New</a>
