@@ -18,6 +18,7 @@
                     <div class="icon">
                         <i class="fa fa-users"></i>
                     </div>
+                    <div class="small-box-footer" style="height: 15px"></div>
                 </div>
             </div>
         </a>
@@ -48,6 +49,7 @@
                 <div class="icon">
                     <i class="fa  fa-money"></i>
                 </div>
+                <div class="small-box-footer disable-module" style="height: 15px; background: #ADADAD"></div>
                 {{--<a href="{{URL::to('SD')}}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>--}}
             </div>
         </div>
@@ -63,6 +65,7 @@
                 <div class="icon">
                     <i class="fa fa-gears"></i>
                 </div>
+                <div class="small-box-footer disable-module" style="height: 15px; background: #ADADAD"></div>
                 {{--<a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>--}}
             </div>
         </div>
