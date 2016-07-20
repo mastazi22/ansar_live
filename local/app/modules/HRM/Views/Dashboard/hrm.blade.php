@@ -1,17 +1,14 @@
 @extends('template.master')
-<<<<<<< HEAD
 @section('title','Dashboard')
 @section('small_title','Human Resource Management')
 @section('breadcrumb')
 {!! Breadcrumbs::render('hrm') !!}
 @endsection
-=======
         @section('title','Dashboard')
         {{--@section('small_title','Human Resource Management')--}}
         @section('breadcrumb')
         {!! Breadcrumbs::render('hrm') !!}
         @endsection
->>>>>>> 3c911950cf89c6f530d8e4806709da3c46afdf8e
 @section('content')
         <!-- Content Wrapper. Contains page content -->
 <script>
