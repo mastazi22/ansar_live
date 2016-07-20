@@ -5,7 +5,7 @@
 @extends('template.master')
 @section('title','KPI Information')
 @section('small_title')
-    <a href="{{URL::route('go_to_kpi_page')}}" class="btn btn-sm btn-info">Add New Kpi</a>
+    <a href="{{URL::route('go_to_kpi_page')}}" class="btn btn-sm btn-info"><span><i class="fa fa-plus"></i></span>&nbsp;&nbsp;Add New KPI</a>
     @endsection
 @section('breadcrumb')
     {!! Breadcrumbs::render('kpi_view') !!}
@@ -188,7 +188,7 @@
                     <div class="row">
                         <div class="col-sm-4" ng-hide="isAdmin==66 || isAdmin==22">
                             <div class="form-group">
-                                <label class="control-label">Select a division&nbsp;
+                                <label class="control-label">Select a Division&nbsp;
                                     <img ng-show="loadingDivision" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select class="form-control" ng-model="selectedDivision"
@@ -203,7 +203,7 @@
                         </div>
                         <div class="col-sm-4" ng-hide="isAdmin==22">
                             <div class="form-group">
-                                <label class="control-label">Select a unit&nbsp;
+                                <label class="control-label">Select a District&nbsp;
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select class="form-control" ng-model="selectedDistrict"
@@ -239,13 +239,13 @@
                                 <th>Unit</th>
                                 <th>Thana</th>
                                 <th>KPI Address</th>
-                                <th>KPI Contact No</th>
+                                <th>KPI Contact No.</th>
                                 <th>Action</th>
                             </tr>
                             <tbody>
                             <tr ng-if="kpis.length==0">
                                 <td colspan="8" class="warning no-ansar">
-                                    No kpi is available to show
+                                    No KPI is available to show.
                                 </td>
                             </tr>
                             <tr ng-if="kpis.length>0" ng-repeat="a in kpis">

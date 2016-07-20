@@ -26,7 +26,7 @@
             $scope.isVerified = false;
             $scope.isVerifying = false;
             $scope.allLoading = false;
-            $scope.reduce_reason = "Freeze for Guard Reduction";
+            $scope.reduce_reason = "Freeze Ansar for Guard's Strength Reduction";
 //
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
             $scope.verifyMemorandumId = function () {
@@ -200,7 +200,7 @@
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="pc-table">
 
-                                    <tr class="info">
+                                    <tr>
                                         <th>Ansar ID</th>
                                         <th>Ansar Name</th>
                                         <th>Ansar Designation</th>
@@ -214,7 +214,7 @@
                                     </tr>
                                     <tbody id="ansar-all-for-reduce" class="status">
                                     <tr colspan="10" class="warning" id="not-find-info">
-                                        <td colspan="10">No Ansar Found to Withdraw</td>
+                                        <td colspan="10">No Ansar is available for Reduction</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -226,18 +226,18 @@
             <div class="row">
                 <div class="col-md-12">
                     <button class="pull-right btn btn-primary" id="reduce-guard-strength-confirmation" open-hide-modal disabled>
-                        <i class="fa fa-send"></i>&nbsp;&nbsp;Reduce Guard Strength
+                        Reduce Guard Strength
                     </button>
                 </div>
             </div>
             <!--Modal Open-->
             <div id="reduce-guard-option" class="modal fade" role="dialog">
-                <div class="modal-dialog" style="width: 70%;">
+                <div class="modal-dialog" style="width: 80%;">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"
                                     ng-click="modalOpen = false">&times;</button>
-                            <h3 class="modal-title">Ansar for Reduction</h3>
+                            <h3 class="modal-title">Guard's Strength Reduction Confirmation</h3>
                         </div>
                         <div class="modal-body">
                             {!! Form::open(array('route' => 'ansar-reduce-update', 'name' => 'kpiReduceForm', 'ng-app' => 'myValidateApp', 'novalidate')) !!}
@@ -279,7 +279,7 @@
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table table-bordered" id="pc-table">
-                                            <tr class="info">
+                                            <tr>
                                                 <th>Ansar ID</th>
                                                 <th>Ansar Name</th>
                                                 <th>Ansar Designation</th>
@@ -294,7 +294,7 @@
                                     </div>
                                     <button id="reduce-confirm" class="btn btn-primary pull-right"
                                             ng-disabled="kpiReduceForm.reduce_guard_strength_date.$error.required||kpiReduceForm.reduce_reason.$error.required||!memorandumId||isVerified||isVerifying">
-                                        <i class="fa fa-check"></i>&nbsp;Confirm
+                                        Confirm
                                     </button>
                                     {!! Form::close() !!}
                                 </div>
@@ -332,7 +332,7 @@
                     else {
                         $('#reduce-guard-strength-confirmation').prop('disabled', true);
 //                        alert($("#status-all").html())
-                        $("#ansar-all-for-reduce").html('<tr colspan="11" class="warning" id="not-find-info"> <td colspan="11">No Ansar Found to add to Reduce</td> </tr>');
+                        $("#ansar-all-for-reduce").html('<tr colspan="11" class="warning" id="not-find-info"> <td colspan="11">No Ansar is available for Reduction</td> </tr>');
                     }
                 }
             });

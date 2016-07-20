@@ -52,7 +52,7 @@
                     <li ng-if="checkMenu(ansar_before_withdraw_view)">
                         <a href="{{URL::route('ansar_before_withdraw_view')}}">
                             <i class="fa fa-users"></i>
-                            <span>Ansar Before Withdraw List</span>
+                            <span>Ansar List Before Withdrawal</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('reduce_guard_strength')">
@@ -64,7 +64,7 @@
                     <li ng-if="checkMenu('ansar_before_reduce_view')">
                         <a href="{{URL::route('ansar_before_reduce_view')}}">
                             <i class="fa fa-users"></i>
-                            <span>Ansar Before Reduce List</span>
+                            <span>Ansar List Before Reduction</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('kpi-withdraw-view')">
