@@ -4486,3 +4486,17 @@ table.text-center, table.text-center td, table.text-center th {
 .table tr:nth-child(odd){
     background-color: #E6E6E6;
 }
+.active-submenu{
+    background: rgba(104, 109, 111, 0.43);
+    position: relative;
+}
+.active-submenu::before{
+    content: '';
+    display: block;
+    position: absolute;
+    width: 5px;
+    height: 100%;
+    left: -5px;
+    top:0;
+    background: rgba(104, 109, 111, 0.43);
+}

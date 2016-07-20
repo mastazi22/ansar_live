@@ -236,7 +236,9 @@
             console.log({sss: s.ftt})
         }
         //alert(p.text())
-        p.parents('li').addClass('active');
+        p.parents('li').eq(0).parents('ul').eq(0).addClass('menu-open').css('display','block');
+        p.parents('li').eq(0).addClass('active-submenu');
+        p.parents('li').not(':eq(0)').addClass('active');
     })
 </script>
 </div>
