@@ -1,4 +1,5 @@
 @extends('template.master')
+@section('title','401 Error')
 @section('content')
     <div>
         <!-- Content Header (Page header) -->
