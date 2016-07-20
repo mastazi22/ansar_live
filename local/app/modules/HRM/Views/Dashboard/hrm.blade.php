@@ -1,14 +1,14 @@
 @extends('template.master')
 @section('title','Dashboard')
-@section('small_title','Human Resource Management')
+{{--@section('small_title','Human Resource Management')--}}
 @section('breadcrumb')
 {!! Breadcrumbs::render('hrm') !!}
 @endsection
-        @section('title','Dashboard')
-        {{--@section('small_title','Human Resource Management')--}}
-        @section('breadcrumb')
-        {!! Breadcrumbs::render('hrm') !!}
-        @endsection
+@section('title','Dashboard')
+{{--@section('small_title','Human Resource Management')--}}
+@section('breadcrumb')
+{!! Breadcrumbs::render('hrm') !!}
+@endsection
 @section('content')
         <!-- Content Wrapper. Contains page content -->
 <script>
@@ -416,7 +416,7 @@
                     </div>
                     <a href="{{URL::to('HRM/show_recent_ansar_list')}}/blacked_ansar"
                        style="color:#FFFFFF" class="btn-link">
-                    <span class="progress-description">Recent-[[recentAnsar.recentBlackList]]</span></a>
+                        <span class="progress-description">Recent-[[recentAnsar.recentBlackList]]</span></a>
                 </div>
                 <!-- /.info-box-content -->
             </div>
@@ -430,35 +430,11 @@
         <div class="col-sm-12 col-md-9 col-xs-12 pull-right">
             <div class="box box-solid">
                 <div class="box-header with-border">
-                    <h3 class="box-title" style="font-size: 17px; margin-bottom: 8px">Total number of Ansars who have been Embodied and
-                        Disembodied in recent years</h3>
-
-                    <div id="graph-level" class="col-md-8 col-sm-12 col-xs-12 col-centered" style="text-align: center">
-                        <div class="col-md-4 col-sm-6 col-xs-12">
-                            <span style="color: #000000;"><div
-                                        style="background-color: rgba(0,60,100,1); border-radius:50%; width: 20px; height: 18px; float: left"></div>Embodied</span>
-                        </div>
-                        <div class="col-md-4 col-sm-6 col-xs-12">
-                            <span style="color: #000000;"><div
-                                        style="background-color: rgba(151,187,205,0.5); border-radius:50%; width: 20px; height: 20px; float: left"></div>Disembodied</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                    <canvas id="graph-embodiment" graph style="width: 100%; height: 160px;" class="well"></canvas>
-                </div>
-                <!-- /.box-body -->
-            </div>
-        </div>
-        <div class="col-sm-12 col-md-9 col-xs-12 pull-right">
-            <div class="box box-solid">
-                <div class="box-header with-border">
                     <h3 class="box-title">Progress Information</h3>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body" style="padding-left: 0;padding-right: 0">
-                    <div class="label-hrm" style="border-bottom: 1px solid #E6E6EA">
+                    <div class="label-hrm" style="border-bottom: 1px solid rgba(153, 153, 153, 0.52)">
                         <div class="label-hrm-title">
                             <span class="info-box-text"
                                   style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial">Total number of Ansars who will complete 3 years of service within the next 2 months</span>
@@ -475,7 +451,7 @@
                         </div>
                         <br style="clear: left;"/>
                     </div>
-                    <div class="label-hrm" style="border-bottom: 1px solid #E6E6EA">
+                    <div class="label-hrm" style="border-bottom: 1px solid rgba(153, 153, 153, 0.52)">
                         <div class="label-hrm-title">
                             <span class="info-box-text"
                                   style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial">Total number of Ansars who will reach 50 years of age within next 3 months</span>
@@ -529,6 +505,34 @@
                 <!-- /.box-body -->
             </div>
         </div>
+        <div class="col-sm-12 col-md-9 col-xs-12 pull-right">
+            <div class="box box-solid">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Total number of Ansars who have
+                        been Embodied and
+                        Disembodied in recent years</h3>
+                </div>
+                <div class="box-body">
+                    <div id="graph-level" class="col-md-8 col-sm-12 col-xs-12 col-centered" style="text-align: center">
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <span style="color: #000000"><i class="fa fa-lg fa-circle"
+                                                            style="color: rgba(0,60,100,1) !important;"></i>  Embodied</span>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <span style="color: #000000"><i class="fa fa-lg fa-circle"
+                                                            style="color: rgba(151,187,205,0.5) !important;"></i>  Disembodied</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <canvas id="graph-embodiment" graph style="width: 100%; height: 160px;" class="well"></canvas>
+                </div>
+                <!-- /.box-body -->
+            </div>
+        </div>
+
         {{--<div class="col-sm-4 col-md-4">--}}
         {{--<div class="box box-solid">--}}
         {{--<div class="box-header with-border">--}}

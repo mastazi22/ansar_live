@@ -130,7 +130,7 @@
                                 Withdraw
                             </button>
                         </div>
-                        <div class="col-sm-8"
+                        <div class="col-sm-6 col-sm-offset-2"
                              style="min-height: 400px;border-left: 1px solid #CCCCCC">
                             <div id="loading-box" ng-if="loadingAnsar">
                             </div>

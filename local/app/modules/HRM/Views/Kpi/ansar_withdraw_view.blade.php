@@ -31,7 +31,7 @@
             $scope.isVerified = false;
             $scope.isVerifying = false;
             $scope.allLoading = false;
-            $scope.kpi_withdraw_reason = "Freeze for Guard Withdraw";
+            $scope.kpi_withdraw_reason = "Freeze Ansar for Withdrawal";
             $scope.kpi_withdraw_date="";
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
             $scope.verifyMemorandumId = function () {
@@ -205,7 +205,7 @@
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="pc-table">
 
-                                    <tr class="info">
+                                    <tr>
                                         <th>Sl No.</th>
                                         <th>Ansar ID</th>
                                         <th>Ansar Name</th>
@@ -219,7 +219,7 @@
                                     </tr>
                                     <tbody id="ansar-all" class="status">
                                     <tr colspan="10" class="warning" id="not-find-info">
-                                        <td colspan="10">No Ansar Found to Withdraw</td>
+                                        <td colspan="10">No Ansar is available to Withdraw</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -230,20 +230,20 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <button class="pull-right btn btn-primary" id="withdraw-guard-confirmation" open-hide-modal disabled>
-                        <i class="fa fa-send"></i>&nbsp;&nbsp;Withdraw Ansar
+                    <button class="pull-right btn btn-info" id="withdraw-guard-confirmation" open-hide-modal disabled>
+                        Withdraw Ansar
                     </button>
                 </div>
             </div>
             <!--Modal Open-->
             {!! Form::open(array('route' => 'ansar-withdraw-update', 'name' => 'kpiWithdrawForm', 'id'=> 'kpi-form', 'ng-app' => 'myValidateApp', 'novalidate')) !!}
             <div id="withrdaw-option" class="modal fade" role="dialog">
-                <div class="modal-dialog" style="width: 70%;overflow: auto;">
+                <div class="modal-dialog" style="width: 80%;overflow: auto;">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"
                                     ng-click="modalOpen = false">&times;</button>
-                            <h3 class="modal-title">Ansar Withdraw Confirm</h3>
+                            <h3 class="modal-title">Ansars' Withdrawal Confirmation</h3>
                         </div>
                         <div class="modal-body">
                             <div class="register-box" style="width: auto;margin: 0">
@@ -280,7 +280,7 @@
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table table-bordered" id="pc-table">
-                                            <tr class="info">
+                                            <tr>
                                                 <th>Sl No.</th>
                                                 <th>Ansar ID</th>
                                                 <th>Ansar Name</th>
@@ -292,14 +292,14 @@
                                             </tr>
                                             <tbody id="cansar-all" class="status">
                                             <tr colspan="10" class="warning" id="not-find-info">
-                                                <td colspan="10">No Ansar Found to Withdraw</td>
+                                                <td colspan="10">No Ansar is available to Withdraw</td>
                                             </tr>
                                             </tbody>
                                         </table>
                                     </div>
                                     <button class="btn btn-primary pull-right"
                                             ng-disabled="!kpi_withdraw_date||!kpi_withdraw_reason||!memorandumId||isVerified||isVerifying">
-                                        <i class="fa fa-check"></i>&nbsp;Confirm
+                                        Confirm
                                     </button>
                                     {!! Form::close() !!}
                                 </div>
@@ -346,7 +346,7 @@
                     else {
                         $('#withdraw-guard-confirmation').prop('disabled', true);
 //                        alert($("#status-all").html())
-                        $("#ansar-all").html('<tr colspan="11" class="warning" id="not-find-info"> <td colspan="11">No Ansar Found to add to Withdraw</td> </tr>');
+                        $("#ansar-all").html('<tr colspan="11" class="warning" id="not-find-info"> <td colspan="11">No Ansar is available to Withdraw</td> </tr>');
                     }
                 }
             });

@@ -32,7 +32,7 @@ Breadcrumbs::register('dashboard_menu_not_interested', function($breadcrumbs,$to
 //KPI Branch
 Breadcrumbs::register('kpi', function($breadcrumbs) {
     $breadcrumbs->parent('hrm');
-    $breadcrumbs->push('Kpi Branch', '#');
+    $breadcrumbs->push('KPI Branch', '#');
 });
 Breadcrumbs::register('kpi_view', function($breadcrumbs) {
     $breadcrumbs->parent('kpi');
@@ -52,7 +52,7 @@ Breadcrumbs::register('ansar_withdraw_view', function($breadcrumbs) {
 });
 Breadcrumbs::register('ansar_before_withdraw_list', function($breadcrumbs) {
     $breadcrumbs->parent('kpi');
-    $breadcrumbs->push('Ansar Before Withdraw List', URL::route('ansar_before_withdraw_view'));
+    $breadcrumbs->push('Ansar List Before Withdrawal', URL::route('ansar_before_withdraw_view'));
 });
 Breadcrumbs::register('reduce_guard_strength', function($breadcrumbs) {
     $breadcrumbs->parent('kpi');
@@ -60,7 +60,7 @@ Breadcrumbs::register('reduce_guard_strength', function($breadcrumbs) {
 });
 Breadcrumbs::register('ansar_before_reduce_list', function($breadcrumbs) {
     $breadcrumbs->parent('kpi');
-    $breadcrumbs->push('Ansar Before Reduce List', URL::route('ansar_before_reduce_view'));
+    $breadcrumbs->push('Ansar List Before Reduction', URL::route('ansar_before_reduce_view'));
 });
 Breadcrumbs::register('withdraw_kpi', function($breadcrumbs) {
     $breadcrumbs->parent('kpi');

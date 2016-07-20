@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','New Kpi')
+@section('title','Add New KPI')
 @section('breadcrumb')
     {!! Breadcrumbs::render('new_kpi') !!}
     @endsection
