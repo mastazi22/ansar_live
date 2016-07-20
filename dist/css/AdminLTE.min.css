@@ -4483,3 +4483,6 @@ table.text-center, table.text-center td, table.text-center th {
 .box-info,.box-solid{
     border-top: 3px solid forestgreen !important;
 }
+.table tr:nth-child(odd){
+    background-color: #E6E6E6;
+}
