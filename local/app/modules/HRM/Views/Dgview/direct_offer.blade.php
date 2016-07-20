@@ -1,6 +1,6 @@
 @extends('template.master')
 @section('title','Direct Offer')
-@section('small_title','DG')
+{{--@section('small_title','DG')--}}
 @section('breadcrumb')
     {!! Breadcrumbs::render('direct_offer') !!}
     @endsection

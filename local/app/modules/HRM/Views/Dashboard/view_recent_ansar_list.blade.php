@@ -1,6 +1,6 @@
 @extends('template.master')
 @section('title','Total Ansar (Recent)')
-@section('small_title',ucfirst(implode(' ',explode('_',$type))))
+{{--@section('small_title',ucfirst(implode(' ',explode('_',$type))))--}}
 @section('breadcrumb')
     {!! Breadcrumbs::render('dashboard_menu_recent',ucwords(implode(' ',explode('_',$type))),$type) !!}
 @endsection

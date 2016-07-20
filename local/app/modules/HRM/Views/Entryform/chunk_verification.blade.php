@@ -1,6 +1,6 @@
 @extends('template.master')
 @section('title','Ansar Verification')
-@section('small_title','Chunk verification')
+{{--@section('small_title','Chunk verification')--}}
 @section('breadcrumb')
     {!! Breadcrumbs::render('chunk_verification') !!}
     @endsection

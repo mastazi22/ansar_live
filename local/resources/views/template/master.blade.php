@@ -42,6 +42,7 @@
     <script src="{{asset('dist/js/alertify.js')}}" type="text/javascript"></script>
     <script src="{{asset('dist/js/ajaxsubmit.js')}}"></script>
     <script src="{{asset('dist/js/angular-filter.js')}}"></script>
+    <script src="{{asset('dist/js/jquery.cookie.js')}}"></script>
     {{--<script src="{{asset('dist/js/moment.min.js')}}"></script>--}}
     <script src="{{asset('dist/js/moment-locales.min.js')}}"></script>
     <script>
@@ -126,7 +127,7 @@
             <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
                 <span class="sr-only">Toggle navigation</span>
             </a>
-
+            <h3 class="header-title">@yield('title')</h3>
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
                     <!-- Messages: style can be found in dropdown.less-->
@@ -367,12 +368,11 @@
     @endif
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <h1>
-                @yield('title')
-                <small>@yield('small_title')</small>
-            </h1>
+        <section class="content-header sh">
             @yield('breadcrumb')
+            <h1 class="small-title">
+                <small class="small-title">@yield('small_title')</small>
+            </h1>
         </section>
         @yield('content')
     </div>
@@ -383,7 +383,19 @@
         <strong>Copyright &copy; 2015 <a href="#">Ansar & VDP</a></strong> All rights reserved.
     </footer>
 
-
+<script>
+    $(document).ready(function (e) {
+        var url = '{{request()->url()}}'
+        var p = $('a[href="'+url+'"]');
+        if(p.length>0) {
+            $.cookie('ftt', url);
+        }
+        else{
+            p = $('a[href="'+$.cookie('ftt')+'"]')
+        }
+        p.parents('li').addClass('active');
+    })
+</script>
 </div>
 </body>
 </html>

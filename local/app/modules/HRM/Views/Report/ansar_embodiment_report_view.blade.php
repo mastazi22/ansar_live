@@ -176,11 +176,15 @@
                                 <label class="control-label">
                                     Select Date Range
                                 </label></br>
-                                <div class="col-md-6 col-sm-12 col-xs-12" style="margin-left: 0px; padding-left: 0px; margin-right: 0px; padding-right: 0px">
+                                <div class="col-md-5 col-sm-12 col-xs-12" style="margin-left: 0px; padding-left: 0px;margin-right: 0px; padding-right: 0px">
                                     <input type="text" name="from_date" id="from_date" class="form-control"
-                                           placeholder="From Date" ng-model="from_date" ng-change="resetValues()"><br>
+                                           placeholder="From Date" ng-model="from_date" ng-change="resetValues()">
                                 </div>
-                                <div class="col-md-6 col-sm-12 col-xs-12" style="margin-left: 0px; padding-left: 0px; margin-right: 0px; padding-right: 0px">
+                                <div class="col-md-1 col-sm-12 col-xs-12" style="margin-left: 0px; padding-left: 0px;margin-right: 0px; padding-right: 0px;">
+                                    {{--<button class="btn pull-left" style="border: none; background: #ffffff;">to</button><br>--}}
+                                    <div class="" style="text-align: center; padding:5px">to</div>
+                                </div>
+                                <div class="col-md-5 col-sm-12 col-xs-12" style="margin-right: 0px; padding-right: 0px;margin-left: 0px; padding-left: 0px">
                                     <input type="text" name="to_date" id="to_date" class="form-control"
                                            placeholder="To Date" ng-model="to_date" ng-change="resetValues()">
                                 </div>
