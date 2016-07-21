@@ -30,7 +30,9 @@
                 console.log(response.data);
                 $scope.loadingAnsar = false;
             }, function (response) {
+                //console.log(response)
                 $scope.loadingAnsar = false;
+                $scope.errorAllAnsar = response.data;
             })
         }
         $scope.loadAnsar();
@@ -63,6 +65,7 @@
                 $scope.loadingProgressInfo = false;
             }, function (response) {
                 $scope.loadingProgressInfo = false;
+
             })
         }
         $scope.progressData();
@@ -73,15 +76,6 @@
             $scope.graphData=response.data
         })
         $scope.graphDisembodiment = [];
-        {{--$scope.graphDisembodimentData = function () {--}}
-            {{--$http({--}}
-                {{--url: "{{URL::to('graph_disembodiment')}}",--}}
-                {{--method: 'get',--}}
-            {{--}).then(function (response) {--}}
-                {{--$scope.graphData.push({d:response.data})--}}
-            {{--})--}}
-        {{--}--}}
-        {{--$scope.graphDisembodimentData();--}}
     })
     GlobalApp.directive('graph', function () {
         return{
@@ -147,9 +141,12 @@
         <div class="col-md-4 col-sm-6 col-xs-12">
             <div class="info-box bg-aqua"><span class="info-box-icon"><img src="{{asset('dist/img/ansars.png')}}"></span>
 
-                <div class="info-box-content"><span class="info-box-text">Total Ansar</span> <span
-                            class="info-box-number"><a href="{{URL::to('HRM/show_ansar_list')}}/all_ansar" class="btn-link" style="color: #FFFFFF !important;" >[[allAnsar.totalAnsar]]</a>
-                        <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar"></span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Total Ansar</span>
+                    <span class="info-box-number">
+                        <a href="{{URL::to('HRM/show_ansar_list')}}/all_ansar" class="btn-link" style="color: #FFFFFF !important;" >[[allAnsar.totalAnsar]]</a>
+                        <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
+                    </span>
 
                     <div class="progress">
                         <div class="progress-bar" style="width: 70%"></div>

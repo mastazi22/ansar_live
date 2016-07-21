@@ -153,8 +153,7 @@
             <div class="info-box bg-aqua"><span class="info-box-icon"><img src="{{asset('dist/img/not_verified.png')}}"></span>
 
                 <div class="info-box-content">
-                    <a href="{{URL::to('HRM/show_ansar_list')}}/not_verified_ansar"
-                       class="btn-link" style="color: #FFFFFF !important;">
+                    <a href="{{URL::to('HRM/show_ansar_list')}}/not_verified_ansar" class="btn-link" style="color: #FFFFFF !important;">
                         <span class="info-box-text">Total Unverified</span>
                     <span class="info-box-number" style="font-weight: normal">[[allAnsar.totalNotVerified]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
