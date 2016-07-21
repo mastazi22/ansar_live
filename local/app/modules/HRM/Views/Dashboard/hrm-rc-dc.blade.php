@@ -31,6 +31,17 @@
                 $scope.loadingAnsar = false;
             }, function (response) {
                 $scope.loadingAnsar = false;
+                $scope.allAnsar = {
+                    totalAnsar:response.data,
+                    totalPanel:response.data,
+                    totalEmbodiedOwn:response.data,
+                    totalOffered:response.data,
+                    totalFreeze:response.data,
+                    totalBlockList:response.data,
+                    totalBlackList:response.data,
+                    totalRest:response.data,
+                    totalEmbodiedDiff:response.data,
+                }
             })
         }
         $scope.loadAnsar();
@@ -47,6 +58,18 @@
 //                $scope.loadingAnsar = false;
             }, function (response) {
 //                $scope.loadingAnsar = false;
+                $scope.recentAnsar = {
+                    recentAnsar:response.data,
+                    recentPanel:response.data,
+                    recentEmbodiedDiff:response.data,
+                    recentEmbodiedOwn:response.data,
+                    recentFreeze:response.data,
+                    recentBlockList:response.data,
+                    recentBlackList:response.data,
+                    recentRest:response.data,
+                    recentOffered:response.data
+
+                }
             })
         }
         $scope.loadRecentAnsar();
@@ -63,6 +86,12 @@
                 $scope.loadingProgressInfo = false;
             }, function (response) {
                 $scope.loadingProgressInfo = false;
+                $scope.progressInfo = {
+                    totalServiceEndedInThreeYears:response.data,
+                    totalAnsarReachedFiftyYearsOfAge:response.data,
+                    totalNotInterestedMembersUptoTenTimes:response.data,
+
+                }
             })
         }
         $scope.progressData();
@@ -217,10 +246,9 @@
                     <div class="progress">
                         <div class="progress-bar" style="width: 70%"></div>
                     </div>
-                    <a
-                            href="{{URL::to('HRM/show_recent_ansar_list')}}/own_embodied_ansar"
+                    <a href="{{URL::to('HRM/show_recent_ansar_list')}}/own_embodied_ansar"
                             style="color:#FFFFFF" class="btn-link">
-                        <span class="progress-description">Recent-[[recentAnsar.recentEmbodied]]</span></a>
+                        <span class="progress-description">Recent-[[recentAnsar.recentEmbodiedOwn]]</span></a>
                 </div>
                 <!-- /.info-box-content -->
             </div>
@@ -247,7 +275,7 @@
                     <a
                             href="{{URL::to('HRM/show_recent_ansar_list')}}/embodied_ansar_in_different_district"
                             style="color:#FFFFFF" class="btn-link">
-                        <span class="progress-description">Recent-[[recentAnsar.recentEmbodied]]</span></a>
+                        <span class="progress-description">Recent-[[recentAnsar.recentEmbodiedDiff]]</span></a>
                 </div>
                 <!-- /.info-box-content -->
             </div>
@@ -376,63 +404,6 @@
             </div>
             <!-- /.info-box -->
         </div>
-
-
-        {{--<div class="col-md-4 col-sm-6 col-xs-12">--}}
-        {{--<div class="info-box bg-aqua"><span class="info-box-icon"><img src="{{asset('dist/img/not_verified.png')}}"></span>--}}
-
-        {{--<div class="info-box-content"><span class="info-box-text">Total Not Verified</span> <span--}}
-        {{--class="info-box-number"><a href="{{URL::to('/show_ansar_list')}}/not_verified_ansar" class="btn-link" style="color: #FFFFFF !important;">[[allAnsar.totalNotVerified]]</a>--}}
-        {{--<img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar"></span>--}}
-
-        {{--<div class="progress">--}}
-        {{--<div class="progress-bar" style="width: 70%"></div>--}}
-        {{--</div>--}}
-        {{--<span class="progress-description"><a href="{{URL::to('/show_recent_ansar_list')}}/not_verified_ansar" class="btn-link" style="color:#FFFFFF">Recent-[[recentAnsar.recentNotVerified]]</a></span></div>--}}
-        {{--<!-- /.info-box-content -->--}}
-        {{--</div>--}}
-        {{--<!-- /.info-box -->--}}
-        {{--</div>--}}
-
-        {{--<!-- /.col -->--}}
-
-        {{--<!-- /.col -->--}}
-        {{----}}
-        {{--<!-- /.col -->--}}
-        {{--<div class="col-md-4 col-sm-6 col-xs-12">--}}
-        {{--<div class="info-box bg-aqua"><span class="info-box-icon"><img src="{{asset('dist/img/free.png')}}"></span>--}}
-
-        {{--<div class="info-box-content"><span class="info-box-text">Total Free status</span> <span--}}
-        {{--class="info-box-number"><a href="{{URL::to('/show_ansar_list')}}/free_ansar" class="btn-link" style="color: #FFFFFF !important;">[[allAnsar.totalFree]]</a>--}}
-        {{--<img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar"></span>--}}
-
-        {{--<div class="progress">--}}
-        {{--<div class="progress-bar" style="width: 70%"></div>--}}
-        {{--</div>--}}
-        {{--<span class="progress-description"><a href="{{URL::to('/show_recent_ansar_list')}}/free_ansar" style="color:#FFFFFF" class="btn-link">Recent-[[recentAnsar.recentFree]]</a></span></div>--}}
-        {{--<!-- /.info-box-content -->--}}
-        {{--</div>--}}
-        {{--<!-- /.info-box -->--}}
-        {{--</div>--}}
-        {{--<!-- /.col -->--}}
-        {{--<!-- /.col -->--}}
-
-        {{----}}
-        {{--<!-- /.col -->--}}
-        {{--<div class="col-md-4 col-sm-6 col-xs-12">--}}
-        {{--<div class="info-box bg-aqua"> <span class="info-box-icon"><i class="fa fa-exclamation-circle"></i></span>--}}
-        {{--<div class="info-box-content"> <span class="info-box-text">Total Not Verified (Status Free)</span> <span class="info-box-number">322</span>--}}
-        {{--<div class="progress">--}}
-        {{--<div class="progress-bar" style="width: 70%"></div>--}}
-        {{--</div>--}}
-        {{--<span class="progress-description">70% Increase in 30 Days </span> </div>--}}
-        {{--<!-- /.info-box-content -->--}}
-        {{--</div>--}}
-        {{--<!-- /.info-box -->--}}
-        {{--</div>--}}
-        <!-- /.col -->
-
-        <!-- /.col -->
     </div>
     <!-- /.row -->
     <!-- =========================================================== -->
@@ -451,7 +422,7 @@
                         </div>
 
                         <div class="label-hrm-calculation">
-                                <span class="info-box-number"
+                                <span class="info-box-text"
                                       style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial"><a
                                             href="{{URL::to('HRM/service_ended_in_three_years')}}/[[progressInfo.totalServiceEndedInThreeYears]]"
                                             class="btn-link">[[progressInfo.totalServiceEndedInThreeYears]]</a><img
@@ -468,7 +439,7 @@
                         </div>
 
                         <div class="label-hrm-calculation">
-                            <span class="info-box-number" style="color: #000000"><a
+                            <span class="info-box-text" style="color: #000000"><a
                                         href="{{URL::to('HRM/ansar_reached_fifty_years')}}/[[progressInfo.totalAnsarReachedFiftyYearsOfAge]]"
                                         class="btn-link">[[progressInfo.totalAnsarReachedFiftyYearsOfAge]]</a><img
                                         src="{{asset('dist/img/facebook.gif')}}" width="20"
@@ -483,7 +454,7 @@
                         </div>
 
                         <div class="label-hrm-calculation">
-                            <span class="info-box-number" style="color: #000000"><a
+                            <span class="info-box-text" style="color: #000000"><a
                                         href="{{URL::to('HRM/ansar_not_interested')}}/[[progressInfo.totalNotInterestedMembersUptoTenTimes]]"
                                         class="btn-link">[[progressInfo.totalNotInterestedMembersUptoTenTimes]]</a><img
                                         src="{{asset('dist/img/facebook.gif')}}" width="20"
@@ -491,26 +462,6 @@
                         </div>
                         <br style="clear: left;"/>
                     </div>
-                    {{--<div class="progress">--}}
-                    {{--<div class="progress-bar progress-bar-green" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">--}}
-                    {{--<span class="sr-only">40% Complete (success)</span>--}}
-                    {{--</div>--}}
-                    {{--</div>--}}
-                    {{--<div class="progress">--}}
-                    {{--<div class="progress-bar progress-bar-aqua" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">--}}
-                    {{--<span class="sr-only">20% Complete</span>--}}
-                    {{--</div>--}}
-                    {{--</div>--}}
-                    {{--<div class="progress">--}}
-                    {{--<div class="progress-bar progress-bar-yellow" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">--}}
-                    {{--<span class="sr-only">60% Complete (warning)</span>--}}
-                    {{--</div>--}}
-                    {{--</div>--}}
-                    {{--<div class="progress">--}}
-                    {{--<div class="progress-bar progress-bar-red" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">--}}
-                    {{--<span class="sr-only">80% Complete</span>--}}
-                    {{--</div>--}}
-                    {{--</div>--}}
                 </div>
                 <!-- /.box-body -->
             </div>
