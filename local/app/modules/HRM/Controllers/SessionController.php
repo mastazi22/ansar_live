@@ -27,10 +27,10 @@ class SessionController extends Controller
     public function saveSessionEntry(Request $request)
     {
         $rules = array(
-            'session_year' => 'required',
-            'session_start_month' => 'required',
-            'session_end_month' => 'required',
-            'session_name' => 'required',
+            'session_year' => 'required|numeric|min:2016|max:3000',
+            'session_start_month' => 'required|regex:/[A-Z]([a-z]+)/|min:1|max:9',
+            'session_end_month' => 'required|regex:/[A-Z]([a-z]+)/|min:1|max:9',
+            'session_name' => 'required|regex:/[0-9]{4}\-[0-9]{4}/'
         );
         $validation = Validator::make(Input::all(), $rules);
 
@@ -50,7 +50,7 @@ class SessionController extends Controller
                 return $e->getMessage();
             }
 
-            return Redirect::route('view_session_list')->with('success_message', 'New Session is Entered successfully');
+            return Redirect::route('view_session_list')->with('success_message', 'New Session is Entered Successfully!');
         } else {
             return Redirect::route('create_session')->withInput(Input::all())->withErrors($validation);
         }
@@ -76,18 +76,14 @@ class SessionController extends Controller
     public function sessionUpdate(Request $request)
     {
         $id = $request->input('id');
+
         $rules = array(
-            'session_year' => 'different:select-year',
-            'session_start_month' => 'different:select-start-month',
-            'session_end_month' => 'different:select-end-month',
-            'session_name' => 'required',
+            'session_year' => 'required|numeric|min:2016|max:3000',
+            'session_start_month' => 'required|regex:/[A-Z]([a-z]+)/|min:1|max:9',
+            'session_end_month' => 'required|regex:/[A-Z]([a-z]+)/|min:1|max:9',
+            'session_name' => 'required|regex:/[0-9]{4}\-[0-9]{4}/',
         );
-        $messages = array(
-            'session_year.different' => 'The session year field is required.',
-            'session_start_month.different' => 'The session start month field is required.',
-            'session_end_month.different' => 'The session end month field is required.',
-        );
-        $validation = Validator::make(Input::all(), $rules, $messages);
+        $validation = Validator::make(Input::all(), $rules);
 
         if (!$validation->fails()) {
             DB::beginTransaction();
@@ -104,7 +100,7 @@ class SessionController extends Controller
                 DB::rollback();
                 return $e->getMessage();
             }
-            return Redirect::to('HRM/session_view?page=' . $request->input('page'))->with('success_message', 'New Session is Updated successfully');
+            return Redirect::to('HRM/session_view?page=' . $request->input('page'))->with('success_message', 'New Session is Updated Successfully!');
         } else {
             return Redirect::back()->withInput(Input::all())->withErrors($validation);
         }

@@ -19,7 +19,7 @@
         <section class="content">
             <div class="row">
                 <!-- left column -->
-                <div class="col-lg-6 col-centered">
+                <div class="col-lg-8 col-centered">
 
                     <!-- general form elements -->
 
@@ -29,7 +29,7 @@
 
                         <div class="box-body">
 
-                            {!! Form::open(array('url' => 'session-update', 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => 'HRM/session-update', 'class' => 'form-horizontal')) !!}
                             <div class="box-body">
                                 <input type="hidden" value="{{$page}}" name="page">
                                 <div class="form-group">
@@ -40,11 +40,11 @@
                                             <span class="input-group-addon glyphicon glyphicon-calendar"></span>
                                             <input type="hidden" name="select-year" value="selectyear">
                                             <select class="form-control" id="session_year" name="session_year">
-                                                <option value="selectyear">--Select Year--</option>
+                                                <option value="">--Select Year--</option>
                                                 <?php
-                                                $year=1990;
+                                                $year=2016;
 
-                                                while ( $year<= 2050) {
+                                                while ( $year<= 3000) {
                                                 ?>
                                                 <option value="{{$year}}" <?php if(Request::old('session_year')){ if(Request::old('session_year')==$year) echo 'selected'; } else if($session_info->session_year==$year){ echo 'selected';} ; ?>><?php echo $year; ?></option>
 
@@ -69,7 +69,7 @@
                                             <span class="input-group-addon glyphicon glyphicon-calendar"></span>
                                             <input type="hidden" name="select-start-month" value="selectstartsession">
                                             <select class="form-control" id="session_start_month" name="session_start_month">
-                                                <option value="selectstartsession">--Select Starting Month--</option>
+                                                <option value="">--Select Starting Month--</option>
                                                 <option value="January" <?php if(Request::old('session_start_month')){ if(Request::old('session_start_month')=="January") echo 'selected'; } else if($session_info->session_start_month=="January"){ echo 'selected';} ; ?>>January</option>
                                                 <option value="February" <?php if(Request::old('session_start_month')){ if(Request::old('session_start_month')=="February") echo 'selected'; } else if($session_info->session_start_month=="February"){ echo 'selected';} ; ?>>February</option>
                                                 <option value="March" <?php if(Request::old('session_start_month')){ if(Request::old('session_start_month')=="March") echo 'selected'; } else if($session_info->session_start_month=="March"){ echo 'selected';} ; ?>>March</option>
@@ -97,7 +97,7 @@
                                             <!-- <span class="glyphicons glyphicons-calendar">î?†</span> -->
                                             <input type="hidden" name="select-end-month" value="selectendsession">
                                             <select class="form-control" id="session_end_month" name="session_end_month">
-                                                <option value="selectendsession">--Select Ending Month--</option>
+                                                <option value="">--Select Ending Month--</option>
                                                 <option value="January" <?php if(Request::old('session_end_month')){ if(Request::old('session_end_month')=="January") echo 'selected'; } else if($session_info->session_end_month=="January"){ echo 'selected';} ; ?>>January</option>
                                                 <option value="February" <?php if(Request::old('session_end_month')){ if(Request::old('session_end_month')=="February") echo 'selected'; } else if($session_info->session_end_month=="February"){ echo 'selected';} ; ?>>February</option>
                                                 <option value="March" <?php if(Request::old('session_end_month')){ if(Request::old('session_end_month')=="March") echo 'selected'; } else if($session_info->session_end_month=="March"){ echo 'selected';} ; ?>>March</option>

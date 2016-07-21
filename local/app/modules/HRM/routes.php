@@ -112,11 +112,11 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         //SESSION
 
         Route::get('/session', ['as' => 'create_session', 'uses' => 'SessionController@index']);
-        Route::post('/save-session-entry', 'SessionController@saveSessionEntry');
+        Route::post('/save-session-entry', ['as' => 'save-session-entry', 'uses' => 'SessionController@saveSessionEntry']);
         Route::get('/session_view', ['as' => 'view_session_list', 'uses' => 'SessionController@sessionView']);
         Route::get('/session-delete/{id}', ['as' => 'delete_session', 'uses' => 'SessionController@sessionDelete']);
         Route::get('/session-edit/{id}/{page}', ['as' => 'edit_session', 'uses' => 'SessionController@sessionEdit']);
-        Route::post('/session-update', 'SessionController@sessionUpdate');
+        Route::post('/session-update', ['as' => 'session-update', 'uses' => 'SessionController@sessionUpdate']);
         route::get('/session_name', 'SessionController@SessionName');
 
         //END SESSION
