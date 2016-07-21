@@ -3,7 +3,7 @@
 {{--Time: 11:37 AM--}}
 
 @extends('template.master')
-@section('title','Service Extension for Ansar')
+@section('title','Service Extension')
 @section('breadcrumb')
     {!! Breadcrumbs::render('service_extension') !!}
 @endsection

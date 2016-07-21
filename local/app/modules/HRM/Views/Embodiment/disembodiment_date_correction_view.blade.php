@@ -3,7 +3,7 @@
 {{--Time: 11:02 AM--}}
 
 @extends('template.master')
-@section('title','Dis-Embodiment Date Correction')
+@section('title','Disembodiment Date Correction')
 @section('breadcrumb')
     {!! Breadcrumbs::render('disembodiment_date_correction') !!}
 @endsection

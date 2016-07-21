@@ -3,7 +3,7 @@
 {{--Time: 11:00 AM--}}
 
 @extends('template.master')
-@section('title','New Dis-Embodiment')
+@section('title','Disembodiment')
 @section('breadcrumb')
     {!! Breadcrumbs::render('disembodiment_entry') !!}
 @endsection

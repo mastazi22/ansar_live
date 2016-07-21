@@ -3,7 +3,7 @@
 {{--Time: 2:17 PM--}}
 
 @extends('template.master')
-@section('title','Freeze for disciplinary action')
+@section('title','Freeze for Disciplinary Action')
 @section('breadcrumb')
     {!! Breadcrumbs::render('freeze') !!}
 @endsection

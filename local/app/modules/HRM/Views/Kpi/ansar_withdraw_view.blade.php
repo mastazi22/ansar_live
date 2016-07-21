@@ -3,7 +3,7 @@
 {{--Time: 10:49 AM--}}
 
 @extends('template.master')
-@section('title','Ansar Withdraw')
+@section('title','Withdraw Ansar')
 @section('breadcrumb')
     {!! Breadcrumbs::render('ansar_withdraw_view') !!}
     @endsection

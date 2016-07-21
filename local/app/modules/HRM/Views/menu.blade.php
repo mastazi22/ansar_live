@@ -46,7 +46,7 @@
                     <li ng-if="checkMenu('ansar-withdraw-view')">
                         <a href="{{URL::route('ansar-withdraw-view')}}">
                             <i class="fa fa-users"></i>
-                            <span>Ansar Withdraw</span>
+                            <span>Withdraw Ansar</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu(ansar_before_withdraw_view)">
@@ -70,13 +70,13 @@
                     <li ng-if="checkMenu('kpi-withdraw-view')">
                         <a href="{{URL::route('kpi-withdraw-view')}}">
                             <i class="fa fa-users"></i>
-                            <span>KPI Withdraw</span>
+                            <span>Withdraw KPI</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('withdrawn_kpi_list')">
                         <a href="{{URL::route('withdrawn_kpi_view')}}">
                             <i class="fa fa-users"></i>
-                            <span>KPI Withdraw Date Update</span>
+                            <span>KPI Withdrawal Date Update</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('inactive_kpi_list')">
@@ -88,7 +88,7 @@
                     <li ng-if="checkMenu('kpi_withdraw_cancel_view')">
                         <a href="{{URL::route('kpi_withdraw_cancel_view')}}">
                             <i class="fa fa-users"></i>
-                            <span>KPI Withdraw Cancel</span>
+                            <span>Cancel KPI Withdrawal</span>
                         </a>
                     </li>
                 </ul>
@@ -185,7 +185,7 @@
                             <li ng-if="checkMenu('go_to_new_disembodiment_page')">
                                 <a href="{{URL::route('go_to_new_disembodiment_page')}}">
                                     <i class="fa fa-users"></i>
-                                    <span>Dis-Embodiment</span>
+                                    <span>Disembodiment</span>
                                 </a>
                             </li>
                             <?php $user_type = Auth::user()->type;
@@ -228,7 +228,7 @@
                                     <li ng-if="checkMenu('freeze_list')">
                                         <a href="{{URL::route('freeze_list')}}">
                                             <i class="fa fa-users"></i>
-                                            <span>After Result of Freeze</span>
+                                            <span>After Result of Freezing</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -280,7 +280,7 @@
                     <li ng-if="checkMenu('transfer_process')">
                         <a href="{{URL::route('transfer_process')}}">
                             <i class="fa fa-users"></i>
-                            <span>Ansar Transfer</span>
+                            <span>Transfer Ansars</span>
                         </a>
                     </li>
                 </ul>

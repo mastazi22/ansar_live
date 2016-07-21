@@ -3,7 +3,7 @@
 {{--Time: 12:52 PM--}}
 
 @extends('template.master')
-@section('title','Kpi Withdraw Date Update')
+@section('title','KPI Withdrawal Date Update')
 @section('breadcrumb')
     {!! Breadcrumbs::render('withdrawn_kpi_list') !!}
 @endsection

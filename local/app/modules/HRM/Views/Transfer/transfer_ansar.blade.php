@@ -1,7 +1,7 @@
 {{--Ansar Transfer Complete--}}
 
 @extends('template.master')
-@section('title','Ansar Transfer')
+@section('title','Transfer Ansars')
 @section('breadcrumb')
     {!! Breadcrumbs::render('transfer') !!}
 @endsection
@@ -375,7 +375,7 @@
                 <div class="box-body">
                     <div class="row" style="padding-bottom: 10px">
                         <div class="col-md-4">
-                            <label class="control-label"> Select a district&nbsp;&nbsp;&nbsp;<i
+                            <label class="control-label"> Select a District&nbsp;&nbsp;&nbsp;<i
                                         class="fa fa-spinner fa-pulse" ng-show="loadingThana[0]"></i></label>
                             <select class="form-control" ng-model="selectedDistrict[0]"
                                     ng-disabled="loadingAnsar||loadingThana[0]||loadingKPI[0]"
@@ -397,12 +397,12 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="control-label"> Select a Kpi&nbsp;&nbsp;&nbsp;<i
+                            <label class="control-label"> Select a KPI&nbsp;&nbsp;&nbsp;<i
                                         class="fa fa-spinner fa-pulse" ng-show="loadingAnsar"></i></label>
                             <select class="form-control"
                                     ng-disabled="loadingAnsar||loadingThana[0]||loadingKPI[0]"
                                     ng-model="selectedKPI[0]" ng-change="loadAnsar()">
-                                <option value="">--Select a Kpi--</option>
+                                <option value="">--Select a KPI--</option>
                                 <option ng-repeat="d in allKPI[0]" value="[[d.id]]">[[d.kpi_name]]
                                 </option>
                             </select>

@@ -48,7 +48,7 @@ Breadcrumbs::register('kpi_edit', function($breadcrumbs,$id) {
 });
 Breadcrumbs::register('ansar_withdraw_view', function($breadcrumbs) {
     $breadcrumbs->parent('kpi');
-    $breadcrumbs->push('Ansar Withdraw', URL::route('ansar-withdraw-view'));
+    $breadcrumbs->push('Withdraw Ansar', URL::route('ansar-withdraw-view'));
 });
 Breadcrumbs::register('ansar_before_withdraw_list', function($breadcrumbs) {
     $breadcrumbs->parent('kpi');
@@ -64,15 +64,15 @@ Breadcrumbs::register('ansar_before_reduce_list', function($breadcrumbs) {
 });
 Breadcrumbs::register('withdraw_kpi', function($breadcrumbs) {
     $breadcrumbs->parent('kpi');
-    $breadcrumbs->push('KPI Withdraw', URL::route('kpi-withdraw-view'));
+    $breadcrumbs->push('Withdraw KPI', URL::route('kpi-withdraw-view'));
 });
 Breadcrumbs::register('withdrawn_kpi_list', function($breadcrumbs) {
     $breadcrumbs->parent('kpi');
-    $breadcrumbs->push('KPI Withdraw Date Update', URL::route('withdrawn_kpi_view'));
+    $breadcrumbs->push('KPI Withdrawal Date Update', URL::route('withdrawn_kpi_view'));
 });
 Breadcrumbs::register('kpi_withdraw_cancel', function($breadcrumbs) {
     $breadcrumbs->parent('kpi');
-    $breadcrumbs->push('Kpi Withdraw Cancel', URL::to('kpi_withdraw_cancel_view'));
+    $breadcrumbs->push('Cancel KPI Withdrawal', URL::to('kpi_withdraw_cancel_view'));
 });
 Breadcrumbs::register('inactive_kpi_list', function($breadcrumbs) {
     $breadcrumbs->parent('kpi');
@@ -169,7 +169,7 @@ Breadcrumbs::register('embodiment_entry', function($breadcrumbs) {
 });
 Breadcrumbs::register('disembodiment_entry', function($breadcrumbs) {
     $breadcrumbs->parent('embodiment');
-    $breadcrumbs->push('Dis-Embodiment Entry', URL::route('go_to_new_disembodiment_page'));
+    $breadcrumbs->push('Disembodiment', URL::route('go_to_new_disembodiment_page'));
 });
 Breadcrumbs::register('service_extension', function($breadcrumbs) {
     $breadcrumbs->parent('embodiment');
@@ -181,7 +181,7 @@ Breadcrumbs::register('disembodiment_date_correction', function($breadcrumbs) {
 });
 Breadcrumbs::register('embodiment_memorandum_id_correction_view', function($breadcrumbs) {
     $breadcrumbs->parent('embodiment');
-    $breadcrumbs->push('Embodiment Memorandum Id Correction', URL::to('embodiment_memorandum_id_correction_view'));
+    $breadcrumbs->push('Embodiment Memorandum ID Correction', URL::to('embodiment_memorandum_id_correction_view'));
 });
 Breadcrumbs::register('fr', function($breadcrumbs) {
     $breadcrumbs->parent('hrm');
@@ -189,7 +189,7 @@ Breadcrumbs::register('fr', function($breadcrumbs) {
 });
 Breadcrumbs::register('freeze', function($breadcrumbs) {
     $breadcrumbs->parent('fr');
-    $breadcrumbs->push('Freeze for disciplinary action', URL::route('freeze_view'));
+    $breadcrumbs->push('Freeze for Disciplinary Action', URL::route('freeze_view'));
 });
 //Breadcrumbs::register('freeze_view', function($breadcrumbs) {
 //    $breadcrumbs->parent('freeze');
@@ -197,7 +197,7 @@ Breadcrumbs::register('freeze', function($breadcrumbs) {
 //});
 Breadcrumbs::register('freezelist', function($breadcrumbs) {
     $breadcrumbs->parent('fr');
-    $breadcrumbs->push('After Result of Freeze', URL::route('freeze_list'));
+    $breadcrumbs->push('After Result of Freezing', URL::route('freeze_list'));
 });
 ////Blocklist
 Breadcrumbs::register('blocklist', function($breadcrumbs) {
@@ -228,7 +228,7 @@ Breadcrumbs::register('cancel_blacklist', function($breadcrumbs) {
 ////Transfer
 Breadcrumbs::register('transfer', function($breadcrumbs) {
     $breadcrumbs->parent('service');
-    $breadcrumbs->push('Ansar Transfer', URL::route('transfer_process'));
+    $breadcrumbs->push('Transfer Ansars', URL::route('transfer_process'));
 });
 //Report
 Breadcrumbs::register('report', function($breadcrumbs) {

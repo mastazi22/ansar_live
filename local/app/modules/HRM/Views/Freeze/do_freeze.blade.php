@@ -13,7 +13,7 @@
     <section class="content">
         <div class="row" style="height: 100%">
             <div style="width:50%;margin:0 auto;">
-                <h2 style="text-align: center;">Freeze for disciplinary action</h2>
+                <h2 style="text-align: center;">Freeze for Disciplinary Action</h2>
                 <div class="box">
                     <div class="box-body">
                         @if(Session::has('success_message'))

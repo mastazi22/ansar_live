@@ -3,7 +3,7 @@
 {{--Time: 01:58 PM--}}
 
 @extends('template.master')
-@section('title','Inactive Kpi List')
+@section('title','Inactive KPI List')
 @section('breadcrumb')
     {!! Breadcrumbs::render('inactive_kpi_list') !!}
 @endsection
