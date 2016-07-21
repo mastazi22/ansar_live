@@ -238,7 +238,7 @@
         //alert(p.text())
         p.parents('li').eq(0).parents('ul').eq(0).addClass('menu-open').css('display','block');
         if(p.parents('li').length>1){
-            p.parents('li').eq(0).addClass('active-submenu');
+            if(p.parents('li').parents('ol').length<=0)p.parents('li').eq(0).addClass('active-submenu');
             p.parents('li').not(':eq(0)').addClass('active');
         }
         else{

@@ -73,6 +73,11 @@
                     $scope.numOfPage = Math.ceil($scope.total/$scope.itemPerPage);
                     $scope.loadPagination();
                     //alert($scope.total)
+                }, function (response) {
+                    $scope.total = 0;
+                    $scope.ansars = $sce.trustAsHtml(response.data);
+                    $scope.allLoading = false;
+                    $scope.pages = [];
                 })
             }
             $scope.filterMiddlePage = function (value, index, array) {
@@ -157,7 +162,7 @@
                             </tr>
                             <tbody ng-bind-html="ansars">
                             <tr>
-                                <td class="warning" colspan="7">No Ansar Found</td>
+                                <td class="warning" colspan="8">No Ansar Found</td>
                             </tr>
                             </tbody>
                         </table>

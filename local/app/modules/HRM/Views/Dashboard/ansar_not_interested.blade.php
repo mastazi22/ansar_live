@@ -74,6 +74,11 @@
                     $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
                     $scope.loadPagination();
                     //alert($scope.total)
+                }, function (response) {
+                    $scope.total = 0;
+                    $scope.ansars = $sce.trustAsHtml(response.data);
+                    $scope.allLoading = false;
+                    $scope.pages = [];
                 })
             }
             $scope.filterMiddlePage = function (value, index, array) {

@@ -31,6 +31,14 @@
                 $scope.loadingAnsar = false;
             }, function (response) {
                 $scope.loadingAnsar = false;
+                switch (response.status){
+                    case 404:
+                        response.data = "Not found(404)";
+                        break;
+                    case 500:
+                        response.data = "Server error(500)";
+                        break;
+                }
                 $scope.allAnsar = {
                     totalAnsar:response.data,
                     totalPanel:response.data,
@@ -58,6 +66,15 @@
 //                $scope.loadingAnsar = false;
             }, function (response) {
 //                $scope.loadingAnsar = false;
+                console.log(response)
+                switch (response.status){
+                    case 404:
+                        response.data = "Not found(404)";
+                        break;
+                    case 500:
+                        response.data = "Server error(500)";
+                        break;
+                }
                 $scope.recentAnsar = {
                     recentAnsar:response.data,
                     recentPanel:response.data,
@@ -86,6 +103,14 @@
                 $scope.loadingProgressInfo = false;
             }, function (response) {
                 $scope.loadingProgressInfo = false;
+                switch (response.status){
+                    case 404:
+                        response.data = "Not found(404)";
+                        break;
+                    case 500:
+                        response.data = "Server error(500)";
+                        break;
+                }
                 $scope.progressInfo = {
                     totalServiceEndedInThreeYears:response.data,
                     totalAnsarReachedFiftyYearsOfAge:response.data,

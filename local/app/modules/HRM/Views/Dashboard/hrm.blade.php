@@ -31,6 +31,26 @@
                 $scope.loadingAnsar = false;
             }, function (response) {
                 $scope.loadingAnsar = false;
+                switch (response.status){
+                    case 404:
+                        response.data = "Not found(404)";
+                        break;
+                    case 500:
+                        response.data = "Server error(500)";
+                        break;
+                }
+                $scope.allAnsar = {
+                    totalAnsar:response.data,
+                    totalPanel:response.data,
+                    totalNotVerified:response.data,
+                    totalFree:response.data,
+                    totalEmbodied:response.data,
+                    totalOffered:response.data,
+                    totalFreeze:response.data,
+                    totalBlockList:response.data,
+                    totalBlackList:response.data,
+                    totalRest:response.data,
+                }
             })
         }
         $scope.loadAnsar();
@@ -47,6 +67,27 @@
 //                $scope.loadingAnsar = false;
             }, function (response) {
 //                $scope.loadingAnsar = false;
+                switch (response.status){
+                    case 404:
+                        response.data = "Not found(404)";
+                        break;
+                    case 500:
+                        response.data = "Server error(500)";
+                        break;
+                }
+                $scope.recentAnsar = {
+                    recentAnsar:response.data,
+                    recentPanel:response.data,
+                    recentNotVerified:response.data,
+                    recentFree:response.data,
+                    recentEmbodied:response.data,
+                    recentFreeze:response.data,
+                    recentBlockList:response.data,
+                    recentBlackList:response.data,
+                    recentRest:response.data,
+                    recentOffered:response.data
+
+                }
             })
         }
         $scope.loadRecentAnsar();
@@ -63,6 +104,20 @@
                 $scope.loadingProgressInfo = false;
             }, function (response) {
                 $scope.loadingProgressInfo = false;
+                switch (response.status){
+                    case 404:
+                        response.data = "Not found(404)";
+                        break;
+                    case 500:
+                        response.data = "Server error(500)";
+                        break;
+                }
+                $scope.progressInfo = {
+                    totalServiceEndedInThreeYears:response.data,
+                    totalAnsarReachedFiftyYearsOfAge:response.data,
+                    totalNotInterestedMembersUptoTenTimes:response.data,
+
+                }
             })
         }
         $scope.progressData();
@@ -71,6 +126,8 @@
             method: 'get',
         }).then(function (response) {
             $scope.graphData = response.data
+        }, function (response) {
+            $scope.graphData = [];
         })
         $scope.graphDisembodiment = [];
         {{--$scope.graphDisembodimentData = function () {--}}

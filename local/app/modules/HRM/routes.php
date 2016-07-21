@@ -16,7 +16,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/graph_embodiment', ['as' => 'graph_embodiment', 'uses' => 'HrmController@graphEmbodiment']);
         Route::get('/graph_disembodiment', ['as' => 'graph_disembodiment', 'uses' => 'HrmController@graphDisembodiment']);
 //        Route::get('getrecentansar', ['as' => 'recent_ansar', 'uses' => 'HrmController@getRecentAnsar']);
-        Route::get('/show_ansar_list/{type}', ['as' => 'show_ansar_list', 'uses' => 'HrmController@showAnsarList']);
+        Route::get('/show_ansar_list/{type}', ['as' => 'show_ansar_list', 'uses' => 'HrmController@showAnsarList'])->where('type','^[a-z]+(_[a-z]+)+$');
         Route::get('/get_ansar_list', ['as' => 'get_ansar_list', 'uses' => 'HrmController@getAnsarList']);
         Route::get('/service_ended_in_three_years/{count}', ['as' => 'service_ended_in_three_years', 'uses' => 'HrmController@showAnsarForServiceEnded'])->where('count','[0-9]+');
         Route::get('/service_ended_info_details', ['as' => 'service_ended_info_details', 'uses' => 'HrmController@serviceEndedInfoDetails']);
@@ -39,7 +39,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         //ANSAR ENTRY
 
         Route::get('entrylist', ['as' => 'anser_list', 'uses' => 'EntryFormController@entrylist']);
-        Route::get('/entryreport/{ansarid}', ['as' => 'entry_report', 'uses' => 'EntryFormController@entryReport']);
+        Route::get('/entryreport/{ansarid}', ['as' => 'entry_report', 'uses' => 'EntryFormController@entryReport'])->where('ansarid','[0-9]+');
         Route::get('entryform', ['as' => 'ansar_registration', 'uses' => 'EntryFormController@entryform']);
         Route::get('ansar_rank', ['as' => 'ansar_rank', 'uses' => 'FormSubmitHandler@getAnsarRank']);
         Route::post('handleregistration', 'FormSubmitHandler@handleregistration');

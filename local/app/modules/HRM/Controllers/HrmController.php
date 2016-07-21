@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 
 class HrmController extends Controller
@@ -261,6 +262,21 @@ class HrmController extends Controller
         $thana = Input::get('thana');
         $division = Input::get('division');
         $view = Input::get('view');
+        $rules = [
+            'type'=>'regex:/[a-z]+/',
+            'view'=>'regex:/[a-z]+/',
+            'limit'=>'numeric',
+            'offset'=>'numeric',
+            'thana'=>['regex:/^(all)$|^[0-9]+$/'],
+            'unit'=>['regex:/^(all)$|^[0-9]+$/'],
+            'division'=>['regex:/^(all)$|^[0-9]+$/'],
+        ];
+        $valid = Validator::make(Input::all(),$rules);
+
+        if($valid->fails()){
+            //return print_r($valid->messages());
+            return response("<tr class='warning'><td colspan='7'>Invalid Request(400)</td></tr>",400,['Content-Type:text/HTML']);
+        }
         if (strcasecmp($view, 'view') == 0) {
             switch ($type) {
                 case 'all_ansar':
@@ -327,6 +343,21 @@ class HrmController extends Controller
         $thana = Input::get('thana');
         $view = Input::get('view');
         $division = Input::get('division');
+        $rules = [
+            'type'=>'regex:/[a-z]+/',
+            'view'=>'regex:/[a-z]+/',
+            'limit'=>'numeric',
+            'offset'=>'numeric',
+            'thana'=>['regex:/^(all)$|^[0-9]+$/'],
+            'unit'=>['regex:/^(all)$|^[0-9]+$/'],
+            'division'=>['regex:/^(all)$|^[0-9]+$/'],
+        ];
+        $valid = Validator::make(Input::all(),$rules);
+
+        if($valid->fails()){
+            //return print_r($valid->messages());
+            return response("<tr class='warning'><td colspan='7'>Invalid Request(400)</td></tr>",400,['Content-Type:text/HTML']);
+        }
         if (strcasecmp($view, 'view') == 0) {
             switch ($type) {
                 case 'all_ansar':
@@ -393,10 +424,25 @@ class HrmController extends Controller
         $unit = Input::get('unit');
         $thana = Input::get('thana');
         $view = Input::get('view');
+        $division = Input::get('division');
+        $rules = [
+            'view'=>'regex:/[a-z]+/',
+            'limit'=>'numeric',
+            'offset'=>'numeric',
+            'thana'=>['regex:/^(all)$|^[0-9]+$/'],
+            'unit'=>['regex:/^(all)$|^[0-9]+$/'],
+            'division'=>['regex:/^(all)$|^[0-9]+$/'],
+        ];
+        $valid = Validator::make(Input::all(),$rules);
+
+        if($valid->fails()){
+            //return print_r($valid->messages());
+            return response("<tr class='warning'><td colspan='9'>Invalid Request(400)</td></tr>",400,['Content-Type:text/HTML']);
+        }
         if (strcasecmp($view, 'view') == 0) {
-            return CustomQuery::ansarListForServiceEnded($offset, $limit, $unit, $thana);
+            return CustomQuery::ansarListForServiceEnded($offset, $limit, $unit, $thana,$division);
         } else {
-            return CustomQuery::ansarListForServiceEndedCount($unit, $thana);
+            return CustomQuery::ansarListForServiceEndedCount($unit, $thana,$division);
         }
     }
 
@@ -413,10 +459,25 @@ class HrmController extends Controller
         $unit = Input::get('unit');
         $thana = Input::get('thana');
         $view = Input::get('view');
+        $division = Input::get('division');
+        $rules = [
+            'view'=>'regex:/[a-z]+/',
+            'limit'=>'numeric',
+            'offset'=>'numeric',
+            'thana'=>['regex:/^(all)$|^[0-9]+$/'],
+            'unit'=>['regex:/^(all)$|^[0-9]+$/'],
+            'division'=>['regex:/^(all)$|^[0-9]+$/'],
+        ];
+        $valid = Validator::make(Input::all(),$rules);
+
+        if($valid->fails()){
+            //return print_r($valid->messages());
+            return response("<tr class='warning'><td colspan='8'>Invalid Request(400)</td></tr>",400,['Content-Type:text/HTML']);
+        }
         if (strcasecmp($view, 'view') == 0) {
-            return CustomQuery::ansarListWithFiftyYears($offset, $limit, $unit, $thana);
+            return CustomQuery::ansarListWithFiftyYears($offset, $limit, $unit, $thana,$division);
         } else {
-            return CustomQuery::getansarWithFiftyYearsCount($unit, $thana);
+            return CustomQuery::getansarWithFiftyYearsCount($unit, $thana,$division);
         }
     }
 
@@ -433,10 +494,25 @@ class HrmController extends Controller
         $unit = Input::get('unit');
         $thana = Input::get('thana');
         $view = Input::get('view');
+        $division = Input::get('division');
+        $rules = [
+            'view'=>'regex:/[a-z]+/',
+            'limit'=>'numeric',
+            'offset'=>'numeric',
+            'thana'=>['regex:/^(all)$|^[0-9]+$/'],
+            'unit'=>['regex:/^(all)$|^[0-9]+$/'],
+            'division'=>['regex:/^(all)$|^[0-9]+$/'],
+        ];
+        $valid = Validator::make(Input::all(),$rules);
+
+        if($valid->fails()){
+            //return print_r($valid->messages());
+            return response("<tr class='warning'><td colspan='8'>Invalid Request(400)</td></tr>",400,['Content-Type:text/HTML']);
+        }
         if (strcasecmp($view, 'view') == 0) {
-            return CustomQuery::ansarListForNotInterested($offset, $limit, $unit, $thana);
+            return CustomQuery::ansarListForNotInterested($offset, $limit, $unit, $thana,$division);
         } else {
-            return CustomQuery::getansarForNotInterestedCount($unit, $thana);
+            return CustomQuery::getansarForNotInterestedCount($unit, $thana,$division);
         }
     }
 
