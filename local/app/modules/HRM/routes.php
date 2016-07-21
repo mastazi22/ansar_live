@@ -115,7 +115,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('/save-session-entry', ['as' => 'save-session-entry', 'uses' => 'SessionController@saveSessionEntry']);
         Route::get('/session_view', ['as' => 'view_session_list', 'uses' => 'SessionController@sessionView']);
         Route::get('/session-delete/{id}', ['as' => 'delete_session', 'uses' => 'SessionController@sessionDelete']);
-        Route::get('/session-edit/{id}/{page}', ['as' => 'edit_session', 'uses' => 'SessionController@sessionEdit']);
+        Route::get('/session-edit/{id}/{page}', ['as' => 'edit_session', 'uses' => 'SessionController@sessionEdit'])->where('id','[0-9]+')->where('page', '[0-9]+');
         Route::post('/session-update', ['as' => 'session-update', 'uses' => 'SessionController@sessionUpdate']);
         route::get('/session_name', 'SessionController@SessionName');
 

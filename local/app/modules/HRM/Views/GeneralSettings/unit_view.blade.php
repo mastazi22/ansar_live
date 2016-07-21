@@ -56,7 +56,6 @@
                     }
                 }).then(function (response) {
                     $scope.units = response.data.units;
-                    console.log($scope.units)
 //                    $compile($scope.ansars)
                     $scope.loadingPage[page.pageNum] = false;
                 })
@@ -74,12 +73,30 @@
                     }
                 }).then(function (response) {
 
-                    $scope.total = response.data.total;
-                    $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
-                    $scope.loadPagination();
-                    $scope.isLoading = false;
-                    //alert($scope.total)
-                })
+                            $scope.total = response.data.total;
+                            $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
+                            $scope.loadPagination();
+                            $scope.isLoading = false;
+                            //alert($scope.total)
+                        }, function (response) {
+                            switch(response.status){
+                                case 500:
+                                    response.data="Server Error(500)";
+                                    break;
+                                case 401:
+                                    response.data="Unauthorized Error(401)";
+                                    break;
+                                case 404:
+                                    response.data="Not Found(404)";
+                                    break;
+                            }
+                            $scope.total = 0;
+                            $scope.units = [];
+                            $scope.errorFound = $sce.trustAsHtml(response.data);
+                           // $scope.allLoading = false;
+                            $scope.pages = [];
+                        }
+                )
             }
             $scope.filterMiddlePage = function (value, index, array) {
                 var minPage = $scope.currentPage - 3 < 0 ? 0 : ($scope.currentPage > array.length - 4 ? array.length - 8 : $scope.currentPage - 3);
@@ -146,8 +163,9 @@
                                         <th>Division Code</th>
                                         <th>Action</th>
                                     </tr>
+                                    <tbody ng-bind-html="errorFound"></tbody>
                                     <tbody>
-                                    <tr ng-if="units.length==0">
+                                    <tr ng-if="units.length==0&&errorFound==undefined">
                                         <td colspan="8" class="warning no-ansar">
                                             No unit available to see
                                         </td>

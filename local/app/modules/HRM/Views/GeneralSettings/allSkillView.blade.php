@@ -38,6 +38,7 @@
                             </tr>
                             </thead>
                             <tbody>
+                            @if(count($skill_infos)>0)
                             @foreach($skill_infos as $skill_info)
                                 <tr>
                                     <th scope="row">{{ $i++}}</th>
@@ -48,6 +49,11 @@
                                     </td>
                                 </tr>
                             @endforeach
+                                @else
+                                <tr class="warning">
+                                    <td colspan="4">No information found.</td>
+                                </tr>
+                            @endif
                             </tbody>
                         </table>
                     </div>

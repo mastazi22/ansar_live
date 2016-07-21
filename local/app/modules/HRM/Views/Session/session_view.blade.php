@@ -9,7 +9,7 @@
         <span class="glyphicon glyphicon-plus"></span> Add new Session
     </a>
 
-    @endsection
+@endsection
 @section('breadcrumb')
     {!! Breadcrumbs::render('session_information_list') !!}
 @endsection
@@ -25,50 +25,58 @@
                 </div>
             </div>
             @endif
-        <!-- Content Header (Page header) -->
+                    <!-- Content Header (Page header) -->
 
-        <!-- Main content -->
-        <section class="content">
-            <div class="box box-solid">
+            <!-- Main content -->
+            <section class="content">
+                <div class="box box-solid">
 
-                <div class="box-body">
-                    <table id="example2" class="table table-bordered table-hover table-striped">
-                        <thead>
-                        <tr>
-                            <th>Session Year</th>
-                            <th>Starting Session Month</th>
-                            <th>Ending Session Month</th>
-                            <th>Session Name</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($session_info as $session_infos)
-                                <tr>
-                                    <td>{{ $session_infos->session_year }}</td>
-                                    <td>{{ $session_infos->session_start_month }}</td>
-                                    <td>{{ $session_infos->session_end_month }}</td>
-                                    <td>{{ $session_infos->session_name }}</td>
+                    <div class="box-body">
+                        <table id="example2" class="table table-bordered table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th>Session Year</th>
+                                <th>Starting Session Month</th>
+                                <th>Ending Session Month</th>
+                                <th>Session Name</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @if(count($session_info)>0)
+                                @foreach($session_info as $session_infos)
+                                    <tr>
+                                        <td>{{ $session_infos->session_year }}</td>
+                                        <td>{{ $session_infos->session_start_month }}</td>
+                                        <td>{{ $session_infos->session_end_month }}</td>
+                                        <td>{{ $session_infos->session_name }}</td>
 
-                                    <td><a href="{{URL::to('HRM/session-edit/'.$session_infos->id)."/"}}@if(Request::exists('page')){{Request::get('page')}}@else{{'1'}}@endif" class="btn btn-primary btn-xs" title="Edit"><span
-                                                    class="glyphicon glyphicon-edit"></span></a>
-                                    </td>
+                                        <td>
+                                            <a href="{{URL::to('HRM/session-edit/'.$session_infos->id)."/"}}@if(Request::exists('page')){{Request::get('page')}}@else{{'1'}}@endif"
+                                               class="btn btn-primary btn-xs" title="Edit"><span
+                                                        class="glyphicon glyphicon-edit"></span></a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr class="warning">
+                                    <td colspan="5">No information found.</td>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            @endif
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="table_pagination">
+                        {!! $session_info->render() !!}
+                    </div>
                 </div>
-                <!-- /.box-body -->
-                <div class="table_pagination">
-                    {!! $session_info->render() !!}
-                </div>
-            </div>
-            <!-- /.row -->
-        </section>
-        <!-- /.content -->
+                <!-- /.row -->
+            </section>
+            <!-- /.content -->
     </div><!-- /.content-wrapper -->
     <script>
-        function check () {
+        function check() {
             return confirm('Are you sure to delete this entry');
         }
     </script>

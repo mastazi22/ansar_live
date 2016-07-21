@@ -30,7 +30,7 @@ class SessionController extends Controller
             'session_year' => 'required|numeric|min:2016|max:3000',
             'session_start_month' => 'required|regex:/[A-Z]([a-z]+)/|min:1|max:9',
             'session_end_month' => 'required|regex:/[A-Z]([a-z]+)/|min:1|max:9',
-            'session_name' => 'required|regex:/[0-9]{4}\-[0-9]{4}/'
+            'session_name' => 'required|regex:/^[0-9]{4}\-[0-9]{4}$/'
         );
         $validation = Validator::make(Input::all(), $rules);
 
@@ -81,7 +81,7 @@ class SessionController extends Controller
             'session_year' => 'required|numeric|min:2016|max:3000',
             'session_start_month' => 'required|regex:/[A-Z]([a-z]+)/|min:1|max:9',
             'session_end_month' => 'required|regex:/[A-Z]([a-z]+)/|min:1|max:9',
-            'session_name' => 'required|regex:/[0-9]{4}\-[0-9]{4}/',
+            'session_name' => 'required|regex:/^[0-9]{4}\-[0-9]{4}$/',
         );
         $validation = Validator::make(Input::all(), $rules);
 

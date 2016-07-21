@@ -11,7 +11,7 @@
         <section class="content">
             <div class="row">
                 <!-- left column -->
-                <div class="col-lg-6 col-centered">
+                <div class="col-lg-8 col-centered">
                     {{--<div class="label-title-session-entry">
                         <h4 style="text-align:center; padding:2px">Edit Disease Form</h4>
                     </div>--}}
@@ -26,7 +26,7 @@
                             <div class="box-body">
                                 
                                 <input type="hidden" name="id" class="form-control" value="{{ $disease_infos->id }}">
-                                <div class="form-group">
+                                <div class="form-group required">
                                     {!! Form::label('disease_name_eng', 'Disease Name:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                     <div class="col-sm-8 @if($errors->has('disease_name_eng')) has-error @endif">
                                         {!! Form::text('disease_name_eng', $value = (Request::old('disease_name_eng')) ? Request::old('disease_name_eng') : $disease_infos->disease_name_eng, $attributes = array('class' => 'form-control', 'id' => 'disease_name_eng', 'placeholder' => 'Enter Disease Name in English')) !!}
@@ -35,8 +35,8 @@
                                         @endif
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    {!! Form::label('disease_name_bng', 'জেলার নাম:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
+                                <div class="form-group required">
+                                    {!! Form::label('disease_name_bng', 'অসুখের নাম:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                     <div class="col-sm-8 @if($errors->has('disease_name_bng')) has-error @endif">
                                         {!! Form::text('disease_name_bng', $value = (Request::old('disease_name_bng')) ? Request::old('disease_name_bng') : $disease_infos->disease_name_bng, $attributes = array('class' => 'form-control', 'id' => 'disease_name_bng', 'placeholder' => 'অসুখের নাম লিখুন বাংলায়')) !!}
                                         @if($errors->has('disease_name_bng'))
