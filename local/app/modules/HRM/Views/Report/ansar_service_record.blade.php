@@ -93,17 +93,19 @@
         </div>
         <section class="content">
             <div class="box box-solid">
-                <div class="box-body">
+                <div class="box-body"><br>
                     <div class="row">
-                        <div class="col-sm-4 col-sm-offset-4">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    Enter Ansar Id
-                                </label>
-                                <input type="text" ng-model="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-keypress="loadAnsarDetailOnKeyPress(ansar_id,$event)">
+                        <div class="col-md-6 col-centered">
+                            <div class="col-md-6 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    {{--<label class="control-label">Enter a ansar id</label>--}}
+                                    <input type="text" ng-model="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-keypress="loadAnsarDetailOnKeyPress(ansar_id,$event)">
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12 col-xs-12">
+                                <button class="btn btn-primary" ng-click="loadAnsarDetail(ansar_id)">Generate Ansar Service Record</button>
 
                             </div>
-                            <button class="btn btn-primary" ng-click="loadAnsarDetail(ansar_id)">Generate Ansar Service Report</button>
                         </div>
                     </div>
                     <div class="row">

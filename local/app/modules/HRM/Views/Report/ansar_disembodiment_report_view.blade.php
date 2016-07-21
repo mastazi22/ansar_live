@@ -194,7 +194,7 @@
                         <div class="col-md-3 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <label class="control-label">
-                                    Select Unit
+                                    Select a District
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 </label>
@@ -210,7 +210,7 @@
                         <div class="col-md-3 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <label class="control-label">
-                                    Select Thana
+                                    Select a Thana
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16">
                                 </label>

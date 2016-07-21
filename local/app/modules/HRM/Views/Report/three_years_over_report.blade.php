@@ -154,7 +154,7 @@
                     </div><br>
                     <div class="row">
                         <div class="col-md-3">
-                            <div class="form-group required">
+                            <div class="form-group">
                                 <label class="control-label">Select a District&nbsp;
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
@@ -166,7 +166,7 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="form-group required">
+                            <div class="form-group">
                                 <label class="control-label">
                                     Select Rank
                                 </label>
@@ -180,7 +180,7 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <div class="form-group required">
+                            <div class="form-group">
                                 <label class="control-label">
                                     Select Sex
                                 </label>
