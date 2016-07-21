@@ -239,9 +239,9 @@ Breadcrumbs::register('offer_report', function($breadcrumbs) {
     $breadcrumbs->parent('report');
     $breadcrumbs->push('Offer Report', URL::route('offer_report'));
 });
-Breadcrumbs::register('disembodiment_report_view', function($breadcrumbs) {
+Breadcrumbs::register('disembodiment_letter_view', function($breadcrumbs) {
     $breadcrumbs->parent('report');
-    $breadcrumbs->push('Dis-embodiment Letter', URL::route('disembodiment_report_view'));
+    $breadcrumbs->push('Disembodiment Letter', URL::route('disembodiment_letter_view'));
 });
 Breadcrumbs::register('embodiment_letter_view', function($breadcrumbs) {
     $breadcrumbs->parent('report');
@@ -261,11 +261,11 @@ Breadcrumbs::register('three_year_over_report_view', function($breadcrumbs) {
 });
 Breadcrumbs::register('three_year_over_report_view', function($breadcrumbs) {
     $breadcrumbs->parent('report');
-    $breadcrumbs->push('Three Years Over Ansar Report', URL::route('three_year_over_report_view'));
+    $breadcrumbs->push('Three Years Over Service Report', URL::route('three_year_over_report_view'));
 });
 Breadcrumbs::register('guard_report', function($breadcrumbs) {
     $breadcrumbs->parent('report');
-    $breadcrumbs->push('Ansar in guard Report', URL::route('guard_report'));
+    $breadcrumbs->push('Ansar in Guard Report', URL::route('guard_report'));
 });
 Breadcrumbs::register('blacklist_view', function($breadcrumbs) {
     $breadcrumbs->parent('report');
@@ -277,11 +277,11 @@ Breadcrumbs::register('blocklist_view', function($breadcrumbs) {
 });
 Breadcrumbs::register('disembodiment_report_view', function($breadcrumbs) {
     $breadcrumbs->parent('report');
-    $breadcrumbs->push('Disembodied Ansar Info', URL::route('disembodiment_report_view'));
+    $breadcrumbs->push('Disembodied Ansar Report', URL::route('disembodiment_report_view'));
 });
 Breadcrumbs::register('embodiment_report_view', function($breadcrumbs) {
     $breadcrumbs->parent('report');
-    $breadcrumbs->push('Embodied Ansar Info', URL::route('embodiment_report_view'));
+    $breadcrumbs->push('Embodied Ansar Report', URL::route('embodiment_report_view'));
 });
 Breadcrumbs::register('ansar_service_report_view', function($breadcrumbs) {
     $breadcrumbs->parent('report');

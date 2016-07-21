@@ -295,13 +295,13 @@
                     <li ng-if="checkMenu('guard_report')">
                         <a href="{{URL::route('guard_report')}}">
                             <i class="fa fa-users"></i>
-                            <span>View Ansar in Guard</span>
+                            <span>Ansar in Guard Report</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('transfer_ansar_history')">
                         <a href="{{URL::route('transfer_ansar_history')}}">
                             <i class="fa fa-users"></i>
-                            <span>Ansar Transfer History</span>
+                            <span>Ansar Transfer Report</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('view_ansar_service_record')">
@@ -313,7 +313,7 @@
                     <li ng-if="checkMenu('ansar_service_report_view')">
                         <a href="{{URL::route('ansar_service_report_view')}}">
                             <i class="fa fa-users"></i>
-                            <span>View Ansar Service Report</span>
+                            <span>Ansar Service Report</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('embodiment_report_view')">
@@ -331,19 +331,19 @@
                     <li ng-if="checkMenu('blocklist_view')">
                         <a href="{{URL::route('blocklist_view')}}">
                             <i class="fa fa-users"></i>
-                            <span>Blocklist Information</span>
+                            <span>Blocklisted Ansar Report</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('blacklist_view')">
                         <a href="{{URL::route('blacklist_view')}}">
                             <i class="fa fa-users"></i>
-                            <span>Blacklist Information</span>
+                            <span>Blacklisted Ansar Report</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('three_year_over_report_view')">
                         <a href="{{URL::route('three_year_over_report_view')}}">
                             <i class="fa fa-users"></i>
-                            <span>Three Years Over List</span>
+                            <span>Three Years Over Service Report</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('service_record_unitwise_view')">
@@ -355,7 +355,7 @@
                     <li ng-if="checkMenu('transfer_letter_view')">
                         <a href="{{URL::route('transfer_letter_view')}}">
                             <i class="fa fa-envelope"></i>
-                            <span>Print Transfer Letter</span>
+                            <span>Transfer Letter</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('transfer_letter_view')">
@@ -367,13 +367,13 @@
                     <li ng-if="checkMenu('embodiment_letter_view')">
                         <a href="{{URL::route('embodiment_letter_view')}}">
                             <i class="fa fa-envelope"></i>
-                            <span>Print Embodiment Letter</span>
+                            <span>Embodiment Letter</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('disembodiment_letter_view')">
                         <a href="{{URL::route('disembodiment_letter_view')}}">
                             <i class="fa fa-envelope"></i>
-                            <span>Print Dis-Embodiment Letter</span>
+                            <span>Disembodiment Letter</span>
                         </a>
                     </li>
                 </ul>

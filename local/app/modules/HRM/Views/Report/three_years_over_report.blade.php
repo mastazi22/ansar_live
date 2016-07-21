@@ -3,7 +3,7 @@
 {{--Time: 2:46 PM--}}
 
 @extends('template.master')
-@section('title','Three Years Over Ansar Report')
+@section('title','Three Years Over Service Report')
 @section('breadcrumb')
     {!! Breadcrumbs::render('three_year_over_report_view') !!}
 @endsection
@@ -155,11 +155,11 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group required">
-                                <label class="control-label">Select Unit&nbsp;
+                                <label class="control-label">Select a District&nbsp;
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select class="form-control" ng-model="selectedDistrict">
-                                    <option value="">--Select--</option>
+                                    <option value="">--Select a District--</option>
                                     <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
                                     </option>
                                 </select>
@@ -171,7 +171,7 @@
                                     Select Rank
                                 </label>
                                 <select name="ansar_rank" class="form-control" ng-model="selectedRank">
-                                    <option value="" disabled>--Select--</option>
+                                    <option value="" disabled>--Select Rank--</option>
                                     <option value="1">Ansar</option>
                                     <option value="2">APC</option>
                                     <option value="3">PC</option>
@@ -185,7 +185,7 @@
                                     Select Sex
                                 </label>
                                 <select name="ansar_sex" class="form-control" ng-model="selectedSex">
-                                    <option value="" disabled>--Select--</option>
+                                    <option value="" disabled>--Select Sex--</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
                                     <option value="Other">Other</option>
