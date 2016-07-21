@@ -1,7 +1,7 @@
 @extends('template.master')
-@section('title','Dis-embodiment Letter')
+@section('title','Disembodiment Letter')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('disembodiment_report_view') !!}
+    {!! Breadcrumbs::render('disembodiment_letter_view') !!}
 @endsection
 @section('content')
     <script>
@@ -61,9 +61,9 @@
                                 <input class="form-control" ng-model="memId" type="text" placeholder="Memorandum No">
                             </div>
                             <div class="form-group" ng-if="!isDc">
-                                <label class="control-label">Select district</label>
+                                <label class="control-label">Select a District</label>
                                 <select class="form-control" ng-model="unit.selectedUnit" ng-disabled="units.length==0">
-                                    <option value="">--Select a district--</option>
+                                    <option value="">--Select a District--</option>
                                     <option ng-repeat="u in units" value="[[u.id]]">[[u.unit_name_bng]]</option>
                                 </select>
                             </div>

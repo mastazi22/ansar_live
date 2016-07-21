@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','Offer List')
+@section('title','Offer')
 @section('breadcrumb')
     {!! Breadcrumbs::render('offer_information') !!}
 @endsection
@@ -232,7 +232,7 @@
 
                         <div class="row">
                             <div class="col-md-4" ng-if="isAdmin">
-                                <h4>Select a district</h4>
+                                <h4>Select a District</h4>
                                 <ul class="offer-district">
                                     <li ng-repeat="unit in allDistrict">
                                         <input ng-change="addDistrict()" type="checkbox" class="check-boxx"

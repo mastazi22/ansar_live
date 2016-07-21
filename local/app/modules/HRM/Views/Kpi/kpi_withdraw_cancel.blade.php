@@ -4,7 +4,7 @@
 
 
 @extends('template.master')
-@section('title','Kpi Withdraw Cancel')
+@section('title','Cancel KPI Withdrawal')
 @section('breadcrumb')
     {!! Breadcrumbs::render('kpi_withdraw_cancel') !!}
 @endsection
