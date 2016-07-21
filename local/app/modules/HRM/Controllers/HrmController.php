@@ -225,7 +225,29 @@ class HrmController extends Controller
 
     public function showRecentAnsarList($type)
     {
-        return View::make('HRM::Dashboard.view_recent_ansar_list')->with(['type' => $type]);
+        $pageTitle = '';
+        if (strcasecmp($type, 'all_ansar') == 0) {
+            $pageTitle = "Total number of Ansars(Recent)";
+        } elseif (strcasecmp($type, 'not_verified_ansar') == 0) {
+            $pageTitle = "Total number of Unverified Ansars(Recent)";
+        } elseif (strcasecmp($type, 'offerred_ansar') == 0) {
+            $pageTitle = "Total number of Offered Ansars(Recent)";
+        } elseif (strcasecmp($type, 'freezed_ansar') == 0) {
+            $pageTitle = "Total number of Frozen Ansars(Recent)";
+        } elseif (strcasecmp($type, 'free_ansar') == 0) {
+            $pageTitle = "Total number of Free Ansars(Recent)";
+        } elseif (strcasecmp($type, 'paneled_ansar') == 0) {
+            $pageTitle = "Total number of Paneled Ansars(Recent)";
+        } elseif (strcasecmp($type, 'rest_ansar') == 0) {
+            $pageTitle = "Total number of Resting Ansars(Recent)";
+        } elseif (strcasecmp($type, 'blocked_ansar') == 0) {
+            $pageTitle = "Total number of Block-listed Ansars(Recent)";
+        } elseif (strcasecmp($type, 'blacked_ansar') == 0) {
+            $pageTitle = "Total number of Blacklisted Ansars(Recent)";
+        } elseif (strcasecmp($type, 'embodied_ansar') == 0) {
+            $pageTitle = "Total number of Embodied Ansars(Recent)";
+        }
+        return View::make('HRM::Dashboard.view_recent_ansar_list')->with(['type' => $type,'pageTitle'=>$pageTitle]);
     }
 
     public function getAnsarList()

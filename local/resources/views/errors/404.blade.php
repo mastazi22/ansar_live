@@ -1,14 +1,11 @@
 @extends('template.master')
+@section('title','404 Error')
+@section('breadcrumb')
+    {{--{!! Breadcrumbs::generate() !!}--}}
+    @endsection
 @section('content')
     <div>
         <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <ol class="breadcrumb">
-                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                <li><a href="#">Examples</a></li>
-                <li class="active">404 error</li>
-            </ol>
-        </section>
 
         <!-- Main content -->
         <section class="content">

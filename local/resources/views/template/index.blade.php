@@ -1,6 +1,6 @@
 @extends('template.master')
 @section('title','Dashboard')
-@section('small_title','Control panel')
+{{--@section('small_title','Control panel')--}}
 @section('content')
         <!-- Main content -->
 <section class="content">

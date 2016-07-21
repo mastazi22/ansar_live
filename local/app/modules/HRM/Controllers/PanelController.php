@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 
 class PanelController extends Controller
@@ -27,11 +28,21 @@ class PanelController extends Controller
 
     public function statusSelection(Request $request)
     {
-        $statusSelected = Input::get('status');
-        $select = Input::get('select');
-        $from_id=Input::get('from');
-        $to_id=Input::get('to');
-        $count=Input::get('ansar_count');
+        $statusSelected = Input::get('come_from_where');
+//        $select = Input::get('select');
+        $from_id=Input::get('from-id');
+        $to_id=Input::get('to-id');
+        $count=Input::get('ansar_num');
+        $rules = [
+            'come_from_where'=>'required|numeric',
+            'from-id'=>'required|numeric',
+            'to-id'=>'required|numeric',
+            'ansar_num'=>'required|numeric:max:100|min:1'
+        ];
+        $valid = Validator::make($request->all(),$rules);
+        if($valid->fails()){
+            return response("Invalid request",400);
+        }
         if ($statusSelected == 1) {
             //$ansar_status = AnsarStatusInfo::where('rest_status', 1)->get();
 

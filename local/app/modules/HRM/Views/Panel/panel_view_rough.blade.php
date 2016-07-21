@@ -93,30 +93,6 @@
             <div class="box box-solid" style="min-height: 200px;">
                 <div class="box-body">
                     <div class="row" >
-                        <div class="col-md-6" id="show-ansar" style="display: none;">
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label">Select Ansar Number:</label>
-
-                                <div class="col-md-6">
-                                    <select class="form-control" id="count-ansar">
-                                        <option value="">--Select--</option>
-                                        <option value="10">10</option>
-                                        <option value="20">20</option>
-                                        <option value="30">30</option>
-                                        <option value="40">40</option>
-                                        <option value="50">50</option>
-                                        <option value="60">60</option>
-                                        <option value="70">70</option>
-                                        <option value="80">80</option>
-                                        <option value="90">90</option>
-                                        <option value="100">100</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        {{--<div class="col-md-4 pull-right">--}}
-                        {{----}}
-                        {{--</div>--}}
                         <div class="col-md-12">
                             <br>
                             <div class="table-responsive">
@@ -168,54 +144,66 @@
                             <div class="offer-loading" ng-show="showLoadingScreen">
                                 <i class="fa fa-spinner fa-pulse fa-2x" style="position: relative;left:48%;top:40%"></i>
                             </div>
-                            <div class="register-box" style="width: auto;margin: 0">
-                                <div class="register-box-body">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group row">
-                                                <div class="col-sm-12">
-                                                    <div class="form-group">
-                                                        <select name='come_from_where required' id='come_from_where'
-                                                                class="form-control">
-                                                            <option value="" disabled selected>--Select Status--</option>
-                                                            <option value="1">Rest Status</option>
-                                                            <option value="2">Free Status</option>
-                                                        </select>
+                            <div class="box" style="border-top: none;">
+                                <div class="box-body">
+                                    <form role="form" id="load_ansar_for_panel" action="{{URL::route('select_status')}}" method="get">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group row">
+                                                    <div class="col-sm-12">
+                                                        <div class="form-group">
+                                                            <label> Select a status</label>
+                                                            <select name='come_from_where' id='come_from_where'
+                                                                    class="form-control">
+                                                                <option value="" disabled selected>--Select Status--</option>
+                                                                <option value="1">Rest Status</option>
+                                                                <option value="2">Free Status</option>
+                                                            </select>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <ul style="padding: 0">
-                                                    {{--<li class="btn select-choice" id="all-select">--}}
-                                                    {{--<span><input type="radio" value="1" name="choice"--}}
-                                                    {{--checked> All</span>--}}
-                                                    {{--</li>--}}
-                                                    <li class="btn select-choice required" id="custom-select">
-                                                    <span><input type="radio" value="0"
-                                                                 name="choice"> Select Ansar ID Range</span>
-                                                    </li>
-                                                </ul>
-                                                <ul style="list-style: none;display: none; margin-left: 0 !important;padding: 0"
-                                                    class="row custom-selected">
-                                                    <li class="form-group col-md-6 custom-selected" id="from-id">
-                                                    <span>From(ID) <input type="text" name="from-id"
-                                                                          class="form-control"></span>
-                                                    </li>
-                                                    <li class="form-group col-md-6" id="to-id">
-                                                    <span>To(ID) <input type="text" name="to-id"
-                                                                        class="form-control"></span>
-                                                    </li>
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <ul style="list-style: none; margin-left: 0 !important;padding: 0"
+                                                        class="row custom-selected">
+                                                        <li class="form-group col-md-6 custom-selected" id="from-id">
+                                                            <label>From(ID)</label>
+                                                            <input type="text" name="from-id" class="form-control">
+                                                        </li>
+                                                        <li class="form-group col-md-6" id="to-id">
+                                                            <label>To(ID)</label>
+                                                            <input type="text" name="to-id" class="form-control">
+                                                        </li>
 
-                                                </ul>
+                                                    </ul>
+                                                </div>
                                             </div>
-                                            <button class="btn btn-default pull-right" id="load-panel"><i
-                                                        class="fa fa-download"></i>
-                                                Load
-                                            </button>
+
                                         </div>
-                                    </div>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <label>Select no of ansars to load</label>
+                                                <select class="form-control" name="ansar_num" id="count-ansar">
+                                                    <option value="">--Select--</option>
+                                                    <option value="10">10</option>
+                                                    <option value="20">20</option>
+                                                    <option value="30">30</option>
+                                                    <option value="40">40</option>
+                                                    <option value="50">50</option>
+                                                    <option value="60">60</option>
+                                                    <option value="70">70</option>
+                                                    <option value="80">80</option>
+                                                    <option value="90">90</option>
+                                                    <option value="100">100</option>
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                        <button type="submit" class="btn btn-default pull-right" id="load-panel">
+                                            <i class="fa fa-download"></i> Load
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -300,68 +288,37 @@
             headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'}
         })
         var h = "";
-        var choice = 0;
-        $('#load-panel').click(function (e) {
-            e.preventDefault();
-            $("#status-all").html("");
-            $('#count-ansar').val("");
-            $('#check-all-panel').prop('checked', false);
-            $('.check-panel').prop('checked', false);
-            selectedAnsars = [];
-            selectedValue = $("#come_from_where").val();
-            choice = $('input[name="choice"]:checked').val();
-            //alert(selectedValue)
-//            if (choice == 1) {
-//                var data = {status: selectedValue, select: choice}
-//            }
-//            else {
+        $("#load_ansar_for_panel").ajaxForm({
+            beforeSubmit: function () {
 
-
-//            }
-            //make the ajax call
-
-            $(".close").trigger('click');
-            $('#show-ansar').css('display', 'block');
-            $('#show-ansar').change(function () {
                 $('#check-all-panel').prop('checked', false);
                 $('.check-panel').prop('checked', false);
                 selectedAnsars = [];
-                $("#all-loading").css('display', 'block');
-                ansar_number = $('#count-ansar').val();
-                var data = {
-                    status: selectedValue,
-                    select: choice,
-                    from: $('input[name="from-id"]').val(),
-                    to: $('input[name="to-id"]').val(),
-                    ansar_count: ansar_number
+                $("#panel-modal").modal('toggle')
+            },
+            success: function (data) {
+                console.log()
+                $("#status-all").html("");
+                $("#confirm-panel").prop('disabled',true);
+                if (data.result == undefined) {
+                    //$('#confirm-panel').prop('disabled', false);
+                    $("#status-all").html(data);
+                    h = data;
+                    $("#all-loading").css('display', 'none');
                 }
-                //alert(ansar_number)
-                $.ajax({
-                    url: '{{URL::route('select_status')}}',
-                    type: 'get',
-                    data: data,
-                    success: function (data) {
-                        //console.log(data)
-                        //alert(data.view)
-                        //alert(data)
-                        if (data.result == undefined) {
-                            $('#confirm-panel').prop('disabled', false);
-                            $("#status-all").html(data);
-                            h = data;
-                            $("#all-loading").css('display', 'none');
-                        }
-                        else {
-                            $("#all-loading").css('display', 'none');
-                            $('#confirm-panel').prop('disabled', true);
+                else {
+                    $("#all-loading").css('display', 'none');
+                    $('#confirm-panel').prop('disabled', true);
 //                        alert($("#status-all").html())
-                            $("#status-all").html('<tr colspan="11" class="warning" id="not-find-info"> <td colspan="11">No Ansar Found to add to Panel</td> </tr>');
-                        }
-
-                    }
-                });
-            })
-        });
-
+                    $("#status-all").html('<tr colspan="11" class="warning" id="not-find-info"> <td colspan="11">No Ansar Found to add to Panel</td> </tr>');
+                }
+                $("#load_ansar_for_panel")[0].reset();
+            },
+            error: function (response) {
+                $("#status-all").html('<tr colspan="11" class="warning" id="not-find-info"> <td colspan="11">'+response.responseText+'</td> </tr>');
+                console.log(response);
+            }
+        })
         $('#confirm-panel').click(function (e) {
             e.preventDefault();
             var innerHtml = "";
@@ -377,14 +334,6 @@
             $('#status-all-modal').html(innerHtml)
         });
 
-        $(function () {
-            $('input[name="choice"]').change(function () {
-                if ($(this).val() == 0)
-                    $('.custom-selected').show();
-                else $('.custom-selected').hide();
-            });
-        });
-
 
         var selectedAnsars = [];
         $(document).on('change', '.check-panel', function () {
@@ -398,14 +347,12 @@
             $('.check-panel:checked').each(function () {
                 selectedAnsars.push($(this).parents('tr'))
             })
-//            if (this.checked) {
-//                //alert($(this).parents('tr').splice(7, 1).html())
-//                selectedAnsars.push($(this).parents('tr'))
-//            } else {
-////                alert("Hello");
-//                selectedAnsars.splice(selectedAnsars.indexOf($(this).parents('tr')), 1)
-//            }
-            //alert(selectedAnsars.length)
+            if(selectedAnsars.length==0){
+                $("#confirm-panel").prop('disabled',true);
+            }
+            else{
+                $("#confirm-panel").prop('disabled',false);
+            }
         })
 
         $('#confirm-panel-entry').click(function (e) {
