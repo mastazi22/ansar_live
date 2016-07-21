@@ -73,6 +73,11 @@
             })
         })
     </script>
+    <style>
+        input::-webkit-input-placeholder,  input:-moz-placeholder, input:-ms-input-placeholder {
+            color: #7b7b7b !important;
+        }
+    </style>
     <div ng-controller="serviceRecordController">
         <div class="loading-report animated" ng-class="{fadeInDown:isLoading,fadeOutUp:!isLoading}">
             <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
@@ -93,14 +98,17 @@
                                              ng-model="reportType">&nbsp;<b>বাংলা</b>
                             </span>
                     </div>
-                    <br>
-
+                    <br><br>
                     <div class="row">
-                        <div class="col-sm-offset-4 col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label">Enter a ansar id</label>
-                                <input type="text" class="form-control" ng-keypress="loadAnsarServiceRecord($event)" ng-model="ansarId" placeholder="Ansar id">
-                                <button class="btn btn-default" style="margin-top: 10px"
+                        <div class="col-md-6 col-centered">
+                            <div class="col-md-6 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    {{--<label class="control-label">Enter a ansar id</label>--}}
+                                    <input type="text" class="form-control" ng-keypress="loadAnsarServiceRecord($event)" ng-model="ansarId" placeholder="Enter Ansar id">
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12 col-xs-12">
+                                <button class="btn btn-primary"
                                         ng-click="loadAnsarServiceRecord()">
                                     View Ansar Service Record
                                 </button>
