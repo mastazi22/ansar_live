@@ -497,8 +497,8 @@
                         </div>
 
                         <div class="label-hrm-calculation">
-                                <span class="info-box-number"
-                                      style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial"><a
+                                <span class="info-box-text"
+                                      style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial"><a style="font-size: 18px"
                                             href="{{URL::to('HRM/service_ended_in_three_years')}}/[[progressInfo.totalServiceEndedInThreeYears]]"
                                             class="btn-link">[[progressInfo.totalServiceEndedInThreeYears]]</a><img
                                             src="{{asset('dist/img/facebook.gif')}}" width="20"
@@ -514,7 +514,7 @@
                         </div>
 
                         <div class="label-hrm-calculation">
-                            <span class="info-box-number" style="color: #000000"><a
+                            <span class="info-box-text" style="color: #000000"><a style="font-size: 18px"
                                         href="{{URL::to('HRM/ansar_reached_fifty_years')}}/[[progressInfo.totalAnsarReachedFiftyYearsOfAge]]"
                                         class="btn-link">[[progressInfo.totalAnsarReachedFiftyYearsOfAge]]</a><img
                                         src="{{asset('dist/img/facebook.gif')}}" width="20"
@@ -529,7 +529,7 @@
                         </div>
 
                         <div class="label-hrm-calculation">
-                            <span class="info-box-number" style="color: #000000"><a
+                            <span class="info-box-text" style="color: #000000"><a style="font-size: 18px"
                                         href="{{URL::to('HRM/ansar_not_interested')}}/[[progressInfo.totalNotInterestedMembersUptoTenTimes]]"
                                         class="btn-link">[[progressInfo.totalNotInterestedMembersUptoTenTimes]]</a><img
                                         src="{{asset('dist/img/facebook.gif')}}" width="20"
