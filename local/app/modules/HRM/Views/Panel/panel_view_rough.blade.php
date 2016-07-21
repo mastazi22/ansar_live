@@ -3,9 +3,9 @@
 {{--Time: 10:49 AM--}}
 
 @extends('template.master')
-@section('title','Panel Information')
+@section('title','Panel')
 @section('small_title')
-    <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#panel-modal"><span class="glyphicon glyphicon-save"></span> Load for panel</button>
+    <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#panel-modal"><span class="glyphicon glyphicon-save"></span> Load Ansars</button>
     @endsection
 @section('breadcrumb')
     {!! Breadcrumbs::render('panel_information') !!}
@@ -122,7 +122,7 @@
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="pc-table">
 
-                                    <tr class="info">
+                                    <tr>
                                         <th>Ansar ID</th>
                                         <th>Ansar Name</th>
                                         <th>Ansar Rank</th>
@@ -162,7 +162,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h3 class="modal-title">Panel Option</h3>
+                            <h3 class="modal-title">Options</h3>
                         </div>
                         <div class="modal-body">
                             <div class="offer-loading" ng-show="showLoadingScreen">
@@ -225,12 +225,12 @@
             <!--Modal Close-->
             <!--Modal Open-->
             <div id="confirm-panel-modal" class="modal fade" role="dialog">
-                <div class="modal-dialog" style="width: 70%;overflow: auto;">
+                <div class="modal-dialog" style="width: 80%;overflow: auto;">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"
                                     ng-click="modalOpen = false">&times;</button>
-                            <h3 class="modal-title">Add to Panel</h3>
+                            <h3 class="modal-title">Confirmation for Adding Ansars to Panel</h3>
                         </div>
                         {!! Form::open(array('route' => 'save-panel-entry', 'id'=>'panel-form', 'name' => 'panelForm', 'method' => 'post')) !!}
                         <div class="modal-body">
