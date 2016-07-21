@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Mockery\Exception;
 use Monolog\Handler\Curl;
@@ -189,6 +190,17 @@ class OfferController extends Controller
     function handleCancelOffer()
     {
         $ansar_ids = Input::get('ansar_ids');
+        if(count($ansar_ids)<=0){
+            return response("Invalid request(400)",400);
+        }
+        $rules = [];
+        for($i=0;$i<count($ansar_ids);$i++){
+            $rules["ansar_ids.{$i}"] = 'required|numeric|regex:/^[0-9]$/';
+        }
+        $vaild = Validator::make(Input::all(),$rules);
+        if($vaild->fails()){
+            return response("Invalid request(400)",400);
+        }
         $result = ['success' => 0, 'fail' => 0];
         //return $ansar_ids;
         for ($i = 0; $i < count($ansar_ids); $i++) {
@@ -251,6 +263,13 @@ class OfferController extends Controller
 
     function getOfferedAnsar()
     {
+        $rules=[
+          'district_id'=>'required|numeric|regex:/^[0-9]+$/'
+        ];
+        $valid = Validator::make(Input::all(),$rules);
+        if($valid->fails()){
+            return response("<tr class='warning'><td colspan='8'>Invalid request(400)</td></tr>",400,['Content-Type','text/HTML']);
+        }
         $district_id = Input::get('district_id');
         return Response::json(CustomQuery::getOfferSMSInfo($district_id));
     }

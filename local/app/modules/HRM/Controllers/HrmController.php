@@ -578,6 +578,26 @@ class HrmController extends Controller
 
     function updateGlobalParameter()
     {
+        $rules = [
+            'id'=>'required|numeric',
+            'pv'=>'required|numeric|regex:/^[0-9]+$/',
+            'pu'=>'regex:/^[a-zA-Z]+$/',
+            'pd'=>'regex:/^[a-zA-Z\s]+$/',
+            'pp'=>'numeric|regex:/^[0-9]+$/'
+        ];
+        $messages = [
+            'pv.required'=>'Parameter value is required',
+            'pv.numeric'=>'Parameter value must be numeric.eg 1,2..',
+            'pv.regex'=>'Parameter value must be numeric.eg 1,2..',
+            'pp.numeric'=>'Parameter unit must be numeric.eg 1,2..',
+            'pp.regex'=>'Parameter unit must be numeric.eg 1,2..',
+            'pu.regex'=>'Parameter unit is invalid',
+            'pd.regex'=>'Parameter description only contain a-z,A-Z and space',
+        ];
+        $valid = Validator::make(Input::all(),$rules,$messages);
+        if($valid->fails()){
+            return response($valid->messages()->toJson(),400,['Content-Type'=>'application/json']);
+        }
         $id = Input::get('id');
         $pv = Input::get('pv');
         $pd = Input::get('pd');

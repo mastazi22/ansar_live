@@ -7,7 +7,7 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('OfferCancelController', function ($scope, $http) {
+        GlobalApp.controller('OfferCancelController', function ($scope, $http,$sce) {
             $scope.selectedDistrict = "";
             $scope.noAnsar = true;
             $scope.showLoadScreen = true;
@@ -23,6 +23,11 @@
             }).then(function (response) {
                 $scope.allDistrict = response.data;
                 $scope.loadingUnit = false;
+            }, function (response) {
+                if(response.status==500){
+                    $scope.errorVisible = true;
+                }
+                $scope.loadingUnit = false;
             })
             $scope.loadAnsar = function () {
                 //alert($scope.selectedDistrict)
@@ -33,6 +38,7 @@
                     params: {district_id: $scope.selectedDistrict}
                 }).then(function (response) {
 //                    /alert(JSON.stringify(response));
+                    $scope.errorLoad=undefined;
                     $scope.selectAll = false;
                     if (response.data.length > 0) {
                         $scope.selectedAnsar = response.data;
@@ -40,6 +46,9 @@
                         $scope.selectAnsar = Array.apply(null, new Array(response.data.length)).map(Boolean.prototype.valueOf, false);
                     }
                     else $scope.noAnsar = true;
+                    $scope.loadingAnsar = false;
+                }, function (response) {
+                    $scope.errorLoad = $sce.trustAsHtml(response.data);
                     $scope.loadingAnsar = false;
                 })
             }
@@ -85,6 +94,10 @@
                         }, function (response) {
                             console.log(response)
                             $scope.showLoadScreen = true;
+                    $('body').notifyDialog({
+                        type: 'error',
+                        message: response.data
+                    }).showDialog()
                         })
             }
         })
@@ -128,6 +141,7 @@
                                 <option ng-repeat="d in allDistrict" value="[[d.id]]">[[d.unit_name_bng]]
                                 </option>
                             </select>
+                            <p ng-if="errorVisible" class="text text-danger">An error occur while loading district name <button class="btn btn-danger btn-xs"><i class="fa fa-refresh" ng-class="{'fa-pulse':loadingAnsar}"></i></button></p>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -149,10 +163,11 @@
                                     &nbsp;&nbsp<span>Select All</span>
                                 </th>
                             </tr>
-                            <tr ng-show="noAnsar" class="warning">
+                            <tr ng-show="noAnsar&&errorLoad==undefined" class="warning">
                                 <td colspan="8">No Ansar Found to Send Offer</td>
                             </tr>
-                            <tr ng-repeat="ansar in selectedAnsar" ng-hide="noAnsar">
+                            <tbody ng-if="errorLoad!=undefined" ng-bind-html="errorLoad"></tbody>
+                            <tr ng-repeat="ansar in selectedAnsar" ng-hide="noAnsar&&errorLoad==undefined">
                                 <td ansar-id="[[ansar.ansar_id]]">[[ansar.ansar_id]]</td>
                                 <td>[[ansar.ansar_name_bng]]</td>
                                 <td>[[ansar.sms_send_datetime]]</td>
