@@ -22,9 +22,7 @@
             <div class="row">
                 <!-- left column -->
                 <div class="col-lg-6 col-centered">
-                    <div class="label-title-session-entry">
-                        <h4 style="text-align:center; padding:2px">Unit Form</h4>
-                    </div>
+
                     <!-- general form elements -->
 
                     <!-- Input addon -->
@@ -42,9 +40,9 @@
                                                 <option value="{{$division->id}}" {{Request::old('division_id')==$division->id ? "selected":""}}>{{$division->division_name_eng}}</option>
                                             @endforeach
                                         </select>
-                                    @if($errors->has('division_id'))
-                                        <p class="text-danger">{{$errors->first('division_id')}}</p>
-                                    @endif
+                                        @if($errors->has('division_id'))
+                                            <p class="text-danger">{{$errors->first('division_id')}}</p>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="form-group required">

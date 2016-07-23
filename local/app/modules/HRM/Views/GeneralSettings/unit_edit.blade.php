@@ -32,9 +32,6 @@
             <div class="row">
                 <!-- left column -->
                 <div class="col-lg-6 col-centered">
-                    <div class="label-title-session-entry">
-                        <h4 style="text-align:center; padding:2px">Edit Unit Form</h4>
-                    </div>
                     <!-- general form elements -->
 
                     <!-- Input addon -->
@@ -45,10 +42,7 @@
                                 <div class="form-group">
                                     {!! Form::label('division_id', 'Division:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                     <div class="col-sm-8">
-                                        <select class="form-control" id="division_id"
-                                                name="division_id" disabled>
-                                            <option value="">{{$division->division_name_eng}}</option>
-                                        </select>
+                                        {!! Form::text('thana_name_eng', $value = $division->division_name_eng, $attributes = array('class' => 'form-control', 'disabled')) !!}
                                     </div>
                                 </div>
                                 <input type="hidden" name="id" class="form-control" value="{{ $unit_info->id }}">

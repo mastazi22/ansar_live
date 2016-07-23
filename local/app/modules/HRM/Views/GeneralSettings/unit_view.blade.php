@@ -79,21 +79,21 @@
                             $scope.isLoading = false;
                             //alert($scope.total)
                         }, function (response) {
-                            switch(response.status){
+                            switch (response.status) {
                                 case 500:
-                                    response.data="Server Error(500)";
+                                    response.data = "Server Error(500)";
                                     break;
                                 case 401:
-                                    response.data="Unauthorized Error(401)";
+                                    response.data = "Unauthorized Error(401)";
                                     break;
                                 case 404:
-                                    response.data="Not Found(404)";
+                                    response.data = "Not Found(404)";
                                     break;
                             }
                             $scope.total = 0;
                             $scope.units = [];
                             $scope.errorFound = $sce.trustAsHtml(response.data);
-                           // $scope.allLoading = false;
+                            // $scope.allLoading = false;
                             $scope.pages = [];
                         }
                 )
@@ -123,6 +123,14 @@
                 <div class="alert alert-success">
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                     <span class="glyphicon glyphicon-ok"></span> {{Session::get('success_message')}}
+                </div>
+            </div>
+        @endif
+        @if(Session::has('error_message'))
+            <div style="padding: 10px 20px 0 20px;">
+                <div class="alert alert-danger">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    {{Session::get('error_message')}}
                 </div>
             </div>
         @endif

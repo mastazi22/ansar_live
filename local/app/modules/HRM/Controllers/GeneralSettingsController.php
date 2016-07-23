@@ -47,7 +47,7 @@ class GeneralSettingsController extends Controller
         $rules = array(
             'division_id' => 'required|numeric|integer|min:0',
             'unit_name_eng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
-            'unit_name_bng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
+            'unit_name_bng' => 'required',
             'unit_code' => 'required|numeric|integer',
         );
         $messages = array(
@@ -83,7 +83,7 @@ class GeneralSettingsController extends Controller
             } catch
             (Exception $e) {
                 DB::rollback();
-                return $e->getMessage();
+                return Redirect::route('unit_view')->with('error_message', $e->getMessage());
             }
             return Redirect::route('unit_view')->with('success_message', 'New Unit Entered Successfully!');
         }
@@ -121,28 +121,57 @@ class GeneralSettingsController extends Controller
 
     public function thanaEntry(Request $request)
     {
+        $rules = array(
+            'division_name_eng' => 'required|numeric|integer|min:0',
+            'unit_name_eng' => 'required|numeric|integer|min:0',
+            'thana_name_eng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
+            'thana_name_bng' => 'required',
+            'thana_code' => 'required|numeric|integer',
+        );
+        $messages = array(
+            'division_name_eng.required' => 'Division  is required.',
+            'division_name_eng.numeric' => 'The format of Division is invalid.',
+            'division_name_eng.integer' => 'The format of Division is invalid.',
+            'division_name_eng.min' => 'The format of Division is invalid.',
+            'unit_name_eng.required' => 'Unit is required.',
+            'unit_name_eng.numeric' => 'The format of Unit is invalid.',
+            'unit_name_eng.integer' => 'The format of Unit is invalid.',
+            'unit_name_eng.min' => 'The format of Unit is invalid.',
+            'thana_name_eng.required' => 'Thana Name in English is required.',
+            'thana_name_eng.regex' => 'Thana Name in English must contain Alphabets, Numbers and Special Characters (- and _).',
+            'thana_name_bng.required' => 'Thana Name in Bangla is required.',
+            'thana_name_bng.regex' => 'The format of Thana Name in Bangla is invalid.',
+            'thana_code.required' => 'Thana Code is required.',
+            'thana_code.numeric' => 'Thana Code must be a number.',
+            'thana_code.integer' => 'The format of Thana Code is invalid.',
+        );
+        $validation = Validator::make(Input::all(), $rules, $messages);
 
-        DB::beginTransaction();
-        try {
-            $thana_info = new Thana();
-            $thana_info->division_id = $request->input('division_name_eng');
-            $division_id = Division::find($request->input('division_name_eng'));
-            $thana_info->division_id = $division_id->id;
-            $unit_id = District::find($request->input('unit_name_eng'));
-            $thana_info->unit_id = $unit_id->id;
-            $thana_info->unit_code = $unit_id->unit_code;
-            $thana_info->thana_name_eng = $request->input('thana_name_eng');
-            $thana_info->thana_name_bng = $request->input('thana_name_bng');
-            $thana_info->thana_code = $request->input('thana_code');
-            $thana_info->save();
-            DB::commit();
-            //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
-        } catch
-        (Exception $e) {
-            DB::rollback();
-            return $e->getMessage();
+        if ($validation->fails()) {
+            return Redirect::back()->withInput(Input::all())->withErrors($validation);
+        }else{
+            DB::beginTransaction();
+            try {
+                $thana_info = new Thana();
+                $thana_info->division_id = $request->input('division_name_eng');
+                $division_id = Division::find($request->input('division_name_eng'));
+                $thana_info->division_id = $division_id->id;
+                $unit_id = District::find($request->input('unit_name_eng'));
+                $thana_info->unit_id = $unit_id->id;
+                $thana_info->unit_code = $unit_id->unit_code;
+                $thana_info->thana_name_eng = $request->input('thana_name_eng');
+                $thana_info->thana_name_bng = $request->input('thana_name_bng');
+                $thana_info->thana_code = $request->input('thana_code');
+                $thana_info->save();
+                DB::commit();
+                //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return Redirect::route('thana_view')->with('error_message', $e->getMessage());
+            }
+            return Redirect::route('thana_view')->with('success_message', 'New Thana Entered Successfully!');
         }
-        return Redirect::route('thana_view')->with('success_message', 'New Thana Entered Successfully!');
     }
 
     public function unitEdit($id)
@@ -167,9 +196,9 @@ class GeneralSettingsController extends Controller
     {
         $id = $request->input('id');
         $rules = array(
-            'id' => 'numeric|min:0|integer',
+            'id' => 'required|numeric|min:0|integer',
             'unit_name_eng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
-            'unit_name_bng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
+            'unit_name_bng' => 'required',
             'unit_code' => 'required|numeric|integer',
         );
         $messages = array(
@@ -209,21 +238,42 @@ class GeneralSettingsController extends Controller
     public function updateThana(Request $request)
     {
         $id = $request->input('id');
-        DB::beginTransaction();
-        try {
-            $thana_info = Thana::find($id);
-            $thana_info->thana_name_eng = $request->input('thana_name_eng');
-            $thana_info->thana_name_bng = $request->input('thana_name_bng');
-            $thana_info->thana_code = $request->input('thana_code');
-            $thana_info->save();
-            DB::commit();
-            //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
-        } catch
-        (Exception $e) {
-            DB::rollback();
-            return $e->getMessage();
+        $rules = array(
+            'id' => 'required|numeric|integer|min:0',
+            'thana_name_eng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
+            'thana_name_bng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
+            'thana_code' => 'required|numeric|integer',
+        );
+        $messages = array(
+            'thana_name_eng.required' => 'Thana Name in English is required.',
+            'thana_name_eng.regex' => 'Thana Name in English must contain Alphabets, Numbers and Special Characters (- and _).',
+            'thana_name_bng.required' => 'Thana Name in Bangla is required.',
+            'thana_name_bng.regex' => 'The format of Thana Name in Bangla is invalid.',
+            'thana_code.required' => 'Thana Code is required.',
+            'thana_code.numeric' => 'Thana Code must be a number.',
+            'thana_code.integer' => 'The format of Thana Code is invalid.',
+        );
+        $validation = Validator::make(Input::all(), $rules, $messages);
+
+        if ($validation->fails()) {
+            return Redirect::back()->withInput(Input::all())->withErrors($validation);
+        } else {
+            DB::beginTransaction();
+            try {
+                $thana_info = Thana::find($id);
+                $thana_info->thana_name_eng = $request->input('thana_name_eng');
+                $thana_info->thana_name_bng = $request->input('thana_name_bng');
+                $thana_info->thana_code = $request->input('thana_code');
+                $thana_info->save();
+                DB::commit();
+                //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return $e->getMessage();
+            }
+            return Redirect::route('thana_view')->with('success_message', 'Thana Updated Successfully!');
         }
-        return Redirect::route('thana_view')->with('success_message', 'Thana Updated Successfully!');
     }
 
     public function unitDelete($id)
