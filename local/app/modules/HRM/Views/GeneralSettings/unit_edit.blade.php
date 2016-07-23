@@ -16,11 +16,19 @@
         })
     </script>
     <div>
-        {!! Form::open(array('route' => 'unit_update', 'class' => 'form-horizontal', 'ng-controller' => 'UnitEditController','name' => 'unitForm',)) !!}
+        {!! Form::open(array('route' => 'unit_update', 'class' => 'form-horizontal','name' => 'unitForm',)) !!}
                 <!-- Content Header (Page header) -->
 
         <!-- Main content -->
         <section class="content">
+            @if($errors->has('id'))
+                <div style="padding: 10px 20px 0 20px;">
+                    <div class="alert alert-danger">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        Invalid Request
+                    </div>
+                </div>
+            @endif
             <div class="row">
                 <!-- left column -->
                 <div class="col-lg-6 col-centered">
@@ -44,28 +52,26 @@
                                     </div>
                                 </div>
                                 <input type="hidden" name="id" class="form-control" value="{{ $unit_info->id }}">
+
                                 <div class="form-group required">
                                     {!! Form::label('unit_name_eng', 'Unit Name:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
-                                    <div class="col-sm-8" ng-class="{ 'has-error': unitForm.unit_name_eng.$touched && unitForm.unit_name_eng.$invalid }">
-                                        {!! Form::text('unit_name_eng', $value = null, $attributes = array('class' => 'form-control', 'id' => 'unit_name_eng', 'placeholder' => 'Enter Unit Name in English', 'required', 'ng-model' => 'unit_name_eng')) !!}
-                                        <span ng-if="unitForm.unit_name_eng.$touched && unitForm.unit_name_eng.$error.required"><p
-                                                    class="text-danger">Unit Name in English is required.</p></span>
+                                    <div class="col-sm-8 @if($errors->has('unit_name_eng')) has-error @endif">
+                                        {!! Form::text('unit_name_eng', $value = (Request::old('unit_name_eng')) ? Request::old('unit_name_eng') : $unit_info->unit_name_eng, $attributes = array('class' => 'form-control', 'id' => 'unit_name_eng', 'placeholder' => 'Enter Unit Name in English')) !!}
+                                        <p class="text-danger">{{$errors->first('unit_name_eng')}}</p>
                                     </div>
                                 </div>
                                 <div class="form-group required">
                                     {!! Form::label('unit_name_bng', 'জেলার নাম:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
-                                    <div class="col-sm-8" ng-class="{ 'has-error': unitForm.unit_name_bng.$touched && unitForm.unit_name_bng.$invalid }">
-                                        {!! Form::text('unit_name_bng', $value = null, $attributes = array('class' => 'form-control', 'id' => 'unit_name_bng', 'placeholder' => 'জেলার নাম লিখুন বাংলায়', 'required', 'ng-model' => 'unit_name_bng')) !!}
-                                        <span ng-if="unitForm.unit_name_bng.$touched && unitForm.unit_name_bng.$error.required"><p
-                                                    class="text-danger">Unit Name in Bangla is required.</p></span>
+                                    <div class="col-sm-8 @if($errors->has('unit_name_bng')) has-error @endif">
+                                        {!! Form::text('unit_name_bng', $value = (Request::old('unit_name_bng')) ? Request::old('unit_name_bng') : $unit_info->unit_name_bng, $attributes = array('class' => 'form-control', 'id' => 'unit_name_bng', 'placeholder' => 'জেলার নাম লিখুন বাংলায়')) !!}
+                                        <p class="text-danger">{{$errors->first('unit_name_bng')}}</p>
                                     </div>
                                 </div>
                                 <div class="form-group required">
                                     {!! Form::label('unit_code', 'Unit Code:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
-                                    <div class="col-sm-8" ng-class="{ 'has-error': unitForm.unit_code.$touched && unitForm.unit_code.$invalid }">
-                                        {!! Form::text('unit_code', $value = null, $attributes = array('class' => 'form-control', 'id' => 'unit_code', 'placeholder' => 'Enter Unit Code in English', 'required', 'ng-model' => 'unit_code')) !!}
-                                        <span ng-if="unitForm.unit_code.$touched && unitForm.unit_code.$error.required"><p
-                                                    class="text-danger">Unit Code is required.</p></span>
+                                    <div class="col-sm-8 @if($errors->has('unit_code')) has-error @endif">
+                                        {!! Form::text('unit_code', $value = (Request::old('unit_code')) ? Request::old('unit_code') : $unit_info->unit_code, $attributes = array('class' => 'form-control', 'id' => 'unit_code', 'placeholder' => 'Enter Unit Code in English')) !!}
+                                        <p class="text-danger">{{$errors->first('unit_code')}}</p>
                                     </div>
                                 </div>
                             </div>

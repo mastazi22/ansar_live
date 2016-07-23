@@ -44,25 +44,49 @@ class GeneralSettingsController extends Controller
 
     public function unitEntry(Request $request)
     {
+        $rules = array(
+            'division_id' => 'required|numeric|integer|min:0',
+            'unit_name_eng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
+            'unit_name_bng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
+            'unit_code' => 'required|numeric|integer',
+        );
+        $messages = array(
+            'division_id.required' => 'Division  is required.',
+            'division_id.numeric' => 'The format of Division is invalid.',
+            'division_id.integer' => 'The format of Division is invalid.',
+            'division_id.min' => 'The format of Division is invalid.',
+            'unit_name_eng.required' => 'Unit Name in English is required.',
+            'unit_name_eng.regex' => 'Unit Name in English must contain Alphabets, Numbers and Special Characters (- and _).',
+            'unit_name_bng.required' => 'Unit Name in Bangla is required.',
+            'unit_name_bng.regex' => 'The format of Unit Name in Bangla is invalid.',
+            'unit_code.required' => 'Unit Code is required.',
+            'unit_code.numeric' => 'Unit Code must be a number.',
+            'unit_code.integer' => 'The format of Unit Code is invalid.',
+        );
+        $validation = Validator::make($request->all(), $rules, $messages);
 
-        DB::beginTransaction();
-        try {
-            $unit_info = new District();
-            $unit_info->division_id = $request->input('division_id');
-            $division_code = Division::find($request->input('division_id'));
-            $unit_info->division_code = $division_code->division_code;
-            $unit_info->unit_name_eng = $request->input('unit_name_eng');
-            $unit_info->unit_name_bng = $request->input('unit_name_bng');
-            $unit_info->unit_code = $request->input('unit_code');
-            $unit_info->save();
-            DB::commit();
-            //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
-        } catch
-        (Exception $e) {
-            DB::rollback();
-            return $e->getMessage();
+        if ($validation->fails()) {
+            return Redirect::back()->withInput(Input::all())->withErrors($validation);
+        } else {
+            DB::beginTransaction();
+            try {
+                $unit_info = new District();
+                $unit_info->division_id = $request->input('division_id');
+                $division_code = Division::find($request->input('division_id'));
+                $unit_info->division_code = $division_code->division_code;
+                $unit_info->unit_name_eng = $request->input('unit_name_eng');
+                $unit_info->unit_name_bng = $request->input('unit_name_bng');
+                $unit_info->unit_code = $request->input('unit_code');
+                $unit_info->save();
+                DB::commit();
+                //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return $e->getMessage();
+            }
+            return Redirect::route('unit_view')->with('success_message', 'New Unit Entered Successfully!');
         }
-        return Redirect::route('unit_view')->with('success_message', 'New Unit Entered Successfully!');
     }
 
     public function thanaIndex()
@@ -85,8 +109,8 @@ class GeneralSettingsController extends Controller
     {
         $limit = Input::get('limit');
         $offset = Input::get('offset');
-        $division=Input::get('division');
-        $unit=Input::get('unit');
+        $division = Input::get('division');
+        $unit = Input::get('unit');
         $view = Input::get('view');
         if (strcasecmp($view, 'view') == 0) {
             return CustomQuery::thanaInfo($offset, $limit, $division, $unit);
@@ -126,7 +150,7 @@ class GeneralSettingsController extends Controller
         $unit_info = District::find($id);
         $division_id = $unit_info->division_id;
         $division = DB::table('tbl_division')->where('id', $division_id)->select('tbl_division.division_name_eng')->first();
-        return view('HRM::GeneralSettings.unit_edit')->with(['unit_info' => $unit_info, 'division' => $division,'id' => $id]);
+        return view('HRM::GeneralSettings.unit_edit')->with(['unit_info' => $unit_info, 'division' => $division, 'id' => $id]);
     }
 
     public function thanaEdit($id)
@@ -136,29 +160,50 @@ class GeneralSettingsController extends Controller
         $unit_id = $thana_info->unit_id;
         $division = DB::table('tbl_division')->where('id', $division_id)->select('tbl_division.division_name_eng')->first();
         $unit = DB::table('tbl_units')->where('id', $unit_id)->select('tbl_units.unit_name_eng')->first();
-        return view('HRM::GeneralSettings.thana_edit')->with(['thana_info' => $thana_info, 'division' => $division, 'unit' => $unit, 'id'=>$id]);
+        return view('HRM::GeneralSettings.thana_edit')->with(['thana_info' => $thana_info, 'division' => $division, 'unit' => $unit, 'id' => $id]);
     }
 
     public function updateUnit(Request $request)
     {
         $id = $request->input('id');
-        DB::beginTransaction();
-        try {
-            $unit_info = District::find($id);
-            $unit_info->unit_name_eng = $request->input('unit_name_eng');
-            $unit_info->unit_name_bng = $request->input('unit_name_bng');
-            $unit_info->unit_code = $request->input('unit_code');
-            $unit_info->save();
-            DB::commit();
-            //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
-        } catch
-        (Exception $e) {
-            DB::rollback();
-            return $e->getMessage();
+        $rules = array(
+            'id' => 'numeric|min:0|integer',
+            'unit_name_eng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
+            'unit_name_bng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
+            'unit_code' => 'required|numeric|integer',
+        );
+        $messages = array(
+            'division_id.min' => 'The format of Division is invalid.',
+            'unit_name_eng.required' => 'Unit Name in English is required.',
+            'unit_name_eng.regex' => 'Unit Name in English must contain Alphabets, Numbers and Special Characters (- and _).',
+            'unit_name_bng.required' => 'Unit Name in Bangla is required.',
+            'unit_name_bng.regex' => 'The format of Unit Name in Bangla is invalid.',
+            'unit_code.required' => 'Unit Code is required.',
+            'unit_code.numeric' => 'Unit Code must be a number.',
+            'unit_code.integer' => 'The format of Unit Code is invalid.',
+        );
+        $validation = Validator::make($request->all(), $rules, $messages);
+
+        if ($validation->fails()) {
+            return Redirect::back()->withInput(Input::all())->withErrors($validation);
+        }else{
+            DB::beginTransaction();
+            try {
+                $unit_info = District::find($id);
+                $unit_info->unit_name_eng = $request->input('unit_name_eng');
+                $unit_info->unit_name_bng = $request->input('unit_name_bng');
+                $unit_info->unit_code = $request->input('unit_code');
+                $unit_info->save();
+                DB::commit();
+                //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return $e->getMessage();
+            }
+
+            return Redirect::route('unit_view')->with('success_message', 'Unit Updated Successfully!');
         }
-
-        return Redirect::route('unit_view')->with('success_message', 'Unit Updated Successfully!');
-
     }
 
     public function updateThana(Request $request)
@@ -180,16 +225,21 @@ class GeneralSettingsController extends Controller
         }
         return Redirect::route('thana_view')->with('success_message', 'Thana Updated Successfully!');
     }
-    public function unitDelete($id){
-        $unit_info=District::find($id);
+
+    public function unitDelete($id)
+    {
+        $unit_info = District::find($id);
         $unit_info->delete();
         return Redirect::route('unit_view')->with('success_message', 'Unit Deleted Successfully!');
     }
-    public function thanaDelete($id){
-        $thana_info=Thana::find($id);
+
+    public function thanaDelete($id)
+    {
+        $thana_info = Thana::find($id);
         $thana_info->delete();
         return Redirect::route('thana_view')->with('success_message', 'Thana Deleted Successfully!');
     }
+
     public function diseaseView()
     {
 
@@ -227,7 +277,7 @@ class GeneralSettingsController extends Controller
     public function diseaseEdit($id)
     {
         $unit_infos = AllDisease::find($id);
-        return view('HRM::GeneralSettings.diseaseEdit')->with(['disease_infos' => $unit_infos, 'id'=>$id]);
+        return view('HRM::GeneralSettings.diseaseEdit')->with(['disease_infos' => $unit_infos, 'id' => $id]);
     }
 
     public function updateDisease(Request $request)

@@ -18,7 +18,7 @@
 
         <!-- Main content -->
         <section class="content">
-            {!! Form::open(array('url' => 'HRM/unit_entry', 'ng-controller' => 'UnitEntryController','name' => 'unitForm', 'class' => 'form-horizontal', 'novalidate')) !!}
+            {!! Form::open(array('url' => 'HRM/unit_entry','name' => 'unitForm', 'class' => 'form-horizontal')) !!}
             <div class="row">
                 <!-- left column -->
                 <div class="col-lg-6 col-centered">
@@ -36,10 +36,10 @@
                                     {!! Form::label('division_id', 'Division:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                     <div class="col-sm-8 @if($errors->has('division_id')) has-error @endif">
                                         <select class="form-control" id="division_id"
-                                                name="division_id" ng-model="division_id" required>
+                                                name="division_id" ng-model="division_id">
                                             <option value="">--Select Division--</option>
                                             @foreach($divisions as $division)
-                                                <option value="{{$division->id}}">{{$division->division_name_eng}}</option>
+                                                <option value="{{$division->id}}" {{Request::old('division_id')==$division->id ? "selected":""}}>{{$division->division_name_eng}}</option>
                                             @endforeach
                                         </select>
                                     @if($errors->has('division_id'))
@@ -50,8 +50,8 @@
                                 <div class="form-group required">
                                     {!! Form::label('unit_name_eng', 'Unit Name:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                     <div class="col-sm-8 @if($errors->has('unit_name_eng')) has-error @endif">
-                                        {!! Form::text('unit_name_eng', $value = null, $attributes = array('class' => 'form-control', 'id' => 'unit_name_eng', 'placeholder' => 'Enter Unit Name in English', 'required', 'ng-model' => 'unit_name_eng')) !!}
-                                        @if($errors->has('division_id'))
+                                        {!! Form::text('unit_name_eng', $value = Request::old('unit_name_eng'), $attributes = array('class' => 'form-control', 'id' => 'unit_name_eng', 'placeholder' => 'Enter Unit Name in English')) !!}
+                                        @if($errors->has('unit_name_eng'))
                                             <p class="text-danger">{{$errors->first('unit_name_eng')}}</p>
                                         @endif
                                     </div>
@@ -59,8 +59,8 @@
                                 <div class="form-group required">
                                     {!! Form::label('unit_name_bng', 'জেলার নাম:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                     <div class="col-sm-8 @if($errors->has('unit_name_bng')) has-error @endif">
-                                        {!! Form::text('unit_name_bng', $value = null, $attributes = array('class' => 'form-control', 'id' => 'unit_name_bng', 'placeholder' => 'জেলার নাম লিখুন বাংলায়', 'required', 'ng-model' => 'unit_name_bng')) !!}
-                                        @if($errors->has('division_id'))
+                                        {!! Form::text('unit_name_bng', $value = Request::old('unit_name_bng'), $attributes = array('class' => 'form-control', 'id' => 'unit_name_bng', 'placeholder' => 'জেলার নাম লিখুন বাংলায়')) !!}
+                                        @if($errors->has('unit_name_bng'))
                                             <p class="text-danger">{{$errors->first('unit_name_bng')}}</p>
                                         @endif
                                     </div>
@@ -68,8 +68,8 @@
                                 <div class="form-group required">
                                     {!! Form::label('unit_code', 'Unit Code:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                     <div class="col-sm-8 @if($errors->has('unit_code')) has-error @endif">
-                                        {!! Form::text('unit_code', $value = null, $attributes = array('class' => 'form-control', 'id' => 'unit_code', 'placeholder' => 'Enter Unit Code in English', 'required', 'ng-model' => 'unit_code')) !!}
-                                        @if($errors->has('division_id'))
+                                        {!! Form::text('unit_code', $value = Request::old('unit_code'), $attributes = array('class' => 'form-control', 'id' => 'unit_code', 'placeholder' => 'Enter Unit Code in English')) !!}
+                                        @if($errors->has('unit_code'))
                                             <p class="text-danger">{{$errors->first('unit_code')}}</p>
                                         @endif
                                     </div>
@@ -82,8 +82,7 @@
                     </div>
                     <!-- /.box -->
                     <div>
-                        <button type="submit" class="btn btn-info pull-right"
-                                 ng-disabled="unitForm.division_id.$error.required||unitForm.unit_name_eng.$error.required||unitForm.unit_name_bng.$error.required||unitForm.unit_code.$error.required">
+                        <button type="submit" class="btn btn-info pull-right">
                             Submit
                         </button>
                     </div>
