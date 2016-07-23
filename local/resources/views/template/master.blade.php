@@ -124,8 +124,8 @@
 
 </head>
 <body class="skin-blue sidebar-mini " ng-app="GlobalApp"><!-- ./wrapper -->
-
-<div class="wrapper" ng-app="GlobalApp" ng-cloak>
+<div ng-app="GlobalApp">
+<div class="wrapper" ng-cloak>
     <header class="main-header">
         <!-- Logo -->
         <a href="{{URL::to('/')}}" class="logo">
@@ -259,6 +259,7 @@
         }
     })
 </script>
+</div>
 </div>
 </body>
 </html>
