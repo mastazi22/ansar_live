@@ -85,7 +85,7 @@
 
         })
     </script>
-    <div class="content-wrapper" style="min-height: 490px" ng-controller="NewDisembodimentController">
+    <div style="min-height: 490px" ng-controller="NewDisembodimentController">
         @if(Session::has('success_message'))
             <div style="padding: 10px 20px 0 20px;">
                 <div class="alert alert-success">
@@ -317,14 +317,6 @@
             $('.ansar-check:checked').each(function () {
                 selectedAnsars.push($(this).parents('tr'))
             })
-//            if (this.checked) {
-//                //alert($(this).parents('tr').splice(7, 1).html())
-//                selectedAnsars.push($(this).parents('tr'))
-//            } else {
-////                alert("Hello");
-//                selectedAnsars.splice(selectedAnsars.indexOf($(this).parents('tr')), 1)
-//            }
-//            alert(selectedAnsars.length)
         })
 
         $('#disembodiment-entry').click(function (e) {

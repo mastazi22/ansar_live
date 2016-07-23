@@ -129,17 +129,13 @@
                 </div>
             </div>
         @endif
-        <div id="all-loading"
-             style="position:fixed;width: 100%;height: 100%;background-color: rgba(255, 255, 255, 0.27);z-index: 100; margin-left: 30%; display: none; overflow: hidden">
-            <div style="position: fixed;width: 20%;height: auto;margin: 20% auto;text-align: center;background: #FFFFFF">
-                <img class="img-responsive" src="{{asset('dist/img/loading-data.gif')}}"
-                     style="position: relative;margin: 0 auto">
-                <h4>Loading....</h4>
-            </div>
-
-        </div>
         <section class="content">
             <div class="box box-solid">
+                <div class="overlay" style="display: none;">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-3" ng-show="isAdmin==11">
@@ -205,7 +201,6 @@
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr>
-                            <tr class="info">
                                 <th>Ansar ID</th>
                                 <th>Ansar Name</th>
                                 <th>Ansar Unit</th>
@@ -214,7 +209,6 @@
                                 <th>KPI Name</th>
                                 <th>Reason of Disembodiment</th>
                                 <th>Select From Here</th>
-                            </tr>
                             </tr>
                             <tbody id="ansar-all" class="status">
                             <tr colspan="10" class="warning" id="not-find-info">
@@ -284,7 +278,7 @@
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table table-bordered" id="pc-table">
-                                            <tr class="info">
+                                            <tr>
                                                 <th>Ansar ID</th>
                                                 <th>Ansar Name</th>
                                                 <th>Ansar Unit</th>
@@ -318,7 +312,7 @@
         var selectedAnsars = [];
         var ansar_ids = [];
         $('#load-ansar-for-disembodiment').click(function () {
-            $("#all-loading").css('display', 'block');
+            $(".overlay").css('display', 'block');
             var selectedKpi = $('select[name=kpi_id]').val();
             var selectedThana = $('select[name=thana_id]').val();
             $.ajax({
@@ -327,7 +321,7 @@
                 data: {kpi_id: selectedKpi, thana_id: selectedThana},
                 success: function (data) {
                     //$('#ansar-all').html(data);
-                    $("#all-loading").css('display', 'none');
+                    $(".overlay").css('display', 'none');
                     if (data.result == undefined) {
                         $('#disembodiment-confirmation').prop('disabled', false);
                         $("#ansar-all").html(data);
