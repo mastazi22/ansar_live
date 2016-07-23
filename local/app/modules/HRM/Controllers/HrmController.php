@@ -275,7 +275,7 @@ class HrmController extends Controller
 
         if($valid->fails()){
             //return print_r($valid->messages());
-            return response("<tr class='warning'><td colspan='7'>Invalid Request(400)</td></tr>",400,['Content-Type:text/HTML']);
+            return response("Invalid Request(400)",400);
         }
         if (strcasecmp($view, 'view') == 0) {
             switch ($type) {
@@ -356,7 +356,7 @@ class HrmController extends Controller
 
         if($valid->fails()){
             //return print_r($valid->messages());
-            return response("<tr class='warning'><td colspan='7'>Invalid Request(400)</td></tr>",400,['Content-Type:text/HTML']);
+            return response("Invalid Request(400)",400);
         }
         if (strcasecmp($view, 'view') == 0) {
             switch ($type) {

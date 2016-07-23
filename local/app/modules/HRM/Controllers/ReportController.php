@@ -381,7 +381,13 @@ class ReportController extends Controller
             'f_date'=>'required|date_format:d-M-Y',
             't_date'=>'required|date_format:d-M-Y',
         ];
-        $valid = Validator::make(Input::all(),$rules);
+        $message = [
+            'f_date.required'=>'From date field is required',
+            't_date.required'=>'To date field is required',
+            'f_date.date_format'=>'From date field is invalid',
+            't_date.date_format'=>'To date field is invalid',
+        ];
+        $valid = Validator::make(Input::all(),$rules,$message);
         if($valid->fails()){
             return response($valid->messages()->toJson(),400,['Content-Type','application/json']);
         }
@@ -394,6 +400,14 @@ class ReportController extends Controller
 
     public function ansarCardStatusChange()
     {
+        $rules = [
+            'action'=>'required|regex:/^[a-z]+$/',
+            'ansar_id'=>'required|regex:/^[0-9]+$/',
+        ];
+        $valid = Validator::make(Input::all(),$rules);
+        if($valid->fails()){
+            return response("Invalid request(400)",400);
+        }
         switch (Input::get('action')) {
             case 'block':
                 $ansar = AnsarIdCard::where('ansar_id', Input::get('ansar_id'))->first();
@@ -413,6 +427,8 @@ class ReportController extends Controller
                     return Response::json(['status' => 0]);
                 }
                 break;
+            default:
+                return response("Invalid request(400)",400);
         }
     }
 
@@ -473,6 +489,24 @@ class ReportController extends Controller
 
     public function getRejectedAnsarList()
     {
+        $rules = [
+            'from_date'=>'required|date_format:d-M-Y',
+            'to_date'=>'required|date_format:d-M-Y',
+            'rejection_no'=>'required|numeric|regex:/^[0-9]+$/',
+        ];
+        $message = [
+            'from_date.required'=>'From date field is required',
+            'to_date.required'=>'To date field is required',
+            'from_date.date_format'=>'From date field is invalid',
+            'to_date.date_format'=>'To date field is invalid',
+            'rejection_no.required'=>'Rejection no required',
+            'rejection_no.numeric'=>'Rejection no must be integer.eg 1,2...',
+            'rejection_no.regex'=>'Rejection no must be integer.eg 1,2...',
+        ];
+        $valid = Validator::make(Input::all(),$rules,$message);
+        if($valid->fails()){
+            return response($valid->messages()->toJson(),400,['Content-Type'=>'application/json']);
+        }
         $fd = Carbon::createFromFormat("d-M-Y", Input::get('from_date'))->format("Y-m-d");
         $td = Carbon::createFromFormat("d-M-Y", Input::get('to_date'))->format("Y-m-d");
         $rejection_no = Input::get('rejection_no');

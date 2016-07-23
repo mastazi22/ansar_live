@@ -79,7 +79,7 @@
             $interpolateProvider.endSymbol(']]');
             $httpProvider.useApplyAsync(true)
             $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
-            $httpProvider.interceptors.push(function () {
+            $httpProvider.interceptors.push(function ($q) {
                 return {
                     response: function (response) {
                         if (response.data.status == 'logout') {
@@ -90,6 +90,19 @@
 
                         }
                         return response;
+                    },
+                    responseError: function (response) {
+                        console.log(response);
+//                        var a = response;
+                        switch (response.status){
+                            case 404:
+                                response.data = "Not found(404)"
+                                break;
+                            case 500:
+                                response.data = "Internal server error(500)"
+                                break;
+                        }
+                        return $q.reject(response);
                     }
                 }
             })
@@ -112,7 +125,7 @@
 </head>
 <body class="skin-blue sidebar-mini " ng-app="GlobalApp"><!-- ./wrapper -->
 
-<div class="wrapper" ng-app="GlobalApp">
+<div class="wrapper" ng-app="GlobalApp" ng-cloak>
     <header class="main-header">
         <!-- Logo -->
         <a href="{{URL::to('/')}}" class="logo">

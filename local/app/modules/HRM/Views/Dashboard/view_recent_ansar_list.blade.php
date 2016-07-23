@@ -77,7 +77,8 @@
                     $scope.loadPagination();
                 }, function (response) {
                     $scope.total = 0;
-                    $scope.ansars = $sce.trustAsHtml(response.data);
+                    $scope.ansars = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
+
                     $scope.allLoading = false;
                     $scope.pages = [];
                 })

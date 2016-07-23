@@ -26,9 +26,18 @@
                 }).then(function (response) {
                     $scope.ansars = response.data;
                     $scope.isLoading = false
+                    $scope.internalError = undefined;
+                    $scope.error = undefined;
                 }, function (response) {
-                    alert('ERROR!!!!!')
+                    //alert('ERROR!!!!!')
                     $scope.isLoading = false
+                    if(response.status==400) {
+                        $scope.error = response.data;
+                    }
+                    else if(response.status==500){
+                        $scope.internalEerror = response.data;
+                    }
+                    console.log(response)
                 })
             }
             $scope.blockAnsar = function (id,i) {
@@ -60,12 +69,16 @@
         <section class="content">
             <div class="box box-solid">
                 <div class="box-body">
+                    <div class="alert alert-danger" ng-if="internalError!=undefined">
+                        <i class="fa fa-warning"></i>&nbsp;[[internalError]]
+                    </div>
                     <div class="row">
                         <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label">From Date</label>
                                 <input type="text" class="form-control showdate" ng-model="fromDate"
                                        placeholder="From Date">
+                                <p class="text text-danger" ng-if="error!=undefined&&error.from_date!=undefined">[[error.from_date[0] ]]</p>
                             </div>
                         </div>
                         <div class="col-sm-3">
@@ -73,6 +86,7 @@
                                 <label class="control-label">To Date</label>
                                 <input type="text" ng-model="toDate" class="form-control showdate"
                                        placeholder="To Date">
+                                <p class="text text-danger" ng-if="error!=undefined&&error.to_date!=undefined">[[error.to_date[0] ]]</p>
                             </div>
                         </div>
                         <div class="col-sm-3">
@@ -80,6 +94,7 @@
                                 <label class="control-label">No Of Offer Rejected/Not Respond</label>
                                 <input type="text" ng-model="noOfRejection" ng-change="noOfRejection = noOfRejection<1?1:noOfRejection" class="form-control"
                                        placeholder="No of Rejection/Not Respond">
+                                <p class="text text-danger" ng-if="error!=undefined&&error.rejection_no!=undefined">[[error.rejection_no[0] ]]</p>
                             </div>
                         </div>
                         <div class="col-sm-12">

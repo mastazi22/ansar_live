@@ -15,17 +15,28 @@
             $scope.loading = [];
             $scope.toDate = ""
             $scope.fromDate = ""
+            $scope.isLoading = false;
             $scope.loadAnsar = function () {
                // alert(document.getElementById('from-date').value+" "+t)
+                $scope.isLoading = true;
                 $http({
                     url:'{{URL::to('HRM/get_print_id_list')}}',
                     method:'get',
                     params:{f_date:$scope.fromDate,t_date:$scope.toDate}
                 }).then(function (response) {
                     console.log(response.data);
+                    $scope.error = undefined;
+                    $scope.internalEerror = undefined;
                     $scope.ansars = response.data.ansars;
+                    $scope.isLoading = false;
                 }, function (response) {
-
+                    $scope.isLoading = false;
+                    if(response.status==400) {
+                        $scope.error = response.data;
+                    }
+                    else if(response.status==500){
+                        $scope.internalEerror = "Internal server error(500)";
+                    }
                 })
             }
             $scope.blockAnsarCard = function (a) {
@@ -39,6 +50,12 @@
                     $scope.loading[a] = false;
                 }, function (resonse) {
                     $scope.loading[a] = false;
+                    if(response.status==400) {
+                        $scope.internalEerror = response.data;
+                    }
+                    else if(response.status==500){
+                        $scope.internalEerror = "Internal server error(500)";
+                    }
                 })
             }
             $scope.activeAnsarCard = function (a) {
@@ -52,6 +69,12 @@
                     $scope.loading[a] = false;
                 }, function (resonse) {
                     $scope.loading[a] = false;
+                    if(response.status==400) {
+                        $scope.internalEerror = response.data;
+                    }
+                    else if(response.status==500){
+                        $scope.internalEerror = "Internal server error(500)";
+                    }
                 })
             }
         })
@@ -93,6 +116,9 @@
         <section class="content">
             <div class="box box-solid">
                 <div class="box-body">
+                    <div class="alert alert-danger" ng-if="internalError!=undefined">
+                        <i class="fa fa-warning"></i>&nbsp;[[internalError]]
+                    </div>
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
@@ -100,6 +126,7 @@
                                     From Date
                                 </label>
                                 <input type="text" ng-model="fromDate" id="from-date" class="form-control" placeholder="From Date">
+                                <p class="text text-danger" ng-if="error!=undefined&&error.f_date!=undefined">[[error.f_date[0] ]]</p>
                             </div>
 
                         </div>
@@ -113,11 +140,13 @@
                                     To Date
                                 </label>
                                 <input type="text" ng-model="toDate"  id="to-date" class="form-control" placeholder="To Date">
+                                <p class="text text-danger" ng-if="error!=undefined&&error.t_date!=undefined">[[error.t_date[0] ]]</p>
                             </div>
                         </div>
                         <div class="col-sm-3">
                             <label class="control-label" style="display: block">&nbsp;</label>
-                            <button class="btn btn-primary"  ng-click="loadAnsar()">View Printed ID Card List</button>
+                            <button class="btn btn-primary" ng-disabled="isLoading"  ng-click="loadAnsar()">
+                                <i ng-if="isLoading" class="fa fa-spinner fa-pulse"></i>&nbsp;View Printed ID Card List</button>
                         </div>
                     </div>
                     <div class="form-group">
