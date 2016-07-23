@@ -4489,6 +4489,10 @@ table.text-center, table.text-center td, table.text-center th {
 .active-submenu{
     background: rgba(104, 109, 111, 0.43);
     position: relative;
+
+}
+.active-submenu>a{
+    color: #ffffff !important;
 }
 .active-submenu::before{
     content: '';

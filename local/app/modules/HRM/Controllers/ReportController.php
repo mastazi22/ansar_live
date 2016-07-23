@@ -377,7 +377,14 @@ class ReportController extends Controller
 
     public function getPrintIdList()
     {
-
+        $rules = [
+            'f_date'=>'required|date_format:d-M-Y',
+            't_date'=>'required|date_format:d-M-Y',
+        ];
+        $valid = Validator::make(Input::all(),$rules);
+        if($valid->fails()){
+            return response($valid->messages()->toJson(),400,['Content-Type','application/json']);
+        }
         $f_date = Carbon::createFromFormat("d-M-Y", Input::get('f_date'))->format("Y-m-d");
         $t_date = Carbon::createFromFormat("d-M-Y", Input::get('t_date'))->format("Y-m-d");
 //        return Response::json(["f"=>$f_date,"t"=>$t_date]);
