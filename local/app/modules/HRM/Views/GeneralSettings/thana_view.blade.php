@@ -199,7 +199,7 @@
                                     <tbody>
                                     <tr ng-if="thanas.length==0">
                                         <td colspan="8" class="warning no-ansar">
-                                            No thana available to see
+                                            No information found.
                                         </td>
                                     </tr>
                                     <tr ng-if="thanas.length>0" ng-repeat="a in thanas">

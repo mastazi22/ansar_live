@@ -175,7 +175,7 @@
                                     <tbody>
                                     <tr ng-if="units.length==0&&errorFound==undefined">
                                         <td colspan="8" class="warning no-ansar">
-                                            No unit available to see
+                                            No information found.
                                         </td>
                                     </tr>
                                     <tr ng-if="units.length>0" ng-repeat="a in units">
