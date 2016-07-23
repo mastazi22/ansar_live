@@ -149,7 +149,7 @@ class GeneralSettingsController extends Controller
 
         if ($validation->fails()) {
             return Redirect::back()->withInput(Input::all())->withErrors($validation);
-        }else{
+        } else {
             DB::beginTransaction();
             try {
                 $thana_info = new Thana();
@@ -215,7 +215,7 @@ class GeneralSettingsController extends Controller
 
         if ($validation->fails()) {
             return Redirect::back()->withInput(Input::all())->withErrors($validation);
-        }else{
+        } else {
             DB::beginTransaction();
             try {
                 $unit_info = District::find($id);
@@ -228,7 +228,7 @@ class GeneralSettingsController extends Controller
             } catch
             (Exception $e) {
                 DB::rollback();
-                return $e->getMessage();
+                return Redirect::route('unit_view')->with('error_message', $e->getMessage());
             }
 
             return Redirect::route('unit_view')->with('success_message', 'Unit Updated Successfully!');
@@ -270,7 +270,7 @@ class GeneralSettingsController extends Controller
             } catch
             (Exception $e) {
                 DB::rollback();
-                return $e->getMessage();
+                return Redirect::route('thana_view')->with('error_message', $e->getMessage());
             }
             return Redirect::route('thana_view')->with('success_message', 'Thana Updated Successfully!');
         }
@@ -305,21 +305,34 @@ class GeneralSettingsController extends Controller
     public function diseaseEntry(Request $request)
     {
         $rules = array(
-            'disease_name_eng' => 'required|unique:tbl_long_term_disease',
+            'disease_name_eng' => 'required|unique:tbl_long_term_disease|regex:/^[a-zA-Z0-9 ]+$/',
             'disease_name_bng' => 'required|unique:tbl_long_term_disease',
         );
         $messages = array(
-            'required' => 'This field is required',
+            'disease_name_eng.required' => 'Disease Name in English field is required.',
+            'disease_name_eng.unique' => 'Disease Name in English has already taken.',
+            'disease_name_eng.regex' => 'Disease Name in English must contain Alphabets, Numbers and Space Characters.',
+            'disease_name_eng.required' => 'Disease Name in Bangla field is required.',
         );
         $validation = Validator::make(Input::all(), $rules, $messages);
 
         if ($validation->fails()) {
             return Redirect::route('add_disease_view')->withInput(Input::all())->withErrors($validation);
         } else {
-            $disease_info = new AllDisease();
-            $disease_info->disease_name_eng = $request->input('disease_name_eng');
-            $disease_info->disease_name_bng = $request->input('disease_name_bng');
-            $disease_info->save();
+
+            DB::beginTransaction();
+            try {
+                $disease_info = new AllDisease();
+                $disease_info->disease_name_eng = $request->input('disease_name_eng');
+                $disease_info->disease_name_bng = $request->input('disease_name_bng');
+                $disease_info->save();
+                DB::commit();
+                //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return Redirect::route('disease_view')->with('error_message', $e->getMessage());
+            }
             return Redirect::route('disease_view')->with('success_message', 'New Disease Added Successfully!');
         }
     }
@@ -333,22 +346,38 @@ class GeneralSettingsController extends Controller
     public function updateDisease(Request $request)
     {
         $id = $request->input('id');
+        if(!preg_match('/^[0-9]+$/',$id))
+        {
+            return Redirect::route('disease_view')->with('error_message', 'Invalid Request');
+        }
         $rules = array(
-            'disease_name_eng' => 'required|unique:tbl_long_term_disease,disease_name_eng,' . $id,
+            'disease_name_eng' => 'required|regex:/^[a-zA-Z0-9 ]+$/|unique:tbl_long_term_disease,disease_name_eng,' . $id,
             'disease_name_bng' => 'required|unique:tbl_long_term_disease,disease_name_bng,' . $id,
         );
         $messages = array(
-            'required' => 'This field is required',
+            'disease_name_eng.required' => 'Disease Name in English field is required.',
+            'disease_name_eng.unique' => 'Disease Name in English has already taken.',
+            'disease_name_eng.regex' => 'Disease Name in English must contain Alphabets, Numbers and Space Characters.',
+            'disease_name_eng.required' => 'Disease Name in Bangla field is required.',
         );
         $validation = Validator::make(Input::all(), $rules, $messages);
 
         if ($validation->fails()) {
             return Redirect::route('disease_edit')->withInput(Input::all())->withErrors($validation);
         } else {
-            $disease_info = AllDisease::find($id);
-            $disease_info->disease_name_eng = $request->input('disease_name_eng');
-            $disease_info->disease_name_bng = $request->input('disease_name_bng');
-            $disease_info->save();
+            DB::beginTransaction();
+            try {
+                $disease_info = AllDisease::find($id);
+                $disease_info->disease_name_eng = $request->input('disease_name_eng');
+                $disease_info->disease_name_bng = $request->input('disease_name_bng');
+                $disease_info->save();
+                DB::commit();
+                //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return Redirect::route('disease_view')->with('error_message', $e->getMessage());
+            }
             return Redirect::route('disease_view')->with('success_message', 'Disease Updated Successfully!');
         }
     }
@@ -369,21 +398,32 @@ class GeneralSettingsController extends Controller
     public function skillEntry(Request $request)
     {
         $rules = array(
-            'skill_name_eng' => 'required|unique:tbl_particular_skill',
+            'skill_name_eng' => 'required|unique:tbl_particular_skill|regex:/^[a-zA-Z0-9 ]+$/',
             'skill_name_bng' => 'required|unique:tbl_particular_skill',
         );
         $messages = array(
-            'required' => 'This field is required',
+            'skill_name_eng.required' => 'Skill Name in English field is required.',
+            'skill_name_eng.unique' => 'Skill Name in English has already taken.',
+            'skill_name_eng.regex' => 'Skill Name in English must contain Alphabets, Numbers and Space Characters.',
+            'skill_name_bng.required' => 'Skill Name in Bangla field is required.',
         );
         $validation = Validator::make(Input::all(), $rules, $messages);
 
         if ($validation->fails()) {
             return Redirect::route('add_skill_view')->withInput(Input::all())->withErrors($validation);
         } else {
-            $skill_info = new AllSkill();
-            $skill_info->skill_name_eng = $request->input('skill_name_eng');
-            $skill_info->skill_name_bng = $request->input('skill_name_bng');
-            $skill_info->save();
+            DB::beginTransaction();
+            try {
+                $skill_info = new AllSkill();
+                $skill_info->skill_name_eng = $request->input('skill_name_eng');
+                $skill_info->skill_name_bng = $request->input('skill_name_bng');
+                $skill_info->save();
+                DB::commit();
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return Redirect::route('skill_view')->with('error_message', $e->getMessage());
+            }
             return Redirect::route('skill_view')->with('success_message', 'New Skill Added Successfully!');
         }
     }
@@ -397,22 +437,38 @@ class GeneralSettingsController extends Controller
     public function updateSkill(Request $request)
     {
         $id = $request->input('id');
+        if(!preg_match('/^[0-9]+$/',$id))
+        {
+            return Redirect::route('skill_view')->with('error_message', 'Invalid Request');
+        }
         $rules = array(
-            'skill_name_eng' => 'required|unique:tbl_particular_skill,skill_name_eng,' . $id,
+            'skill_name_eng' => 'required|regex:/^[a-zA-Z0-9 ]+$/|unique:tbl_particular_skill,skill_name_eng,' . $id,
             'skill_name_bng' => 'required|unique:tbl_particular_skill,skill_name_bng,' . $id,
         );
         $messages = array(
-            'required' => 'This field is required',
+            'skill_name_eng.required' => 'Skill Name in English field is required.',
+            'skill_name_eng.unique' => 'Skill Name in English has already taken.',
+            'skill_name_eng.regex' => 'Skill Name in English must contain Alphabets, Numbers and Space Characters.',
+            'skill_name_bng.required' => 'Skill Name in Bangla field is required.',
         );
         $validation = Validator::make(Input::all(), $rules, $messages);
 
         if ($validation->fails()) {
             return Redirect::back()->withInput(Input::all())->withErrors($validation);
         } else {
-            $skill_info = AllSkill::find($id);
-            $skill_info->skill_name_eng = $request->input('skill_name_eng');
-            $skill_info->skill_name_bng = $request->input('skill_name_bng');
-            $skill_info->save();
+
+            DB::beginTransaction();
+            try {
+                $skill_info = AllSkill::find($id);
+                $skill_info->skill_name_eng = $request->input('skill_name_eng');
+                $skill_info->skill_name_bng = $request->input('skill_name_bng');
+                $skill_info->save();
+                DB::commit();
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return Redirect::route('skill_view')->with('error_message', $e->getMessage());
+            }
             return Redirect::route('skill_view')->with('success_message', 'Skill Updated Successfully!');
         }
     }
