@@ -130,9 +130,9 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/thana_view_details', 'GeneralSettingsController@thanaViewDetails');
         Route::post('/unit_entry', ['as' => 'unit_entry', 'uses' => 'GeneralSettingsController@unitEntry']);
         Route::post('/thana_entry', ['as'=>'thana_entry','uses'=>'GeneralSettingsController@thanaEntry']);
-        Route::get('/unit_edit/{id}', ['as' => 'unit_edit', 'uses' => 'GeneralSettingsController@unitEdit']);
+        Route::get('/unit_edit/{id}', ['as' => 'unit_edit', 'uses' => 'GeneralSettingsController@unitEdit'])->where('id','[0-9]+');
         Route::get('/unit_delete/{id}', ['as' => 'unit_delete', 'uses' => 'GeneralSettingsController@unitDelete']);
-        Route::get('/thana_edit/{id}', ['as' => 'thana_edit', 'uses' => 'GeneralSettingsController@thanaEdit']);
+        Route::get('/thana_edit/{id}', ['as' => 'thana_edit', 'uses' => 'GeneralSettingsController@thanaEdit'])->where('id','[0-9]+');
         Route::get('/thana_delete/{id}', ['as' => 'thana_delete', 'uses' => 'GeneralSettingsController@thanaDelete']);
         Route::post('/unit_update', ['as'=>'unit_update','uses'=>'GeneralSettingsController@updateUnit']);
         Route::post('/thana_update', ['as'=>'thana_update','uses'=>'GeneralSettingsController@updateThana']);

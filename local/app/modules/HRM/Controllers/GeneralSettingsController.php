@@ -44,25 +44,49 @@ class GeneralSettingsController extends Controller
 
     public function unitEntry(Request $request)
     {
+        $rules = array(
+            'division_id' => 'required|numeric|integer|min:0',
+            'unit_name_eng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
+            'unit_name_bng' => 'required',
+            'unit_code' => 'required|numeric|integer',
+        );
+        $messages = array(
+            'division_id.required' => 'Division  is required.',
+            'division_id.numeric' => 'The format of Division is invalid.',
+            'division_id.integer' => 'The format of Division is invalid.',
+            'division_id.min' => 'The format of Division is invalid.',
+            'unit_name_eng.required' => 'Unit Name in English is required.',
+            'unit_name_eng.regex' => 'Unit Name in English must contain Alphabets, Numbers and Special Characters (- and _).',
+            'unit_name_bng.required' => 'Unit Name in Bangla is required.',
+            'unit_name_bng.regex' => 'The format of Unit Name in Bangla is invalid.',
+            'unit_code.required' => 'Unit Code is required.',
+            'unit_code.numeric' => 'Unit Code must be a number.',
+            'unit_code.integer' => 'The format of Unit Code is invalid.',
+        );
+        $validation = Validator::make($request->all(), $rules, $messages);
 
-        DB::beginTransaction();
-        try {
-            $unit_info = new District();
-            $unit_info->division_id = $request->input('division_id');
-            $division_code = Division::find($request->input('division_id'));
-            $unit_info->division_code = $division_code->division_code;
-            $unit_info->unit_name_eng = $request->input('unit_name_eng');
-            $unit_info->unit_name_bng = $request->input('unit_name_bng');
-            $unit_info->unit_code = $request->input('unit_code');
-            $unit_info->save();
-            DB::commit();
-            //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
-        } catch
-        (Exception $e) {
-            DB::rollback();
-            return $e->getMessage();
+        if ($validation->fails()) {
+            return Redirect::back()->withInput(Input::all())->withErrors($validation);
+        } else {
+            DB::beginTransaction();
+            try {
+                $unit_info = new District();
+                $unit_info->division_id = $request->input('division_id');
+                $division_code = Division::find($request->input('division_id'));
+                $unit_info->division_code = $division_code->division_code;
+                $unit_info->unit_name_eng = $request->input('unit_name_eng');
+                $unit_info->unit_name_bng = $request->input('unit_name_bng');
+                $unit_info->unit_code = $request->input('unit_code');
+                $unit_info->save();
+                DB::commit();
+                //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return Redirect::route('unit_view')->with('error_message', $e->getMessage());
+            }
+            return Redirect::route('unit_view')->with('success_message', 'New Unit Entered Successfully!');
         }
-        return Redirect::route('unit_view')->with('success_message', 'New Unit Entered Successfully!');
     }
 
     public function thanaIndex()
@@ -85,8 +109,8 @@ class GeneralSettingsController extends Controller
     {
         $limit = Input::get('limit');
         $offset = Input::get('offset');
-        $division=Input::get('division');
-        $unit=Input::get('unit');
+        $division = Input::get('division');
+        $unit = Input::get('unit');
         $view = Input::get('view');
         if (strcasecmp($view, 'view') == 0) {
             return CustomQuery::thanaInfo($offset, $limit, $division, $unit);
@@ -97,28 +121,57 @@ class GeneralSettingsController extends Controller
 
     public function thanaEntry(Request $request)
     {
+        $rules = array(
+            'division_name_eng' => 'required|numeric|integer|min:0',
+            'unit_name_eng' => 'required|numeric|integer|min:0',
+            'thana_name_eng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
+            'thana_name_bng' => 'required',
+            'thana_code' => 'required|numeric|integer',
+        );
+        $messages = array(
+            'division_name_eng.required' => 'Division  is required.',
+            'division_name_eng.numeric' => 'The format of Division is invalid.',
+            'division_name_eng.integer' => 'The format of Division is invalid.',
+            'division_name_eng.min' => 'The format of Division is invalid.',
+            'unit_name_eng.required' => 'Unit is required.',
+            'unit_name_eng.numeric' => 'The format of Unit is invalid.',
+            'unit_name_eng.integer' => 'The format of Unit is invalid.',
+            'unit_name_eng.min' => 'The format of Unit is invalid.',
+            'thana_name_eng.required' => 'Thana Name in English is required.',
+            'thana_name_eng.regex' => 'Thana Name in English must contain Alphabets, Numbers and Special Characters (- and _).',
+            'thana_name_bng.required' => 'Thana Name in Bangla is required.',
+            'thana_name_bng.regex' => 'The format of Thana Name in Bangla is invalid.',
+            'thana_code.required' => 'Thana Code is required.',
+            'thana_code.numeric' => 'Thana Code must be a number.',
+            'thana_code.integer' => 'The format of Thana Code is invalid.',
+        );
+        $validation = Validator::make(Input::all(), $rules, $messages);
 
-        DB::beginTransaction();
-        try {
-            $thana_info = new Thana();
-            $thana_info->division_id = $request->input('division_name_eng');
-            $division_id = Division::find($request->input('division_name_eng'));
-            $thana_info->division_id = $division_id->id;
-            $unit_id = District::find($request->input('unit_name_eng'));
-            $thana_info->unit_id = $unit_id->id;
-            $thana_info->unit_code = $unit_id->unit_code;
-            $thana_info->thana_name_eng = $request->input('thana_name_eng');
-            $thana_info->thana_name_bng = $request->input('thana_name_bng');
-            $thana_info->thana_code = $request->input('thana_code');
-            $thana_info->save();
-            DB::commit();
-            //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
-        } catch
-        (Exception $e) {
-            DB::rollback();
-            return $e->getMessage();
+        if ($validation->fails()) {
+            return Redirect::back()->withInput(Input::all())->withErrors($validation);
+        } else {
+            DB::beginTransaction();
+            try {
+                $thana_info = new Thana();
+                $thana_info->division_id = $request->input('division_name_eng');
+                $division_id = Division::find($request->input('division_name_eng'));
+                $thana_info->division_id = $division_id->id;
+                $unit_id = District::find($request->input('unit_name_eng'));
+                $thana_info->unit_id = $unit_id->id;
+                $thana_info->unit_code = $unit_id->unit_code;
+                $thana_info->thana_name_eng = $request->input('thana_name_eng');
+                $thana_info->thana_name_bng = $request->input('thana_name_bng');
+                $thana_info->thana_code = $request->input('thana_code');
+                $thana_info->save();
+                DB::commit();
+                //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return Redirect::route('thana_view')->with('error_message', $e->getMessage());
+            }
+            return Redirect::route('thana_view')->with('success_message', 'New Thana Entered Successfully!');
         }
-        return Redirect::route('thana_view')->with('success_message', 'New Thana Entered Successfully!');
     }
 
     public function unitEdit($id)
@@ -126,7 +179,7 @@ class GeneralSettingsController extends Controller
         $unit_info = District::find($id);
         $division_id = $unit_info->division_id;
         $division = DB::table('tbl_division')->where('id', $division_id)->select('tbl_division.division_name_eng')->first();
-        return view('HRM::GeneralSettings.unit_edit')->with(['unit_info' => $unit_info, 'division' => $division,'id' => $id]);
+        return view('HRM::GeneralSettings.unit_edit')->with(['unit_info' => $unit_info, 'division' => $division, 'id' => $id]);
     }
 
     public function thanaEdit($id)
@@ -136,60 +189,107 @@ class GeneralSettingsController extends Controller
         $unit_id = $thana_info->unit_id;
         $division = DB::table('tbl_division')->where('id', $division_id)->select('tbl_division.division_name_eng')->first();
         $unit = DB::table('tbl_units')->where('id', $unit_id)->select('tbl_units.unit_name_eng')->first();
-        return view('HRM::GeneralSettings.thana_edit')->with(['thana_info' => $thana_info, 'division' => $division, 'unit' => $unit, 'id'=>$id]);
+        return view('HRM::GeneralSettings.thana_edit')->with(['thana_info' => $thana_info, 'division' => $division, 'unit' => $unit, 'id' => $id]);
     }
 
     public function updateUnit(Request $request)
     {
         $id = $request->input('id');
-        DB::beginTransaction();
-        try {
-            $unit_info = District::find($id);
-            $unit_info->unit_name_eng = $request->input('unit_name_eng');
-            $unit_info->unit_name_bng = $request->input('unit_name_bng');
-            $unit_info->unit_code = $request->input('unit_code');
-            $unit_info->save();
-            DB::commit();
-            //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
-        } catch
-        (Exception $e) {
-            DB::rollback();
-            return $e->getMessage();
+        $rules = array(
+            'id' => 'required|numeric|min:0|integer',
+            'unit_name_eng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
+            'unit_name_bng' => 'required',
+            'unit_code' => 'required|numeric|integer',
+        );
+        $messages = array(
+            'division_id.min' => 'The format of Division is invalid.',
+            'unit_name_eng.required' => 'Unit Name in English is required.',
+            'unit_name_eng.regex' => 'Unit Name in English must contain Alphabets, Numbers and Special Characters (- and _).',
+            'unit_name_bng.required' => 'Unit Name in Bangla is required.',
+            'unit_name_bng.regex' => 'The format of Unit Name in Bangla is invalid.',
+            'unit_code.required' => 'Unit Code is required.',
+            'unit_code.numeric' => 'Unit Code must be a number.',
+            'unit_code.integer' => 'The format of Unit Code is invalid.',
+        );
+        $validation = Validator::make($request->all(), $rules, $messages);
+
+        if ($validation->fails()) {
+            return Redirect::back()->withInput(Input::all())->withErrors($validation);
+        } else {
+            DB::beginTransaction();
+            try {
+                $unit_info = District::find($id);
+                $unit_info->unit_name_eng = $request->input('unit_name_eng');
+                $unit_info->unit_name_bng = $request->input('unit_name_bng');
+                $unit_info->unit_code = $request->input('unit_code');
+                $unit_info->save();
+                DB::commit();
+                //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return Redirect::route('unit_view')->with('error_message', $e->getMessage());
+            }
+
+            return Redirect::route('unit_view')->with('success_message', 'Unit Updated Successfully!');
         }
-
-        return Redirect::route('unit_view')->with('success_message', 'Unit Updated Successfully!');
-
     }
 
     public function updateThana(Request $request)
     {
         $id = $request->input('id');
-        DB::beginTransaction();
-        try {
-            $thana_info = Thana::find($id);
-            $thana_info->thana_name_eng = $request->input('thana_name_eng');
-            $thana_info->thana_name_bng = $request->input('thana_name_bng');
-            $thana_info->thana_code = $request->input('thana_code');
-            $thana_info->save();
-            DB::commit();
-            //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
-        } catch
-        (Exception $e) {
-            DB::rollback();
-            return $e->getMessage();
+        $rules = array(
+            'id' => 'required|numeric|integer|min:0',
+            'thana_name_eng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
+            'thana_name_bng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
+            'thana_code' => 'required|numeric|integer',
+        );
+        $messages = array(
+            'thana_name_eng.required' => 'Thana Name in English is required.',
+            'thana_name_eng.regex' => 'Thana Name in English must contain Alphabets, Numbers and Special Characters (- and _).',
+            'thana_name_bng.required' => 'Thana Name in Bangla is required.',
+            'thana_name_bng.regex' => 'The format of Thana Name in Bangla is invalid.',
+            'thana_code.required' => 'Thana Code is required.',
+            'thana_code.numeric' => 'Thana Code must be a number.',
+            'thana_code.integer' => 'The format of Thana Code is invalid.',
+        );
+        $validation = Validator::make(Input::all(), $rules, $messages);
+
+        if ($validation->fails()) {
+            return Redirect::back()->withInput(Input::all())->withErrors($validation);
+        } else {
+            DB::beginTransaction();
+            try {
+                $thana_info = Thana::find($id);
+                $thana_info->thana_name_eng = $request->input('thana_name_eng');
+                $thana_info->thana_name_bng = $request->input('thana_name_bng');
+                $thana_info->thana_code = $request->input('thana_code');
+                $thana_info->save();
+                DB::commit();
+                //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return Redirect::route('thana_view')->with('error_message', $e->getMessage());
+            }
+            return Redirect::route('thana_view')->with('success_message', 'Thana Updated Successfully!');
         }
-        return Redirect::route('thana_view')->with('success_message', 'Thana Updated Successfully!');
     }
-    public function unitDelete($id){
-        $unit_info=District::find($id);
+
+    public function unitDelete($id)
+    {
+        $unit_info = District::find($id);
         $unit_info->delete();
         return Redirect::route('unit_view')->with('success_message', 'Unit Deleted Successfully!');
     }
-    public function thanaDelete($id){
-        $thana_info=Thana::find($id);
+
+    public function thanaDelete($id)
+    {
+        $thana_info = Thana::find($id);
         $thana_info->delete();
         return Redirect::route('thana_view')->with('success_message', 'Thana Deleted Successfully!');
     }
+
     public function diseaseView()
     {
 
@@ -205,21 +305,34 @@ class GeneralSettingsController extends Controller
     public function diseaseEntry(Request $request)
     {
         $rules = array(
-            'disease_name_eng' => 'required|unique:tbl_long_term_disease',
+            'disease_name_eng' => 'required|unique:tbl_long_term_disease|regex:/^[a-zA-Z0-9 ]+$/',
             'disease_name_bng' => 'required|unique:tbl_long_term_disease',
         );
         $messages = array(
-            'required' => 'This field is required',
+            'disease_name_eng.required' => 'Disease Name in English field is required.',
+            'disease_name_eng.unique' => 'Disease Name in English has already taken.',
+            'disease_name_eng.regex' => 'Disease Name in English must contain Alphabets, Numbers and Space Characters.',
+            'disease_name_eng.required' => 'Disease Name in Bangla field is required.',
         );
         $validation = Validator::make(Input::all(), $rules, $messages);
 
         if ($validation->fails()) {
             return Redirect::route('add_disease_view')->withInput(Input::all())->withErrors($validation);
         } else {
-            $disease_info = new AllDisease();
-            $disease_info->disease_name_eng = $request->input('disease_name_eng');
-            $disease_info->disease_name_bng = $request->input('disease_name_bng');
-            $disease_info->save();
+
+            DB::beginTransaction();
+            try {
+                $disease_info = new AllDisease();
+                $disease_info->disease_name_eng = $request->input('disease_name_eng');
+                $disease_info->disease_name_bng = $request->input('disease_name_bng');
+                $disease_info->save();
+                DB::commit();
+                //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return Redirect::route('disease_view')->with('error_message', $e->getMessage());
+            }
             return Redirect::route('disease_view')->with('success_message', 'New Disease Added Successfully!');
         }
     }
@@ -227,28 +340,44 @@ class GeneralSettingsController extends Controller
     public function diseaseEdit($id)
     {
         $unit_infos = AllDisease::find($id);
-        return view('HRM::GeneralSettings.diseaseEdit')->with(['disease_infos' => $unit_infos, 'id'=>$id]);
+        return view('HRM::GeneralSettings.diseaseEdit')->with(['disease_infos' => $unit_infos, 'id' => $id]);
     }
 
     public function updateDisease(Request $request)
     {
         $id = $request->input('id');
+        if(!preg_match('/^[0-9]+$/',$id))
+        {
+            return Redirect::route('disease_view')->with('error_message', 'Invalid Request');
+        }
         $rules = array(
-            'disease_name_eng' => 'required|unique:tbl_long_term_disease,disease_name_eng,' . $id,
+            'disease_name_eng' => 'required|regex:/^[a-zA-Z0-9 ]+$/|unique:tbl_long_term_disease,disease_name_eng,' . $id,
             'disease_name_bng' => 'required|unique:tbl_long_term_disease,disease_name_bng,' . $id,
         );
         $messages = array(
-            'required' => 'This field is required',
+            'disease_name_eng.required' => 'Disease Name in English field is required.',
+            'disease_name_eng.unique' => 'Disease Name in English has already taken.',
+            'disease_name_eng.regex' => 'Disease Name in English must contain Alphabets, Numbers and Space Characters.',
+            'disease_name_eng.required' => 'Disease Name in Bangla field is required.',
         );
         $validation = Validator::make(Input::all(), $rules, $messages);
 
         if ($validation->fails()) {
             return Redirect::route('disease_edit')->withInput(Input::all())->withErrors($validation);
         } else {
-            $disease_info = AllDisease::find($id);
-            $disease_info->disease_name_eng = $request->input('disease_name_eng');
-            $disease_info->disease_name_bng = $request->input('disease_name_bng');
-            $disease_info->save();
+            DB::beginTransaction();
+            try {
+                $disease_info = AllDisease::find($id);
+                $disease_info->disease_name_eng = $request->input('disease_name_eng');
+                $disease_info->disease_name_bng = $request->input('disease_name_bng');
+                $disease_info->save();
+                DB::commit();
+                //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return Redirect::route('disease_view')->with('error_message', $e->getMessage());
+            }
             return Redirect::route('disease_view')->with('success_message', 'Disease Updated Successfully!');
         }
     }
@@ -269,21 +398,32 @@ class GeneralSettingsController extends Controller
     public function skillEntry(Request $request)
     {
         $rules = array(
-            'skill_name_eng' => 'required|unique:tbl_particular_skill',
+            'skill_name_eng' => 'required|unique:tbl_particular_skill|regex:/^[a-zA-Z0-9 ]+$/',
             'skill_name_bng' => 'required|unique:tbl_particular_skill',
         );
         $messages = array(
-            'required' => 'This field is required',
+            'skill_name_eng.required' => 'Skill Name in English field is required.',
+            'skill_name_eng.unique' => 'Skill Name in English has already taken.',
+            'skill_name_eng.regex' => 'Skill Name in English must contain Alphabets, Numbers and Space Characters.',
+            'skill_name_bng.required' => 'Skill Name in Bangla field is required.',
         );
         $validation = Validator::make(Input::all(), $rules, $messages);
 
         if ($validation->fails()) {
             return Redirect::route('add_skill_view')->withInput(Input::all())->withErrors($validation);
         } else {
-            $skill_info = new AllSkill();
-            $skill_info->skill_name_eng = $request->input('skill_name_eng');
-            $skill_info->skill_name_bng = $request->input('skill_name_bng');
-            $skill_info->save();
+            DB::beginTransaction();
+            try {
+                $skill_info = new AllSkill();
+                $skill_info->skill_name_eng = $request->input('skill_name_eng');
+                $skill_info->skill_name_bng = $request->input('skill_name_bng');
+                $skill_info->save();
+                DB::commit();
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return Redirect::route('skill_view')->with('error_message', $e->getMessage());
+            }
             return Redirect::route('skill_view')->with('success_message', 'New Skill Added Successfully!');
         }
     }
@@ -297,22 +437,38 @@ class GeneralSettingsController extends Controller
     public function updateSkill(Request $request)
     {
         $id = $request->input('id');
+        if(!preg_match('/^[0-9]+$/',$id))
+        {
+            return Redirect::route('skill_view')->with('error_message', 'Invalid Request');
+        }
         $rules = array(
-            'skill_name_eng' => 'required|unique:tbl_particular_skill,skill_name_eng,' . $id,
+            'skill_name_eng' => 'required|regex:/^[a-zA-Z0-9 ]+$/|unique:tbl_particular_skill,skill_name_eng,' . $id,
             'skill_name_bng' => 'required|unique:tbl_particular_skill,skill_name_bng,' . $id,
         );
         $messages = array(
-            'required' => 'This field is required',
+            'skill_name_eng.required' => 'Skill Name in English field is required.',
+            'skill_name_eng.unique' => 'Skill Name in English has already taken.',
+            'skill_name_eng.regex' => 'Skill Name in English must contain Alphabets, Numbers and Space Characters.',
+            'skill_name_bng.required' => 'Skill Name in Bangla field is required.',
         );
         $validation = Validator::make(Input::all(), $rules, $messages);
 
         if ($validation->fails()) {
             return Redirect::back()->withInput(Input::all())->withErrors($validation);
         } else {
-            $skill_info = AllSkill::find($id);
-            $skill_info->skill_name_eng = $request->input('skill_name_eng');
-            $skill_info->skill_name_bng = $request->input('skill_name_bng');
-            $skill_info->save();
+
+            DB::beginTransaction();
+            try {
+                $skill_info = AllSkill::find($id);
+                $skill_info->skill_name_eng = $request->input('skill_name_eng');
+                $skill_info->skill_name_bng = $request->input('skill_name_bng');
+                $skill_info->save();
+                DB::commit();
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return Redirect::route('skill_view')->with('error_message', $e->getMessage());
+            }
             return Redirect::route('skill_view')->with('success_message', 'Skill Updated Successfully!');
         }
     }
