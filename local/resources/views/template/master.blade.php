@@ -214,7 +214,7 @@
 
     <footer class="main-footer">
         <div class="pull-right hidden-xs"><b>Developed by</b> <a href="#">shurjoMukhi</a></div>
-        <strong>Copyright &copy; 2015 <a href="#">Ansar & VDP</a></strong> All rights reserved.
+        <strong>2015 &copy; <a href="#">Ansar & VDP</a></strong> All rights reserved.
     </footer>
 
 <script>
