@@ -124,7 +124,6 @@
 
 </head>
 <body class="skin-blue sidebar-mini " ng-app="GlobalApp"><!-- ./wrapper -->
-<div ng-app="GlobalApp">
 <div class="wrapper" ng-cloak>
     <header class="main-header">
         <!-- Logo -->
@@ -259,7 +258,6 @@
         }
     })
 </script>
-</div>
 </div>
 </body>
 </html>
