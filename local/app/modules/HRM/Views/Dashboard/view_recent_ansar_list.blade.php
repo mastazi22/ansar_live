@@ -58,9 +58,11 @@
                 }).then(function (response) {
                     $scope.ansars = $sce.trustAsHtml(response.data);
                     $scope.loadingPage[page.pageNum]=false;
+                    $scope.allLoading = false;
                 })
             }
             $scope.loadTotal = function () {
+                $scope.allLoading = true;
                 $http({
                     url: '{{URL::route('get_recent_ansar_list')}}',
                     method: 'get',
@@ -119,6 +121,11 @@
     <div ng-controller="AnsarListController">
         <section class="content">
             <div class="box box-solid">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4">

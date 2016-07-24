@@ -212,11 +212,11 @@
             height: 20px;
             top: 10px;
             left: 0;
-            border: 1px solid #111111;
+            border: 1px solid #166f16;
         }
 
         .radio-inline:checked + .radio-label::before {
-            background: #028cab;
+            background: forestgreen;
         }
 
         .search-field {
@@ -301,8 +301,8 @@
 
                 </div>
                 <div class="box-header">
-                    <h3 style="margin-top: 0" ng-if="loadType==0">Total not verified ansar : [[notVerified.toLocaleString()]]</h3>
-                    <h3 style="margin-top: 0" ng-if="loadType==1">Total verified ansar : [[Verified.toLocaleString()]]</h3>
+                    <h4 style="margin-top: 0" ng-if="loadType==0">Total unverified ansars : [[notVerified.toLocaleString()]]</h4>
+                    <h4 style="margin-top: 0" ng-if="loadType==1">Total verified ansars : [[Verified.toLocaleString()]]</h4>
                 </div>
                 <div class="box-body" id="change-body">
 

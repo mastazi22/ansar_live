@@ -52,26 +52,35 @@
                     'X-CSRF-TOKEN': '{{csrf_token()}}'
                 }
             })
-//            $('.sidebar-menu li').hover(function () {
-//                var p = $(this);
-//                if (p.has('ul').length > 0) p.addClass('arrow-left');
-//                $(this).children('ul').css('display', 'block')
-//                $(this).children('ul').position({
-//                    "of": p,
-//                    "at": "right+5 top",
-//                    "my": "left top",
-//                    "collision": "fit fit"
-//                })
-//            }, function () {
-//                $(this).children('ul').css('display', 'none')
-//                $(this).removeClass('arrow-left');
-//            })
+            resizeMenu();
             $('#national_id_no,#birth_certificate_no,#mobile_no_self').keypress(function (e) {
                 var code = e.keyCode ? e.keyCode : e.which;
-//                alert(code)
                 if ((code >= 47 && code <= 57) || code == 8);
                 else e.preventDefault();
             });
+            $(window).resize(function (e) {
+                resizeMenu();
+            })
+            $(".navbar-custom-menu").resize(function () {
+                alert(2222);
+            })
+            function resizeMenu(){
+                console.log({width:$("#ncm").outerWidth(true)})
+                var w = $("#resize_menu").width();
+                var cw = 0;
+                $("#resize_menu").children().not('h4').each(function (ch) {
+                    cw += $(this).outerWidth(true);
+                })
+                $("#resize_menu").children('h4').width(w-cw-20);
+            }
+            var lastWidth = $("#ncm").outerWidth(true);
+            setInterval(function () {
+                var v = $("#ncm");
+                if(lastWidth==v.outerWidth(true)) return;
+                lastWidth=v.outerWidth(true);
+                console.log({change:lastWidth})
+                resizeMenu();
+            },100)
         });
 
         var GlobalApp = angular.module('GlobalApp', ['angular.filter'], function ($interpolateProvider, $httpProvider) {
@@ -134,13 +143,13 @@
             <span class="logo-lg"><b>Ansar & VDP</b> ERP</span>
         </a>
         <!-- Header Navbar: style can be found in header.less -->
-        <nav class="navbar navbar-static-top" role="navigation">
+        <nav id="resize_menu" class="navbar navbar-static-top" role="navigation">
             <!-- Sidebar toggle button-->
             <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
                 <span class="sr-only">Toggle navigation</span>
             </a>
             <h4 class="header-title">@yield('title')</h4>
-            <div class="navbar-custom-menu">
+            <div id="ncm" class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
                     @if(auth()->user()->type==11)
                         <li class="dropdown notifications-menu">
@@ -181,7 +190,7 @@
                                     <img src="{{action('UserController@getImage',['file'=>auth()->user()->userProfile->profile_image])}}"
                                          class="img-circle" alt="User Image"/>
 
-                                    <p>
+                                    <p style="color: #666666">
                                         {{Auth::user()->userProfile->first_name.' '.Auth::user()->userProfile->last_name}}
                                         <br>
                                         {{Auth::user()->userProfile->rank}}

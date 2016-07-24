@@ -10,9 +10,11 @@
             $scope.showAnsar = '10';
             $scope.ansars = []
             $scope.selectAll = false
+            $scope.messages=[];
             $scope.selected = [];
             $scope.loadAnsar = function () {
                 $scope.loading = true;
+                $scope.error = undefined;
                 $http({
                     method: 'get',
                     url: '{{URL::to('HRM/getnotverifiedansar')}}',
@@ -32,7 +34,8 @@
                     $scope.selected = Array.apply(null, new Array(d.length)).map(Boolean.prototype.valueOf, false)
                     $scope.selectAll = false
                 }, function (response) {
-
+                    $scope.error = response.data;
+                    $scope.loading = false;
                 })
             }
             $scope.$watch('selected', function (n, o) {
@@ -54,19 +57,21 @@
                     $(elem).on('click', function (e) {
                         e.preventDefault();
                         scope.loading = true;
+                        scope.errorVerify = undefined;
                         $("#not-verified-form").ajaxSubmit({
                             success: function (response) {
                                 console.log(response)
                                 if(response.status){
                                     scope.loadAnsar();
-                                    $('body').notifyDialog({type: 'success', message: 'Verify successfully'}).showDialog()
+                                    scope.messages = response.messege;
                                 }
                                 else{
                                     $('body').notifyDialog({type: 'error', message: response.message}).showDialog()
                                 }
                             },
                             error:function(response){
-
+                                scope.errorVerify = response;
+                                scope.loading = false;
                             }
                         })
                     })
@@ -98,12 +103,17 @@
                 style="position: fixed;bottom: 10px;right: 20px;z-index: 1000000000000000;display: none">
             <i class="fa fa-arrow-up fa-2x"></i>
         </button>
-        <div class="loading-report animated" ng-show="loading">
-            <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
-            <h4>Loading...</h4>
-        </div>
+
         <section class="content" ng-init="loadAnsar()">
             <div class="box box-solid">
+                <div class="overlay" ng-if="loading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
+                <div style="padding: 5px 10px">
+                    <p ng-repeat="message in messages" class="text" ng-class="{'text-success':message.status,'text-danger':!message.status}"><i class="fa" ng-class="{'fa-check':message.status,'fa-warning':!message.status}"></i>&nbsp;[[message.message]]</p>
+                </div>
                 <div class="box-body">
                     <div id="ppp" style="margin-right: 0" class="row margin-bottom">
                         <div class="col-sm-6">
@@ -146,12 +156,12 @@
                                                ng-change="changeSelectedAll()" value="all" name="select_all">
                                     </th>
                                 </tr>
-                                <tr ng-if="ansars.length==0">
-                                    <td class="warning" colspan="8">No Not Verified Ansar Found</td>
+                                <tr ng-if="ansars.length==0||error!=undefined">
+                                    <td class="warning" colspan="8">No unverified ansar found</td>
                                 </tr>
-                                <tr ng-repeat="a in ansars" ng-if="ansars.length>0">
+                                <tr ng-repeat="a in ansars" ng-if="ansars.length>0&&error==undefined">
                                     <td>[[$index+1]]</td>
-                                    <td>[[a.ansar_id]]</td>
+                                    <td><a href="{{URL::to('HRM/entryreport')}}/[[a.ansar_id]]">[[a.ansar_id]]</a></td>
                                     <td>[[a.ansar_name_bng]]</td>
                                     <td>[[a.unit_name_bng]]</td>
                                     <td>[[a.thana_name_bng]]</td>

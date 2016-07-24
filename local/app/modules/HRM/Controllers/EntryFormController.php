@@ -16,8 +16,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
-use Mockery\Exception;
 
 class EntryFormController extends Controller
 {
@@ -58,21 +58,50 @@ class EntryFormController extends Controller
         $usertype = Auth::user()->type;
         if ($request->exists('chunk_verification')) {
             $ids = $request->input('not_verified');
+            $rules =[
+                'chunk_verification'=>'required|regex:/^[a-z]+_[a-z]+/',
+                'not_verified'=>'required'
+            ];
+            for($i=0;$i<count($ids);$i++){
+                $rules["not_verified.{$i}"] = "required|numeric|regex:/^[0-9]+$/";
+            }
+            $valid = Validator::make($request->all(),$rules);
+            if($valid->fails()){
+                return response("Invalid request(400)",400);
+            }
+            $messages = [];
             DB::beginTransaction();
             try {
                 for ($i = 0; $i < count($ids); $i++) {
-                    $success = PersonalInfo::where('ansar_id', $ids[$i])->update(['verified' => 2]);
-                    $status = AnsarStatusInfo::where('ansar_id',$ids[$i])->update(['free_status'=>1]);
-                    CustomQuery::addActionlog(['ansar_id' => $ids[$i], 'action_type' => 'VERIFIED', 'from_state' => 'ENTRY', 'to_state' => 'VERIFIED', 'action_by' => auth()->user()->id]);
-                    if (!$success&&!$status) throw new Exception("An Error Occur While Verifying. Please try again later");
-                    DB::commit();
+                    $ansar = PersonalInfo::where('ansar_id', $ids[$i])->first();
+                    if(!preg_match('/^(\+88)?[0-9]{11}$/',$ansar->mobile_no_self)){
+                        //return 'error';
+                        array_push($messages,['status'=>false,'message'=>'Ansar id '.$ansar->ansar_id.' does not contain valid mobile no']);
+                    }
+                    else{
+                        $ansar->verified = 2;
+                        $ansar->status->free_status = 1;
+                        $success = $ansar->save();
+                        $status = $ansar->status->save();
+                        CustomQuery::addActionlog(['ansar_id' => $ids[$i], 'action_type' => 'VERIFIED', 'from_state' => 'ENTRY', 'to_state' => 'VERIFIED', 'action_by' => auth()->user()->id]);
+                        if (!$success&&!$status) throw new \Exception("An Error Occur While Verifying. Please try again later");
+                        array_push($messages,['status'=>true,'message'=>$ansar->ansar_id.' verified successfully']);
+                        DB::commit();
+                    }
+
 
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 DB::rollback();
+                return $e->getMessage();
                 return Response::json(['status' => false, 'messege' => $e->getMessage()]);
             }
-            return Response::json(['status' => true, 'messege' => 'Ansar Verification Complete Successfully']);
+            return Response::json(['status' => true, 'messege' => $messages]);
+        }
+        $rules = ['verified_id'=>'required|numeric|regex:/^[0-9]+$/'];
+        $valid = Validator::make($request->all(),$rules);
+        if($valid->fails()){
+            return response("Invalid request(400)",400);
         }
         $verifyid = $request->input('verified_id');
         $ansar = PersonalInfo::where('ansar_id',$verifyid)->first();
@@ -103,6 +132,11 @@ class EntryFormController extends Controller
     {
         $user = Auth::user();
         $usertype = $user->type;
+        $rules = ['reject_id'=>'required|numeric|regex:/^[0-9]+$/'];
+        $valid = Validator::make($request->all(),$rules);
+        if($valid->fails()){
+            return response("Invalid request(400)",400);
+        }
         $rejectid = $request->input('reject_id');
 
         if ($usertype == 44) {
