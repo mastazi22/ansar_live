@@ -315,7 +315,7 @@
                                 Embodied
                             </button>
                         </div>
-                        <div class="col-sm-8" style="min-height: 400px;border-left: 1px solid #CCCCCC">
+                        <div class="col-sm-8">
                             <div id="loading-box" ng-if="loadingAnsar">
                             </div>
                             <div ng-if="!ansarDetail.aoi.ansar_id">

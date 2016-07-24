@@ -410,7 +410,7 @@
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered" id="pc-table">
-                            <tr class="info">
+                            <tr>
                                 <th>SL. No</th>
                                 <th>ID</th>
                                 <th>Designation</th>
@@ -567,7 +567,7 @@
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table table-bordered" style="max-height: 200px">
-                                            <tr class="info">
+                                            <tr>
                                                 <th>SL. No</th>
                                                 <th>ID</th>
                                                 <th>Designation</th>

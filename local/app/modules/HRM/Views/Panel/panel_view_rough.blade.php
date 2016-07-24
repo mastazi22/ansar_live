@@ -135,10 +135,10 @@
             <!--Modal Open-->
             <div id="panel-modal" class="modal fade" role="dialog">
                 <div class="modal-dialog">
-                    <div class="modal-content">
+                    <div class="box-info modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h3 class="modal-title">Options</h3>
+                            <h3 class="modal-title">Panel Options</h3>
                         </div>
                         <div class="modal-body">
                             <div class="offer-loading" ng-show="showLoadingScreen">
@@ -169,11 +169,11 @@
                                                         class="row custom-selected">
                                                         <li class="form-group col-md-6 custom-selected" id="from-id">
                                                             <label>From(ID)</label>
-                                                            <input type="text" name="from-id" class="form-control">
+                                                            <input type="text" name="from-id" class="form-control" placeholder="Ansar ID">
                                                         </li>
                                                         <li class="form-group col-md-6" id="to-id">
                                                             <label>To(ID)</label>
-                                                            <input type="text" name="to-id" class="form-control">
+                                                            <input type="text" name="to-id" class="form-control" placeholder="Ansar ID">
                                                         </li>
 
                                                     </ul>
@@ -200,7 +200,7 @@
                                             </div>
 
                                         </div>
-                                        <button type="submit" class="btn btn-default pull-right" id="load-panel">
+                                        <button type="submit" class="btn btn-info pull-right" id="load-panel">
                                             <i class="fa fa-download"></i> Load
                                         </button>
                                     </form>
@@ -214,7 +214,7 @@
             <!--Modal Open-->
             <div id="confirm-panel-modal" class="modal fade" role="dialog">
                 <div class="modal-dialog" style="width: 80%;overflow: auto;">
-                    <div class="modal-content">
+                    <div class="box-info modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"
                                     ng-click="modalOpen = false">&times;</button>
@@ -250,7 +250,7 @@
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table table-bordered" id="pc-table">
-                                            <tr class="info">
+                                            <tr>
                                                 <th>Ansar ID</th>
                                                 <th>Ansar Name</th>
                                                 <th>Ansar Rank</th>
