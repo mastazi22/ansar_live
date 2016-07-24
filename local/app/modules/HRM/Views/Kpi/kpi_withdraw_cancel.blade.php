@@ -100,22 +100,22 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label for="e_unit" class="control-label">Select a unit&nbsp;
+                                <label for="e_unit" class="control-label">Select a Unit&nbsp;
                                     <img ng-show="loadingUnit" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select ng-disabled="loadingUnit" id="e_unit" class="form-control"
                                         ng-model="selectedUnit" ng-change="loadThana(selectedUnit)">
-                                    <option value="">--Select a unit--</option>
+                                    <option value="">--Select a Unit--</option>
                                     <option ng-repeat="u in units" value="[[u.id]]">[[u.unit_name_eng]]</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="e_thana" class="control-label">Select a thana&nbsp;
+                                <label for="e_thana" class="control-label">Select a Thana&nbsp;
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select ng-disabled="loadingThana" id="e_thana" class="form-control"
                                         ng-model="selectedThana" ng-change="loadKpi(selectedThana)">
-                                    <option value="">--Select a thana--</option>
+                                    <option value="">--Select a Thana--</option>
                                     <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_eng]]
                                     </option>
                                 </select>
