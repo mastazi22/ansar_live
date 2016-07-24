@@ -164,7 +164,7 @@
                             </div>
                         </div>
                     </div>
-                    <h4>Total Ansar :[[total.toLocaleString()]]</h4>
+                    <h4>Total Ansars :[[total.toLocaleString()]]</h4>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr>

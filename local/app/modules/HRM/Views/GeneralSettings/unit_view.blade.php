@@ -28,6 +28,8 @@
             $scope.pages = [];
             $scope.loadingDivision = true;
             $scope.loadingPage = [];
+            $scope.errorFound=0;
+            $scope.allLoading = true;
             $scope.loadPagination = function () {
                 $scope.pages = [];
                 for (var i = 0; i < $scope.numOfPage; i++) {
@@ -61,7 +63,7 @@
                 })
             }
             $scope.loadTotal = function (id) {
-                $scope.isLoading = true;
+                $scope.allLoading = true;
                 //alert($scope.selectedDivision)
                 $http({
 
@@ -72,28 +74,19 @@
                         view: 'count'
                     }
                 }).then(function (response) {
-
+                            $scope.allLoading = false;
                             $scope.total = response.data.total;
                             $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
                             $scope.loadPagination();
-                            $scope.isLoading = false;
+                            $scope.errorFound=0;
                             //alert($scope.total)
                         }, function (response) {
-                            switch (response.status) {
-                                case 500:
-                                    response.data = "Server Error(500)";
-                                    break;
-                                case 401:
-                                    response.data = "Unauthorized Error(401)";
-                                    break;
-                                case 404:
-                                    response.data = "Not Found(404)";
-                                    break;
-                            }
+                            $scope.errorFound=1;
                             $scope.total = 0;
-                            $scope.units = [];
-                            $scope.errorFound = $sce.trustAsHtml(response.data);
-                            // $scope.allLoading = false;
+                            $scope.allLoading = false;
+                            $scope.units = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
+                            //alert($(".table").html())
+                            $scope.allLoading = false;
                             $scope.pages = [];
                         }
                 )
@@ -140,6 +133,11 @@
         </div>
         <section class="content">
             <div class="box box-solid">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs">
                     </ul>
@@ -171,7 +169,7 @@
                                         <th>Division Code</th>
                                         <th>Action</th>
                                     </tr>
-                                    <tbody ng-bind-html="errorFound"></tbody>
+                                    <tbody ng-if="errorFound==1" ng-bind-html="units"></tbody>
                                     <tbody>
                                     <tr ng-if="units.length==0&&errorFound==undefined">
                                         <td colspan="8" class="warning no-ansar">

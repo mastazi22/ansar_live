@@ -212,7 +212,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/all_ansar" class="btn-link"
                        style="color: #FFFFFF !important;">
-                        <span class="info-box-text">Total Ansar</span>
+                        <span class="info-box-text">Total Ansars</span>
                     <span class="info-box-number">[[allAnsar.totalAnsar]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
                     </span>
@@ -240,7 +240,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/paneled_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">Total Panel</span>
+                        <span class="info-box-text">Total Paneled</span>
                     <span class="info-box-number">
                         [[allAnsar.totalPanel]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
@@ -268,7 +268,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/own_embodied_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">Total Embodied(Own District)</span>
+                        <span class="info-box-text">Total Embodied (Own District)</span>
                     <span class="info-box-number">[[allAnsar.totalEmbodiedOwn]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
                     </span>
@@ -344,7 +344,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/rest_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">Total Rest</span>
+                        <span class="info-box-text">Total Resting</span>
                     <span class="info-box-number">
                         [[allAnsar.totalRest]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
@@ -370,7 +370,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/freezed_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                    <span class="info-box-text">Total Freeze</span>
+                    <span class="info-box-text">Total Frozen</span>
                     <span class="info-box-number">[[allAnsar.totalFreeze]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
                     </span>
@@ -394,7 +394,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/blacked_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                    <span class="info-box-text">Total Black list</span>
+                    <span class="info-box-text">Total Blacklisted</span>
                     <span class="info-box-number">
                        [[allAnsar.totalBlackList]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
@@ -418,7 +418,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/blocked_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                    <span class="info-box-text">Total block list</span>
+                    <span class="info-box-text">Total Block-listed</span>
                     <span class="info-box-number">[[allAnsar.totalBlockList]]
 
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">

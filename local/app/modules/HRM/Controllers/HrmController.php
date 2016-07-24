@@ -203,25 +203,25 @@ class HrmController extends Controller
     {
         $pageTitle = '';
         if (strcasecmp($type, 'all_ansar') == 0) {
-            $pageTitle = "Total number of Ansars";
+            $pageTitle = "Total Ansars";
         } elseif (strcasecmp($type, 'not_verified_ansar') == 0) {
-            $pageTitle = "Total number of Unverified Ansars";
+            $pageTitle = "Total Unverified Ansars";
         } elseif (strcasecmp($type, 'offerred_ansar') == 0) {
-            $pageTitle = "Total number of Offered Ansars";
+            $pageTitle = "Total Offered Ansars";
         } elseif (strcasecmp($type, 'freezed_ansar') == 0) {
-            $pageTitle = "Total number of Frozen Ansars";
+            $pageTitle = "Total Frozen Ansars";
         } elseif (strcasecmp($type, 'free_ansar') == 0) {
-            $pageTitle = "Total number of Free Ansars";
+            $pageTitle = "Total Free Ansars";
         } elseif (strcasecmp($type, 'paneled_ansar') == 0) {
-            $pageTitle = "Total number of Paneled Ansars";
+            $pageTitle = "Total Paneled Ansars";
         } elseif (strcasecmp($type, 'rest_ansar') == 0) {
-            $pageTitle = "Total number of Resting Ansars";
+            $pageTitle = "Total Resting Ansars";
         } elseif (strcasecmp($type, 'blocked_ansar') == 0) {
-            $pageTitle = "Total number of Block-listed Ansars";
+            $pageTitle = "Total Block-listed Ansars";
         } elseif (strcasecmp($type, 'blacked_ansar') == 0) {
-            $pageTitle = "Total number of Blacklisted Ansars";
+            $pageTitle = "Total Blacklisted Ansars";
         } elseif (strcasecmp($type, 'embodied_ansar') == 0) {
-            $pageTitle = "Total number of Embodied Ansars";
+            $pageTitle = "Total Embodied Ansars";
         }
         return View::make('HRM::Dashboard.view_ansar_list')->with(['type' => $type, 'pageTitle' => $pageTitle]);
     }
@@ -230,25 +230,25 @@ class HrmController extends Controller
     {
         $pageTitle = '';
         if (strcasecmp($type, 'all_ansar') == 0) {
-            $pageTitle = "Total number of Ansars(Recent)";
+            $pageTitle = "Total Ansars (Recent)";
         } elseif (strcasecmp($type, 'not_verified_ansar') == 0) {
-            $pageTitle = "Total number of Unverified Ansars(Recent)";
+            $pageTitle = "Total Unverified Ansars (Recent)";
         } elseif (strcasecmp($type, 'offerred_ansar') == 0) {
-            $pageTitle = "Total number of Offered Ansars(Recent)";
+            $pageTitle = "Total Offered Ansars (Recent)";
         } elseif (strcasecmp($type, 'freezed_ansar') == 0) {
-            $pageTitle = "Total number of Frozen Ansars(Recent)";
+            $pageTitle = "Total Frozen Ansars (Recent)";
         } elseif (strcasecmp($type, 'free_ansar') == 0) {
-            $pageTitle = "Total number of Free Ansars(Recent)";
+            $pageTitle = "Total Free Ansars (Recent)";
         } elseif (strcasecmp($type, 'paneled_ansar') == 0) {
-            $pageTitle = "Total number of Paneled Ansars(Recent)";
+            $pageTitle = "Total Paneled Ansars (Recent)";
         } elseif (strcasecmp($type, 'rest_ansar') == 0) {
-            $pageTitle = "Total number of Resting Ansars(Recent)";
+            $pageTitle = "Total Resting Ansars (Recent)";
         } elseif (strcasecmp($type, 'blocked_ansar') == 0) {
-            $pageTitle = "Total number of Block-listed Ansars(Recent)";
+            $pageTitle = "Total Block-listed Ansars (Recent)";
         } elseif (strcasecmp($type, 'blacked_ansar') == 0) {
-            $pageTitle = "Total number of Blacklisted Ansars(Recent)";
+            $pageTitle = "Total Blacklisted Ansars (Recent)";
         } elseif (strcasecmp($type, 'embodied_ansar') == 0) {
-            $pageTitle = "Total number of Embodied Ansars(Recent)";
+            $pageTitle = "Total Embodied Ansars (Recent)";
         }
         return View::make('HRM::Dashboard.view_recent_ansar_list')->with(['type' => $type,'pageTitle'=>$pageTitle]);
     }

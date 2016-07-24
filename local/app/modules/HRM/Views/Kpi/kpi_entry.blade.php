@@ -71,7 +71,7 @@
     <div style="position: relative; padding-bottom: 30px">
         {!! Form::open(array('route' => 'save-kpi', 'class' => 'form-horizontal', 'name' => 'kpiForm', 'id'=> 'kpi-form', 'ng-controller' => 'DivisionController', 'ng-app' => 'myValidateApp', 'novalidate')) !!}
         <section class="content">
-                <div class="box box-solid">
+                <div class="col-lg-9 box box-solid">
                     <div class="box-body">
                         <div class="nav-tabs-custom">
                             <ul class="nav nav-tabs" id="tab_bar">

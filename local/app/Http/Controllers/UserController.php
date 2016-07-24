@@ -370,7 +370,7 @@ class UserController extends Controller
         else{
             $user = User::where('user_name',$request->get('user_name'));
             if(!$user->exists()){
-                return Redirect::back()->withInputs($request->accepts(['_token']))->with('error','This user name doesn`t exists');
+                return Redirect::back()->withInputs($request->accepts(['_token']))->with('error','This user name does not exists');
             }
             try {
                 $fpr = ForgetPasswordRequest::findOrFail($request->get('user_name'));
@@ -382,7 +382,7 @@ class UserController extends Controller
             }
 
         }
-        return Redirect::back()->with('success','Password change request send successfully');
+        return Redirect::back()->with('success','Password change request sent successfully');
     }
     public function changeForgetPassword($user){
         return view('User.change_password',['user'=>$user]);

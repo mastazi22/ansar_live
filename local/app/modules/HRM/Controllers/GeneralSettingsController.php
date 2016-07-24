@@ -31,10 +31,24 @@ class GeneralSettingsController extends Controller
 
     public function unitViewDetails()
     {
+        $view = Input::get('view');
         $limit = Input::get('limit');
         $offset = Input::get('offset');
         $division = Input::get('division');
-        $view = Input::get('view');
+
+        $rules = [
+            'view'=>'regex:/[a-z]+/',
+            'limit'=>'numeric',
+            'offset'=>'numeric',
+            'division'=>['regex:/^(all)$|^[0-9]+$/'],
+        ];
+        $valid = Validator::make(Input::all(),$rules);
+
+        if($valid->fails()){
+            //return print_r($valid->messages());
+            return response("Invalid Request(400)",400);
+        }
+
         if (strcasecmp($view, 'view') == 0) {
             return CustomQuery::unitInfo($offset, $limit, $division);
         } else {
@@ -112,6 +126,21 @@ class GeneralSettingsController extends Controller
         $division = Input::get('division');
         $unit = Input::get('unit');
         $view = Input::get('view');
+
+        $rules = [
+            'view'=>'regex:/[a-z]+/',
+            'limit'=>'numeric',
+            'offset'=>'numeric',
+            'unit'=>['regex:/^(all)$|^[0-9]+$/'],
+            'division'=>['regex:/^(all)$|^[0-9]+$/'],
+        ];
+        $valid = Validator::make(Input::all(),$rules);
+
+        if($valid->fails()){
+            //return print_r($valid->messages());
+            return response("Invalid Request(400)",400);
+        }
+
         if (strcasecmp($view, 'view') == 0) {
             return CustomQuery::thanaInfo($offset, $limit, $division, $unit);
         } else {

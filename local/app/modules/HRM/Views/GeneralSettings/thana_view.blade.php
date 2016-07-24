@@ -29,6 +29,8 @@
             $scope.loadingDistrict = false;
             $scope.loadingDivision = true;
             $scope.loadingPage = [];
+            $scope.allLoading = true;
+            $scope.errorFound=0;
             $scope.loadPagination = function () {
                 $scope.pages = [];
                 for (var i = 0; i < $scope.numOfPage; i++) {
@@ -64,7 +66,7 @@
                 })
             }
             $scope.loadTotal = function () {
-                $scope.isLoading = true;
+                $scope.allLoading = true;
                 //alert($scope.selectedDivision)
                 $http({
 
@@ -81,7 +83,17 @@
                     $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
                     $scope.loadPagination();
                     $scope.isLoading = false;
+                    $scope.errorFound=0;
+                    $scope.allLoading = false;
                     //alert($scope.total)
+                },function(response){
+                    $scope.errorFound=1;
+                    $scope.total = 0;
+                    $scope.allLoading = false;
+                    $scope.thanas = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
+                    //alert($(".table").html())
+                    $scope.pages = [];
+
                 })
             }
             $scope.filterMiddlePage = function (value, index, array) {
@@ -102,12 +114,13 @@
             })
 
             $scope.loadDistrict = function (d_id) {
-
+                $scope.allLoading = true;
                 $http({
                     method: 'get',
                     url: '{{URL::to('HRM/DistrictName')}}',
                     params: {id: d_id}
                 }).then(function (response) {
+
                     $scope.districts = response.data;
                     $scope.selectedDistrict = "all";
                     $scope.loadingDistrict = false;
@@ -135,12 +148,13 @@
                 </div>
             </div>
         @endif
-        <div class="loading-report animated" ng-class="{fadeInDown:isLoading,fadeOutUp:!isLoading}">
-            <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
-            <h4>Loading...</h4>
-        </div>
         <section class="content">
             <div class="box box-solid">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="nav-tabs-custom">
                     {{--<ul class="nav nav-tabs">
                         <li class="active">
@@ -202,6 +216,7 @@
                                             No thana available to see
                                         </td>
                                     </tr>
+                                    <tbody ng-if="errorFound==1" ng-bind-html="thanas"></tbody>
                                     <tr ng-if="thanas.length>0" ng-repeat="a in thanas">
                                         <td>
                                             [[((currentPage)*itemPerPage)+$index+1]]
