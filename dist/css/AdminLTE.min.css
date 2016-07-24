@@ -159,7 +159,7 @@ a:hover, a:active, a:focus {
 
 .main-header {
     position: relative;
-    max-height: 100px;
+    /*max-height: 100px;*/
     z-index: 1030
 }
 
@@ -1768,7 +1768,7 @@ a:hover, a:active, a:focus {
 
 .box .overlay > .fa, .overlay-wrapper .overlay > .fa {
     position: absolute;
-    top: 20%;
+    top: 100px;
     left: 50%;
     margin-left: -78px;
     margin-top: -15px;

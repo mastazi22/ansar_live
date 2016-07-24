@@ -113,15 +113,14 @@
         })
     </script>
     <div ng-controller="AnsarServiceEndedListController">
-        <div style="position:absolute;width: 100%;height: 100%;background-color: rgba(255, 255, 255, 0.27);z-index: 100" ng-show="allLoading">
-            <div style="position: relative;width: 20%;height: auto;margin: 20% auto;text-align: center;background: #FFFFFF">
-                <img class="img-responsive" src="{{asset('dist/img/loading-data.gif')}}" style="position: relative;margin: 0 auto">
-                <h4>Loading....</h4>
-            </div>
 
-        </div>
         <section class="content">
             <div class="box box-solid">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4">
@@ -148,7 +147,7 @@
                             </div>
                         </div>
                     </div>
-                    <h4>Total Ansar: [[total]]</h4>
+                    <h4>Total Ansar: [[total.toLocaleString()]]</h4>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr>
