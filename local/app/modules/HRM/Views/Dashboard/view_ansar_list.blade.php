@@ -142,7 +142,7 @@
                     <div class="row">
                         <div class="col-sm-4" ng-show="!isDc">
                             <div class="form-group">
-                                <label class="control-label">Select a unit&nbsp;
+                                <label class="control-label">Select a Unit&nbsp;
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select class="form-control" ng-model="selectedDistrict" ng-change="loadThana(selectedDistrict)">

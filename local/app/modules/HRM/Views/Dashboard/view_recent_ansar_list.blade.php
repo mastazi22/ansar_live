@@ -123,7 +123,7 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label class="control-label">Select a unit&nbsp;
+                                <label class="control-label">Select a Unit&nbsp;
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select class="form-control" ng-model="selectedDistrict" ng-change="loadThana(selectedDistrict)">
@@ -145,7 +145,7 @@
                             </div>
                         </div>
                     </div>
-                    <h4>{{$pageTitle}}:[[total]]</h4>
+                    <h4>{{$pageTitle}}:[[total.toLocaleString()]]</h4>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr>
