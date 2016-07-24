@@ -115,13 +115,13 @@
                     <li ng-if="checkMenu('entry_draft')">
                         <a href="{{URL::to('HRM/entrydraft')}}">
                             <i class="fa fa-users"></i>
-                            <span>Draft entry</span>
+                            <span>Draft Entry</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('entry_advanced_search')">
                         <a href="{{URL::to('HRM/entryadvancedsearch')}}">
                             <i class="fa fa-users"></i>
-                            <span>Advanced search</span>
+                            <span>Advanced Search</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('orginal_info')">
@@ -133,7 +133,7 @@
                     <li ng-if="checkMenu('print_card_id_view')">
                         <a href="{{URL::to('HRM/print_card_id_view')}}">
                             <i class="fa fa-users"></i>
-                            <span>Print Id Card</span>
+                            <span>Print ID Card</span>
                         </a>
                     </li>
                 </ul>
@@ -505,7 +505,7 @@
             <li>
                 <a href="#">
                     <i class="fa fa-cog"></i>
-                    <span>General Setiings</span>
+                    <span>General Settings</span>
                     <i class="fa fa-angle-right pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
