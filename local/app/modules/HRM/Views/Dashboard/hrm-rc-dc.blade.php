@@ -26,7 +26,7 @@
                 method: 'get',
             }).then(function (response) {
 //                alert(JSON.stringify(response.data));
-                $scope.allAnsar = response.data;
+                $scope.allAnsar = formatNumber(response.data);
                 console.log(response.data);
                 $scope.loadingAnsar = false;
             }, function (response) {
@@ -61,7 +61,7 @@
                 method: 'get',
             }).then(function (response) {
 //                alert(JSON.stringify(response.data));
-                $scope.recentAnsar = response.data;
+                $scope.recentAnsar = formatNumber(response.data);
                 console.log(response.data);
 //                $scope.loadingAnsar = false;
             }, function (response) {
@@ -99,7 +99,7 @@
                 url: "{{URL::to('HRM/progress_info')}}",
                 method: 'get',
             }).then(function (response) {
-                $scope.progressInfo = response.data;
+                $scope.progressInfo = formatNumber(response.data);
                 $scope.loadingProgressInfo = false;
             }, function (response) {
                 $scope.loadingProgressInfo = false;
@@ -136,6 +136,12 @@
         {{--})--}}
         {{--}--}}
         {{--$scope.graphDisembodimentData();--}}
+        function formatNumber(data){
+            Object.keys(data).forEach(function (key) {
+                data[key] = data[key].toLocaleString();
+            })
+            return data;
+        }
     })
     GlobalApp.directive('graph', function () {
         return {
