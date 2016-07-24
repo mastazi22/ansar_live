@@ -190,7 +190,7 @@
                                     <img src="{{action('UserController@getImage',['file'=>auth()->user()->userProfile->profile_image])}}"
                                          class="img-circle" alt="User Image"/>
 
-                                    <p>
+                                    <p style="color: #666666">
                                         {{Auth::user()->userProfile->first_name.' '.Auth::user()->userProfile->last_name}}
                                         <br>
                                         {{Auth::user()->userProfile->rank}}

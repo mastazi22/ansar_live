@@ -836,6 +836,14 @@ class FormSubmitHandler extends Controller
 
     public function getNotVerifiedAnsar()
     {
+        $rules = [
+          'limit'=>'required|numeric|regex:/^[0-9]+$/',
+          'offset'=>'required|numeric|regex:/^[0-9]+$/',
+        ];
+        $valid = Validator::make(Input::all(),$rules);
+        if($valid->fails()){
+            return response("Invalid request(400)",400);
+        }
         if (Input::exists('chunk')) return response()->json(CustomQuery::getNotVerifiedChunkAnsar(Input::get('limit'), Input::get('offset')));
         return response()->json(CustomQuery::getNotVerifiedAnsar(Input::get('limit'), Input::get('offset')));
     }
@@ -986,7 +994,7 @@ class FormSubmitHandler extends Controller
         if ($request->input('nid')) {
             $ansarAdvancedSearch = $ansarAdvancedSearch->where('national_id_no', '=', $request->input('nid'));
         }
-        $ansarAdvancedSearch = $ansarAdvancedSearch->paginate(10);
+        $ansarAdvancedSearch = $ansarAdvancedSearch->paginate(config('app.item_per_page'));
         return Response::json($ansarAdvancedSearch);
     }
 
