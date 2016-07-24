@@ -5,37 +5,44 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('TransferController', function ($scope,$http) {
+        GlobalApp.controller('TransferController', function ($scope,$http,$sce) {
             $scope.ansarDetail = {};
-            $scope.isLoading = false;
+            $scope.allLoading = false;
             $scope.exist = false;
+            $scope.errorFound=0;
             $scope.loadAnsarDetail = function (id) {
-                $scope.isLoading = true;
+                $scope.allLoading = true;
                 $http({
                     method: 'get',
                     url: '{{URL::route('ansar_detail_info')}}',
                     params: {ansar_id: id}
                 }).then(function (response) {
+                    $scope.errorFound=0;
                     $scope.ansarDetail = response.data
                     //$scope.checkFile($scope.ansarDetail.apid.profile_pic)
-                    $scope.isLoading = false;
-                    console.log(response.data)
+                    $scope.allLoading = false;
+                },function(response){
+                    $scope.errorFound=1;
+                    $scope.allLoading = false;
+//                    $scope.ansarDetail = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
                 })
             }
             $scope.loadAnsarDetailOnKeyPress = function (ansar_id,$event) {
                 if($event.keyCode==13) {
-                    $scope.isLoading = true;
+                    $scope.allLoading = true;
                     $http({
                         method: 'get',
                         url: '{{URL::route('ansar_detail_info')}}',
                         params: {ansar_id: ansar_id}
                     }).then(function (response) {
+                        $scope.errorFound=0;
                         $scope.ansarDetail = response.data
                         //if($scope.ansarDetail.apid)$scope.checkFile($scope.ansarDetail.apid.profile_pic)
-                        $scope.isLoading = false;
-                        console.log(response.data)
+                        $scope.allLoading = false;
                     }, function (response) {
-                        $scope.isLoading = false;
+                        $scope.errorFound=1;
+                        $scope.allLoading = false;
+//                        $scope.ansarDetail = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
                     })
                 }
             }
@@ -87,12 +94,13 @@
         })
     </script>
     <div ng-controller="TransferController">
-        <div class="loading-report animated" ng-class="{fadeInDown:isLoading,fadeOutUp:!isLoading}">
-            <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
-            <h4>Loading...</h4>
-        </div>
         <section class="content">
             <div class="box box-solid">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body"><br>
                     <div class="row">
                         <div class="col-md-6 col-centered">
@@ -112,7 +120,7 @@
                         <div class="col-sm-12" id="ansar_service_record">
                             <h3 style="text-align: center">Ansar Service Record&nbsp;<a href="#" id="print-report"><span class="glyphicon glyphicon-print"></span></a></h3>
 
-                            <div ng-if="!ansarDetail.apid">
+                            <div ng-if="!ansarDetail.apid||errorFound==1">
                                 <h3 style="text-align: center">No Ansar Found</h3>
                             </div>
                             <div ng-if="ansarDetail.apid">

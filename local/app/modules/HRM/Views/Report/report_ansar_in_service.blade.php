@@ -10,25 +10,35 @@
             $scope.reportType = 'eng';
             $scope.currentServiceDate = 0;
             $scope.current = "";
-            $scope.isLoading = true;
+            $scope.allLoading = true;
             $scope.past = [];
             $scope.ansar = ""
             $scope.pi = false;
+            $scope.errorMessage = '';
+            $scope.errorFound = 0;
             $scope.loadAnsarServiceRecord = function (event) {
-                if(event==undefined||event.keyCode==13) {
-                    $scope.isLoading = true;
+                if (event == undefined || event.keyCode == 13) {
+                    $scope.allLoading = true;
                     $http({
                         method: 'get',
                         url: '{{URL::route('ansar_service_report')}}',
                         params: {ansar_id: $scope.ansarId}
                     }).then(function (response) {
+                        $scope.errorFound = 0;
                         $scope.current = response.data.current;
                         $scope.past = response.data.past;
                         $scope.ansar = response.data.ansar;
                         $scope.pi = response.data.pi;
-                        console.log(response.data)
-                        $scope.isLoading = false;
+                        $scope.allLoading = false;
                         $scope.currentServiceDate = getCurrentServiceDate(new Date($scope.current.joining_date), new Date())
+                    }, function (response) {
+                        $scope.current = '';
+                        $scope.past = '';
+                        $scope.ansar = '';
+                        $scope.pi = '';
+                        $scope.errorFound = 1;
+                        $scope.errorMessage = "Please enter a valid Ansar ID";
+                        $scope.allLoading = false;
                     })
                 }
             }
@@ -48,15 +58,14 @@
                 return Math.abs(Math.floor((dd - cud) / _MS_PER_DAY));
             }
             $scope.loadReportData = function (reportName, type) {
-                $scope.isLoading = true;
+                $scope.allLoading = true;
                 $http({
                     method: 'get',
                     url: '{{URL::route('localize_report')}}',
                     params: {name: reportName, type: type}
                 }).then(function (response) {
-                    console.log(response.data)
                     $scope.report = response.data;
-                    $scope.isLoading = false;
+                    $scope.allLoading = false;
                 })
             }
             $scope.dateConvert = function (date) {
@@ -74,18 +83,18 @@
         })
     </script>
     <style>
-        input::-webkit-input-placeholder,  input:-moz-placeholder, input:-ms-input-placeholder {
+        input::-webkit-input-placeholder, input:-moz-placeholder, input:-ms-input-placeholder {
             color: #7b7b7b !important;
         }
     </style>
     <div ng-controller="serviceRecordController">
-        <div class="loading-report animated" ng-class="{fadeInDown:isLoading,fadeOutUp:!isLoading}">
-            <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
-            <h4>Loading...</h4>
-        </div>
         <section class="content">
-
             <div class="box box-solid">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="pull-right">
                             <span class="control-label" style="padding: 5px 8px">
@@ -99,12 +108,15 @@
                             </span>
                     </div>
                     <br><br>
+
                     <div class="row">
                         <div class="col-md-6 col-centered">
                             <div class="col-md-6 col-sm-12 col-xs-12">
                                 <div class="form-group">
                                     {{--<label class="control-label">Enter a ansar id</label>--}}
-                                    <input type="text" class="form-control" ng-keypress="loadAnsarServiceRecord($event)" ng-model="ansarId" placeholder="Enter Ansar id">
+                                    <input type="text" class="form-control" ng-keypress="loadAnsarServiceRecord($event)"
+                                           ng-model="ansarId" placeholder="Enter Ansar id">
+                                    <span class="text-danger" ng-if="errorFound==1"><p>[[errorMessage]]</p></span>
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-12 col-xs-12">
@@ -114,6 +126,7 @@
                                 </button>
                             </div>
                         </div>
+
                     </div>
                     <div id="report-ansar-service">
                         <h3 style="text-align:center">[[report.header]]&nbsp;&nbsp; <a href="#" id="print-report"><span

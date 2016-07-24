@@ -33,26 +33,38 @@ class ReportController extends Controller
 
     function reportAllGuard()
     {
-        //DB::enableQueryLog();
-        $ansar = DB::table('tbl_kpi_info')
-            ->join('tbl_embodiment', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
-            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-            ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-            ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-            ->where('tbl_kpi_info.id', '=', Input::get('kpi_id'))
-            ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-            ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_designations.name_bng',
-                'tbl_units.unit_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.joining_date')->get();
-        //return DB::getQueryLog();
-        $guards = DB::table('tbl_kpi_info')
-            ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-            ->join('tbl_embodiment', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
-            ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-            ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-            ->where('tbl_kpi_info.id', '=', Input::get('kpi_id'))
-            ->select('tbl_kpi_info.kpi_name', 'tbl_kpi_info.kpi_address', 'tbl_kpi_detail_info.total_ansar_given', 'tbl_units.unit_name_bng', 'tbl_thana.thana_name_bng')->first();
-        return Response::json(['ansars' => $ansar, 'guard' => $guards]);
+        $kpi=Input::get('kpi_id');
+
+        $rules = [
+            'kpi_id'=>'regex:/^[0-9]+$/'
+        ];
+        $valid = Validator::make(Input::all(),$rules);
+
+        if($valid->fails()){
+            //return print_r($valid->messages());
+            return response("Invalid Request(400)",400);
+        }else{
+            //DB::enableQueryLog();
+            $ansar = DB::table('tbl_kpi_info')
+                ->join('tbl_embodiment', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
+                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+                ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
+                ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
+                ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+                ->where('tbl_kpi_info.id', '=', $kpi)
+                ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
+                ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_designations.name_bng',
+                    'tbl_units.unit_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.joining_date')->get();
+            //return DB::getQueryLog();
+            $guards = DB::table('tbl_kpi_info')
+                ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
+                ->join('tbl_embodiment', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
+                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
+                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
+                ->where('tbl_kpi_info.id', '=', $kpi)
+                ->select('tbl_kpi_info.kpi_name', 'tbl_kpi_info.kpi_address', 'tbl_kpi_detail_info.total_ansar_given', 'tbl_units.unit_name_bng', 'tbl_thana.thana_name_bng')->first();
+            return Response::json(['ansars' => $ansar, 'guard' => $guards]);
+        }
     }
 
     function localizeReport()
@@ -68,23 +80,31 @@ class ReportController extends Controller
 
     function ansarServiceReport()
     {
+        $ansar_id=Input::get('ansar_id');
+        $rules = [
+            'ansar_id'=>'required|numeric|regex:/^[0-9]+$/',
+        ];
+        $validation = Validator::make(Input::all(),$rules);
+        if($validation->fails()){
+            return Redirect::back()->withInput(Input::all())->withErrors($validation);
+        }
         $ansar = DB::table('tbl_ansar_parsonal_info')
             ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
             ->join('tbl_blood_group', 'tbl_ansar_parsonal_info.blood_group_id', '=', 'tbl_blood_group.id')
             ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-            ->where('tbl_ansar_parsonal_info.ansar_id', '=', Input::get('ansar_id'))
+            ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
             ->select('tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_ansar_parsonal_info.profile_pic', 'tbl_designations.name_bng', 'tbl_units.unit_name_bng', 'tbl_blood_group.blood_group_name_bng')->first();
         $ansarCurrentServiceRecord = DB::table('tbl_embodiment')
             ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-            ->where('tbl_embodiment.ansar_id', '=', Input::get('ansar_id'))
+            ->where('tbl_embodiment.ansar_id', '=', $ansar_id)
             ->select('tbl_embodiment.joining_date', 'tbl_embodiment.reporting_date', 'tbl_embodiment.memorandum_id', 'tbl_embodiment.service_ended_date',
                 'tbl_units.unit_name_bng', 'tbl_kpi_info.kpi_name')->first();
         $ansarPastServiceRecord = DB::table('tbl_embodiment_log')
             ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
             ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment_log.kpi_id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-            ->where('tbl_embodiment_log.ansar_id', '=', Input::get('ansar_id'))->orderBy('tbl_embodiment_log.id', 'desc')
+            ->where('tbl_embodiment_log.ansar_id', '=', $ansar_id)->orderBy('tbl_embodiment_log.id', 'desc')
             ->select('tbl_embodiment_log.joining_date', 'tbl_embodiment_log.reporting_date', 'tbl_embodiment_log.old_memorandum_id',
                 'tbl_units.unit_name_bng', 'tbl_kpi_info.kpi_name', 'tbl_embodiment_log.release_date',
                 'tbl_disembodiment_reason.reason_in_bng', 'tbl_embodiment_log.joining_date')->get();
@@ -233,16 +253,24 @@ class ReportController extends Controller
     {
         DB::enableQueryLog();
         $ansar_id = Input::get('ansar_id');
-        $transfer_history = DB::table('tbl_transfer_ansar')
-            ->join(DB::raw('tbl_kpi_info as pk'), 'tbl_transfer_ansar.present_kpi_id', '=', 'pk.id')
-            ->join(DB::raw('tbl_kpi_info as tk'), 'tbl_transfer_ansar.transfered_kpi_id', '=', 'tk.id')
-            ->join('tbl_units', 'pk.unit_id', '=', 'tbl_units.id')
-            ->join('tbl_thana', 'pk.thana_id', '=', 'tbl_thana.id')
-            ->where('tbl_transfer_ansar.ansar_id', $ansar_id)
-            ->select('tbl_transfer_ansar.present_kpi_join_date as joiningDate', 'tbl_transfer_ansar.transfered_kpi_join_date as transferDate',
-                'pk.kpi_name as FromkpiName', 'tk.kpi_name as TokpiName', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana');
-        //return DB::getQueryLog();
-        return $transfer_history->get();
+        $rules = [
+            'ansar_id'=>'required|numeric|regex:/^[0-9]+$/',
+        ];
+        $validation = Validator::make(Input::all(),$rules);
+        if($validation->fails()){
+            return response("Invalid Request(400)",400);
+        }else{
+            $transfer_history = DB::table('tbl_transfer_ansar')
+                ->join(DB::raw('tbl_kpi_info as pk'), 'tbl_transfer_ansar.present_kpi_id', '=', 'pk.id')
+                ->join(DB::raw('tbl_kpi_info as tk'), 'tbl_transfer_ansar.transfered_kpi_id', '=', 'tk.id')
+                ->join('tbl_units', 'pk.unit_id', '=', 'tbl_units.id')
+                ->join('tbl_thana', 'pk.thana_id', '=', 'tbl_thana.id')
+                ->where('tbl_transfer_ansar.ansar_id', $ansar_id)
+                ->select('tbl_transfer_ansar.present_kpi_join_date as joiningDate', 'tbl_transfer_ansar.transfered_kpi_join_date as transferDate',
+                    'pk.kpi_name as FromkpiName', 'tk.kpi_name as TokpiName', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana');
+            //return DB::getQueryLog();
+            return $transfer_history->get();
+        }
     }
 
     public function ansarEmbodimentReportView()

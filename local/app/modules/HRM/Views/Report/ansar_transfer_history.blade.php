@@ -7,7 +7,8 @@
     <script>
         GlobalApp.controller('TransferController', function ($scope,$http) {
             $scope.ansars = [];
-            $scope.isLoading = false;
+            $scope.allLoading = false;
+            $scope.errorFound=0;
             $scope.loadTransferHistory = function (ansar_id) {
                 $scope.isLoading = true;
                 $http({
@@ -15,24 +16,30 @@
                     method:'get',
                     params:{ansar_id:ansar_id}
                 }).then(function (response) {
+                    $scope.errorFound=0;
                     $scope.ansars = response.data;
-                    $scope.isLoading = false;
+                    $scope.allLoading = false;
                 },function (response) {
-                    $scope.isLoading = false;
+                    $scope.errorFound=1;
+                    $scope.allLoading = false;
+                    $scope.ansars = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
                 })
             }
             $scope.loadTransferHistoryOnKeyPress = function (ansar_id,$event) {
                 if($event.keyCode==13) {
-                    $scope.isLoading = true;
+                    $scope.allLoading = true;
                     $http({
                         url: '{{URL::route('get_transfer_ansar_history')}}',
                         method: 'get',
                         params: {ansar_id: ansar_id}
                     }).then(function (response) {
+                        $scope.errorFound=0;
                         $scope.ansars = response.data;
-                        $scope.isLoading = false;
+                        $scope.allLoading = false;
                     }, function (response) {
-                        $scope.isLoading = false;
+                        $scope.errorFound=1;
+                        $scope.allLoading = false;
+                        $scope.ansars = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
                     })
                 }
             }
@@ -52,12 +59,13 @@
 
     </script>
     <div ng-controller="TransferController">
-        <div class="loading-report animated" ng-class="{fadeInDown:isLoading,fadeOutUp:!isLoading}">
-            <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
-            <h4>Loading...</h4>
-        </div>
         <section class="content">
             <div class="box box-solid">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body"><br>
                     <div class="row">
                         <div class="col-md-6 col-centered">
@@ -93,6 +101,7 @@
                                             No ansar found
                                         </td>
                                     </tr>
+                                    <tbody ng-if="errorFound==1" ng-bind-html="ansars"></tbody>
                                     <tr ng-repeat="a in ansars" ng-show="ansars.length>0">
                                         <td>[[$index+1]]</td>
                                         <td>[[a.FromkpiName]]</td>

@@ -5,7 +5,7 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('ReportGuardSearchController', function ($scope, $http) {
+        GlobalApp.controller('ReportGuardSearchController', function ($scope, $http, $sce) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}')
             $scope.districts = [];
             $scope.thanas = [];
@@ -19,7 +19,8 @@
             $scope.loadingThana = false;
             $scope.loadingKpi = false;
             $scope.report = {};
-            $scope.reportType = 'eng'
+            $scope.errorFound=0;
+            $scope.reportType = 'eng';
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}')
             $scope.loadDistrict = function () {
                 $scope.loadingUnit = true;
@@ -58,13 +59,27 @@
                 })
             }
             $scope.loadAnsar = function (id) {
+                $scope.allLoading = true;
                 $http({
                     method: 'get',
                     url: '{{URL::route('guard_list')}}',
-                    params: {kpi_id: id}
+                    params: {
+                        kpi_id: id,
+                        unit: $scope.selectedDistrict,
+                        thana: $scope.selectedThana
+                    }
                 }).then(function (response) {
+                    $scope.errorFound=0;
+                    $scope.allLoading = false;
                     $scope.ansars = response.data.ansars;
                     $scope.guardDetail = response.data.guard;
+                },function(response){
+                    $scope.errorFound=1;
+                    $scope.allLoading = false;
+                    $scope.guardDetail = [];
+                    $scope.ansars = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
+                    //alert($(".table").html())
+                    $scope.allLoading = false;
                 })
             }
             $scope.loadReportData = function (reportName, type) {
@@ -112,6 +127,11 @@
     <div ng-controller="ReportGuardSearchController">
         <section class="content">
             <div class="box box-solid">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="pull-right">
                             <span class="control-label" style="padding: 5px 8px">
@@ -243,6 +263,7 @@
                                         No available available to see
                                     </td>
                                 </tr>
+                                <tbody ng-if="errorFound==1" ng-bind-html="ansars"></tbody>
                                 <tr ng-show="ansars.length>0" ng-repeat="a in ansars">
                                     <td>
                                         [[$index+1]]

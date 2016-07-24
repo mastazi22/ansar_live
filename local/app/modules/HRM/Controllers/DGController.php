@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Mockery\CountValidator\Exception;
 
@@ -55,30 +56,38 @@ class DGController extends Controller
 
     function loadAnsarDetail()
     {
+        $ansar_id=Input::get('ansar_id');
+        $rules = [
+            'ansar_id'=>'required|numeric|regex:/^[0-9]+$/',
+        ];
+        $validation = Validator::make(Input::all(),$rules);
+        if($validation->fails()){
+            return response("Invalid Request(400)",400);
+        }
         $ansarPersonalDetail = DB::table('tbl_ansar_parsonal_info')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->where('tbl_ansar_parsonal_info.ansar_id', '=', Input::get('ansar_id'))
+            ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
             ->select('tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_ansar_parsonal_info.profile_pic','tbl_ansar_parsonal_info.ansar_id',
                 'tbl_units.unit_name_bng', 'tbl_units.id as unit_id', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_designations.name_bng', 'tbl_ansar_parsonal_info.mobile_no_self')->first();
-        $ansarStatusInfo = DB::table('tbl_ansar_status_info')->where('ansar_id', Input::get('ansar_id'))
+        $ansarStatusInfo = DB::table('tbl_ansar_status_info')->where('ansar_id', $ansar_id)
             ->select('*')->first();
-        $ansarPanelInfo = DB::table('tbl_panel_info')->where('ansar_id', Input::get('ansar_id'));
+        $ansarPanelInfo = DB::table('tbl_panel_info')->where('ansar_id', $ansar_id);
         if (!$ansarPanelInfo->exists()) {
-            $ansarPanelInfo = DB::table('tbl_panel_info_log')->where('ansar_id', Input::get('ansar_id'))->orderBy('id', 'desc')->select('panel_date', 'panel_id_old as memorandum_id')->first();
+            $ansarPanelInfo = DB::table('tbl_panel_info_log')->where('ansar_id', $ansar_id)->orderBy('id', 'desc')->select('panel_date', 'panel_id_old as memorandum_id')->first();
         } else {
             $ansarPanelInfo = $ansarPanelInfo->select('panel_date', 'memorandum_id')->first();
         }
         $ansarOfferInfo = DB::table('tbl_sms_offer_info')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_offer_info.district_id')
-            ->where('tbl_sms_offer_info.ansar_id', '=', Input::get('ansar_id'));
+            ->where('tbl_sms_offer_info.ansar_id', '=', $ansar_id);
 
         if ($ansarOfferInfo->exists()) {
             $ansarOfferInfo = $ansarOfferInfo->select('tbl_sms_offer_info.created_at as offerDate', 'tbl_units.unit_name_bng as offerUnit')->first();
         } else {
             $ansarOfferInfo = DB::table('tbl_sms_receive_info')
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_receive_info.offered_district')
-                ->where('tbl_sms_receive_info.ansar_id', '=', Input::get('ansar_id'));
+                ->where('tbl_sms_receive_info.ansar_id', '=', $ansar_id);
 
             if ($ansarOfferInfo->exists()) {
                 $ansarOfferInfo = $ansarOfferInfo->select('tbl_sms_receive_info.sms_send_datetime as offerDate', 'tbl_units.unit_name_bng as offerUnit')->first();
@@ -86,11 +95,11 @@ class DGController extends Controller
             } else {
                 $ansarOfferInfo = DB::table('tbl_sms_send_log')
                     ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_send_log.offered_district')
-                    ->where('tbl_sms_send_log.ansar_id', '=', Input::get('ansar_id'))->orderBy('tbl_sms_send_log.id', 'desc')
+                    ->where('tbl_sms_send_log.ansar_id', '=', $ansar_id)->orderBy('tbl_sms_send_log.id', 'desc')
                     ->select('tbl_sms_send_log.offered_date as offerDate', 'tbl_units.unit_name_bng as offerUnit')->first();
             }
         }
-        $offer_cancel = DB::table('tbl_offer_cancel')->where('ansar_id', Input::get('ansar_id'))->orderBy('id', 'desc')->select('offer_cancel_date as offerCancel')->first();
+        $offer_cancel = DB::table('tbl_offer_cancel')->where('ansar_id', $ansar_id)->orderBy('id', 'desc')->select('offer_cancel_date as offerCancel')->first();
         $ansarEmbodimentInfo = DB::table('tbl_embodiment')
             ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
@@ -99,7 +108,7 @@ class DGController extends Controller
             $ansarEmbodimentInfo = DB::table('tbl_embodiment_log')
                 ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment_log.kpi_id')
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                ->where('tbl_embodiment_log.ansar_id', Input::get('ansar_id'))->orderBy('tbl_embodiment_log.id', 'desc')
+                ->where('tbl_embodiment_log.ansar_id', $ansar_id)->orderBy('tbl_embodiment_log.id', 'desc')
                 ->select('tbl_embodiment_log.joining_date', 'tbl_embodiment_log.old_memorandum_id as memorandum_id', 'tbl_kpi_info.kpi_name', 'tbl_units.unit_name_bng')->first();
         } else {
             $ansarEmbodimentInfo = $ansarEmbodimentInfo
@@ -108,7 +117,7 @@ class DGController extends Controller
         }
         $ansarDisEmbodimentInfo = DB::table('tbl_embodiment_log')
             ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
-            ->where('tbl_embodiment_log.ansar_id', Input::get('ansar_id'))->orderBy('tbl_embodiment_log.id', 'desc')
+            ->where('tbl_embodiment_log.ansar_id', $ansar_id)->orderBy('tbl_embodiment_log.id', 'desc')
             ->select('tbl_embodiment_log.release_date as disembodiedDate', 'tbl_disembodiment_reason.reason_in_bng as disembodiedReason')->first();
         return json_encode(['apid' => $ansarPersonalDetail, 'api' => $ansarPanelInfo, 'aod' => $ansarOfferInfo, 'aoci' => $offer_cancel, 'asi' => $ansarStatusInfo,
             'aei' => $ansarEmbodimentInfo, 'adei' => $ansarDisEmbodimentInfo]);

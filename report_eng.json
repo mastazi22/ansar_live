@@ -1,16 +1,16 @@
 {
   "ansar_in_guard_report": {
-    "report_header": "Ansar in guard",
+    "report_header": "Ansar in Guard",
     "guard": {
-      "kpi_title": "Guard Detail",
-      "kpi_name": "Guard name",
-      "kpi_address": "Guard address",
-      "kpi_type": "Guard type",
-      "kpi_ansar_given": "Total given ansar",
-      "kpi_current_ansar": "Total current ansar"
+      "kpi_title": "Guard Details",
+      "kpi_name": "Guard Name",
+      "kpi_address": "Guard Address",
+      "kpi_type": "Guard Type",
+      "kpi_ansar_given": "Total Given Ansar",
+      "kpi_current_ansar": "Total Current Ansar"
     },
     "ansar": {
-      "ansar_title": "Ansar Detail",
+      "ansar_title": "Ansar Details",
       "sl_no": "Sl. No.",
       "id": "Ansar ID",
       "name": "Name",
