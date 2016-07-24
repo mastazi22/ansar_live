@@ -49,8 +49,43 @@ class KpiController extends Controller
 
     public function saveKpiInfo(Request $request)
     {
+        $kpi_name = $request->input('kpi_name');
+        $division_id = $request->input('division_name_eng');
+        $unit_id = $request->input('unit_name_eng');
+        $thana_id = $request->input('thana_name_eng');
+        $kpi_address = $request->input('kpi_address');
+        $kpi_contact_no = $request->input('kpi_contact_no');
+        $total_ansar_request = $request->input('total_ansar_request');
+        $total_ansar_given = $request->input('total_ansar_given');
+        $with_weapon = $request->input('with_weapon');
+        $weapon_count = $request->input('weapon_count');
+        $bullet_no = $request->input('bullet_no');
+        $weapon_description = $request->input('weapon_description');
+        $no_of_ansar = $request->input('no_of_ansar');
+        $no_of_apc = $request->input('no_of_apc');
+        $no_of_pc = $request->input('no_of_pc');
         $activation_date = $request->input('activation_date');
         $withdraw_date = $request->input('withdraw_date');
+
+        $rules=[
+            'kpi_name'=> 'required',
+            'division_name_eng'=> 'required',
+            'unit_name_eng'=> 'required',
+            'thana_name_eng'=> 'required',
+            'kpi_address'=> 'required',
+            'kpi_contact_no'=> 'required',
+            'total_ansar_request'=> 'required',
+            'total_ansar_given'=> 'required',
+            'with_weapon'=> 'required',
+            'weapon_count'=> 'required',
+            'bullet_no'=> 'required',
+            'weapon_description'=> 'required',
+            'no_of_ansar'=> 'required',
+            'no_of_apc'=> 'required',
+            'no_of_pc'=> 'required',
+            'activation_date'=> 'required|date_format:d-M-Y',
+            'withdraw_date'=> 'date_format:d-M-Y',
+        ];
         $modified_activation_date = Carbon::parse($activation_date)->format('Y-m-d');
         if (strcasecmp($withdraw_date, '') != 0) {
             $modified_withdraw_date = Carbon::parse($withdraw_date)->format('Y-m-d');
@@ -62,28 +97,28 @@ class KpiController extends Controller
         DB::beginTransaction();
         try {
             $kpi_general = new KpiGeneralModel();
-            $kpi_general->kpi_name = $request->input('kpi_name');
-            $kpi_general->division_id = $request->input('division_name_eng');
-            $kpi_general->unit_id = $request->input('unit_name_eng');
-            $kpi_general->thana_id = $request->input('thana_name_eng');
-            $kpi_general->kpi_address = $request->input('kpi_address');
-            $kpi_general->kpi_contact_no = $request->input('kpi_contact_no');
+            $kpi_general->kpi_name = $kpi_name;
+            $kpi_general->division_id = $division_id;
+            $kpi_general->unit_id = $unit_id;
+            $kpi_general->thana_id = $thana_id;
+            $kpi_general->kpi_address = $kpi_address;
+            $kpi_general->kpi_contact_no = $kpi_contact_no;
             $kpi_general->status_of_kpi = 0;
             $kpi_general->save();
 
             $kpi_details = new KpiDetailsModel();
             $kpi_details->kpi_id = $kpi_general->id;
-            $kpi_details->total_ansar_request = $request->input('total_ansar_request');
-            $kpi_details->total_ansar_given = $request->input('total_ansar_given');
-            $kpi_details->with_weapon = $request->input('with_weapon');
-            $kpi_details->weapon_count = $request->input('weapon_count');
-            $kpi_details->bullet_no = $request->input('bullet_no');
-            $kpi_details->weapon_description = $request->input('weapon_description');
+            $kpi_details->total_ansar_request = $total_ansar_request;
+            $kpi_details->total_ansar_given = $total_ansar_given;
+            $kpi_details->with_weapon = $with_weapon;
+            $kpi_details->weapon_count = $weapon_count;
+            $kpi_details->bullet_no = $bullet_no;
+            $kpi_details->weapon_description = $weapon_description;
             $kpi_details->activation_date = $modified_activation_date;
             $kpi_details->withdraw_date = $modified_withdraw_date;
-            $kpi_details->no_of_ansar = $request->input('no_of_ansar');
-            $kpi_details->no_of_apc = $request->input('no_of_apc');
-            $kpi_details->no_of_pc = $request->input('no_of_pc');
+            $kpi_details->no_of_ansar = $no_of_ansar;
+            $kpi_details->no_of_apc = $no_of_apc;
+            $kpi_details->no_of_pc = $no_of_pc;
             $kpi_details->save();
             DB::commit();
             CustomQuery::addActionlog(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]);

@@ -425,6 +425,7 @@ class HrmController extends Controller
         $thana = Input::get('thana');
         $view = Input::get('view');
         $division = Input::get('division');
+
         $rules = [
             'view'=>'regex:/[a-z]+/',
             'limit'=>'numeric',
@@ -437,7 +438,7 @@ class HrmController extends Controller
 
         if($valid->fails()){
             //return print_r($valid->messages());
-            return response("<tr class='warning'><td colspan='9'>Invalid Request(400)</td></tr>",400,['Content-Type:text/HTML']);
+            return response("Invalid Request(400)",400);
         }
         if (strcasecmp($view, 'view') == 0) {
             return CustomQuery::ansarListForServiceEnded($offset, $limit, $unit, $thana,$division);
@@ -472,7 +473,7 @@ class HrmController extends Controller
 
         if($valid->fails()){
             //return print_r($valid->messages());
-            return response("<tr class='warning'><td colspan='8'>Invalid Request(400)</td></tr>",400,['Content-Type:text/HTML']);
+            return response("Invalid Request(400)",400);
         }
         if (strcasecmp($view, 'view') == 0) {
             return CustomQuery::ansarListWithFiftyYears($offset, $limit, $unit, $thana,$division);
@@ -507,7 +508,7 @@ class HrmController extends Controller
 
         if($valid->fails()){
             //return print_r($valid->messages());
-            return response("<tr class='warning'><td colspan='8'>Invalid Request(400)</td></tr>",400,['Content-Type:text/HTML']);
+            return response("Invalid Request(400)",400);
         }
         if (strcasecmp($view, 'view') == 0) {
             return CustomQuery::ansarListForNotInterested($offset, $limit, $unit, $thana,$division);
