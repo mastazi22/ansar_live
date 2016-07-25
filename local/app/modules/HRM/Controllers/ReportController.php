@@ -124,8 +124,8 @@ class ReportController extends Controller
         $type = Input::get('type');
         $rules = [
           'ansar_id'=>'required|numeric|regex:/^[0-9]+$/',
-          'issue_date'=>'required|date_format:d-M-Y',
-          'expire_date'=>'required|date_format:d-M-Y',
+          'issue_date'=>['required','date_format:d-M-Y','regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+          'expire_date'=>['required','date_format:d-M-Y','regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
         ];
         $message = [
           'required'=>'This field is required',
@@ -406,14 +406,16 @@ class ReportController extends Controller
     public function getPrintIdList()
     {
         $rules = [
-            'f_date'=>'required|date_format:d-M-Y',
-            't_date'=>'required|date_format:d-M-Y',
+            'f_date'=>['required','date_format:d-M-Y','regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+            't_date'=>['required','date_format:d-M-Y','regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
         ];
         $message = [
             'f_date.required'=>'From date field is required',
             't_date.required'=>'To date field is required',
+            't_date.regex'=>'To date field is invalid',
             'f_date.date_format'=>'From date field is invalid',
             't_date.date_format'=>'To date field is invalid',
+            'f_date.regex'=>'From date field is invalid',
         ];
         $valid = Validator::make(Input::all(),$rules,$message);
         if($valid->fails()){
@@ -518,15 +520,17 @@ class ReportController extends Controller
     public function getRejectedAnsarList()
     {
         $rules = [
-            'from_date'=>'required|date_format:d-M-Y',
-            'to_date'=>'required|date_format:d-M-Y',
+            'from_date'=>['required','date_format:d-M-Y','regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+            'to_date'=>['required','date_format:d-M-Y','regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
             'rejection_no'=>'required|numeric|regex:/^[0-9]+$/',
         ];
         $message = [
             'from_date.required'=>'From date field is required',
             'to_date.required'=>'To date field is required',
             'from_date.date_format'=>'From date field is invalid',
+            'from_date.regex'=>'From date field is invalid',
             'to_date.date_format'=>'To date field is invalid',
+            'to_date.regex'=>'To date field is invalid',
             'rejection_no.required'=>'Rejection no required',
             'rejection_no.numeric'=>'Rejection no must be integer.eg 1,2...',
             'rejection_no.regex'=>'Rejection no must be integer.eg 1,2...',

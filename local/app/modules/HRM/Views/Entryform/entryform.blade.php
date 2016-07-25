@@ -338,7 +338,7 @@
                                         <h5 style="text-align: center;">পারিবারিক তথ্য </h5>
                                     </div>
 
-                                    <div class="box-info">
+                                    <div class="box box-info">
                                         <div class="box-body">
                                             <div class="form-horizontal col-md-12" ng-show="isAdmin==55">
 
@@ -626,7 +626,7 @@
                                     <div class="level-title-session-entry">
                                         <h5 style="text-align: center;">স্থায়ী ঠিকানা</h5>
                                     </div>
-                                    <div class="box-info">
+                                    <div class="box box-info">
                                         <div class="box-body">
                                             <div class="form-horizontal col-md-12">
                                                 <label class="control-label col-sm-2" for="email">Village:</label>
@@ -713,7 +713,7 @@
                                     <div class="level-title-session-entry">
                                         <h5 style="text-align: center;">শারীরিক যোগ্যতার তথ্য</h5>
                                     </div>
-                                    <div class="box-info">
+                                    <div class="box box-info">
                                         <div class="box-body">
                                             <div class="form-horizontal col-md-12 " ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.hight_feet[0]}">
                                                 <label class="control-label col-sm-2" for="email"><sup style="color: #ff0709;font-size: 1em">*</sup>Height</label>
@@ -810,7 +810,7 @@
                                     <div class="level-title-session-entry">
                                         <h5 style="text-align: center;">Educational Information</h5>
                                     </div>
-                                    <div class="box-info">
+                                    <div class="box box-info">
                                         <div class="box-body">
                                             <div class="table-responsive">
                                                 <table class="table">
@@ -838,8 +838,8 @@
                                                             <a href="" ng-click="(eduRows.length > 1)?eduDeleteRows($index):''"><i class="glyphicon glyphicon-trash"></i></a>
                                                         </td>
                                                     </tr>
-                                                    <tr>
-                                                        <td style=" border-top:0px;">
+                                                    <tr >
+                                                        <td style=" border-top:0px;background: #ffffff !important;">
                                                             <a href="">
                                                                 <p ng-click="addEduinput()" style="cursor: hand;padding: .2em .5em;background-color: #5cb85c;display: inline-block;color:#ffffff">Add more</p>
                                                             </a>
@@ -857,7 +857,7 @@
                                     <div class="level-title-session-entry">
                                         <h5 style="text-align: center;">শিক্ষাগত যোগ্যতার তথ্য</h5>
                                     </div>
-                                    <div class="box-info">
+                                    <div class="box box-info">
                                         <div class="box-body">
                                             <div class="table-responsive">
                                                 <table class="table">
@@ -891,7 +891,7 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td style=" border-top:0px;">
+                                                        <td style=" border-top:0px;background: #ffffff !important;">
                                                             <a href=""><p ng-click="addEduinput()"
                                                                           style="cursor: hand;padding: .2em .5em;background-color: #5cb85c;display: inline-block;color:#ffffff">
                                                                     Add more</p></a>
@@ -911,7 +911,7 @@
                                     <div class="level-title-session-entry">
                                         <h5 style="text-align: center;">Training Information</h5>
                                     </div>
-                                    <div class="box-info">
+                                    <div class="box box-info">
                                         <div class="box-body">
                                             <div class=" table-responsive">
                                                 <table class="table">
@@ -939,7 +939,7 @@
                                                                         class="glyphicon glyphicon-trash"></i></a></td>
                                                     </tr>
                                                     <tr>
-                                                        <td style=" border-top:0px;">
+                                                        <td style=" border-top:0px;background: #ffffff !important;">
                                                             <a href=""><p ng-click="addTraininput()"
                                                                           style="cursor: hand;padding: .2em .5em;background-color: #5cb85c;display: inline-block;color:#ffffff">
                                                                     Add more</p></a>
@@ -958,7 +958,7 @@
                                     <div class="level-title-session-entry">
                                         <h5 style="text-align: center;">প্রশিক্ষন সংক্রান্ত তথ্য্</h5>
                                     </div>
-                                    <div class="box-info">
+                                    <div class="box box-info">
                                         <div class="box-body">
                                             <div class=" table-responsive">
                                                 <table class="table">
@@ -991,7 +991,7 @@
                                                                         class="glyphicon glyphicon-trash"></i></a></td>
                                                     </tr>
                                                     <tr>
-                                                        <td style=" border-top:0px;">
+                                                        <td style=" border-top:0px;background: #ffffff !important;">
                                                             <a href=""><p ng-click="addTraininput()"
                                                                           style="cursor: hand;padding: .2em .5em;background-color: #5cb85c;display: inline-block;color:#ffffff">
                                                                     Add more</p></a>
@@ -1010,7 +1010,7 @@
                                     <div class="level-title-session-entry">
                                         <h5 style="text-align: center;">Nominee Information</h5>
                                     </div>
-                                    <div class="box-info">
+                                    <div class="box box-info">
                                         <div class="box-body">
                                             <div class="table-responsive">
                                                 <table class="table">
@@ -1030,7 +1030,7 @@
                                                                         class="glyphicon glyphicon-trash"></i></a></td>
                                                     </tr>
                                                     <tr>
-                                                        <td style=" border-top:0px;">
+                                                        <td style=" border-top:0px;background:#ffffff !important;">
                                                             <a href=""><p ng-click="addNomineeinput()"
                                                                           style="cursor: hand;padding: .2em .5em;background-color: #5cb85c;display: inline-block;color:#ffffff">
                                                                     Add more</p></a>
@@ -1048,7 +1048,7 @@
                                     <div class="level-title-session-entry">
                                         <h5 style="text-align: center;">উত্তরাধিকারীর তথ্য</h5>
                                     </div>
-                                    <div class="box-info">
+                                    <div class="box box-info">
                                         <div class="box-body">
                                             <div class="table-responsive">
                                                 <table class="table">
@@ -1068,7 +1068,7 @@
                                                                         class="glyphicon glyphicon-trash"></i></a></td>
                                                     </tr>
                                                     <tr>
-                                                        <td style=" border-top:0px;">
+                                                        <td style=" border-top:0px;background: #ffffff !important;">
                                                             <a href=""><p ng-click="addNomineeinput()"
                                                                           style="cursor: hand;padding: .2em .5em;background-color: #5cb85c;display: inline-block;color:#ffffff">
                                                                     Add more</p></a>
@@ -1086,7 +1086,7 @@
                                     <div class="level-title-session-entry">
                                         <h5 style="text-align: center;">অন্যান্য তথ্য</h5>
                                     </div>
-                                    <div class="box-info">
+                                    <div class="box box-info">
                                         <div class="box-body">
                                             <div class="form-horizontal col-md-12 "
                                                  ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.mobile_no_self[0]}">
@@ -1159,7 +1159,7 @@
                                     <div class="level-title-session-entry">
                                         <h5 style="text-align: center;">ছবি সমূহ</h5>
                                     </div>
-                                    <div class="box-info">
+                                    <div class="box box-info">
                                         <div class="box-body">
                                             <div class=" table-responsive">
                                                 <table class="table">
@@ -1188,16 +1188,19 @@
                                     </div>
                                 </fieldset>
                                 {{--Draft Save Button--}}
-                                <div class="form-horizontal pull-left">
-                                    <input form-submit id="submit" type="submit" name="submit" class="btn btn-primary"
-                                           value="Submit">
+                                <div class="row" style="margin: 0 !important;">
+                                    <div class="form-horizontal pull-left">
+                                        <input form-submit id="submit" type="submit" name="submit" class="btn btn-primary"
+                                               value="Submit">
+                                    </div>
+                                    {{--Form Submit Button--}}
+                                    <div class="form-horizontal pull-right">
+                                        <input form-submit id="submit1" type="submit" name="Save" class="btn btn-primary"
+                                               value="Save as draft">
+                                        <!--<button name="save" type="save">Save</button>-->
+                                    </div>
                                 </div>
-                                {{--Form Submit Button--}}
-                                <div class="form-horizontal pull-right">
-                                    <input form-submit id="submit1" type="submit" name="Save" class="btn btn-primary"
-                                           value="Save as draft">
-                                    <!--<button name="save" type="save">Save</button>-->
-                                </div>
+
                             </form>
 
 
@@ -1205,7 +1208,7 @@
 
                     </div>
                 </div>
-                <div ng-bind-html="error"></div>
+                {{--<div ng-bind-html="error"></div>--}}
             </section>
         </div>
     </div>

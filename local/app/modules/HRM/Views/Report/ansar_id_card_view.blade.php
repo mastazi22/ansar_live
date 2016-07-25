@@ -93,7 +93,7 @@
                             </span>
                             </div>
                             <div class="form-group">
-                                <button ng-click="generateIdCard()" class="btn btn-default">Generate Id Card</button>
+                                <button ng-click="generateIdCard()" class="btn btn-info">Generate Id Card</button>
                             </div>
                         </div>
                         <div class="col-sm-6 col-sm-offset-1" style="overflow: auto;z-index: 5" ng-bind-html="idCard">

@@ -48,6 +48,7 @@
                 $scope.isSearching = false;
                 $scope.loading = true;
                 $scope.noFound = false;
+                $scope.AllAnsar=[];
                 $http({
                     url: $scope.loadType == 0 ? "{{URL::to('HRM/getnotverifiedansar')}}" : "{{URL::to('HRM/getverifiedansar')}}",
                     method: 'get',
@@ -325,7 +326,7 @@
                             <tr ng-if="noFound">
                                 <td colspan="10">No data or not have permission</td>
                             </tr>
-                            <tr ng-repeat="ansar in AllAnsar">
+                            <tr ng-repeat="ansar in AllAnsar" ng-if="AllAnsar.length>0">
 
                                 <td>
                                     <a href="{{ URL::to('HRM/entryreport/') }}/[[ansar.ansar_id]]">[[ansar.ansar_id]]</a>
@@ -448,10 +449,5 @@
 
         </div>
         </section>
-        <script>
-            $("#ansar-table").sortTable({
-                exclude: 9
-            })
-        </script>
     </div>
 @stop

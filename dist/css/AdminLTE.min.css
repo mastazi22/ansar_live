@@ -1587,7 +1587,7 @@ a:hover, a:active, a:focus {
 }
 
 .box.box-primary {
-    border-top-color: #3c8dbc
+    border-top-color: forestgreen;
 }
 
 .box.box-info {

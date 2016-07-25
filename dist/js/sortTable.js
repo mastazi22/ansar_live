@@ -33,20 +33,22 @@
         b.setAttribute('data-col-num', option.col);
         b.setAttribute('data-sort', option.sortDir);
         b.setAttribute('href', '#');
-        $(b).addClass("text-aqua")
+        b.style.color = "forestgreen";
         var i = document.createElement("i");
         $(i).addClass('fa ' + _self.settings.sort_ASC);
         $(b).append(i);
         $(b).on('click', function () {
-            $('tr:not(:eq(0))')
-            var rows = $('tr:not(:eq(0))', _self.element);
+            //$('tr:not(:eq(0))')
+            var rows = $('tr', _self.element).not($(b).parents('tr')[0]);
+            alert(rows.length);
             var i = $(this).attr('data-col-num')
             var s = $(this).attr('data-sort')
             rows.sort(function (c, d) {
-                var p = $('td,th', c).filter(":eq(" + i + ")").text()
-                var q = $('td,th', d).filter(":eq(" + i + ")").text()
-                //alert($.trim(p)+" "+$.trim(q))
-                if ($.isNumeric($.trim(p)) && $.isNumeric($.trim(q))) return s == 1 ? parseInt($.trim(p)) > parseInt($.trim(q)) : parseInt(p) < parseInt(q)
+                var p = $.trim($('td,th', c).filter(":eq(" + i + ")").text());
+                var q = $.trim($('td,th', d).filter(":eq(" + i + ")").text());
+                console.log({sss:p +" "+ q})
+                console.log({ssss:s == 1 ? parseInt(p) > parseInt(q) : parseInt(p) < parseInt(q),s:s})
+                if ($.isNumeric(p) && $.isNumeric(q)) return s == 1 ? parseInt(p) > parseInt(q) : parseInt(p) < parseInt(q)
                 return s == 1 ? p > q : p < q;
             })
             rows.detach().appendTo(_self.element);
