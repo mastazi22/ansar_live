@@ -14,14 +14,14 @@
             $scope.tsAnsar = 0;
             $scope.showKpiStatus = false;
             $scope.totalKpiAnsar = {
-                pc:{
-                    given:0,current:0
+                pc: {
+                    given: 0, current: 0
                 },
-                apc:{
-                    given:0,current:0
+                apc: {
+                    given: 0, current: 0
                 },
-                ansar:{
-                    given:0,current:0
+                ansar: {
+                    given: 0, current: 0
                 }
             }
             $scope.noAnsar = true;
@@ -177,7 +177,7 @@
                 var index = $scope.selectedAnsar.indexOf($scope.ansars[i]);
                 if ($scope.selectAnsar[i]) {
                     if (index == -1) {
-                        switch($scope.ansars[i].rank){
+                        switch ($scope.ansars[i].rank) {
                             case 1:
                                 $scope.tsAnsar += 1;
                                 break
@@ -193,7 +193,7 @@
                     }
                 }
                 else {
-                    switch($scope.selectedAnsar[index].rank){
+                    switch ($scope.selectedAnsar[index].rank) {
                         case 1:
                             $scope.tsAnsar -= 1;
                             break
@@ -245,6 +245,9 @@
 
 
                 }, function (response) {
+                    console.log(response.data);
+                    $scope.allLoading = false;
+                    return;
                     $scope.result = {
                         status: false,
                         message: 'A Server error occur<br> ERROR CODE : ' + response.status
@@ -273,7 +276,15 @@
             return {
                 restrict: 'AC',
                 link: function (scope, elem, attr) {
+                    $(elem).tooltip({title: "Select at least an ansar", trigger: 'manual'})
                     $(elem).on('click', function () {
+                        if (scope.selectedAnsar.length <= 0) {
+                            $(this).tooltip('show');
+                            setTimeout(function () {
+                                $(elem).tooltip('hide');
+                            }, 1000)
+                            return;
+                        }
                         $("#transfer-option").modal("toggle")
                         $("#transfer-option").on('show.bs.modal', function () {
                             scope.result = [];
@@ -282,14 +293,11 @@
                             scope.selectedDistrict[1] = ""
                             scope.memorandumId = "";
                             scope.joinDate = "";
-                            $scope.showKpiStatus = false;
-                            $scope.tsAnsar = 0;
-                            $scope.tsPC = 0;
-                            $scope.tsAPC = 0;
+                            scope.showKpiStatus = false;
+
                         })
                         $("#transfer-option").on('hide.bs.modal', function () {
                             modalOpen = false;
-
                         })
                     })
                 }
@@ -326,6 +334,7 @@
             return {
                 restrict: 'AC',
                 link: function (scope, elem, attrs) {
+
                     $(elem).on('change', function (e) {
                         var v = $(this).val()
 //                            alert(v)
@@ -357,21 +366,17 @@
             $("#join_date_in_tk").datePicker(false);
         })
     </script>
-    <div notification-message style="min-height: 490px" ng-controller="TransferController">
+    <div notification-message ng-controller="TransferController">
         {{--<div class="breadcrumbplace">--}}
-            {{--{!! Breadcrumbs::render('transfer') !!}--}}
-        {{--</div>--}}
-        <div ng-show="allLoading"
-             style="position:fixed;width: 100%;height: 100%;background-color: rgba(255, 255, 255, 0.27);z-index: 100;top:0;left:0">
-            <div style="position: relative;width: 20%;height: auto;margin: 200px auto;text-align: center;background: #FFFFFF">
-                <img class="img-responsive" src="{{asset('dist/img/loading-data.gif')}}"
-                     style="position: relative;margin: 0 auto">
-                <h4>Transferring....</h4>
-            </div>
+        {{--{!! Breadcrumbs::render('transfer') !!}--}}
 
-        </div>
         <section class="content">
             <div class="box box-solid">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="row" style="padding-bottom: 10px">
                         <div class="col-md-4">
@@ -451,8 +456,7 @@
                         </table>
                     </div>
                     <div>
-                        <button class="pull-right btn btn-primary" open-hide-modal
-                                ng-click="modalOpen = true">
+                        <button class="pull-right btn btn-primary" open-hide-modal ng-click="modalOpen=true">
                             <i class="fa fa-send"></i>&nbsp;&nbsp;Transfer
                         </button>
                         <div class="clearfix"></div>
@@ -475,17 +479,20 @@
                                     <div class="col-md-8 col-md-offset-2">
                                         <div class="table-responsive">
                                             <table class="table">
-                                                <tr style="font-weight: bold;" ng-class="{'text-danger':totalKpiAnsar.pc.given<totalKpiAnsar.pc.current+tsPC,'text-success':totalKpiAnsar.pc.given>=totalKpiAnsar.pc.current+tsPC}">
+                                                <tr style="font-weight: bold;"
+                                                    ng-class="{'text-danger':totalKpiAnsar.pc.given<totalKpiAnsar.pc.current+tsPC,'text-success':totalKpiAnsar.pc.given>=totalKpiAnsar.pc.current+tsPC}">
                                                     <td>Total PC given : [[totalKpiAnsar.pc.given]]</td>
                                                     <td>Total PC embodied : [[totalKpiAnsar.pc.current]]</td>
                                                     <td>Total PC Transferred : [[tsPC]]</td>
                                                 </tr>
-                                                <tr style="font-weight: bold;" ng-class="{'text-danger':totalKpiAnsar.apc.given<totalKpiAnsar.apc.current+tsAPC,'text-success':totalKpiAnsar.apc.given>=totalKpiAnsar.apc.current+tsAPC}">
+                                                <tr style="font-weight: bold;"
+                                                    ng-class="{'text-danger':totalKpiAnsar.apc.given<totalKpiAnsar.apc.current+tsAPC,'text-success':totalKpiAnsar.apc.given>=totalKpiAnsar.apc.current+tsAPC}">
                                                     <td>Total APC given : [[totalKpiAnsar.apc.given]]</td>
                                                     <td>Total APC embodied : [[totalKpiAnsar.apc.current]]</td>
                                                     <td>Total APC Transferred : [[tsAPC]]</td>
                                                 </tr>
-                                                <tr style="font-weight: bold;" ng-class="{'text-danger':totalKpiAnsar.ansar.given<totalKpiAnsar.ansar.current+tsAnsar,'text-success':totalKpiAnsar.ansar.given>=totalKpiAnsar.ansar.current+tsAnsar}">
+                                                <tr style="font-weight: bold;"
+                                                    ng-class="{'text-danger':totalKpiAnsar.ansar.given<totalKpiAnsar.ansar.current+tsAnsar,'text-success':totalKpiAnsar.ansar.given>=totalKpiAnsar.ansar.current+tsAnsar}">
                                                     <td>Total Ansar given : [[totalKpiAnsar.ansar.given]]</td>
                                                     <td>Total Ansar embodied : [[totalKpiAnsar.ansar.current]]</td>
                                                     <td>Total Ansar Transferred : [[tsAnsar]]</td>

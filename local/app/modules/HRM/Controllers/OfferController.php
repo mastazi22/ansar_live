@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
@@ -154,7 +155,8 @@ class OfferController extends Controller
 
     function offerQuota()
     {
-        return View::make('HRM::Offer.offer_quota');
+        $quota = CustomQuery::offerQuota();
+        return View::make('HRM::Offer.offer_quota',['quota'=>$quota]);
     }
 
     function getOfferQuota()
@@ -184,7 +186,7 @@ class OfferController extends Controller
             }
             if (!$offer_quota) $success = false;
         }
-        return Response::json(['status' => $success]);
+        return Redirect::back()->with('success','Offer quota updated successfully');
     }
 
     function handleCancelOffer()
