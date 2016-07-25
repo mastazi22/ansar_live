@@ -11,11 +11,11 @@
                 <!-- small box -->
                 <div class="small-box bg-aqua">
                     <div class="inner">
-                        <h3>HRM</h3>
+                        <h3 style="color: #ffffff">HRM</h3>
 
-                        <p style="color: black">Human Resource Management</p>
+                        <p style="color: #ffffff">Human Resource Management</p>
                     </div>
-                    <div class="icon">
+                    <div class="icon" style="color: #ffffff">
                         <i class="fa fa-users"></i>
                     </div>
                     <div class="small-box-footer" style="height: 15px"></div>

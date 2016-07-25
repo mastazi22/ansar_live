@@ -257,13 +257,15 @@
             console.log({sss: s.ftt})
         }
         //alert(p.text())
-        p.parents('li').eq(0).parents('ul').eq(0).addClass('menu-open').css('display','block');
-        if(p.parents('li').length>1){
-            if(p.parents('li').parents('ol').length<=0)p.parents('li').eq(0).addClass('active-submenu');
-            p.parents('li').not(':eq(0)').addClass('active');
-        }
-        else{
-            p.parents('li').addClass('active');
+        if(p.parents('.sidebar-menu').length>0) {
+            p.parents('li').eq(0).parents('ul').eq(0).addClass('menu-open').css('display', 'block');
+            if (p.parents('li').length > 1) {
+                if (p.parents('li').parents('ol').length <= 0)p.parents('li').eq(0).addClass('active-submenu');
+                p.parents('li').not(':eq(0)').addClass('active');
+            }
+            else {
+                p.parents('li').addClass('active');
+            }
         }
     })
 </script>

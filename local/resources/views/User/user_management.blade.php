@@ -19,9 +19,9 @@
     <script>
 
         GlobalApp.controller('UserController',function($scope,$http){
-            var totalCount = 10;
-            var total = '{{$total_user}}';
-            $scope.totalPages = Math.ceil(parseInt(total)/totalCount);
+            var totalCount = parseInt('{{config('app.item_per_page')}}');
+            $scope.total = '{{$total_user}}';
+            $scope.totalPages = Math.ceil(parseInt($scope.total)/totalCount);
             $scope.pages = [];
             $scope.currentPage = 0;
             $scope.showDialog = false;
@@ -134,18 +134,21 @@
             </div>
         @endif
         <section class="content">
-            <div class="box box-primary" style="overflow: hidden">
-                <div style="overflow: hidden;padding: 5px">
-
-                    <form method="get" class="pull-right">
-                        <label for="submitted" style="position: relative">
-                            <input style="padding: 4px 34px 4px 10px;border: 1px solid;font-size: 16px;font-weight: normal;/* border-radius: 5px; */" ng-keypress="searchId($event,userName)" ng-model="userName" type="text" class="ng-valid ng-dirty ng-valid-parse ng-touched ng-empty" name="table-search" id="entry-search" placeholder="Search by Username" value="">
-                            <button class="btn btn-sm btn-info" style="right: 1px;position: absolute;top: 1px;border-radius: 0;">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </label>
-                    </form>
-
+            <div class="box box-primary">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <h4 style="padding-left: 8px;padding-top: 6px">Total users : [[total]]</h4>
+                    </div>
+                    <div class="col-sm-3">
+                        <form action="#" method="get" class="sidebar-form">
+                            <div class="input-group">
+                                <input type="text" name="q" class="form-control" placeholder="Search by user name...">
+                                <span class="input-group-btn">
+                                    <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+                                 </span>
+                            </div>
+                        </form>
+                    </div>
                 </div>
                 <div class="box-body">
                     <div class="table-responsive">
@@ -159,10 +162,10 @@
                                 <th>Activity</th>
                                 <th>Action</th>
                             </tr>
-                            <tr ng-show="isSearching&&searchedUser.length==0">
+                            <tr ng-if="isSearching&&searchedUser.length==0">
                                 <td colspan="7">No user found</td>
                             </tr>
-                            <tr ng-show="isSearching&&searchedUser.length!=0" ng-repeat="user in searchedUser">
+                            <tr ng-if="isSearching&&searchedUser.length!=0" ng-repeat="user in searchedUser">
                                 <td>[[$index+1]]</td>
                                 <td>[[user.user_name]]</td>
                                 <td>
@@ -252,17 +255,4 @@
             </div>
         </section>
     </div>
-    <script>
-        $(document).ready(function () {
-            $("#user-table").sortTable({
-                exclude:4
-            })
-
-            $(document).on('click','.block-user', function (event) {
-
-
-            })
-
-        })
-    </script>
 @stop
