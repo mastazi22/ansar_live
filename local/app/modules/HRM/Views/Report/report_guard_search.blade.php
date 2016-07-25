@@ -79,10 +79,10 @@
                     $scope.guardDetail = [];
                     $scope.ansars = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
                     //alert($(".table").html())
-                    $scope.allLoading = false;
                 })
             }
             $scope.loadReportData = function (reportName, type) {
+                $scope.allLoading = true;
                 $http({
                     method: 'get',
                     url: '{{URL::route('localize_report')}}',
@@ -90,6 +90,7 @@
                 }).then(function (response) {
                     console.log(response.data)
                     $scope.report = response.data;
+                    $scope.allLoading = false;
                 })
             }
             $scope.dateConvert=function(date){

@@ -23,7 +23,7 @@
             $scope.loadingDistrict = true;
             $scope.loadingRank = false;
             $scope.loadingSex = false;
-            $scope.isLoading = false;
+            $scope.allLoading = false;
             $scope.loadingPage = [];
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
             $scope.loadPagination = function () {
@@ -60,7 +60,7 @@
                 })
             }
             $scope.loadTotal = function () {
-                $scope.isLoading = true;
+                $scope.allLoading = true;
                 //alert('here');
                 //alert($scope.selectedDistrict+" "+$scope.selectedRank+" "+$scope.selectedSex)
                 $http({
@@ -80,7 +80,12 @@
 //                    $scope.selectedDistrict = [];
 //                    $scope.selectedRank = [];
 //                    $scope.selectedSex = '';
-                    $scope.isLoading = false;
+                    $scope.allLoading = false;
+                },function(response){
+                    $scope.total = 0;
+                    $scope.ansars = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
+                    $scope.allLoading = false;
+                    $scope.pages = [];
                 })
             }
             $scope.filterMiddlePage = function (value, index, array) {
@@ -107,6 +112,7 @@
             }
 
             $scope.loadReportData = function (reportName,type) {
+                $scope.allLoading = true;
                 $http({
                     method:'get',
                     url:'{{URL::route('localize_report')}}',
@@ -114,6 +120,7 @@
                 }).then(function(response){
                     console.log(response.data)
                     $scope.report = response.data;
+                    $scope.allLoading = false;
                 })
             }
             $scope.dateConvert=function(date){
@@ -133,12 +140,13 @@
         })
     </script>
     <div ng-controller="ReportThreeYearsOverList">
-        <div class="loading-report animated" ng-show="isLoading" ng-class="{'fadeInDown visible':isLoading,fadeOutUp:!isLoading}">
-            <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
-            <h4>Loading...</h4>
-        </div>
         <section class="content">
             <div class="box box-solid">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="pull-right">
                             <span class="control-label" style="padding: 5px 8px">

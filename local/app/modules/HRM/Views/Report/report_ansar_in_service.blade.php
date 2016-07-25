@@ -174,7 +174,7 @@
                                     <th>[[report.current.tsd]]</th>
                                     <th>[[report.current.dr]]</th>
                                 </tr>
-                                <tr ng-if="!current">
+                                <tr ng-if="!current" class="warning">
                                     <td colspan="7">No information Found</td>
                                 </tr>
                                 <tr ng-if="current">
@@ -202,7 +202,7 @@
                                     <th>[[report.past.tsd]]</th>
                                     <th>[[report.past.dr]]</th>
                                 </tr>
-                                <tr ng-if="past.length<=0">
+                                <tr ng-if="past.length<=0" class="warning">
                                     <td colspan="8">No Information found</td>
                                 </tr>
                                 <tr ng-if="past.length>0" ng-repeat="p in past">

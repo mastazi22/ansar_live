@@ -1,6 +1,6 @@
 {
   "ansar_in_guard_report": {
-    "report_header": "Ansar in Guard",
+    "report_header": "List of Ansars in Guard",
     "guard": {
       "kpi_title": "Guard Details",
       "kpi_name": "Guard Name",
@@ -129,7 +129,7 @@
     }
   },
   "three_years_over_ansar_report": {
-    "header": "3 Years Over Ansar Report",
+    "header": "Three Years Over Service Report",
     "ansar": {
       "ansar_title": "Ansar Details",
       "sl_no": "Sl. No.",

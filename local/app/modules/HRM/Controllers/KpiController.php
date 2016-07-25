@@ -449,12 +449,8 @@ class KpiController extends Controller
     public function loadKpiForWithdraw()
     {
         $kpi_id = Input::get('kpi_id');
-        $unit_id = Input::get('unit_id');
-        $thana_id = Input::get('thana_id');
         $rules = [
             'kpi_id'=>'required|numeric|regex:/^[0-9]+$/',
-            'unit_id'=>'required|numeric|regex:/^[0-9]+$/',
-            'thana_id'=>'required|numeric|regex:/^[0-9]+$/',
         ];
         $validation = Validator::make(Input::all(),$rules);
         if(!$validation->fails()){
@@ -464,7 +460,7 @@ class KpiController extends Controller
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
                 ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
                 ->where('tbl_kpi_info.id', '=', $kpi_id)
-                ->whereNull('tbl_kpi_detail_info.kpi_withdraw_date')
+                ->where('tbl_kpi_detail_info.kpi_withdraw_date', '=', '')->distinct()
                 ->select('tbl_kpi_info.kpi_name as kpi', 'tbl_kpi_detail_info.total_ansar_request as tar', 'tbl_kpi_detail_info.total_ansar_given as tag', 'tbl_kpi_detail_info.weapon_count as weapon', 'tbl_kpi_detail_info.bullet_no as bullet', 'tbl_kpi_detail_info.activation_date as a_date', 'tbl_division.division_name_eng as division', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana')
                 ->first();
             return Response::json($kpi_info);
@@ -477,37 +473,51 @@ class KpiController extends Controller
         $unit_id = Input::get('unit_id');
         $thana_id = Input::get('thana_id');
         $withdraw_date = $request->input('withdraw_date');
+        $kpiExist=$request->input('kpiExist');
 
         $rules = [
+            'kpiExist'=>'required|numeric|regex:/^[0-9]+$/',
             'kpi_id'=>'required|numeric|regex:/^[0-9]+$/',
             'unit_id'=>'required|numeric|regex:/^[0-9]+$/',
             'thana_id'=>'required|numeric|regex:/^[0-9]+$/',
-            'withdraw_date'=>'required|date_format:d-M-Y',
+            'withdraw_date'=>['required','regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
         ];
         $message = [
-            'required'=>'This field is required',
-            'regex'=>'Enter a valid ansar id',
-            'numeric'=>'Ansar id must be numeric',
-            'date_format'=>'Invalid date format',
+            'kpi_id.required'=>'KPI is required',
+            'unit_id.required'=>'Unit is required',
+            'thana_id.required'=>'Thana is required',
+            'withdraw_date.required'=>'Withdraw Date is required',
+            'kpi_id.numeric'=>'Select a valid KPI',
+            'kpi_id.regex'=>'Select a valid KPI',
+            'unit_id.numeric'=>'Select a valid Unit',
+            'unit_id.regex'=>'Select a valid Unit',
+            'thana_id.numeric'=>'Select a valid Thana',
+            'thana_id.regex'=>'Select a valid Thana',
+            'withdraw_date.regex'=>'Select a valid Date',
         ];
         $validation = Validator::make(Input::all(),$rules,$message);
         if($validation->fails()){
             return Redirect::back()->withInput(Input::all())->withErrors($validation);
         }else{
             $modified_withdraw_date = Carbon::parse($withdraw_date)->format('Y-m-d');
-            DB::beginTransaction();
-            try {
-                $kpi_withdraw_date_entry = KpiDetailsModel::where('kpi_id', $kpi_id)->first();
-                $kpi_withdraw_date_entry->kpi_withdraw_date = $modified_withdraw_date;
-                $kpi_withdraw_date_entry->save();
+            if($kpiExist==1){
+                DB::beginTransaction();
+                try {
+                    $kpi_withdraw_date_entry = KpiDetailsModel::where('kpi_id', $kpi_id)->first();
+                    $kpi_withdraw_date_entry->kpi_withdraw_date = $modified_withdraw_date;
+                    $kpi_withdraw_date_entry->save();
 
-                DB::commit();
-            } catch
-            (Exception $e) {
-                DB::rollback();
-                return $e->getMessage();
+                    DB::commit();
+                } catch
+                (Exception $e) {
+                    DB::rollback();
+                    return $e->getMessage();
+                }
+                return Redirect::route('kpi-withdraw-view')->with('success_message', 'KPI withdraw date is saved successfully');
+            }else{
+                return Redirect::route('kpi-withdraw-view')->with('error_message', 'KPI is already withdrawn!');
             }
-            return Redirect::route('kpi-withdraw-view')->with('success_message', 'KPI withdraw date is saved successfully');
+
         }
     }
 

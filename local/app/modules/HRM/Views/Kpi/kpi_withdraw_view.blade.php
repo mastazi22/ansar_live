@@ -29,6 +29,9 @@
                 method: 'get',
                 url: '{{URL::to('HRM/DistrictName')}}'
             }).then(function (response) {
+                {{--if ('{{Request::old('unit_id')}}') {--}}
+                {{--$scope.selectedUnit = '{{Request::old('unit_id')}}'--}}
+                {{--}--}}
                 $scope.units = response.data
                 $scope.loadingUnit = false;
             })
@@ -42,6 +45,7 @@
                     $scope.thanas = response.data;
                     $scope.selectedThana = "";
                     $scope.loadingThana = false;
+                    $scope.selectedThana = '{{Request::old('thana_id')}}'
                 })
             }
             $scope.loadKpi = function (t_id) {
@@ -54,6 +58,7 @@
                     $scope.kpis = response.data
                     $scope.selectedKpi = "";
                     $scope.loadingKpi = false;
+                    $scope.selectedKpi = "{{Request::old('kpi_id')}}";
                 })
             }
             $scope.loadKpiDetail = function (id) {
@@ -65,20 +70,37 @@
                 }).then(function (response) {
                     $scope.kpiDetail = response.data
                     $scope.loadingKpi = false;
-                    console.log($scope.ansarDetail)
                 })
             }
+            $scope.$watch('selectedUnit', function (n, o) {
+                if (n)
+                // alert(o)
+                    $scope.loadThana(n);
+
+            })
+            $scope.$watch('selectedThana', function (n, o) {
+                if (n)
+                    $scope.loadKpi(n);
+            })
         })
     </script>
     <div ng-controller="KpiWithdrawController">
         {{--<div class="breadcrumbplace">--}}
-            {{--{!! Breadcrumbs::render('withdraw_kpi') !!}--}}
+        {{--{!! Breadcrumbs::render('withdraw_kpi') !!}--}}
         {{--</div>--}}
         @if(Session::has('success_message'))
             <div style="padding: 10px 20px 0 20px;">
                 <div class="alert alert-success">
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                     <span class="glyphicon glyphicon-ok"></span> {{Session::get('success_message')}}
+                </div>
+            </div>
+        @endif
+        @if(Session::has('error_message'))
+            <div style="padding: 10px 20px 0 20px;">
+                <div class="alert alert-danger">
+                    <a href="#" class="close" data-dismiss="alert"
+                       aria-label="close">&times;</a>{{Session::get('error_message')}}
                 </div>
             </div>
         @endif
@@ -89,28 +111,40 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4">
-                            <div class="form-group">
+                            <div class="form-group"
+                                 ng-init="selectedUnit='{{Request::old('unit_id')}}'">
                                 <label for="e_unit" class="control-label">Select a Unit&nbsp;
                                     <img ng-show="loadingUnit" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select ng-disabled="loadingUnit" id="e_unit" class="form-control"
-                                        ng-model="selectedUnit" ng-change="loadThana(selectedUnit)">
+                                        ng-model="selectedUnit" name="unit_id">
                                     <option value="">--Select a Unit--</option>
-                                    <option ng-repeat="u in units" value="[[u.id]]">[[u.unit_name_eng]]</option>
+                                    <option ng-repeat="u in units" value="[[u.id]]"
+                                            ng-selected="x.id=='{{Request::old('unit_id')}}'">[[u.unit_name_eng]]
+                                    </option>
                                 </select>
+                                @if($errors->has('unit_id'))
+                                    <p class="text-danger">{{$errors->first('unit_id')}}</p>
+                                @endif
                             </div>
-                            <div class="form-group">
+                            <div class="form-group"
+                                 ng-init="selectedThana=='{{Request::old('thana_id')}}'">
                                 <label for="e_thana" class="control-label">Select a Thana&nbsp;
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select ng-disabled="loadingThana" id="e_thana" class="form-control"
-                                        ng-model="selectedThana" ng-change="loadKpi(selectedThana)">
+                                        ng-model="selectedThana" name="thana_id">
                                     <option value="">--Select a Thana--</option>
-                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_eng]]
+                                    <option ng-repeat="t in thanas" value="[[t.id]]"
+                                            ng-selected="x.id=='{{Request::old('thana_id')}}'">[[t.thana_name_eng]]
                                     </option>
                                 </select>
+                                @if($errors->has('thana_id'))
+                                    <p class="text-danger">{{$errors->first('thana_id')}}</p>
+                                @endif
                             </div>
-                            <div class="form-group">
+                            <div class="form-group"
+                                 ng-init="selectedKpi='{{Request::old('kpi_id')}}'">
                                 <label for="e_kpi" class="control-label">Select a KPI&nbsp;
                                     <img ng-show="loadingKpi" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
@@ -119,14 +153,19 @@
                                     <option value="">--Select a KPI--</option>
                                     <option ng-repeat="k in kpis" value="[[k.id]]">[[k.kpi_name]]</option>
                                 </select>
+                                @if($errors->has('kpi_id'))
+                                    <p class="text-danger">{{$errors->first('kpi_id')}}</p>
+                                @endif
                             </div>
                             <div class="form-group">
                                 <label for="withdraw_date" class="control-label">Withdraw Date</label>
                                 <input type="text" name="withdraw_date" id="withdraw_date" class="form-control"
                                        ng-model="withdraw_date">
+                                @if($errors->has('withdraw_date'))
+                                    <p class="text-danger">{{$errors->first('withdraw_date')}}</p>
+                                @endif
                             </div>
-                            <button id="withdraw-kpi" class="btn btn-primary"
-                                    ng-disabled="!withdraw_date||!selectedUnit||!selectedThana||!selectedKpi">
+                            <button id="withdraw-kpi" class="btn btn-primary">
                                 Withdraw
                             </button>
                         </div>
@@ -135,12 +174,17 @@
                             <div id="loading-box" ng-if="loadingAnsar">
                             </div>
                             <div ng-if="!kpiDetail.kpi">
+                                <input type="hidden" name="kpiExist" value="0">
+
                                 <h3 style="text-align: center">No KPI Information Found</h3>
                             </div>
                             <div ng-if="kpiDetail.kpi">
+                                <input type="hidden" name="kpiExist" value="1">
+
                                 <div class="form-group">
                                     <div class="col-sm-8 col-sm-offset-2">
                                         <h3 style="text-align: center">KPI Information</h3>
+
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
                                                 <tr>
@@ -193,9 +237,9 @@
     </div>
     <script>
         $("#withdraw-kpi").confirmDialog({
-            message:'Are you sure to Withdraw this KPI',
-            ok_button_text:'Confirm',
-            cancel_button_text:'Cancel',
+            message: 'Are you sure to Withdraw this KPI',
+            ok_button_text: 'Confirm',
+            cancel_button_text: 'Cancel',
             ok_callback: function (element) {
                 $("#kpi_withdraw_entry").submit()
             },

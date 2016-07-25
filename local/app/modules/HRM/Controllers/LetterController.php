@@ -8,6 +8,7 @@ use App\modules\HRM\Models\EmbodimentModel;
 use App\modules\HRM\Models\TransferAnsar;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 
 class LetterController extends Controller
@@ -23,6 +24,17 @@ class LetterController extends Controller
         $id = Input::get('id');
         $type = Input::get('type');
         $unit = Input::get('unit');
+        $rules = [
+            'id' => 'regex:/[^<>"]/',
+            'type' => 'regex:/^[A-Z]+$/',
+            'unit' => 'numeric|regex:/^[0-9]+$/',
+        ];
+        $valid = Validator::make(Input::all(), $rules);
+
+        if ($valid->fails()) {
+            //return print_r($valid->messages());
+            return response("Invalid Request(400)", 400);
+        }
         switch ($type) {
             case 'TRANSFER':
                 return $this->transferLetterPrint($id, $unit);

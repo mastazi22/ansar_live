@@ -5550,7 +5550,7 @@ class CustomQuery
                 ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment_log.kpi_id')
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
                 ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
-                ->whereBetween('tbl_embodiment_log.release_date', array($from_date, $to_date));
+                ->whereBetween('tbl_embodiment_log.release_date', array($from_date, $to_date))->distinct();
 
         } elseif ((strcasecmp($unit, "all") != 0) && (strcasecmp($thana, "all") == 0)) {
             $ansarQuery = DB::table('tbl_embodiment_log')
@@ -5560,7 +5560,7 @@ class CustomQuery
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
                 ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
                 ->whereBetween('tbl_embodiment_log.release_date', array($from_date, $to_date))
-                ->where('tbl_kpi_info.unit_id', '=', $unit);
+                ->where('tbl_kpi_info.unit_id', '=', $unit)->distinct();
 
         } elseif ((strcasecmp($unit, "all") == 0) && (strcasecmp($thana, "all") != 0)) {
             $ansarQuery = DB::table('tbl_embodiment_log')
@@ -5569,7 +5569,7 @@ class CustomQuery
                 ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment_log.kpi_id')
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
                 ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
-                ->whereBetween('tbl_embodiment_log.release_date', array($from_date, $to_date));
+                ->whereBetween('tbl_embodiment_log.release_date', array($from_date, $to_date))->distinct();
 
         } elseif ((strcasecmp($unit, "all") != 0) && (strcasecmp($thana, "all") != 0)) {
             $ansarQuery = DB::table('tbl_embodiment_log')
@@ -5579,7 +5579,7 @@ class CustomQuery
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
                 ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
                 ->whereBetween('tbl_embodiment_log.release_date', array($from_date, $to_date))
-                ->where('tbl_kpi_info.thana_id', '=', $thana);
+                ->where('tbl_kpi_info.thana_id', '=', $thana)->distinct();
         }
         $ansars = $ansarQuery->select('tbl_embodiment_log.ansar_id as id', 'tbl_embodiment_log.reporting_date as r_date', 'tbl_embodiment_log.joining_date as j_date', 'tbl_embodiment_log.release_date as re_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
             'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi', 'tbl_disembodiment_reason.reason_in_bng as reason')->skip($offset)->limit($limit)->get();
@@ -5595,7 +5595,7 @@ class CustomQuery
                 ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment_log.kpi_id')
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
                 ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
-                ->whereBetween('tbl_embodiment_log.release_date', array($from_date, $to_date));
+                ->whereBetween('tbl_embodiment_log.release_date', array($from_date, $to_date))->distinct();
 
         } elseif ((strcasecmp($unit, "all") != 0) && (strcasecmp($thana, "all") == 0)) {
             $ansarQuery = DB::table('tbl_embodiment_log')
@@ -5605,7 +5605,7 @@ class CustomQuery
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
                 ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
                 ->whereBetween('tbl_embodiment_log.release_date', array($from_date, $to_date))
-                ->where('tbl_kpi_info.unit_id', '=', $unit);
+                ->where('tbl_kpi_info.unit_id', '=', $unit)->distinct();
 
         } elseif ((strcasecmp($unit, "all") == 0) && (strcasecmp($thana, "all") != 0)) {
             $ansarQuery = DB::table('tbl_embodiment_log')
@@ -5614,7 +5614,7 @@ class CustomQuery
                 ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment_log.kpi_id')
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
                 ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
-                ->whereBetween('tbl_embodiment_log.release_date', array($from_date, $to_date));
+                ->whereBetween('tbl_embodiment_log.release_date', array($from_date, $to_date))->distinct();
 
         } elseif ((strcasecmp($unit, "all") != 0) && (strcasecmp($thana, "all") != 0)) {
             $ansarQuery = DB::table('tbl_embodiment_log')
@@ -5624,7 +5624,7 @@ class CustomQuery
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
                 ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
                 ->whereBetween('tbl_embodiment_log.release_date', array($from_date, $to_date))
-                ->where('tbl_kpi_info.thana_id', '=', $thana);
+                ->where('tbl_kpi_info.thana_id', '=', $thana)->distinct();
         }
         $total = $ansarQuery->count('tbl_embodiment_log.ansar_id');
         return Response::json(['total' => $total]);
