@@ -5,7 +5,7 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('ReportGuardSearchController', function ($scope, $http) {
+        GlobalApp.controller('ReportGuardSearchController', function ($scope, $http, $sce) {
             $scope.isDc = parseInt('{{Auth::user()->type}}') == 22 ? true : false
             $scope.districts = [];
             $scope.unit = {
@@ -20,7 +20,9 @@
             $scope.loadingUnit = false;
             $scope.report = {};
             $scope.selectedDate = "2"
-            $scope.reportType = 'eng'
+            $scope.reportType = 'eng';
+            $scope.errorFind = 0;
+            $scope.allLoading = false;
             if ($scope.isDc) {
                 $scope.unit.selectedDistrict = parseInt('{{Auth::user()->district_id}}')
             }
@@ -47,6 +49,7 @@
                 })
             }
             $scope.loadAnsar = function () {
+                $scope.allLoading = true;
                 var data = {};
                 if ($scope.selectedDate == 0) {
                     data = {
@@ -67,12 +70,22 @@
                     url: '{{URL::route('get_offered_ansar')}}',
                     params: data
                 }).then(function (response) {
+                    $scope.errorFind = 0;
                     $scope.onr = response.data.onr
                     $scope.or = response.data.or
                     $scope.orj = response.data.orj
+                    $scope.allLoading = false;
+                },function(response){
+                    $scope.errorFind = 1;
+                    $scope.onr = []
+                    $scope.or = []
+                    $scope.orj = []
+                    $scope.errorMessage = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
+                    $scope.allLoading = false;
                 })
             }
             $scope.loadReportData = function (reportName, type) {
+                $scope.allLoading = true;
                 $http({
                     method: 'get',
                     url: '{{URL::route('localize_report')}}',
@@ -80,6 +93,7 @@
                 }).then(function (response) {
                     console.log(response.data)
                     $scope.report = response.data;
+                    $scope.allLoading = false;
                 })
             }
             $scope.dateConvert = function (date) {
@@ -115,6 +129,11 @@
     <div ng-controller="ReportGuardSearchController">
         <section class="content">
             <div class="box box-solid">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="pull-right">
                             <span class="control-label" style="padding: 5px 8px">
@@ -205,10 +224,11 @@
                                                 <th>Rank</th>
                                                 <th>Offered Date</th>
                                             </tr>
-                                            <tr ng-if="onr.length<=0">
+                                            <tr ng-if="onr.length<=0&&errorFind==0">
                                                 <th class="warning" colspan="5">No Ansar Found</th>
                                             </tr>
-                                            <tr ng-if="onr.length>0" ng-repeat="a in onr">
+                                            <tbody ng-if="errorFind==1&&onr.length<=0" ng-bind-html="errorMessage"></tbody>
+                                            <tr ng-if="onr.length>0&&errorFind==0" ng-repeat="a in onr">
                                                 <td>[[$index+1]]</td>
                                                 <td>[[a.ansar_id]]</td>
                                                 <td>[[a.ansar_name_eng]]</td>
@@ -228,10 +248,11 @@
                                                 <th>Rank</th>
                                                 <th>Offer Accepted Date</th>
                                             </tr>
-                                            <tr ng-if="or.length<=0">
+                                            <tr ng-if="or.length<=0&&errorFind==0">
                                                 <th class="warning" colspan="5">No Ansar Found</th>
                                             </tr>
-                                            <tr ng-if="or.length>0" ng-repeat="a in or">
+                                            <tbody ng-if="errorFind==1&&or.length<=0" ng-bind-html="errorMessage"></tbody>
+                                            <tr ng-if="or.length>0&&errorFind==0" ng-repeat="a in or">
                                                 <td>[[$index+1]]</td>
                                                 <td>[[a.ansar_id]]</td>
                                                 <td>[[a.ansar_name_eng]]</td>
@@ -251,10 +272,11 @@
                                                 <th>Rank</th>
                                                 <th>Reject Date</th>
                                             </tr>
-                                            <tr ng-if="orj.length<=0">
+                                            <tr ng-if="orj.length<=0&&errorFind==0">
                                                 <th class="warning" colspan="5">No Ansar Found</th>
                                             </tr>
-                                            <tr ng-if="orj.length>0" ng-repeat="a in orj">
+                                            <tbody ng-if="errorFind==1&&orj.length<=0" ng-bind-html="errorMessage"></tbody>
+                                            <tr ng-if="orj.length>0&&errorFind==0" ng-repeat="a in orj">
                                                 <td>[[$index+1]]</td>
                                                 <td>[[a.ansar_id]]</td>
                                                 <td>[[a.ansar_name_eng]]</td>

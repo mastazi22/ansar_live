@@ -21,7 +21,7 @@
             $scope.units = [];
             $scope.loadingLetter=false;
             $scope.memId = ""
-            $scope.isGenerating = false;
+            $scope.allLoading = false;
             $scope.isDc = parseInt("{{auth()->user()->type}}")==22?true:false;
             if($scope.isDc){
                 $scope.unit.selectedUnit = parseInt("{{auth()->user()->district_id}}")
@@ -38,14 +38,17 @@
             }
 
             $scope.generateLetter = function (id) {
-                $scope.isGenerating = true;
+                $scope.allLoading = true;
                 $http({
                     method:'get',
                     url:'{{URL::route('print_letter')}}',
                     params:{id:id,type:'DISEMBODIMENT',unit:$scope.unit.selectedUnit}
                 }).then(function (response) {
                     $scope.letterPrintView = $sce.trustAsHtml(response.data);
-                    $scope.isGenerating = false;
+                    $scope.allLoading = false;
+                }, function (response) {
+                    $scope.letterPrintView = $sce.trustAsHtml("<h4 class='text-danger' style='text-align: center'>"+response.data+"</h4>");
+                    $scope.allLoading = false;
                 })
             }
         })
@@ -53,6 +56,11 @@
     <div ng-controller="DisEmbodiedLetterController">
         <section class="content">
             <div class="box box-solid">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-4 col-sm-12 col-xs-12">

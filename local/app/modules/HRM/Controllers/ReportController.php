@@ -33,17 +33,17 @@ class ReportController extends Controller
 
     function reportAllGuard()
     {
-        $kpi=Input::get('kpi_id');
+        $kpi = Input::get('kpi_id');
 
         $rules = [
-            'kpi_id'=>'regex:/^[0-9]+$/'
+            'kpi_id' => 'regex:/^[0-9]+$/'
         ];
-        $valid = Validator::make(Input::all(),$rules);
+        $valid = Validator::make(Input::all(), $rules);
 
-        if($valid->fails()){
+        if ($valid->fails()) {
             //return print_r($valid->messages());
-            return response("Invalid Request(400)",400);
-        }else{
+            return response("Invalid Request(400)", 400);
+        } else {
             //DB::enableQueryLog();
             $ansar = DB::table('tbl_kpi_info')
                 ->join('tbl_embodiment', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
@@ -80,12 +80,12 @@ class ReportController extends Controller
 
     function ansarServiceReport()
     {
-        $ansar_id=Input::get('ansar_id');
+        $ansar_id = Input::get('ansar_id');
         $rules = [
-            'ansar_id'=>'required|numeric|regex:/^[0-9]+$/',
+            'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
         ];
-        $validation = Validator::make(Input::all(),$rules);
-        if($validation->fails()){
+        $validation = Validator::make(Input::all(), $rules);
+        if ($validation->fails()) {
             return Redirect::back()->withInput(Input::all())->withErrors($validation);
         }
         $ansar = DB::table('tbl_ansar_parsonal_info')
@@ -123,19 +123,19 @@ class ReportController extends Controller
         $expire_date = Input::get('expire_date');
         $type = Input::get('type');
         $rules = [
-          'ansar_id'=>'required|numeric|regex:/^[0-9]+$/',
-          'issue_date'=>'required|date_format:d-M-Y',
-          'expire_date'=>'required|date_format:d-M-Y',
+            'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
+            'issue_date' => 'required|date_format:d-M-Y',
+            'expire_date' => 'required|date_format:d-M-Y',
         ];
         $message = [
-          'required'=>'This field is required',
-          'regex'=>'Enter a valid ansar id',
-          'numeric'=>'Ansar id must be numeric',
-          'date_format'=>'Invalid date format',
+            'required' => 'This field is required',
+            'regex' => 'Enter a valid ansar id',
+            'numeric' => 'Ansar id must be numeric',
+            'date_format' => 'Invalid date format',
         ];
-        $validation = Validator::make(Input::all(),$rules,$message);
-        if($validation->fails()){
-            return Response::json(['validation'=>true,'messages'=>$validation->messages()]);
+        $validation = Validator::make(Input::all(), $rules, $message);
+        if ($validation->fails()) {
+            return Response::json(['validation' => true, 'messages' => $validation->messages()]);
         }
         $report_data = $this->getReportData($type, 'ansar_id_card');
         $ansar = DB::table('tbl_ansar_parsonal_info')
@@ -157,12 +157,12 @@ class ReportController extends Controller
                 return View::make('HRM::Report.no_ansar_found')->with('id', $id);
             }
             $path = public_path("{$id}.jpg");
-            SnappyImage::loadView('HRM::Report.ansar_id_card_font',['rd' => $report_data, 'ad' => $ansar, 'id' => Carbon::createFromFormat('d-M-Y', $issue_date)->format("d/m/Y"), 'ed' => Carbon::createFromFormat('d-M-Y', $expire_date)->format("d/m/Y"), 'type' => $type])->setOption('quality',100)
-                ->setOption('crop-x',0)->setOption('crop-y',0)->setOption('crop-h',292)->setOption('crop-w',340)->setOption('encoding','utf-8')->save($path);
-            $image =  Image::make($path)->encode('data-url');
+            SnappyImage::loadView('HRM::Report.ansar_id_card_font', ['rd' => $report_data, 'ad' => $ansar, 'id' => Carbon::createFromFormat('d-M-Y', $issue_date)->format("d/m/Y"), 'ed' => Carbon::createFromFormat('d-M-Y', $expire_date)->format("d/m/Y"), 'type' => $type])->setOption('quality', 100)
+                ->setOption('crop-x', 0)->setOption('crop-y', 0)->setOption('crop-h', 292)->setOption('crop-w', 340)->setOption('encoding', 'utf-8')->save($path);
+            $image = Image::make($path)->encode('data-url');
             File::delete($path);
 //            return View::make('HRM::Report.ansar_id_card_font',['rd' => $report_data, 'ad' => $ansar, 'id' => Carbon::createFromFormat('d-M-Y', $issue_date)->format("d/m/Y"), 'ed' => Carbon::createFromFormat('d-M-Y', $expire_date)->format("d/m/Y"), 'type' => $type]);
-            return View::make('HRM::Report.id_card_print')->with(['image'=>$image->encode('data-url'), 'history' => $ansarIdHistory]);
+            return View::make('HRM::Report.id_card_print')->with(['image' => $image->encode('data-url'), 'history' => $ansarIdHistory]);
         }
         return View::make('HRM::Report.no_ansar_found')->with('id', $id);
     }
@@ -182,21 +182,39 @@ class ReportController extends Controller
     public function disembodedAnsarInfo(Request $request)
     {
         $from = Input::get('from_date');
-        $from_date = Carbon::parse($from)->format('Y-m-d');
         $to = Input::get('to_date');
-        $to_date = Carbon::parse($to)->format('Y-m-d');
         $unit = $request->input('unit_id');
         $thana = $request->input('thana_id');
         $limit = Input::get('limit');
         $offset = Input::get('offset');
 
         $view = Input::get('view');
-        if (strcasecmp($view, 'view') == 0) {
-            return CustomQuery::disembodedAnsarListforReport($offset, $limit, $from_date, $to_date, $unit, $thana);
-        } else {
-            return CustomQuery::disembodedAnsarListforReportCount($from_date, $to_date, $unit, $thana);
+        $rules = [
+            'view' => 'regex:/^[a-z]+/',
+            'limit' => 'numeric',
+            'offset' => 'numeric',
+            'from_date' => ['regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+            'to_date' => ['regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+            'unit_id' => ['regex:/^(all)$|^[0-9]+$/'],
+            'thana_id' => ['regex:/^(all)$|^[0-9]+$/'],
+        ];
+        $valid = Validator::make(Input::all(), $rules);
 
+        if ($valid->fails()) {
+            //return print_r($valid->messages());
+            return response("Invalid Request(400)", 400);
+        } else {
+            if (!is_null($from) && !is_null($to) && !is_null($unit) && !is_null($thana)) {
+                $from_date = Carbon::parse($from)->format('Y-m-d');
+                $to_date = Carbon::parse($to)->format('Y-m-d');
+                if (strcasecmp($view, 'view') == 0) {
+                    return CustomQuery::disembodedAnsarListforReport($offset, $limit, $from_date, $to_date, $unit, $thana);
+                } else {
+                    return CustomQuery::disembodedAnsarListforReportCount($from_date, $to_date, $unit, $thana);
+                }
+            }
         }
+
     }
 
     public function blockListView()
@@ -215,12 +233,29 @@ class ReportController extends Controller
         }
         $thana = Input::get('thana');
         $view = Input::get('view');
-        if (strcasecmp($view, 'view') == 0) {
 
-            return CustomQuery::getBlocklistedAnsar($offset, $limit, $unit, $thana);
+        $rules = [
+            'view' => 'regex:/^[a-z]+/',
+            'limit' => 'numeric',
+            'offset' => 'numeric',
+            'unit' => ['regex:/^(all)$|^[0-9]+$/'],
+            'thana' => ['regex:/^(all)$|^[0-9]+$/'],
+        ];
+        $valid = Validator::make(Input::all(), $rules);
+
+        if ($valid->fails()) {
+            //return print_r($valid->messages());
+            return response("Invalid Request(400)", 400);
         } else {
-
-            return CustomQuery::getTotalBlockedAnsarCount($unit, $thana);
+            if (strcasecmp($view, 'view') == 0) {
+                if (!is_null($unit) && !is_null($thana)) {
+                    return CustomQuery::getBlocklistedAnsar($offset, $limit, $unit, $thana);
+                }
+            } else {
+                if (!is_null($unit) && !is_null($thana)) {
+                    return CustomQuery::getTotalBlockedAnsarCount($unit, $thana);
+                }
+            }
         }
     }
 
@@ -240,12 +275,29 @@ class ReportController extends Controller
         }
         $thana = Input::get('thana');
         $view = Input::get('view');
-        if (strcasecmp($view, 'view') == 0) {
+        $rules = [
+            'view' => 'regex:/^[a-z]+/',
+            'limit' => 'numeric',
+            'offset' => 'numeric',
+            'unit' => ['regex:/^(all)$|^[0-9]+$/'],
+            'thana' => ['regex:/^(all)$|^[0-9]+$/'],
+        ];
+        $valid = Validator::make(Input::all(), $rules);
 
-            return CustomQuery::getBlacklistedAnsar($offset, $limit, $unit, $thana);
+        if ($valid->fails()) {
+            //return print_r($valid->messages());
+            return response("Invalid Request(400)", 400);
         } else {
+            if (strcasecmp($view, 'view') == 0) {
+                if (!is_null($unit) && !is_null($thana)) {
+                    return CustomQuery::getBlacklistedAnsar($offset, $limit, $unit, $thana);
+                }
+            } else {
+                if (!is_null($unit) && !is_null($thana)) {
+                    return CustomQuery::getTotalBlackedAnsarCount($unit, $thana);
+                }
 
-            return CustomQuery::getTotalBlackedAnsarCount($unit, $thana);
+            }
         }
     }
 
@@ -254,12 +306,12 @@ class ReportController extends Controller
         DB::enableQueryLog();
         $ansar_id = Input::get('ansar_id');
         $rules = [
-            'ansar_id'=>'required|numeric|regex:/^[0-9]+$/',
+            'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
         ];
-        $validation = Validator::make(Input::all(),$rules);
-        if($validation->fails()){
+        $validation = Validator::make(Input::all(), $rules);
+        if ($validation->fails()) {
             return Redirect::back()->withInput(Input::all())->withErrors($validation);
-        }else{
+        } else {
             $transfer_history = DB::table('tbl_transfer_ansar')
                 ->join(DB::raw('tbl_kpi_info as pk'), 'tbl_transfer_ansar.present_kpi_id', '=', 'pk.id')
                 ->join(DB::raw('tbl_kpi_info as tk'), 'tbl_transfer_ansar.transfered_kpi_id', '=', 'tk.id')
@@ -281,20 +333,37 @@ class ReportController extends Controller
 
     public function embodedAnsarInfo()
     {
-        $from = Input::get('from_date');
-        $from_date = Carbon::parse($from)->format('Y-m-d');
-        $to = Input::get('to_date');
-        $to_date = Carbon::parse($to)->format('Y-m-d');
-        $unit = Input::get('unit_id');
-        $thana = Input::get('thana_id');
+        $view = Input::get('view');
         $limit = Input::get('limit');
         $offset = Input::get('offset');
+        $from = Input::get('from_date');
+        $to = Input::get('to_date');
+        $unit = Input::get('unit_id');
+        $thana = Input::get('thana_id');
+        $rules = [
+            'view' => 'regex:/^[a-z]+/',
+            'limit' => 'numeric',
+            'offset' => 'numeric',
+            'from_date' => ['regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+            'to_date' => ['regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+            'unit_id' => ['regex:/^(all)$|^[0-9]+$/'],
+            'thana_id' => ['regex:/^(all)$|^[0-9]+$/'],
+        ];
+        $valid = Validator::make(Input::all(), $rules);
 
-        $view = Input::get('view');
-        if (strcasecmp($view, 'view') == 0) {
-            return CustomQuery::embodedAnsarListforReport($offset, $limit, $from_date, $to_date, $unit, $thana);
+        if ($valid->fails()) {
+            //return print_r($valid->messages());
+            return response("Invalid Request(400)", 400);
         } else {
-            return CustomQuery::embodedAnsarListforReportCount($from_date, $to_date, $unit, $thana);
+            if (!is_null($from) && !is_null($to) && !is_null($unit) && !is_null($thana)) {
+                $from_date = Carbon::parse($from)->format('Y-m-d');
+                $to_date = Carbon::parse($to)->format('Y-m-d');
+                if (strcasecmp($view, 'view') == 0) {
+                    return CustomQuery::embodedAnsarListforReport($offset, $limit, $from_date, $to_date, $unit, $thana);
+                } else {
+                    return CustomQuery::embodedAnsarListforReportCount($from_date, $to_date, $unit, $thana);
+                }
+            }
         }
     }
 
@@ -316,12 +385,30 @@ class ReportController extends Controller
         $ansar_sex = Input::get('ansar_sex');
         //$thana = Input::get('thana');
         $view = Input::get('view');
-        if (strcasecmp($view, 'view') == 0) {
+        $rules = [
+            'view' => 'regex:/^[a-z]+/',
+            'limit' => 'numeric',
+            'offset' => 'numeric',
+            'unit' => 'numeric',
+            'ansar_rank' => 'numeric',
+            'ansar_sex' => 'regex:/^[a-z]+/',
+        ];
+        $valid = Validator::make(Input::all(), $rules);
 
-            return CustomQuery::threeYearsOverAnsarList($offset, $limit, $unit, $ansar_rank, $ansar_sex);
+        if ($valid->fails()) {
+            //return print_r($valid->messages());
+            return response("Invalid Request(400)", 400);
         } else {
+            if (strcasecmp($view, 'view') == 0) {
+                if (!is_null($unit) && !is_null($ansar_rank) && !is_null($ansar_sex)) {
+                    return CustomQuery::threeYearsOverAnsarList($offset, $limit, $unit, $ansar_rank, $ansar_sex);
+                }
 
-            return CustomQuery::threeYearsOverAnsarCount($unit, $ansar_rank, $ansar_sex);
+            } else {
+                if (!is_null($unit) && !is_null($ansar_rank) && !is_null($ansar_sex)) {
+                    return CustomQuery::threeYearsOverAnsarCount($unit, $ansar_rank, $ansar_sex);
+                }
+            }
         }
     }
 
@@ -343,81 +430,93 @@ class ReportController extends Controller
 
     public function ansarInfoForServiceRecordUnitWise()
     {
-        $unit=Input::get('unit');
+        $unit = Input::get('unit');
         $thana = Input::get('thana');
-        if(strcasecmp($unit, 'all')==0 && strcasecmp($thana, 'all')==0){
-            $ansar_details = DB::table('tbl_embodiment')
-                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                ->orderBy('tbl_embodiment.ansar_id', 'asc')
-                ->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
-                    'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')
-                ->get();
-            return Response::json($ansar_details);
+        $rules = [
+            'unit' => ['regex:/^(all)$|^[0-9]+$/'],
+            'thana' => ['regex:/^(all)$|^[0-9]+$/'],
+        ];
+        $valid = Validator::make(Input::all(), $rules);
+
+        if ($valid->fails()) {
+            //return print_r($valid->messages());
+            return response("Invalid Request(400)", 400);
         }
-        if(strcasecmp($unit, 'all')!=0 && strcasecmp($thana, 'all')==0){
-            $ansar_details = DB::table('tbl_embodiment')
-                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                ->where('tbl_kpi_info.unit_id', '=', $unit)
-                ->orderBy('tbl_embodiment.ansar_id', 'asc')
-                ->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
-                    'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')
-                ->get();
-            return Response::json($ansar_details);
-        }
-        if(strcasecmp($unit, 'all')==0 && strcasecmp($thana, 'all')!=0){
-            $ansar_details = DB::table('tbl_embodiment')
-                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                ->where('tbl_kpi_info.thana_id', '=', $thana)
-                ->orderBy('tbl_embodiment.ansar_id', 'asc')
-                ->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
-                    'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')
-                ->get();
-            return Response::json($ansar_details);
-        }
-        if(strcasecmp($unit, 'all')!=0 && strcasecmp($thana, 'all')!=0){
-            $ansar_details = DB::table('tbl_embodiment')
-                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                ->where('tbl_kpi_info.unit_id', '=', $unit)
-                ->where('tbl_kpi_info.thana_id', '=', $thana)
-                ->orderBy('tbl_embodiment.ansar_id', 'asc')
-                ->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
-                    'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')
-                ->get();
-            return Response::json($ansar_details);
+        if (!is_null($unit) && !is_null($thana)) {
+            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
+                $ansar_details = DB::table('tbl_embodiment')
+                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
+                    ->orderBy('tbl_embodiment.ansar_id', 'asc')
+                    ->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
+                        'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')
+                    ->get();
+                return Response::json($ansar_details);
+            }
+            if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
+                $ansar_details = DB::table('tbl_embodiment')
+                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
+                    ->where('tbl_kpi_info.unit_id', '=', $unit)
+                    ->orderBy('tbl_embodiment.ansar_id', 'asc')
+                    ->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
+                        'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')
+                    ->get();
+                return Response::json($ansar_details);
+            }
+            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
+                $ansar_details = DB::table('tbl_embodiment')
+                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
+                    ->where('tbl_kpi_info.thana_id', '=', $thana)
+                    ->orderBy('tbl_embodiment.ansar_id', 'asc')
+                    ->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
+                        'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')
+                    ->get();
+                return Response::json($ansar_details);
+            }
+            if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') != 0) {
+                $ansar_details = DB::table('tbl_embodiment')
+                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
+                    ->where('tbl_kpi_info.unit_id', '=', $unit)
+                    ->where('tbl_kpi_info.thana_id', '=', $thana)
+                    ->orderBy('tbl_embodiment.ansar_id', 'asc')
+                    ->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
+                        'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')
+                    ->get();
+                return Response::json($ansar_details);
+            }
         }
     }
 
     public function getPrintIdList()
     {
         $rules = [
-            'f_date'=>'required|date_format:d-M-Y',
-            't_date'=>'required|date_format:d-M-Y',
+            'f_date' => 'required|date_format:d-M-Y',
+            't_date' => 'required|date_format:d-M-Y',
         ];
         $message = [
-            'f_date.required'=>'From date field is required',
-            't_date.required'=>'To date field is required',
-            'f_date.date_format'=>'From date field is invalid',
-            't_date.date_format'=>'To date field is invalid',
+            'f_date.required' => 'From date field is required',
+            't_date.required' => 'To date field is required',
+            'f_date.date_format' => 'From date field is invalid',
+            't_date.date_format' => 'To date field is invalid',
         ];
-        $valid = Validator::make(Input::all(),$rules,$message);
-        if($valid->fails()){
-            return response($valid->messages()->toJson(),400,['Content-Type','application/json']);
+        $valid = Validator::make(Input::all(), $rules, $message);
+        if ($valid->fails()) {
+            return response($valid->messages()->toJson(), 400, ['Content-Type', 'application/json']);
         }
         $f_date = Carbon::createFromFormat("d-M-Y", Input::get('f_date'))->format("Y-m-d");
         $t_date = Carbon::createFromFormat("d-M-Y", Input::get('t_date'))->format("Y-m-d");
@@ -429,12 +528,12 @@ class ReportController extends Controller
     public function ansarCardStatusChange()
     {
         $rules = [
-            'action'=>'required|regex:/^[a-z]+$/',
-            'ansar_id'=>'required|regex:/^[0-9]+$/',
+            'action' => 'required|regex:/^[a-z]+$/',
+            'ansar_id' => 'required|regex:/^[0-9]+$/',
         ];
-        $valid = Validator::make(Input::all(),$rules);
-        if($valid->fails()){
-            return response("Invalid request(400)",400);
+        $valid = Validator::make(Input::all(), $rules);
+        if ($valid->fails()) {
+            return response("Invalid request(400)", 400);
         }
         switch (Input::get('action')) {
             case 'block':
@@ -456,7 +555,7 @@ class ReportController extends Controller
                 }
                 break;
             default:
-                return response("Invalid request(400)",400);
+                return response("Invalid request(400)", 400);
         }
     }
 
@@ -480,6 +579,15 @@ class ReportController extends Controller
         $unit = Input::get('unit');
         $past = Input::get('report_past');
         $type = Input::get('type');
+        $rules = [
+            'unit' => 'numeric',
+            'report_past' => 'numeric',
+            'type' => 'numeric',
+        ];
+        $valid = Validator::make(Input::all(), $rules);
+        if ($valid->fails()) {
+            return response("Invalid request(400)", 400);
+        }
         $c_date = Carbon::now();
         switch ($type) {
             case 0:
@@ -518,22 +626,22 @@ class ReportController extends Controller
     public function getRejectedAnsarList()
     {
         $rules = [
-            'from_date'=>'required|date_format:d-M-Y',
-            'to_date'=>'required|date_format:d-M-Y',
-            'rejection_no'=>'required|numeric|regex:/^[0-9]+$/',
+            'from_date' => 'required|date_format:d-M-Y',
+            'to_date' => 'required|date_format:d-M-Y',
+            'rejection_no' => 'required|numeric|regex:/^[0-9]+$/',
         ];
         $message = [
-            'from_date.required'=>'From date field is required',
-            'to_date.required'=>'To date field is required',
-            'from_date.date_format'=>'From date field is invalid',
-            'to_date.date_format'=>'To date field is invalid',
-            'rejection_no.required'=>'Rejection no required',
-            'rejection_no.numeric'=>'Rejection no must be integer.eg 1,2...',
-            'rejection_no.regex'=>'Rejection no must be integer.eg 1,2...',
+            'from_date.required' => 'From date field is required',
+            'to_date.required' => 'To date field is required',
+            'from_date.date_format' => 'From date field is invalid',
+            'to_date.date_format' => 'To date field is invalid',
+            'rejection_no.required' => 'Rejection no required',
+            'rejection_no.numeric' => 'Rejection no must be integer.eg 1,2...',
+            'rejection_no.regex' => 'Rejection no must be integer.eg 1,2...',
         ];
-        $valid = Validator::make(Input::all(),$rules,$message);
-        if($valid->fails()){
-            return response($valid->messages()->toJson(),400,['Content-Type'=>'application/json']);
+        $valid = Validator::make(Input::all(), $rules, $message);
+        if ($valid->fails()) {
+            return response($valid->messages()->toJson(), 400, ['Content-Type' => 'application/json']);
         }
         $fd = Carbon::createFromFormat("d-M-Y", Input::get('from_date'))->format("Y-m-d");
         $td = Carbon::createFromFormat("d-M-Y", Input::get('to_date'))->format("Y-m-d");

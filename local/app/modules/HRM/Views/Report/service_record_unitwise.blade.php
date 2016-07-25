@@ -9,7 +9,7 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('ReportGuardSearchController', function ($scope, $http) {
+        GlobalApp.controller('ReportGuardSearchController', function ($scope, $http, $sce) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}')
             $scope.districts = [];
             $scope.thanas = [];
@@ -20,7 +20,9 @@
             $scope.loadingThana = false;
             $scope.loadingKpi = false;
             $scope.report = {};
-            $scope.reportType = 'eng'
+            $scope.reportType = 'eng';
+            $scope.errorFound=0;
+            $scope.allLoading = false;
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}')
             $scope.loadDistrict = function () {
                 $scope.loadingUnit = true;
@@ -47,7 +49,7 @@
             }
             $scope.loadAnsarDetail = function () {
                 //console.log(id)
-                $scope.isLoading = true;
+                $scope.allLoading = true;
                 $http({
                     method: 'get',
                     url: '{{URL::route('service_record_unitwise_info')}}',
@@ -56,19 +58,24 @@
                         thana:$scope.selectedThana,
                     }
                 }).then(function (response) {
+                    $scope.errorFound=0;
                     $scope.ansarDetail = response.data
-                    $scope.isLoading = false;
-                    console.log(response.data)
+                    $scope.allLoading = false;
+                },function(response){
+                    $scope.errorFound=1;
+                    $scope.ansarDetail = $sce.trustAsHtml("<h5 class='text-danger' style='text-align: center;'>"+response.data+"</h5>");
+                    $scope.allLoading = false;
                 })
             }
             $scope.loadReportData = function (reportName, type) {
+                $scope.allLoading = true;
                 $http({
                     method: 'get',
                     url: '{{URL::route('localize_report')}}',
                     params: {name: reportName, type: type}
                 }).then(function (response) {
-                    console.log(response.data)
                     $scope.report = response.data;
+                    $scope.allLoading = false;
                 })
             }
             $scope.dateConvert=function(date){
@@ -118,12 +125,13 @@
         })
     </script>
     <div ng-controller="ReportGuardSearchController">
-        <div class="loading-report animated" ng-class="{fadeInDown:isLoading,fadeOutUp:!isLoading}">
-            <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
-            <h4>Loading...</h4>
-        </div>
         <section class="content">
             <div class="box box-solid">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="pull-right">
                             <span class="control-label" style="padding: 5px 8px">
@@ -179,6 +187,7 @@
                             <div ng-show="ansarDetail.length==0">
                                 <h3 style="text-align: center">No Ansar Found</h3>
                             </div>
+                            <div ng-if="errorFound==1" ng-bind-html="ansarDetail"></div>
                             <div style="overflow: hidden" ng-show="ansarDetail.length>0"
                                  ng-repeat="(key,value) in ansarDetail|groupBy:'kpi'">
                                 <div class="max-min-button">
