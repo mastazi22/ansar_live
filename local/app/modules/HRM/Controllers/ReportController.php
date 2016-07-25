@@ -123,15 +123,9 @@ class ReportController extends Controller
         $expire_date = Input::get('expire_date');
         $type = Input::get('type');
         $rules = [
-<<<<<<< HEAD
             'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
             'issue_date' => 'required|date_format:d-M-Y',
             'expire_date' => 'required|date_format:d-M-Y',
-=======
-          'ansar_id'=>'required|numeric|regex:/^[0-9]+$/',
-          'issue_date'=>['required','date_format:d-M-Y','regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
-          'expire_date'=>['required','date_format:d-M-Y','regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
->>>>>>> b23b9b72576af395eb2b3c8603695183077b52f4
         ];
         $message = [
             'required' => 'This field is required',
@@ -511,7 +505,6 @@ class ReportController extends Controller
     public function getPrintIdList()
     {
         $rules = [
-<<<<<<< HEAD
             'f_date' => 'required|date_format:d-M-Y',
             't_date' => 'required|date_format:d-M-Y',
         ];
@@ -520,18 +513,6 @@ class ReportController extends Controller
             't_date.required' => 'To date field is required',
             'f_date.date_format' => 'From date field is invalid',
             't_date.date_format' => 'To date field is invalid',
-=======
-            'f_date'=>['required','date_format:d-M-Y','regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
-            't_date'=>['required','date_format:d-M-Y','regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
-        ];
-        $message = [
-            'f_date.required'=>'From date field is required',
-            't_date.required'=>'To date field is required',
-            't_date.regex'=>'To date field is invalid',
-            'f_date.date_format'=>'From date field is invalid',
-            't_date.date_format'=>'To date field is invalid',
-            'f_date.regex'=>'From date field is invalid',
->>>>>>> b23b9b72576af395eb2b3c8603695183077b52f4
         ];
         $valid = Validator::make(Input::all(), $rules, $message);
         if ($valid->fails()) {
@@ -645,7 +626,6 @@ class ReportController extends Controller
     public function getRejectedAnsarList()
     {
         $rules = [
-<<<<<<< HEAD
             'from_date' => 'required|date_format:d-M-Y',
             'to_date' => 'required|date_format:d-M-Y',
             'rejection_no' => 'required|numeric|regex:/^[0-9]+$/',
@@ -658,22 +638,6 @@ class ReportController extends Controller
             'rejection_no.required' => 'Rejection no required',
             'rejection_no.numeric' => 'Rejection no must be integer.eg 1,2...',
             'rejection_no.regex' => 'Rejection no must be integer.eg 1,2...',
-=======
-            'from_date'=>['required','date_format:d-M-Y','regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
-            'to_date'=>['required','date_format:d-M-Y','regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
-            'rejection_no'=>'required|numeric|regex:/^[0-9]+$/',
-        ];
-        $message = [
-            'from_date.required'=>'From date field is required',
-            'to_date.required'=>'To date field is required',
-            'from_date.date_format'=>'From date field is invalid',
-            'from_date.regex'=>'From date field is invalid',
-            'to_date.date_format'=>'To date field is invalid',
-            'to_date.regex'=>'To date field is invalid',
-            'rejection_no.required'=>'Rejection no required',
-            'rejection_no.numeric'=>'Rejection no must be integer.eg 1,2...',
-            'rejection_no.regex'=>'Rejection no must be integer.eg 1,2...',
->>>>>>> b23b9b72576af395eb2b3c8603695183077b52f4
         ];
         $valid = Validator::make(Input::all(), $rules, $message);
         if ($valid->fails()) {
