@@ -345,6 +345,9 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/kpi_list_for_withdraw_cancel', ['as'=>'kpi_list_for_withdraw_cancel','uses'=>'KpiController@kpiListForWithdrawCancel']);
         Route::post('/kpi-withdraw-cancel-update', ['as'=>'kpi-withdraw-cancel-update','uses'=>'KpiController@kpiWithdrawCancelUpdate']);
 //End KPI
+        Route::get('testt',function(){
+           return UserPermission::isPermissionExists('ansar_not_interested1');
+        });
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
     Route::get('/all_notification', function () {
