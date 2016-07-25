@@ -22,7 +22,9 @@
                     //$scope.checkFile($scope.ansarDetail.apid.profile_pic)
                     $scope.allLoading = false;
                 },function(response){
-                    $scope.errorFound=1;
+                    $scope.ansarDetail = '';
+                    $scope.errorFound = 1;
+                    $scope.errorMessage = "Please enter a valid Ansar ID";
                     $scope.allLoading = false;
 //                    $scope.ansarDetail = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
                 })
@@ -40,7 +42,9 @@
                         //if($scope.ansarDetail.apid)$scope.checkFile($scope.ansarDetail.apid.profile_pic)
                         $scope.allLoading = false;
                     }, function (response) {
-                        $scope.errorFound=1;
+                        $scope.ansarDetail = '';
+                        $scope.errorFound = 1;
+                        $scope.errorMessage = "Please enter a valid Ansar ID";
                         $scope.allLoading = false;
 //                        $scope.ansarDetail = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
                     })
@@ -108,6 +112,7 @@
                                 <div class="form-group">
                                     {{--<label class="control-label">Enter a ansar id</label>--}}
                                     <input type="text" ng-model="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-keypress="loadAnsarDetailOnKeyPress(ansar_id,$event)">
+                                    <span class="text-danger" ng-if="errorFound==1"><p>[[errorMessage]]</p></span>
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-12 col-xs-12">

@@ -258,7 +258,7 @@ class ReportController extends Controller
         ];
         $validation = Validator::make(Input::all(),$rules);
         if($validation->fails()){
-            return response("Invalid Request(400)",400);
+            return Redirect::back()->withInput(Input::all())->withErrors($validation);
         }else{
             $transfer_history = DB::table('tbl_transfer_ansar')
                 ->join(DB::raw('tbl_kpi_info as pk'), 'tbl_transfer_ansar.present_kpi_id', '=', 'pk.id')

@@ -270,7 +270,14 @@ class DGController extends Controller
         $ansar_id = Input::get('ansar_id');
         $status = "";
         $ansar_details = "";
-
+        $ansar_id = Input::get('ansar_id');
+        $rules = [
+            'ansar_id'=>'required|numeric|regex:/^[0-9]+$/',
+        ];
+        $validation = Validator::make(Input::all(),$rules);
+        if($validation->fails()){
+            return Redirect::back()->withInput(Input::all())->withErrors($validation);
+        }
         $ansar_check = DB::table('tbl_ansar_parsonal_info')
             ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)

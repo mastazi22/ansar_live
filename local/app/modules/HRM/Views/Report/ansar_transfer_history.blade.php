@@ -10,7 +10,7 @@
             $scope.allLoading = false;
             $scope.errorFound=0;
             $scope.loadTransferHistory = function (ansar_id) {
-                $scope.isLoading = true;
+                $scope.allLoading = true;
                 $http({
                     url:'{{URL::route('get_transfer_ansar_history')}}',
                     method:'get',
@@ -22,7 +22,8 @@
                 },function (response) {
                     $scope.errorFound=1;
                     $scope.allLoading = false;
-                    $scope.ansars = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
+                    $scope.ansars = '';
+                    $scope.errorMessage = "Please enter a valid Ansar ID";
                 })
             }
             $scope.loadTransferHistoryOnKeyPress = function (ansar_id,$event) {
@@ -39,7 +40,8 @@
                     }, function (response) {
                         $scope.errorFound=1;
                         $scope.allLoading = false;
-                        $scope.ansars = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
+                        $scope.ansars = '';
+                        $scope.errorMessage = "Please enter a valid Ansar ID";
                     })
                 }
             }
@@ -72,7 +74,8 @@
                             <div class="col-md-6 col-sm-12 col-xs-12">
                                 <div class="form-group">
                                     {{--<label class="control-label">Enter a ansar id</label>--}}
-                                    <input type="text" ng-model="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-keypress="loadTransferHistoryOnKeyPress(ansar_id,$event)">
+                                    <input type="text" ng-model="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-keypress="loadTransferHistoryOnKeyPress(ansar_id,$event)">
+                                    <span class="text-danger" ng-if="errorFound==1"><p>[[errorMessage]]</p></span>
                                 </div>
                             </div>
                             <div class="col-md-6 col-sm-12 col-xs-12">
