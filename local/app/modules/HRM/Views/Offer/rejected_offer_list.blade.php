@@ -91,7 +91,7 @@
                         </div>
                         <div class="col-sm-3">
                             <div class="form-group">
-                                <label class="control-label">No Of Offer Rejected/Not Respond</label>
+                                <label class="control-label">No. Of Rejected/Unresponded Offers</label>
                                 <input type="text" ng-model="noOfRejection" ng-change="noOfRejection = noOfRejection<1?1:noOfRejection" class="form-control"
                                        placeholder="No of Rejection/Not Respond">
                                 <p class="text text-danger" ng-if="error!=undefined&&error.rejection_no!=undefined">[[error.rejection_no[0] ]]</p>
@@ -110,15 +110,15 @@
                         <table class="table table-bordered">
                             <tr>
                                 <th>Sl. No</th>
-                                <th>Ansar Id</th>
+                                <th>Ansar ID</th>
                                 <th>Name</th>
                                 <th>Rank</th>
                                 <th>District</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
-                            <tr ng-if="ansars.length<=0">
-                                <th colspan="7">No Ansar Found</th>
+                            <tr ng-if="ansars.length<=0" class="warning">
+                                <th colspan="7">No information found</th>
                             </tr>
                             <tr ng-if="ansars.length>0" ng-repeat="a in ansars">
                                 <td>[[$index+1]]</td>

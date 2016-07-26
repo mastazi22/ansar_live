@@ -163,7 +163,7 @@
                                 <th>Action</th>
                             </tr>
                             <tr ng-show="ansars.length<=0">
-                                <td colspan="6" class="warning">No List Found</td>
+                                <td colspan="6" class="warning">No information found</td>
                             </tr>
                             <tr ng-show="ansars.length>0" ng-repeat="a in ansars">
                                 <td>[[$index+1]]</td>

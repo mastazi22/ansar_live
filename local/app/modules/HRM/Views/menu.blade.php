@@ -238,7 +238,7 @@
                     <li>
                         <a href="#">
                             <i class="fa fa-users"></i>
-                            <span>BlackList</span>
+                            <span>Blacklist</span>
                             <i class="fa fa-angle-right pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
@@ -259,7 +259,7 @@
                     <li>
                         <a href="#">
                             <i class="fa fa-users"></i>
-                            <span>BlockList</span>
+                            <span>Blocklist</span>
                             <i class="fa fa-angle-right pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
@@ -413,7 +413,7 @@
                     <li ng-if="checkMenu('direct_disembodiment')">
                         <a href="{{URL::to('HRM/direct_disembodiment')}}">
                             <i class="fa fa-users"></i>
-                            <span>Direct Dis-embodiment</span>
+                            <span>Direct Disembodiment</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('direct_transfer')">
@@ -425,7 +425,7 @@
                     <li>
                         <a href="#">
                             <i class="fa fa-users"></i>
-                            <span>Direct BlockList</span>
+                            <span>Direct Blocklist</span>
                             <i class="fa fa-angle-right pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
@@ -446,7 +446,7 @@
                     <li>
                         <a href="#">
                             <i class="fa fa-users"></i>
-                            <span>Direct BlackList</span>
+                            <span>Direct Blacklist</span>
                             <i class="fa fa-angle-right pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
@@ -490,13 +490,13 @@
                     <li>
                         <a href="{{URL::to('HRM/print_id_list')}}">
                             <i class="fa fa-users"></i>
-                            <span>Ansar id list</span>
+                            <span>Printed ID Card List</span>
                         </a>
                     </li>
                     <li>
                         <a href="{{URL::to('HRM/rejected_offer_list')}}">
                             <i class="fa fa-users"></i>
-                            <span>Rejected offer list</span>
+                            <span>Rejected Offer List</span>
                         </a>
                     </li>
                 </ul>

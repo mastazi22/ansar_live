@@ -204,21 +204,29 @@ Breadcrumbs::register('freezelist', function($breadcrumbs) {
     $breadcrumbs->push('After Result of Freezing', URL::route('freeze_list'));
 });
 ////Blocklist
-Breadcrumbs::register('blocklist', function($breadcrumbs) {
+Breadcrumbs::register('blockl', function($breadcrumbs) {
     $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Blocklist', URL::to('#'));
+});
+Breadcrumbs::register('blocklist', function($breadcrumbs) {
+    $breadcrumbs->parent('service');
     $breadcrumbs->push('Blocklist', URL::to('#'));
 });
 Breadcrumbs::register('add_to_blocklist', function($breadcrumbs) {
     $breadcrumbs->parent('blocklist');
-    $breadcrumbs->push('Ansar blocklist entry', URL::route('blocklist_entry_view'));
+    $breadcrumbs->push('Add Ansar in Blocklist', URL::route('blocklist_entry_view'));
 });
 Breadcrumbs::register('unblock_ansar', function($breadcrumbs) {
     $breadcrumbs->parent('blocklist');
     $breadcrumbs->push('Remove Ansar from Blocklist', URL::route('unblocklist_entry_view'));
 });
 ////Blacklist
-Breadcrumbs::register('blacklist', function($breadcrumbs) {
+Breadcrumbs::register('blackl', function($breadcrumbs) {
     $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Blacklist', URL::to('#'));
+});
+Breadcrumbs::register('blacklist', function($breadcrumbs) {
+    $breadcrumbs->parent('service');
     $breadcrumbs->push('Blacklist', URL::to('#'));
 });
 Breadcrumbs::register('add_to_blacklist', function($breadcrumbs) {
@@ -302,7 +310,7 @@ Breadcrumbs::register('transfer_ansar_history', function($breadcrumbs) {
 //DG Forms
 Breadcrumbs::register('dg', function($breadcrumbs) {
     $breadcrumbs->parent('hrm');
-    $breadcrumbs->push('DG View', URL::to('#'));
+    $breadcrumbs->push('DG Forms', URL::to('#'));
 });
 Breadcrumbs::register('direct_offer', function($breadcrumbs) {
     $breadcrumbs->parent('dg');
@@ -328,21 +336,29 @@ Breadcrumbs::register('direct_transfer', function($breadcrumbs) {
     $breadcrumbs->parent('dg');
     $breadcrumbs->push('Direct Transfer', URL::route('direct_transfer'));
 });
-Breadcrumbs::register('direct_block', function($breadcrumbs) {
+Breadcrumbs::register('dg_black', function($breadcrumbs) {
     $breadcrumbs->parent('dg');
-    $breadcrumbs->push('Direct Block', URL::route('blocklist_entry_view'));
+    $breadcrumbs->push('Direct Blacklist', URL::to('#'));
+});
+Breadcrumbs::register('dg_block', function($breadcrumbs) {
+    $breadcrumbs->parent('dg');
+    $breadcrumbs->push('Direct Blocklist', URL::to('#'));
+});
+Breadcrumbs::register('direct_block', function($breadcrumbs) {
+    $breadcrumbs->parent('dg_block');
+    $breadcrumbs->push('Add Ansar in Blocklist', URL::route('blocklist_entry_view'));
 });
 Breadcrumbs::register('direct_black', function($breadcrumbs) {
-    $breadcrumbs->parent('dg');
-    $breadcrumbs->push('Direct Black', URL::route('dg_blacklist_entry_view'));
+    $breadcrumbs->parent('dg_black');
+    $breadcrumbs->push('Add Ansar in Blacklist', URL::route('dg_blacklist_entry_view'));
 });
 Breadcrumbs::register('direct_unblock', function($breadcrumbs) {
-    $breadcrumbs->parent('dg');
-    $breadcrumbs->push('Direct Remove From Block', URL::route('dg_unblocklist_entry_view'));
+    $breadcrumbs->parent('dg_block');
+    $breadcrumbs->push('Remove Ansar from Blocklist', URL::route('dg_unblocklist_entry_view'));
 });
 Breadcrumbs::register('direct_unblack', function($breadcrumbs) {
-    $breadcrumbs->parent('dg');
-    $breadcrumbs->push('Direct Remove From Black', URL::route('dg_unblacklist_entry_view'));
+    $breadcrumbs->parent('dg_black');
+    $breadcrumbs->push('Remove Ansar from Blacklist', URL::route('dg_unblacklist_entry_view'));
 });
 
 
@@ -357,7 +373,7 @@ Breadcrumbs::register('global_parameter', function($breadcrumbs) {
 });
 Breadcrumbs::register('offer_cancel', function($breadcrumbs) {
     $breadcrumbs->parent('admin');
-    $breadcrumbs->push('Offer Cancel', URL::route('cancel_offer'));
+    $breadcrumbs->push('Cancel Offer', URL::route('cancel_offer'));
 });
 Breadcrumbs::register('id_card', function($breadcrumbs) {
     $breadcrumbs->parent('admin');
@@ -371,7 +387,7 @@ Breadcrumbs::register('rejected_offer_list', function($breadcrumbs) {
 //General Setting
 Breadcrumbs::register('gs', function($breadcrumbs) {
     $breadcrumbs->parent('hrm');
-    $breadcrumbs->push('General Setting', URL::to('#'));
+    $breadcrumbs->push('General Settings', URL::to('#'));
 });
 Breadcrumbs::register('session_information_list', function($breadcrumbs) {
     $breadcrumbs->parent('gs');

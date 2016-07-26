@@ -165,21 +165,21 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label for="ansar_id" class="control-label">Ansar Id to Disembodied</label>
-                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-model="ansarId" ng-change="makeQueue(ansarId)">
+                                <label for="ansar_id" class="control-label">Ansar ID</label>
+                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="makeQueue(ansarId)">
                             </div>
                             <div class="form-group">
                                 <label for="mem_id" class="control-label">Memorandum Id&nbsp;<i class="fa fa-spinner fa-pulse" ng-show="isVerifying"></i>
                                     <span class="text-danger" ng-if="isVerified">This id already taken</span>
                                 </label>
-                                <input type="text" name="mem_id" id="mem_id" class="form-control" placeholder="Memorandum Id" ng-model="memorandumId" ng-blur="verifyMemorandumId()">
+                                <input type="text" name="mem_id" id="mem_id" class="form-control" placeholder="Enter Memorandum ID" ng-model="memorandumId" ng-blur="verifyMemorandumId()">
                             </div>
                             <div class="form-group">
-                                <label for="dis_date" class="control-label">Dis-Embodiment Date</label>
+                                <label for="dis_date" class="control-label">Disembodiment Date</label>
                                 <input type="text" id="dis_date" class="form-control" ng-model="dis_date">
                             </div>
                             <div class="form-group">
-                                <label for="dis-reason" class="control-label">Dis-embodiment Reason&nbsp;
+                                <label for="dis-reason" class="control-label">Disembodiment Reason&nbsp;
                                     <img ng-show="loadingReason" src="{{asset('dist/img/facebook.gif')}}" width="16"></label>
                                 <select ng-disabled="loadingReason" id="dis-reason" class="form-control" ng-model="selectedReason" ng-change="loadThana(selectedReason)">
                                     <option value="">--Select a Reason--</option>
@@ -187,8 +187,8 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="comment" class="control-label">Comment for dis-embodiment</label>
-                                <input type="text" name="comment" id="comment" class="form-control" placeholder="Enter your comment" ng-model="comment">
+                                <label for="comment" class="control-label">Comment for Disembodiment</label>
+                                <textarea name="comment" id="comment" class="form-control" placeholder="Enter Comment" ng-model="comment"></textarea>
                             </div>
                             <button class="btn btn-primary" ng-disabled="!dis_date||!ansarId||!selectedReason||isVerified||isVerifying" confirm-dialog><img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16" style="margin-top: -2px">Dis-Embodied Ansar</button>
                         </div>
