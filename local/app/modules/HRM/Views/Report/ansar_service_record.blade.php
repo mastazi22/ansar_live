@@ -97,6 +97,23 @@
             window.onafterprint = afterPrint;
         })
     </script>
+    <style>
+        input::-webkit-input-placeholder {
+            color: #7b7b7b !important;
+        }
+
+        input:-moz-placeholder { /* Firefox 18- */
+            color: #7b7b7b !important;
+        }
+
+        input::-moz-placeholder {  /* Firefox 19+ */
+            color: #7b7b7b !important;
+        }
+
+        input:-ms-input-placeholder {
+            color: #7b7b7b !important;
+        }
+    </style>
     <div ng-controller="TransferController">
         <section class="content">
             <div class="box box-solid">
