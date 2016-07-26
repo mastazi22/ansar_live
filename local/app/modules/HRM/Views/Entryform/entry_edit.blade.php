@@ -395,11 +395,11 @@
                 link: function (scope, element, attribute) {
                     $(element).click(function (e) {
                         var b = $(this).val()
-                        $("#loading-screen").slideDown(300);
+                        $(".overlay").css('display','block');
                         $("#pppp").ajaxSubmit({
                             success: function (responseText, statusText, xhr, $form) {
                                 scope.formSubmitResult = responseText;
-                                $("#loading-screen").slideUp(300);
+                                $(".overlay").css('display','none');
                                 console.log(scope.formSubmitResult)
                                 if(scope.formSubmitResult.status==false){
                                     var keys = Object.keys(scope.formSubmitResult.error);
@@ -417,12 +417,11 @@
                                     window.location = "{{URL::to('HRM/entrylist')}}";
                                 }
                                 if (scope.formSubmitResult.status == 'numeric') {
-//                        alert(JSON.stringify(scope.formSubmitResult.data));
                                 }
                                 scope.$digest();
                             }, error: function (responseText, statusText, xhr, $form) {
+                                $(".overlay").css('display','none');
                                 scope.error = $sce.trustAsHtml(xhr.responseText);
-//                    alert(xhr.responseText);
 
                                 console.log(responseText);
                                 console.log(responseText);
@@ -436,16 +435,22 @@
                 }
             }
         })
+        $(document).ready(function (e) {
+            $(".overlay").height($(window).height());
+            $(window).resize(function () {
+                $(".overlay").height($(window).height());
+            })
+            $(window).scroll(function () {
+//                alert("scroll")
+                $(".overlay").css('top',($(window).scrollTop()-$("#entryform").offset().top)+"px")
+            })
+        })
     </script>
-    <div id="#entryform" ng-controller="fullEntryFormController" d-picker>
-        <div id="loading-screen"
-             style="position:fixed;margin-top:-50px;display:none;width: 100%;height: 100%;background-color: rgba(255, 255, 255, 0.27);z-index: 100000000">
-            <div style="position: relative;width: 20%;height: auto;margin: 14% auto;text-align: center;background: #FFFFFF">
-                <img class="img-responsive" src="{{asset('dist/img/loading-data.gif')}}"
-                     style="position: relative;margin: 0 auto">
-                <h4>Submitting....</h4>
-            </div>
-
+    <div id="entryform" ng-controller="fullEntryFormController" d-picker>
+        <div class="overlay">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
         </div>
         <div>
             {{--<div class="breadcrumbplace">--}}

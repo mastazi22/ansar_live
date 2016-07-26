@@ -246,13 +246,13 @@
                 restrict: 'A',
                 link: function (scope, element, attribute) {
                     $(element).click(function (e) {
-                        $("#loading-screen").slideDown(300);
+                        $(".overlay").css('display','block');
                         var b = $(this).val()
                         $("#pppp").ajaxSubmit({
                             success: function (responseText, statusText, xhr, $form) {
                                 scope.formSubmitResult= responseText;
                                 console.log(scope.formSubmitResult)
-                                $("#loading-screen").slideUp(300);
+                                $(".overlay").css('display','none');
                                 if(scope.formSubmitResult.status==false){
                                     var keys = Object.keys(scope.formSubmitResult.error);
                                     var min = 10000000;
@@ -266,29 +266,24 @@
                                     },1000)
                                 }
                                 if (scope.formSubmitResult.status == true) {
-//                        alert("Ansar added successfully.");
-//                        alert(scope.formSubmitResult.data);
                                     window.location = scope.formSubmitResult.url;
                                     console.log(scope.formSubmitResult.data);
                                     $("#pppp").resetForm();
                                 }
                                 if (scope.formSubmitResult.status == 'save') {
-//                        alert("Draft saved successfully.");
-//                        alert(scope.formSubmitResult.data);
                                     $("#pppp").resetForm();
                                 }
                                 if (scope.formSubmitResult.status == 'numeric') {
-//                        alert(JSON.stringify(scope.formSubmitResult.data));
                                 }
                                 scope.$digest();
-                            }, error: function (responseText, statusText, xhr, $form) {
-                                $("#loading-screen").slideUp(300);
+                            },
+                            error: function (responseText, statusText, xhr, $form) {
+                                $(".overlay").css('display','none');
                                 scope.error = $sce.trustAsHtml(xhr.responseText);
-//                    alert(xhr.responseText);
 
                                 console.log(responseText);
-//                                console.log(responseText);
-                            }, beforeSubmit: function (arr, $form, options) {
+                            },
+                            beforeSubmit: function (arr, $form, options) {
                                 arr.push({name: 'action', type: 'text', value: b})
                                 console.log(arr)
                             }
@@ -298,14 +293,23 @@
                 }
             }
         })
+        $(document).ready(function (e) {
+            $(".overlay").height($(window).height());
+            $(window).resize(function () {
+                $(".overlay").height($(window).height());
+            })
+            $(window).scroll(function () {
+//                alert("scroll")
+                $(".overlay").css('top',($(window).scrollTop()-$("#entryform").offset().top)+"px")
+            })
+        })
     </script>
-    <div id="#entryform" ng-controller="fullEntryFormController" d-picker>
-        <div id="loading-screen" style="position:fixed;margin-top:-50px;display:none;width: 100%;height: 100%;background-color: rgba(255, 255, 255, 0.27);z-index: 100000000">
-            <div style="position: relative;width: 20%;height: auto;margin: 14% auto;text-align: center;background: #FFFFFF">
-                <img class="img-responsive" src="{{asset('dist/img/loading-data.gif')}}" style="position: relative;margin: 0 auto">
-                <h4>Submitting....</h4>
-            </div>
 
+    <div id="entryform" ng-controller="fullEntryFormController" d-picker>
+        <div class="overlay">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
         </div>
         <div>
             
@@ -1190,13 +1194,13 @@
                                 {{--Draft Save Button--}}
                                 <div class="row" style="margin: 0 !important;">
                                     <div class="form-horizontal pull-left">
-                                        <input form-submit id="submit" type="submit" name="submit" class="btn btn-primary"
-                                               value="Submit">
+                                        <button form-submit id="submit" type="submit" name="submit" class="btn btn-primary"
+                                               value="1">Submit</button>
                                     </div>
                                     {{--Form Submit Button--}}
                                     <div class="form-horizontal pull-right">
-                                        <input form-submit id="submit1" type="submit" name="Save" class="btn btn-primary"
-                                               value="Save as Draft">
+                                        <button form-submit id="submit1" type="submit" name="Save" class="btn btn-primary"
+                                               value="0">Save as draft</button>
                                         <!--<button name="save" type="save">Save</button>-->
                                     </div>
                                 </div>
