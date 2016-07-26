@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -240,16 +241,20 @@ class EmbodimentController extends Controller
     }
     function completeTransferProcess()
     {
+        $rules = [
+           'transfer_date'=>['required','date_format:d-M-Y','regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'] ,
+            'kpi_id.0'=>'required|numeric|regex:/^[0-9]+$/',
+            'kpi_id.1'=>'required|numeric|regex:/^[0-9]+$/',
+        ];
+        $valid = Validator::make(Input::all(),$rules);
+        if($valid->fails()){
+            return response($valid->messages()->toJson(),400,['Content-Type'=>'application/json']);
+        }
         $m_id = Input::get('memorandum_id');
         $t_date = Input::get('transfer_date');
         $kpi_id = Input::get('kpi_id');
-//        return $t_date;
-//        return $kpi_id;
         $transferred_ansar = Input::get('transferred_ansar');
-        //$p =  json_decode($transferred_ansar[0]);
-//        return var_dump($transferred_ansar);
         $status = array('success' => array('count' => 0, 'data' => array()), 'error' => array('count' => 0, 'data' => array()));
-        //return $status;
         DB::beginTransaction();
         try {
             $memorandum = new MemorandumModel;

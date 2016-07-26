@@ -20,6 +20,7 @@
             $scope.currentPage = 0;
             $scope.pages = [];
             $scope.isSearching = false;
+            $scope.searchAnsarId = '';
             $scope.loading = false;
             $scope.rejecting = false;
             $scope.noFound = false;
@@ -147,39 +148,26 @@
                     return true;
                 }
             }
-            $scope.searchId = function (keyEvent, id) {
+            $scope.searchId = function () {
+                if(!$scope.searchAnsarId){
+                    $scope.isSearching = false;
+                    $scope.loadPagination();
+                    return;
+                }
                 $scope.noFound = false;
-                if (keyEvent == null) {
-                    $scope.loading = true;
-                    $scope.isSearching = true;
-                    $http({
-                        url: "{{URL::to('HRM/entrysearch')}}",
-                        method: 'post',
-                        data: {ansarId: id, type: $scope.loadType}
-                    }).then(function (response) {
+                $scope.loading = true;
+                $scope.isSearching = true;
+                $http({
+                    url: "{{URL::to('HRM/entrysearch')}}",
+                    method: 'post',
+                    data: {ansarId: $scope.searchAnsarId, type: $scope.loadType}
+                }).then(function (response) {
 
-                        $scope.loading = false;
-                        $scope.AllAnsar = response.data;
-                        $scope.noFound = $scope.AllAnsar.length <= 0
-                        //alert($scope.noFound)
-                        console.log($scope.searchedAnsar);
-                    })
-                }
-                else if (keyEvent.which === 13) {
-                    $scope.loading = true;
-                    $scope.isSearching = true;
-                    $http({
-                        url: "{{URL::to('HRM/entrysearch')}}",
-                        method: 'post',
-                        data: {ansarId: id, type: $scope.loadType}
-                    }).then(function (response) {
-
-                        $scope.loading = false;
-                        $scope.AllAnsar = response.data;
-                        $scope.noFound = $scope.AllAnsar.length <= 0
-                        console.log($scope.searchedAnsar);
-                    })
-                }
+                    $scope.loading = false;
+                    $scope.AllAnsar = response.data;
+                    $scope.noFound = $scope.AllAnsar.length <= 0
+                    console.log($scope.searchedAnsar);
+                })
             }
             $scope.clearSearch = function () {
                 $scope.searchedAnsar = "";
@@ -290,9 +278,9 @@
                         </label>
                     </div>
                     <div class="col-sm-3">
-                        <form action="#" method="get" class="sidebar-form">
+                        <form ng-submit="searchId()" class="sidebar-form">
                             <div class="input-group">
-                                <input type="text" name="q" class="form-control" placeholder="Search by ansar id...">
+                                <input type="text" name="q" autocomplete="off" class="form-control" ng-model="searchAnsarId" placeholder="Search by ansar id...">
                                 <span class="input-group-btn">
                                     <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
                                  </span>

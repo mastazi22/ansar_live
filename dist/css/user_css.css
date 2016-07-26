@@ -293,7 +293,7 @@
 }
 
 .styled-checkbox input[type=checkbox]:checked + label:before {
-    background-color: #2489C5;
+    background-color: forestgreen;
 }
 
 .styled-checkbox input[type=checkbox] {

@@ -4,13 +4,13 @@
     <a href="{{action('UserController@userRegistration')}}" class="btn btn-primary btn-sm">
         <span class="glyphicon glyphicon-user"></span> Add New User
     </a>
-    @endsection
+@endsection
 @section('breadcrumb')
     {!! Breadcrumbs::render('all_user') !!}
-    @endsection
+@endsection
 @section('content')
     <style>
-        .content-header h1::after{
+        .content-header h1::after {
             content: '';
             display: block;
             clear: both;
@@ -18,10 +18,10 @@
     </style>
     <script>
 
-        GlobalApp.controller('UserController',function($scope,$http){
+        GlobalApp.controller('UserController', function ($scope, $http) {
             var totalCount = parseInt('{{config('app.item_per_page')}}');
             $scope.total = '{{$total_user}}';
-            $scope.totalPages = Math.ceil(parseInt($scope.total)/totalCount);
+            $scope.totalPages = Math.ceil(parseInt($scope.total) / totalCount);
             $scope.pages = [];
             $scope.currentPage = 0;
             $scope.showDialog = false;
@@ -30,15 +30,16 @@
             $scope.confirmURL = "";
             $scope.isSearching = false;
             $scope.noFound = false;
+            $scope.searchUserName = '';
 //            alert($scope.showDialog)
-            for(var i=0;i<$scope.totalPages;i++) $scope.pages[i]={pageNum:i,totalCount:totalCount}
-            $scope.loadPage = function(pageNum,event){
-                if(event!=null) event.preventDefault();
+            for (var i = 0; i < $scope.totalPages; i++) $scope.pages[i] = {pageNum: i, totalCount: totalCount}
+            $scope.loadPage = function (pageNum, event) {
+                if (event != null) event.preventDefault();
                 $scope.currentPage = pageNum;
                 $http({
-                    url:'{{action('UserController@getAllUser')}}',
-                    method:'get',
-                    params:{limit:totalCount,offset:pageNum*totalCount}
+                    url: '{{action('UserController@getAllUser')}}',
+                    method: 'get',
+                    params: {limit: totalCount, offset: pageNum * totalCount}
                 }).then(function (response) {
                     $scope.users = response.data;
                     $scope.blockStatus = [];
@@ -47,65 +48,61 @@
                     })
                 })
             }
-            $scope.blockUser = function(id,index){
+            $scope.blockUser = function (id, index) {
                 $http({
-                    method:'post',
-                    url:'{{URL::to('/block_user')}}',
-                    data:{user_id:id}
-                }).then(function(response){
+                    method: 'post',
+                    url: '{{URL::to('/block_user')}}',
+                    data: {user_id: id}
+                }).then(function (response) {
                     $scope.result = response.data.status;
-                    if(response.data.status)$scope.blockStatus[index] = 0
+                    if (response.data.status)$scope.blockStatus[index] = 0
                 })
             }
-            $scope.unblockUser = function(id,index){
+            $scope.unblockUser = function (id, index) {
                 $http({
-                    method:'post',
-                    url:'{{URL::to('/unblock_user')}}',
-                    data:{user_id:id}
-                }).then(function(response){
+                    method: 'post',
+                    url: '{{URL::to('/unblock_user')}}',
+                    data: {user_id: id}
+                }).then(function (response) {
                     $scope.result = response.data.status;
-                    if(response.data.status)$scope.blockStatus[index] = 1
+                    if (response.data.status)$scope.blockStatus[index] = 1
                 })
             }
-            $scope.searchId = function(keyEvent,username){
+            $scope.searchId = function () {
                 $scope.noFound = false;
-                if (keyEvent.which === 13)
-                {
-                    $scope.loading = true;
-                    $scope.isSearching = true;
-                    $http({
-                        url : "{{URL::to('/user_search')}}",
-                        method: 'get',
-                        params: {user_name : username}
-                    }).then(function(response){
-                        $scope.blockStatus=[]
-                        $scope.loading = false;
-                        $scope.searchedUser = response.data;
-                        $scope.searchedUser.forEach(function (v) {
-                            $scope.blockStatus.push(v.status)
-                        })
-                       // console.log($scope.searchedUser);
-                    })
+                if(!$scope.searchUserName){
+                    $scope.isSearching = false;
+                    $scope.loadPage(0, null);
+                    return;
                 }
+                $scope.loading = true;
+                $scope.isSearching = true;
+                $http({
+                    url: "{{URL::to('/user_search')}}",
+                    method: 'get',
+                    params: {user_name: $scope.searchUserName}
+                }).then(function (response) {
+                    $scope.blockStatus = []
+                    $scope.loading = false;
+                    $scope.searchedUser = response.data;
+                    $scope.searchedUser.forEach(function (v) {
+                        $scope.blockStatus.push(v.status)
+                    })
+                    // console.log($scope.searchedUser);
+                })
             }
-            $scope.clearSearch = function(){
-                $scope.searchedUser = "";
-                $scope.userName = "";
-                $scope.isSearching = false;
-                $scope.loadPage(0,null);
-            }
-            $scope.loadPage(0,null);
+            $scope.loadPage(0, null);
         })
         GlobalApp.directive('confirmDialog', function () {
-            return{
-                restrict:'A',
-                link: function (scope,elem,attr) {
+            return {
+                restrict: 'A',
+                link: function (scope, elem, attr) {
                     var d = JSON.parse(attr.confirmDialog)
                     $(elem).confirmDialog({
-                        message: 'Are you sure want to '+ d.type +' this user',
+                        message: 'Are you sure want to ' + d.type + ' this user',
                         ok_callback: function (element) {
 
-                            switch(d.type){
+                            switch (d.type) {
                                 case 'block':
                                     scope.blockUser(d.id, d.index)
                                     break;
@@ -124,7 +121,7 @@
         })
     </script>
 
-    <div  ng-controller="UserController">
+    <div ng-controller="UserController">
         @if(Session::has('success_message'))
             <div style="padding: 10px 20px 0 20px;">
                 <div class="alert alert-success">
@@ -140,11 +137,13 @@
                         <h4 style="padding-left: 8px;padding-top: 6px">Total users : [[total]]</h4>
                     </div>
                     <div class="col-sm-3">
-                        <form action="#" method="get" class="sidebar-form">
+                        <form ng-submit="searchId()" class="sidebar-form">
                             <div class="input-group">
-                                <input type="text" name="q" class="form-control" placeholder="Search by user name...">
+                                <input type="text" name="q" ng-model="searchUserName" class="form-control"
+                                       placeholder="Search by user name...">
                                 <span class="input-group-btn">
-                                    <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+                                    <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i
+                                                class="fa fa-search"></i></button>
                                  </span>
                             </div>
                         </form>
@@ -180,20 +179,27 @@
                                 <td style="width: 100px">
                                     <div class="row" style="margin-right: 0;min-width: 100px">
                                         <div class="col-xs-1">
-                                            <a class="btn btn-primary btn-xs" href="{{URL::to('/edit_user')}}/[[user.id]]" title="edit"><span
+                                            <a class="btn btn-primary btn-xs"
+                                               href="{{URL::to('/edit_user')}}/[[user.id]]" title="edit"><span
                                                         class="glyphicon glyphicon-edit"></span></a>
                                         </div>
 
                                         <div class="col-xs-1">
-                                            <a class="btn btn-danger btn-xs" ng-show="blockStatus[$index]" confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"block"}'  class="block-user" title="block">
-                                                <span  class="fa fa-ban"></span>
+                                            <a class="btn btn-danger btn-xs" ng-show="blockStatus[$index]"
+                                               confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"block"}'
+                                               class="block-user" title="block">
+                                                <span class="fa fa-ban"></span>
                                             </a>
-                                            <a  ng-show="!blockStatus[$index]" class="btn btn-success btn-xs" confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"unblock"}'  class="block-user" title="unblock">
+                                            <a ng-show="!blockStatus[$index]" class="btn btn-success btn-xs"
+                                               confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"unblock"}'
+                                               class="block-user" title="unblock">
                                                 <span class="fa fa-unlock"></span>
                                             </a>
                                         </div>
                                         <div class="col-xs-1">
-                                            <a class="btn btn-success btn-xs" href="{{URL::to('/edit_user_permission')}}/[[user.id]]" title="edit permission"><span
+                                            <a class="btn btn-success btn-xs"
+                                               href="{{URL::to('/edit_user_permission')}}/[[user.id]]"
+                                               title="edit permission"><span
                                                         class="glyphicon glyphicon-lock"></span></a>
                                         </div>
                                     </div>
@@ -214,20 +220,27 @@
                                 <td style="width: 100px">
                                     <div class="row" style="margin-right: 0;min-width: 100px">
                                         <div class="col-xs-1">
-                                            <a class="btn btn-primary btn-xs" href="{{URL::to('/edit_user')}}/[[user.id]]" title="edit"><span
+                                            <a class="btn btn-primary btn-xs"
+                                               href="{{URL::to('/edit_user')}}/[[user.id]]" title="edit"><span
                                                         class="glyphicon glyphicon-edit"></span></a>
                                         </div>
 
                                         <div class="col-xs-1">
-                                            <a class="btn btn-danger btn-xs" ng-show="blockStatus[$index]" confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"block"}'  class="block-user" title="block">
-                                                <span  class="fa fa-ban"></span>
+                                            <a class="btn btn-danger btn-xs" ng-show="blockStatus[$index]"
+                                               confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"block"}'
+                                               class="block-user" title="block">
+                                                <span class="fa fa-ban"></span>
                                             </a>
-                                            <a  ng-show="!blockStatus[$index]" class="btn btn-success btn-xs" confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"unblock"}'  class="block-user" title="unblock">
+                                            <a ng-show="!blockStatus[$index]" class="btn btn-success btn-xs"
+                                               confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"unblock"}'
+                                               class="block-user" title="unblock">
                                                 <span class="fa fa-unlock"></span>
                                             </a>
                                         </div>
                                         <div class="col-xs-1">
-                                            <a class="btn btn-success btn-xs" href="{{URL::to('/edit_user_permission')}}/[[user.id]]" title="edit permission"><span
+                                            <a class="btn btn-success btn-xs"
+                                               href="{{URL::to('/edit_user_permission')}}/[[user.id]]"
+                                               title="edit permission"><span
                                                         class="glyphicon glyphicon-lock"></span></a>
                                         </div>
                                     </div>
@@ -239,15 +252,18 @@
                         <ul class="pagination">
                             <li ng-class="{disabled:currentPage==0}">
                                 <span ng-show="currentPage==0">&laquo;</span>
-                                <a href="#" ng-click="loadPage(currentPage-1,$event)" ng-hide="currentPage==0">&laquo;</a>
+                                <a href="#" ng-click="loadPage(currentPage-1,$event)"
+                                   ng-hide="currentPage==0">&laquo;</a>
                             </li>
                             <li ng-repeat="page in pages" ng-class="{active:currentPage==page.pageNum}">
                                 <span ng-show="currentPage==page.pageNum">[[page.pageNum+1]]</span>
-                                <a href="#" ng-click="loadPage(page.pageNum,$event)" ng-hide="currentPage==page.pageNum">[[page.pageNum+1]]</a>
+                                <a href="#" ng-click="loadPage(page.pageNum,$event)"
+                                   ng-hide="currentPage==page.pageNum">[[page.pageNum+1]]</a>
                             </li>
                             <li ng-class="{disabled:currentPage==totalPages-1}">
                                 <span ng-show="currentPage==totalPages-1">&raquo;</span>
-                                <a href="#" ng-click="loadPage(currentPage+1,$event)" ng-hide="currentPage==totalPages-1">&raquo;</a>
+                                <a href="#" ng-click="loadPage(currentPage+1,$event)"
+                                   ng-hide="currentPage==totalPages-1">&raquo;</a>
                             </li>
                         </ul>
                     </div>
