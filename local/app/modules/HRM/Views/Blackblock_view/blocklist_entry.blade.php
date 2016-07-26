@@ -3,7 +3,7 @@
 {{--Time: 11:28 AM--}}
 
 @extends('template.master')
-@section('title','Ansar Block List Entry')
+@section('title','Add Ansar in Blocklist')
 @section('breadcrumb')
     {!! Breadcrumbs::render('add_to_blocklist') !!}
 @endsection
@@ -56,7 +56,7 @@
                             <div class="form-group">
                                 <label for="ansar_id" class="control-label">Ansar ID</label>
                                 <input type="text" name="ansar_id" id="ansar_id" class="form-control"
-                                       placeholder="Enter Ansar Id" ng-model="ansarId"
+                                       placeholder="Enter Ansar ID" ng-model="ansarId"
                                        ng-change="loadAnsarDetail(ansarId)">
                             </div>
                             <div class="form-group">
@@ -65,8 +65,8 @@
                                        ng-model="block_date">
                             </div>
                             <div class="form-group">
-                                <label for="block_comment" class="control-label">Comment for Blocking</label>
-                                {!! Form::textarea('block_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'block_comment', 'size' => '30x4', 'placeholder' => "Write any comment", 'ng-model' => 'block_comment')) !!}
+                                <label for="block_comment" class="control-label">Reason</label>
+                                {!! Form::textarea('block_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'block_comment', 'size' => '30x4', 'placeholder' => "Write Reason", 'ng-model' => 'block_comment')) !!}
                             </div>
                             <button id="block-ansar" class="btn btn-primary"
                                     ng-disabled="!block_date||!ansarId||!block_comment"><img

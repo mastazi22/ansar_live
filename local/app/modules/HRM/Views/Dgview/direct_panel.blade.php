@@ -81,7 +81,7 @@
                            <div class="form-group">
                                <label for="ansar_id" class="control-label">Ansar ID to add to Panel</label>
                                <input type="text" name="ansar_id" id="ansar_id" class="form-control"
-                                      placeholder="Enter Ansar Id" ng-model="ansarId"
+                                      placeholder="Enter Ansar ID" ng-model="ansarId"
                                       ng-change="makeQueue(ansarId)">
                            </div>
                            <div class="form-group">
@@ -90,7 +90,7 @@
                                            class="text-danger" ng-if="isVerified"> This id already taken</span></label>
                                <input ng-blur="verifyMemorandumId()" ng-model="memorandumId" type="text"
                                       class="form-control" name="memorandum_id"
-                                      placeholder="Enter memorandum id">
+                                      placeholder="Enter Memorandum ID">
                            </div>
                            <div class="form-group">
                                <label for="direct_panel_date" class="control-label">Panel Date</label>
@@ -100,7 +100,7 @@
                            <div class="form-group">
                                <label for="direct_panel_comment" class="control-label">Comment for adding to
                                    Panel</label>
-                               {!! Form::textarea('direct_panel_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'direct_panel_comment', 'size' => '30x4', 'placeholder' => "Write any comment", 'ng-model' => 'direct_panel_comment')) !!}
+                               {!! Form::textarea('direct_panel_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'direct_panel_comment', 'size' => '30x4', 'placeholder' => "Write Comment", 'ng-model' => 'direct_panel_comment')) !!}
                            </div>
                            <button id="add-panel-for-dg" class="btn btn-primary"
                                    ng-disabled="!direct_panel_date||!ansarId||!direct_panel_comment"><img

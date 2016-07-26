@@ -143,14 +143,14 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label for="ansar_id" class="control-label">Ansar Id to send offer</label>
-                                <input type="text" id="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-model="ansarId" ng-change="makeQueue(ansarId)">
+                                <label for="ansar_id" class="control-label">Ansar ID to send Offer</label>
+                                <input type="text" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="makeQueue(ansarId)">
                             </div>
                             <div class="form-group">
-                                <label for="district" class="control-label">Select district to send offer&nbsp;
+                                <label for="district" class="control-label">Select District to send Offer&nbsp;
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}" width="16"></label>
                                 <select class="form-control" ng-model="selectedDistrict" ng-disabled="loadingDistrict">
-                                    <option value="">--Select a district--</option>
+                                    <option value="">--Select a District--</option>
                                     <option ng-repeat="d in districts" ng-disabled="ansarDetail.apid.unit_id==d.id" value="[[d.id]]">[[d.unit_name_bng]]</option>
                                 </select>
                             </div>

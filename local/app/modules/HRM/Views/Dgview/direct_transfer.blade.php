@@ -205,24 +205,24 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label for="ansar_id" class="control-label">Ansar Id to Transfer</label>
+                                <label for="ansar_id" class="control-label">Ansar ID to Transfer</label>
                                 <input type="text" name="ansar_id" id="ansar_id" class="form-control"
-                                       placeholder="Enter Ansar Id" ng-model="ansarId"
+                                       placeholder="Enter Ansar ID" ng-model="ansarId"
                                        ng-change="makeQueue(ansarId)">
                             </div>
                             <div class="form-group">
-                                <label for="mem_id" class="control-label">Memorandum Id&nbsp;<i class="fa fa-spinner fa-pulse" ng-show="isVerifying"></i>
+                                <label for="mem_id" class="control-label">Memorandum ID&nbsp;<i class="fa fa-spinner fa-pulse" ng-show="isVerifying"></i>
                                     <span class="text-danger" ng-if="isVerified">This id already taken</span>
                                 </label>
-                                <input type="text" name="mem_id" id="mem_id" class="form-control" placeholder="Memorandum Id" ng-model="memorandumId" ng-blur="verifyMemorandumId()">
+                                <input type="text" name="mem_id" id="mem_id" class="form-control" placeholder="Enter Memorandum ID" ng-model="memorandumId" ng-blur="verifyMemorandumId()">
                             </div>
                             <div class="form-group">
-                                <label for="e_unit" class="control-label">Transferred unit&nbsp;
+                                <label for="e_unit" class="control-label">Transferred Unit&nbsp;
                                     <img ng-show="loadingUnit" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select ng-disabled="loadingUnit" id="e_unit" class="form-control"
                                         ng-model="selectedUnit" ng-change="loadThana(selectedUnit)">
-                                    <option value="">--Select a unit--</option>
+                                    <option value="">--Select a Unit--</option>
                                     <option ng-repeat="u in units"
                                             ng-class="{'bg-danger':u.id==ansarDetail.unit_id}"
                                             ng-disabled="u.id==ansarDetail.apid.unit_id" value="[[u.id]]">
@@ -231,12 +231,12 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="e_thana" class="control-label">Transferred thana&nbsp;
+                                <label for="e_thana" class="control-label">Transferred Thana&nbsp;
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select ng-disabled="loadingThana" id="e_thana" class="form-control"
                                         ng-model="selectedThana" ng-change="loadKpi(selectedThana)">
-                                    <option value="">--Select a thana--</option>
+                                    <option value="">--Select a Thana--</option>
                                     <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
                                     </option>
                                 </select>

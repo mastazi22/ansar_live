@@ -3,7 +3,7 @@
 {{--Time: 11:28 AM--}}
 
 @extends('template.master')
-@section('title','Direct Blocklist Entry')
+@section('title','Add Ansar in Blocklist')
 {{--@section('small_title','DG')--}}
 @section('breadcrumb')
     {!! Breadcrumbs::render('direct_block') !!}
@@ -66,15 +66,15 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label for="ansar_id" class="control-label">Ansar ID</label>
-                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-model="ansarId" ng-change="makeQueue(ansarId)">
+                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="makeQueue(ansarId)">
                             </div>
                             <div class="form-group">
                                 <label for="block_date" class="control-label">Blocking Date</label>
                                 <input type="text" name="block_date" id="block_date" class="form-control" ng-model="block_date">
                             </div>
                             <div class="form-group">
-                                <label for="block_comment" class="control-label">Comment for Blocking</label>
-                                {!! Form::textarea('block_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'block_comment', 'size' => '30x4', 'placeholder' => "Write any comment", 'ng-model' => 'block_comment')) !!}
+                                <label for="block_comment" class="control-label">Reason</label>
+                                {!! Form::textarea('block_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'block_comment', 'size' => '30x4', 'placeholder' => "Write Reason", 'ng-model' => 'block_comment')) !!}
                             </div>
                             <button id="block-for-dg" class="btn btn-primary" ng-disabled="!block_date||!ansarId||!block_comment"><img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16" style="margin-top: -2px">Block Ansar</button>
                         </div>

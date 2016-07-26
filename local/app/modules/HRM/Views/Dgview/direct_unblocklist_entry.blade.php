@@ -3,7 +3,7 @@
 {{--Time: 6:17 PM--}}
 
 @extends('template.master')
-@section('title','Direct Remove From Blocklist')
+@section('title','Remove Ansar from Blocklist')
 {{--@section('small_title','DG')--}}
 @section('breadcrumb')
     {!! Breadcrumbs::render('direct_unblock') !!}
@@ -66,17 +66,17 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label for="ansar_id" class="control-label">Ansar ID (Comes from Blocklist)</label>
-                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-model="ansarId" ng-change="makeQueue(ansarId)">
+                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="makeQueue(ansarId)">
                             </div>
                             <div class="form-group">
-                                <label for="unblock_date" class="control-label">Unlocking Date</label>
+                                <label for="unblock_date" class="control-label">Unblocking Date</label>
                                 <input type="text" name="unblock_date" id="unblock_date" class="form-control" ng-model="unblock_date">
                             </div>
                             <div class="form-group">
-                                <label for="unblock_comment" class="control-label">Comment for Unblocking</label>
-                                {!! Form::textarea('unblock_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'unblock_comment', 'size' => '30x4', 'placeholder' => "Write any comment", 'ng-model' => 'unblock_comment')) !!}
+                                <label for="unblock_comment" class="control-label">Reason</label>
+                                {!! Form::textarea('unblock_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'unblock_comment', 'size' => '30x4', 'placeholder' => "Write Reason", 'ng-model' => 'unblock_comment')) !!}
                             </div>
-                            <button id="unblock-for-dg" class="btn btn-primary" ng-disabled="!unblock_date||!unblock_comment||!ansarId"><img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16" style="margin-top: -2px">Unblock Ansar</button>
+                            <button id="unblock-for-dg" class="btn btn-primary" ng-disabled="!unblock_date||!unblock_comment||!ansarId"><img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16" style="margin-top: -2px">Remove Ansar from Blocklist</button>
                         </div>
                         <div class="col-sm-6 col-sm-offset-2" style="min-height: 400px;border-left: 1px solid #CCCCCC">
                             <div id="loading-box" ng-if="loadingAnsar">

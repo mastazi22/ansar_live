@@ -133,7 +133,7 @@
                 <div class="box-body">
                     <div class="row" style="padding-bottom: 10px">
                         <div class="col-md-4">
-                            <label class="control-label"> Select a district to cancel offer&nbsp;&nbsp;&nbsp;<i
+                            <label class="control-label"> Select a District to Cancel Offer&nbsp;&nbsp;&nbsp;<i
                                         class="fa fa-spinner fa-pulse" ng-show="loadingAnsar"></i></label>
                             <select class="form-control" ng-model="selectedDistrict"
                                     ng-disabled="loadingAnsar||loadingUnit" ng-change="loadAnsar()">
@@ -164,7 +164,7 @@
                                 </th>
                             </tr>
                             <tr ng-show="noAnsar&&errorLoad==undefined" class="warning">
-                                <td colspan="8">No Ansar Found to Send Offer</td>
+                                <td colspan="8">No Ansar is available to show</td>
                             </tr>
                             <tbody ng-if="errorLoad!=undefined" ng-bind-html="errorLoad"></tbody>
                             <tr ng-repeat="ansar in selectedAnsar" ng-hide="noAnsar&&errorLoad==undefined">

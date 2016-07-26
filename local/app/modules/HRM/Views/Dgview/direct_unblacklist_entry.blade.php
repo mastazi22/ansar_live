@@ -3,7 +3,7 @@
 {{--Time: 5:39 PM--}}
 
 @extends('template.master')
-@section('title','Direct Remove From Blacklist')
+@section('title','Remove Ansar from Blacklist')
 {{--@section('small_title','DG')--}}
 @section('breadcrumb')
     {!! Breadcrumbs::render('direct_unblack') !!}
@@ -66,15 +66,15 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label for="ansar_id" class="control-label">Ansar ID (Comes from Blacklist)</label>
-                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-model="ansarId" ng-change="makeQueue(ansarId)">
+                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="makeQueue(ansarId)">
                             </div>
                             <div class="form-group">
                                 <label for="unblack_date" class="control-label">Unblacking Date</label>
                                 <input type="text" name="unblack_date" id="unblack_date" class="form-control" ng-model="unblack_date">
                             </div>
                             <div class="form-group">
-                                <label for="unblack_comment" class="control-label">Comment for removing Block</label>
-                                {!! Form::textarea('unblack_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'unblack_comment', 'size' => '30x4', 'placeholder' => "Write any comment", 'ng-model' => 'unblack_comment')) !!}
+                                <label for="unblack_comment" class="control-label">Reason</label>
+                                {!! Form::textarea('unblack_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'unblack_comment', 'size' => '30x4', 'placeholder' => "Write Reason", 'ng-model' => 'unblack_comment')) !!}
                             </div>
                             <button id="unblack-for-dg" class="btn btn-primary" ng-disabled="!unblack_date||!unblack_comment||!ansarId"><img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16" style="margin-top: -2px">Remove Ansar from Blacklist</button>
                         </div>

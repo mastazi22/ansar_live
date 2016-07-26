@@ -65,8 +65,8 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label for="ansar_id" class="control-label">Ansar ID (comes from Panel)</label>
-                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-model="ansarId" ng-change="makeQueue(ansarId)">
+                                <label for="ansar_id" class="control-label">Ansar ID (Comes from Panel)</label>
+                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="makeQueue(ansarId)">
                             </div>
                             <div class="form-group">
                                 <label for="cancel_panel_date" class="control-label">Cancel Panel Date</label>
@@ -74,7 +74,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="cancel_panel_comment" class="control-label">Comment for Canceling Panel</label>
-                                {!! Form::textarea('cancel_panel_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'cancel_panel_comment', 'size' => '30x4', 'placeholder' => "Write any comment", 'ng-model' => 'cancel_panel_comment')) !!}
+                                {!! Form::textarea('cancel_panel_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'cancel_panel_comment', 'size' => '30x4', 'placeholder' => "Write Comment", 'ng-model' => 'cancel_panel_comment')) !!}
                             </div>
                             <button id="cancel-panel-for-dg" class="btn btn-primary" ng-disabled="!ansarDetail.ansar_name_eng||!cancel_panel_date||!ansarId||!cancel_panel_comment"><img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16" style="margin-top: -2px">Cancel Panel</button>
                         </div>

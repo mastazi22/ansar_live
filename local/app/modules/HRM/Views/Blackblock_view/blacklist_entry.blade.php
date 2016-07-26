@@ -3,7 +3,7 @@
 {{--Time: 11:28 AM--}}
 
 @extends('template.master')
-@section('title','Ansar Black List Entry')
+@section('title','Add Ansar in Blacklist')
 @section('breadcrumb')
     {!! Breadcrumbs::render('add_to_blacklist') !!}
 @endsection
@@ -60,7 +60,7 @@
                             <div class="form-group">
                                 <label for="ansar_id" class="control-label">Ansar ID</label>
                                 <input type="text" name="ansar_id" id="ansar_id" class="form-control"
-                                       placeholder="Enter Ansar Id" ng-model="ansarId"
+                                       placeholder="Enter Ansar ID" ng-model="ansarId"
                                        ng-change="loadAnsarDetail(ansarId)">
                             </div>
                             <div class="form-group">
@@ -69,8 +69,8 @@
                                        ng-model="black_date">
                             </div>
                             <div class="form-group">
-                                <label for="black_comment" class="control-label">Comment for Blacking</label>
-                                {!! Form::textarea('black_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'black_comment', 'size' => '30x4', 'placeholder' => "Write any comment", 'ng-model' => 'black_comment')) !!}
+                                <label for="black_comment" class="control-label">Reason</label>
+                                {!! Form::textarea('black_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'black_comment', 'size' => '30x4', 'placeholder' => "Write Reason", 'ng-model' => 'black_comment')) !!}
                             </div>
                             <button id="black-ansar" class="btn btn-primary"
                                     ng-disabled="!black_date||!ansarId||!black_comment"><img
