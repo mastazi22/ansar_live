@@ -180,7 +180,7 @@
                             <tbody>
                             <tr ng-if="kpis.length==0">
                                 <td colspan="8" class="warning no-ansar">
-                                    No kpi available to see
+                                    No KPI is available to show
                                 </td>
                             </tr>
                             <tr ng-if="kpis.length>0" ng-repeat="a in kpis">

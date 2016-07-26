@@ -44,7 +44,7 @@ Breadcrumbs::register('new_kpi', function($breadcrumbs) {
 });
 Breadcrumbs::register('kpi_edit', function($breadcrumbs,$id) {
     $breadcrumbs->parent('kpi_view');
-    $breadcrumbs->push('KPI Update', URL::route('Kpi_edit',['id'=>$id]));
+    $breadcrumbs->push('Edit KPI Information', URL::route('kpi-edit',['id'=>$id]));
 });
 Breadcrumbs::register('ansar_withdraw_view', function($breadcrumbs) {
     $breadcrumbs->parent('kpi');
@@ -77,6 +77,10 @@ Breadcrumbs::register('kpi_withdraw_cancel', function($breadcrumbs) {
 Breadcrumbs::register('inactive_kpi_list', function($breadcrumbs) {
     $breadcrumbs->parent('kpi');
     $breadcrumbs->push('Inactive KPI List', URL::route('inactive_kpi_view'));
+});
+Breadcrumbs::register('kpi_withdrawal_date_edit_form', function($breadcrumbs, $id) {
+    $breadcrumbs->parent('withdrawn_kpi_list');
+    $breadcrumbs->push('KPI Withdrawal Date Edit', URL::route('withdraw-date-edit',['id'=>$id]));
 });
 //Personal Info
 Breadcrumbs::register('pi', function($breadcrumbs) {

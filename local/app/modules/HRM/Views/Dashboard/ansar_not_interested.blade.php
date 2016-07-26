@@ -113,10 +113,6 @@
         })
     </script>
     <div ng-controller="AnsarNotInterestedListController">
-<<<<<<< HEAD
-=======
-
->>>>>>> 88253777a8b1a29bb47de5d1f8398aa38c61d920
         <section class="content">
             <div class="box box-solid">
                 <div class="overlay" ng-if="allLoading">

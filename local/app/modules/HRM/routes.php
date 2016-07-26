@@ -307,9 +307,9 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/kpi_view', ['as' => 'kpi_view', 'uses' => 'KpiController@kpiView']);
         Route::get('/kpi_view_details', ['as'=>'kpi_view_details','uses'=>'KpiController@kpiViewDetails']);
         Route::post('/save-kpi', ['as'=>'save-kpi','uses'=>'KpiController@saveKpiInfo']);
-        Route::get('/kpi-delete/{id}', ['as' => 'kpi_delete', 'uses' => 'KpiController@delete']);
-        Route::get('/kpi-edit/{id}', ['as' => 'Kpi_edit', 'uses' => 'KpiController@edit']);
-        Route::get('/kpi_verify/{id}', ['as' => 'kpi_verify', 'uses' => 'KpiController@kpiVerify']);
+        Route::get('/kpi-delete/{id}', ['as' => 'kpi_delete', 'uses' => 'KpiController@delete'])->where('id','[0-9]+');
+        Route::get('/kpi-edit/{id}', ['as' => 'Kpi_edit', 'uses' => 'KpiController@edit'])->where('id','[0-9]+');
+        Route::get('/kpi_verify/{id}', ['as' => 'kpi_verify', 'uses' => 'KpiController@kpiVerify'])->where('id','[0-9]+');
 
         Route::get('/ansar-withdraw-view', ['as' => 'ansar-withdraw-view', 'uses' => 'KpiController@ansarWithdrawView']);
         Route::get('/ansar_list_for_withdraw', ['as' => 'ansar_list_for_withdraw', 'uses' => 'KpiController@ansarListForWithdraw']);
@@ -333,12 +333,12 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 
         Route::get('/withdrawn_kpi_view', ['as' => 'withdrawn_kpi_view', 'uses' => 'KpiController@withdrawnKpiView']);
         Route::get('/withdrawn_kpi_list', ['as' => 'withdrawn_kpi_list', 'uses' => 'KpiController@withdrawnKpiList']);
-        Route::get('/withdraw-date-edit/{id}', ['as' => 'withdraw-date-edit', 'uses' => 'KpiController@kpiWithdrawDateEdit']);
+        Route::get('/withdraw-date-edit/{id}', ['as' => 'withdraw-date-edit', 'uses' => 'KpiController@kpiWithdrawDateEdit'])->where('id','[0-9]+');
         Route::post('/withdraw-date-update', ['as' => 'withdraw-date-update', 'uses' => 'KpiController@kpiWithdrawDateUpdate']);
 
         Route::get('/inactive_kpi_view', ['as' => 'inactive_kpi_view', 'uses' => 'KpiController@inactiveKpiView']);
         Route::get('/inactive_kpi_list', ['as' => 'inactive_kpi_list', 'uses' => 'KpiController@inactiveKpiList']);
-        Route::get('/active_kpi/{id}', ['as' => 'active_kpi', 'uses' => 'KpiController@activeKpi']);
+        Route::get('/active_kpi/{id}', ['as' => 'active_kpi', 'uses' => 'KpiController@activeKpi'])->where('id','[0-9]+');
 
         Route::get('/withdrawn_kpi_name', ['as'=>'withdrawn_kpi_name','uses'=>'KpiController@withdrawnKpiName']);
         Route::get('/kpi_withdraw_cancel_view', ['as' => 'kpi_withdraw_cancel_view', 'uses' => 'KpiController@kpiWithdrawCancelView']);

@@ -544,28 +544,42 @@ class KpiController extends Controller
     {
         $kpi_details = KpiDetailsModel::where('kpi_id', $id)->first();
         $kpi_info = KpiGeneralModel::find($id);
-        return view('HRM::Kpi.kpi_withdraw_date_edit', ['id' => $id])->with(['kpi_info' => $kpi_info, 'kpi_details' => $kpi_details]);
+        return view('HRM::Kpi.kpi_withdraw_date_edit', ['id' => $id])->with(['kpi_info' => $kpi_info, 'kpi_details' => $kpi_details, 'id'=> $id]);
     }
 
     public function kpiWithdrawDateUpdate(Request $request)
     {
         $id = $request->input('id');
+        $withdraw_date=$request->input('withdraw-date');
+        $rules = array(
+            'id' => 'required|numeric|min:0|integer',
+            'withdraw-date' => ['required','regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+        );
+        $messages = array(
+            'withdraw-date.required' => 'Withdraw Date is required.',
+            'withdraw-date.regex' => 'Withdraw Date format is invalid',
+        );
+        $validation = Validator::make($request->all(), $rules, $messages);
 
-        DB::beginTransaction();
-        try {
-            $kpi_details = KpiDetailsModel::where('kpi_id', $id)->first();
-            $modified_activation_date = Carbon::parse($request->input('withdraw-date'))->format('Y-m-d');
-            $kpi_details->kpi_withdraw_date = $modified_activation_date;
+        if ($validation->fails()) {
+            return Redirect::back()->withInput(Input::all())->withErrors($validation);
+        }else{
+            DB::beginTransaction();
+            try {
+                $kpi_details = KpiDetailsModel::where('kpi_id', $id)->first();
+                $modified_activation_date = Carbon::parse($withdraw_date)->format('Y-m-d');
+                $kpi_details->kpi_withdraw_date = $modified_activation_date;
 
-            $kpi_details->save();
-            DB::commit();
+                $kpi_details->save();
+                DB::commit();
 //            Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'EDIT KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
-        } catch
-        (Exception $e) {
-            DB::rollback();
-//            return Response::json(['status' => false, 'message' => "Date not Updated"]);
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return Redirect::route('withdrawn_kpi_view')->with('error_message', 'KPI withdraw date has not been updated');
+            }
+            return Redirect::route('withdrawn_kpi_view')->with('success_message', 'KPI withdraw date is updated successfully');
         }
-        return Redirect::route('withdrawn_kpi_view')->with('success_message', 'KPI withdraw date is updated successfully');
     }
 
     public function inactiveKpiView()
