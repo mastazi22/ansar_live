@@ -44,7 +44,7 @@ Breadcrumbs::register('new_kpi', function($breadcrumbs) {
 });
 Breadcrumbs::register('kpi_edit', function($breadcrumbs,$id) {
     $breadcrumbs->parent('kpi_view');
-    $breadcrumbs->push('KPI Update', URL::route('Kpi_edit',['id'=>$id]));
+    $breadcrumbs->push('Edit KPI Information', URL::route('Kpi_edit',['id'=>$id]));
 });
 Breadcrumbs::register('ansar_withdraw_view', function($breadcrumbs) {
     $breadcrumbs->parent('kpi');
@@ -78,6 +78,10 @@ Breadcrumbs::register('inactive_kpi_list', function($breadcrumbs) {
     $breadcrumbs->parent('kpi');
     $breadcrumbs->push('Inactive KPI List', URL::route('inactive_kpi_view'));
 });
+Breadcrumbs::register('kpi_withdrawal_date_edit_form', function($breadcrumbs, $id) {
+    $breadcrumbs->parent('withdrawn_kpi_list');
+    $breadcrumbs->push('KPI Withdrawal Date Edit', URL::route('withdraw-date-edit',['id'=>$id]));
+});
 //Personal Info
 Breadcrumbs::register('pi', function($breadcrumbs) {
     $breadcrumbs->parent('hrm');
@@ -85,7 +89,7 @@ Breadcrumbs::register('pi', function($breadcrumbs) {
 });
 Breadcrumbs::register('entry_list', function($breadcrumbs) {
     $breadcrumbs->parent('pi');
-    $breadcrumbs->push('Entry List', URL::route('anser_list'));
+    $breadcrumbs->push('Entry Information', URL::route('anser_list'));
 });
 Breadcrumbs::register('entry_report', function($breadcrumbs,$id) {
     $breadcrumbs->parent('entry_list');
@@ -94,19 +98,19 @@ Breadcrumbs::register('entry_report', function($breadcrumbs,$id) {
 
 Breadcrumbs::register('entryform', function($breadcrumbs) {
     $breadcrumbs->parent('entry_list');
-    $breadcrumbs->push('Add new entry', URL::route('ansar_registration'));
+    $breadcrumbs->push('Entry Form', URL::route('ansar_registration'));
 });
 Breadcrumbs::register('entry_edit', function($breadcrumbs,$id) {
     $breadcrumbs->parent('entry_list');
-    $breadcrumbs->push('Edit entry', URL::route('editentry',['ansarid'=>$id]));
+    $breadcrumbs->push('Edit Ansar Information', URL::route('editentry',['ansarid'=>$id]));
 });
 Breadcrumbs::register('chunk_verification', function($breadcrumbs) {
     $breadcrumbs->parent('pi');
-    $breadcrumbs->push('Verify Entry(Chunk)', URL::route('chunk_verify'));
+    $breadcrumbs->push('Verify Entry (Chunk)', URL::route('chunk_verify'));
 });
 Breadcrumbs::register('draft_list', function($breadcrumbs) {
     $breadcrumbs->parent('pi');
-    $breadcrumbs->push('Entry Draft List', URL::route('entry_draft'));
+    $breadcrumbs->push('Draft Entry List', URL::route('entry_draft'));
 });
 
 Breadcrumbs::register('draft_edit', function($breadcrumbs,$id) {
@@ -115,7 +119,7 @@ Breadcrumbs::register('draft_edit', function($breadcrumbs,$id) {
 });
 Breadcrumbs::register('orginal_info', function($breadcrumbs) {
     $breadcrumbs->parent('pi');
-    $breadcrumbs->push('Orginal Info', URL::route('orginal_info'));
+    $breadcrumbs->push('Original Information', URL::route('orginal_info'));
 });
 
 Breadcrumbs::register('entryadvancedsearch', function($breadcrumbs) {

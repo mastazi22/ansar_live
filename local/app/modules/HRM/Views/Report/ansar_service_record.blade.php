@@ -128,7 +128,7 @@
                             <div class="col-md-6 col-sm-12 col-xs-12">
                                 <div class="form-group">
                                     {{--<label class="control-label">Enter a ansar id</label>--}}
-                                    <input type="text" ng-model="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-keypress="loadAnsarDetailOnKeyPress(ansar_id,$event)">
+                                    <input type="text" ng-model="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-keypress="loadAnsarDetailOnKeyPress(ansar_id,$event)">
                                     <span class="text-danger" ng-if="errorFound==1"><p>[[errorMessage]]</p></span>
                                 </div>
                             </div>
@@ -143,7 +143,7 @@
                             <h3 style="text-align: center">Ansar Service Record&nbsp;<a href="#" id="print-report"><span class="glyphicon glyphicon-print"></span></a></h3>
 
                             <div ng-if="!ansarDetail.apid||errorFound==1">
-                                <h3 style="text-align: center">No Ansar Found</h3>
+                                <h4 style="text-align: center">No Ansar is available to show</h4>
                             </div>
                             <div ng-if="ansarDetail.apid">
                                 <div class="form-group">

@@ -46,8 +46,8 @@
             <div class="box-body">
                 <form method="post">
                     <div class="center-search">
-                        <input ng-keypress="fullInfo($event,Id)" ng-model="Id" type="text" placeholder="Enter ansar ID to see orginal info">
-                        <button ng-click="fullInfo($event,Id)" class="btn btn-success btn-lg" style="display: block;margin: 20px auto;">View Orginal Info</button>
+                        <input ng-keypress="fullInfo($event,Id)" ng-model="Id" type="text" placeholder="Enter Ansar ID to see Original Information">
+                        <button ng-click="fullInfo($event,Id)" class="btn btn-success btn-lg" style="display: block;margin: 20px auto;">View Original Information</button>
                     </div>
                 </form>
                 <div ng-show="searchedAnsar.yes == 'yes'" class="fullinfo">

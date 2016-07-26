@@ -230,7 +230,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <button class="pull-right btn btn-info" id="withdraw-guard-confirmation" open-hide-modal disabled>
+                    <button class="pull-right btn btn-primary" id="withdraw-guard-confirmation" open-hide-modal disabled>
                         Withdraw Ansar
                     </button>
                 </div>

@@ -376,8 +376,8 @@
                                 </tr>
                             </table>
                         </div>
-                        <button ng-click="advancedSearchSubmit()" class="default pull-right" style="margin-right:6px;">
-                            submit
+                        <button ng-click="advancedSearchSubmit()" class="btn btn-primary pull-right" style="margin-right:6px;">
+                            Search
                         </button>
                         <!--<button  class="default pull-right" style="margin-right:6px;">submit</button>-->
 

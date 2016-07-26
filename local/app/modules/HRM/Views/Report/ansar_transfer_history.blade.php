@@ -118,7 +118,7 @@
                                     </tr>
                                     <tr ng-show="ansars.length==0">
                                         <td colspan="7" class="warning">
-                                            No ansar found
+                                            No Ansar is available to show
                                         </td>
                                     </tr>
                                     <tbody ng-if="errorFound==1" ng-bind-html="ansars"></tbody>

@@ -25,7 +25,7 @@ class LetterController extends Controller
         $type = Input::get('type');
         $unit = Input::get('unit');
         $rules = [
-            'id' => 'regex:/[^<>"]/',
+            'id' => 'regex:/[^<>"]+$/',
             'type' => 'regex:/^[A-Z]+$/',
             'unit' => 'numeric|regex:/^[0-9]+$/',
         ];

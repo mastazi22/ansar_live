@@ -113,10 +113,6 @@
         })
     </script>
     <div ng-controller="AnsarServiceEndedListController">
-<<<<<<< HEAD
-=======
-
->>>>>>> 88253777a8b1a29bb47de5d1f8398aa38c61d920
         <section class="content">
             <div class="box box-solid">
                 <div class="overlay" ng-if="allLoading">
@@ -150,11 +146,7 @@
                             </div>
                         </div>
                     </div>
-<<<<<<< HEAD
                     <h4>Total Ansars: [[total.toLocaleString()]]</h4>
-=======
-                    <h4>Total Ansar: [[total.toLocaleString()]]</h4>
->>>>>>> 88253777a8b1a29bb47de5d1f8398aa38c61d920
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr>

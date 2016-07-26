@@ -69,9 +69,9 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label class="control-label">Enter a ansar id</label>
+                                <label class="control-label">Enter Ansar ID</label>
                                 <input type="text" class="form-control" ng-model="ansarId"
-                                       placeholder="Ansar id">
+                                       placeholder="Ansar ID">
                                 <p class="text text-danger" ng-if="errors.ansar_id!=undefined">[[errors.ansar_id[0] ]]</p>
                             </div>
                             <div class="form-group">
@@ -93,7 +93,7 @@
                             </span>
                             </div>
                             <div class="form-group">
-                                <button ng-click="generateIdCard()" class="btn btn-info">Generate Id Card</button>
+                                <button ng-click="generateIdCard()" class="btn btn-info">Generate ID Card</button>
                             </div>
                         </div>
                         <div class="col-sm-6 col-sm-offset-1" style="overflow: auto;z-index: 5" ng-bind-html="idCard">

@@ -162,7 +162,7 @@
                             </tr>
                             <tr ng-show="ansars.length==0">
                                 <td colspan="10" class="warning no-ansar">
-                                    No available available to see
+                                    No Ansar is available to show
                                 </td>
                             </tr>
                             <tr ng-show="ansars.length>0" ng-repeat="a in ansars">

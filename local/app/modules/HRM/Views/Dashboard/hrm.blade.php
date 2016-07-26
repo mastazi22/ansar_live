@@ -31,7 +31,7 @@
                 $scope.loadingAnsar = false;
             }, function (response) {
                 $scope.loadingAnsar = false;
-                switch (response.status){
+                switch (response.status) {
                     case 404:
                         response.data = "Not found(404)";
                         break;
@@ -40,16 +40,16 @@
                         break;
                 }
                 $scope.allAnsar = {
-                    totalAnsar:response.data,
-                    totalPanel:response.data,
-                    totalNotVerified:response.data,
-                    totalFree:response.data,
-                    totalEmbodied:response.data,
-                    totalOffered:response.data,
-                    totalFreeze:response.data,
-                    totalBlockList:response.data,
-                    totalBlackList:response.data,
-                    totalRest:response.data,
+                    totalAnsar: response.data,
+                    totalPanel: response.data,
+                    totalNotVerified: response.data,
+                    totalFree: response.data,
+                    totalEmbodied: response.data,
+                    totalOffered: response.data,
+                    totalFreeze: response.data,
+                    totalBlockList: response.data,
+                    totalBlackList: response.data,
+                    totalRest: response.data,
                 }
             })
         }
@@ -67,7 +67,7 @@
 //                $scope.loadingAnsar = false;
             }, function (response) {
 //                $scope.loadingAnsar = false;
-                switch (response.status){
+                switch (response.status) {
                     case 404:
                         response.data = "Not found(404)";
                         break;
@@ -76,16 +76,16 @@
                         break;
                 }
                 $scope.recentAnsar = {
-                    recentAnsar:response.data,
-                    recentPanel:response.data,
-                    recentNotVerified:response.data,
-                    recentFree:response.data,
-                    recentEmbodied:response.data,
-                    recentFreeze:response.data,
-                    recentBlockList:response.data,
-                    recentBlackList:response.data,
-                    recentRest:response.data,
-                    recentOffered:response.data
+                    recentAnsar: response.data,
+                    recentPanel: response.data,
+                    recentNotVerified: response.data,
+                    recentFree: response.data,
+                    recentEmbodied: response.data,
+                    recentFreeze: response.data,
+                    recentBlockList: response.data,
+                    recentBlackList: response.data,
+                    recentRest: response.data,
+                    recentOffered: response.data
 
                 }
             })
@@ -104,7 +104,7 @@
                 $scope.loadingProgressInfo = false;
             }, function (response) {
                 $scope.loadingProgressInfo = false;
-                switch (response.status){
+                switch (response.status) {
                     case 404:
                         response.data = "Not found(404)";
                         break;
@@ -113,9 +113,9 @@
                         break;
                 }
                 $scope.progressInfo = {
-                    totalServiceEndedInThreeYears:response.data,
-                    totalAnsarReachedFiftyYearsOfAge:response.data,
-                    totalNotInterestedMembersUptoTenTimes:response.data,
+                    totalServiceEndedInThreeYears: response.data,
+                    totalAnsarReachedFiftyYearsOfAge: response.data,
+                    totalNotInterestedMembersUptoTenTimes: response.data,
 
                 }
             })
@@ -139,7 +139,7 @@
         {{--})--}}
         {{--}--}}
         {{--$scope.graphDisembodimentData();--}}
-        function formatNumber(data){
+        function formatNumber(data) {
             Object.keys(data).forEach(function (key) {
                 data[key] = data[key].toLocaleString();
             })
@@ -216,7 +216,8 @@
             <div class="info-box bg-aqua"><span class="info-box-icon"><img src="{{asset('dist/img/not_verified.png')}}"></span>
 
                 <div class="info-box-content">
-                    <a href="{{URL::to('HRM/show_ansar_list')}}/not_verified_ansar" class="btn-link" style="color: #FFFFFF !important;">
+                    <a href="{{URL::to('HRM/show_ansar_list')}}/not_verified_ansar" class="btn-link"
+                       style="color: #FFFFFF !important;">
                         <span class="info-box-text">Total Unverified</span>
                     <span class="info-box-number" style="font-weight: normal">[[allAnsar.totalNotVerified]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
@@ -258,7 +259,7 @@
                        class="btn-link">
                     <span class="progress-description" style="color:#FFFFFF">
                        Recent-[[recentAnsar.recentOffered]]
-                        </span>
+                    </span>
                     </a>
                 </div>
                 <!-- /.info-box-content -->
@@ -504,7 +505,8 @@
 
                         <div class="label-hrm-calculation">
                                 <span class="info-box-text"
-                                      style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial"><a style="font-size: 18px"
+                                      style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial"><a
+                                            style="font-size: 18px"
                                             href="{{URL::to('HRM/service_ended_in_three_years')}}/[[progressInfo.totalServiceEndedInThreeYears]]"
                                             class="btn-link">[[progressInfo.totalServiceEndedInThreeYears]]</a><img
                                             src="{{asset('dist/img/facebook.gif')}}" width="20"
@@ -521,8 +523,8 @@
 
                         <div class="label-hrm-calculation">
                             <span class="info-box-text" style="color: #000000"><a style="font-size: 18px"
-                                        href="{{URL::to('HRM/ansar_reached_fifty_years')}}/[[progressInfo.totalAnsarReachedFiftyYearsOfAge]]"
-                                        class="btn-link">[[progressInfo.totalAnsarReachedFiftyYearsOfAge]]</a><img
+                                                                                  href="{{URL::to('HRM/ansar_reached_fifty_years')}}/[[progressInfo.totalAnsarReachedFiftyYearsOfAge]]"
+                                                                                  class="btn-link">[[progressInfo.totalAnsarReachedFiftyYearsOfAge]]</a><img
                                         src="{{asset('dist/img/facebook.gif')}}" width="20"
                                         ng-show="loadingProgressInfo"></span>
                         </div>
@@ -536,8 +538,8 @@
 
                         <div class="label-hrm-calculation">
                             <span class="info-box-text" style="color: #000000"><a style="font-size: 18px"
-                                        href="{{URL::to('HRM/ansar_not_interested')}}/[[progressInfo.totalNotInterestedMembersUptoTenTimes]]"
-                                        class="btn-link">[[progressInfo.totalNotInterestedMembersUptoTenTimes]]</a><img
+                                                                                  href="{{URL::to('HRM/ansar_not_interested')}}/[[progressInfo.totalNotInterestedMembersUptoTenTimes]]"
+                                                                                  class="btn-link">[[progressInfo.totalNotInterestedMembersUptoTenTimes]]</a><img
                                         src="{{asset('dist/img/facebook.gif')}}" width="20"
                                         ng-show="loadingProgressInfo"></span>
                         </div>

@@ -109,7 +109,7 @@
                     $scope.loadTotal()
                 })
             }
-            $scope.dateConvert=function(date){
+            $scope.dateConvert = function (date) {
                 return (moment(date).format('DD-MMM-Y'));
             }
             $scope.loadTotal();
@@ -121,6 +121,14 @@
                 <div class="alert alert-success">
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                     <span class="glyphicon glyphicon-ok"></span> {{Session::get('success_message')}}
+                </div>
+            </div>
+        @endif
+        @if(Session::has('eroor_message'))
+            <div style="padding: 10px 20px 0 20px;">
+                <div class="alert alert-danger">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    {{Session::get('error_message')}}
                 </div>
             </div>
         @endif
@@ -137,7 +145,8 @@
                                 <label class="control-label">Select a Unit&nbsp;
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
-                                <select class="form-control" ng-model="selectedDistrict" ng-disabled="loadingDistrict||loadingThana"
+                                <select class="form-control" ng-model="selectedDistrict"
+                                        ng-disabled="loadingDistrict||loadingThana"
                                         ng-change="loadThana(selectedDistrict)">
                                     <option value="all">All</option>
                                     <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_eng]]
@@ -174,7 +183,7 @@
                             <tbody>
                             <tr ng-if="kpis.length==0">
                                 <td colspan="8" class="warning no-ansar">
-                                    No kpi available to see
+                                    No KPI is available to show
                                 </td>
                             </tr>
                             <tr ng-if="kpis.length>0" ng-repeat="a in kpis">

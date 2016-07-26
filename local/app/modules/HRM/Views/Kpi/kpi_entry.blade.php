@@ -84,7 +84,7 @@
                                 </ul>
                                 <div class="tab-content">
                                     <div id="kpi_general" class="tab-pane fade in active">
-                                        <h3 style="text-align: center">General KPI Form</h3>
+                                        <h3 style="text-align: center">General Information of KPI</h3>
                                         <div class="box-body">
                                             <div class="form-group required">
                                                 {!! Form::label('kpi_name', 'KPI Name:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
@@ -162,13 +162,13 @@
                                                     {!! Form::textarea('kpi_contact_no', $value = null, $attributes = array('class' => 'form-control', 'id' => 'kpi_contact_no', 'size' => '30x4', 'placeholder' => "Write Contact No and Person Info")) !!}
                                                 </div>
                                             </div>
-                                            <button style="background: #5bc0de; border-color: #46b8da; color: #FFFFFF" class="btn btn-info pull-right" id="nexttab" type="button">Next Page</button>
+                                            <button style="background: #5bc0de; border-color: #46b8da; color: #FFFFFF" class="btn btn-primary pull-right" id="nexttab" type="button">Next Page</button>
                                         </div>
                                         {{--{!! Form::close() !!}--}}
                                     </div>
                                     <div id="kpi_details" class="tab-pane fade">
                                         <div class="box-body">
-                                            <h3 style="text-align: center">Details KPI Form</h3>
+                                            <h3 style="text-align: center">Details Information of KPI</h3>
                                             <div class="box-body">
                                                 <div class="form-group required">
                                                     {!! Form::label('total_ansar_request', 'Total Ansar Request:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
@@ -260,8 +260,8 @@
                                                         {!! Form::text('no_of_ansar', $value = null, $attributes = array('class' => 'form-control', 'id' => 'no_of_ansar', 'placeholder' => 'Enter Number of Ansar')) !!}
                                                     </div>
                                                 </div>
-                                                <button style="background: #5bc0de; border-color: #46b8da; color: #FFFFFF" class="btn btn-info" id="prevtab" type="button">Previous Page</button>
-                                                <button type="submit" id="next-button" class="btn btn-info pull-right"
+                                                <button style="background: #5bc0de; border-color: #46b8da; color: #FFFFFF" class="btn btn-primary" id="prevtab" type="button">Previous Page</button>
+                                                <button type="submit" id="next-button" class="btn btn-primary pull-right"
                                                         ng-disabled="kpiForm.kpi_name.$error.required||kpiForm.division_name_eng.$error.required||kpiForm.unit_name_eng.$error.required||kpiForm.thana_name_eng.$error.required||kpiForm.total_ansar_request.$error.required||kpiForm.total_ansar_given.$error.required||kpiForm.with_weapon.$error.required||kpiForm.activation_date.$error.required">
                                                     Save KPI Information
                                                 </button>

@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','Verify Entry(Chunk)')
+@section('title','Verify Entry (Chunk)')
 {{--@section('small_title','Chunk verification')--}}
 @section('breadcrumb')
     {!! Breadcrumbs::render('chunk_verification') !!}
@@ -146,7 +146,7 @@
                             <table class="table table-bordered">
                                 <tr>
                                     <th>SL. No</th>
-                                    <th>Ansar Id</th>
+                                    <th>Ansar ID</th>
                                     <th>Ansar Name</th>
                                     <th>Ansar District</th>
                                     <th>Ansar Thana</th>

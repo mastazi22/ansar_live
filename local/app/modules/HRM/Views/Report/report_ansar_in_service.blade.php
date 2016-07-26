@@ -127,7 +127,7 @@
                                 <div class="form-group">
                                     {{--<label class="control-label">Enter a ansar id</label>--}}
                                     <input type="text" class="form-control" ng-keypress="loadAnsarServiceRecord($event)"
-                                           ng-model="ansarId" placeholder="Enter Ansar id">
+                                           ng-model="ansarId" placeholder="Enter Ansar ID">
                                     <span class="text-danger" ng-if="errorFound==1"><p>[[errorMessage]]</p></span>
                                 </div>
                             </div>
@@ -187,7 +187,7 @@
                                     <th>[[report.current.dr]]</th>
                                 </tr>
                                 <tr ng-if="!current" class="warning">
-                                    <td colspan="7">No information Found</td>
+                                    <td colspan="7">No Ansar is available to show</td>
                                 </tr>
                                 <tr ng-if="current">
                                     <td>[[dateConvert(current.joining_date)]]</td>
@@ -215,7 +215,7 @@
                                     <th>[[report.past.dr]]</th>
                                 </tr>
                                 <tr ng-if="past.length<=0" class="warning">
-                                    <td colspan="8">No Information found</td>
+                                    <td colspan="8">No Ansar is available to show</td>
                                 </tr>
                                 <tr ng-if="past.length>0" ng-repeat="p in past">
                                     <td>[[$index+1]]</td>
