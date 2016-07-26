@@ -64,23 +64,24 @@
             $(".navbar-custom-menu").resize(function () {
                 alert(2222);
             })
-            function resizeMenu(){
-                console.log({width:$("#ncm").outerWidth(true)})
+            function resizeMenu() {
+                console.log({width: $("#ncm").outerWidth(true)})
                 var w = $("#resize_menu").width();
                 var cw = 0;
                 $("#resize_menu").children().not('h4').each(function (ch) {
                     cw += $(this).outerWidth(true);
                 })
-                $("#resize_menu").children('h4').width(w-cw-20);
+                $("#resize_menu").children('h4').width(w - cw - 20);
             }
+
             var lastWidth = $("#ncm").outerWidth(true);
             setInterval(function () {
                 var v = $("#ncm");
-                if(lastWidth==v.outerWidth(true)) return;
-                lastWidth=v.outerWidth(true);
-                console.log({change:lastWidth})
+                if (lastWidth == v.outerWidth(true)) return;
+                lastWidth = v.outerWidth(true);
+                console.log({change: lastWidth})
                 resizeMenu();
-            },100)
+            }, 100)
         });
 
         var GlobalApp = angular.module('GlobalApp', ['angular.filter'], function ($interpolateProvider, $httpProvider) {
@@ -88,7 +89,7 @@
             $interpolateProvider.endSymbol(']]');
             $httpProvider.useApplyAsync(true)
             $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
-            $httpProvider.interceptors.push(function ($q) {
+            $httpProvider.interceptors.push(function ($q,$injector) {
                 return {
                     response: function (response) {
                         if (response.data.status == 'logout') {
@@ -103,18 +104,32 @@
                     responseError: function (response) {
                         console.log(response);
 //                        var a = response;
-                        switch (response.status){
+                        switch (response.status) {
                             case 404:
                                 response.data = "Not found(404)"
                                 break;
                             case 500:
-                                response.data = "Internal server error(500)"
-                                break;
+                                var d = $q.defer();
+                                retryHttpRequest(response.config, d);
+                                return d.promise;
                         }
                         return $q.reject(response);
                     }
                 }
+                function retryHttpRequest(config, deferred) {
+                    function successCallback(response) {
+                        deferred.resolve(response);
+                    }
+
+                    function errorCallback(response) {
+                        deferred.reject(response);
+                    }
+
+                    var $http = $injector.get('$http');
+                    $http(config).then(successCallback, errorCallback);
+                }
             })
+
         });
 
         GlobalApp.controller('MenuController', function ($scope) {
@@ -149,6 +164,7 @@
                 <span class="sr-only">Toggle navigation</span>
             </a>
             <h4 class="header-title">@yield('title')</h4>
+
             <div id="ncm" class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
                     @if(auth()->user()->type==11)
@@ -165,7 +181,8 @@
                                     <ul class="menu">
                                         @foreach(Notification::getNotification() as $notification)
                                             <li>
-                                                <a href="{{URL::to((request()->route()?request()->route()->getPrefix():'')."/change_password/".$notification->user_name)}}" style="white-space: normal !important;overflow: auto !important;text-overflow: initial !important;">
+                                                <a href="{{URL::to((request()->route()?request()->route()->getPrefix():'')."/change_password/".$notification->user_name)}}"
+                                                   style="white-space: normal !important;overflow: auto !important;text-overflow: initial !important;">
                                                     <i class="fa fa-users text-aqua"></i>
                                                     <span style="color: #000000;font-size: 1.3em;">{{$notification->user_name}}</span>
                                                     forgets password.
@@ -174,39 +191,41 @@
                                         @endforeach
                                     </ul>
                                 </li>
-                                <li class="footer"><a href="{{URL::to((request()->route()?request()->route()->getPrefix():'')."/all_notification")}}">View all</a></li>
+                                <li class="footer"><a
+                                            href="{{URL::to((request()->route()?request()->route()->getPrefix():'')."/all_notification")}}">View
+                                        all</a></li>
                             </ul>
                         </li>
-                        @endif
-                        <li class="dropdown user user-menu"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <img
-                                        src="{{action('UserController@getImage',['file'=>auth()->user()->userProfile->profile_image])}}"
-                                        class="user-image" alt="User Image"/>
-                                <span class="hidden-xs">{{Auth::user()->userProfile->first_name.' '.Auth::user()->userProfile->last_name}}</span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <!-- User image -->
-                                <li class="user-header">
-                                    <img src="{{action('UserController@getImage',['file'=>auth()->user()->userProfile->profile_image])}}"
-                                         class="img-circle" alt="User Image"/>
+                    @endif
+                    <li class="dropdown user user-menu"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img
+                                    src="{{action('UserController@getImage',['file'=>auth()->user()->userProfile->profile_image])}}"
+                                    class="user-image" alt="User Image"/>
+                            <span class="hidden-xs">{{Auth::user()->userProfile->first_name.' '.Auth::user()->userProfile->last_name}}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- User image -->
+                            <li class="user-header">
+                                <img src="{{action('UserController@getImage',['file'=>auth()->user()->userProfile->profile_image])}}"
+                                     class="img-circle" alt="User Image"/>
 
-                                    <p style="color: #666666">
-                                        {{Auth::user()->userProfile->first_name.' '.Auth::user()->userProfile->last_name}}
-                                        <br>
-                                        {{Auth::user()->userProfile->rank}}
-                                        {{--<small>Member since Nov. 2012</small>--}}
-                                    </p>
-                                </li>
-                                <!-- Menu Footer-->
-                                <li class="user-footer">
-                                    <div class="pull-left"><a
-                                                href="{{request()->route()?(request()->route()->getPrefix()?URL::to(request()->route()->getPrefix()."/view_profile",['id'=>Auth::user()->id]):URL::to('view_profile',['id'=>Auth::user()->id])):URL::to('view_profile',['id'=>Auth::user()->id])}}"
-                                                class="btn btn-default btn-flat">Profile</a></div>
-                                    <div class="pull-right"><a href="{{action('UserController@logout')}}"
-                                                               class="btn btn-default btn-flat">Sign out</a></div>
-                                </li>
-                            </ul>
-                        </li>
+                                <p style="color: #666666">
+                                    {{Auth::user()->userProfile->first_name.' '.Auth::user()->userProfile->last_name}}
+                                    <br>
+                                    {{Auth::user()->userProfile->rank}}
+                                    {{--<small>Member since Nov. 2012</small>--}}
+                                </p>
+                            </li>
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+                                <div class="pull-left"><a
+                                            href="{{request()->route()?(request()->route()->getPrefix()?URL::to(request()->route()->getPrefix()."/view_profile",['id'=>Auth::user()->id]):URL::to('view_profile',['id'=>Auth::user()->id])):URL::to('view_profile',['id'=>Auth::user()->id])}}"
+                                            class="btn btn-default btn-flat">Profile</a></div>
+                                <div class="pull-right"><a href="{{action('UserController@logout')}}"
+                                                           class="btn btn-default btn-flat">Sign out</a></div>
+                            </li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </nav>
@@ -238,37 +257,37 @@
         <strong>2015 &copy; <a href="#">Ansar & VDP</a></strong> All rights reserved.
     </footer>
 
-<script>
-    $(document).ready(function (e) {
-        var url = '{{request()->url()}}'
-        var p = $('a[href="'+url+'"]');
-        if(p.length>0) {
-            //console.log({beforeurl:$.cookie('ftt')})
-            $.cookie('ftt', null);
-            $.cookie('ftt', url);
+    <script>
+        $(document).ready(function (e) {
+            var url = '{{request()->url()}}'
+            var p = $('a[href="' + url + '"]');
+            if (p.length > 0) {
+                //console.log({beforeurl:$.cookie('ftt')})
+                $.cookie('ftt', null);
+                $.cookie('ftt', url);
 
-            console.log({afterurl:$.cookie()})
-            //console.log({afterurl:url})
-        }
-        else{
-            var s = $.cookie();
-            p = $('a[href="'+ s.ftt+'"]')
-            console.log($.cookie())
-            console.log({sss: s.ftt})
-        }
-        //alert(p.text())
-        if(p.parents('.sidebar-menu').length>0) {
-            p.parents('li').eq(0).parents('ul').eq(0).addClass('menu-open').css('display', 'block');
-            if (p.parents('li').length > 1) {
-                if (p.parents('li').parents('ol').length <= 0)p.parents('li').eq(0).addClass('active-submenu');
-                p.parents('li').not(':eq(0)').addClass('active');
+                console.log({afterurl: $.cookie()})
+                //console.log({afterurl:url})
             }
             else {
-                p.parents('li').addClass('active');
+                var s = $.cookie();
+                p = $('a[href="' + s.ftt + '"]')
+                console.log($.cookie())
+                console.log({sss: s.ftt})
             }
-        }
-    })
-</script>
+            //alert(p.text())
+            if (p.parents('.sidebar-menu').length > 0) {
+                p.parents('li').eq(0).parents('ul').eq(0).addClass('menu-open').css('display', 'block');
+                if (p.parents('li').length > 1) {
+                    if (p.parents('li').parents('ol').length <= 0)p.parents('li').eq(0).addClass('active-submenu');
+                    p.parents('li').not(':eq(0)').addClass('active');
+                }
+                else {
+                    p.parents('li').addClass('active');
+                }
+            }
+        })
+    </script>
 </div>
 </body>
 </html>
