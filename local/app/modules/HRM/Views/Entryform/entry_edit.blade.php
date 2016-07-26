@@ -12,21 +12,6 @@
             //$("#to_date").datePicker(true);
 
         })
-//        GlobalApp.directive('datePickerDir', function ($timeout) {
-//            return {
-//                restrict: "AC",
-//                link: function (scope, element, attrs) {
-//
-//                    //alert('asaddad')
-//                    $timeout(function () {
-//
-//                    })
-//                    if (attrs.datePickerDir)$(element).datePicker(attrs.value);
-//                }
-//
-//            }
-//
-//        })
         GlobalApp.controller('fullEntryFormController', function ($scope, getNameService, getBloodService, getDiseaseSkillService, $sce, $http) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}')
             $scope.SelectedDistrict = ""
@@ -1104,7 +1089,7 @@
                                                                         class="glyphicon glyphicon-trash"></i></a></td>
                                                     </tr>
                                                     <tr>
-                                                        <td style=" border-top:0px;">
+                                                        <td style=" border-top:0px;background: #ffffff;">
                                                                 <button class="btn btn-info" ng-click="addEduinput()" >Add more</button>
                                                         </td>
                                                     </tr>
@@ -1149,7 +1134,7 @@
                                                                         class="glyphicon glyphicon-trash"></i></a></td>
                                                     </tr>
                                                     <tr>
-                                                        <td style=" border-top:0px;">
+                                                        <td style=" border-top:0px;background: #ffffff;">
                                                             <button class="btn btn-info" ng-click="addEduinput()" >Add more</button>
                                                         </td>
                                                     </tr>
@@ -1200,7 +1185,7 @@
                                                                         class="glyphicon glyphicon-trash"></i></a></td>
                                                     </tr>
                                                     <tr>
-                                                        <td style=" border-top:0px;">
+                                                        <td style=" border-top:0px;background: #ffffff;">
                                                             <button class="btn btn-info" ng-click="addEduinput()" >Add more</button>
                                                         </td>
                                                     </tr>
@@ -1250,7 +1235,7 @@
                                                                         class="glyphicon glyphicon-trash"></i></a></td>
                                                     </tr>
                                                     <tr>
-                                                        <td style=" border-top:0px;">
+                                                        <td style=" border-top:0px;background: #ffffff;">
                                                             <button class="btn btn-info" ng-click="addEduinput()" >Add more</button>
                                                         </td>
                                                     </tr>
@@ -1288,7 +1273,7 @@
                                                                         class="glyphicon glyphicon-trash"></i></a></td>
                                                     </tr>
                                                     <tr>
-                                                        <td style=" border-top:0px;">
+                                                        <td style=" border-top:0px;background: #ffffff;">
                                                             <button class="btn btn-info" ng-click="addEduinput()" >Add more</button>
                                                         </td>
                                                     </tr>
@@ -1326,7 +1311,7 @@
                                                                         class="glyphicon glyphicon-trash"></i></a></td>
                                                     </tr>
                                                     <tr>
-                                                        <td style=" border-top:0px;">
+                                                        <td style=" border-top:0px;background: #ffffff;">
                                                             <button class="btn btn-info" ng-click="addEduinput()" >Add more</button>
                                                         </td>
                                                     </tr>
