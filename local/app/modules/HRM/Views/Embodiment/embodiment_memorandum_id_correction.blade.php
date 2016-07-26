@@ -84,7 +84,7 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label for="ansar_id" class="control-label">Ansar ID (Comes from Embodiment)</label>
-                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-model="ansarId" ng-change="makeQueue(ansarId)">
+                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="makeQueue(ansarId)">
                             </div>
                             <div class="form-group">
                                 <label class="control-label">Memorandum no.&nbsp;&nbsp;&nbsp;<span
@@ -96,7 +96,7 @@
                                             ng-if="isVerified&&memorandumId">This id already taken.</span></label>
                                 <input ng-blur="verifyMemorandumId()" ng-model="memorandumId"
                                        type="text" class="form-control" name="memorandum_id"
-                                       placeholder="Enter memorandum id" required>
+                                       placeholder="Enter Memorandum no." required>
                                 {{--<label for="black_date" class="control-label">New Dis-Embodiment Date</label>--}}
                                 {{--<input type="text" name="new_disembodiment_date" id="new_disembodiment_date" class="form-control" ng-model="new_disembodiment_date">--}}
                             </div>

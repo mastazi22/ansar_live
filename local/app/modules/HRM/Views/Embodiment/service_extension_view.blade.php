@@ -49,8 +49,8 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label for="ansar_id" class="control-label">Ansar ID to extend service</label>
-                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-model="ansarId" ng-change="loadAnsarDetail(ansarId)">
+                                <label for="ansar_id" class="control-label">Ansar ID to Extend Service</label>
+                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="loadAnsarDetail(ansarId)">
                             </div>
                             <div class="form-group">
                                 <label for="extended_period" class="control-label">Extended Period (In Month)</label>
@@ -61,7 +61,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="service_extension_comment" class="control-label">Comment for Service Extension</label>
-                                {!! Form::textarea('service_extension_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'service_extension_comment', 'size' => '30x4', 'placeholder' => "Write any comment", 'ng-model' => 'service_extension_comment', 'required')) !!}
+                                {!! Form::textarea('service_extension_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'service_extension_comment', 'size' => '30x4', 'placeholder' => "Write any Comment", 'ng-model' => 'service_extension_comment', 'required')) !!}
                                 <span ng-show="serviceExtensionForm.service_extension_comment.$touched && serviceExtensionForm.service_extension_comment.$error.required"><p class="text-danger">Comment for Service Extension Cannot be empty</p></span>
                             </div>
                             <button id="service_extension_confirm" class="btn btn-primary" ng-disabled="serviceExtensionForm.extended_period.$error.max||serviceExtensionForm.extended_period.$error.min||!extended_period||!service_extension_comment||!ansarId"><img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16" style="margin-top: -2px">Extend Service</button>

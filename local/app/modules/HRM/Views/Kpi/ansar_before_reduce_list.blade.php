@@ -16,7 +16,7 @@
             $scope.selectedDistrict = "";
             $scope.selectedThana = "";
             $scope.selectedKpi = "";
-            $scope.isLoading = false;
+            $scope.allLoading = false;
             $scope.loadingUnit = false;
             $scope.ansars="";
             $scope.loadingThana = false;
@@ -59,7 +59,7 @@
                 })
             }
             $scope.loadAnsar = function (id) {
-                $scope.isLoading = true;
+                $scope.allLoading = true;
                 $http({
                     method: 'get',
                     url: '{{URL::route('load_ansar_before_reduce')}}',
@@ -67,7 +67,7 @@
                 }).then(function (response) {
                     $scope.ansars = response.data;
                     console.log($scope.ansars)
-                    $scope.isLoading = false;
+                    $scope.allLoading = false;
                 })
             }
             if ($scope.isAdmin == 11) {
@@ -88,12 +88,13 @@
         {{--<div class="breadcrumbplace">--}}
             {{--{!! Breadcrumbs::render('ansar_before_reduce_list') !!}--}}
         {{--</div>--}}
-        <div class="loading-report animated" ng-class="{fadeInDown:isLoading,fadeOutUp:!isLoading}">
-            <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
-            <h4>Loading...</h4>
-        </div>
         <section class="content">
             <div class="box box-solid">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4" ng-show="isAdmin==11">

@@ -80,6 +80,7 @@
                 })
             }
             $scope.loadAnsar = function (id) {
+                $scope.allLoading = true;
                 $http({
                     method: 'get',
                     url: '{{URL::route('guard_list')}}',
@@ -87,6 +88,7 @@
                 }).then(function (response) {
                     $scope.ansars = response.data.ansars;
                     $scope.guardDetail = response.data.guard;
+                    $scope.allLoading = false;
                 })
             }
             if ($scope.isAdmin == 11) {
@@ -127,15 +129,6 @@
         {{--<div class="breadcrumbplace">--}}
             {{--{!! Breadcrumbs::render('reduce_guard_strength') !!}--}}
         {{--</div>--}}
-        <div id="all-loading"
-             style="position:fixed;width: 100%;height: 100%;background-color: rgba(255, 255, 255, 0.27);z-index: 100; margin-left: 30%; display: none; overflow: hidden">
-            <div style="position: fixed;width: 20%;height: auto;margin: 20% auto;text-align: center;background: #FFFFFF">
-                <img class="img-responsive" src="{{asset('dist/img/loading-data.gif')}}"
-                     style="position: relative;margin: 0 auto">
-                <h4>Loading....</h4>
-            </div>
-
-        </div>
         @if(Session::has('success_message'))
             <div style="padding: 10px 20px 0 20px;">
                 <div class="alert alert-success">
@@ -146,6 +139,11 @@
         @endif
         <section class="content">
             <div class="box box-solid">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4" ng-show="isAdmin==11">
