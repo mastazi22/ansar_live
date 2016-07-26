@@ -68,8 +68,9 @@ class FormSubmitHandler extends Controller
 
     public function handleregistration(Request $request)
     {
+
         if ($request->ajax()) {
-            if (Input::get('action') == 'Save as draft') {
+            if (Input::get('action') == 0) {
 //                $rules = [
 //                    'mobile_no_self' => 'required'];
 //                $messages = [
@@ -80,7 +81,7 @@ class FormSubmitHandler extends Controller
 ////                return Redirect::to('entryform')->withErrors($validator)->withInput();
 //                    return Response::json(['error' => $validator->errors(), 'status' => false]);
 //                }
-
+//                return $request->get('action');
                 $time = time();
                 $i = 1;
                 $dir = storage_path() . '/drafts/';
@@ -130,7 +131,8 @@ class FormSubmitHandler extends Controller
                 }
                 Session::flash('add_success', 'Draft Added Successfully');
                 return Response::json(['status' => true, 'url' => URL::route('entry_draft')]);
-            } else {
+            }
+            else {
 
 
                 $rules = [
@@ -143,7 +145,7 @@ class FormSubmitHandler extends Controller
                     'mother_name_bng' => 'required',
                     'data_of_birth' => 'required',
                     'marital_status' => 'required',
-                    'national_id_no' => 'required',
+                    'national_id_no' => 'required|numeric|regex:/[0-9]{17}/',
                     'division_name_eng' => 'required',
                     'unit_name_eng' => 'required',
                     'thana_name_eng' => 'required',

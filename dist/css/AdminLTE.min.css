@@ -4518,3 +4518,23 @@ table.text-center, table.text-center td, table.text-center th {
 .table tbody:first-child tr:first-child{
     background-color: #d8d8d8
 }
+.overlay{
+    position: absolute;
+    top:0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.61);
+    z-index: 50;
+    display: none;
+}
+.overlay>.fa{
+    display: block;
+    position: absolute;
+    left: 50%;
+    top:50%;
+    margin-left: -75px;
+    margin-top: -15px;
+    font-size: 2em;
+}
+#entryform{
+    position: relative;
+}

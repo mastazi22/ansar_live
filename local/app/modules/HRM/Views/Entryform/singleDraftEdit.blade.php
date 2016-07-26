@@ -437,29 +437,24 @@
                     $(element).click(function (e) {
 
                         var b = $(this).val()
-                        $("#loading-screen").slideDown(300);
+                        $(".overlay").css('display','block');
                         $("#pppp").ajaxSubmit({
                             success: function (responseText, statusText, xhr, $form) {
                                 scope.formSubmitResult = responseText;
                                 console.log(scope.formSubmitResult);
-                                $("#loading-screen").slideUp(300);
+                                $(".overlay").css('display','none');
                                 if (scope.formSubmitResult.status == true) {
                                     $(element).resetForm();
-//                        alert("Value added successfully.");
-//                        alert(scope.formSubmitResult.data);
                                     window.location = "{{URL::route('entry_draft')}}";
                                 }
                                 if (scope.formSubmitResult.status == 'save') {
-//                        alert("Value saved successfully.");
-//                        alert(scope.formSubmitResult.data);
                                     $(element).resetForm();
                                     window.location = "{{URL::route('entry_draft')}}";
                                 }
                                 scope.$digest();
                             }, error: function (responseText, statusText, xhr, $form) {
                                 scope.error = $sce.trustAsHtml(xhr.responseText);
-//                    alert(xhr.responseText);
-                                $("#loading-screen").slideUp(300);
+                                $(".overlay").css('display','none');
                                 console.log(responseText);
                                 console.log(responseText);
                             }, beforeSubmit: function (arr, $form, options) {
@@ -472,17 +467,23 @@
                 }
             }
         })
+        $(document).ready(function (e) {
+            $(".overlay").height($(window).height());
+            $(window).resize(function () {
+                $(".overlay").height($(window).height());
+            })
+            $(window).scroll(function () {
+//                alert("scroll")
+                $(".overlay").css('top',($(window).scrollTop()-$("#entryform").offset().top)+"px")
+            })
+        })
     </script>
 
-    <div id="#entryform" ng-controller="singleDraftController">
-        <div id="loading-screen"
-             style="position:fixed;margin-top:-50px;display:none;width: 100%;height: 100%;background-color: rgba(255, 255, 255, 0.27);z-index: 100000000">
-            <div style="position: relative;width: 20%;height: auto;margin: 14% auto;text-align: center;background: #FFFFFF">
-                <img class="img-responsive" src="{{asset('dist/img/loading-data.gif')}}"
-                     style="position: relative;margin: 0 auto">
-                <h4>Submitting....</h4>
-            </div>
-
+    <div id="entryform" ng-controller="singleDraftController">
+        <div class="overlay">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
         </div>
         <div>
             <section class="content">
@@ -1086,7 +1087,7 @@
                                                                     class="glyphicon glyphicon-trash"></i></a></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style=" border-top:0px;">
+                                                    <td style=" border-top:0px;background: #ffffff">
                                                         <a href=""><p ng-click="addEduinput()"
                                                                       style="cursor: hand;padding: .2em .5em;background-color: #5cb85c;display: inline-block;color:#ffffff">
                                                                 Add more</p></a>
@@ -1133,7 +1134,7 @@
                                                                     class="glyphicon glyphicon-trash"></i></a></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style=" border-top:0px;">
+                                                    <td style=" border-top:0px;;background: #ffffff">
                                                         <a href=""><p ng-click="addEduinput()"
                                                                       style="cursor: hand;padding: .2em .5em;background-color: #5cb85c;display: inline-block;color:#ffffff">
                                                                 Add more</p></a>
@@ -1186,7 +1187,7 @@
                                                                     class="glyphicon glyphicon-trash"></i></a></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style=" border-top:0px;">
+                                                    <td style=" border-top:0px;;background: #ffffff">
                                                         <a href=""><p ng-click="addTraininput()"
                                                                       style="cursor: hand;padding: .2em .5em;background-color: #5cb85c;display: inline-block;color:#ffffff">
                                                                 Add more</p></a>
@@ -1239,7 +1240,7 @@
                                                                     class="glyphicon glyphicon-trash"></i></a></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style=" border-top:0px;">
+                                                    <td style=" border-top:0px;;background: #ffffff">
                                                         <a href=""><p ng-click="addTraininput()"
                                                                       style="cursor: hand;padding: .2em .5em;background-color: #5cb85c;display: inline-block;color:#ffffff">
                                                                 Add more</p></a>
@@ -1279,7 +1280,7 @@
                                                                     class="glyphicon glyphicon-trash"></i></a></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style=" border-top:0px;">
+                                                    <td style=" border-top:0px;;background: #ffffff">
                                                         <a href=""><p ng-click="addNomineeinput()"
                                                                       style="cursor: hand;padding: .2em .5em;background-color: #5cb85c;display: inline-block;color:#ffffff">
                                                                 Add more</p></a>
@@ -1319,7 +1320,7 @@
                                                                     class="glyphicon glyphicon-trash"></i></a></td>
                                                 </tr>
                                                 <tr>
-                                                    <td style=" border-top:0px;">
+                                                    <td style=" border-top:0px;;background: #ffffff">
                                                         <a href=""><p ng-click="addNomineeinput()"
                                                                       style="cursor: hand;padding: .2em .5em;background-color: #5cb85c;display: inline-block;color:#ffffff">
                                                                 Add more</p></a>
@@ -1471,7 +1472,6 @@
                     </div>
 
                 </div>
-                <div ng-bind-html="error"></div>
             </section>
         </div>
     </div>
