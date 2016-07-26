@@ -4518,7 +4518,7 @@ table.text-center, table.text-center td, table.text-center th {
 .table tbody:first-child tr:first-child{
     background-color: #d8d8d8
 }
-.overlay{
+#entryform>.overlay{
     position: absolute;
     top:0;
     width: 100%;
@@ -4526,7 +4526,7 @@ table.text-center, table.text-center td, table.text-center th {
     z-index: 50;
     display: none;
 }
-.overlay>.fa{
+#entryform>.overlay>.fa{
     display: block;
     position: absolute;
     left: 50%;
