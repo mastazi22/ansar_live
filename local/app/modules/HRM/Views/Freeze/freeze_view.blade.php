@@ -94,26 +94,26 @@
                             <div class="form-group">
                                 <label for="ansar_id" class="control-label">Ansar ID to Freeze</label>
                                 <input type="text" name="ansar_id" id="ansar_id" class="form-control"
-                                       placeholder="Enter Ansar Id" ng-model="ansarId"
+                                       placeholder="Enter Ansar ID" ng-model="ansarId"
                                        ng-change="makeQueue(ansarId)">
                             </div>
                             <div class="form-group">
-                                <label for="memorandum_id" class="control-label">Memorandum ID<span
+                                <label for="memorandum_id" class="control-label">Memorandum no.<span
                                             ng-show="isVerifying"><i class="fa fa-spinner fa-pulse"></i>Verifying</span><span
                                             class="text-danger" ng-if="isVerified"> This id already taken</span></label>
                                 <input ng-blur="verifyMemorandumId()" ng-model="memorandumId" type="text"
                                        class="form-control" name="memorandum_id"
-                                       placeholder="Enter memorandum id">
+                                       placeholder="Enter Memorandum no.">
                             </div>
                             <div class="form-group">
-                                <label for="freeze_date" class="control-label">Freeze date</label>
+                                <label for="freeze_date" class="control-label">Freeze Date</label>
                                 <input type="text" name="freeze_date" id="freeze_date"
                                        class="form-control" ng-model="freeze_date">
                                 <span ng-if="verifyDate(ansarDetail.j_date,freeze_date)" class="text-danger">Freeze date must be bigger then joining date</span>
                             </div>
                             <div class="form-group">
                                 <label for="freeze_comment" class="control-label">Comment for Freezing the Ansar</label>
-                                {!! Form::textarea('freeze_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'freeze_comment', 'size' => '30x4', 'placeholder' => "Write any comment", 'ng-model' => 'freeze_comment')) !!}
+                                {!! Form::textarea('freeze_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'freeze_comment', 'size' => '30x4', 'placeholder' => "Write any Comment", 'ng-model' => 'freeze_comment')) !!}
                             </div>
                             <button id="confirm-freeze" class="btn btn-primary"
                                     ng-disabled="!freeze_date||!ansarId||!freeze_comment||verifyDate(ansarDetail.j_date,freeze_date)"><img

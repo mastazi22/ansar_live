@@ -67,15 +67,6 @@
         {{--<div class="breadcrumbplace">--}}
             {{--{!! Breadcrumbs::render('panel_information') !!}--}}
         {{--</div>--}}
-        <div id="all-loading"
-             style="position:fixed;width: 100%;height: 100%;background-color: rgba(255, 255, 255, 0.27);z-index: 100; margin-left: 30%; display: none; overflow: hidden">
-            <div style="position: fixed;width: 20%;height: auto;margin: 20% auto;text-align: center;background: #FFFFFF">
-                <img class="img-responsive" src="{{asset('dist/img/loading-data.gif')}}"
-                     style="position: relative;margin: 0 auto">
-                <h4>Loading....</h4>
-            </div>
-
-        </div>
         <!-- Content Header (Page header) -->
 
         <!-- Main content -->
@@ -91,6 +82,11 @@
         <section class="content">
 
             <div class="box box-solid" style="min-height: 200px;">
+                <div class="overlay" id="all-loading" style="display: none">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="row" >
                         <div class="col-md-12">
@@ -152,10 +148,10 @@
                                                 <div class="form-group row">
                                                     <div class="col-sm-12">
                                                         <div class="form-group">
-                                                            <label> Select a status</label>
+                                                            <label> Select a Status</label>
                                                             <select name='come_from_where' id='come_from_where'
                                                                     class="form-control">
-                                                                <option value="" disabled selected>--Select Status--</option>
+                                                                <option value="" disabled selected>--Select a Status--</option>
                                                                 <option value="1">Rest Status</option>
                                                                 <option value="2">Free Status</option>
                                                             </select>
@@ -167,15 +163,18 @@
                                                 <div class="form-group">
                                                     <ul style="list-style: none; margin-left: 0 !important;padding: 0"
                                                         class="row custom-selected">
-                                                        <li class="form-group col-md-6 custom-selected" id="from-id">
-                                                            <label>From(ID)</label>
+                                                        <li class="form-group col-md-5 custom-selected" id="from-id">
+                                                            <label>From (ID)</label>
                                                             <input type="text" name="from-id" class="form-control" placeholder="Ansar ID">
                                                         </li>
-                                                        <li class="form-group col-md-6" id="to-id">
-                                                            <label>To(ID)</label>
+                                                        <li class="col-sm-1" style="text-align: center;font-size: 1.2em;padding: 0;width: auto;">
+                                                            <label class="control-label" style="display: block">&nbsp;</label>
+                                                            to
+                                                        </li>
+                                                        <li class="form-group col-md-5" id="to-id">
+                                                            <label>To (ID)</label>
                                                             <input type="text" name="to-id" class="form-control" placeholder="Ansar ID">
                                                         </li>
-
                                                     </ul>
                                                 </div>
                                             </div>
@@ -183,7 +182,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-sm-6">
-                                                <label>Select no of ansars to load</label>
+                                                <label>Select no. of Ansars to Load</label>
                                                 <select class="form-control" name="ansar_num" id="count-ansar">
                                                     <option value="">--Select--</option>
                                                     <option value="10">10</option>
@@ -198,7 +197,6 @@
                                                     <option value="100">100</option>
                                                 </select>
                                             </div>
-
                                         </div>
                                         <button type="submit" class="btn btn-info pull-right" id="load-panel">
                                             <i class="fa fa-download"></i> Load
@@ -236,7 +234,7 @@
                                                             ng-if="isVerified&&memorandumId">This id already taken.</span></label>
                                                 <input ng-blur="verifyMemorandumId()" ng-model="memorandumId"
                                                        type="text" class="form-control" name="memorandum_id"
-                                                       placeholder="Enter memorandum id" required>
+                                                       placeholder="Enter Memorandum no." required>
                                             </div>
                                         </div>
                                         <div class="col-sm-4">
@@ -290,7 +288,7 @@
         var h = "";
         $("#load_ansar_for_panel").ajaxForm({
             beforeSubmit: function () {
-
+                $("#all-loading").css('display', 'block');
                 $('#check-all-panel').prop('checked', false);
                 $('.check-panel').prop('checked', false);
                 selectedAnsars = [];

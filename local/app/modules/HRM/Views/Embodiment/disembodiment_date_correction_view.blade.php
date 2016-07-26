@@ -69,10 +69,10 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label for="ansar_id" class="control-label">Ansar ID (Comes from Rest)</label>
-                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar Id" ng-model="ansarId" ng-change="makeQueue(ansarId)">
+                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="makeQueue(ansarId)">
                             </div>
                             <div class="form-group">
-                                <label for="new_disembodiment_date" class="control-label">New Dis-Embodiment Date</label>
+                                <label for="new_disembodiment_date" class="control-label">New Disembodiment Date</label>
                                 <input type="text" name="new_disembodiment_date" id="new_disembodiment_date" class="form-control" ng-model="new_disembodiment_date">
                             </div>
                             <button id="confirm-new-disembodiment-date" class="btn btn-primary" ng-disabled="!ansarDetail.name||!new_disembodiment_date||!ansarId"><img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16" style="margin-top: -2px">Correct Date</button>

@@ -216,9 +216,9 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group required">
-                                <label for="ansar_id" class="control-label">Ansar Id</label>
+                                <label for="ansar_id" class="control-label">Ansar ID</label>
                                 <input type="text" name="ansar_id" id="ansar_id" class="form-control"
-                                       placeholder="Enter Ansar Id" ng-model="ansarId"
+                                       placeholder="Enter Ansar ID" ng-model="ansarId"
                                        ng-change="makeQueue(ansarId)">
                             </div>
                             <div class="form-group required">
@@ -231,7 +231,7 @@
                                             ng-if="isVerified&&memorandumId">This id already taken.</span></label>
                                 <input ng-blur="verifyMemorandumId()" ng-model="memorandumId"
                                        type="text" class="form-control" name="memorandum_id"
-                                       placeholder="Enter memorandum id" required>
+                                       placeholder="Enter Memorandum no." required>
                             </div>
                             <div ng-show="isAdmin!=22">
                                 <div class="form-group required">
@@ -274,7 +274,7 @@
                             </div>
                             <!---->
                             <div class="form-group required">
-                                <label for="e_unit" class="control-label">Unit&nbsp;
+                                <label for="e_unit" class="control-label">Select a Unit&nbsp;
                                     <img ng-show="loadingUnit" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select name="division_name_eng" ng-disabled="loadingUnit||ansarDetail.apd==undefined" id="e_unit"
@@ -289,7 +289,7 @@
                                 </select>
                             </div>
                             <div class="form-group required">
-                                <label for="e_thana" class="control-label">Thana&nbsp;
+                                <label for="e_thana" class="control-label">Select a Thana&nbsp;
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select name="thana_name_eng" ng-disabled="loadingThana||ansarDetail.apd==undefined" id="e_thana"
@@ -301,7 +301,7 @@
                                 </select>
                             </div>
                             <div class="form-group required">
-                                <label for="e_kpi" class="control-label">KPI&nbsp;
+                                <label for="e_kpi" class="control-label">Select a KPI&nbsp;
                                     <img ng-show="loadingKpi" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select name="kpi_id" check-kpi="[[selectedKpi]]" ng-disabled="loadingKpi||ansarDetail.apd==undefined" id="e_kpi" class="form-control"

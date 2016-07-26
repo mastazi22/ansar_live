@@ -14,7 +14,7 @@
             $scope.numOfPage = 0;
             $scope.selectedDistrict = "all";
             $scope.selectedThana = "all";
-            $scope.isLoading = false;
+            $scope.allLoading = false;
             $scope.districts = [];
             $scope.thanas = [];
             $scope.guards = [];
@@ -62,7 +62,7 @@
                 })
             }
             $scope.loadTotal = function () {
-                $scope.isLoading = true;
+                $scope.allLoading = true;
                 //alert($scope.selectedDivision)
                 $http({
 
@@ -78,7 +78,7 @@
                     $scope.total = response.data.total;
                     $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
                     $scope.loadPagination();
-                    $scope.isLoading = false;
+                    $scope.allLoading = false;
                     //alert($scope.total)
                 })
             }
@@ -132,12 +132,13 @@
                 </div>
             </div>
         @endif
-        <div class="loading-report animated" ng-class="{fadeInDown:isLoading,fadeOutUp:!isLoading}">
-            <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
-            <h4>Loading...</h4>
-        </div>
         <section class="content">
             <div class="box box-solid">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4">

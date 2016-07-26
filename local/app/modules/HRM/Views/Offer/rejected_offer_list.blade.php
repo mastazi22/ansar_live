@@ -81,6 +81,10 @@
                                 <p class="text text-danger" ng-if="error!=undefined&&error.from_date!=undefined">[[error.from_date[0] ]]</p>
                             </div>
                         </div>
+                        <div class="col-sm-1" style="    text-align: center;font-size: 1.2em;padding: 0;width: auto;">
+                            <label class="control-label" style="display: block">&nbsp;</label>
+                            to
+                        </div>
                         <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label">To Date</label>

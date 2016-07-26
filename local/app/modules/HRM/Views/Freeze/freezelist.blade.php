@@ -9,7 +9,7 @@
 
         GlobalApp.controller('freezeController', function ($scope, $http) {
 //        $scope.filter_name = "0";
-            $scope.loading = false;
+            $scope.allLoading = false;
             $scope.allFreezeAnsar = [];
             $scope.loadingThana = false;
             $scope.loadingKpi = false;
@@ -85,7 +85,7 @@
                     break;
             }
             $scope.getFreezeList = function () {
-                $scope.loading = true;
+                $scope.allLoading = true;
                 $http({
                     url: "{{URL::route('getfreezelist')}}",
                     method: 'get',
@@ -93,9 +93,9 @@
                 }).then(function (response) {
 //            alert(JSON.stringify(response.data));
                     $scope.allFreezeAnsar = response.data;
-                    $scope.loading = false;
+                    $scope.allLoading = false;
                 }, function (response) {
-                    $scope.loading = false;
+                    $scope.allLoading = false;
                 })
             }
 //        $scope.getFreezeList();
@@ -123,7 +123,7 @@
                         kpi_id: kpi
                     })
                 }).then(function (response) {
-                    console.log(response.data)
+
                 })
             }
             $scope.checkMemorandum = function (id, type) {
@@ -135,7 +135,7 @@
                 }).then(function (response) {
                     if (type == 0) $scope.verify = response.data.status;
                     else $scope.verifyTransfer = response.data.status;
-                    console.log(response.data)
+
                     $scope.verifying = false;
                 })
             }
@@ -310,13 +310,13 @@
         {{--{!! Breadcrumbs::render('freezelist') !!}--}}
         {{--</div>--}}
         <section class="content">
-
-            <div class="loading-report animated" ng-show="loading">
-                <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
-                <h4>Loading...</h4>
-            </div>
             <div>
                 <div class="box box-solid">
+                    <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                    </div>
                     <div class="box-body">
                         <div class="box-body" id="change-body">
                             <div class="form-group">
@@ -398,7 +398,7 @@
                                         </td>
                                     </tr>
                                     <tr ng-show="allFreezeAnsar.length==0">
-                                        <td class="warning" colspan="10">No ansar found</td>
+                                        <td class="warning" colspan="10">No information found</td>
                                     </tr>
                                 </table>
                             </div>

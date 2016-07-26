@@ -132,15 +132,6 @@
         {{--<div class="breadcrumbplace">--}}
             {{--{!! Breadcrumbs::render('ansar_withdraw_view') !!}--}}
         {{--</div>--}}
-        <div id="all-loading"
-             style="position:absolute;width: 100%;height: 100%;background-color: rgba(255, 255, 255, 0.27);z-index: 100; display: none">
-            <div style="position: relative;width: 20%;height: auto;margin: 20% auto;text-align: center;background: #FFFFFF">
-                <img class="img-responsive" src="{{asset('dist/img/loading-data.gif')}}"
-                     style="position: relative;margin: 0 auto">
-                <h4>Loading....</h4>
-            </div>
-
-        </div>
         @if(Session::has('success_message'))
             <div style="padding: 10px 20px 0 20px;">
                 <div class="alert alert-success">
@@ -151,6 +142,11 @@
         @endif
         <section class="content">
             <div class="box box-solid">
+                <div class="overlay" id="all-loading" style="display: none;">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4" ng-show="isAdmin==11">

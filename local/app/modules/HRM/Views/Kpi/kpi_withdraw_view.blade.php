@@ -23,7 +23,6 @@
             $scope.loadingKpi = false;
             $scope.loadingUnit = true;
             $scope.loadingThana = false;
-            $scope.loadingKpi = false;
             $scope.exist = false;
             $http({
                 method: 'get',
