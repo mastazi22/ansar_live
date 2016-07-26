@@ -289,9 +289,9 @@
                     </div>
 
                 </div>
-                <div class="box-header">
-                    <h4 style="margin-top: 0" ng-if="loadType==0">Total Unverified Ansars : [[notVerified.toLocaleString()]]</h4>
-                    <h4 style="margin-top: 0" ng-if="loadType==1">Total Verified Ansars : [[Verified.toLocaleString()]]</h4>
+                <div class="box-header" ng-if="!isSearching">
+                    <h4 style="margin-top: 0" ng-if="loadType==0">Total unverified ansars : [[notVerified.toLocaleString()]]</h4>
+                    <h4 style="margin-top: 0" ng-if="loadType==1">Total verified ansars : [[Verified.toLocaleString()]]</h4>
                 </div>
                 <div class="box-body" id="change-body">
 
