@@ -289,7 +289,7 @@
                     </div>
 
                 </div>
-                <div class="box-header" ng-if="isSearching">
+                <div class="box-header" ng-if="!isSearching">
                     <h4 style="margin-top: 0" ng-if="loadType==0">Total unverified ansars : [[notVerified.toLocaleString()]]</h4>
                     <h4 style="margin-top: 0" ng-if="loadType==1">Total verified ansars : [[Verified.toLocaleString()]]</h4>
                 </div>
