@@ -103,19 +103,19 @@
                     <li ng-if="checkMenu('anser_list')">
                         <a href="{{URL::to('HRM/entrylist')}}">
                             <i class="fa fa-users"></i>
-                            <span>Entry</span>
+                            <span>Entry Information</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('chunk_verify')">
                         <a href="{{URL::to('HRM/chunkverify')}}">
                             <i class="fa fa-users"></i>
-                            <span>Verify Entry(Chunk)</span>
+                            <span>Verify Entry (Chunk)</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('entry_draft')">
                         <a href="{{URL::to('HRM/entrydraft')}}">
                             <i class="fa fa-users"></i>
-                            <span>Draft Entry</span>
+                            <span>Draft Entry List</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('entry_advanced_search')">
@@ -127,7 +127,7 @@
                     <li ng-if="checkMenu('orginal_info')">
                         <a href="{{URL::to('HRM/originalinfo')}}">
                             <i class="fa fa-users"></i>
-                            <span>Orginal Info</span>
+                            <span>Original Information</span>
                         </a>
                     </li>
                     <li ng-if="checkMenu('print_card_id_view')">

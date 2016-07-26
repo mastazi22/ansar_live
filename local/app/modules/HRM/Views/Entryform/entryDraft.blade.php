@@ -1,5 +1,5 @@
 @extends('template/master')
-@section('title','Draft Entry')
+@section('title','Draft Entry List')
 @section('breadcrumb')
     {!! Breadcrumbs::render('draft_list') !!}
     @endsection

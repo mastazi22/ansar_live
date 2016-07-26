@@ -2,7 +2,7 @@
 <?php $i = $index; ?>
 @if(count($ansars)==0)
     <tr class="warning">
-        <td colspan="11">No Ansar Found</td>
+        <td colspan="11">No Ansar is available to show</td>
     </tr>
 @else
     @foreach($ansars as $ansar)

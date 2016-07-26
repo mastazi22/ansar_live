@@ -1196,7 +1196,7 @@
                                     {{--Form Submit Button--}}
                                     <div class="form-horizontal pull-right">
                                         <input form-submit id="submit1" type="submit" name="Save" class="btn btn-primary"
-                                               value="Save as draft">
+                                               value="Save as Draft">
                                         <!--<button name="save" type="save">Save</button>-->
                                     </div>
                                 </div>

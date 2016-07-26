@@ -1,8 +1,8 @@
 @extends('template/master')
-@section('title','Entry')
+@section('title','Entry Information')
 @section('small_title')
     <a href="{{URL::to('HRM/entryform')}}" class="btn btn-info btn-sm"><span
-                class="glyphicon glyphicon-user"></span> Add New</a>
+                class="glyphicon glyphicon-user"></span>  Add New</a>
 @endsection
 @section('breadcrumb')
     {!! Breadcrumbs::render('entry_list') !!}
@@ -302,8 +302,8 @@
 
                 </div>
                 <div class="box-header">
-                    <h4 style="margin-top: 0" ng-if="loadType==0">Total unverified ansars : [[notVerified.toLocaleString()]]</h4>
-                    <h4 style="margin-top: 0" ng-if="loadType==1">Total verified ansars : [[Verified.toLocaleString()]]</h4>
+                    <h4 style="margin-top: 0" ng-if="loadType==0">Total Unverified Ansars : [[notVerified.toLocaleString()]]</h4>
+                    <h4 style="margin-top: 0" ng-if="loadType==1">Total Verified Ansars : [[Verified.toLocaleString()]]</h4>
                 </div>
                 <div class="box-body" id="change-body">
 

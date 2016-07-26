@@ -10,7 +10,7 @@
       "kpi_current_ansar": "মোট বর্তমান আনসার"
     },
     "ansar": {
-      "ansar_title": "আনসার বিবরন",
+      "ansar_title": "আনসারদের বিবরণ",
       "sl_no": "ক্রমিক নং",
       "id": "আইডি",
       "name": "নাম",
@@ -104,7 +104,7 @@
       "id": "আইডি নং",
       "name": "নাম",
       "rank": "পদবী",
-      "district": "জেলা",
+      "district": "নিজ জেলা",
       "date_of_birth": "জন্ম তারিখ",
       "sex": "লিঙ্গ",
       "blocklisted_from_where": "কোথা থেকে ব্লকলিস্টেড হয়েছে",
@@ -120,7 +120,7 @@
       "id": "আইডি নং",
       "name": "নাম",
       "rank": "পদবী",
-      "district": "জেলা",
+      "district": "নিজ জেলা",
       "date_of_birth": "জন্ম তারিখ",
       "sex": "লিঙ্গ",
       "blacklisted_from_where": "কোথা থেকে ব্ল্যাকলিস্টেড হয়েছে",
