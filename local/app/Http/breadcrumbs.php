@@ -16,17 +16,21 @@ Breadcrumbs::register('dashboard_menu_recent', function($breadcrumbs,$title,$typ
     $breadcrumbs->parent('hrm');
     $breadcrumbs->push($title, URL::route('show_recent_ansar_list',['type'=>$type]));
 });
-Breadcrumbs::register('dashboard_menu_service_ended_2_month', function($breadcrumbs,$total) {
+Breadcrumbs::register('progress_info', function($breadcrumbs) {
     $breadcrumbs->parent('hrm');
-    $breadcrumbs->push('Progress Information', URL::route('service_ended_in_three_years',['count'=>$total]));
+    $breadcrumbs->push('Progress Information', '#');
+});
+Breadcrumbs::register('dashboard_menu_service_ended_2_month', function($breadcrumbs,$total) {
+    $breadcrumbs->parent('progress_info');
+    $breadcrumbs->push('Total number of Ansars who will complete 3 years of service within the next 2 months', URL::route('service_ended_in_three_years',['count'=>$total]));
 });
 Breadcrumbs::register('dashboard_menu_50_year', function($breadcrumbs,$total) {
-    $breadcrumbs->parent('hrm');
-    $breadcrumbs->push('Progress Information', URL::route('ansar_reached_fifty_years',['count'=>$total]));
+    $breadcrumbs->parent('progress_info');
+    $breadcrumbs->push('Total number of Ansars who will reach 50 years of age within next 3 months', URL::route('ansar_reached_fifty_years',['count'=>$total]));
 });
 Breadcrumbs::register('dashboard_menu_not_interested', function($breadcrumbs,$total) {
-    $breadcrumbs->parent('hrm');
-    $breadcrumbs->push('Progress Information', URL::route('ansar_not_interested',['count'=>$total]));
+    $breadcrumbs->parent('progress_info');
+    $breadcrumbs->push('Total number of Ansars who are not interested to join after more than 10 reminders', URL::route('ansar_not_interested',['count'=>$total]));
 });
 
 //KPI Branch

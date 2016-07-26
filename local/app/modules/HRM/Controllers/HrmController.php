@@ -217,7 +217,7 @@ class HrmController extends Controller
         } elseif (strcasecmp($type, 'rest_ansar') == 0) {
             $pageTitle = "Total Resting Ansars";
         } elseif (strcasecmp($type, 'blocked_ansar') == 0) {
-            $pageTitle = "Total Block-listed Ansars";
+            $pageTitle = "Total Blocklisted Ansars";
         } elseif (strcasecmp($type, 'blacked_ansar') == 0) {
             $pageTitle = "Total Blacklisted Ansars";
         } elseif (strcasecmp($type, 'embodied_ansar') == 0) {

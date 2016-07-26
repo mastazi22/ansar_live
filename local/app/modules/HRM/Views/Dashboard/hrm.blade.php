@@ -378,7 +378,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/blocked_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">Total Block-listed</span>
+                        <span class="info-box-text">Total Blocklisted</span>
                     <span class="info-box-number" style="font-weight: normal">
                         [[allAnsar.totalBlockList]]
 
