@@ -28,7 +28,8 @@
     <link href="{{asset('dist/css/id-card.css')}}" rel="stylesheet" type="text/css"/>
     <link href="{{asset('dist/css/print.css')}}" rel="stylesheet" type="text/css"/>
     <link href="{{asset('dist/css/print_bootstrap.css')}}" rel="stylesheet" type="text/css"/>
-    <link href="{{asset('plugins/iCheck/square/blue.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{asset('plugins/iCheck/square/green.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{asset('plugins/iCheck/all.css')}}" rel="stylesheet" type="text/css"/>
     <link href="{{asset('dist/css/bank-form.css')}}" rel="stylesheet" type="text/css"/>
 
     <script src="{{asset('plugins/jQuery/jQuery-2.1.4.min.js')}}" type="text/javascript"></script>
