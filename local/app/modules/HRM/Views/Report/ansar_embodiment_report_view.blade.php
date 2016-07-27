@@ -147,11 +147,29 @@
 
         })
         $(function () {
+            function beforePrint(){
+//                console.log($("body").find("#print-body").html())
+                $("#print-area").remove()
+                $('body').append('<div id="print-area">'+$("#print_ansar_embodiment_report").html()+'</div>')
+            }
+            function afterPrint(){
+                $("#print-area").remove()
+            }
+            if(window.matchMedia){
+                var mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        beforePrint();
+                    } else {
+                        afterPrint();
+                    }
+                });
+            }
+            window.onbeforeprint = beforePrint;
+            window.onafterprint = afterPrint;
             $("#print-report").on('click', function (e) {
                 e.preventDefault();
-                $('body').append('<div id="print-area">' + $("#print_ansar_embodiment_report").html() + '</div>')
                 window.print();
-                $("#print-area").remove()
             })
         })
 
@@ -239,7 +257,7 @@
                             </a></h3>
 
                         <div class="table-responsive">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered full">
                                 <tr>
                                     <th>[[report.ansar.sl_no]]</th>
                                     <th>[[report.ansar.id]]</th>
@@ -253,29 +271,29 @@
                                 </tr>
                                 <tbody ng-bind-html="ansars"></tbody>
                             </table>
-                            <div class="table_pagination" ng-if="pages.length>1">
-                                <ul class="pagination">
-                                    <li ng-class="{disabled:currentPage == 0}">
-                                        <a href="#" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>
-                                    </li>
-                                    <li ng-class="{disabled:currentPage == 0}">
-                                        <a href="#" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
-                                    </li>
-                                    <li ng-repeat="page in pages|filter:filterMiddlePage"
-                                        ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
-                                        <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
-                                        <a href="#" ng-click="loadPage(page,$event)" ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
-                                        <span ng-show="loadingPage[page.pageNum]"  style="position: relative"><i class="fa fa-spinner fa-pulse" style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
-                                    </li>
-                                    <li ng-class="{disabled:currentPage==pages.length-1}">
-                                        <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
-                                    </li>
-                                    <li ng-class="{disabled:currentPage==pages.length-1}">
-                                        <a href="#" ng-click="loadPage(pages[pages.length-1],$event)">&raquo;&raquo;</a>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
+                    </div>
+                    <div class="table_pagination" ng-if="pages.length>1">
+                        <ul class="pagination">
+                            <li ng-class="{disabled:currentPage == 0}">
+                                <a href="#" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>
+                            </li>
+                            <li ng-class="{disabled:currentPage == 0}">
+                                <a href="#" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
+                            </li>
+                            <li ng-repeat="page in pages|filter:filterMiddlePage"
+                                ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
+                                <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
+                                <a href="#" ng-click="loadPage(page,$event)" ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
+                                <span ng-show="loadingPage[page.pageNum]"  style="position: relative"><i class="fa fa-spinner fa-pulse" style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
+                            </li>
+                            <li ng-class="{disabled:currentPage==pages.length-1}">
+                                <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
+                            </li>
+                            <li ng-class="{disabled:currentPage==pages.length-1}">
+                                <a href="#" ng-click="loadPage(pages[pages.length-1],$event)">&raquo;&raquo;</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>

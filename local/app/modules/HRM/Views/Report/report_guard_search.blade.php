@@ -108,6 +108,26 @@
 
         })
         $(function () {
+            function beforePrint(){
+//                console.log($("body").find("#print-body").html())
+                $("#print-area").remove();
+                $('body').append('<div id="print-area">'+$("#print-guard-in-ansar-report").html()+'</div>')
+            }
+            function afterPrint(){
+                $("#print-area").remove()
+            }
+            if(window.matchMedia){
+                var mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        beforePrint();
+                    } else {
+                        afterPrint();
+                    }
+                });
+            }
+            window.onbeforeprint = beforePrint;
+            window.onafterprint = afterPrint;
             $("#print-report").on('click', function (e) {
                 e.preventDefault();
                 $('#print-guard-in-ansar-report table tr td a').each(function () {
@@ -115,13 +135,11 @@
                     $(this).parents('td').append('<span>' + v + '</span>')
                     $(this).css('display', 'none')
                 })
-                $('body').append('<div id="print-area">' + $("#print-guard-in-ansar-report").html() + '</div>')
                 window.print();
                 $('#print-guard-in-ansar-report table tr td a').each(function () {
                     $(this).parents('td').children('span').remove()
                     $(this).css('display', 'block')
                 })
-                $("#print-area").remove()
             })
         })
     </script>

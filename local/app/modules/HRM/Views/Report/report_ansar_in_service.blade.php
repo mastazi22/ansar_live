@@ -74,11 +74,29 @@
             $scope.loadReportData("ansar_service_report", "eng")
         })
         $(function () {
+            function beforePrint(){
+                $("#print-area").remove();
+//                console.log($("body").find("#print-body").html())
+                $('body').append('<div id="print-area">'+$("#report-ansar-service").html()+'</div>')
+            }
+            function afterPrint(){
+                $("#print-area").remove()
+            }
+            if(window.matchMedia){
+                var mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        beforePrint();
+                    } else {
+                        afterPrint();
+                    }
+                });
+            }
+            window.onbeforeprint = beforePrint;
+            window.onafterprint = afterPrint;
             $('body').on('click', '#print-report', function (e) {
                 e.preventDefault();
-                $('body').append('<div id="print-area" class="letter">' + $("#report-ansar-service").html() + '</div>')
                 window.print();
-                $("#print-area").remove()
             })
         })
     </script>
@@ -147,10 +165,10 @@
                         <div class="table-responsive" align="center">
                             <table class="table " style="width: auto">
                                 <tr>
-                                    <td>[[report.ansar_detail.name]]</td>
-                                    <td ng-if="!ansar">--</td>
-                                    <td ng-if="ansar">[[ansar.ansar_name_bng]]</td>
-                                    <td rowspan="4" align="center" valign="middle">
+                                    <td style="background: #ffffff">[[report.ansar_detail.name]]</td>
+                                    <td style="background: #ffffff" ng-if="!ansar">--</td>
+                                    <td style="background: #ffffff" ng-if="ansar">[[ansar.ansar_name_bng]]</td>
+                                    <td style="background: #ffffff" rowspan="4" align="center" valign="middle">
                                         <img ng-if="pi" src="{{asset('')}}[[ansar.profile_pic]]" class="img-thumbnail"
                                              style="width:120px;height: auto">
                                         <img ng-if="!pi" src="{{asset('')}}dist/img/nimage.png" class="img-thumbnail"
@@ -158,25 +176,25 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>[[report.ansar_detail.rank]]</td>
-                                    <td ng-if="!ansar">--</td>
-                                    <td ng-if="ansar">[[ansar.name_bng]]</td>
+                                    <td style="background: #FFFFFF">[[report.ansar_detail.rank]]</td>
+                                    <td style="background: #ffffff" ng-if="!ansar">--</td>
+                                    <td style="background: #ffffff" ng-if="ansar">[[ansar.name_bng]]</td>
                                 </tr>
                                 <tr>
-                                    <td>[[report.ansar_detail.bg]]</td>
-                                    <td ng-if="!ansar">--</td>
-                                    <td ng-if="ansar">[[ansar.blood_group_name_bng]]</td>
+                                    <td style="background: #ffffff">[[report.ansar_detail.bg]]</td>
+                                    <td style="background: #ffffff" ng-if="!ansar">--</td>
+                                    <td style="background: #ffffff" ng-if="ansar">[[ansar.blood_group_name_bng]]</td>
                                 </tr>
                                 <tr>
-                                    <td>[[report.ansar_detail.district]]</td>
-                                    <td ng-if="!ansar">--</td>
-                                    <td ng-if="ansar">[[ansar.unit_name_bng]]</td>
+                                    <td style="background: #ffffff">[[report.ansar_detail.district]]</td>
+                                    <td style="background: #ffffff" ng-if="!ansar">--</td>
+                                    <td style="background: #ffffff" ng-if="ansar">[[ansar.unit_name_bng]]</td>
                                 </tr>
                             </table>
                         </div>
                         <div class="table-responsive">
                             <h4 style="text-align: center;">[[report.current.header]]</h4>
-                            <table class="table table-bordered">
+                            <table class="table table-bordered full">
                                 <tr>
                                     <th>[[report.current.jd]]</th>
                                     <th>[[report.current.rdmi]]</th>
@@ -203,7 +221,7 @@
                         </div>
                         <div class="table-responsive">
                             <h4 style="text-align: center;">[[report.past.header]]</h4>
-                            <table class="table table-bordered">
+                            <table class="table table-bordered full">
                                 <tr>
                                     <th>[[report.past.sl_no]]</th>
                                     <th>[[report.past.jd]]</th>

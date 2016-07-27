@@ -50,12 +50,32 @@
             }
         })
         $(function () {
+            function beforePrint(){
+//                console.log($("body").find("#print-body").html())
+                $("#print-area").remove();
+                $('body').append('<div id="print-area" class="letter">'+$("#ansar_transfer_history").html()+'</div>')
+            }
+            function afterPrint(){
+                $("#print-area").remove()
+            }
+            if(window.matchMedia){
+                var mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        beforePrint();
+                    } else {
+                        afterPrint();
+                    }
+                });
+            }
+            window.onbeforeprint = beforePrint;
+            window.onafterprint = afterPrint;
             $('body').on('click','#print-report', function (e) {
                // alert("pppp")
                 e.preventDefault();
-                $('body').append('<div id="print-area" class="letter">'+$("#ansar_transfer_history").html()+'</div>')
+
                 window.print();
-                $("#print-area").remove()
+
             })
         })
 

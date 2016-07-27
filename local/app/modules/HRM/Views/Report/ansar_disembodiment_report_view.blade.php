@@ -148,11 +148,29 @@
 
         })
         $(function () {
+            function beforePrint(){
+                $("#print-area").remove();
+//                console.log($("body").find("#print-body").html())
+                $('body').append('<div id="print-area">'+$("#print_ansar_disembodiment_report").html()+'</div>')
+            }
+            function afterPrint(){
+                $("#print-area").remove()
+            }
+            if(window.matchMedia){
+                var mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        beforePrint();
+                    } else {
+                        afterPrint();
+                    }
+                });
+            }
+            window.onbeforeprint = beforePrint;
+            window.onafterprint = afterPrint;
             $("#print-report").on('click', function (e) {
                 e.preventDefault();
-                $('body').append('<div id="print-area">' + $("#print_ansar_disembodiment_report").html() + '</div>')
                 window.print();
-                $("#print-area").remove()
             })
         })
     </script>
@@ -241,7 +259,7 @@
                             </a></h3>
 
                         <div class="table-responsive">
-                            <table class="table table-bordered">
+                            <table class="table table-bordered full">
                                 <tr>
                                     <th>[[report.ansar.sl_no]]</th>
                                     <th>[[report.ansar.id]]</th>

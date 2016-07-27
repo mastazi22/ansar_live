@@ -155,11 +155,29 @@
             $scope.loadTotal()
         })
         $(function () {
+            function beforePrint(){
+                $("#print-area").remove();
+//                console.log($("body").find("#print-body").html())
+                $('body').append('<div id="print-area">'+$("#print-blacklisted-ansar-report").html()+'</div>')
+            }
+            function afterPrint(){
+                $("#print-area").remove()
+            }
+            if(window.matchMedia){
+                var mediaQueryList = window.matchMedia('print');
+                mediaQueryList.addListener(function(mql) {
+                    if (mql.matches) {
+                        beforePrint();
+                    } else {
+                        afterPrint();
+                    }
+                });
+            }
+            window.onbeforeprint = beforePrint;
+            window.onafterprint = afterPrint;
             $("#print-report").on('click', function (e) {
                 e.preventDefault();
-                $('body').append('<div id="print-area">' + $("#print-blacklisted-ansar-report").html() + '</div>')
                 window.print();
-                $("#print-area").remove()
             })
         })
     </script>

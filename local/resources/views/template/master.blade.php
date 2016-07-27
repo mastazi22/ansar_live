@@ -52,36 +52,12 @@
                     'X-CSRF-TOKEN': '{{csrf_token()}}'
                 }
             })
-            resizeMenu();
             $('#national_id_no,#birth_certificate_no,#mobile_no_self').keypress(function (e) {
                 var code = e.keyCode ? e.keyCode : e.which;
                 if ((code >= 47 && code <= 57) || code == 8);
                 else e.preventDefault();
             });
-            $(window).resize(function (e) {
-                resizeMenu();
-            })
-            $(".navbar-custom-menu").resize(function () {
-                alert(2222);
-            })
-            function resizeMenu() {
-                console.log({width: $("#ncm").outerWidth(true)})
-                var w = $("#resize_menu").width();
-                var cw = 0;
-                $("#resize_menu").children().not('h4').each(function (ch) {
-                    cw += $(this).outerWidth(true);
-                })
-                $("#resize_menu").children('h4').width(w - cw - 20);
-            }
 
-            var lastWidth = $("#ncm").outerWidth(true);
-            setInterval(function () {
-                var v = $("#ncm");
-                if (lastWidth == v.outerWidth(true)) return;
-                lastWidth = v.outerWidth(true);
-                console.log({change: lastWidth})
-                resizeMenu();
-            }, 100)
         });
 
         var GlobalApp = angular.module('GlobalApp', ['angular.filter'], function ($interpolateProvider, $httpProvider) {

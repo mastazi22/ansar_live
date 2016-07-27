@@ -4538,3 +4538,23 @@ table.text-center, table.text-center td, table.text-center th {
 #entryform{
     position: relative;
 }
+@page{
+    size: 'A4';
+    margin: .5cm .6cm;
+}
+@media print{
+    *{
+        float: none !important;
+    }
+    .full>tr>td,.full>tr>th,.full>tbody>tr>td,.full>tbody>tr>th,.full>thead>tr>td,.full>thead>tr>th{
+        white-space: normal !important;
+        font-size: 12px !important;
+    }
+    .full>tr,.full>tbody>tr{
+        page-break-before: always;
+    }
+    .full>tr,.full>tbody>tr{
+        page-break-inside: avoid !important;
+    }
+
+}

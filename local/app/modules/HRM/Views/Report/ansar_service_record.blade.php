@@ -66,23 +66,15 @@
             }
         })
         $(function () {
-            $('body').on('click','#print-report', function (e) {
-                //alert("pppp")
-                e.preventDefault();
-               // beforePrint()
-                window.print();
-               // afterPrint()
-            })
-            var beforePrint = function() {
-                if($("#print-area").length<=0)$('body').append('<div id="print-area" class="letter">'+$("#ansar_service_record").html()+'</div>')
-                console.log('Functionality to run before printing.');
-            };
-            var afterPrint = function() {
+            function beforePrint(){
+                $("#print-area").remove();
+//                console.log($("body").find("#print-body").html())
+                $('body').append('<div id="print-area">'+$("#ansar_service_record").html()+'</div>')
+            }
+            function afterPrint(){
                 $("#print-area").remove()
-                console.log('Functionality to run after printing');
-            };
-
-            if (window.matchMedia) {
+            }
+            if(window.matchMedia){
                 var mediaQueryList = window.matchMedia('print');
                 mediaQueryList.addListener(function(mql) {
                     if (mql.matches) {
@@ -92,9 +84,15 @@
                     }
                 });
             }
-
             window.onbeforeprint = beforePrint;
             window.onafterprint = afterPrint;
+            $('body').on('click','#print-report', function (e) {
+                //alert("pppp")
+                e.preventDefault();
+               // beforePrint()
+                window.print();
+               // afterPrint()
+            })
         })
     </script>
     <style>
