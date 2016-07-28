@@ -1,4 +1,8 @@
 @extends('template/master')
+@section('title','User Registration')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('user_registration') !!}
+@endsection
 @section('content')
     <script>
         GlobalApp.controller('userController', function ($scope, $http) {
@@ -49,8 +53,7 @@
             <div class="register-page" style="background-color: transparent">
                 <div class="register-box" style="margin: 4% auto 5% auto;width:50%">
 
-                    <div class="register-box-body" style="position: relative">
-                        <div class="table-list-title">User Form</div>
+                    <div class="register-box-body box-info" style="position: relative">
 
                         <form action="{{action('UserController@handleRegister')}}" method="post"
                               class="form-horizontal">
@@ -61,7 +64,7 @@
 
                                 <div class="col-sm-9 @if($errors->has('user_name')) has-error @endif">
                                     <input type="text" name="user_name" value="{{Request::old('user_name')}}"
-                                           class="form-control" placeholder="user_name"/>
+                                           class="form-control" placeholder="Enter User Name"/>
                                     <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                                     @if($errors->has('user_name'))
                                         <p class="text-danger">{{$errors->first('user_name')}}</p>
@@ -73,7 +76,7 @@
                                        style="text-align: left;padding-top:0">Password</label>
 
                                 <div class="col-sm-9 @if($errors->has('password')) has-error @endif">
-                                    <input type="password" name="password" class="form-control" placeholder="Password"/>
+                                    <input type="password" name="password" class="form-control" placeholder="Enter Password"/>
                                     <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                                     @if($errors->has('password'))
                                         <p class="text-danger">{{$errors->first('password')}}</p>
@@ -82,7 +85,7 @@
                             </div>
                             <div class="form-group has-feedback">
                                 <label for="r_password" class="col-sm-3 control-label"
-                                       style="padding-top:0;margin-top: -2px;text-align: left ">Re-type Password</label>
+                                       style="padding-top:0;margin-top: -2px;text-align: left ">Retype Password</label>
 
                                 <div class="col-sm-9 @if($errors->has('r_password')) has-error @endif">
                                     <input type="password" name="r_password" class="form-control"
@@ -100,7 +103,7 @@
                                 <div class="col-sm-9">
                                     <select name="user_type" class="form-control" ng-model="selectedUserType"
                                             ng-change="onUserTypeChange()">
-                                        <option value="">--Select a user type--</option>
+                                        <option value="">--Select a User Type--</option>
                                         <option ng-repeat="u in userType" value="[[u.code]]">[[u.name]]</option>
 
                                     </select>

@@ -391,7 +391,7 @@ class ReportController extends Controller
             'offset' => 'numeric',
             'unit' => 'numeric',
             'ansar_rank' => 'numeric',
-            'ansar_sex' => 'regex:/^[a-z]+/',
+            'ansar_sex' => 'regex:/^[A-Za-z]+$/',
         ];
         $valid = Validator::make(Input::all(), $rules);
 
