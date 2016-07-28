@@ -26,11 +26,11 @@ Breadcrumbs::register('dashboard_menu_service_ended_2_month', function($breadcru
 });
 Breadcrumbs::register('dashboard_menu_50_year', function($breadcrumbs,$total) {
     $breadcrumbs->parent('progress_info');
-    $breadcrumbs->push('Total number of Ansars who will reach 50 years of age within next 3 months', URL::route('ansar_reached_fifty_years',['count'=>$total]));
+    $breadcrumbs->push('Total number of Ansars who will reach 50 years of age within the next 3 months', URL::route('ansar_reached_fifty_years',['count'=>$total]));
 });
 Breadcrumbs::register('dashboard_menu_not_interested', function($breadcrumbs,$total) {
     $breadcrumbs->parent('progress_info');
-    $breadcrumbs->push('Total number of Ansars who are not interested to join after more than 10 reminders', URL::route('ansar_not_interested',['count'=>$total]));
+    $breadcrumbs->push('Total number of Ansars who are not interested to join after 10 or more reminders', URL::route('ansar_not_interested',['count'=>$total]));
 });
 
 //KPI Branch
