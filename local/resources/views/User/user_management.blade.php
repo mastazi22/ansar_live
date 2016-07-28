@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','User Management')
+@section('title','Manage User')
 @section('small_title')
     <a href="{{action('UserController@userRegistration')}}" class="btn btn-primary btn-sm">
         <span class="glyphicon glyphicon-user"></span> Add New User

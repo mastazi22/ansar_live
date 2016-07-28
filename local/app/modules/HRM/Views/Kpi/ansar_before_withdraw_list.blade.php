@@ -10,7 +10,7 @@
 
 @section('content')
     <script>
-        GlobalApp.controller('GuardBeforeWithdrawController', function ($scope, $http) {
+        GlobalApp.controller('GuardBeforeWithdrawController', function ($scope, $http, $sce) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}')
             $scope.districts = [];
             $scope.thanas = [];
@@ -22,6 +22,8 @@
             $scope.loadingUnit = false;
             $scope.loadingThana = false;
             $scope.loadingKpi = false;
+            $scope.errorFound = 0;
+            $scope.errorMessage='';
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}')
             $scope.loadDistrict = function () {
                 $scope.loadingUnit = true;
@@ -66,8 +68,13 @@
                     url: '{{URL::route('load_ansar_before_withdraw')}}',
                     params: {kpi_id: id}
                 }).then(function (response) {
+                    $scope.errorFound = 0;
                     $scope.ansars = response.data;
-                    console.log($scope.ansars)
+                    $scope.allLoading = false;
+                },function(response){
+                    $scope.errorFound = 1;
+                    $scope.ansars = [];
+                    $scope.errorMessage = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
                     $scope.allLoading = false;
                 })
             }
@@ -107,7 +114,7 @@
                                 </label>
                                 <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedDistrict"
-                                        ng-change="loadThana(selectedDistrict)">
+                                        ng-change="loadThana(selectedDistrict)" name="unit_id">
                                     <option value="">--Select a District--</option>
                                     <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
                                     </option>
@@ -123,7 +130,7 @@
                                 </label>
                                 <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedThana"
-                                        ng-change="loadGuard(selectedThana)">
+                                        ng-change="loadGuard(selectedThana)" name="thana_id">
                                     <option value="">--Select a Thana--</option>
                                     <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
                                     </option>
@@ -161,7 +168,8 @@
                                 <th>Withdraw Reason</th>
                                 <th>Withdraw Date</th>
                             </tr>
-                            <tr ng-show="ansars.length==0">
+                            <tbody ng-if="errorFound==1" ng-bind-html="errorMessage"></tbody>
+                            <tr ng-show="ansars.length==0&&errorFound==0">
                                 <td colspan="10" class="warning no-ansar">
                                     No Ansar is available to show
                                 </td>

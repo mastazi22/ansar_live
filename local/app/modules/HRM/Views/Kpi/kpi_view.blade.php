@@ -21,7 +21,7 @@
             $scope.selectedDivision = "all";
             $scope.selectedDistrict = "all";
             $scope.selectedThana = "all";
-            $scope.isLoading = false;
+            $scope.allLoading = false;
             $scope.divisions = [];
             $scope.districts = [];
             $scope.thanas = [];
@@ -37,6 +37,8 @@
             $scope.loadingPage = [];
             $scope.verified = [];
             $scope.verifying = [];
+            $scope.errorMessage = '';
+            $scope.errorFound = 0;
             $scope.loadPagination = function () {
                 $scope.pages = [];
                 for (var i = 0; i < $scope.numOfPage; i++) {
@@ -73,7 +75,7 @@
                 })
             }
             $scope.loadTotal = function () {
-                $scope.isLoading = true;
+                $scope.allLoading = true;
                 //alert($scope.selectedDivision)
                 $http({
 
@@ -86,12 +88,19 @@
                         view: 'count'
                     }
                 }).then(function (response) {
-
+                    $scope.errorFound = 0;
                     $scope.total = response.data.total;
                     $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
                     $scope.loadPagination();
-                    $scope.isLoading = false;
+                    $scope.allLoading = false;
                     //alert($scope.total)
+                },function(response){
+                    $scope.errorFound = 1;
+                    $scope.total = 0;
+                    $scope.kpis = [];
+                    $scope.errorMessage = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
+                    $scope.pages = [];
+                    $scope.allLoading = false;
                 })
             }
             $scope.filterMiddlePage = function (value, index, array) {
@@ -178,12 +187,13 @@
                 </div>
             </div>
         @endif
-        <div class="loading-report animated" ng-class="{fadeInDown:isLoading,fadeOutUp:!isLoading}">
-            <img src="{{asset('dist/img/ring-alt.gif')}}" class="center-block">
-            <h4>Loading...</h4>
-        </div>
         <section class="content">
             <div class="box box-solid">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4" ng-hide="isAdmin==66 || isAdmin==22">
@@ -230,6 +240,7 @@
                             </div>
                         </div>
                     </div>
+                    <h4>Total KPI: [[total.toLocaleString()]]</h4>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr>
@@ -242,8 +253,9 @@
                                 <th>KPI Contact No.</th>
                                 <th>Action</th>
                             </tr>
+                            <tbody ng-if="errorFound==1" ng-bind-html="errorMessage"></tbody>
                             <tbody>
-                            <tr ng-if="kpis.length==0">
+                            <tr ng-if="kpis.length==0&&errorFound==0">
                                 <td colspan="8" class="warning no-ansar">
                                     No KPI is available to show.
                                 </td>

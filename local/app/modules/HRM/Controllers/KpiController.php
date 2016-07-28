@@ -40,10 +40,23 @@ class KpiController extends Controller
         $unit = Input::get('unit');
         $thana = Input::get('thana');
         $view = Input::get('view');
-        if (strcasecmp($view, 'view') == 0) {
-            return CustomQuery::kpiInfo($offset, $limit, $division, $unit, $thana);
-        } else {
-            return CustomQuery::kpiInfoCount($division, $unit, $thana);
+        $rules=[
+            'limit'=>'numeric',
+            'offset' =>'numeric',
+            'division'=>['regex:/^(all)$|^[0-9]+$/'],
+            'unit'=>['regex:/^(all)$|^[0-9]+$/'],
+            'thana'=>['regex:/^(all)$|^[0-9]+$/'],
+            'view'=>'regex:/[a-z]+/'
+        ];
+        $validation=Validator::make(Input::all(), $rules);
+        if($validation->fails()){
+            return response('Invalid Request (400)', 400);
+        }else{
+            if (strcasecmp($view, 'view') == 0) {
+                return CustomQuery::kpiInfo($offset, $limit, $division, $unit, $thana);
+            } else {
+                return CustomQuery::kpiInfoCount($division, $unit, $thana);
+            }
         }
     }
 
@@ -214,26 +227,37 @@ class KpiController extends Controller
 
     public function ansarListForWithdraw()
     {
-
+        $unit_id=Input::get('unit_id');
+        $thana=Input::get('thana_id');
         $statusSelected = Input::get('selected_name');
-        $kpi_infos = DB::table('tbl_embodiment')
-            ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
-            ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-            ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-            ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-            ->join('tbl_ansar_parsonal_info', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-            ->where('tbl_embodiment.kpi_id', '=', $statusSelected)
-            ->where('tbl_ansar_status_info.block_list_status', '=', 0)
-            ->where('tbl_ansar_status_info.black_list_status', '=', 0)
-            ->where('tbl_embodiment.emboded_status', '=', "Emboded")
-            ->distinct()
-            ->select('tbl_embodiment.*', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_kpi_info.kpi_name', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_designations.name_eng')
-            ->get();
-        //$kpi_infos = EmbodimentModel::where('kpi_id', $statusSelected)->get();
-        if (count($kpi_infos) <= 0) return Response::json(array('result' => true));
-        return view('HRM::Kpi.selected_ansar_withrdaw_view')->with('kpi_infos', $kpi_infos);
+        $rules=[
+            'unit_id'=>'regex:/^[0-9]+$/',
+            'thana_id'=>'regex:/^[0-9]+$/',
+            'selected_name'=>'regex:/^[0-9]+$/'
+        ];
+        $validation=Validator::make(Input::all(), $rules);
+        if($validation->fails()){
+            return Response::json(array('valid' => true));
+        }else{
+            $kpi_infos = DB::table('tbl_embodiment')
+                ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
+                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
+                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
+                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
+                ->join('tbl_ansar_parsonal_info', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+                ->where('tbl_embodiment.kpi_id', '=', $statusSelected)
+                ->where('tbl_ansar_status_info.block_list_status', '=', 0)
+                ->where('tbl_ansar_status_info.black_list_status', '=', 0)
+                ->where('tbl_embodiment.emboded_status', '=', "Emboded")
+                ->distinct()
+                ->select('tbl_embodiment.*', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_kpi_info.kpi_name', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_designations.name_eng')
+                ->get();
+            //$kpi_infos = EmbodimentModel::where('kpi_id', $statusSelected)->get();
+            if (count($kpi_infos) <= 0) return Response::json(array('result' => true));
+            return view('HRM::Kpi.selected_ansar_withrdaw_view')->with('kpi_infos', $kpi_infos);
+        }
     }
 
     public function ansarWithdrawUpdate(Request $request)
@@ -303,24 +327,36 @@ class KpiController extends Controller
 
     public function ansarListForReduce()
     {
+        $unit_id=Input::get('unit_id');
+        $thana=Input::get('thana_id');
         $selctedReducedAnsars = Input::get('selected_name');
-        $kpi_infos = DB::table('tbl_embodiment')
-            ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
-            ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-            ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-            ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-            ->join('tbl_ansar_parsonal_info', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-            ->where('tbl_embodiment.kpi_id', '=', $selctedReducedAnsars)
-            ->where('tbl_ansar_status_info.block_list_status', '=', 0)
-            ->where('tbl_ansar_status_info.black_list_status', '=', 0)
-            ->where('tbl_embodiment.emboded_status', '=', "Emboded")
-            ->distinct()
-            ->select('tbl_embodiment.*', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_kpi_info.kpi_name', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_designations.name_eng')
-            ->get();
-        if (count($kpi_infos) <= 0) return Response::json(array('result' => true));
-        return view('HRM::Kpi.selected_reduce_guard_strength')->with('kpi_infos', $kpi_infos);
+        $rules=[
+            'unit_id'=>'regex:/^[0-9]+$/',
+            'thana_id'=>'regex:/^[0-9]+$/',
+            'selected_name'=>'^regex:/[0-9]+$/'
+        ];
+        $validation=Validator::make(Input::all(), $rules);
+        if($validation->fails()){
+            return Response::json(array('valid' => true));
+        }else{
+            $kpi_infos = DB::table('tbl_embodiment')
+                ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
+                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
+                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
+                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
+                ->join('tbl_ansar_parsonal_info', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+                ->where('tbl_embodiment.kpi_id', '=', $selctedReducedAnsars)
+                ->where('tbl_ansar_status_info.block_list_status', '=', 0)
+                ->where('tbl_ansar_status_info.black_list_status', '=', 0)
+                ->where('tbl_embodiment.emboded_status', '=', "Emboded")
+                ->distinct()
+                ->select('tbl_embodiment.*', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_kpi_info.kpi_name', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_designations.name_eng')
+                ->get();
+            if (count($kpi_infos) <= 0) return Response::json(array('result' => true));
+            return view('HRM::Kpi.selected_reduce_guard_strength')->with('kpi_infos', $kpi_infos);
+        }
     }
 
     public function ansarReduceUpdate(Request $request)
@@ -396,23 +432,35 @@ class KpiController extends Controller
 
     public function loadAnsarsForBeforeWithdraw()
     {
+        $unit_id=Input::get('unit_id');
+        $thana=Input::get('thana_id');
         $kpi_id = Input::get('kpi_id');
-        $freeze_reason = "Guard Withdraw";
+        $rules=[
+            'unit_id'=>'regex:/^[0-9]+$/',
+            'thana_id'=>'regex:/^[0-9]+$/',
+            'kpi_id'=>'regex:/^[0-9]+$/'
+        ];
+        $validation=Validator::make(Input::all(), $rules);
+        if($validation->fails()){
+            return response('Invalid Request (400)', 400);
+        }else{
+            $freeze_reason = "Guard Withdraw";
 
-        $guards_before_withdraw = DB::table('tbl_freezing_info')
-            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-            ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-            ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_freezing_info.kpi_id')
-            ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-            ->where('tbl_freezing_info.freez_reason', '=', $freeze_reason)
-            ->where('tbl_freezing_info.kpi_id', '=', $kpi_id)
-            ->distinct()
-            ->select('tbl_freezing_info.ansar_id as id', 'tbl_freezing_info.freez_date as date', 'tbl_freezing_info.comment_on_freez as reason', 'tbl_ansar_parsonal_info.ansar_name_eng as name', 'tbl_designations.name_eng as rank', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana', 'tbl_kpi_info.kpi_name',
-                'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.reporting_date as r_date', 'tbl_kpi_info.kpi_name')->get();
+            $guards_before_withdraw = DB::table('tbl_freezing_info')
+                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
+                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
+                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_freezing_info.kpi_id')
+                ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
+                ->where('tbl_freezing_info.freez_reason', '=', $freeze_reason)
+                ->where('tbl_freezing_info.kpi_id', '=', $kpi_id)
+                ->distinct()
+                ->select('tbl_freezing_info.ansar_id as id', 'tbl_freezing_info.freez_date as date', 'tbl_freezing_info.comment_on_freez as reason', 'tbl_ansar_parsonal_info.ansar_name_eng as name', 'tbl_designations.name_eng as rank', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana', 'tbl_kpi_info.kpi_name',
+                    'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.reporting_date as r_date', 'tbl_kpi_info.kpi_name')->get();
 //        return Response::json($guards_before_withdraw);
-        return $guards_before_withdraw;
+            return $guards_before_withdraw;
+        }
     }
 
     public function guardBeforeReduceView()
@@ -422,23 +470,35 @@ class KpiController extends Controller
 
     public function loadAnsarsForBeforeReduce()
     {
+        $unit_id=Input::get('unit_id');
+        $thana=Input::get('thana_id');
         $kpi_id = Input::get('kpi_id');
-        $freeze_reason = "Guard Reduce";
+        $rules=[
+            'unit_id'=>'regex:/^[0-9]+$/',
+            'thana_id'=>'regex:/^[0-9]+$/',
+            'kpi_id'=>'regex:/^[0-9]+$/'
+        ];
+        $validation=Validator::make(Input::all(), $rules);
+        if($validation->fails()){
+            return response('Invalid Request (400)', 400);
+        }else{
+            $freeze_reason = "Guard Reduce";
 
-        $guards_before_reduce = DB::table('tbl_freezing_info')
-            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-            ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-            ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_freezing_info.kpi_id')
-            ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-            ->where('tbl_freezing_info.freez_reason', '=', $freeze_reason)
-            ->where('tbl_freezing_info.kpi_id', '=', $kpi_id)
-            ->distinct()
-            ->select('tbl_freezing_info.ansar_id as id', 'tbl_freezing_info.freez_date as date', 'tbl_freezing_info.comment_on_freez as reason', 'tbl_ansar_parsonal_info.ansar_name_eng as name', 'tbl_designations.name_eng as rank', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana', 'tbl_kpi_info.kpi_name',
-                'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.reporting_date as r_date', 'tbl_kpi_info.kpi_name')->get();
+            $guards_before_reduce = DB::table('tbl_freezing_info')
+                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
+                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
+                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_freezing_info.kpi_id')
+                ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
+                ->where('tbl_freezing_info.freez_reason', '=', $freeze_reason)
+                ->where('tbl_freezing_info.kpi_id', '=', $kpi_id)
+                ->distinct()
+                ->select('tbl_freezing_info.ansar_id as id', 'tbl_freezing_info.freez_date as date', 'tbl_freezing_info.comment_on_freez as reason', 'tbl_ansar_parsonal_info.ansar_name_eng as name', 'tbl_designations.name_eng as rank', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana', 'tbl_kpi_info.kpi_name',
+                    'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.reporting_date as r_date', 'tbl_kpi_info.kpi_name')->get();
 //        return Response::json($guards_before_withdraw);
-        return $guards_before_reduce;
+            return $guards_before_reduce;
+        }
     }
 
     public function kpiWithdrawView()
@@ -460,7 +520,7 @@ class KpiController extends Controller
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
                 ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
                 ->where('tbl_kpi_info.id', '=', $kpi_id)
-                ->where('tbl_kpi_detail_info.kpi_withdraw_date', '=', '')->distinct()
+                ->whereNull('tbl_kpi_detail_info.kpi_withdraw_date')->distinct()
                 ->select('tbl_kpi_info.kpi_name as kpi', 'tbl_kpi_detail_info.total_ansar_request as tar', 'tbl_kpi_detail_info.total_ansar_given as tag', 'tbl_kpi_detail_info.weapon_count as weapon', 'tbl_kpi_detail_info.bullet_no as bullet', 'tbl_kpi_detail_info.activation_date as a_date', 'tbl_division.division_name_eng as division', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana')
                 ->first();
             return Response::json($kpi_info);
@@ -533,10 +593,22 @@ class KpiController extends Controller
         $unit = Input::get('unit');
         $thana = Input::get('thana');
         $view = Input::get('view');
-        if (strcasecmp($view, 'view') == 0) {
-            return CustomQuery::withdrawnKpiInfo($offset, $limit, $unit, $thana);
-        } else {
-            return CustomQuery::withdrawnKpiInfoCount($unit, $thana);
+        $rules=[
+            'limit'=>'numeric',
+            'offset' =>'numeric',
+            'unit'=>['regex:/^(all)$|^[0-9]+$/'],
+            'thana'=>['regex:/^(all)$|^[0-9]+$/'],
+            'view'=>'regex:/[a-z]+/'
+        ];
+        $validation=Validator::make(Input::all(), $rules);
+        if($validation->fails()){
+            return response('Invalid Request (400)', 400);
+        }else{
+            if (strcasecmp($view, 'view') == 0) {
+                return CustomQuery::withdrawnKpiInfo($offset, $limit, $unit, $thana);
+            } else {
+                return CustomQuery::withdrawnKpiInfoCount($unit, $thana);
+            }
         }
     }
 
@@ -594,25 +666,41 @@ class KpiController extends Controller
         $unit = Input::get('unit');
         $thana = Input::get('thana');
         $view = Input::get('view');
-        if (strcasecmp($view, 'view') == 0) {
-            return CustomQuery::inactiveKpiInfo($offset, $limit, $unit, $thana);
-        } else {
-            return CustomQuery::inactiveKpiInfoCount($unit, $thana);
+        $rules=[
+            'limit'=>'numeric',
+            'offset'=>'numeric',
+            'unit'=>['regex:/^(all)$|^[0-9]+$/'],
+            'thana'=>['regex:/^(all)$|^[0-9]+$/'],
+            'view'=>'regex:/[a-z]+/'
+        ];
+        $validation=Validator::make(Input::all(), $rules);
+        if($validation->fails()){
+            return response('Invalid Request(400)', 400);
+        }else{
+            if (strcasecmp($view, 'view') == 0) {
+                return CustomQuery::inactiveKpiInfo($offset, $limit, $unit, $thana);
+            } else {
+                return CustomQuery::inactiveKpiInfoCount($unit, $thana);
+            }
         }
     }
 
     public function activeKpi($id)
     {
-        DB::beginTransaction();
-        try {
-            KpiGeneralModel::where('id', $id)->update(['withdraw_status' => 0]);
-            DB::commit();
-        } catch
-        (Exception $e) {
-            DB::rollback();
-            return $e->getMessage();
+        if(!preg_match('/^[0-9]+$/', $id)){
+            return Redirect::route('inactive_kpi_view')->with('error_message', 'Invalid Request!');
+        }else{
+            DB::beginTransaction();
+            try {
+                KpiGeneralModel::where('id', $id)->update(['withdraw_status' => 0]);
+                DB::commit();
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return Redirect::route('inactive_kpi_view')->with('error_message', 'KPI has not been Active!');
+            }
+            return Redirect::route('inactive_kpi_view')->with('success_message', 'KPI is Active Successfully!');
         }
-        return Redirect::route('kpi_view')->with('success_message', 'KPI is Active Successfully!');
     }
 
     public function withdrawnKpiName(Request $request)
@@ -652,28 +740,53 @@ class KpiController extends Controller
 
     public function kpiWithdrawCancelUpdate(Request $request)
     {
+        $unit = Input::get('unit_id');
+        $thana = Input::get('thana_id');
         $kpi_id = $request->input('kpi_id');
-        $kpi_withdraw_date_cancel = KpiDetailsModel::where('kpi_id', $kpi_id)->first();
-        if (empty($kpi_withdraw_date_cancel->kpi_withdraw_date)) {
-            return Redirect::route('kpi_withdraw_cancel_view')->with('error_message', 'This kpi not in withdraw list');
-        }
-        DB::beginTransaction();
-        try {
+        $kpiExist=$request->input('kpiExist');
+        $rules = [
+            'kpiExist'=>'required|numeric|regex:/^[0-9]+$/',
+            'kpi_id'=>'required|numeric|regex:/^[0-9]+$/',
+            'unit_id'=>'required|numeric|regex:/^[0-9]+$/',
+            'thana_id'=>'required|numeric|regex:/^[0-9]+$/',
+        ];
+        $message = [
+            'kpi_id.required'=>'KPI is required',
+            'unit_id.required'=>'Unit is required',
+            'thana_id.required'=>'Thana is required',
+            'kpi_id.numeric'=>'Select a valid KPI',
+            'kpi_id.regex'=>'Select a valid KPI',
+            'unit_id.numeric'=>'Select a valid Unit',
+            'unit_id.regex'=>'Select a valid Unit',
+            'thana_id.numeric'=>'Select a valid Thana',
+            'thana_id.regex'=>'Select a valid Thana',
+        ];
+        $validation = Validator::make(Input::all(),$rules,$message);
+        if($validation->fails()){
+            return Redirect::back()->withInput(Input::all())->withErrors($validation);
+        }else{
             $kpi_withdraw_date_cancel = KpiDetailsModel::where('kpi_id', $kpi_id)->first();
-            $kpi_withdraw_date_cancel->kpi_withdraw_date = NULL;
-            $kpi_withdraw_date_cancel->save();
+            if (empty($kpi_withdraw_date_cancel->kpi_withdraw_date)) {
+                return Redirect::route('kpi_withdraw_cancel_view')->with('error_message', 'KPI withdrawal cannot be cancelled!');
+            }
+            DB::beginTransaction();
+            try {
+                $kpi_withdraw_date_cancel = KpiDetailsModel::where('kpi_id', $kpi_id)->first();
+                $kpi_withdraw_date_cancel->kpi_withdraw_date = NULL;
+                $kpi_withdraw_date_cancel->save();
 
-            $kpi_withdraw_status_change = KpiGeneralModel::find($kpi_id);
-            $kpi_withdraw_status_change->withdraw_status = 0;
-            $kpi_withdraw_status_change->save();
+                $kpi_withdraw_status_change = KpiGeneralModel::find($kpi_id);
+                $kpi_withdraw_status_change->withdraw_status = 0;
+                $kpi_withdraw_status_change->save();
 
-            DB::commit();
-        } catch
-        (Exception $e) {
-            DB::rollback();
-            return $e->getMessage();
+                DB::commit();
+                return Redirect::route('kpi_withdraw_cancel_view')->with('success_message', 'KPI withdrawal cancelled successfully');
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return Redirect::route('kpi_withdraw_cancel_view')->with('error_message', 'KPI withdrawal cannot be cancelled!');
+            }
         }
-        return Redirect::route('kpi_withdraw_cancel_view')->with('success_message', 'KPI withdrawal cancelled successfully');
     }
 }
 
