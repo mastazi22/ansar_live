@@ -1,33 +1,43 @@
 <html>
 <head>
+    <meta charset="utf-8">
     <link rel="stylesheet" href="{{asset('dist/css/id-card.css')}}">
     <link href="{{asset('dist/css/AdminLTE.min.css')}}" rel="stylesheet" type="text/css"/>
     <link href="{{asset('bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css"/>
     <style>
         @font-face {
             font-family: banglFont;
-            src: url('{{asset('dist/fonts/SolaimanLipi.ttf')}}');
+            src: url('{{asset('dist/fonts/Siyamrupali.ttf')}}');
         }
         @font-face {
             font-family: engFont;
             src: url('{{asset('dist/fonts/LiberationSerif-Regular.ttf')}}');
         }
+        .bangla-class{
+            font-family: banglFont;
+        }
+        .bangla-class ul>li{
+            font-size: .96em;
+        }
+        .bangla-class .card-footer-sing>div{
+            font-size: 9px;
+        }
     </style>
 </head>
 <body>
-<div id="ansar-id-card-front" @if($type=='bng') style="font-family: banglFont" @else style="font-family: engFont" @endif >
+<div id="ansar-id-card-front" @if($type=='bng') class="bangla-class" @else style="font-family: engFont" @endif >
 
     <div class="card-header">
         <div class="card-header-left-part">
             <img src="{{asset('dist/img/ansar-vdp.png')}}" class="img-responsive">
         </div>
         <div class="card-header-right-part">
-            <h4 style="@if($type=='bng') font-size: 1.2em @elseif($type=='eng') font-size:1em; @endif">{{$rd['title']}}</h4>
+            <h4 style="@if($type=='bng') font-size: 1em @elseif($type=='eng') font-size:1em; @endif">{{$rd['title']}}</h4>
             <h5 style="font-size: 13px">{{$rd['id_no']}}
                 : {{strcasecmp($type,'bng')==0?LanguageConverter::engToBng($ad->division_code.$ad->unit_code.$ad->ansar_id):$ad->division_code.$ad->unit_code.$ad->ansar_id}}</h5>
         </div>
     </div>
-    <div class="card-body" style="font-size: 13px">
+    <div class="card-body">
         <img src="data:image/png;base64,{{DNS2D::getBarcodePNG($ad->division_code.$ad->unit_code.$ad->ansar_id,'QRCODE')}}"
              style="width: 50px;height: 50px;position: absolute;z-index: 3000;left: 58%;top: 44%">
 

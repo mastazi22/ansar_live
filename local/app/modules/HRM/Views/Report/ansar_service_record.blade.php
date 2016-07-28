@@ -149,28 +149,28 @@
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
                                                 <tr>
-                                                    <td rowspan="5"  style="vertical-align: middle;width: 130px;height: 150px">
+                                                    <td rowspan="5"  style="vertical-align: middle;width: 130px;height: 150px;background: #ffffff">
                                                         <img  style="width: 120px;height: 150px" src="{{URL::to('image').'?file='}}[[ansarDetail.apid.profile_pic]]" alt="">
                                                     </td>
-                                                    <th>Id</th>
-                                                    <td>[[ansarDetail.apid.ansar_id]]</td>
+                                                    <th style="background: #ffffff">Id</th>
+                                                    <td style="background: #ffffff">[[ansarDetail.apid.ansar_id]]</td>
                                                 </tr>
                                                 <tr>
 
-                                                    <th>Name</th>
-                                                    <td>[[ansarDetail.apid.ansar_name_bng]]</td>
+                                                    <th style="background: #ffffff">Name</th>
+                                                    <td style="background: #ffffff">[[ansarDetail.apid.ansar_name_bng]]</td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Rank</th>
-                                                    <td>[[ansarDetail.apid.name_bng]]</td>
+                                                    <th style="background: #ffffff">Rank</th>
+                                                    <td style="background: #ffffff">[[ansarDetail.apid.name_bng]]</td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Mobile No.</th>
-                                                    <td>[[ansarDetail.apid.mobile_no_self]]</td>
+                                                    <th style="background: #ffffff">Mobile No.</th>
+                                                    <td style="background: #ffffff">[[ansarDetail.apid.mobile_no_self]]</td>
                                                 </tr>
                                                 <tr>
-                                                    <th>Home District</th>
-                                                    <td>[[ansarDetail.apid.unit_name_bng]]</td>
+                                                    <th style="background: #ffffff">Home District</th>
+                                                    <td style="background: #ffffff">[[ansarDetail.apid.unit_name_bng]]</td>
                                                 </tr>
                                             </table>
                                         </div>
@@ -218,7 +218,7 @@
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
                                                 <tr>
-                                                    <td>
+                                                    <td style="background: #ffffff">
                                                         <table class="table table-bordered">
                                                             <caption>অঙ্গিভুতির বিবরণ</caption>
                                                             <tr>
@@ -235,7 +235,7 @@
                                                             </tr>
                                                         </table>
                                                     </td>
-                                                    <td>
+                                                    <td style="background: #ffffff">
                                                         <table class="table table-bordered">
                                                             <caption>অঙ্গিভুতির বিবরণ</caption>
                                                             <tr>
