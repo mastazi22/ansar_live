@@ -127,7 +127,7 @@
     </script>
     <div ng-controller="AnsarReduceController">
         {{--<div class="breadcrumbplace">--}}
-            {{--{!! Breadcrumbs::render('reduce_guard_strength') !!}--}}
+        {{--{!! Breadcrumbs::render('reduce_guard_strength') !!}--}}
         {{--</div>--}}
         @if(Session::has('success_message'))
             <div style="padding: 10px 20px 0 20px;">
@@ -139,7 +139,7 @@
         @endif
         <section class="content">
             <div class="box box-solid">
-                <div class="overlay" ng-if="allLoading">
+                <div class="overlay" id="all-loading" style="display: none;">
                     <span class="fa">
                         <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
                     </span>
@@ -223,7 +223,8 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <button class="pull-right btn btn-primary" id="reduce-guard-strength-confirmation" open-hide-modal disabled>
+                    <button class="pull-right btn btn-primary" id="reduce-guard-strength-confirmation" open-hide-modal
+                            disabled>
                         Reduce Guard Strength
                     </button>
                 </div>
@@ -322,15 +323,18 @@
 //                    $("#ansar-all-for-reduce").html(data);
 //                    alert(data)
 //
-                    if (data.result == undefined) {
+                    if (data.result == undefined && data.valid == undefined) {
                         //$('#reduce-guard-strength-confirmation').prop('disabled', false);
                         $("#ansar-all-for-reduce").html(data);
                         //h = data;
                     }
-                    else {
+                    else if (data.result != undefined && data.valid == undefined) {
                         //$('#reduce-guard-strength-confirmation').prop('disabled', true);
 //                        alert($("#status-all").html())
                         $("#ansar-all-for-reduce").html('<tr colspan="11" class="warning" id="not-find-info"> <td colspan="11">No Ansar is available for Reduction</td> </tr>');
+                    } else if (data.result == undefined && data.valid != undefined) {
+//                        alert($("#status-all").html())
+                        $("#ansar-all-for-reduce").html('<tr colspan="11" class="warning" id="not-find-info"> <td colspan="11">Invalid Request (400)</td> </tr>');
                     }
                 }
             });
@@ -350,15 +354,15 @@
         });
         $(document).on('change', '.reduce-guard-strength-check', function () {
 
-            selectedAnsars=[]
+            selectedAnsars = []
             $('.reduce-guard-strength-check:checked').each(function () {
                 selectedAnsars.push($(this).parents('tr'))
             })
-            if(selectedAnsars.length==0) {
-                $("#reduce-guard-strength-confirmation").prop('disabled',true)
+            if (selectedAnsars.length == 0) {
+                $("#reduce-guard-strength-confirmation").prop('disabled', true)
             }
-            else{
-                $("#reduce-guard-strength-confirmation").prop('disabled',false)
+            else {
+                $("#reduce-guard-strength-confirmation").prop('disabled', false)
             }
         });
         $('#reduce-confirm').click(function (e) {
@@ -371,23 +375,28 @@
                 url: '{{URL::route('ansar-reduce-update')}}',
                 type: "get",
 
-                data: {ansaridget: ansar_ids, memorandum_id: $('input[name=memorandum_id]').val(), reduce_date:$('input[name= reduce_guard_strength_date]').val(), reduce_reason:$('input[name= reduce_reason]').val()},
+                data: {
+                    ansaridget: ansar_ids,
+                    memorandum_id: $('input[name=memorandum_id]').val(),
+                    reduce_date: $('input[name= reduce_guard_strength_date]').val(),
+                    reduce_reason: $('input[name= reduce_reason]').val()
+                },
 
                 success: function (data) {
                     console.log(data)
                     selectedAnsars.forEach(function (a, b, c) {
                         a.remove()
                     })
-                    if(data.status){
+                    if (data.status) {
                         $("#all-loading").css('display', 'none');
-                        $('body').notifyDialog({type:'success',message:data.message}).showDialog();
+                        $('body').notifyDialog({type: 'success', message: data.message}).showDialog();
                     }
                     // $('#success-message').css('display','block')
                     //$('#success-message').children('div').append(data.message)
                 },
                 error: function (res) {
                     $("#all-loading").css('display', 'none');
-                    $('body').notifyDialog({type:'error',message:"Server Error. Please Try again!"}).showDialog();
+                    $('body').notifyDialog({type: 'error', message: "Server Error. Please Try again!"}).showDialog();
                 }
             });
             $(".close").trigger('click');

@@ -40,10 +40,23 @@ class KpiController extends Controller
         $unit = Input::get('unit');
         $thana = Input::get('thana');
         $view = Input::get('view');
-        if (strcasecmp($view, 'view') == 0) {
-            return CustomQuery::kpiInfo($offset, $limit, $division, $unit, $thana);
-        } else {
-            return CustomQuery::kpiInfoCount($division, $unit, $thana);
+        $rules=[
+            'limit'=>'numeric',
+            'offset' =>'numeric',
+            'division'=>['regex:/^(all)$|^[0-9]+$/'],
+            'unit'=>['regex:/^(all)$|^[0-9]+$/'],
+            'thana'=>['regex:/^(all)$|^[0-9]+$/'],
+            'view'=>'regex:/[a-z]+/'
+        ];
+        $validation=Validator::make(Input::all(), $rules);
+        if($validation->fails()){
+            return response('Invalid Request (400)', 400);
+        }else{
+            if (strcasecmp($view, 'view') == 0) {
+                return CustomQuery::kpiInfo($offset, $limit, $division, $unit, $thana);
+            } else {
+                return CustomQuery::kpiInfoCount($division, $unit, $thana);
+            }
         }
     }
 
@@ -214,26 +227,37 @@ class KpiController extends Controller
 
     public function ansarListForWithdraw()
     {
-
+        $unit_id=Input::get('unit_id');
+        $thana=Input::get('thana_id');
         $statusSelected = Input::get('selected_name');
-        $kpi_infos = DB::table('tbl_embodiment')
-            ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
-            ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-            ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-            ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-            ->join('tbl_ansar_parsonal_info', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-            ->where('tbl_embodiment.kpi_id', '=', $statusSelected)
-            ->where('tbl_ansar_status_info.block_list_status', '=', 0)
-            ->where('tbl_ansar_status_info.black_list_status', '=', 0)
-            ->where('tbl_embodiment.emboded_status', '=', "Emboded")
-            ->distinct()
-            ->select('tbl_embodiment.*', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_kpi_info.kpi_name', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_designations.name_eng')
-            ->get();
-        //$kpi_infos = EmbodimentModel::where('kpi_id', $statusSelected)->get();
-        if (count($kpi_infos) <= 0) return Response::json(array('result' => true));
-        return view('HRM::Kpi.selected_ansar_withrdaw_view')->with('kpi_infos', $kpi_infos);
+        $rules=[
+            'unit_id'=>'regex:/^[0-9]+$/',
+            'thana_id'=>'regex:/^[0-9]+$/',
+            'selected_name'=>'regex:/^[0-9]+$/'
+        ];
+        $validation=Validator::make(Input::all(), $rules);
+        if($validation->fails()){
+            return Response::json(array('valid' => true));
+        }else{
+            $kpi_infos = DB::table('tbl_embodiment')
+                ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
+                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
+                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
+                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
+                ->join('tbl_ansar_parsonal_info', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+                ->where('tbl_embodiment.kpi_id', '=', $statusSelected)
+                ->where('tbl_ansar_status_info.block_list_status', '=', 0)
+                ->where('tbl_ansar_status_info.black_list_status', '=', 0)
+                ->where('tbl_embodiment.emboded_status', '=', "Emboded")
+                ->distinct()
+                ->select('tbl_embodiment.*', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_kpi_info.kpi_name', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_designations.name_eng')
+                ->get();
+            //$kpi_infos = EmbodimentModel::where('kpi_id', $statusSelected)->get();
+            if (count($kpi_infos) <= 0) return Response::json(array('result' => true));
+            return view('HRM::Kpi.selected_ansar_withrdaw_view')->with('kpi_infos', $kpi_infos);
+        }
     }
 
     public function ansarWithdrawUpdate(Request $request)
@@ -303,24 +327,36 @@ class KpiController extends Controller
 
     public function ansarListForReduce()
     {
+        $unit_id=Input::get('unit_id');
+        $thana=Input::get('thana_id');
         $selctedReducedAnsars = Input::get('selected_name');
-        $kpi_infos = DB::table('tbl_embodiment')
-            ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
-            ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-            ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-            ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-            ->join('tbl_ansar_parsonal_info', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-            ->where('tbl_embodiment.kpi_id', '=', $selctedReducedAnsars)
-            ->where('tbl_ansar_status_info.block_list_status', '=', 0)
-            ->where('tbl_ansar_status_info.black_list_status', '=', 0)
-            ->where('tbl_embodiment.emboded_status', '=', "Emboded")
-            ->distinct()
-            ->select('tbl_embodiment.*', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_kpi_info.kpi_name', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_designations.name_eng')
-            ->get();
-        if (count($kpi_infos) <= 0) return Response::json(array('result' => true));
-        return view('HRM::Kpi.selected_reduce_guard_strength')->with('kpi_infos', $kpi_infos);
+        $rules=[
+            'unit_id'=>'regex:/^[0-9]+$/',
+            'thana_id'=>'regex:/^[0-9]+$/',
+            'selected_name'=>'^regex:/[0-9]+$/'
+        ];
+        $validation=Validator::make(Input::all(), $rules);
+        if($validation->fails()){
+            return Response::json(array('valid' => true));
+        }else{
+            $kpi_infos = DB::table('tbl_embodiment')
+                ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
+                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
+                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
+                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
+                ->join('tbl_ansar_parsonal_info', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+                ->where('tbl_embodiment.kpi_id', '=', $selctedReducedAnsars)
+                ->where('tbl_ansar_status_info.block_list_status', '=', 0)
+                ->where('tbl_ansar_status_info.black_list_status', '=', 0)
+                ->where('tbl_embodiment.emboded_status', '=', "Emboded")
+                ->distinct()
+                ->select('tbl_embodiment.*', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_kpi_info.kpi_name', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_designations.name_eng')
+                ->get();
+            if (count($kpi_infos) <= 0) return Response::json(array('result' => true));
+            return view('HRM::Kpi.selected_reduce_guard_strength')->with('kpi_infos', $kpi_infos);
+        }
     }
 
     public function ansarReduceUpdate(Request $request)
@@ -396,23 +432,35 @@ class KpiController extends Controller
 
     public function loadAnsarsForBeforeWithdraw()
     {
+        $unit_id=Input::get('unit_id');
+        $thana=Input::get('thana_id');
         $kpi_id = Input::get('kpi_id');
-        $freeze_reason = "Guard Withdraw";
+        $rules=[
+            'unit_id'=>'regex:/^[0-9]+$/',
+            'thana_id'=>'regex:/^[0-9]+$/',
+            'kpi_id'=>'regex:/^[0-9]+$/'
+        ];
+        $validation=Validator::make(Input::all(), $rules);
+        if($validation->fails()){
+            return response('Invalid Request (400)', 400);
+        }else{
+            $freeze_reason = "Guard Withdraw";
 
-        $guards_before_withdraw = DB::table('tbl_freezing_info')
-            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-            ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-            ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_freezing_info.kpi_id')
-            ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-            ->where('tbl_freezing_info.freez_reason', '=', $freeze_reason)
-            ->where('tbl_freezing_info.kpi_id', '=', $kpi_id)
-            ->distinct()
-            ->select('tbl_freezing_info.ansar_id as id', 'tbl_freezing_info.freez_date as date', 'tbl_freezing_info.comment_on_freez as reason', 'tbl_ansar_parsonal_info.ansar_name_eng as name', 'tbl_designations.name_eng as rank', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana', 'tbl_kpi_info.kpi_name',
-                'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.reporting_date as r_date', 'tbl_kpi_info.kpi_name')->get();
+            $guards_before_withdraw = DB::table('tbl_freezing_info')
+                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
+                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
+                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_freezing_info.kpi_id')
+                ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
+                ->where('tbl_freezing_info.freez_reason', '=', $freeze_reason)
+                ->where('tbl_freezing_info.kpi_id', '=', $kpi_id)
+                ->distinct()
+                ->select('tbl_freezing_info.ansar_id as id', 'tbl_freezing_info.freez_date as date', 'tbl_freezing_info.comment_on_freez as reason', 'tbl_ansar_parsonal_info.ansar_name_eng as name', 'tbl_designations.name_eng as rank', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana', 'tbl_kpi_info.kpi_name',
+                    'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.reporting_date as r_date', 'tbl_kpi_info.kpi_name')->get();
 //        return Response::json($guards_before_withdraw);
-        return $guards_before_withdraw;
+            return $guards_before_withdraw;
+        }
     }
 
     public function guardBeforeReduceView()
@@ -422,23 +470,35 @@ class KpiController extends Controller
 
     public function loadAnsarsForBeforeReduce()
     {
+        $unit_id=Input::get('unit_id');
+        $thana=Input::get('thana_id');
         $kpi_id = Input::get('kpi_id');
-        $freeze_reason = "Guard Reduce";
+        $rules=[
+            'unit_id'=>'regex:/^[0-9]+$/',
+            'thana_id'=>'regex:/^[0-9]+$/',
+            'kpi_id'=>'regex:/^[0-9]+$/'
+        ];
+        $validation=Validator::make(Input::all(), $rules);
+        if($validation->fails()){
+            return response('Invalid Request (400)', 400);
+        }else{
+            $freeze_reason = "Guard Reduce";
 
-        $guards_before_reduce = DB::table('tbl_freezing_info')
-            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-            ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-            ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_freezing_info.kpi_id')
-            ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-            ->where('tbl_freezing_info.freez_reason', '=', $freeze_reason)
-            ->where('tbl_freezing_info.kpi_id', '=', $kpi_id)
-            ->distinct()
-            ->select('tbl_freezing_info.ansar_id as id', 'tbl_freezing_info.freez_date as date', 'tbl_freezing_info.comment_on_freez as reason', 'tbl_ansar_parsonal_info.ansar_name_eng as name', 'tbl_designations.name_eng as rank', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana', 'tbl_kpi_info.kpi_name',
-                'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.reporting_date as r_date', 'tbl_kpi_info.kpi_name')->get();
+            $guards_before_reduce = DB::table('tbl_freezing_info')
+                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
+                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
+                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_freezing_info.kpi_id')
+                ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
+                ->where('tbl_freezing_info.freez_reason', '=', $freeze_reason)
+                ->where('tbl_freezing_info.kpi_id', '=', $kpi_id)
+                ->distinct()
+                ->select('tbl_freezing_info.ansar_id as id', 'tbl_freezing_info.freez_date as date', 'tbl_freezing_info.comment_on_freez as reason', 'tbl_ansar_parsonal_info.ansar_name_eng as name', 'tbl_designations.name_eng as rank', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana', 'tbl_kpi_info.kpi_name',
+                    'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.reporting_date as r_date', 'tbl_kpi_info.kpi_name')->get();
 //        return Response::json($guards_before_withdraw);
-        return $guards_before_reduce;
+            return $guards_before_reduce;
+        }
     }
 
     public function kpiWithdrawView()

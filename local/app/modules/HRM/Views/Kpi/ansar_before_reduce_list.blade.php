@@ -9,7 +9,7 @@
     @endsection
 @section('content')
     <script>
-        GlobalApp.controller('GuardBeforeWithdrawController', function ($scope, $http) {
+        GlobalApp.controller('GuardBeforeWithdrawController', function ($scope, $http, $sce) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}')
             $scope.districts = [];
             $scope.thanas = [];
@@ -21,6 +21,8 @@
             $scope.ansars="";
             $scope.loadingThana = false;
             $scope.loadingKpi = false;
+            $scope.errorFound = 0;
+            $scope.errorMessage='';
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}')
             $scope.loadDistrict = function () {
                 $scope.loadingUnit = true;
@@ -65,8 +67,13 @@
                     url: '{{URL::route('load_ansar_before_reduce')}}',
                     params: {kpi_id: id}
                 }).then(function (response) {
+                    $scope.errorFound = 0;
                     $scope.ansars = response.data;
-                    console.log($scope.ansars)
+                    $scope.allLoading = false;
+                },function(response){
+                    $scope.errorFound = 1;
+                    $scope.ansars = [];
+                    $scope.errorMessage = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
                     $scope.allLoading = false;
                 })
             }
@@ -160,7 +167,8 @@
                                 <th>Reduce Reason</th>
                                 <th>Reduce Date</th>
                             </tr>
-                            <tr ng-show="ansars.length==0">
+                            <tbody ng-if="errorFound==1" ng-bind-html="errorMessage"></tbody>
+                            <tr ng-show="ansars.length==0&&errorFound==0">
                                 <td colspan="10" class="warning no-ansar">
                                     No Ansar is available to show
                                 </td>

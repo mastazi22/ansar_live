@@ -12,7 +12,7 @@
         $(document).ready(function () {
             $('#kpi_withdraw_date').datePicker(true);
         })
-        GlobalApp.controller('ReportGuardSearchController', function ($scope, $http) {
+        GlobalApp.controller('ReportGuardSearchController', function ($scope, $http, $sce) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}')
             $scope.districts = [];
             $scope.thanas = [];
@@ -34,6 +34,8 @@
             $scope.kpi_withdraw_reason = "Freeze Ansar for Withdrawal";
             $scope.kpi_withdraw_date="";
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
+            $scope.errorMessage = '';
+            $scope.errorFound = 0;
             $scope.verifyMemorandumId = function () {
                 var data = {
                     memorandum_id: $scope.memorandumId
@@ -90,8 +92,14 @@
                     url: '{{URL::route('guard_list')}}',
                     params: {kpi_id: id}
                 }).then(function (response) {
+                    $scope.errorFound = 0;
                     $scope.ansars = response.data.ansars;
                     $scope.guardDetail = response.data.guard;
+                },function(response){
+                    $scope.errorFound = 1;
+                    $scope.ansars = [];
+                    $scope.guardDetail = [];
+                    $scope.errorMessage = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
                 })
             }
             if ($scope.isAdmin == 11) {
@@ -158,7 +166,7 @@
                                 </label>
                                 <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedDistrict"
-                                        ng-change="loadThana(selectedDistrict)">
+                                        ng-change="loadThana(selectedDistrict)" name="unit_id">
                                     <option value="">--Select a District--</option>
                                     <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
                                     </option>
@@ -174,7 +182,7 @@
                                 </label>
                                 <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedThana"
-                                        ng-change="loadGuard(selectedThana)">
+                                        ng-change="loadGuard(selectedThana)" name="thana_id">
                                     <option value="">--Select a Thana--</option>
                                     <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
                                     </option>
@@ -213,8 +221,9 @@
                                         <th>Reporting Date</th>
                                         <th>Embodiment Date</th>
                                     </tr>
+                                    <tbody ng-if="errorFound==1" ng-bind-html="errorMessage"></tbody>
                                     <tbody id="ansar-all" class="status">
-                                    <tr colspan="10" class="warning" id="not-find-info">
+                                    <tr colspan="10" class="warning" id="not-find-info" ng-if="errorFound==0">
                                         <td colspan="10">No Ansar is available to Withdraw</td>
                                     </tr>
                                     </tbody>
@@ -334,15 +343,19 @@
 //                    }
                     $("#all-loading").css('display', 'none');
 
-                    if (data.result == undefined) {
+                    if (data.result == undefined && data.valid == undefined) {
                         $('#withdraw-guard-confirmation').prop('disabled', false);
                         $("#ansar-all").html(data);
                         h = data;
                     }
-                    else {
+                    else if (data.result!=undefined && data.valid == undefined){
                         $('#withdraw-guard-confirmation').prop('disabled', true);
 //                        alert($("#status-all").html())
-                        $("#ansar-all").html('<tr colspan="11" class="warning" id="not-find-info"> <td colspan="11">No Ansar is available to Withdraw</td> </tr>');
+                        $("#ansar-all").html('<tr colspan="11" class="warning" id="not-find-info"> <td colspan="11">No Ansar is available to Withdraw</td></tr>');
+                    }else if(data.result==undefined && data.valid != undefined){
+                        $('#withdraw-guard-confirmation').prop('disabled', true);
+//                        alert($("#status-all").html())
+                        $("#ansar-all").html('<tr colspan="11" class="warning" id="not-find-info"> <td colspan="11">Invalid Request (400)</td></tr>');
                     }
                 }
             });
