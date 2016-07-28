@@ -27,6 +27,8 @@
             $scope.loadingThana = false;
             $scope.loadingKpi = false;
             $scope.loadingPage = [];
+            $scope.errorMessage = '';
+            $scope.errorFound = 0;
             $scope.loadPagination = function () {
                 $scope.pages = [];
                 for (var i = 0; i < $scope.numOfPage; i++) {
@@ -74,12 +76,19 @@
                         view: 'count'
                     }
                 }).then(function (response) {
-
+                    $scope.errorFound = 0;
                     $scope.total = response.data.total;
                     $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
                     $scope.loadPagination();
                     $scope.allLoading = false;
                     //alert($scope.total)
+                },function(response){
+                    $scope.errorFound = 1;
+                    $scope.total = 0;
+                    $scope.kpis = [];
+                    $scope.errorMessage = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
+                    $scope.pages = [];
+                    $scope.allLoading = false;
                 })
             }
             $scope.filterMiddlePage = function (value, index, array) {
@@ -170,6 +179,7 @@
                             </div>
                         </div>
                     </div>
+                    <h4>Total KPI: [[total.toLocaleString()]]</h4>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr>
@@ -182,7 +192,8 @@
                                 <th>Action</th>
                             </tr>
                             <tbody>
-                            <tr ng-if="kpis.length==0">
+                            <tbody ng-if="errorFound==1" ng-bind-html="errorMessage"></tbody>
+                            <tr ng-if="kpis.length==0&&errorFound==0">
                                 <td colspan="8" class="warning no-ansar">
                                     No KPI is available to show
                                 </td>

@@ -39,6 +39,7 @@
                     $scope.thanas = response.data;
                     $scope.selectedThana = "";
                     $scope.loadingThana = false;
+                    $scope.selectedThana = "{{Request::old('thana_id')}}";
                 })
             }
             $scope.loadKpi = function (t_id) {
@@ -51,6 +52,7 @@
                     $scope.kpis = response.data
                     $scope.selectedKpi = "";
                     $scope.loadingKpi = false;
+                    $scope.selectedKpi = "{{Request::old('kpi_id')}}";
                 })
             }
             $scope.loadKpiDetail = function (id) {
@@ -64,12 +66,24 @@
 //                    alert(Object.keys($scope.kpiDetail).length)
                     $scope.loadingKpi = false;
                    // console.log($scope.kpiDetail)
+                },function(response){
+                    alert(reponse.data)
                 })
             }
             $scope.isEmpty = function (object) {
                 if(!object) return true;
                 return Object.keys(object).length==0
             }
+            $scope.$watch('selectedUnit', function(n, o){
+                if(n){
+                    $scope.loadThana(n);
+                }
+            })
+            $scope.$watch('selectedThana', function(n, o){
+                if(n){
+                    $scope.loadKpi(n);
+                }
+            })
         })
     </script>
     <div ng-controller="KpiWithdrawCancelController">
@@ -99,39 +113,47 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4">
-                            <div class="form-group">
+                            <div class="form-group required" ng-init="selectedUnit='{{Request::old('unit_id')}}'">
                                 <label for="e_unit" class="control-label">Select a Unit&nbsp;
                                     <img ng-show="loadingUnit" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select ng-disabled="loadingUnit" id="e_unit" class="form-control"
-                                        ng-model="selectedUnit" ng-change="loadThana(selectedUnit)">
+                                        ng-model="selectedUnit" name="unit_id">
                                     <option value="">--Select a Unit--</option>
-                                    <option ng-repeat="u in units" value="[[u.id]]">[[u.unit_name_eng]]</option>
+                                    <option ng-repeat="u in units" value="[[u.id]]" ng-selected="u.id=='{{Request::old('unit_id')}}'">[[u.unit_name_eng]]</option>
                                 </select>
+                                @if($errors->has('unit_id'))
+                                    <p class="text-danger">{{$errors->first('unit_id')}}</p>
+                                @endif
                             </div>
-                            <div class="form-group">
+                            <div class="form-group required" ng-init="selectedThana='{{Request::old('thana_id')}}'">
                                 <label for="e_thana" class="control-label">Select a Thana&nbsp;
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select ng-disabled="loadingThana" id="e_thana" class="form-control"
-                                        ng-model="selectedThana" ng-change="loadKpi(selectedThana)">
+                                        ng-model="selectedThana" name="thana_id">
                                     <option value="">--Select a Thana--</option>
-                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_eng]]
+                                    <option ng-repeat="t in thanas" value="[[t.id]]" ng-selected="t.id=='{{Request::old('thana_id')}}'">[[t.thana_name_eng]]
                                     </option>
                                 </select>
+                                @if($errors->has('thana_id'))
+                                    <p class="text-danger">{{$errors->first('thana_id')}}</p>
+                                @endif
                             </div>
-                            <div class="form-group">
+                            <div class="form-group required" ng-init="selectedKpi='{{Request::old('kpi_id')}}'">
                                 <label for="e_kpi" class="control-label">Select a KPI&nbsp;
                                     <img ng-show="loadingKpi" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select ng-disabled="loadingKpi" id="e_kpi" class="form-control"
                                         ng-model="selectedKpi" ng-change="loadKpiDetail(selectedKpi)" name="kpi_id">
                                     <option value="">--Select a KPI--</option>
-                                    <option ng-repeat="k in kpis" value="[[k.id]]">[[k.kpi_name]]</option>
+                                    <option ng-repeat="k in kpis" value="[[k.id]]" ng-selected="k.id=='{{Request::old('kpi_id')}}'">[[k.kpi_name]]</option>
                                 </select>
+                                @if($errors->has('kpi_id'))
+                                    <p class="text-danger">{{$errors->first('kpi_id')}}</p>
+                                @endif
                             </div>
-                            <button id="cancel-withdraw-kpi" class="btn btn-primary"
-                                    ng-disabled="isEmpty(kpiDetail)">
+                            <button id="cancel-withdraw-kpi" class="btn btn-primary">
                                 Cancel Withdraw
                             </button>
                         </div>
@@ -140,9 +162,11 @@
                             <div id="loading-box" ng-if="loadingAnsar">
                             </div>
                             <div ng-if="isEmpty(kpiDetail)">
+                                <input type="hidden" name="kpiExist" value="0">
                                 <h3 style="text-align: center">No KPI Information Found</h3>
                             </div>
                             <div ng-if="!isEmpty(kpiDetail)">
+                                <input type="hidden" name="kpiExist" value="1">
                                 <div class="form-group">
                                     <div class="col-sm-8 col-sm-offset-2">
                                         <h3 style="text-align: center">KPI Information</h3>

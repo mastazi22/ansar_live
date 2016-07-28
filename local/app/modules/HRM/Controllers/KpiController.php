@@ -460,7 +460,7 @@ class KpiController extends Controller
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
                 ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
                 ->where('tbl_kpi_info.id', '=', $kpi_id)
-                ->where('tbl_kpi_detail_info.kpi_withdraw_date', '=', '')->distinct()
+                ->whereNull('tbl_kpi_detail_info.kpi_withdraw_date')->distinct()
                 ->select('tbl_kpi_info.kpi_name as kpi', 'tbl_kpi_detail_info.total_ansar_request as tar', 'tbl_kpi_detail_info.total_ansar_given as tag', 'tbl_kpi_detail_info.weapon_count as weapon', 'tbl_kpi_detail_info.bullet_no as bullet', 'tbl_kpi_detail_info.activation_date as a_date', 'tbl_division.division_name_eng as division', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana')
                 ->first();
             return Response::json($kpi_info);
@@ -533,10 +533,22 @@ class KpiController extends Controller
         $unit = Input::get('unit');
         $thana = Input::get('thana');
         $view = Input::get('view');
-        if (strcasecmp($view, 'view') == 0) {
-            return CustomQuery::withdrawnKpiInfo($offset, $limit, $unit, $thana);
-        } else {
-            return CustomQuery::withdrawnKpiInfoCount($unit, $thana);
+        $rules=[
+            'limit'=>'numeric',
+            'offset' =>'numeric',
+            'unit'=>['regex:/^(all)$|^[0-9]+$/'],
+            'thana'=>['regex:/^(all)$|^[0-9]+$/'],
+            'view'=>'regex:/[a-z]+/'
+        ];
+        $validation=Validator::make(Input::all(), $rules);
+        if($validation->fails()){
+            return response('Invalid Request (400)', 400);
+        }else{
+            if (strcasecmp($view, 'view') == 0) {
+                return CustomQuery::withdrawnKpiInfo($offset, $limit, $unit, $thana);
+            } else {
+                return CustomQuery::withdrawnKpiInfoCount($unit, $thana);
+            }
         }
     }
 
@@ -594,25 +606,41 @@ class KpiController extends Controller
         $unit = Input::get('unit');
         $thana = Input::get('thana');
         $view = Input::get('view');
-        if (strcasecmp($view, 'view') == 0) {
-            return CustomQuery::inactiveKpiInfo($offset, $limit, $unit, $thana);
-        } else {
-            return CustomQuery::inactiveKpiInfoCount($unit, $thana);
+        $rules=[
+            'limit'=>'numeric',
+            'offset'=>'numeric',
+            'unit'=>['regex:/^(all)$|^[0-9]+$/'],
+            'thana'=>['regex:/^(all)$|^[0-9]+$/'],
+            'view'=>'regex:/[a-z]+/'
+        ];
+        $validation=Validator::make(Input::all(), $rules);
+        if($validation->fails()){
+            return response('Invalid Request(400)', 400);
+        }else{
+            if (strcasecmp($view, 'view') == 0) {
+                return CustomQuery::inactiveKpiInfo($offset, $limit, $unit, $thana);
+            } else {
+                return CustomQuery::inactiveKpiInfoCount($unit, $thana);
+            }
         }
     }
 
     public function activeKpi($id)
     {
-        DB::beginTransaction();
-        try {
-            KpiGeneralModel::where('id', $id)->update(['withdraw_status' => 0]);
-            DB::commit();
-        } catch
-        (Exception $e) {
-            DB::rollback();
-            return $e->getMessage();
+        if(!preg_match('/^[0-9]+$/', $id)){
+            return Redirect::route('inactive_kpi_view')->with('error_message', 'Invalid Request!');
+        }else{
+            DB::beginTransaction();
+            try {
+                KpiGeneralModel::where('id', $id)->update(['withdraw_status' => 0]);
+                DB::commit();
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return Redirect::route('inactive_kpi_view')->with('error_message', 'KPI has not been Active!');
+            }
+            return Redirect::route('inactive_kpi_view')->with('success_message', 'KPI is Active Successfully!');
         }
-        return Redirect::route('kpi_view')->with('success_message', 'KPI is Active Successfully!');
     }
 
     public function withdrawnKpiName(Request $request)
@@ -652,28 +680,53 @@ class KpiController extends Controller
 
     public function kpiWithdrawCancelUpdate(Request $request)
     {
+        $unit = Input::get('unit_id');
+        $thana = Input::get('thana_id');
         $kpi_id = $request->input('kpi_id');
-        $kpi_withdraw_date_cancel = KpiDetailsModel::where('kpi_id', $kpi_id)->first();
-        if (empty($kpi_withdraw_date_cancel->kpi_withdraw_date)) {
-            return Redirect::route('kpi_withdraw_cancel_view')->with('error_message', 'This kpi not in withdraw list');
-        }
-        DB::beginTransaction();
-        try {
+        $kpiExist=$request->input('kpiExist');
+        $rules = [
+            'kpiExist'=>'required|numeric|regex:/^[0-9]+$/',
+            'kpi_id'=>'required|numeric|regex:/^[0-9]+$/',
+            'unit_id'=>'required|numeric|regex:/^[0-9]+$/',
+            'thana_id'=>'required|numeric|regex:/^[0-9]+$/',
+        ];
+        $message = [
+            'kpi_id.required'=>'KPI is required',
+            'unit_id.required'=>'Unit is required',
+            'thana_id.required'=>'Thana is required',
+            'kpi_id.numeric'=>'Select a valid KPI',
+            'kpi_id.regex'=>'Select a valid KPI',
+            'unit_id.numeric'=>'Select a valid Unit',
+            'unit_id.regex'=>'Select a valid Unit',
+            'thana_id.numeric'=>'Select a valid Thana',
+            'thana_id.regex'=>'Select a valid Thana',
+        ];
+        $validation = Validator::make(Input::all(),$rules,$message);
+        if($validation->fails()){
+            return Redirect::back()->withInput(Input::all())->withErrors($validation);
+        }else{
             $kpi_withdraw_date_cancel = KpiDetailsModel::where('kpi_id', $kpi_id)->first();
-            $kpi_withdraw_date_cancel->kpi_withdraw_date = NULL;
-            $kpi_withdraw_date_cancel->save();
+            if (empty($kpi_withdraw_date_cancel->kpi_withdraw_date)) {
+                return Redirect::route('kpi_withdraw_cancel_view')->with('error_message', 'KPI withdrawal cannot be cancelled!');
+            }
+            DB::beginTransaction();
+            try {
+                $kpi_withdraw_date_cancel = KpiDetailsModel::where('kpi_id', $kpi_id)->first();
+                $kpi_withdraw_date_cancel->kpi_withdraw_date = NULL;
+                $kpi_withdraw_date_cancel->save();
 
-            $kpi_withdraw_status_change = KpiGeneralModel::find($kpi_id);
-            $kpi_withdraw_status_change->withdraw_status = 0;
-            $kpi_withdraw_status_change->save();
+                $kpi_withdraw_status_change = KpiGeneralModel::find($kpi_id);
+                $kpi_withdraw_status_change->withdraw_status = 0;
+                $kpi_withdraw_status_change->save();
 
-            DB::commit();
-        } catch
-        (Exception $e) {
-            DB::rollback();
-            return $e->getMessage();
+                DB::commit();
+                return Redirect::route('kpi_withdraw_cancel_view')->with('success_message', 'KPI withdrawal cancelled successfully');
+            } catch
+            (Exception $e) {
+                DB::rollback();
+                return Redirect::route('kpi_withdraw_cancel_view')->with('error_message', 'KPI withdrawal cannot be cancelled!');
+            }
         }
-        return Redirect::route('kpi_withdraw_cancel_view')->with('success_message', 'KPI withdrawal cancelled successfully');
     }
 }
 

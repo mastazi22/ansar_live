@@ -11,7 +11,7 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#withdraw_date').datePicker(true);
+            $('#withdraw_date').datePicker(false);
         })
         GlobalApp.controller('KpiWithdrawController', function ($scope, $http) {
             $scope.selectedUnit = "";
@@ -81,6 +81,10 @@
                 if (n)
                     $scope.loadKpi(n);
             })
+            $scope.$watch('selectedKpi', function (n, o) {
+                if (n)
+                    $scope.loadKpiDetail(n);
+            })
         })
     </script>
     <div ng-controller="KpiWithdrawController">
@@ -110,7 +114,7 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4">
-                            <div class="form-group"
+                            <div class="form-group required"
                                  ng-init="selectedUnit='{{Request::old('unit_id')}}'">
                                 <label for="e_unit" class="control-label">Select a Unit&nbsp;
                                     <img ng-show="loadingUnit" src="{{asset('dist/img/facebook.gif')}}"
@@ -126,7 +130,7 @@
                                     <p class="text-danger">{{$errors->first('unit_id')}}</p>
                                 @endif
                             </div>
-                            <div class="form-group"
+                            <div class="form-group required"
                                  ng-init="selectedThana=='{{Request::old('thana_id')}}'">
                                 <label for="e_thana" class="control-label">Select a Thana&nbsp;
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
@@ -142,7 +146,7 @@
                                     <p class="text-danger">{{$errors->first('thana_id')}}</p>
                                 @endif
                             </div>
-                            <div class="form-group"
+                            <div class="form-group required"
                                  ng-init="selectedKpi='{{Request::old('kpi_id')}}'">
                                 <label for="e_kpi" class="control-label">Select a KPI&nbsp;
                                     <img ng-show="loadingKpi" src="{{asset('dist/img/facebook.gif')}}"
@@ -156,10 +160,10 @@
                                     <p class="text-danger">{{$errors->first('kpi_id')}}</p>
                                 @endif
                             </div>
-                            <div class="form-group">
+                            <div class="form-group required" ng-init="withdraw_date='{{Request::old('withdraw_date')}}'">
                                 <label for="withdraw_date" class="control-label">Withdraw Date</label>
                                 <input type="text" name="withdraw_date" id="withdraw_date" class="form-control"
-                                       ng-model="withdraw_date">
+                                       ng-model="withdraw_date" value="{{Request::old('withdraw_date')}}">
                                 @if($errors->has('withdraw_date'))
                                     <p class="text-danger">{{$errors->first('withdraw_date')}}</p>
                                 @endif
