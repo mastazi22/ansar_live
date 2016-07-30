@@ -1,4 +1,4 @@
-@foreach($ansar_status as $rest)
+@forelse($ansar_status as $rest)
     <tr>
         <td>{{ $rest->ansar_id }}</td>
         <td>{{ $rest->ansar_name_eng }}</td>
@@ -12,7 +12,7 @@
         </td>
         <td>
             <div class="styled-checkbox">
-                <input type="checkbox" id="a_{{$rest->ansar_id}}" name="ch[]" class="check-panel"
+                <input type="checkbox" ng-model="formData.a_{{$rest->ansar_id}}" id="a_{{$rest->ansar_id}}" name="ch[]" class="check-panel"
                        value="{{ $rest->ansar_id }}">
                 <label for="a_{{$rest->ansar_id}}"></label>
             </div>
@@ -20,9 +20,11 @@
         {{--<td><input type="checkbox" name="ch[]" class="select-panel" value="{{ $rest->ansar_id }}"--}}
         {{--style="height: 20px; width: 30px"></td>--}}
     </tr>
-    <?php
-    ?>
-@endforeach
+    @empty
+        <tr class="warning">
+            <td colspan="9">No Ansar found</td>
+        </tr>
+@endforelse
 
 
 
