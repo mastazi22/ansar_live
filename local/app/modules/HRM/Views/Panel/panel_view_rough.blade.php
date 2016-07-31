@@ -19,14 +19,15 @@
             $scope.joinDate = "";
             $scope.isVerified = false;
             $scope.isVerifying = false;
-            $scope.loading = false;
+            $scope.loading = {
+                loading_ansar_for_panel:false,
+                loading_add_to_panel:false
+            };
             $scope.ansarsForPanel = [];
             $scope.formData = {merit: [], ch: []};
             $scope.panelFormData = {};
             $scope.panelData = [];
-            $scope.submitEntryPanelData = {
-
-            };
+            $scope.submitEntryPanelData = {};
             $scope.checkAll = false;
             $scope.verifyMemorandumId = function () {
                 var data = {
@@ -42,14 +43,22 @@
                 })
             }
             $scope.loadForPanel = function () {
+                $scope.loading.loading_ansar_for_panel = true;
                 $http({
                     url: '{{URL::route('select_status')}}',
                     method: 'get',
                     params: $scope.panelFormData
                 }).then(function (response) {
                     console.log(response.data);
+                    $scope.ansarLoaderror = undefined;
                     $scope.ansarsForPanel = response.data;
                     $scope.formData.ch = Array.apply(null, Array($scope.ansarsForPanel.length)).map(Boolean.prototype.valueOf, false);
+                    $scope.loading.loading_ansar_for_panel = false;
+                    $("#panel-modal").modal('hide');
+                    $scope.panelFormData = {};
+                }, function (response) {
+                    $scope.ansarLoaderror = response.data;
+                    $scope.loading.loading_ansar_for_panel = false;
                 })
 
             }
@@ -87,15 +96,40 @@
             }
             $scope.submitPanelEntry = function () {
                 console.log($scope.submitEntryPanelData);
+                $scope.loading.loading_add_to_panel = true;
                 $http({
                     url: '{{URL::route('save-panel-entry')}}',
                     method: 'post',
                     data: angular.toJson($scope.submitEntryPanelData)
                 }).then(function (response) {
+                    $scope.add_to_panel_error = undefined;
                     console.log(response.data);
+                    $scope.loading.loading_add_to_panel = false;
+                    $scope.result = response.data;
+                    $scope.submitEntryPanelData = {};
+                    $("#confirm-panel-modal").modal('hide');
+                    $scope.alerts = [];
+                    if($scope.result.status){
+                        $scope.alerts.push({type:'success',message:$scope.result.message})
+                        removeData();
+                    }
+                    else{
+                        $scope.alerts.push({type:'error',message:$scope.result.message})
+                    }
                 }, function (response) {
-
+                    $scope.add_to_panel_error = response.data;
+                    $scope.loading.loading_add_to_panel = false;
                 })
+            }
+            $scope.closeAlert = function () {
+                $scope.alerts = [];
+            }
+            function removeData(){
+                $scope.panelData.forEach(function (value,key,array) {
+                    var index = $scope.ansarsForPanel.indexOf(value);
+                    $scope.ansarsForPanel.splice(index,1);
+                })
+                $scope.panelData = [];
             }
         })
         GlobalApp.directive('openHideModal', function () {
@@ -113,6 +147,16 @@
                 }
             }
         })
+        GlobalApp.directive('showAlert', function () {
+            return{
+                restrict:'AEC',
+                scope:{
+                    alerts:"=",
+                    close:"&"
+                },
+                templateUrl:'{{asset('dist/template/alert_template.html')}}'
+            }
+        })
     </script>
 
     <div ng-controller="PanelController">
@@ -122,23 +166,10 @@
         <!-- Content Header (Page header) -->
 
         <!-- Main content -->
-        @if(Session::has('success_message'))
-            <div style="padding: 10px 20px 0 20px;">
-                <div class="alert alert-success">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <span class="glyphicon glyphicon-ok"></span> {{Session::get('success_message')}}
-                </div>
-            </div>
-        @endif
-        {!! csrf_field() !!}
-        <section class="content">
 
+        <section class="content">
+            <show-alert alerts="alerts" close="closeAlert()"></show-alert>
             <div class="box box-solid">
-                <div class="overlay" ng-if="loading">
-                    <span class="fa">
-                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
-                    </span>
-                </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-12">
@@ -204,16 +235,18 @@
             <!--Modal Open-->
             <div id="panel-modal" class="modal fade" role="dialog">
                 <div class="modal-dialog">
-                    <div class="box-info modal-content">
+                    <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h3 class="modal-title">Panel Options</h3>
                         </div>
                         <div class="modal-body">
-                            <div class="offer-loading" ng-show="showLoadingScreen">
-                                <i class="fa fa-spinner fa-pulse fa-2x" style="position: relative;left:48%;top:40%"></i>
-                            </div>
-                            <div class="box" style="border-top: none;">
+                            <div class="box box-solid" style="border-top: none !important;">
+                                <div class="overlay" ng-if="loading.loading_ansar_for_panel">
+                                    <span class="fa">
+                                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                                    </span>
+                                </div>
                                 <div class="box-body">
                                     <form role="form" id="load_ansar_for_panel" ng-submit="loadForPanel()">
                                         <div class="row">
@@ -228,6 +261,7 @@
                                                                 <option value="1">Rest Status</option>
                                                                 <option value="2">Free Status</option>
                                                             </select>
+                                                            <p ng-if="ansarLoaderror.come_from_where!=undefined" class="text text-danger">[[ansarLoaderror.come_from_where[0] ]]</p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -241,6 +275,7 @@
                                                             <input type="text" ng-model="panelFormData.from_id"
                                                                    name="from-id" class="form-control"
                                                                    placeholder="Ansar ID">
+                                                            <p ng-if="ansarLoaderror.from_id!=undefined" class="text text-danger">[[ansarLoaderror.from_id[0] ]]</p>
                                                         </li>
                                                         <li class="col-sm-1"
                                                             style="text-align: center;font-size: 1.2em;padding: 0;width: auto;">
@@ -252,6 +287,7 @@
                                                             <input type="text" ng-model="panelFormData.to_id"
                                                                    name="to-id" class="form-control"
                                                                    placeholder="Ansar ID">
+                                                            <p ng-if="ansarLoaderror.to_id!=undefined" class="text text-danger">[[ansarLoaderror.to_id[0] ]]</p>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -275,6 +311,7 @@
                                                     <option value="90">90</option>
                                                     <option value="100">100</option>
                                                 </select>
+                                                <p ng-if="ansarLoaderror.ansar_num!=undefined" class="text text-danger">[[ansarLoaderror.ansar_num[0] ]]</p>
                                             </div>
                                         </div>
                                         <button type="submit" class="btn btn-info pull-right" id="load-panel">
@@ -290,84 +327,89 @@
             <!--Modal Close-->
             <!--Modal Open-->
             <div id="confirm-panel-modal" class="modal fade" role="dialog">
-                <div class="modal-dialog" style="width: 80%;overflow: auto;">
-                    <div class="box-info modal-content">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"
                                     ng-click="modalOpen = false">&times;</button>
-                            <h3 class="modal-title">Confirmation for Adding Ansars to Panel</h3>
+                            <h4 class="modal-title">Confirmation for Adding Ansars to Panel</h4>
                         </div>
-                        <form ng-submit='submitPanelEntry()'>
-                            <div class="modal-body">
-                                <div class="register-box" style="width: auto;margin: 0">
-                                    <div class="register-box-body  margin-bottom">
-
-                                        <div class="row">
-                                            <div class="col-sm-4">
-                                                <div class="form-group">
-                                                    <label class="control-label">Memorandum no.&nbsp;&nbsp;&nbsp;<span
-                                                                ng-show="isVerifying">
-                                                        <i class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span>
-                                                        <span class="text-danger" ng-if="isVerified&&!memorandumId">Memorandum ID is required.</span>
-                                                        <span class="text-danger" ng-if="isVerified&&memorandumId">This id already taken.</span>
-                                                    </label>
-                                                    <input ng-blur="verifyMemorandumId()" ng-model="submitEntryPanelData.memorandumId" type="text" class="form-control" name="memorandum_id" placeholder="Enter Memorandum no." required>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <div class="form-group">
-                                                    <label class="control-label">Panel Date <span class="text-danger"
-                                                                                                  ng-show="panelForm.panel_date.$touched && panelForm.panel_date.$error.required"> Date is required.</span></label>
-                                                    &nbsp;&nbsp;&nbsp;</label>
-                                                    {!! Form::text('panel_date', $value = null, $attributes = array('class' => 'form-control', 'id' => 'panel_date', 'ng_model' => 'submitEntryPanelData.panel_date', 'required')) !!}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="table-responsive">
-                                            <input type="hidden" ng-model="submitEntryPanelData.come_from_where" >
-                                            <table class="table table-bordered" id="pc-table">
-                                                <tr>
-                                                    <th>Ansar ID</th>
-                                                    <th>Ansar Name</th>
-                                                    <th>Ansar Rank</th>
-                                                    <th>Ansar Unit</th>
-                                                    <th>Ansar Thana</th>
-                                                    <th>Date of Birth</th>
-                                                    <th>Sex</th>
-                                                    <th>Merit List</th>
-                                                </tr>
-                                                <tr ng-if="panelData.length>0" ng-repeat="p in panelData">
-                                                    <td ng-init="submitEntryPanelData.ansar_id[$index]=p.ansar_id">
-                                                        [[p.ansar_id]]
-                                                        <input type="hidden" ng-model="submitEntryPanelData.ansar_id[$index]">
-                                                    </td>
-                                                    <td>[[p.ansar_name_eng]]</td>
-                                                    <td>[[p.name_eng]]</td>
-                                                    <td>[[p.unit_name_eng]]</td>
-                                                    <td>[[p.thana_name_eng]]</td>
-                                                    <td>[[p.data_of_birth]]</td>
-                                                    <td>[[p.sex]]</td>
-                                                    <td ng-init="submitEntryPanelData.merit[$index]=p.merit">
-                                                        [[p.merit]]
-                                                        <input type="hidden"
-                                                               ng-model="submitEntryPanelData.merit[$index]">
-                                                    </td>
-                                                </tr>
-                                                <tr ng-if="panelData.length<=0" class="warning">
-                                                    <td colspan="9">No Ansar Found to Withdraw</td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <button class="btn btn-primary pull-right" id="confirm-panel-entry"
-                                                ng-disabled="!submitEntryPanelData.panel_date||!submitEntryPanelData.memorandumId||isVerified||isVerifying">
-                                            <i class="fa fa-check"></i>&nbsp;Confirm
-                                        </button>
-                                    </div>
+                        <div class="modal-body">
+                            <div class="box box-solid " style="border-top: none !important;">
+                                <div class="overlay" ng-if="loading.loading_add_to_panel">
+                                    <span class="fa">
+                                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                                    </span>
                                 </div>
+                                <div class="box-body">
+                                    <form ng-submit='submitPanelEntry()'>
 
+                                            <div class="row">
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Memorandum no.&nbsp;&nbsp;&nbsp;<span
+                                                                    ng-show="isVerifying">
+                                                        <i class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span>
+                                                            <span class="text-danger" ng-if="isVerified&&!memorandumId">Memorandum ID is required.</span>
+                                                            <span class="text-danger" ng-if="isVerified&&memorandumId">This id already taken.</span>
+                                                        </label>
+                                                        <input ng-blur="verifyMemorandumId()" ng-model="submitEntryPanelData.memorandumId" type="text" class="form-control" name="memorandum_id" placeholder="Enter Memorandum no." required>
+                                                        <p ng-if="add_to_panel_error.memorandumId!=undefined" class="text text-danger">[[add_to_panel_error.memorandumId[0] ]]</p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Panel Date</label>
+                                                        {!! Form::text('panel_date', $value = null, $attributes = array('class' => 'form-control', 'id' => 'panel_date', 'ng_model' => 'submitEntryPanelData.panel_date', 'required')) !!}
+                                                        <p ng-if="add_to_panel_error.panel_date!=undefined" class="text text-danger">[[add_to_panel_error.panel_date[0] ]]</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="table-responsive">
+                                                <input type="hidden" ng-model="submitEntryPanelData.come_from_where" >
+                                                <table class="table table-bordered" id="pc-table">
+                                                    <tr>
+                                                        <th>Ansar ID</th>
+                                                        <th>Ansar Name</th>
+                                                        <th>Ansar Rank</th>
+                                                        <th>Ansar Unit</th>
+                                                        <th>Ansar Thana</th>
+                                                        <th>Date of Birth</th>
+                                                        <th>Sex</th>
+                                                        <th>Merit List</th>
+                                                    </tr>
+                                                    <tr ng-if="panelData.length>0" ng-repeat="p in panelData">
+                                                        <td ng-init="submitEntryPanelData.ansar_id[$index]=p.ansar_id">
+                                                            [[p.ansar_id]]
+                                                            <input type="hidden" ng-model="submitEntryPanelData.ansar_id[$index]">
+                                                        </td>
+                                                        <td>[[p.ansar_name_eng]]</td>
+                                                        <td>[[p.name_eng]]</td>
+                                                        <td>[[p.unit_name_eng]]</td>
+                                                        <td>[[p.thana_name_eng]]</td>
+                                                        <td>[[p.data_of_birth]]</td>
+                                                        <td>[[p.sex]]</td>
+                                                        <td ng-init="submitEntryPanelData.merit[$index]=p.merit">
+                                                            [[p.merit]]
+                                                            <input type="hidden"
+                                                                   ng-model="submitEntryPanelData.merit[$index]">
+                                                        </td>
+                                                    </tr>
+                                                    <tr ng-if="panelData.length<=0" class="warning">
+                                                        <td colspan="9">No Ansar Found to Withdraw</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <button class="btn btn-primary pull-right" id="confirm-panel-entry"
+                                                    ng-disabled="!submitEntryPanelData.panel_date||!submitEntryPanelData.memorandumId||isVerified||isVerifying">
+                                                <i class="fa fa-check"></i>&nbsp;Confirm
+                                            </button>
+                                    </form>
+                                </div>
                             </div>
-                        </form>
+
+                        </div>
                     </div>
                 </div>
             </div>

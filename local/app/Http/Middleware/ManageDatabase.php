@@ -16,8 +16,12 @@ class ManageDatabase
      */
     public function handle($request, Closure $next)
     {
-        $prefix = strtolower(request()->route()->getPrefix());
-        if(!is_null($prefix)) Config::set('database.default',$prefix);
+        if(!is_null(request()->route())) {
+            $prefix = strtolower(request()->route()->getPrefix());
+            if (!is_null($prefix)) Config::set('database.default', $prefix);
+            else Config::set('database.default', 'hrm');
+        }
+        else Config::set('database.default', 'hrm');
         return $next($request);
     }
 }
