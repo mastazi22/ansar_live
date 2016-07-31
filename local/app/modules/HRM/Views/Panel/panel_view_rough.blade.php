@@ -52,7 +52,7 @@
                     console.log(response.data);
                     $scope.ansarLoaderror = undefined;
                     $scope.ansarsForPanel = response.data;
-                    $scope.formData.ch = Array.apply(null, Array($scope.ansarsForPanel.length)).map(Boolean.prototype.valueOf, false);
+                    initializeArray();
                     $scope.loading.loading_ansar_for_panel = false;
                     $("#panel-modal").modal('hide');
                     $scope.panelFormData = {};
@@ -90,7 +90,9 @@
                 }
                 console.log($scope.panelData);
             }
-
+            function initializeArray(){
+                $scope.formData.ch = Array.apply(null, Array($scope.ansarsForPanel.length)).map(Boolean.prototype.valueOf, false);
+            }
             $scope.changeAll = function () {
                 $scope.formData.ch = Array.apply(null, Array($scope.formData.ch.length)).map(Boolean.prototype.valueOf, $scope.checkAll);
             }
@@ -110,6 +112,7 @@
                     $("#confirm-panel-modal").modal('hide');
                     $scope.alerts = [];
                     if($scope.result.status){
+                        initializeArray();
                         $scope.alerts.push({type:'success',message:$scope.result.message})
                         removeData();
                     }
@@ -145,16 +148,6 @@
                         $("#confirm-panel-modal").modal("toggle")
                     })
                 }
-            }
-        })
-        GlobalApp.directive('showAlert', function () {
-            return{
-                restrict:'AEC',
-                scope:{
-                    alerts:"=",
-                    close:"&"
-                },
-                templateUrl:'{{asset('dist/template/alert_template.html')}}'
             }
         })
     </script>

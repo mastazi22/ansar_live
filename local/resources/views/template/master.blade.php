@@ -108,7 +108,16 @@
             })
 
         });
-
+        GlobalApp.directive('showAlert', function () {
+            return{
+                restrict:'AEC',
+                scope:{
+                    alerts:"=",
+                    close:"&"
+                },
+                templateUrl:'{{asset('dist/template/alert_template.html')}}'
+            }
+        })
         GlobalApp.controller('MenuController', function ($scope) {
             $scope.menu = [];
             var permission = '{{auth()->user()->userPermission->permission_list?auth()->user()->userPermission->permission_list:""}}'
@@ -152,6 +161,11 @@
             <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
                 <span class="sr-only">Toggle navigation</span>
             </a>
+            <ul class="module-menu">
+                @foreach(config('app.modules') as $module)
+                <li><a href="{{URL::to($module['route'])}}" @if(!is_null(request()->route())&&strcasecmp(request()->route()->getPrefix(),$module['name'])==0) class="active" @endif>{{$module['name']}}</a></li>
+                @endforeach
+            </ul>
             <div id="ncm" class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
                     @if(auth()->user()->type==11)

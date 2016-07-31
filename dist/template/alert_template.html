@@ -1,4 +1,4 @@
 <div ng-repeat="alert in alerts" class="alert" ng-class="{'alert-success':alert.type=='success','alert-danger':alert.type=='error'}">
     <a href="#" class="close" data-dismiss="alert" ng-click="close()" aria-label="close">&times;</a>
-    <span class="glyphicon" ng-class="{'fa-check':alert.type=='success','glyphicon-warning-sign':alert.type=='error'}"></span> [[alert.message]]
+    <span class="fa" ng-class="{'fa-check':alert.type=='success','glyphicon-warning-sign':alert.type=='error'}"></span> [[alert.message]]
 </div>
