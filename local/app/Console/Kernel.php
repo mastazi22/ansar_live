@@ -76,87 +76,87 @@ class Kernel extends ConsoleKernel
             }
 
         })->everyMinute();
-//        $schedule->call(function () {
-//            $user = env('SSL_USER_ID');
-//            $pass = env('SSL_PASSWORD');
-//            $sid = env('SSL_SID');
-//            $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
-//            $offered_cancel = OfferCancel::where('sms_status', 0)->take(10)->get();
-//            foreach ($offered_cancel as $offer) {
-//                $a = PersonalInfo::where('ansar_id', $offer->ansar_id)->first();
-//                $body = 'Your offer is cancelled';
-//                $phone = '88' . trim($a->mobile_no_self);
-//                $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
-//                $crl = curl_init();
-//                curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, FALSE);
-//                curl_setopt($crl, CURLOPT_SSL_VERIFYHOST, 2);
-//                curl_setopt($crl, CURLOPT_URL, $url);
-//                curl_setopt($crl, CURLOPT_HEADER, 0);
-//                curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
-//                curl_setopt($crl, CURLOPT_POST, 1);
-//                curl_setopt($crl, CURLOPT_POSTFIELDS, $param);
-//                $response = curl_exec($crl);
-//                curl_close($crl);
-//                $r = simplexml_load_string($response);
-//                Log::info(json_encode($r));
-//                $offer->sms_status = 1;
-//                $offer->save();
-//            }
-//
-//        })->everyMinute();
-//        $schedule->call(function () {
-//            Log::info("CALLED END");
-//            $offeredAnsars = OfferSMS::where('sms_end_datetime', '<=', Carbon::now())->get();
-//            foreach ($offeredAnsars as $ansar) {
-//                $offer_log = new OfferSmsLog;
-//                $status_info = AnsarStatusInfo::where('ansar_id', $ansar->ansar_id)->first();
-//                $panel_info = new PanelModel;
-//                $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
-//                $offer_log->offered_date = $ansar->sms_send_datetime;
-//                $offer_log->ansar_id = $ansar->ansar_id;
-//                $offer_log->reply_type = 'No Reply';
-//                $offer_log->offered_district = $ansar->district_id;
-//                $offer_log->action_date = Carbon::now();
-//                $offer_log->save();
-//                $panel_info->memorandum_id = $panel_log->old_memorandum_id;
-//                $panel_info->ansar_id = $ansar->ansar_id;
-//                $panel_info->panel_date = Carbon::now();
-//                $panel_info->come_from = 'Offer';
-//                $panel_info->ansar_merit_list = 1;
-//                $panel_info->save();
-//                $status_info->offer_sms_status = 0;
-//                $status_info->pannel_status = 1;
-//                $status_info->save();
-//                $ansar->delete();
-//            }
-//        })->dailyAt("00:00");
-//        $schedule->call(function () {
-//            $withdraw_kpi_ids = KpiDetailsModel::where('kpi_withdraw_date', '<=', Carbon::now())->get();
-//            foreach ($withdraw_kpi_ids as $withdraw_kpi_id) {
-//                if (!is_null($withdraw_kpi_id->kpi_withdraw_date)) {
-//                    $kpi_info = KpiGeneralModel::find($withdraw_kpi_id->kpi_id);
-//                    $kpi_info->withdraw_status = 1;
-//                    $kpi_info->save();
-//                    $withdraw_kpi_id->kpi_withdraw_date = NULL;
-//                    $withdraw_kpi_id->save();
-//                    $embodiment_info_exist = EmbodimentModel::where('kpi_id', $withdraw_kpi_id->kpi_id)->first();
-//                    if (is_null($embodiment_info_exist->kpi_id)) {
-//                        $embodiment_infos = EmbodimentModel::where('kpi_id', $withdraw_kpi_id->kpi_id)->get();
-//                        foreach ($embodiment_infos as $embodiment_info) {
-//                            $freeze_info_update = new FreezingInfoModel();
-//                            $freeze_info_update->ansar_id = $embodiment_info->ansar_id;
-//                            $freeze_info_update->freez_reason = "Guard Withdraw";
-//                            $freeze_info_update->freez_date = Carbon::now();
-//                            $freeze_info_update->kpi_id = $withdraw_kpi_id->kpi_id;
-//                            $freeze_info_update->ansar_embodiment_id = $embodiment_info->id;
-//                            $freeze_info_update->save();
-//                            $embodiment_info->emboded_status = "Freeze";
-//                            $embodiment_info->save();
-//                            AnsarStatusInfo::where('ansar_id', $embodiment_info->ansar_id)->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 1]);
-//                        }
-//                    }
-//                }
-//            }
-//        })->dailyAt("00:00");
+        $schedule->call(function () {
+            $user = env('SSL_USER_ID');
+            $pass = env('SSL_PASSWORD');
+            $sid = env('SSL_SID');
+            $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
+            $offered_cancel = OfferCancel::where('sms_status', 0)->take(10)->get();
+            foreach ($offered_cancel as $offer) {
+                $a = PersonalInfo::where('ansar_id', $offer->ansar_id)->first();
+                $body = 'Your offer is cancelled';
+                $phone = '88' . trim($a->mobile_no_self);
+                $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
+                $crl = curl_init();
+                curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, FALSE);
+                curl_setopt($crl, CURLOPT_SSL_VERIFYHOST, 2);
+                curl_setopt($crl, CURLOPT_URL, $url);
+                curl_setopt($crl, CURLOPT_HEADER, 0);
+                curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($crl, CURLOPT_POST, 1);
+                curl_setopt($crl, CURLOPT_POSTFIELDS, $param);
+                $response = curl_exec($crl);
+                curl_close($crl);
+                $r = simplexml_load_string($response);
+                Log::info(json_encode($r));
+                $offer->sms_status = 1;
+                $offer->save();
+            }
+
+        })->everyMinute();
+        $schedule->call(function () {
+            Log::info("CALLED END");
+            $offeredAnsars = OfferSMS::where('sms_end_datetime', '<=', Carbon::now())->get();
+            foreach ($offeredAnsars as $ansar) {
+                $offer_log = new OfferSmsLog;
+                $status_info = AnsarStatusInfo::where('ansar_id', $ansar->ansar_id)->first();
+                $panel_info = new PanelModel;
+                $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
+                $offer_log->offered_date = $ansar->sms_send_datetime;
+                $offer_log->ansar_id = $ansar->ansar_id;
+                $offer_log->reply_type = 'No Reply';
+                $offer_log->offered_district = $ansar->district_id;
+                $offer_log->action_date = Carbon::now();
+                $offer_log->save();
+                $panel_info->memorandum_id = $panel_log->old_memorandum_id;
+                $panel_info->ansar_id = $ansar->ansar_id;
+                $panel_info->panel_date = Carbon::now();
+                $panel_info->come_from = 'Offer';
+                $panel_info->ansar_merit_list = 1;
+                $panel_info->save();
+                $status_info->offer_sms_status = 0;
+                $status_info->pannel_status = 1;
+                $status_info->save();
+                $ansar->delete();
+            }
+        })->dailyAt("00:00");
+        $schedule->call(function () {
+            $withdraw_kpi_ids = KpiDetailsModel::where('kpi_withdraw_date', '<=', Carbon::now())->get();
+            foreach ($withdraw_kpi_ids as $withdraw_kpi_id) {
+                if (!is_null($withdraw_kpi_id->kpi_withdraw_date)) {
+                    $kpi_info = KpiGeneralModel::find($withdraw_kpi_id->kpi_id);
+                    $kpi_info->withdraw_status = 1;
+                    $kpi_info->save();
+                    $withdraw_kpi_id->kpi_withdraw_date = NULL;
+                    $withdraw_kpi_id->save();
+                    $embodiment_info_exist = EmbodimentModel::where('kpi_id', $withdraw_kpi_id->kpi_id)->first();
+                    if (is_null($embodiment_info_exist->kpi_id)) {
+                        $embodiment_infos = EmbodimentModel::where('kpi_id', $withdraw_kpi_id->kpi_id)->get();
+                        foreach ($embodiment_infos as $embodiment_info) {
+                            $freeze_info_update = new FreezingInfoModel();
+                            $freeze_info_update->ansar_id = $embodiment_info->ansar_id;
+                            $freeze_info_update->freez_reason = "Guard Withdraw";
+                            $freeze_info_update->freez_date = Carbon::now();
+                            $freeze_info_update->kpi_id = $withdraw_kpi_id->kpi_id;
+                            $freeze_info_update->ansar_embodiment_id = $embodiment_info->id;
+                            $freeze_info_update->save();
+                            $embodiment_info->emboded_status = "Freeze";
+                            $embodiment_info->save();
+                            AnsarStatusInfo::where('ansar_id', $embodiment_info->ansar_id)->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 1]);
+                        }
+                    }
+                }
+            }
+        })->dailyAt("00:00");
     }
 }
