@@ -41,7 +41,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->call(function () {
             Log::info("called");
-            return;
+            //return;
             $user = env('SSL_USER_ID');
             $pass = env('SSL_PASSWORD');
             $sid = env('SSL_SID');
