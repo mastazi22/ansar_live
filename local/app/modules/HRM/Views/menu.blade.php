@@ -1,27 +1,7 @@
 <aside class="main-sidebar" ng-controller="MenuController">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
-        <!-- Sidebar user panel -->
-        <div class="user-panel" style="margin-top: 10px;margin-bottom: 0;">
 
-            <div style="color: #FFFFFF;font-size: 16px;text-align: center">
-                <p class="full-header" style="padding: 0 !important;margin: 0;line-height: 1">Human Resource Management</p>
-
-                <p style="padding: 0 !important;margin: 0;">(HRM)</p>
-            </div>
-        </div>
-        <!-- search form -->
-        {{--<form action="#" method="get" class="sidebar-form">
-            <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Search..."/>
-              <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                </button>
-              </span>
-            </div>
-        </form>--}}
-        <!-- /.search form -->
-        <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu">
             {{--<li class="header">MAIN NAVIGATION</li>--}}
             <li>

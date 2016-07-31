@@ -3,3 +3,6 @@
 /.idea/
 /local/storage/
 /local/config/database.php
+/local/config/snappy.php
+.env
+bootstrap/cache/

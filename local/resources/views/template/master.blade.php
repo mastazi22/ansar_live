@@ -66,7 +66,7 @@
             $interpolateProvider.endSymbol(']]');
             $httpProvider.useApplyAsync(true)
             $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
-            $httpProvider.interceptors.push(function ($q,$injector) {
+            $httpProvider.interceptors.push(function ($q, $injector) {
                 return {
                     response: function (response) {
                         if (response.data.status == 'logout') {
@@ -126,13 +126,25 @@
 </head>
 <body class="skin-blue sidebar-mini " ng-app="GlobalApp"><!-- ./wrapper -->
 <div class="wrapper" ng-cloak>
+    <div class="header-top">
+        <div class="logo">
+            <a href="{{URL::route('home')}}"><img src="{{asset('dist/img/erp-logo.png')}}" class="img-responsive" alt=""></a>
+        </div>
+        <div class="middle_header_logo">
+            <img src="{{asset('dist/img/erp-hdeader.png')}}" class="img-responsive" alt="" width="400" height="400">
+        </div>
+        <div class="clearfix"></div>
+
+    </div>
     <header class="main-header">
         <!-- Logo -->
-        <a href="{{URL::to('/')}}" class="logo">
+        <?php $title = request()->route()?request()->route()->getPrefix():''; ?>
+        <a href="{{URL::to("/{$title}")}}" class="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
-            <span class="logo-mini">ERP</span>
+            <?php $title = request()->route()?request()->route()->getPrefix():''; ?>
+            <span class="logo-mini">{{config("app.title_mini_{$title}")}}</span>
             <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><b>Ansar & VDP</b> ERP</span>
+            <span class="logo-lg" style="font-size: 16px;"><b>{{config("app.title_lg_{$title}")}}</b></span>
         </a>
         <!-- Header Navbar: style can be found in header.less -->
         <nav id="resize_menu" class="navbar navbar-static-top" role="navigation">
@@ -140,8 +152,6 @@
             <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
                 <span class="sr-only">Toggle navigation</span>
             </a>
-            <h4 class="header-title">@yield('title')</h4>
-
             <div id="ncm" class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
                     @if(auth()->user()->type==11)
@@ -220,6 +230,7 @@
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header sh">
+            <h3 class="header-title">@yield('title')</h3>
             @yield('breadcrumb')
             <h1 class="small-title">
                 <small class="small-title">@yield('small_title')</small>

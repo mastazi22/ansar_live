@@ -15,9 +15,9 @@ Route::get('/forget_password_request', ['as'=>'forget_password_request','uses'=>
 Route::post('/forget_password_request_handle', ['as'=>'forget_password_request_handle','uses'=>'UserController@handleForgetRequest']);
 Route::post('/check_login', 'UserController@handleLogin');
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('/', function () {
+    Route::get('/', ['as'=>'home','uses'=>function () {
         return view('template.index');
-    });
+    }]);
     Route::get('/all_notification', function () {
         return view('all_notification');
     });

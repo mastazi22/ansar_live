@@ -433,8 +433,8 @@ class ReportController extends Controller
         $unit = Input::get('unit');
         $thana = Input::get('thana');
         $rules = [
-            'unit' => ['regex:/^(all)$|^[0-9]+$/'],
-            'thana' => ['regex:/^(all)$|^[0-9]+$/'],
+            'unit' => ['required','regex:/^(all)$|^[0-9]+$/'],
+            'thana' => ['required','regex:/^(all)$|^[0-9]+$/'],
         ];
         $valid = Validator::make(Input::all(), $rules);
 

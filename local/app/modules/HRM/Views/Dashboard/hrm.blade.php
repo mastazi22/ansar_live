@@ -518,7 +518,7 @@
                     <div class="label-hrm" style="border-bottom: 1px solid rgba(153, 153, 153, 0.52)">
                         <div class="label-hrm-title">
                             <span class="info-box-text"
-                                  style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial">Total number of Ansars who will reach 50 years of age within next 3 months</span>
+                                  style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial">Total number of Ansars who will reach 50 years of age within the next 3 months</span>
                         </div>
 
                         <div class="label-hrm-calculation">
@@ -533,7 +533,7 @@
                     <div class="label-hrm">
                         <div class="label-hrm-title">
                             <span class="info-box-text"
-                                  style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial">Total number of Ansars who are not interested to join after more than 10 reminders </span>
+                                  style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial">Total number of Ansars who are not interested to join after 10 or more reminders </span>
                         </div>
 
                         <div class="label-hrm-calculation">

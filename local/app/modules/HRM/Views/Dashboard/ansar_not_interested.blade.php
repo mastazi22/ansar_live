@@ -3,7 +3,7 @@
 {{--Time: 12:28 PM--}}
 
 @extends('template.master')
-@section('title','Total number of Ansars who are not interested to join after more than 10 reminders')
+@section('title','Total number of Ansars who are not interested to join after 10 or more reminders')
 {{--@section('small_title','Total number of Ansars who are not interested to join after more than 10 reminders')--}}
 @section('breadcrumb')
     {!! Breadcrumbs::render('dashboard_menu_not_interested',$total) !!}

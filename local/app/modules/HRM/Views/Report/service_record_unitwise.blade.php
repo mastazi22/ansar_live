@@ -13,8 +13,8 @@
             $scope.isAdmin = parseInt('{{Auth::user()->type}}')
             $scope.districts = [];
             $scope.thanas = [];
-            $scope.selectedDistrict = "all";
-            $scope.selectedThana = "all";
+            $scope.selectedDistrict = "";
+            $scope.selectedThana = "";
             $scope.ansars = [];
             $scope.loadingUnit = false;
             $scope.loadingThana = false;
@@ -90,7 +90,6 @@
                     $scope.loadThana($scope.dcDistrict)
                 }
             }
-            $scope.loadAnsarDetail();
         })
         $(function () {
             $('body').on('click', '#print-report', function (e) {
@@ -156,7 +155,7 @@
                                 <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedDistrict"
                                         ng-change="loadThana(selectedDistrict)">
-                                    <option value="all">All</option>
+                                    <option value="">--Select a unit--</option>
                                     <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
                                     </option>
                                 </select>
@@ -172,7 +171,7 @@
                                 <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedThana"
                                         ng-change="loadAnsarDetail(selectedThana)">
-                                    <option value="all">All</option>
+                                    <option value="">--Select a thana--</option>
                                     <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
                                     </option>
                                 </select>
