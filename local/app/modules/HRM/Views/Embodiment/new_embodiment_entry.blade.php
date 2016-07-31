@@ -387,7 +387,7 @@
                                                         [[ansarDetail.aoi.offerDate?dateConvert(ansarDetail.aoi.offerDate):'N/A']]
                                                     </td>
                                                     <td>
-                                                        [[ansarDetail.aoi.offerUnit?ansarDetail.aoi.offerUnit:'N/A']]
+                                                        [[ansarDetail.aoi.offered_district?ansarDetail.aoi.offered_district:'N/A']]
                                                     </td>
                                                     {{--<td>[[ansarDetail.aoci.offerCancel?ansarDetail.aoci.offerCancel:'N\A']]</td>--}}
                                                 </tr>
