@@ -81,6 +81,7 @@
                             <th>Panel Date &amp; Time</th>
                             <th>Panel Id</th>
                         </tr>
+                        <?php $i=1; ?>
                         @forelse($ansarList as $ansar)
                             <tr>
                                 <td>{{$i++}}</td>
