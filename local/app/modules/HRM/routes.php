@@ -3,6 +3,8 @@ Route::group(['prefix'=>'HRM','middleware'=>'manageDatabase','namespace'=>'\App\
     Route::any('/send_sms', 'SMSController@sendSMS');
     Route::post('/receive_sms', ['as'=>'receive_sms','uses'=>'SMSController@receiveSMS']);
     Route::post('/get_sms_status', 'SMSController@getSMSStatus');
+    Route::get('/panel_list/{sex}/{designation}',['as'=>'panel_list','uses'=>'PanelController@getPanelListBySexAndDesignation']);
+    Route::get('/central_panel_list',['as'=>'central_panel_list','uses'=>'PanelController@getCentralPanelList']);
 });
 Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserType','permission'] ],function(){
     Route::group(['namespace'=>'\App\modules\HRM\Controllers'],function(){
