@@ -103,7 +103,7 @@
             <div style="padding: 10px 20px 0 20px;">
                 <div class="alert alert-danger">
                     <a href="#" class="close" data-dismiss="alert"
-                       aria-label="close">&times;</a>{{Session::get('error_message')}}
+                       aria-label="close">&times;</a><span class="glyphicon glyphicon-exclamation-sign"></span>{{Session::get('error_message')}}
                 </div>
             </div>
         @endif
@@ -131,7 +131,7 @@
                                 @endif
                             </div>
                             <div class="form-group required"
-                                 ng-init="selectedThana=='{{Request::old('thana_id')}}'">
+                                 ng-init="selectedThana='{{Request::old('thana_id')}}'">
                                 <label for="e_thana" class="control-label">Select a Thana&nbsp;
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
@@ -175,6 +175,8 @@
                         <div class="col-sm-6 col-sm-offset-2"
                              style="min-height: 400px;border-left: 1px solid #CCCCCC">
                             <div id="loading-box" ng-if="loadingAnsar">
+                                <img src="{{asset('dist/img/facebook.gif')}}"
+                                     width="20">
                             </div>
                             <div ng-if="!kpiDetail.kpi">
                                 <input type="hidden" name="kpiExist" value="0">
