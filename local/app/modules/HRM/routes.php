@@ -8,7 +8,18 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
     Route::group(['namespace'=>'\App\modules\HRM\Controllers'],function(){
 
         //DASHBOARD
-
+        Route::get('/tesst',function(){
+            $data = [
+                'name'=>[1,2,3,4,5,6,7]
+            ];
+            $valid = Validator::make($data,[
+                'name'=>'array_type:int'
+            ]);
+            if($valid->fails()){
+                return "false";
+            }
+            return "true";
+        });
         Route::get('/', 'HrmController@hrmDashboard');
         Route::get('/getTotalAnsar', ['as' => 'dashboard_total_ansar', 'uses' => 'HrmController@getTotalAnsar']);
         Route::get('/getrecentansar', ['as' => 'recent_ansar', 'uses' => 'HrmController@getRecentAnsar']);
@@ -97,7 +108,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         //END ADMIN ROUTE
         //OFFER ROUTE
         Route::get('/make_offer', ['as' => 'make_offer', 'uses' => 'OfferController@makeOffer']);
-        Route::get('/kpi_list', ['as'=>'kpi_list','uses'=>'OfferController@getKpi']);
+        Route::post('/kpi_list', ['as'=>'kpi_list','uses'=>'OfferController@getKpi']);
         Route::get('/get_offered_ansar_info', ['as'=>'get_offered_ansar_info','uses'=>'OfferController@getOfferedAnsar']);
         Route::post('/cancel_offer_handle', ['as' => 'cancel_offer_handle', 'uses' => 'OfferController@handleCancelOffer']);
         Route::post('/send_offer', 'OfferController@sendOfferSMS');

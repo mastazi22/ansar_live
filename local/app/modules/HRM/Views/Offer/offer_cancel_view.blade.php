@@ -78,7 +78,8 @@
                 }
             })
             $scope.cancelUpdate = function () {
-                //alert($scope.canceledAnsar.length);
+//                alert($scope.canceledAnsar.length);
+//                return;
                 $scope.showLoadScreen = false;
                 $http(
                         {
@@ -87,7 +88,7 @@
                             method:'post'
                         }
                 ).then(function (response) {
-                            //alert(JSON.stringify(response.data))
+                            alert(JSON.stringify(response.data))
                             $scope.result = response.data;
                             //console.log($scope.result)
                             $scope.showLoadScreen = true;
