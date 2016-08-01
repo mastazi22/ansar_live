@@ -3,7 +3,6 @@
 namespace App\modules\HRM\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\OfferCancel;
@@ -15,6 +14,7 @@ use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\ReceiveSMSModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
@@ -51,15 +51,67 @@ class OfferController extends Controller
             return Response::json(['total_offer' => 'unlimited']);
         }
     }
-
-    function getKpi()
+    function calculateQuota($id){
+        $offered = OfferSMS::where('district_id', $id)->count('ansar_id');
+        $totalEmbodiedAnsar = DB::table('tbl_embodiment')->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')->where('tbl_kpi_info.unit_id', $id)->count('tbl_embodiment.ansar_id');
+        $quota = OfferQuota::where('unit_id', $id)->select('quota')->first();
+//            return Response::json(['e'=>$totalEmbodiedAnsar,'q'=>$quota,'o'=>$offered]);
+        $total = -1;
+        if($quota){
+            $total = ceil(($totalEmbodiedAnsar * $quota->quota) / 100) - $offered;
+        }
+        return $total;
+    }
+    function getKpi(Request $request)
     {
-        $ansar_info = json_decode(Input::get('ansar_info'));
-        return Response::json(CustomQuery::getAnsarInfo(['male' => $ansar_info->pc_male, 'female' => $ansar_info->pc_female], ['male' => $ansar_info->apc_male, 'female' => $ansar_info->apc_female], ['male' => $ansar_info->ansar_male, 'female' => $ansar_info->ansar_female], $ansar_info->district, $ansar_info->exclude_district));
+        $rules = [];
+        $rules['pc_male']='required|numeric|regex:/^[0-9]+$/|min:0';
+        $rules['pc_female']='required|numeric|regex:/^[0-9]+$/|min:0';
+        $rules['apc_male']='required|numeric|regex:/^[0-9]+$/|min:0';
+        $rules['apc_female']='required|numeric|regex:/^[0-9]+$/|min:0';
+        $rules['ansar_male']='required|numeric|regex:/^[0-9]+$/|min:0';
+        $rules['ansar_female']='required|numeric|regex:/^[0-9]+$/|min:0';
+        if(Auth::user()->type==11){
+            $rules['district']='required';
+        }
+        else if(Auth::user()->type==22){
+            $rules['exclude_district']='required|numeric|regex:/^[0-9]+$/';
+        }
+        $valid = Validator::make($request->all(),$rules);
+        if($valid->fails()){
+            return response(collect(['type'=>'error','message'=>'Invalid request'])->toJson(),400,['Content-Type'=>'application/json']);
+        }
+        return Response::json(CustomQuery::getAnsarInfo(
+            ['male' => $request->get('pc_male'), 'female' => $request->get('pc_female')],
+            ['male' => $request->get('apc_male'), 'female' => $request->get('apc_female')],
+            ['male' => $request->get('ansar_male'), 'female' => $request->get('ansar_female')],
+            $request->get('district'),
+            $request->get('exclude_district')));
     }
 
-    function sendOfferSMS()
+    function sendOfferSMS(Request $request)
     {
+        $rules = [];
+        if(Auth::user()->type==11){
+            $rules['offered_ansar']='required|array|array_type:int';
+            $rules['district_id']='required|numeric|regex:/^[0-9]+$/';
+        }
+        else if(Auth::user()->type==33){
+            $rules['offered_ansar']='required|numeric|regex:/^[0-9]+$/';
+            $rules['district_id']='required|numeric|regex:/^[0-9]+$/';
+            $rules['type']='required|regex:/^[a-z]+$/';
+        }
+        else if(Auth::user()->type==22){
+            $did = Auth::user()->district_id;
+            $quota = $this->calculateQuota($did);
+            $rules['offer_limit']='required|numeric|regex:/^[0-9]+$/|max:'.$quota;
+            $rules['offered_ansar']='required|array|array_length_max:offer_limit|array_type:int';
+            $rules['district_id']='required|numeric|regex:/^[0-9]+$/|same:'.$did;
+        }
+        $valid = Validator::make($request->all(),$rules);
+        if($valid->fails()){
+            return response(collect(['type'=>'error','message'=>'Invalid request'])->toJson(),400,['Content-Type'=>'application/json']);
+        }
         $ansar_ids = Input::get('offered_ansar');
         $district_id = Input::get('district_id');
         $offer_limit = Input::get('offer_limit');
@@ -89,11 +141,11 @@ class OfferController extends Controller
                 }
                 DB::commit();
                 CustomQuery::addActionlog($user, true);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 DB::rollback();
-                return Response::json(['status' => false, 'message' => $e->getMessage()]);
+                return response(collect(['status' => 'error', 'message' => $e->getMessage()])->toJson(),400,['Content-Type'=>'application/json']);
             }
-            return Response::json(['status' => true, 'message' => "Offer Send Successfully"]);
+            return Response::json(['type' => 'success', 'message' => "Offer Send Successfully"]);
         } else {
             DB::beginTransaction();
             try {
@@ -116,11 +168,11 @@ class OfferController extends Controller
                 DB::commit();
                 CustomQuery::addActionlog(['ansar_id' => $ansar_ids, 'action_type' => 'SEND OFFER', 'from_state' => 'PANEL', 'to_state' => 'OFFER', 'action_by' => auth()->user()->id]);
                 CustomQuery::addDGlog(['ansar_id' => $ansar_ids, 'action_type' => 'SEND OFFER', 'from_state' => 'PANEL', 'to_state' => 'OFFER']);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 DB::rollback();
-                return Response::json(['status' => false, 'message' => $e->getMessage()]);
+                return response(collect(['status' => 'error', 'message' => $e->getMessage()])->toJson(),400,['Content-Type'=>'application/json']);
             }
-            return Response::json(['status' => true, 'data' => "Offer send successfully"]);
+            return Response::json(['status' => 'success', 'data' => "Offer send successfully"]);
         }
     }
 
@@ -191,20 +243,16 @@ class OfferController extends Controller
 
     function handleCancelOffer()
     {
-        $ansar_ids = Input::get('ansar_ids');
-        if(count($ansar_ids)<=0){
-            return response("Invalid request(400)",400);
-        }
-        $rules = [];
-        for($i=0;$i<count($ansar_ids);$i++){
-            $rules["ansar_ids.{$i}"] = 'required|numeric|regex:/^[0-9]$/';
-        }
+        $rules=[
+            'ansar_ids'=>'required|array|array_type:int|array_length_min:1'
+        ];
         $vaild = Validator::make(Input::all(),$rules);
         if($vaild->fails()){
             return response("Invalid request(400)",400);
         }
         $result = ['success' => 0, 'fail' => 0];
-        //return $ansar_ids;
+        $ansar_ids = Input::get('ansar_ids');
+//        return $ansar_ids;
         for ($i = 0; $i < count($ansar_ids); $i++) {
             //return $ansar_ids[$i];
             DB::beginTransaction();
@@ -250,12 +298,12 @@ class OfferController extends Controller
                 DB::commit();
                 CustomQuery::addActionlog(['ansar_id' => $ansar_ids[$i], 'action_type' => 'CANCEL OFFER', 'from_state' => 'OFFER', 'to_state' => 'PANEL', 'action_by' => auth()->user()->id]);
                 $result['success']++;
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 DB::rollback();
-                $result['fail']++;
+                return response(collect(['type'=>'error','message'=>$e->getMessage()]),400,['Content-Type'=>'application\json']);
             }
         }
-        return Response::json($result);
+        return Response::json(['type'=>'success','message'=>'Offer cancel successfully']);
     }
 
     function cancelOfferView()

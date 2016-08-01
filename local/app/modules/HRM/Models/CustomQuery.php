@@ -169,8 +169,9 @@ class CustomQuery
                     ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
                     ->take($ansar['female']);
             }
-        } else {
-            // echo "3";
+        }
+        else {
+//            return "3";
             //die();
             $pc_male = DB::table('tbl_ansar_parsonal_info')
                 ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
@@ -270,7 +271,8 @@ class CustomQuery
                 ->take($ansar['female']);
             //return DB::getQueryLog();
         }
-        return $pc_male->unionAll($pc_female)->unionAll($apc_male)->unionAll($apc_female)->unionAll($ansar_male)->unionAll($ansar_female)->get();
+        $b =  $pc_male->unionAll($pc_female)->unionAll($apc_male)->unionAll($apc_female)->unionAll($ansar_male)->unionAll($ansar_female)->get();
+        return $b;
     }
 
     public static function offerQuota()
