@@ -720,10 +720,10 @@ class EmbodimentController extends Controller
                 $embodiment_info->save();
 
                 DB::commit();
-            } catch (Exception $e) {
-                return $e->getMessage();
+                return Redirect::route('service_extension_view')->with('success_message', 'Service Date for Ansar Extended Successfully!');
+            } catch (\Exception $e) {
+                return Redirect::route('service_extension_view')->with('error_message', 'Service Date for Ansar has not been Extended!');
             }
-            return Redirect::route('service_extension_view')->with('success_message', 'Service Date for Ansar Extended Successfully!');
         }
     }
 

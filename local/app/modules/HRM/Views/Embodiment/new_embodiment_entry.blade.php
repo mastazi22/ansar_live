@@ -281,7 +281,7 @@
                                 <label for="e_unit" class="control-label">Select a Unit&nbsp;
                                     <img ng-show="loadingUnit" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
-                                <select name="division_name_eng" ng-disabled="loadingUnit||ansarDetail.apd==undefined" id="e_unit"
+                                <select name="division_name_eng" ng-disabled="loadingUnit" id="e_unit"
                                         class="form-control"
                                         ng-model="selectedUnit" required>
                                     <option value="">--Select a Unit--</option>
@@ -299,7 +299,7 @@
                                 <label for="e_thana" class="control-label">Select a Thana&nbsp;
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
-                                <select name="thana_name_eng" ng-disabled="loadingThana||ansarDetail.apd==undefined" id="e_thana"
+                                <select name="thana_name_eng" ng-disabled="loadingThana" id="e_thana"
                                         class="form-control"
                                         ng-model="selectedThana" required>
                                     <option value="">--Select a Thana--</option>
@@ -314,7 +314,7 @@
                                 <label for="e_kpi" class="control-label">Select a KPI&nbsp;
                                     <img ng-show="loadingKpi" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
-                                <select name="kpi_id" check-kpi="[[selectedKpi]]" ng-disabled="loadingKpi||ansarDetail.apd==undefined" id="e_kpi" class="form-control"
+                                <select name="kpi_id" check-kpi="[[selectedKpi]]" ng-disabled="loadingKpi" id="e_kpi" class="form-control"
                                         ng-model="selectedKpi" required>
                                     <option value="">--Select a KPI--</option>
                                     <option ng-repeat="k in kpis" value="[[k.id]]">[[k.kpi_name]]</option>
