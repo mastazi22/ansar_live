@@ -113,7 +113,7 @@ class PanelController extends Controller
             $pd = $request->input('panel_date');
             $modified_panel_date=Carbon::parse($pd)->format('Y-m-d');
             $come_from_where = $request->input('come_from_where');
-            $ansar_merit = $request->input('ansar_merit');
+            $ansar_merit = $request->input('merit');
             $memorandum_entry = new MemorandumModel();
             $memorandum_entry->memorandum_id = $mi;
             $memorandum_entry->save();
@@ -152,7 +152,8 @@ class PanelController extends Controller
                         AnsarStatusInfo::where('ansar_id', $selected_ansars[$i])->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 1, 'freezing_status' => 0]);
 
                         array_push($user, ['ansar_id' => $selected_ansars[$i], 'action_type' => 'PANELED', 'from_state' => 'REST', 'to_state' => 'PANELED', 'action_by' => auth()->user()->id]);
-                    } else {
+                    }
+                    else {
                         $panel_entry = new PanelModel;
                         $panel_entry->ansar_id = $selected_ansars[$i];
                         $panel_entry->come_from = "Entry";
@@ -171,7 +172,7 @@ class PanelController extends Controller
             }
             DB::commit();
             CustomQuery::addActionlog($user, true);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             return Response::json(['status' => false, 'message' => "Ansar/s not added to panel"]);
         }

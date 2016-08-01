@@ -248,7 +248,7 @@
                             </tr>
                         </table>
                     </div>
-                    <div class="table_pagination" ng-show="totalPages>1&& !searchedUser">
+                    <div class="table_pagination" ng-show="totalPages>1&& !isSearching">
                         <ul class="pagination">
                             <li ng-class="{disabled:currentPage==0}">
                                 <span ng-show="currentPage==0">&laquo;</span>

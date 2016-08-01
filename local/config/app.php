@@ -123,6 +123,11 @@ return [
     'title_mini_HRM'=>'HRM',
     'title_mini_SD'=>'SD',
     'title_mini_'=>'ERP',
+    'modules'=>[
+        ['name'=>'HRM','route'=>'HRM'],
+        ['name'=>'SD','route'=>'#'],
+        ['name'=>'ADAPS','route'=>'#'],
+    ],
 
     /*
     |--------------------------------------------------------------------------
