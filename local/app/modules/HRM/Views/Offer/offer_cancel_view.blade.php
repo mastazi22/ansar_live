@@ -7,7 +7,7 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('OfferCancelController', function ($scope, $http,$sce) {
+        GlobalApp.controller('OfferCancelController', function ($scope, $http, $sce) {
             $scope.selectedDistrict = "";
             $scope.noAnsar = true;
             $scope.showLoadScreen = true;
@@ -24,7 +24,7 @@
                 $scope.allDistrict = response.data;
                 $scope.loadingUnit = false;
             }, function (response) {
-                if(response.status==500){
+                if (response.status == 500) {
                     $scope.errorVisible = true;
                 }
                 $scope.loadingUnit = false;
@@ -38,7 +38,8 @@
                     params: {district_id: $scope.selectedDistrict}
                 }).then(function (response) {
 //                    /alert(JSON.stringify(response));
-                    $scope.errorLoad=undefined;
+                    $scope.canceledAnsar = [];
+                    $scope.selectAnsar = [];
                     $scope.selectAll = false;
                     if (response.data.length > 0) {
                         $scope.selectedAnsar = response.data;
@@ -48,7 +49,8 @@
                     else $scope.noAnsar = true;
                     $scope.loadingAnsar = false;
                 }, function (response) {
-                    $scope.errorLoad = $sce.trustAsHtml(response.data);
+                    $scope.alerts = [];
+                    $scope.alerts.push(response.data);
                     $scope.loadingAnsar = false;
                 })
             }
@@ -78,58 +80,32 @@
                 }
             })
             $scope.cancelUpdate = function () {
-//                alert($scope.canceledAnsar.length);
-//                return;
                 $scope.showLoadScreen = false;
-                $http(
-                        {
-                            url: "{{URL::to('HRM/cancel_offer_handle')}}",
-                            data: angular.toJson({"ansar_ids":$scope.canceledAnsar}),
-                            method:'post'
-                        }
-                ).then(function (response) {
-                            alert(JSON.stringify(response.data))
-                            $scope.result = response.data;
-                            //console.log($scope.result)
-                            $scope.showLoadScreen = true;
-                        }, function (response) {
-                            console.log(response)
-                            $scope.showLoadScreen = true;
-                    $('body').notifyDialog({
-                        type: 'error',
-                        message: response.data
-                    }).showDialog()
-                        })
-            }
-        })
-        GlobalApp.directive('notificationMessage', function () {
-            return {
-                restrict: 'ACE',
-                link: function (scope, elem, attrs) {
-                    scope.$watch('result', function (newValue, oldValue) {
-                        if (Object.keys(newValue).length > 0) {
-                            if (newValue.success > 0) {
-                                $('body').notifyDialog({
-                                    type: 'success',
-                                    message: "Success " + newValue.success + ", Failed " + newValue.fail
-                                }).showDialog()
-                                scope.loadAnsar();
-                            }
-                            else {
-                                $('body').notifyDialog({
-                                    type: 'error',
-                                    message: "Transfer Failed. Pleas try again later"
-                                }).showDialog()
-                            }
-                            scope.result = {};
-                        }
-                    }, true)
+                $http({
+                    url: "{{URL::to('HRM/cancel_offer_handle')}}",
+                    data: angular.toJson({"ansar_ids": $scope.canceledAnsar}),
+                    method: 'post'
                 }
+                ).then(function (response) {
+                    $scope.result = response.data;
+                    $scope.alerts = [];
+                    $scope.alerts.push(response.data);
+                    $scope.showLoadScreen = true;
+                    $scope.loadAnsar();
+                }, function (response) {
+                    $scope.alerts = [];
+                    $scope.alerts.push(response.data);
+                    $scope.showLoadScreen = true;
+                })
+            }
+            $scope.closeAlert = function () {
+                $scope.alerts = [];
             }
         })
     </script>
-    <div notification-message ng-controller="OfferCancelController">
+    <div ng-controller="OfferCancelController">
         <section class="content">
+            <show-alert alerts="alerts" close="closeAlert()"></show-alert>
             <div class="box box-solid">
                 <div class="box-body">
                     <div class="row" style="padding-bottom: 10px">
@@ -142,7 +118,12 @@
                                 <option ng-repeat="d in allDistrict" value="[[d.id]]">[[d.unit_name_bng]]
                                 </option>
                             </select>
-                            <p ng-if="errorVisible" class="text text-danger">An error occur while loading district name <button class="btn btn-danger btn-xs"><i class="fa fa-refresh" ng-class="{'fa-pulse':loadingAnsar}"></i></button></p>
+
+                            <p ng-if="errorVisible" class="text text-danger">An error occur while loading district name
+                                <button class="btn btn-danger btn-xs"><i class="fa fa-refresh"
+                                                                         ng-class="{'fa-pulse':loadingAnsar}"></i>
+                                </button>
+                            </p>
                         </div>
                     </div>
                     <div class="table-responsive">

@@ -248,7 +248,7 @@ class OfferController extends Controller
         ];
         $vaild = Validator::make(Input::all(),$rules);
         if($vaild->fails()){
-            return response("Invalid request(400)",400);
+            return response(collect(['type'=>'error','message'=>"Invalid request(400)"]),400,['Content-Type'=>'application/json']);
         }
         $result = ['success' => 0, 'fail' => 0];
         $ansar_ids = Input::get('ansar_ids');
@@ -318,7 +318,7 @@ class OfferController extends Controller
         ];
         $valid = Validator::make(Input::all(),$rules);
         if($valid->fails()){
-            return response("<tr class='warning'><td colspan='8'>Invalid request(400)</td></tr>",400,['Content-Type','text/HTML']);
+            return response(collect(['type'=>'error','message'=>'Invalid request']),400,['Content-Type'=>'application\json']);
         }
         $district_id = Input::get('district_id');
         return Response::json(CustomQuery::getOfferSMSInfo($district_id));
