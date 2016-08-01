@@ -13,6 +13,7 @@
             $scope.kpiAPCFemale = 0;
             $scope.kpiAnsarMale = 0;
             $scope.kpiAnsarFemale = 0;
+            $scope.alerts = [];
             $scope.noAnsar = true;
             $scope.offerAnsarId = [];
             $scope.showLoadScreen = true;
@@ -61,7 +62,6 @@
                 $scope.buttonText = "Loading Ansar"
                 $scope.showLoadScreen = false;
                 var data = {
-                    ansar_info: {
                         pc_male: $scope.kpiPCMale,
                         pc_female: $scope.kpiPCFemale,
                         apc_male: $scope.kpiAPCMale,
@@ -72,16 +72,16 @@
                             return v != undefined;
                         }),
                         exclude_district: (parseInt(userType) == 11 ? null : $scope.districtId)
-                    }
                 }
                 // alert($scope.selectedDistrict);
                 $scope.showLoadingAnsar = true;
                 $scope.modalStyle = {'display': 'block'}
                 $http({
                     url: '{{URL::to('HRM/kpi_list')}}',
-                    method: 'get',
-                    params: data
+                    method: 'post',
+                    data: angular.toJson(data)
                 }).then(function (response) {
+                    console.log(response.data);
                     //alert(JSON.stringify(response.data));
                     if (response.data.length > 0) {
                         $scope.selectedAnsar = response.data;
@@ -96,6 +96,11 @@
 
                 }, function (response) {
                     //alert('Error!! ' + response.status)
+                    if(response.status==400){
+                        $scope.alerts = [];
+                        $scope.alerts.push(response.data);
+                        window.scrollTo(0,0)
+                    }
                     $scope.showLoadingAnsar = false;
                     $scope.buttonText = "Send Offer"
                 })
@@ -107,38 +112,35 @@
                 $scope.selectedAnsar.forEach(function (v) {
                     $scope.offerAnsarId.push(v.ansar_id);
                 })
-                if ($scope.offerAnsarId.length > 0) {
-                    $http({
-                        url: '{{URL::to('HRM/send_offer')}}',
-                        data: angular.toJson({
-                            "offered_ansar": $scope.offerAnsarId,
-                            district_id: $scope.isAdmin ? $scope.data.offeredDistrict : $scope.districtId,
-                            type: 'panel',
-                            offer_limit: $scope.offerQuota
-                        }),
-                        method: 'post'
-                    }).then(
-                            function (response) {
-                                console.log(response.data)
-                                //alert(response.data.success + " Success," + response.data.fail + " Fails");
-                                $scope.showLoadScreen = true;
-                                $scope.result = response.data;
-                                $scope.buttonText = "Send Offer"
-                                $scope.getOfferCount();
-                            },
-                            function (response) {
-                                // $scope.error = response.data;
-                                //alert(JSON.stringify(response));
-                                console.log(response.data);
-                                $scope.result = {
-                                    status: false,
-                                    message: "A Server Error Occur. ERROR CODE : " + response.status
-                                };
-                                $scope.showLoadScreen = true;
-                                $scope.buttonText = "Send Offer"
-                            }
-                    )
-                }
+                $http({
+                    url: '{{URL::to('HRM/send_offer')}}',
+                    data: angular.toJson({
+                        "offered_ansar": $scope.offerAnsarId,
+                        district_id: $scope.isAdmin ? $scope.data.offeredDistrict : $scope.districtId,
+                        type: 'panel',
+                        offer_limit: $scope.offerQuota
+                    }),
+                    method: 'post'
+                }).then(
+                        function (response) {
+                            console.log(response.data)
+                            //alert(response.data.success + " Success," + response.data.fail + " Fails");
+                            $scope.showLoadScreen = true;
+                            $scope.alerts = [];
+                            $scope.alerts.push(response.data);
+                            $scope.buttonText = "Send Offer"
+                            $scope.getOfferCount();
+                        },
+                        function (response) {
+                            // $scope.error = response.data;
+                            //alert(JSON.stringify(response));
+                            console.log(response.data);
+                            $scope.alerts = [];
+                            $scope.alerts.push(response.data);
+                            $scope.showLoadScreen = true;
+                            $scope.buttonText = "Send Offer"
+                        }
+                )
             }
             $scope.getOfferCount = function () {
                 $http({
@@ -177,47 +179,19 @@
                 }
 
             })
-
-        })
-        GlobalApp.directive('closeModal', function () {
-            return {
-                link: function (scope, element, attr) {
-                    scope.$watch('showLoadingAnsar', function (n, o) {
-                        //alert(o + " " + n)
-                        if (o && !n) {
-                            $("#offer-option").modal('hide')
-                        }
-                    })
-                    scope.$watch('result', function (newValue, oldValue) {
-                        if (Object.keys(newValue).length > 0) {
-                            if (newValue.status) {
-                                $('body').notifyDialog({
-                                    type: 'success',
-                                    message: newValue.message
-                                }).showDialog()
-                                scope.selectedAnsar = [];
-                                scope.noAnsar = true;
-                            }
-                            else {
-                                $('body').notifyDialog({
-                                    type: 'error',
-                                    message: newValue.message
-                                }).showDialog()
-                            }
-                            scope.result = {};
-                        }
-                    }, true)
-                }
+            $scope.closeAlert = function(){
+                $scope.alerts = [];
             }
-        })
 
+        })
 
     </script>
-    <div ng-controller="OfferController" close-modal>
+    <div ng-controller="OfferController">
         {{--<div class="breadcrumbplace">--}}
         {{--{!! Breadcrumbs::render('offer_information') !!}--}}
         {{--</div>--}}
         <section class="content">
+            <show-alert alerts="alerts" close="closeAlert()"></show-alert>
             @if($isFreeze)
                 <h3 style="text-align: center">You have <span class="text-warning">{{$isFreeze}}</span> freezed ansar in
                     your district.Unfreeze them then you are eligible to send offer

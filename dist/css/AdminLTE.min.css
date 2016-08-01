@@ -4610,7 +4610,6 @@ ul.module-menu>li:not(:last-child){
 }
 ul.module-menu>li>a{
     padding: 15px 15px;
-    background: #01635b;
     color: #ffffff;
     display: block;
 }
