@@ -26,6 +26,9 @@
                     $scope.loadingAnsar = false;
                 })
             }
+            $scope.$watch('ansarId', function(n, o){
+                $scope.loadAnsarDetail(n);
+            })
         })
     </script>
 
@@ -41,6 +44,14 @@
                 </div>
             </div>
         @endif
+        @if(Session::has('error_message'))
+            <div style="padding: 10px 20px 0 20px;">
+                <div class="alert alert-danger">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <span class="glyphicon glyphicon-exclamation-sign"></span> {{Session::get('error_message')}}
+                </div>
+            </div>
+        @endif
         <section class="content" style="position: relative;" >
             <notify></notify>
             <div class="box box-solid">
@@ -48,31 +59,38 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4">
-                            <div class="form-group">
-                                <label for="ansar_id" class="control-label">Ansar ID to Extend Service</label>
-                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="loadAnsarDetail(ansarId)">
+                            <div class="form-group required" ng-init="ansarId='{{Request::old('ansar_id')}}'">
+                                <label for="ansar_id" class="control-label">Ansar ID (Embodied Ansar)</label>
+                                <input type="text" value="{{Request::old('ansar_id')}}" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="loadAnsarDetail(ansarId)">
+                                @if($errors->has('ansar_id'))
+                                    <p class="text-danger">{{$errors->first('ansar_id')}}</p>
+                                @endif
                             </div>
-                            <div class="form-group">
+                            <div class="form-group required" ng-init="extended_period='{{Request::old('extended_period')}}'">
                                 <label for="extended_period" class="control-label">Extended Period (In Month)</label>
-                                <input type="number" name="extended_period" id="extended_period" placeholder="Enter the number of Month of Extension" class="form-control" ng-model="extended_period" ng-max="12" ng-min="1" required>
-                                <span ng-show="serviceExtensionForm.extended_period.$touched && serviceExtensionForm.extended_period.$error.required"><p class="text-danger">Extended Period Cannot be empty</p></span>
-                                <span ng-show="serviceExtensionForm.extended_period.$error.max"><p class="text-danger">Extended Period Cannot be more than 12 Months</p></span>
-                                <span ng-show="serviceExtensionForm.extended_period.$error.min"><p class="text-danger">Extended Period Cannot be less than 1 Months</p></span>
+                                <input type="text" value="{{Request::old('extended_period')}}" name="extended_period" id="extended_period" placeholder="Enter the number of Month of Extension" class="form-control" ng-model="extended_period" required>
+                                @if($errors->has('extended_period'))
+                                    <p class="text-danger">{{$errors->first('extended_period')}}</p>
+                                @endif
                             </div>
-                            <div class="form-group">
+                            <div class="form-group required" ng-init="service_extension_comment='{{Request::old('service_extension_comment')}}'">
                                 <label for="service_extension_comment" class="control-label">Comment for Service Extension</label>
-                                {!! Form::textarea('service_extension_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'service_extension_comment', 'size' => '30x4', 'placeholder' => "Write any Comment", 'ng-model' => 'service_extension_comment', 'required')) !!}
-                                <span ng-show="serviceExtensionForm.service_extension_comment.$touched && serviceExtensionForm.service_extension_comment.$error.required"><p class="text-danger">Comment for Service Extension Cannot be empty</p></span>
+                                {!! Form::textarea('service_extension_comment', $value = Request::old('service_extension_comment'), $attributes = array('class' => 'form-control', 'id' => 'service_extension_comment', 'size' => '30x4', 'placeholder' => "Write any Comment", 'ng-model' => 'service_extension_comment', 'required')) !!}
+                                @if($errors->has('service_extension_comment'))
+                                    <p class="text-danger">{{$errors->first('service_extension_comment')}}</p>
+                                @endif
                             </div>
-                            <button id="service_extension_confirm" class="btn btn-primary" ng-disabled="serviceExtensionForm.extended_period.$error.max||serviceExtensionForm.extended_period.$error.min||!extended_period||!service_extension_comment||!ansarId"><img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16" style="margin-top: -2px">Extend Service</button>
+                            <button id="service_extension_confirm" class="btn btn-primary"><img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16" style="margin-top: -2px">Extend Service</button>
                         </div>
                         <div class="col-sm-6 col-sm-offset-2" style="min-height: 400px;border-left: 1px solid #CCCCCC">
                             <div id="loading-box" ng-if="loadingAnsar">
                             </div>
                             <div ng-if="ansarDetail.ansar_name_eng==undefined">
                                 <h3 style="text-align: center">No Ansar Found</h3>
+                                <input type="hidden" name="ansarExist" value="0">
                             </div>
                             <div ng-if="ansarDetail.ansar_name_eng!=undefined">
+                                <input type="hidden" name="ansarExist" value="1">
                                 <div class="form-group">
                                     <label class="control-label">Name</label>
                                     <p>
@@ -126,7 +144,7 @@
     </div>
     <script>
         $("#service_extension_confirm").confirmDialog({
-            message: 'Are u sure to extent the  service date for this Ansar',
+            message: 'Are u sure to extent the service days for this Ansar',
             ok_button_text: 'Confirm',
             cancel_button_text: 'Cancel',
             ok_callback: function (element) {

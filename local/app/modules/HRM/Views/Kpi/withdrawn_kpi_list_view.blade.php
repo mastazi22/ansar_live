@@ -133,11 +133,11 @@
                 </div>
             </div>
         @endif
-        @if(Session::has('eroor_message'))
+        @if(Session::has('error_message'))
             <div style="padding: 10px 20px 0 20px;">
                 <div class="alert alert-danger">
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    {{Session::get('error_message')}}
+                    <span class="glyphicon glyphicon-exclamation-sign"></span>{{Session::get('error_message')}}
                 </div>
             </div>
         @endif
