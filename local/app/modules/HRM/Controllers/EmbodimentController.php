@@ -151,9 +151,12 @@ class EmbodimentController extends Controller
 
     public function newEmbodimentEntry(Request $request)
     {
+        $ansar_id = $request->input('ansar_id');
+        $kpi_id = $request->input('kpi_id');
+
         if(Auth::user()->type==22){
             $rules=[
-                'ansar_id'=> 'required|numeric|regex:/^[0-9]+$/',
+                'ansar_id'=> 'required|numeric|regex:/^[0-9]+$/|isEligible:ansar_id,kpi_id',
                 'memorandum_id'=>'required|unique:hrm.tbl_memorandum_id',
                 'division_name_eng'=>'required|numeric|regex:/^[0-9]+$/',
                 'thana_name_eng'=>'required|numeric|regex:/^[0-9]+$/',
@@ -161,6 +164,7 @@ class EmbodimentController extends Controller
             ];
             $message=[
                 'ansar_id.required' =>'Ansar ID is required',
+                'ansar_id.isEligible' =>'Ansar Cannot be Embodied',
                 'memorandum_id.required' =>'Memorandum ID is required',
                 'division_name_eng.required' =>'Division  is required',
                 'thana_name_eng.required' =>'Thana is required',
@@ -177,16 +181,18 @@ class EmbodimentController extends Controller
             ];
         }else{
             $rules=[
-                'ansar_id'=> 'required|numeric|regex:/^[0-9]+$/',
+                'kpi_id'=>'required|numeric|regex:/^[0-9]+$/',
+                'ansar_id'=> 'required|numeric|regex:/^[0-9]+$/|isEligible:ansar_id,kpi_id',
                 'memorandum_id'=>'required|unique:hrm.tbl_memorandum_id',
                 'reporting_date'=>['required','regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
                 'joining_date'=>['required','regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
                 'division_name_eng'=>'required|numeric|regex:/^[0-9]+$/',
                 'thana_name_eng'=>'required|numeric|regex:/^[0-9]+$/',
-                'kpi_id'=>'required|numeric|regex:/^[0-9]+$/',
+
             ];
             $message=[
                 'ansar_id.required' =>'Ansar ID is required',
+                'ansar_id.isEligible' =>'Ansar Cannot be Embodied',
                 'memorandum_id.required' =>'Memorandum ID is required',
                 'reporting_date.required' =>'Reporting Date is required',
                 'joining_date.required' =>'Joining Date is required',
@@ -219,10 +225,7 @@ class EmbodimentController extends Controller
             $modified_joining_date = Carbon::parse($joining_date)->format('Y-m-d');
             $modified_reporting_date = Carbon::parse($reporting_date)->format('Y-m-d');
         }
-        $ansar_id = $request->input('ansar_id');
         $memorandum_id = $request->input('memorandum_id');
-
-        $kpi_id = $request->input('kpi_id');
         $global_value = GlobalParameterFacades::getValue("embodiment_period");
         $global_unit = GlobalParameterFacades::getUnit("embodiment_period");
 
