@@ -60,52 +60,57 @@ class EmbodimentController extends Controller
         return view('HRM::Embodiment.new_embodiment_entry')->with(['user_type' => $user_type, 'user_thanas' => $user_thanas, 'kpi_names' => $kpi_names, 'user_unit' => $user_unit]);
     }
 
-    public function loadAnsarForEmbodiment()
+    public function loadAnsarForEmbodiment(Request $request)
     {
+        $rules=['ansar_id'=> 'required|numeric|regex:/^[0-9]+$/'];
+        $valid=Validator::make($request->all(), $rules);
+        if($valid->fails()){
+            return response('No Ansar Found', 400);
+        }
         $ansar_id = Input::get('ansar_id');
         $ansar_from_sms_offer = DB::table('tbl_sms_offer_info')->where('ansar_id', $ansar_id)->select('tbl_sms_offer_info.ansar_id')->first();
         $ansar_from_sms_receive = DB::table('tbl_sms_receive_info')->where('ansar_id', $ansar_id)->select('tbl_sms_receive_info.ansar_id')->first();
-//
-//        if (!is_null($ansar_from_sms_offer)) {
-//
-//            $ansarPersonalDetail = DB::table('tbl_ansar_parsonal_info')
-//                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-//                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-//                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-//                ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
-//                ->where('tbl_ansar_status_info.block_list_status', '=', 0)
-//                ->where('tbl_ansar_status_info.black_list_status', '=', 0)
-//                ->select('tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_ansar_parsonal_info.profile_pic', 'tbl_designations.id',
-//                    'tbl_units.unit_name_bng', 'tbl_units.id as unit_id', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_designations.name_bng', 'tbl_ansar_parsonal_info.mobile_no_self')->first();
-//
-//            $ansarStatusInfo = DB::table('tbl_ansar_status_info')
-//                ->where('block_list_status', '=', 0)
-//                ->where('black_list_status', '=', 0)
-//                ->where('ansar_id', $ansar_id)
-//                ->select('*')
-//                ->first();
-//
-//            $ansarPanelInfo = DB::table('tbl_panel_info_log')
-//                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_panel_info_log.ansar_id')
-//                ->where('tbl_panel_info_log.ansar_id', Input::get('ansar_id'))
-//                ->where('tbl_ansar_status_info.block_list_status', '=', 0)
-//                ->where('tbl_ansar_status_info.black_list_status', '=', 0)
-//                ->orderBy('tbl_panel_info_log.id', 'desc')
-//                ->select('tbl_panel_info_log.panel_date', 'tbl_panel_info_log.old_memorandum_id as memorandum_id')->first();
-//
-//            $ansar_details = DB::table('tbl_sms_offer_info')
-//                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-//                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_offer_info.district_id')
-//                ->where('tbl_sms_offer_info.ansar_id', '=', $ansar_id)
-//                ->where('tbl_ansar_status_info.block_list_status', '=', 0)
-//                ->where('tbl_ansar_status_info.black_list_status', '=', 0)
-//                ->select('tbl_sms_offer_info.ansar_id', 'tbl_sms_offer_info.sms_send_datetime as offerDate', 'tbl_units.unit_name_bng as offerUnit')
-//                ->first();
-//
-//            return Response::json(['apd' => $ansarPersonalDetail, 'asi' => $ansarStatusInfo, 'api' => $ansarPanelInfo, 'aoi' => $ansar_details]);
-//        }
-//        else {
-        if(!is_null($ansar_from_sms_receive)){
+
+        if (!is_null($ansar_from_sms_offer)) {
+
+            $ansarPersonalDetail = DB::table('tbl_ansar_parsonal_info')
+                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
+                ->where('tbl_ansar_status_info.block_list_status', '=', 0)
+                ->where('tbl_ansar_status_info.black_list_status', '=', 0)
+                ->select('tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_ansar_parsonal_info.profile_pic', 'tbl_designations.id',
+                    'tbl_units.unit_name_bng', 'tbl_units.id as unit_id', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_designations.name_bng', 'tbl_ansar_parsonal_info.mobile_no_self')->first();
+
+            $ansarStatusInfo = DB::table('tbl_ansar_status_info')
+                ->where('block_list_status', '=', 0)
+                ->where('black_list_status', '=', 0)
+                ->where('ansar_id', $ansar_id)
+                ->select('*')
+                ->first();
+
+            $ansarPanelInfo = DB::table('tbl_panel_info_log')
+                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_panel_info_log.ansar_id')
+                ->where('tbl_panel_info_log.ansar_id', Input::get('ansar_id'))
+                ->where('tbl_ansar_status_info.block_list_status', '=', 0)
+                ->where('tbl_ansar_status_info.black_list_status', '=', 0)
+                ->orderBy('tbl_panel_info_log.id', 'desc')
+                ->select('tbl_panel_info_log.panel_date', 'tbl_panel_info_log.old_memorandum_id as memorandum_id')->first();
+
+            $ansar_details = DB::table('tbl_sms_offer_info')
+                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
+                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_offer_info.district_id')
+                ->where('tbl_sms_offer_info.ansar_id', '=', $ansar_id)
+                ->where('tbl_ansar_status_info.block_list_status', '=', 0)
+                ->where('tbl_ansar_status_info.black_list_status', '=', 0)
+                ->select('tbl_sms_offer_info.ansar_id', 'tbl_sms_offer_info.sms_send_datetime as offerDate', 'tbl_units.unit_name_bng as offerUnit')
+                ->first();
+
+            return Response::json(['apd' => $ansarPersonalDetail, 'asi' => $ansarStatusInfo, 'api' => $ansarPanelInfo, 'aoi' => $ansar_details]);
+        }
+        else {
+//        if(!is_null($ansar_from_sms_receive)){
             $ansarPersonalDetail = DB::table('tbl_ansar_parsonal_info')
                 ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
@@ -146,13 +151,77 @@ class EmbodimentController extends Controller
 
     public function newEmbodimentEntry(Request $request)
     {
+        if(Auth::user()->type==22){
+            $rules=[
+                'ansar_id'=> 'required|numeric|regex:/^[0-9]+$/',
+                'memorandum_id'=>'required|unique:hrm.tbl_memorandum_id',
+                'division_name_eng'=>'required|numeric|regex:/^[0-9]+$/',
+                'thana_name_eng'=>'required|numeric|regex:/^[0-9]+$/',
+                'kpi_id'=>'required|numeric|regex:/^[0-9]+$/',
+            ];
+            $message=[
+                'ansar_id.required' =>'Ansar ID is required',
+                'memorandum_id.required' =>'Memorandum ID is required',
+                'division_name_eng.required' =>'Division  is required',
+                'thana_name_eng.required' =>'Thana is required',
+                'kpi_id.required' =>'KPI is required',
+                'ansar_id.numeric' =>'Ansar ID must be numeric',
+                'ansar_id.regex' =>'Ansar ID must be numeric',
+                'memorandum_id.unique' =>'Memorandum ID has already been taken',
+                'division_name_eng.numeric' =>'Division format is invalid',
+                'division_name_eng.regex' =>'Division format is invalid',
+                'thana_name_eng.numeric' =>'Thana format is invalid',
+                'thana_name_eng.regex' =>'Thana format is invalid',
+                'kpi_id.numeric' =>'KPI format is invalid',
+                'kpi_id.regex' =>'KPI format is invalid',
+            ];
+        }else{
+            $rules=[
+                'ansar_id'=> 'required|numeric|regex:/^[0-9]+$/',
+                'memorandum_id'=>'required|unique:hrm.tbl_memorandum_id',
+                'reporting_date'=>['required','regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+                'joining_date'=>['required','regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+                'division_name_eng'=>'required|numeric|regex:/^[0-9]+$/',
+                'thana_name_eng'=>'required|numeric|regex:/^[0-9]+$/',
+                'kpi_id'=>'required|numeric|regex:/^[0-9]+$/',
+            ];
+            $message=[
+                'ansar_id.required' =>'Ansar ID is required',
+                'memorandum_id.required' =>'Memorandum ID is required',
+                'reporting_date.required' =>'Reporting Date is required',
+                'joining_date.required' =>'Joining Date is required',
+                'division_name_eng.required' =>'Division  is required',
+                'thana_name_eng.required' =>'Thana is required',
+                'kpi_id.required' =>'KPI is required',
+                'ansar_id.numeric' =>'Ansar ID must be numeric',
+                'ansar_id.regex' =>'Ansar ID must be numeric',
+                'memorandum_id.unique' =>'Memorandum ID has already been taken',
+                'reporting_date.regex' =>'Reporting Date format is invalid',
+                'joining_date.regex' =>'Joining Date format is invalid',
+                'division_name_eng.numeric' =>'Division format is invalid',
+                'division_name_eng.regex' =>'Division format is invalid',
+                'thana_name_eng.numeric' =>'Thana format is invalid',
+                'thana_name_eng.regex' =>'Thana format is invalid',
+                'kpi_id.numeric' =>'KPI format is invalid',
+                'kpi_id.regex' =>'KPI format is invalid',
+            ];
+        }
+        $valid=Validator::make($request->all(), $rules, $message);
+        if($valid->fails()){
+            return Redirect::back()->withInput(Input::all())->withErrors($valid);
+        }
+        if(Auth::user()->type==22){
+            $modified_joining_date = Carbon::today()->format('Y-m-d');
+            $modified_reporting_date = Carbon::today()->format('Y-m-d');
+        }else{
+            $joining_date = $request->input('joining_date');
+            $reporting_date = $request->input('reporting_date');
+            $modified_joining_date = Carbon::parse($joining_date)->format('Y-m-d');
+            $modified_reporting_date = Carbon::parse($reporting_date)->format('Y-m-d');
+        }
         $ansar_id = $request->input('ansar_id');
         $memorandum_id = $request->input('memorandum_id');
-        $joining_date = $request->input('joining_date');
-        $reporting_date = $request->input('reporting_date');
 
-        $modified_joining_date = Carbon::parse($joining_date)->format('Y-m-d');
-        $modified_reporting_date = Carbon::parse($reporting_date)->format('Y-m-d');
         $kpi_id = $request->input('kpi_id');
         $global_value = GlobalParameterFacades::getValue("embodiment_period");
         $global_unit = GlobalParameterFacades::getUnit("embodiment_period");
@@ -237,7 +306,7 @@ class EmbodimentController extends Controller
             DB::rollback();
             return $e->getMessage();
         }
-        return Redirect::route('go_to_new_embodiment_page')->with('success_message', 'Ansar is Emboded successfully');
+        return Redirect::route('go_to_new_embodiment_page')->with('success_message', 'Ansar is Embodied Successfully!');
     }
 
     public function transferProcessView()
@@ -578,7 +647,7 @@ class EmbodimentController extends Controller
         return view('HRM::Embodiment.service_extension_view');
     }
 
-    public function loadAnsarDetail(Request $request)
+    public function loadAnsarDetail()
     {
         $ansar_id = Input::get('ansar_id');
         $ansar_check = DB::table('tbl_ansar_status_info')
@@ -598,6 +667,7 @@ class EmbodimentController extends Controller
                 ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
                 ->where('tbl_embodiment.ansar_id', '=', $ansar_id)
                 ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
+                ->where('tbl_embodiment.service_extension_status', '=', 0)
                 ->select('tbl_embodiment.*', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex', 'tbl_kpi_info.kpi_name', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng')
                 ->first();
             return Response::json($ansar_details);
@@ -606,32 +676,55 @@ class EmbodimentController extends Controller
 
     public function serviceExtensionEntry(Request $request)
     {
+        $rules=[
+            'ansar_id'=>'required|numeric|regex:/^[0-9]+$/',
+            'extended_period'=>'required|numeric|min:1|max:12',
+            'service_extension_comment'=>'required|regex:/^[a-zA-Z0-9 ]+$/',
+            'ansarExist'=>'numeric|min:0|max:1'
+        ];
+        $message=[
+            'ansar_id.required'=>'Ansar ID is required',
+            'ansar_id.numeric'=>'Ansar ID must be numeric',
+            'ansar_id.regex'=>'Ansar ID must be numeric',
+            'extended_period.required'=>'Extended Period is required',
+            'extended_period.numeric'=>'Extended Period must be numeric',
+            'extended_period.min'=>'Extended Period Cannot be less than 1 Months',
+            'extended_period.max'=>'Extended Period Cannot be more than 12 Months',
+            'service_extension_comment.required'=>'Comment is required',
+            'service_extension_comment.regex'=>'Comment must contain Alphabets, Numbers and Space Characters',
+        ];
+        $valid=Validator::make(Input::all(), $rules, $message);
+        if($valid->fails()){
+            return Redirect::back()->withInput(Input::all())->withErrors($valid);
+        }
         $ansar_id = $request->input('ansar_id');
         $extended_period = $request->input('extended_period');
         $service_extension_comment = $request->input('service_extension_comment');
+        $ansarExist = $request->input('ansarExist');
+        if($ansarExist==1){
+            DB::beginTransaction();
+            try {
+                $embodiment_info = EmbodimentModel::where('ansar_id', $ansar_id)->first();
 
-        DB::beginTransaction();
-        try {
-            $embodiment_info = EmbodimentModel::where('ansar_id', $ansar_id)->first();
+                $serviceExtenstionEntry = new ServiceExtensionModel();
+                $serviceExtenstionEntry->embodiment_id = $embodiment_info->id;
+                $serviceExtenstionEntry->ansar_id = $ansar_id;
+                $serviceExtenstionEntry->pre_service_ended_date = $embodiment_info->service_ended_date;
+                $serviceExtenstionEntry->new_extended_date = Carbon::parse($embodiment_info->service_ended_date)->addMonth($extended_period);
+                $serviceExtenstionEntry->service_extension_comment = $service_extension_comment;
+                $serviceExtenstionEntry->action_user_id = Auth::user()->id;
+                $serviceExtenstionEntry->save();
 
-            $serviceExtenstionEntry = new ServiceExtensionModel();
-            $serviceExtenstionEntry->embodiment_id = $embodiment_info->id;
-            $serviceExtenstionEntry->ansar_id = $ansar_id;
-            $serviceExtenstionEntry->pre_service_ended_date = $embodiment_info->service_ended_date;
-            $serviceExtenstionEntry->new_extended_date = Carbon::parse($embodiment_info->service_ended_date)->addMonth($extended_period);
-            $serviceExtenstionEntry->service_extension_comment = $service_extension_comment;
-            $serviceExtenstionEntry->action_user_id = Auth::user()->id;
-            $serviceExtenstionEntry->save();
+                $embodiment_info->service_ended_date = Carbon::parse($embodiment_info->service_ended_date)->addMonth($extended_period);
+                $embodiment_info->service_extension_status = 1;
+                $embodiment_info->save();
 
-            $embodiment_info->service_ended_date = Carbon::parse($embodiment_info->service_ended_date)->addMonth($extended_period);
-            $embodiment_info->service_extension_status = 1;
-            $embodiment_info->save();
-
-            DB::commit();
-        } catch (Exception $e) {
-            return $e->getMessage();
+                DB::commit();
+            } catch (Exception $e) {
+                return $e->getMessage();
+            }
+            return Redirect::route('service_extension_view')->with('success_message', 'Service Date for Ansar Extended Successfully!');
         }
-        return Redirect::route('service_extension_view')->with('success_message', 'Service Date for Ansar Extended successfully');
     }
 
     public function disembodimentDateCorrectionView()

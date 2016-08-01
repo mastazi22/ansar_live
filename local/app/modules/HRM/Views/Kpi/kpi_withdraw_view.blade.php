@@ -131,7 +131,7 @@
                                 @endif
                             </div>
                             <div class="form-group required"
-                                 ng-init="selectedThana=='{{Request::old('thana_id')}}'">
+                                 ng-init="selectedThana='{{Request::old('thana_id')}}'">
                                 <label for="e_thana" class="control-label">Select a Thana&nbsp;
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
@@ -175,6 +175,8 @@
                         <div class="col-sm-6 col-sm-offset-2"
                              style="min-height: 400px;border-left: 1px solid #CCCCCC">
                             <div id="loading-box" ng-if="loadingAnsar">
+                                <img src="{{asset('dist/img/facebook.gif')}}"
+                                     width="20">
                             </div>
                             <div ng-if="!kpiDetail.kpi">
                                 <input type="hidden" name="kpiExist" value="0">

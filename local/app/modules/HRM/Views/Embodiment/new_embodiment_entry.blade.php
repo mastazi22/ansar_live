@@ -10,9 +10,10 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#reporting_date').datePicker(true);
-            $("#joining_date").datePicker(true);
-
+            $('#reporting_date').datePicker(false);
+            $("#joining_date").datePicker(false);
+            $('#r_date').datePicker(true);
+            $("#j_date").datePicker(true);
         })
         var myApp = angular.module('myApp', []);
         GlobalApp.controller('NewEmbodimentController', function ($scope, $http, $sce) {
@@ -38,11 +39,11 @@
             var j_date = "";
             var r_date = "";
             var rd = new Date();
-            if ($scope.isAdmin == 22) {
-                $scope.reporting_date = moment().format("D-MMM-YYYY");
-                $scope.joining_date = moment().format("D-MMM-YYYY");
-            }
-            $scope.reporting_date = rd.getFullYear() + "-" + (rd.getMonth() + 1) + "-" + (rd.getDate());
+//            if ($scope.isAdmin == 22) {
+//                $scope.reporting_date = moment().format("D-MMM-YYYY");
+//                $scope.joining_date = moment().format("D-MMM-YYYY");
+//            }
+//            $scope.reporting_date = rd.getFullYear() + "-" + (rd.getMonth() + 1) + "-" + (rd.getDate());
             $scope.msg = "";
 
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}')
@@ -55,13 +56,10 @@
                 }).then(function (response) {
                     $scope.units = response.data;
                     $scope.loadingUnit = false;
-                    $scope.thanas = [];
-                    $scope.selectedThana = "";
                 })
             }
             $scope.loadThana = function (d_id) {
                 $scope.loadingThana = true;
-                $scope.selectedKpi = "";
                 $scope.kpis = [];
                 $http({
                     method: 'get',
@@ -71,8 +69,15 @@
                     $scope.thanas = response.data;
                     $scope.selectedThana = "";
                     $scope.loadingThana = false;
+                    $scope.selectedThana = "{{Request::old('thana_name_eng')}}";
                 })
             }
+            $scope.$watch('selectedUnit', function(n, o){
+                $scope.loadThana(n);
+            })
+            $scope.$watch('selectedThana', function(n, o){
+                $scope.loadKpi(n);
+            })
             $scope.loadAnsarDetail = function (id) {
                 $scope.loadingAnsar = true;
                 $http({
@@ -84,8 +89,12 @@
                     $scope.loadingAnsar = false;
                     console.log($scope.ansarDetail)
                     $scope.totalLength--;
+                    $scope.loadingAnsar = false;
                 })
             }
+            $scope.$watch('ansarId', function(n, o){
+                $scope.loadAnsarDetail(n);
+            })
             $scope.makeQueue = function (id) {
                 $scope.ansar_ids.push(id);
                 $scope.totalLength += 1;
@@ -109,6 +118,7 @@
                     $scope.kpis = response.data
                     $scope.selectedKpi = "";
                     $scope.loadingKpi = false;
+                    $scope.selectedKpi = "{{Request::old('kpi_id')}}";
                 })
             }
             $scope.verifyMemorandumId = function () {
@@ -125,16 +135,16 @@
 
                 })
             }
-            $scope.dateCheck = function () {
-                j_date = new Date($scope.joining_date);
-                r_date = new Date();
-                if (j_date <= r_date && $scope.hh == 1) {
-                    $scope.msg = "Joining date must be greater than Reporting date"
-                } else {
-                    $scope.msg = "";
-                }
-
-            }
+//            $scope.dateCheck = function () {
+//                j_date = new Date($scope.joining_date);
+//                r_date = new Date();
+//                if (j_date <= r_date && $scope.hh == 1) {
+//                    $scope.msg = "Joining date must be greater than Reporting date"
+//                } else {
+//                    $scope.msg = "";
+//                }
+//
+//            }
             $scope.dateConvert=function(date){
                 return (moment(date).format('DD-MMM-Y'));
             }
@@ -215,13 +225,16 @@
                     {!! Form::open(array('route' => 'new-embodiment-entry', 'name' => 'newEmbodimentForm', 'novalidate')) !!}
                     <div class="row">
                         <div class="col-sm-4">
-                            <div class="form-group required">
+                            <div class="form-group required" ng-init="ansarId='{{Request::old('ansar_id')}}'">
                                 <label for="ansar_id" class="control-label">Ansar ID</label>
                                 <input type="text" name="ansar_id" id="ansar_id" class="form-control"
                                        placeholder="Enter Ansar ID" ng-model="ansarId"
                                        ng-change="makeQueue(ansarId)">
+                                @if($errors->has('ansar_id'))
+                                    <p class="text-danger">{{$errors->first('ansar_id')}}</p>
+                                @endif
                             </div>
-                            <div class="form-group required">
+                            <div class="form-group required" ng-init="memorandumId='{{Request::old('memorandum_id')}}'">
                                 <label class="control-label">Memorandum no.&nbsp;&nbsp;&nbsp;<span
                                             ng-show="isVerifying"><i
                                                 class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span><span
@@ -232,75 +245,72 @@
                                 <input ng-blur="verifyMemorandumId()" ng-model="memorandumId"
                                        type="text" class="form-control" name="memorandum_id"
                                        placeholder="Enter Memorandum no." required>
+                                @if($errors->has('memorandum_id'))
+                                    <p class="text-danger">{{$errors->first('memorandum_id')}}</p>
+                                @endif
                             </div>
                             <div ng-show="isAdmin!=22">
-                                <div class="form-group required">
-                                    <label for="reporting_date" class="control-label">Reporting Date&nbsp;&nbsp;&nbsp;<span class="text-danger"
-                                                                                                                            ng-if="newEmbodimentForm.reporting_date.$touched && newEmbodimentForm.reporting_date.$error.required">Joining Date is required.</span>
-                                            <span class="text-danger"
-                                                  ng-if="msg">[[msg]]</span></label>
-                                    {!! Form::text('reporting_date', $value = null, $attributes = array('class' => 'form-control', 'id' => 'reporting_date', 'ng-model' => 'reporting_date', 'required')) !!}
-
+                                <div class="form-group required" ng-init="reporting_date='{{Request::old('reporting_date')}}'">
+                                    <label for="reporting_date" class="control-label">Reporting Date</label>
+                                    {!! Form::text('reporting_date', $value = Request::old('reporting_date'), $attributes = array('class' => 'form-control', 'id' => 'reporting_date', 'ng-model' => 'reporting_date', 'required')) !!}
+                                    @if($errors->has('reporting_date'))
+                                        <p class="text-danger">{{$errors->first('reporting_date')}}</p>
+                                    @endif
                                 </div>
-                                <div class="form-group required">
-                                    <label for="joining_date" class="control-label">Joining
-                                        Date&nbsp;&nbsp;&nbsp;<span class="text-danger"
-                                                                    ng-if="newEmbodimentForm.joining_date.$touched && newEmbodimentForm.joining_date.$error.required">Joining Date is required.</span>
-                                            <span class="text-danger"
-                                                  ng-if="msg">[[msg]]</span>
-                                    </label>
-                                    {!! Form::text('joining_date', $value = null, $attributes = array('class' => 'form-control', 'id' => 'joining_date', 'ng-model' => 'joining_date','required')) !!}
-
+                                <div class="form-group required" ng-init="joining_date='{{Request::old('joining_date')}}'">
+                                    <label for="joining_date" class="control-label">Joining Date</label>
+                                    {!! Form::text('joining_date', $value = Request::old('joining_date'), $attributes = array('class' => 'form-control', 'id' => 'joining_date', 'ng-model' => 'joining_date','required')) !!}
+                                    @if($errors->has('joining_date'))
+                                        <p class="text-danger">{{$errors->first('joining_date')}}</p>
+                                    @endif
                                 </div>
                             </div>
                             <!---->
                             <div ng-show="isAdmin==22">
                                 <div class="form-group">
-                                    <label for="reporting_date" class="control-label">Reporting Date&nbsp;&nbsp;&nbsp;</label>
-                                    {!! Form::text('r_date', $value = null, $attributes = array('class' => 'form-control', 'id' => 'reporting_date', 'ng-model' => 'reporting_date', 'disabled')) !!}
-                                    <input type="hidden" name="reporting_date" value="[[reporting_date]]">
-
+                                    <label for="r_date" class="control-label">Reporting Date</label>
+                                    {!! Form::text('r_date', $value = null, $attributes = array('class' => 'form-control', 'id' => 'r_date', 'disabled')) !!}
                                 </div>
-                                <div class="form-group required">
-                                    <label for="joining_date" class="control-label">Joining
-                                        Date&nbsp;&nbsp;&nbsp;<span class="text-danger"
-                                                                    ng-if="newEmbodimentForm.joining_date.$touched && newEmbodimentForm.joining_date.$error.required">Joining Date is required.</span>
-                                            <span class="text-danger"
-                                                  ng-if="msg">[[msg]]</span>
-                                    </label></label>
-                                    {!! Form::text('joining_date', $value = null, $attributes = array('class' => 'form-control', 'id' => 'joining_date', 'ng-model' => 'joining_date','disabled')) !!}
-                                    <input type="hidden" name="joining_date" value="[[joining_date]]">
+                                <div class="form-group">
+                                    <label for="j_date" class="control-label">Joining Date</label>
+                                    {!! Form::text('j_date', $value = null, $attributes = array('class' => 'form-control', 'id' => 'j_date','disabled')) !!}
                                 </div>
                             </div>
                             <!---->
-                            <div class="form-group required">
+                            <div class="form-group required" ng-init="selectedUnit='{{Request::old('division_name_eng')}}'">
                                 <label for="e_unit" class="control-label">Select a Unit&nbsp;
                                     <img ng-show="loadingUnit" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select name="division_name_eng" ng-disabled="loadingUnit||ansarDetail.apd==undefined" id="e_unit"
                                         class="form-control"
-                                        ng-model="selectedUnit" ng-change="loadThana(selectedUnit)" required>
-                                    <option value="">--Select a unit--</option>
+                                        ng-model="selectedUnit" required>
+                                    <option value="">--Select a Unit--</option>
                                     <option ng-repeat="u in units"
                                             ng-class="{'bg-danger':u.id==ansarDetail.unit_id}"
                                             ng-disabled="u.id==ansarDetail.unit_id" value="[[u.id]]">
                                         [[u.unit_name_bng]]
                                     </option>
                                 </select>
+                                @if($errors->has('division_name_eng'))
+                                    <p class="text-danger">{{$errors->first('division_name_eng')}}</p>
+                                @endif
                             </div>
-                            <div class="form-group required">
+                            <div class="form-group required" ng-init="selectedThana='{{Request::old('thana_name_eng')}}'">
                                 <label for="e_thana" class="control-label">Select a Thana&nbsp;
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select name="thana_name_eng" ng-disabled="loadingThana||ansarDetail.apd==undefined" id="e_thana"
                                         class="form-control"
-                                        ng-model="selectedThana" ng-change="loadKpi(selectedThana)" required>
-                                    <option value="">--Select a thana--</option>
-                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
+                                        ng-model="selectedThana" required>
+                                    <option value="">--Select a Thana--</option>
+                                    <option ng-repeat="t in thanas" value="[[t.id]]" ng-selected="t.id=='{{Request::old('thana_name_eng')}}'">[[t.thana_name_bng]]
                                     </option>
                                 </select>
+                                @if($errors->has('thana_name_eng'))
+                                    <p class="text-danger">{{$errors->first('thana_name_eng')}}</p>
+                                @endif
                             </div>
-                            <div class="form-group required">
+                            <div class="form-group required" ng-init="selectedKpi='{{Request::old('kpi_id')}}'">
                                 <label for="e_kpi" class="control-label">Select a KPI&nbsp;
                                     <img ng-show="loadingKpi" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
@@ -309,9 +319,11 @@
                                     <option value="">--Select a KPI--</option>
                                     <option ng-repeat="k in kpis" value="[[k.id]]">[[k.kpi_name]]</option>
                                 </select>
+                                @if($errors->has('kpi_id'))
+                                    <p class="text-danger">{{$errors->first('kpi_id')}}</p>
+                                @endif
                             </div>
-                            <button class="btn btn-primary"
-                                    ng-disabled="!ansarDetail.aoi.ansar_id||!joining_date||!ansarId||!selectedUnit||!selectedThana||!selectedKpi||msg||!memorandumId||isVerified||isVerifying||!isAnsarAvailable">
+                            <button class="btn btn-primary">
                                 Embodied
                             </button>
                         </div>
