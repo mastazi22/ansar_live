@@ -48,6 +48,16 @@
     </script>
 </head>
 <body class="skin-blue" style="background: #ecf0f5">
+<div class="header-top">
+    <div class="logo">
+        <a href="http://ansarerp.local"><img src="http://ansarerp.local/dist/img/erp-logo.png" class="img-responsive" alt=""></a>
+    </div>
+    <div class="middle_header_logo">
+        <img src="http://ansarerp.local/dist/img/erp-hdeader.png" class="img-responsive" alt="" width="400" height="400">
+    </div>
+    <div class="clearfix"></div>
+
+</div>
 <div class="content-wrapper" style="margin: 0">
     <section class="content">
         <div class="box box-solid" id="print-div">
@@ -106,5 +116,9 @@
         </div>
     </section>
 </div>
+<footer class="main-footer" style="margin-left: 0 !important;">
+    <div class="pull-right hidden-xs"><b>Developed by</b> <a href="#">shurjoMukhi</a></div>
+    <strong>2015 © <a href="#">Ansar &amp; VDP</a></strong> All rights reserved.
+</footer>
 </body>
 </html>

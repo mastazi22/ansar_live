@@ -14,7 +14,23 @@
                 if ((code >= 47 && code <= 57) || code == 8);
                 else e.preventDefault();
             });
-
+            $(".module-small-header").on('click', function (e) {
+                $(".module-menu:not('.still')").slideToggle(200, function () {
+                    $(this).addClass('still');
+                    $(".module-small-header>.icon>i").addClass('fa-angle-up').removeClass('fa-angle-down')
+                })
+                $(".module-menu.still").slideToggle(200, function () {
+                    $(this).removeClass('still');
+                    $(".module-small-header>.icon>i").addClass('fa-angle-down').removeClass('fa-angle-up')
+                })
+            })
+            $(window).resize(function () {
+                if($(this).width()>864){
+                    $(".module-menu").removeAttr('style')
+                    $(".module-menu").removeClass('still')
+                    $(".module-small-header>.icon>i").addClass('fa-angle-down').removeClass('fa-angle-up')
+                }
+            })
         });
 
         var GlobalApp = angular.module('GlobalApp', ['angular.filter'], function ($interpolateProvider, $httpProvider) {
@@ -117,11 +133,17 @@
             <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
                 <span class="sr-only">Toggle navigation</span>
             </a>
-            <ul class="module-menu">
-                @foreach(config('app.modules') as $module)
-                <li><a href="{{URL::to($module['route'])}}" @if(!is_null(request()->route())&&strcasecmp(request()->route()->getPrefix(),$module['name'])==0) class="active" @endif>{{$module['name']}}</a></li>
-                @endforeach
-            </ul>
+            <div class="module-menu-container">
+                <div class="module-small-header">
+                    <span class="header-content">HRM</span>
+                    <span class="icon"><i class="fa fa-angle-down"></i></span>
+                </div>
+                <ul class="module-menu">
+                    @foreach(config('app.modules') as $module)
+                        <li><a href="{{URL::to($module['route'])}}" @if(!is_null(request()->route())&&strcasecmp(request()->route()->getPrefix(),$module['name'])==0) class="active" @endif>{{$module['name']}}</a></li>
+                    @endforeach
+                </ul>
+            </div>
             <div id="ncm" class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
                     @if(auth()->user()->type==11)
