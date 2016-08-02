@@ -129,7 +129,7 @@ body {
     margin-left: auto;
     padding-left: 15px;
     padding-right: 15px;
-    padding-top:5px;
+    padding-top: 5px;
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
@@ -1512,7 +1512,7 @@ a:hover, a:active, a:focus {
     color: rgba(255, 255, 255, 0.8);
     display: block;
     z-index: 10;
-    background: rgba(0, 0, 0, 0.1);
+    background: rgb(1, 113, 103);
     text-decoration: none
 }
 
@@ -4597,25 +4597,77 @@ table.text-center, table.text-center td, table.text-center th {
     }
 
 }
-ul.module-menu{
+
+ul.module-menu {
     margin: 0;
     float: left;
     list-style: none;
 }
-ul.module-menu>li{
+
+ul.module-menu > li {
     float: left;
 }
-ul.module-menu>li:not(:last-child){
+
+ul.module-menu > li:not(:last-child) {
     border-right: 1px solid #003330;
 }
-ul.module-menu>li>a{
+
+ul.module-menu > li > a {
     padding: 15px 35px;
     color: #ffffff;
     display: block;
 }
-ul.module-menu>li>a.active{
+
+ul.module-menu > li > a.active {
     box-shadow: 0px 0px 19px 1px #091716 inset;
 }
-ul.module-menu>li>a:hover{
+
+ul.module-menu > li > a:hover {
     box-shadow: 0px 0px 19px 1px #091716 inset;
+}
+
+.module-menu-container, .module-small-header {
+    float: left;
+}
+
+.module-small-header {
+    display: none;
+}
+
+.module-small-header > .header-content {
+    padding: 15px 35px;
+    color: #ffffff;
+    display: block;
+    float: left
+}
+
+.module-small-header > .icon {
+    float: left;
+    padding: 15px 5px;
+    color: #ffffff;
+}
+
+@media (min-width: 864px) {
+    ul.module-menu {
+        display: block !important;
+    }
+}
+
+@media (max-width: 865px) {
+    .module-menu {
+        position: absolute;
+        background: #003d39;
+        top: 50px;
+        display: none;
+    }
+
+    ul.module-menu > li {
+        border-right: none;
+        float: none;
+    }
+
+    .module-small-header {
+        display: block;
+        cursor: pointer;
+    }
 }

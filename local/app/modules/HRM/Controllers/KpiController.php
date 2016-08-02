@@ -333,7 +333,7 @@ class KpiController extends Controller
         $rules=[
             'unit_id'=>'regex:/^[0-9]+$/',
             'thana_id'=>'regex:/^[0-9]+$/',
-            'selected_name'=>'^regex:/[0-9]+$/'
+            'selected_name'=>'regex:/^[0-9]+$/'
         ];
         $validation=Validator::make(Input::all(), $rules);
         if($validation->fails()){
