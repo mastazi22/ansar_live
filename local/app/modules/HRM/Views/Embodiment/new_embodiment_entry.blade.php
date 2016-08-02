@@ -39,11 +39,6 @@
             var j_date = "";
             var r_date = "";
             var rd = new Date();
-//            if ($scope.isAdmin == 22) {
-//                $scope.reporting_date = moment().format("D-MMM-YYYY");
-//                $scope.joining_date = moment().format("D-MMM-YYYY");
-//            }
-//            $scope.reporting_date = rd.getFullYear() + "-" + (rd.getMonth() + 1) + "-" + (rd.getDate());
             $scope.msg = "";
 
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}')
@@ -73,10 +68,10 @@
                 })
             }
             $scope.$watch('selectedUnit', function(n, o){
-                $scope.loadThana(n);
+                if(n!=o) $scope.loadThana(n);
             })
             $scope.$watch('selectedThana', function(n, o){
-                $scope.loadKpi(n);
+                if(n!=o) $scope.loadKpi(n);
             })
             $scope.loadAnsarDetail = function (id) {
                 $scope.loadingAnsar = true;
@@ -89,6 +84,8 @@
                     $scope.loadingAnsar = false;
                     console.log($scope.ansarDetail)
                     $scope.totalLength--;
+                    $scope.loadingAnsar = false;
+                }, function () {
                     $scope.loadingAnsar = false;
                 })
             }
@@ -135,80 +132,13 @@
 
                 })
             }
-//            $scope.dateCheck = function () {
-//                j_date = new Date($scope.joining_date);
-//                r_date = new Date();
-//                if (j_date <= r_date && $scope.hh == 1) {
-//                    $scope.msg = "Joining date must be greater than Reporting date"
-//                } else {
-//                    $scope.msg = "";
-//                }
-//
-//            }
             $scope.dateConvert=function(date){
                 return (moment(date).format('DD-MMM-Y'));
             }
             $scope.loadDistrict();
         })
-        GlobalApp.directive('checkKpi', function ($http) {
-            return{
-                restrict:'AC',
-                link: function (scope,elem,attrs) {
-                    if(scope.ansarDetail.apd==undefined){
-                        $(elem).on('change', function (e) {
-                            var v = $(this).val()
-//                            alert(v)
-                            scope.loadingKpi = true;
-                            $http({
-                                method:'get',
-                                params:{id:v,ansar_id:scope.ansarDetail.apd.id},
-                                url:"{{URL::route('kpi_detail')}}"
-                            }).then(function (response) {
-                                console.log(response.data);
-                                scope.loadingKpi = false;
-                                switch (scope.ansarDetail.apd.id){
-                                    case 1:
-                                            if(response.data.detail.no_of_ansar<response.data.ansar_count.total+1){
-                                                scope.isAnsarAvailable = false;
-                                                $("body").notifyDialog({type:'error',message:'You can`t embodied this ansar(Rank: Ansar) in this kpi.Because total number of ansar in this kpi already exceed. First transfer or disembodied ansar from this kpi.'}).showDialog()
-                                            }
-                                            else{
-                                                scope.isAnsarAvailable = true;
-                                            }
-                                        break;
-                                    case 2:
-                                        if(response.data.detail.no_of_apc<response.data.ansar_count.total+1){
-                                            scope.isAnsarAvailable = false;
-                                            $("body").notifyDialog({type:'error',message:'You can`t embodied this ansar(Rank: APC) in this kpi.Because total number of APC in this kpi already exceed. First transfer or disembodied APC from this kpi.'}).showDialog()
-                                        }
-                                        else{
-                                            scope.isAnsarAvailable = true;
-                                        }
-                                        break;
-                                    case 3:
-                                        if(response.data.detail.no_of_pc<response.data.ansar_count.total+1){
-                                            scope.isAnsarAvailable = false;
-                                            $("body").notifyDialog({type:'error',message:'You can`t embodied this ansar(Rank: PC) in this kpi.Because total number of PC in this kpi already exceed. First transfer or disembodied PC from this kpi.'}).showDialog()
-                                        }
-                                        else{
-                                            scope.isAnsarAvailable = true;
-                                        }
-                                        break;
-                                }
-                            }, function (response) {
-                                scope.loadingKpi = false;
-                            })
-                        })
-                    }
-
-                }
-            }
-        })
     </script>
     <div ng-controller="NewEmbodimentController" ng-app>
-        {{--<div class="breadcrumbplace">--}}
-            {{--{!! Breadcrumbs::render('embodiment_entry') !!}--}}
-        {{--</div>--}}
         @if(Session::has('success_message'))
             <div style="padding: 10px 20px 0 20px;">
                 <div class="alert alert-success">
@@ -218,8 +148,6 @@
             </div>
         @endif
         <section class="content" style="position: relative;">
-
-            <notify></notify>
             <div class="box box-solid">
                 <div class="box-body">
                     {!! Form::open(array('route' => 'new-embodiment-entry', 'name' => 'newEmbodimentForm', 'novalidate')) !!}
