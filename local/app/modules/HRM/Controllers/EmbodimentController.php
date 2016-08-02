@@ -279,6 +279,7 @@ class EmbodimentController extends Controller
         $global_value = GlobalParameterFacades::getValue("embodiment_period");
         $global_unit = GlobalParameterFacades::getUnit("embodiment_period");
 
+
         DB::beginTransaction();
         try {
             $sms_offer_info = OfferSMS::where('ansar_id', $ansar_id)->first();
