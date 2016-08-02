@@ -315,6 +315,6 @@ class PanelController extends Controller
         }
         $ansarList = $ansarList->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_units.unit_name_bng',
             'tbl_thana.thana_name_bng','tbl_panel_info.created_at','tbl_panel_info.memorandum_id','tbl_designations.name_bng as rank')->orderBy('tbl_panel_info.created_at','asc')->get();
-        return View::make('panel.panel_individual_list')->with(['designation' => $designation, 'sex' => $sex, 'ansarList' => $ansarList]);
+        return View::make('HRM::Panel.panel_individual_list')->with(['designation' => $designation, 'sex' => $sex, 'ansarList' => $ansarList]);
     }
 }
