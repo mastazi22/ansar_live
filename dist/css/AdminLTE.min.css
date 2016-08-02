@@ -2123,7 +2123,7 @@ a:hover, a:active, a:focus {
     text-align: center;
     font-size: 45px;
     line-height: 90px;
-    /*background: rgba(0, 0, 0, 0.2)*/
+    background: rgb(0, 88, 82)
 }
 
 .info-box-icon > img {
@@ -2317,42 +2317,42 @@ a:hover, a:active, a:focus {
 }
 
 .btn-primary {
-    background-color: forestgreen !important;
+    background-color: #003a37 !important;
     border-color: #166f16 !important;
 }
 
 .btn-primary:hover, .btn-primary:active, .btn-primary.hover, .btn-primary:focus {
-    background-color: #34d234 !important;
-    border-color: #166f16
+    background-color: #01655d !important;
+    border-color: #01655d
 }
 
 .btn-primary[disabled], .btn-primary.disabled {
-    background-color: forestgreen !important;
+    background-color: #01655d !important;
     border-color: #166f16 !important;
 }
 
 .btn-success {
-    background-color: forestgreen;
-    border-color: #166f16
+    background-color: #003a37;
+    border-color: #01655d
 }
 
 .btn-success:hover, .btn-success:active, .btn-success.hover, btn-success:focus {
-    background-color: #34d234 !important;
+    background-color: #01655d !important;
     border-color: #166f16
 }
 
 .btn-info {
-    background-color: forestgreen;
+    background-color: #003a37;
     border-color: #166f16
 }
 
 .btn-info:hover, .btn-info:active, .btn-info.hover, .btn-info:focus {
-    background-color: #34d234 !important;
+    background-color: #01655d !important;
     border-color: #166f16
 }
 
 .btn-info[disabled], .btn-info.disabled {
-    background-color: forestgreen !important;
+    background-color: #166f16 !important;
     border-color: #166f16 !important;
 }
 
@@ -4021,7 +4021,7 @@ table.text-center, table.text-center td, table.text-center th {
 }
 
 .bg-aqua, .callout.callout-info, .alert-info, .label-info, .modal-info .modal-body {
-    background-color: forestgreen !important
+    background-color: #002926 !important
 }
 
 .bg-blue {
@@ -4499,7 +4499,7 @@ table.text-center, table.text-center td, table.text-center th {
 }
 
 .box-info, .box-solid {
-    border-top: 3px solid forestgreen !important;
+    border-top: 3px solid #002926 !important;
 }
 
 .table tr:nth-child(odd) {
@@ -4609,7 +4609,7 @@ ul.module-menu>li:not(:last-child){
     border-right: 1px solid #003330;
 }
 ul.module-menu>li>a{
-    padding: 15px 15px;
+    padding: 15px 35px;
     color: #ffffff;
     display: block;
 }

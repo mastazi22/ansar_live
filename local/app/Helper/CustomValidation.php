@@ -103,6 +103,7 @@ class CustomValidation extends Validator
     {
         $length = count($value);
         $max = array_get($this->getData(), $parameters[0]);
+        $max = $max?$max:intval($parameters[0]);
         Log::info($max);
         return $length <= $max;
     }
@@ -118,8 +119,9 @@ class CustomValidation extends Validator
     public function validateArrayLengthSame($attribute, $value, $parameters)
     {
         $length = count($value);
-        $same = count(array_get($this->getData(), $parameters[0]));
-        Log::info($same);
+        $same = array_get($this->getData(), $parameters[0]);
+        $same = $same?count($same):intval($parameters[0]);
+        Log::info(count($parameters));
         return $length == $same;
     }
 

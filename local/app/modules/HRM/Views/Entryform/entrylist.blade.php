@@ -205,7 +205,7 @@
         }
 
         .radio-inline:checked + .radio-label::before {
-            background: forestgreen;
+            background: #003a37;
         }
 
         .search-field {
