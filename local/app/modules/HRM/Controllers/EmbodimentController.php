@@ -751,6 +751,22 @@ class EmbodimentController extends Controller
 
     public function newDisembodimentDateEntry(Request $request)
     {
+        $rules=[
+            'ansarExist'=>'numeric|min:0|max:1',
+            'ansar_id'=> 'required|numeric|regex:/^[0-9]+$/',
+            'new_disembodiment_date'=>['required','regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+        ];
+        $message=[
+            'ansar_id.required' =>'Ansar ID is required',
+            'new_disembodiment_date.required' =>'New Disembodiment Date is required',
+            'ansar_id.numeric' =>'Ansar ID must be numeric',
+            'ansar_id.regex' =>'Ansar ID must be numeric',
+            'new_disembodiment_date.regex' =>'New Disembodiment Date format is invalid',
+        ];
+        $valid=Validator::make(Input::all(), $rules, $message);
+        if($valid->fails()){
+            return Redirect::back()->withInput(Input::all())->withErrors($valid);
+        }
         $ansar_id = $request->input('ansar_id');
         $new_disembodiment_date = $request->input('new_disembodiment_date');
         $modified_new_disembodiment_date = Carbon::parse($new_disembodiment_date)->format('Y-m-d');
