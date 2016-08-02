@@ -91,7 +91,7 @@ class CustomValidation extends Validator
         switch ($type) {
             case 'int':
                 foreach ($value as $v) {
-                    if (!is_int($v)) return false;
+                    if (!preg_match('/^[0-9]+$/',$v)) return false;
                 }
                 break;
         }

@@ -218,29 +218,36 @@ class OfferController extends Controller
 
     function updateOfferQuota(Request $request)
     {
-        //return 'ggggg';
+        //return $request->get('quota_id');
         $rules = [
             'quota_id'=>'required|is_array|array_type:int',
-            'quota_id'=>'required|is_array|array_type:int'
+            'quota_value'=>'required|is_array|array_type:int|array_length_same:quota_id'
         ];
-        $id = Input::get('quota_id');
-        $quota = Input::get('quota_value');
-        $success = true;
-        //return $id;
-        for ($i = 0; $i < count($id); $i++) {
+        $valid = Validator::make($request->all(),$rules);
+        if($valid->fails()){
+            return Redirect::back()->with('error',"Invalid request");
+        }
+        $id = $request->get('quota_id');
+        $quota = $request->get('quota_value');
+        DB::beginTransaction();
+        try {
+            for ($i = 0; $i < count($id); $i++) {
 
-            try {
-                $offer_quota = OfferQuota::where('unit_id', $id[$i])->firstOrFail();
-                $offer_quota->update(['quota' => $quota[$i]]);
-            } catch (ModelNotFoundException $e) {
-                //return $e->getMessage();
-                $offer_quota = new OfferQuota;
-                $offer_quota->unit_id = $id[$i];
-                $offer_quota->quota = $quota[$i];
-                $offer_quota->saveOrFail();
-//                $offer_quota->fill(['unit_id'=>$id[$i],'quota' => $quota[$i]]);
+                try {
+                    $offer_quota = OfferQuota::where('unit_id', $id[$i])->firstOrFail();
+                    $offer_quota->update(['quota' => $quota[$i]]);
+                } catch (ModelNotFoundException $e) {
+                    //return $e->getMessage();
+                    $offer_quota = new OfferQuota;
+                    $offer_quota->unit_id = $id[$i];
+                    $offer_quota->quota = $quota[$i];
+                    $offer_quota->saveOrFail();
+                }
+                DB::commit();
             }
-            if (!$offer_quota) $success = false;
+        }catch (\Exception $e){
+            DB::rollback();
+            return Redirect::back()->with('error',$e->getMessage());
         }
         return Redirect::back()->with('success','Offer quota updated successfully');
     }

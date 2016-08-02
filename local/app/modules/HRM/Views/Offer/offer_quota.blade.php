@@ -15,6 +15,12 @@
                     <i class="fa fa-check"></i>&nbsp;{{Session::get('success')}}
                 </div>
                 @endif
+                @if(Session::has('error'))
+                    <div class="alert alert-danger">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <i class="fa fa-warning"></i>&nbsp;{{Session::get('error')}}
+                    </div>
+                @endif
             <div class="box box-solid">
                 <div class="box-body" style="width: 70%;margin: 0 auto">
                     <form id="offer-quota-form" action="{{URL::route('update_offer_quota')}}" method="post">
