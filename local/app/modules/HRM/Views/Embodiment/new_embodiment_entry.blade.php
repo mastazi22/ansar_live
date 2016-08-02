@@ -68,10 +68,22 @@
                 })
             }
             $scope.$watch('selectedUnit', function(n, o){
-                if(n!=o) $scope.loadThana(n);
+                if(!n){
+                    $scope.thanas = [];
+                    $scope.kpis = [];
+                    $scope.selectedThana = "";
+                    $scope.selectedKpi = "";
+                }else{
+                    $scope.loadThana(n);
+                }
             })
             $scope.$watch('selectedThana', function(n, o){
-                if(n!=o) $scope.loadKpi(n);
+                if(!n){
+                    $scope.kpis = [];
+                    $scope.selectedKpi = "";
+                }else{
+                    $scope.loadKpi(n);
+                }
             })
             $scope.loadAnsarDetail = function (id) {
                 $scope.loadingAnsar = true;
