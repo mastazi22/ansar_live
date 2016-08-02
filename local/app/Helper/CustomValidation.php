@@ -20,6 +20,7 @@ class CustomValidation extends Validator
 {
     private $custom_messages = [
         'is_eligible' => ':attribute not eligible for this action',
+        'is_offered_for_embodiment' => ':attribute not eligible for this action',
         'is_array' => ':attribute not an array',
         'array_type' => 'Array type does not match of this :attribute',
         'array_length_max' => ':attribute length is overflow',
@@ -44,7 +45,7 @@ class CustomValidation extends Validator
         $ansar_id = array_get($this->getData(), $parameters[0]);
         $kpi_id = array_get($this->getData(), $parameters[1]);
         Log::info($ansar_id . " " . $kpi_id);
-        if (!is_int($ansar_id) && !is_int($kpi_id)) {
+        if (!is_int($ansar_id) || !is_int($kpi_id)) {
             return false;
         }
         $ansar_rank = PersonalInfo::where('tbl_ansar_parsonal_info.ansar_id', $ansar_id)->select('designation_id')->first();
@@ -77,7 +78,21 @@ class CustomValidation extends Validator
             }
         }
     }
-
+    public function validateIsOfferedForEmbodiment($attribute, $value, $parameters)
+    {
+        $ansar_id = array_get($this->getData(), $parameters[0]);
+        $kpi_id = array_get($this->getData(), $parameters[1]);
+        Log::info($ansar_id);
+        if (!is_int($ansar_id) || !is_int($kpi_id)) {
+            return false;
+        }
+        $ansar_from_sms_receive = DB::table('tbl_sms_receive_info')->where('ansar_id', $ansar_id)->select('tbl_sms_receive_info.ansar_id')->first();
+        if(!is_null($ansar_from_sms_receive)){
+            return true;
+        }else{
+            return false;
+        }
+    }
     public function validateIsArray($attribute, $value, $parameters)
     {
         return is_array($value);
