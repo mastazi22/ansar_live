@@ -12,10 +12,11 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         //DASHBOARD
         Route::get('/tesst',function(){
             $data = [
-                'name'=>[1,2,3,4,5,6,'ssss']
+                'name'=>[1,2,3,4,5,6,7],
+                'sas'=>[1,2,3,4,5,6,7]
             ];
             $valid = Validator::make($data,[
-                'name'=>'array_type:int'
+                'name'=>'array_length_same:sas'
             ]);
             if($valid->fails()){
                 return $valid->messages();

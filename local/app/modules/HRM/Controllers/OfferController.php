@@ -216,9 +216,13 @@ class OfferController extends Controller
         return Response::json(CustomQuery::offerQuota());
     }
 
-    function updateOfferQuota()
+    function updateOfferQuota(Request $request)
     {
         //return 'ggggg';
+        $rules = [
+            'quota_id'=>'required|is_array|array_type:int',
+            'quota_id'=>'required|is_array|array_type:int'
+        ];
         $id = Input::get('quota_id');
         $quota = Input::get('quota_value');
         $success = true;
