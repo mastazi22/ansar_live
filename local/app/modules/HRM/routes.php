@@ -16,7 +16,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
                 'sas'=>[1,2,3,4,5,6,7]
             ];
             $valid = Validator::make($data,[
-                'name'=>'array_length_same:sas'
+                'name'=>'array_length_same:7,5'
             ]);
             if($valid->fails()){
                 return $valid->messages();
