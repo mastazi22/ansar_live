@@ -44,7 +44,7 @@ class CustomValidation extends Validator
         $ansar_id = array_get($this->getData(), $parameters[0]);
         $kpi_id = array_get($this->getData(), $parameters[1]);
         Log::info($ansar_id . " " . $kpi_id);
-        if (!is_int($ansar_id) || !is_int($kpi_id)) {
+        if (!is_int($ansar_id) && !is_int($kpi_id)) {
             return false;
         }
         $ansar_rank = PersonalInfo::where('tbl_ansar_parsonal_info.ansar_id', $ansar_id)->select('designation_id')->first();
