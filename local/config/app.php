@@ -185,7 +185,8 @@ return [
         DaveJamesMiller\Breadcrumbs\ServiceProvider::class,
         \Nathanmac\Utilities\Parser\ParserServiceProvider::class,
         \App\Providers\NotificationProvider::class,
-        \App\Providers\UserPermissionProvider::class
+        \App\Providers\UserPermissionProvider::class,
+        \App\Providers\CustomValidatorProvider::class,
     ],
 
     /*

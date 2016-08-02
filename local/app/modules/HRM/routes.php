@@ -12,15 +12,13 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         //DASHBOARD
         Route::get('/tesst',function(){
             $data = [
-                'name'=>[1,2,3,4,5,6,7],
-                'ansar_id'=>1,
-                'kpi_id'=>2
+                'name'=>[1,2,3,4,5,6,'ssss']
             ];
             $valid = Validator::make($data,[
-                'ansar_id'=>'isEligible:ansar_id,kpi_id'
+                'name'=>'array_type:int'
             ]);
             if($valid->fails()){
-                return "false";
+                return $valid->messages();
             }
             return "true";
         });

@@ -244,7 +244,7 @@ class OfferController extends Controller
     function handleCancelOffer()
     {
         $rules=[
-            'ansar_ids'=>'required|array|array_type:int|array_length_min:1'
+            'ansar_ids'=>'required|is_array|array_type:int|array_length_min:1'
         ];
         $vaild = Validator::make(Input::all(),$rules);
         if($vaild->fails()){
