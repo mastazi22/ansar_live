@@ -23,7 +23,7 @@
             $scope.reportType = 'eng';
             $scope.errorFound=0;
             $scope.allLoading = false;
-            $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}')
+            $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
             $scope.loadDistrict = function () {
                 $scope.loadingUnit = true;
                 $http({
@@ -32,6 +32,7 @@
                 }).then(function (response) {
                     $scope.districts = response.data;
                     $scope.loadingUnit = false;
+                    $scope.loadAnsarDetail();
                 })
             }
             $scope.loadThana = function (id) {
@@ -42,7 +43,7 @@
                     params: {id: id}
                 }).then(function (response) {
                     $scope.thanas = response.data;
-                    $scope.selectedThana = "all";
+                    $scope.selectedThana = "";
                     $scope.loadingThana = false;
                     $scope.loadAnsarDetail();
                 })
@@ -82,7 +83,7 @@
                 return (moment(date).format('DD-MMM-Y'));
             }
             $scope.loadReportData("service_record_unitwise", "eng")
-            if ($scope.isAdmin == 11) {
+            if ($scope.isAdmin != 22) {
                 $scope.loadDistrict()
             }
             else {
@@ -145,7 +146,7 @@
                             </span>
                     </div><br>
                     <div class="row">
-                        <div class="col-sm-4" ng-show="isAdmin==11">
+                        <div class="col-sm-4" ng-hide="isAdmin==22">
                             <div class="form-group">
                                 <label class="control-label">
                                     Select a District&nbsp;&nbsp;
@@ -154,8 +155,8 @@
                                 </label>
                                 <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedDistrict"
-                                        ng-change="loadThana(selectedDistrict)">
-                                    <option value="">--Select a unit--</option>
+                                        ng-change="loadThana(selectedDistrict)" >
+                                    <option value="">--Select a Unit--</option>
                                     <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
                                     </option>
                                 </select>
@@ -170,8 +171,8 @@
                                 </label>
                                 <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedThana"
-                                        ng-change="loadAnsarDetail(selectedThana)">
-                                    <option value="">--Select a thana--</option>
+                                        ng-change="loadAnsarDetail(selectedDistrict,selectedThana)">
+                                    <option value="">--Select a Thana--</option>
                                     <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
                                     </option>
                                 </select>

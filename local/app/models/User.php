@@ -2,6 +2,7 @@
 
 namespace App\models;
 
+use App\modules\HRM\Models\District;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -78,5 +79,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             if(in_array("kpi_verify",$a)) return true;
             else return false;
         }
+    }
+    public function district(){
+        return $this->belongsTo(District::class, 'district_id');
     }
 }

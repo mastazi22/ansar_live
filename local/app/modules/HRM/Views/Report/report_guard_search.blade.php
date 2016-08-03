@@ -97,7 +97,7 @@
                 return (moment(date).format('DD-MMM-Y'));
             }
             $scope.loadReportData("ansar_in_guard_report", "eng")
-            if ($scope.isAdmin == 11) {
+            if ($scope.isAdmin != 22) {
                 $scope.loadDistrict()
             }
             else {
@@ -164,7 +164,7 @@
                             </span>
                     </div><br>
                     <div class="row">
-                        <div class="col-sm-4" ng-show="isAdmin==11">
+                        <div class="col-sm-4" ng-hide="isAdmin==22">
                             <div class="form-group">
                                 <label class="control-label">
                                     Select a District&nbsp;&nbsp;

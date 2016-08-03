@@ -165,7 +165,7 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label class="control-label">
-                                    Select a Option&nbsp;&nbsp;
+                                    Select an Option&nbsp;&nbsp;
                                 </label>
                                 <select class="form-control" ng-disabled="loadingUnit"
                                         ng-model="selectedDate">
@@ -219,7 +219,7 @@
                                         <table class="table table-bordered">
                                             <tr>
                                                 <th>SL. No</th>
-                                                <th>Ansar Id</th>
+                                                <th>Ansar ID</th>
                                                 <th>Name</th>
                                                 <th>Rank</th>
                                                 <th>Offered Date</th>

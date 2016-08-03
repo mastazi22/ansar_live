@@ -39,6 +39,7 @@
             $scope.ppp = {educationIdBng: []};
             $scope.draft = {};
             $scope.rank = [];
+            $scope.isAdmin = parseInt('{{Auth::user()->type}}');
             $http({
                 url: '{{URL::route('ansar_rank')}}',
                 method: 'get'
@@ -854,13 +855,13 @@
                                         </div>
 
                                         <div class="form-horizontal col-md-12 "
-                                             ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.division_name_eng[0]}">
+                                             ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.division_name_eng[0]}" ng-hide="isAdmin==22">
 
                                             <label class="control-label col-sm-2" for="email"><sup
                                                         style="color: #ff0709;font-size: 1em">*</sup>বিভাগ:</label>
 
 
-                                            <div class="col-sm-10 ">
+                                            <div class="col-sm-10">
                                                 <select name="division_name_eng" class="form-control" id="sell"
                                                         ng-model="SelectedDivision"
                                                         ng-change="SelectedItemChanged()">
@@ -874,7 +875,14 @@
                                             </div>
 
                                         </div>
+                                        <div class="form-horizontal col-md-12"ng-show="isAdmin==22">
 
+                                            <label class="control-label col-sm-2" for="email">বিভাগ:</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" value="{{Auth::user()->district->division->division_name_bng}}" disabled>
+                                            </div>
+
+                                        </div>
                                         <div class="form-horizontal col-md-12 "
                                              ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.unit_name_eng[0]}">
 
