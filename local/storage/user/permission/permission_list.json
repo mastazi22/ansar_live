@@ -21,34 +21,34 @@
   {
     "controller":{"value":"KPIController","name":"Kpi Branch"},
     "routes":[
-      {"value":"kpi_view","name":"Kpi Information"},
+      {"value":"kpi_view","name":"Kpi Information","type":"menu"},
       {"value":"Kpi_edit","name":"Kpi Edit"},
       {"value":"kpi_verify","name":"Kpi Verify"},
-      {"value":"ansar-withdraw-view","name":"Ansar Withdraw"},
-      {"value":"ansar_before_withdraw_view","name":"Ansar Before Withdraw List"},
-      {"value":"reduce_guard_strength","name":"Reduce Guard Strength"},
-      {"value":"ansar_before_reduce_view","name":"Ansar Before Reduce List"},
-      {"value":"kpi-withdraw-view","name":"Kpi Withdraw"},
-      {"value":"withdrawn_kpi_view","name":"Kpi Withdraw Date Update"},
-      {"value":"inactive_kpi_view","name":"Inactive Kpi List"},
-      {"value":"kpi_withdraw_cancel_view","name":"KPI Withdraw Cancel"}
+      {"value":"ansar-withdraw-view","name":"Ansar Withdraw","type":"menu"},
+      {"value":"ansar_before_withdraw_view","name":"Ansar Before Withdraw List","type":"menu"},
+      {"value":"reduce_guard_strength","name":"Reduce Guard Strength","type":"menu"},
+      {"value":"ansar_before_reduce_view","name":"Ansar Before Reduce List","type":"menu"},
+      {"value":"kpi-withdraw-view","name":"Kpi Withdraw","type":"menu"},
+      {"value":"withdrawn_kpi_view","name":"Kpi Withdraw Date Update","type":"menu"},
+      {"value":"inactive_kpi_view","name":"Inactive Kpi List","type":"menu"},
+      {"value":"kpi_withdraw_cancel_view","name":"KPI Withdraw Cancel","type":"menu"}
     ]
   },
   {
     "controller":{"value":"FormSubmitHandler","name":"Personal Info"},
     "routes":[
-      {"value":"anser_list","name":"Entry"},
+      {"value":"anser_list","name":"Entry","type":"menu"},
       {"value":"ansar_registration","name":"Add New Entry"},
       {"value":"editentry","name":"Edit Entry(Not Verified)"},
       {"value":"edit_verified_ansar","name":"Edit Entry(Verified)"},
       {"value":"entryverify","name":"Verify Entry(Single)"},
-      {"value":"chunk_verify","name":"Verify Entry(Chunk)"},
-      {"value":"entry_draft","name":"Draft Entry"},
+      {"value":"chunk_verify","name":"Verify Entry(Chunk)","type":"menu"},
+      {"value":"entry_draft","name":"Draft Entry","type":"menu"},
       {"value":"draftEdit","name":"Draft Edit"},
       {"value":"draftDelete","name":"Draft Delete"},
-      {"value":"entry_advanced_search","name":"Advance Search"},
-      {"value":"orginal_info","name":"Orginal info"},
-      {"value":"print_card_id_view","name":"Print Id Card"},
+      {"value":"entry_advanced_search","name":"Advance Search","type":"menu"},
+      {"value":"orginal_info","name":"Orginal info","type":"menu"},
+      {"value":"print_card_id_view","name":"Print Id Card","type":"menu"},
       {"value":"entry_report","name":"Entry Report"}
 
     ]
@@ -56,41 +56,41 @@
   {
     "controller":{"value":"ServiceController","name":"Service"},
     "routes":[
-      {"value":"view_panel_list","name":"Panel"},
-      {"value":"make_offer","name":"Offer"},
-      {"value":"offer_quota","name":"Offer Quota"},
-      {"value":"transfer_process","name":"Ansar Transfer"}
+      {"value":"view_panel_list","name":"Panel","type":"menu"},
+      {"value":"make_offer","name":"Offer","type":"menu"},
+      {"value":"offer_quota","name":"Offer Quota","type":"menu"},
+      {"value":"transfer_process","name":"Ansar Transfer","type":"menu"}
     ]
   },
   {
     "controller":{"value":"ReportController","name":"Report"},
     "routes":[
-      {"value":"guard_report","name":"View Ansar In Guard"},
-      {"value":"transfer_ansar_history","name":"Ansar Transfer History"},
-      {"value":"view_ansar_service_record","name":"Ansar Service Record"},
-      {"value":"ansar_service_report_view","name":"View Ansar Service Report"},
-      {"value":"embodiment_report_view","name":"View Embodied Ansar Report"},
-      {"value":"disembodiment_report_view","name":"View Disembodied Ansar Report"},
-      {"value":"blocklist_view","name":"Blocklist Information"},
-      {"value":"blacklist_view","name":"Blacklist Information"},
-      {"value":"three_year_over_report_view","name":"Three Years Over List"},
-      {"value":"service_record_unitwise_view","name":"Ansar Service Record Unit Wise"},
-      {"value":"transfer_letter_view","name":"Print Transfer Letter"},
-      {"value":"embodiment_letter_view","name":"Print Embodiment Letter"},
-      {"value":"disembodiment_letter_view","name":"Print Dis-embodiment Letter"},
-      {"value":"offer_report","name":"Offer Report"}
+      {"value":"guard_report","name":"View Ansar In Guard","type":"menu"},
+      {"value":"transfer_ansar_history","name":"Ansar Transfer History","type":"menu"},
+      {"value":"view_ansar_service_record","name":"Ansar Service Record","type":"menu"},
+      {"value":"ansar_service_report_view","name":"View Ansar Service Report","type":"menu"},
+      {"value":"embodiment_report_view","name":"View Embodied Ansar Report","type":"menu"},
+      {"value":"disembodiment_report_view","name":"View Disembodied Ansar Report","type":"menu"},
+      {"value":"blocklist_view","name":"Blocklist Information","type":"menu"},
+      {"value":"blacklist_view","name":"Blacklist Information","type":"menu"},
+      {"value":"three_year_over_report_view","name":"Three Years Over List","type":"menu"},
+      {"value":"service_record_unitwise_view","name":"Ansar Service Record Unit Wise","type":"menu"},
+      {"value":"transfer_letter_view","name":"Print Transfer Letter","type":"menu"},
+      {"value":"embodiment_letter_view","name":"Print Embodiment Letter","type":"menu"},
+      {"value":"disembodiment_letter_view","name":"Print Dis-embodiment Letter","type":"menu"},
+      {"value":"offer_report","name":"Offer Report","type":"menu"}
     ]
   },
   {
     "controller":{"value":"DGController","name":"DG Forms"},
     "routes":[
-      {"value":"direct_offer","name":"Direct Offer"},
-      {"value":"direct_panel_view","name":"Direct Panel"},
-      {"value":"direct_panel_cancel_view","name":"Direct Cancel Panel"},
+      {"value":"direct_offer","name":"Direct Offer","type":"menu"},
+      {"value":"direct_panel_view","name":"Direct Panel","type":"menu"},
+      {"value":"direct_panel_cancel_view","name":"Direct Cancel Panel","type":"menu"},
       {"value":"#","name":"Direct Freeze For DG"},
-      {"value":"direct_embodiment","name":"Direct Embodiment"},
-      {"value":"direct_disembodiment","name":"Direct Dis-embodiment"},
-      {"value":"direct_transfer","name":"Direct Transfer"},
+      {"value":"direct_embodiment","name":"Direct Embodiment","type":"menu"},
+      {"value":"direct_disembodiment","name":"Direct Dis-embodiment","type":"menu"},
+      {"value":"direct_transfer","name":"Direct Transfer","type":"menu"},
       {"value":"dg_blacklist_entry_view","name":"Add Ansar In Black List(Direct)"},
       {"value":"dg_unblacklist_entry_view","name":"Remove Ansar From Black List(Direct)"},
       {"value":"dg_blocklist_entry_view","name":"Add Ansar In Block List(Direct)"},
@@ -111,10 +111,10 @@
   {
     "controller":{"value":"GeneralController","name":"General Settings"},
     "routes":[
-      {"value":"view_session_list","name":"Session Information"},
-      {"value":"thana_view","name":"Thana Setting"},
-      {"value":"unit_view","name":"Unit Setting"},
-      {"value":"skill_view","name":"Skill Setting"}
+      {"value":"view_session_list","name":"Session Information","type":"menu"},
+      {"value":"thana_view","name":"Thana Setting","type":"menu"},
+      {"value":"unit_view","name":"Unit Setting","type":"menu"},
+      {"value":"skill_view","name":"Skill Setting","type":"menu"}
     ]
   },
   {
@@ -143,22 +143,22 @@
   {
     "controller":{"value":"FreezeController","name":"Freeze"},
     "routes":[
-      {"value":"freeze_view","name":"Freeze For Dicplinary Action"},
-      {"value":"freeze_list","name":"After Result"}
+      {"value":"freeze_view","name":"Freeze For Dicplinary Action","type":"menu"},
+      {"value":"freeze_list","name":"After Result","type":"menu"}
     ]
   },
   {
     "controller":{"value":"BlackBlockController","name":"Black"},
     "routes":[
-      {"value":"blacklist_entry_view","name":"Add Ansar In Black List"},
-      {"value":"unblacklist_entry_view","name":"Remove Ansar From Black List"}
+      {"value":"blacklist_entry_view","name":"Add Ansar In Black List","type":"menu"},
+      {"value":"unblacklist_entry_view","name":"Remove Ansar From Black List","type":"menu"}
     ]
   },
   {
     "controller":{"value":"BlackBlockController","name":"Block"},
     "routes":[
-      {"value":"blocklist_entry_view","name":"Add Ansar In Block List"},
-      {"value":"unblocklist_entry_view","name":"Remove Ansar From Block List"}
+      {"value":"blocklist_entry_view","name":"Add Ansar In Block List","type":"menu"},
+      {"value":"unblocklist_entry_view","name":"Remove Ansar From Block List","type":"menu"}
     ]
   },
   {

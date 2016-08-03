@@ -9,6 +9,10 @@
                     'X-CSRF-TOKEN': '{{csrf_token()}}'
                 }
             })
+            $(window).load(function () {
+                var text = $.trim($(".module-menu-container > ul.module-menu>li.active>a").text());
+                $(".module-menu-container > .module-small-header > .header-content").text(text?text:"ERP");
+            })
             $('#national_id_no,#birth_certificate_no,#mobile_no_self').keypress(function (e) {
                 var code = e.keyCode ? e.keyCode : e.which;
                 if ((code >= 47 && code <= 57) || code == 8);

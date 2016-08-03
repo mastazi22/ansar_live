@@ -3,28 +3,28 @@
 <head>
     @include('template.resource')
     <style>
-        .table>tbody>tr>td,.table>thead>tr>td,.table>tr>td,.table>tr>th{
+        .table > tbody > tr > td, .table > thead > tr > td, .table > tr > td, .table > tr > th {
             background: #ffffff !important;
         }
     </style>
     <script>
-        var app = angular.module('LoginApp',[],['$interpolateProvider',function($interpolateProvider){
+        var app = angular.module('LoginApp', [], ['$interpolateProvider', function ($interpolateProvider) {
             $interpolateProvider.startSymbol('[[');
             $interpolateProvider.endSymbol(']]');
         }])
-        app.controller('loginController', ['$scope','$http',function ($scope,$http) {
+        app.controller('loginController', ['$scope', '$http', function ($scope, $http) {
             $scope.panelData = {
-                pcMale:0,
-                pcFemale:0,
-                apcMale:0,
-                apcFemale:0,
-                ansarMale:0,
-                ansarFemale:0,
+                pcMale: 0,
+                pcFemale: 0,
+                apcMale: 0,
+                apcFemale: 0,
+                ansarMale: 0,
+                ansarFemale: 0,
             }
             $scope.loading = true;
             $http({
-                url:'{{URL::route('central_panel_list')}}',
-                method:'get'
+                url: '{{URL::route('central_panel_list')}}',
+                method: 'get'
             }).then(function (response) {
                 $scope.panelData.pcMale = response.data.pm;
                 $scope.panelData.pcFemale = response.data.pf;
@@ -78,7 +78,13 @@
                         <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
                     </span>
         </div>
-        <h3 style="text-align: center;">কেন্দ্রীয় প্যানেল তালিকা</h3>
+        <div class="box-header with-border">
+            <h3 class="box-title">কেন্দ্রীয় প্যানেল তালিকা</h3>
+
+            <div class="box-tools pull-right">
+                <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            </div>
+        </div>
 
         <div class="box-body">
             <div class="table-responsive">
@@ -96,28 +102,6 @@
                             <a href="{{URL::route('panel_list',['sex'=>'Male','designation'=>3])}}">পিসি</a>
                         </td>
                         <td id="totalPCMale">[[panelData.pcMale]]</td>
-                        {{--<td colspan="2" style="padding: 0">--}}
-                            {{--<table class="table table-condensed custom-table" style="margin-bottom: 0 !important;">--}}
-                                {{--<tr>--}}
-                                    {{--<td>--}}
-                                        {{--<a href="{{URL::route('panel_list',['sex'=>'Male','designation'=>3])}}">পিসি</a>--}}
-                                    {{--</td>--}}
-                                    {{--<td id="totalPCMale">[[panelData.pcMale]]</td>--}}
-                                {{--</tr>--}}
-                                {{--<tr>--}}
-                                    {{--<td>--}}
-                                        {{--<a href="{{URL::route('panel_list',['sex'=>'Male','designation'=>2])}}">এপিসি</a>--}}
-                                    {{--</td>--}}
-                                    {{--<td id="totalAPCMale">[[panelData.apcMale]]</td>--}}
-                                {{--</tr>--}}
-                                {{--<tr>--}}
-                                    {{--<td>--}}
-                                        {{--<a href="{{URL::route('panel_list',['sex'=>'Male','designation'=>1])}}">আনসার</a>--}}
-                                    {{--</td>--}}
-                                    {{--<td id="totalAnsarMale">[[panelData.ansarMale]]</td>--}}
-                                {{--</tr>--}}
-                            {{--</table>--}}
-                        {{--</td>--}}
                     </tr>
                     <tr>
                         <td>
@@ -139,28 +123,6 @@
                             <a href="{{URL::route('panel_list',['sex'=>'Female','designation'=>3])}}">পিসি </a>
                         </td>
                         <td id="totalPCFeMale">[[panelData.pcFemale]]</td>
-                        {{--<td colspan="2" style="padding: 0">--}}
-                            {{--<table class="table table-condensed custom-table" style="margin-bottom: 0 !important;">--}}
-                                {{--<tr>--}}
-                                    {{--<td>--}}
-                                        {{--<a href="{{URL::route('panel_list',['sex'=>'Female','designation'=>3])}}">পিসি </a>--}}
-                                    {{--</td>--}}
-                                    {{--<td id="totalPCFeMale">[[panelData.pcFemale]]</td>--}}
-                                {{--</tr>--}}
-                                {{--<tr>--}}
-                                    {{--<td>--}}
-                                        {{--<a href="{{URL::route('panel_list',['sex'=>'Female','designation'=>2])}}">এপিসি </a>--}}
-                                    {{--</td>--}}
-                                    {{--<td id="totalAPCFeMale">[[panelData.apcFemale]]</td>--}}
-                                {{--</tr>--}}
-                                {{--<tr>--}}
-                                    {{--<td>--}}
-                                        {{--<a href="{{URL::route('panel_list',['sex'=>'Female','designation'=>1])}}">আনসার</a>--}}
-                                    {{--</td>--}}
-                                    {{--<td id="totalAnsarFeMale">[[panelData.ansarFemale]]</td>--}}
-                                {{--</tr>--}}
-                            {{--</table>--}}
-                        {{--</td>--}}
                     <tr>
                         <td>
                             <a href="{{URL::route('panel_list',['sex'=>'Female','designation'=>2])}}">এপিসি </a>
@@ -179,13 +141,6 @@
         </div>
     </div>
 </div>
-
-<!-- /.login-box -->
-
-<!-- jQuery 2.1.4 -->
-<script src="{{asset('plugins/jQuery/jQuery-2.1.4.min.js')}}" type="text/javascript"></script>
-<script src="{{asset('bootstrap/js/bootstrap.min.js')}}" type="text/javascript"></script>
-<script src="{{asset('plugins/iCheck/icheck.min.js')}}" type="text/javascript"></script>
 
 </body>
 </html>

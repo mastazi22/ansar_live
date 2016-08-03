@@ -50,10 +50,10 @@
 <body class="skin-blue" style="background: #ecf0f5">
 <div class="header-top">
     <div class="logo">
-        <a href="http://ansarerp.local"><img src="http://ansarerp.local/dist/img/erp-logo.png" class="img-responsive" alt=""></a>
+        <a href="http://ansarerp.local"><img src="{{asset('dist/img/erp-logo.png')}}" class="img-responsive" alt=""></a>
     </div>
     <div class="middle_header_logo">
-        <img src="http://ansarerp.local/dist/img/erp-hdeader.png" class="img-responsive" alt="" width="400" height="400">
+        <img src="{{asset('dist/img/erp-hdeader.png')}}" class="img-responsive" alt="" width="400" height="400">
     </div>
     <div class="clearfix"></div>
 

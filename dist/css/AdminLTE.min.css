@@ -4578,7 +4578,7 @@ table.text-center, table.text-center td, table.text-center th {
     position: absolute;
     top: 26px;
     width: 31%;
-    z-index: 2;
+    z-index: -1;
 }
 
 @media print {
@@ -4670,4 +4670,13 @@ ul.module-menu > li > a:hover {
         display: block;
         cursor: pointer;
     }
+}
+.header-top>.logo>a{
+    display: block;
+    float: left;
+}
+.header-top>.logo::after{
+    content: '';
+    display: block;
+    clear: both;
 }
