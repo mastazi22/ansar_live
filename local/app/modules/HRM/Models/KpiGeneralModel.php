@@ -26,4 +26,7 @@ class KpiGeneralModel extends Model
     function demand(){
         $this->hasMany('App\modules\SD\Models\DemandLog','kpi_id');
     }
+    function details(){
+        return $this->hasOne(KpiDetailsModel::class, 'kpi_id');
+    }
 }

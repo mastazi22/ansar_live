@@ -16,13 +16,13 @@
                         $("#user-name-form p").css('display', 'block')
                     }
                     else if (response.submit) {
-                        $('body').notifyDialog({type: 'success', message: 'User name change successfully'}).showDialog()
+                        $('body').notifyDialog({type: 'success', message: 'User name changed successfully'}).showDialog()
                         $("#user-name-form p").css('display', 'none')
                     }
                     else {
                         $('body').notifyDialog({
                             type: 'error',
-                            message: 'An error occur.Please try again later'
+                            message: 'An error occured.Please try again later'
                         }).showDialog()
                         $("#user-name-form p").css('display', 'none')
                     }
@@ -32,7 +32,7 @@
                     $("#user-name-form .submitting").slideUp(100)
                     $('body').notifyDialog({
                         type: 'error',
-                        message: 'An server error occur.ERROR CODE:' + statusText
+                        message: 'An server error occured.ERROR CODE:' + statusText
                     }).showDialog()
                 }
 
@@ -65,14 +65,14 @@
                     else if (response.submit) {
                         $('body').notifyDialog({
                             type: 'success',
-                            message: 'User password change successfully'
+                            message: 'User password changed successfully'
                         }).showDialog()
                         $("#user-password-form p").css('display', 'none')
                     }
                     else {
                         $('body').notifyDialog({
                             type: 'error',
-                            message: 'An error occur.Please try again later'
+                            message: 'An error occur. Please try again later'
                         }).showDialog()
                         $("#user-password-form p").css('display', 'none')
                     }
@@ -82,7 +82,7 @@
                     $("#user-password-form .submitting").slideUp(100)
                     $('body').notifyDialog({
                         type: 'error',
-                        message: 'An server error occur.ERROR CODE:' + statusText
+                        message: 'An server error occur. ERROR CODE:' + statusText
                     }).showDialog()
                 }
 
@@ -97,13 +97,13 @@
                     $("#user_profile_form .submitting").slideUp(100)
                     console.log(response)
                     if (response.submit) {
-                        $('body').notifyDialog({type: 'success', message: 'Profile Update Complete'}).showDialog()
+                        $('body').notifyDialog({type: 'success', message: 'Profile Updated'}).showDialog()
                         window.location.assign("{{\Illuminate\Support\Facades\URL::previous()}}")
                     }
                     else {
                         $('body').notifyDialog({
                             type: 'error',
-                            message: 'An error occur.Please try again later'
+                            message: 'An error occured. Please try again later'
                         }).showDialog()
 
                     }
@@ -113,7 +113,7 @@
                     $("#user_profile_form .submitting").slideUp(100)
                     $('body').notifyDialog({
                         type: 'error',
-                        message: 'An server error occur.ERROR CODE:' + statusText
+                        message: 'An server error occured. ERROR CODE:' + statusText
                     }).showDialog()
                 }
 
@@ -128,11 +128,11 @@
                     success: function (r) {
                         if (r.status) $('body').notifyDialog({
                             type: 'success',
-                            message: 'Profile Image Upadet Complete'
+                            message: 'Profile Image Upadated'
                         }).showDialog()
                         else $('body').notifyDialog({
                             type: 'error',
-                            message: 'Can not update profile image.Try again later'
+                            message: 'Can not update profile image. Try again later'
                         }).showDialog()
                         $("#pppppp").css('display', 'none')
                         $("#pppppp").css('width', 0 + '%').attr('aria-valuenow', 0);

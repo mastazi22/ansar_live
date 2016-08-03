@@ -23,18 +23,20 @@
             $scope.kpi_name = '{{$kpi_info->kpi_name}}';
             $scope.kpi_address = '{{$kpi_info->kpi_address}}';
             $scope.kpi_contact_no ='{{$kpi_info->kpi_contact_no}}';
-            $scope.total_ansar_request = '{{$kpi_details->total_ansar_request}}';
-            $scope.total_ansar_given = '{{$kpi_details->total_ansar_given}}';
-            $scope.with_weapon = '{{$kpi_details->with_weapon}}';
-            $scope.weapon_count = '{{$kpi_details->weapon_count}}';
-            $scope.bullet_no = '{{$kpi_details->bullet_no}}';
-            $scope.weapon_description = '{{$kpi_details->weapon_description}}';
-            $scope.activation_date = '{{$kpi_details->activation_date}}';
-            $scope.withdraw_date = ('{{$kpi_details->withdraw_date}}');
-            $scope.no_of_ansar = '{{$kpi_details->no_of_ansar}}';
-            $scope.no_of_apc = '{{$kpi_details->no_of_apc}}';
-            $scope.no_of_pc = '{{$kpi_details->no_of_pc}}';
+            $scope.total_ansar_request = '{{$kpi_info->details->total_ansar_request}}';
+            $scope.total_ansar_given = '{{$kpi_info->details->total_ansar_given}}';
+            $scope.with_weapon = '{{$kpi_info->details->with_weapon}}';
+            $scope.weapon_count = '{{$kpi_info->details->weapon_count}}';
+            $scope.bullet_no = '{{$kpi_info->details->bullet_no}}';
+            $scope.weapon_description = '{{$kpi_info->details->weapon_description}}';
+            $scope.activation_date = '{{$kpi_info->details->activation_date}}';
+            $scope.withdraw_date = ('{{$kpi_info->details->withdraw_date}}');
+            $scope.no_of_ansar = '{{$kpi_info->details->no_of_ansar}}';
+            $scope.no_of_apc = '{{$kpi_info->details->no_of_apc}}';
+            $scope.no_of_pc = '{{$kpi_info->details->no_of_pc}}';
 
+            $scope.isAdmin = parseInt('{{Auth::user()->type}}');
+            $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
 
             getNameService.getDivision().then(function (response) {
                 $scope.division = response.data;
@@ -64,6 +66,14 @@
                     {{--@endif--}}
                 })
 
+            }
+            if ($scope.isAdmin == 11) {
+                $scope.getNameService.getDivision();
+            }
+            else {
+                if (!isNaN($scope.dcDistrict)) {
+                    $scope.SelectedItemChanged($scope.dcDistrict)
+                }
             }
             {{--@if(!is_null($kpi_info->unit_id))--}}
             {{--$scope.SelectedDistrict = '{{$kpi_info->unit_id}}';--}}
@@ -134,7 +144,7 @@
                                             <input type="hidden" name="id" class="form-control" id="session_year"
                                                    value="{{ $kpi_info->id }}">
 
-                                            <div class="form-group required">
+                                            <div class="form-group required" ng-show="isAdmin==11">
                                                 {!! Form::label('division_id', 'Division:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                                 <div class="col-sm-8"
                                                      ng-class="{ 'has-error': kpiForm.division_name_eng.$touched && kpiForm.division_name_eng.$invalid }">
@@ -195,13 +205,13 @@
                                             <div class="form-group">
                                                 {!! Form::label('kpi_address', 'Address:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                                 <div class="col-sm-8">
-                                                    {!! Form::textarea('kpi_address', $value = null, $attributes = array('class' => 'form-control', 'id' => 'kpi_address', 'size' => '30x4', 'placeholder' => "Write address", 'ng-model' => 'kpi_address')) !!}
+                                                    {!! Form::textarea('kpi_address', $value = null, $attributes = array('class' => 'form-control', 'id' => 'kpi_address', 'size' => '30x4', 'placeholder' => "Write the Address", 'ng-model' => 'kpi_address')) !!}
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                {!! Form::label('kpi_contact_no', 'Contact No and Person:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
+                                                {!! Form::label('kpi_contact_no', 'Contact No. and Person:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                                 <div class="col-sm-8">
-                                                    {!! Form::textarea('kpi_contact_no', $value = null, $attributes = array('class' => 'form-control', 'id' => 'kpi_contact_no', 'size' => '30x4','placeholder' => 'Write Contact No and Person Info', 'ng-model' => 'kpi_contact_no')) !!}
+                                                    {!! Form::textarea('kpi_contact_no', $value = null, $attributes = array('class' => 'form-control', 'id' => 'kpi_contact_no', 'size' => '30x4','placeholder' => 'Write Contact No. and Person Info', 'ng-model' => 'kpi_contact_no')) !!}
                                                 </div>
                                             </div>
                                             <button style="background: #5bc0de; border-color: #46b8da; color: #FFFFFF"
@@ -254,7 +264,7 @@
                                                     {!! Form::label('weapon_count', 'Weapon Number:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                                     <div class="col-sm-8"
                                                          ng-class="{ 'has-error': kpiForm.weapon_count.$touched && kpiForm.weapon_count.$invalid }">
-                                                        {!! Form::text('weapon_count', $value = null, $attributes = array('class' => 'form-control', 'id' => 'weapon_count', 'placeholder' => 'Enter Weapon Number.e.g., For no weapon enter 0', 'required', 'ng-model' => 'weapon_count')) !!}
+                                                        {!! Form::text('weapon_count', $value = null, $attributes = array('class' => 'form-control', 'id' => 'weapon_count', 'placeholder' => 'Enter Weapon Number.e.g., For no weapon, enter 0', 'required', 'ng-model' => 'weapon_count')) !!}
                                                         <span ng-if="kpiForm.weapon_count.$touched && kpiForm.weapon_count.$error.required"><p
                                                                     class="text-danger">Weapon Number field is
                                                                 required.</p></span>
@@ -276,7 +286,7 @@
                                                     {!! Form::label('activation_date', 'Activation Date:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                                     <div class="col-sm-8"
                                                          ng-class="{ 'has-error': kpiForm.activation_date.$touched && kpiForm.activation_date.$invalid }">
-                                                        {!! Form::text('activation_date', $value = $kpi_details->activation_date, $attributes = array('class' => 'form-control', 'id' => 'activation_date', 'required', 'ng-model' => 'activation_date')) !!}
+                                                        {!! Form::text('activation_date', $value = $kpi_info->details->activation_date, $attributes = array('class' => 'form-control', 'id' => 'activation_date', 'required', 'ng-model' => 'activation_date')) !!}
                                                         <span ng-if="kpiForm.activation_date.$touched && kpiForm.activation_date.$error.required"><p
                                                                     class="text-danger">Activation Date field is
                                                                 required.</p></span>
@@ -285,7 +295,7 @@
                                                 <div class="form-group">
                                                     {!! Form::label('withdraw_date', 'Withdraw Date:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                                     <div class="col-sm-8">
-                                                        {!! Form::text('withdraw_date', $value = $kpi_details->withdraw_date, $attributes = array('class' => 'form-control', 'id' => 'withdraw_date', 'ng-model' => 'withdraw_date')) !!}
+                                                        {!! Form::text('withdraw_date', $value = $kpi_info->details->withdraw_date, $attributes = array('class' => 'form-control', 'id' => 'withdraw_date', 'ng-model' => 'withdraw_date')) !!}
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -310,7 +320,7 @@
                                                         class="btn btn-primary" id="prevtab" type="button">Previous Page
                                                 </button>
                                                 <button type="submit" id="next-button" class="btn btn-primary pull-right"
-                                                        ng-disabled="kpiForm.kpi_name.$error.required||kpiForm.division_name_eng.$error.required||kpiForm.unit_name_eng.$error.required||kpiForm.thana_name_eng.$error.required||kpiForm.total_ansar_request.$error.required||kpiForm.total_ansar_given.$error.required||kpiForm.with_weapon.$error.required||kpiForm.activation_date.$error.required">
+                                                        ng-disabled="kpiForm.kpi_name.$error.required||kpiForm.unit_name_eng.$error.required||kpiForm.thana_name_eng.$error.required||kpiForm.total_ansar_request.$error.required||kpiForm.total_ansar_given.$error.required||kpiForm.with_weapon.$error.required||kpiForm.activation_date.$error.required">
                                                     Update KPI Information
                                                 </button>
                                             </div>

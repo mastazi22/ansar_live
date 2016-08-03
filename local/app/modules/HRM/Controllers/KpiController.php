@@ -5,6 +5,7 @@ namespace App\modules\HRM\Controllers;
 use App\Http\Controllers\Controller;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\CustomQuery;
+use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\EmbodimentModel;
 use App\modules\HRM\Models\FreezingInfoModel;
 use App\modules\HRM\Models\KpiDetailsModel;
@@ -80,7 +81,9 @@ class KpiController extends Controller
         $no_of_pc = $request->input('no_of_pc');
         $activation_date = $request->input('activation_date');
         $withdraw_date = $request->input('withdraw_date');
-
+        if(Auth::user()->type==22){
+            $division_id=District::find($unit_id)->division_id;
+        }
         $rules=[
             'kpi_name'=> 'required',
             'division_name_eng'=> 'required',
@@ -141,24 +144,39 @@ class KpiController extends Controller
             DB::rollback();
             return $e->getMessage();
         }
-        return Redirect::route('kpi_view')->with('success_message', 'New KPI is Entered successfully');
+        return Redirect::route('kpi_view')->with('success_message', 'New KPI is Entered Successfully!');
     }
 
     public function edit($id)
     {
         $kpi_info = KpiGeneralModel::find($id);
-        $kpi_details = KpiDetailsModel::where('kpi_id', $id)->first();
-        return view('HRM::Kpi.kpi_edit', ['id' => $id])->with(['kpi_info' => $kpi_info])->with('kpi_details', $kpi_details);
+        return view('HRM::Kpi.kpi_edit', ['id' => $id])->with(['kpi_info' => $kpi_info]);
     }
 
     public function updateKpi(Request $request)
     {
+        $kpi_name = $request->input('kpi_name');
+        $division_id = $request->input('division_name_eng');
+        $unit_id = $request->input('unit_name_eng');
+        $thana_id = $request->input('thana_name_eng');
+        $kpi_address = $request->input('kpi_address');
+        $kpi_contact_no = $request->input('kpi_contact_no');
+        $total_ansar_request = $request->input('total_ansar_request');
+        $total_ansar_given = $request->input('total_ansar_given');
+        $with_weapon = $request->input('with_weapon');
+        $weapon_count = $request->input('weapon_count');
+        $bullet_no = $request->input('bullet_no');
+        $weapon_description = $request->input('weapon_description');
+        $no_of_ansar = $request->input('no_of_ansar');
+        $no_of_apc = $request->input('no_of_apc');
+        $no_of_pc = $request->input('no_of_pc');
+        if(Auth::user()->type==22){
+            $division_id=District::find($unit_id)->division_id;
+        }
         $id = $request->input('id');
         $activation_date = $request->input('activation_date');
         $withdraw_date = $request->input('withdraw_date');
         $modified_activation_date = Carbon::parse($activation_date)->format('Y-m-d');
-//        $modified_withdraw_date=Carbon::parse($withdraw_date)->format('Y-m-d');
-
         if (strcasecmp($withdraw_date, '') != 0) {
             $modified_withdraw_date = Carbon::parse($request->input('withdraw_date'))->format('Y-m-d');
         } else {
@@ -169,27 +187,27 @@ class KpiController extends Controller
         try {
 
             $kpi_general = KpiGeneralModel::find($id);
-            $kpi_general->kpi_name = $request->input('kpi_name');
-            $kpi_general->division_id = $request->input('division_name_eng');
-            $kpi_general->unit_id = $request->input('unit_name_eng');
-            $kpi_general->thana_id = $request->input('thana_name_eng');
-            $kpi_general->kpi_address = $request->input('kpi_address');
-            $kpi_general->kpi_contact_no = $request->input('kpi_contact_no');
+            $kpi_general->kpi_name = $kpi_name;
+            $kpi_general->division_id = $division_id;
+            $kpi_general->unit_id = $unit_id;
+            $kpi_general->thana_id = $thana_id;
+            $kpi_general->kpi_address = $kpi_address;
+            $kpi_general->kpi_contact_no = $kpi_contact_no;
             $kpi_general->save();
 
 
             $kpi_details = KpiDetailsModel::where('kpi_id', $id)->first();
-            $kpi_details->total_ansar_request = $request->input('total_ansar_request');
-            $kpi_details->total_ansar_given = $request->input('total_ansar_given');
-            $kpi_details->with_weapon = $request->input('with_weapon');
-            $kpi_details->weapon_count = $request->input('weapon_count');
-            $kpi_details->bullet_no = $request->input('bullet_no');
-            $kpi_details->weapon_description = $request->input('weapon_description');
+            $kpi_details->total_ansar_request = $total_ansar_request;
+            $kpi_details->total_ansar_given = $total_ansar_given;
+            $kpi_details->with_weapon = $with_weapon;
+            $kpi_details->weapon_count = $weapon_count;
+            $kpi_details->bullet_no = $bullet_no;
+            $kpi_details->weapon_description = $weapon_description;
             $kpi_details->activation_date = $modified_activation_date;
             $kpi_details->withdraw_date = $modified_withdraw_date;
-            $kpi_details->no_of_ansar = $request->input('no_of_ansar');
-            $kpi_details->no_of_apc = $request->input('no_of_apc');
-            $kpi_details->no_of_pc = $request->input('no_of_pc');
+            $kpi_details->no_of_ansar = $no_of_ansar;
+            $kpi_details->no_of_apc = $no_of_apc;
+            $kpi_details->no_of_pc = $no_of_pc;
             $kpi_details->save();
 
             DB::commit();
@@ -199,7 +217,7 @@ class KpiController extends Controller
             DB::rollback();
             return $e->getMessage();
         }
-        return Redirect::route('kpi_view')->with('success_message', 'New KPI is Updated successfully');
+        return Redirect::route('kpi_view')->with('success_message', 'New KPI is Updated Successfully!');
     }
 
     public function delete($id)
@@ -311,7 +329,7 @@ class KpiController extends Controller
                 CustomQuery::addActionlog($user, true);
                 CustomQuery::addActionlog(['ansar_id' => $kpi_id, 'action_type' => 'WITHDRAW KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]);
             }
-            return Redirect::route('ansar-withdraw-view')->with('success_message', 'Ansar/s Withdrawn successfully');
+            return Redirect::route('ansar-withdraw-view')->with('success_message', 'Ansar/s Withdrawn Successfully!');
         } catch
         (Exception $e) {
             DB::rollback();
@@ -420,9 +438,9 @@ class KpiController extends Controller
             CustomQuery::addActionlog(['ansar_id' => $kpi_id, 'action_type' => 'REDUCE KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]);
         } catch (Exception $e) {
             DB::rollback();
-            return Response::json(['status' => false, 'message' => "Ansar/s reduced unsuccessfully"]);
+            return Response::json(['status' => false, 'message' => "Ansar(s) have not been Reduced!"]);
         }
-        return Response::json(['status' => true, 'message' => "Ansar/s reduced successfully"]);
+        return Response::json(['status' => true, 'message' => "Ansar/s Reduced Successfully!"]);
     }
 
     public function guardBeforeWithdrawView()
@@ -573,9 +591,9 @@ class KpiController extends Controller
                     DB::rollback();
                     return $e->getMessage();
                 }
-                return Redirect::route('kpi-withdraw-view')->with('success_message', 'KPI withdraw date is saved successfully');
+                return Redirect::route('kpi-withdraw-view')->with('success_message', 'KPI Withdraw Date is Saved Successfully!');
             }else{
-                return Redirect::route('kpi-withdraw-view')->with('error_message', 'KPI is already withdrawn!');
+                return Redirect::route('kpi-withdraw-view')->with('error_message', 'KPI is already Withdrawn!');
             }
 
         }
@@ -648,9 +666,9 @@ class KpiController extends Controller
             } catch
             (Exception $e) {
                 DB::rollback();
-                return Redirect::route('withdrawn_kpi_view')->with('error_message', 'KPI withdraw date has not been updated');
+                return Redirect::route('withdrawn_kpi_view')->with('error_message', 'KPI withdraw Date has not been Updated!');
             }
-            return Redirect::route('withdrawn_kpi_view')->with('success_message', 'KPI withdraw date is updated successfully');
+            return Redirect::route('withdrawn_kpi_view')->with('success_message', 'KPI withdraw Date is Updated Successfully!');
         }
     }
 
@@ -767,7 +785,7 @@ class KpiController extends Controller
         }else{
             $kpi_withdraw_date_cancel = KpiDetailsModel::where('kpi_id', $kpi_id)->first();
             if (empty($kpi_withdraw_date_cancel->kpi_withdraw_date)) {
-                return Redirect::route('kpi_withdraw_cancel_view')->with('error_message', 'KPI withdrawal cannot be cancelled!');
+                return Redirect::route('kpi_withdraw_cancel_view')->with('error_message', 'KPI Withdrawal cannot be Cancelled!');
             }
             DB::beginTransaction();
             try {
@@ -780,11 +798,11 @@ class KpiController extends Controller
                 $kpi_withdraw_status_change->save();
 
                 DB::commit();
-                return Redirect::route('kpi_withdraw_cancel_view')->with('success_message', 'KPI withdrawal cancelled successfully');
+                return Redirect::route('kpi_withdraw_cancel_view')->with('success_message', 'KPI Withdrawal Cancelled Successfully!');
             } catch
             (Exception $e) {
                 DB::rollback();
-                return Redirect::route('kpi_withdraw_cancel_view')->with('error_message', 'KPI withdrawal cannot be cancelled!');
+                return Redirect::route('kpi_withdraw_cancel_view')->with('error_message', 'KPI Withdrawal cannot be Cancelled!');
             }
         }
     }

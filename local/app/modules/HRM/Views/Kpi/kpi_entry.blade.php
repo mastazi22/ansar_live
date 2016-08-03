@@ -15,6 +15,9 @@
             $scope.district = [];
             $scope.districtLoad = false;
             $scope.thanaLoad = false;
+            $scope.isAdmin = parseInt('{{Auth::user()->type}}');
+            $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
+
             getNameService.getDivision().then(function (response) {
                 $scope.division = response.data;
             });
@@ -31,6 +34,14 @@
                     $scope.thana = response.data;
                     $scope.thanaLoad = false;
                 })
+            }
+            if ($scope.isAdmin == 11) {
+                $scope.getNameService.getDivision();
+            }
+            else {
+                if (!isNaN($scope.dcDistrict)) {
+                    $scope.SelectedItemChanged($scope.dcDistrict)
+                }
             }
             @if(!is_null(Request::old('division_name_eng')))
             $scope.SelectedDivision = parseInt('{{Request::old('division_name_eng')}}');
@@ -95,7 +106,7 @@
                                                                 class="text-danger">KPI name is required.</p></span>
                                                 </div>
                                             </div>
-                                            <div class="form-group required">
+                                            <div class="form-group required" ng-hide="isAdmin==22">
                                                 {!! Form::label('division_id', 'Division:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                                 <div class="col-sm-8"
                                                      ng-class="{ 'has-error': kpiForm.division_name_eng.$touched && kpiForm.division_name_eng.$invalid }">
@@ -103,7 +114,7 @@
                                                     <select name="division_name_eng" class="form-control" id="division_id"
                                                             ng-model="SelectedDivision" ng-change="SelectedItemChanged()"
                                                             ng-model="division_name_eng" required>
-                                                        <option value="">--Select a division--</option>
+                                                        <option value="">--Select a Division--</option>
                                                         <option ng-repeat="x in division" value="[[x.id]]">
                                                             [[x.division_name_eng]]
                                                         </option>
@@ -123,7 +134,7 @@
                                                     <select name="unit_name_eng" class="form-control" id="unit_id"
                                                             ng-model="SelectedDistrict" ng-change="SelectedDistrictChanged()"
                                                             ng-model="unit_name_eng" required>
-                                                        <option value="">--Select a district--</option>
+                                                        <option value="">--Select a District--</option>
                                                         <option ng-repeat="x in district" value="[[x.id]]">[[ x.unit_name_eng ]]
                                                         </option>
                                                     </select>
@@ -141,7 +152,7 @@
                                                     <select name="thana_name_eng" class="form-control" id="thana_id"
                                                             ng-model="ThanaModel" ng-change="SelectedThanaChanged()"
                                                             ng-model="thana_name_eng" required>
-                                                        <option value="">--Select a thana--</option>
+                                                        <option value="">--Select a Thana--</option>
                                                         <option ng-repeat="x in thana" value="[[x.id]]">[[ x.thana_name_eng ]]
                                                         </option>
                                                     </select>
@@ -153,13 +164,13 @@
                                             <div class="form-group">
                                                 {!! Form::label('kpi_address', 'Address:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                                 <div class="col-sm-8">
-                                                    {!! Form::textarea('kpi_address', $value = null, $attributes = array('class' => 'form-control', 'id' => 'kpi_address', 'size' => '30x4', 'placeholder' => "Write the address")) !!}
+                                                    {!! Form::textarea('kpi_address', $value = null, $attributes = array('class' => 'form-control', 'id' => 'kpi_address', 'size' => '30x4', 'placeholder' => "Write the Address")) !!}
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                {!! Form::label('kpi_contact_no', 'Contact No and Person:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
+                                                {!! Form::label('kpi_contact_no', 'Contact No. and Person:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                                 <div class="col-sm-8">
-                                                    {!! Form::textarea('kpi_contact_no', $value = null, $attributes = array('class' => 'form-control', 'id' => 'kpi_contact_no', 'size' => '30x4', 'placeholder' => "Write Contact No and Person Info")) !!}
+                                                    {!! Form::textarea('kpi_contact_no', $value = null, $attributes = array('class' => 'form-control', 'id' => 'kpi_contact_no', 'size' => '30x4', 'placeholder' => "Write Contact No. and Person Info")) !!}
                                                 </div>
                                             </div>
                                             <button style="background: #5bc0de; border-color: #46b8da; color: #FFFFFF" class="btn btn-primary pull-right" id="nexttab" type="button">Next Page</button>
@@ -208,7 +219,7 @@
                                                     {!! Form::label('weapon_count', 'Weapon Number:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                                     <div class="col-sm-8"
                                                          ng-class="{ 'has-error': kpiForm.weapon_count.$touched && kpiForm.weapon_count.$invalid }">
-                                                        {!! Form::text('weapon_count', $value = null, $attributes = array('class' => 'form-control', 'id' => 'weapon_count', 'placeholder' => 'Enter Weapon Number.e.g., For no weapon enter 0', 'required', 'ng-model' => 'weapon_count')) !!}
+                                                        {!! Form::text('weapon_count', $value = null, $attributes = array('class' => 'form-control', 'id' => 'weapon_count', 'placeholder' => 'Enter Weapon Number.e.g., For no weapon, enter 0', 'required', 'ng-model' => 'weapon_count')) !!}
                                                         <span ng-if="kpiForm.weapon_count.$touched && kpiForm.weapon_count.$error.required"><p
                                                                     class="text-danger">Weapon Number field is
                                                                 required.</p></span>
@@ -262,7 +273,7 @@
                                                 </div>
                                                 <button style="background: #5bc0de; border-color: #46b8da; color: #FFFFFF" class="btn btn-primary" id="prevtab" type="button">Previous Page</button>
                                                 <button type="submit" id="next-button" class="btn btn-primary pull-right"
-                                                        ng-disabled="kpiForm.kpi_name.$error.required||kpiForm.division_name_eng.$error.required||kpiForm.unit_name_eng.$error.required||kpiForm.thana_name_eng.$error.required||kpiForm.total_ansar_request.$error.required||kpiForm.total_ansar_given.$error.required||kpiForm.with_weapon.$error.required||kpiForm.activation_date.$error.required">
+                                                        ng-disabled="kpiForm.kpi_name.$error.required||kpiForm.unit_name_eng.$error.required||kpiForm.thana_name_eng.$error.required||kpiForm.total_ansar_request.$error.required||kpiForm.total_ansar_given.$error.required||kpiForm.with_weapon.$error.required||kpiForm.activation_date.$error.required">
                                                     Save KPI Information
                                                 </button>
                                             </div>
