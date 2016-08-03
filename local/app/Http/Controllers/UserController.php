@@ -254,6 +254,7 @@ class UserController extends Controller
 
     function updatePermission($id)
     {
+//        return Input::get('permission');
         $user = User::find($id);
         $all = Input::get('permit_all');
         if (is_null($all)) {

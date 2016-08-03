@@ -29,7 +29,7 @@
                             <span>Withdraw Ansar</span>
                         </a>
                     </li>
-                    <li ng-if="checkMenu(ansar_before_withdraw_view)">
+                    <li ng-if="checkMenu('ansar_before_withdraw_view')">
                         <a href="{{URL::route('ansar_before_withdraw_view')}}">
                             <i class="fa fa-users"></i>
                             <span>Ansar List Before Withdrawal</span>
@@ -124,13 +124,7 @@
                     <span>Service</span>
                     <i class="fa fa-angle-right pull-right"></i>
                 </a>
-                <ul class="treeview-menu">
-                    {{--<li>--}}
-                    {{--<a href="#">--}}
-                    {{--<i class="fa fa-users"></i>--}}
-                    {{--<span>Bank Receipt</span>--}}
-                    {{--</a>--}}
-                    {{--</li>--}}
+                <ul class="treeview-menu">'
                     <li ng-if="checkMenu('view_panel_list')">
                         <a href="{{URL::route('view_panel_list')}}">
                             <i class="fa fa-users"></i>
@@ -525,19 +519,21 @@
     </section>
     <!-- /.sidebar -->
     <script>
-        $(document).ready(function(){
+        $(window).load(function(){
             var l = $('.sidebar-menu').children('li');
             function removeMenu(m){
 
                 m.each(function () {
+                    console.log({parent: $.trim($(this).parents('li').eq($(this).parents('li').length-1).children('a').text()),children: m.text()})
                     //alert($(this).children('ul').length+" "+$(this).children('ul').children('li').length)
-                    if($(this).children('ul').length>0&&$(this).children('ul').children('li').length>0){
-                      //  alert('nnnn')
-                        removeMenu($(this).children('ul').children('li'));
-                    }
-                    else if($(this).children('ul').length>0&&$(this).children('ul').children('li').length<=0){
-                       // alert(m.length)
-                        $(this).remove();
+                    if($(this).children('ul').length>0) {
+                        if ($(this).children('ul').children('li').length > 0) {
+                            removeMenu($(this).children('ul').children('li'));
+                        }
+                        else if ($(this).children('ul').children('li').length <= 0) {
+                            // alert(m.length)
+                            $(this).remove();
+                        }
                     }
                 })
             }
