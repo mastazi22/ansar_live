@@ -592,7 +592,7 @@ a:hover, a:active, a:focus {
     width: 20px
 }
 
-.sidebar-menu .treeview-menu > li > a > .fa-angle-left, .sidebar-menu .treeview-menu > li > a > .fa-angle-down {
+.sidebar-menu .treeview-menu > li > a > .fa-angle-left,.sidebar-menu .treeview-menu > li > a > .fa-angle-right, .sidebar-menu .treeview-menu > li > a > .fa-angle-down {
     width: auto
 }
 

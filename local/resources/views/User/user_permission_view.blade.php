@@ -88,7 +88,7 @@
                                             <li ng-repeat="p in route.routes">
                                                 <label class="control-label">
                                                     <div class="styled-checkbox">
-                                                        <input permission-check type="checkbox" id="p_[[$parent.$index]]_[[$index]]" ng-model="permissionList[$parent.$index][$index]" ng-change=""  name="permission[ [[route.controller.name]] ][]" value="[[p.value]]">
+                                                        <input permission-check type="checkbox" id="p_[[$parent.$index]]_[[$index]]" ng-model="permissionList[$parent.$index][$index]" ng-change=""  name="permission[]" value="[[p.value]]">
                                                         <label for="p_[[$parent.$index]]_[[$index]]"></label>
                                                     </div>
                                                     [[p.name]]
@@ -111,7 +111,7 @@
                                             <li ng-repeat="p in route.routes">
                                                 <label class="control-label">
                                                     <div class="styled-checkbox">
-                                                        <input permission-check type="checkbox" id="[[p.value]]" ng-model="permissionList[$parent.$index][$index]" name="permission[ [[route.controller.name]] ][]" value="[[p.value]]">
+                                                        <input permission-check type="checkbox" id="[[p.value]]" ng-model="permissionList[$parent.$index][$index]" name="permission[]" value="[[p.value]]">
                                                         <label for="[[p.value]]"></label>
                                                     </div>
                                                     [[p.name]]
@@ -134,7 +134,7 @@
                                             <li ng-repeat="p in route.routes">
                                                 <label class="control-label">
                                                     <div class="styled-checkbox">
-                                                        <input permission-check type="checkbox" id="[[p.value]]" ng-model="permissionList[$parent.$index][$index]" name="permission[ [[route.controller.name]] ][]" value="[[p.value]]">
+                                                        <input permission-check type="checkbox" id="[[p.value]]" ng-model="permissionList[$parent.$index][$index]" name="permission[]" value="[[p.value]]">
                                                         <label for="[[p.value]]"></label>
                                                     </div>
                                                     [[p.name]]
