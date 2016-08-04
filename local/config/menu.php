@@ -4,7 +4,7 @@ return [
     "hrm" => [
         "Kpi Branch" => [
             "route" => "#",
-            "icon" => "fa-users",
+            "icon" => "fa-building",
             "children" => [
                 "Kpi Information" => [
                     "route" => "kpi_view",
@@ -46,7 +46,7 @@ return [
         ],
         "Personal Info" => [
             "route" => "#",
-            "icon" => "fa-dashboard",
+            "icon" => "fa-user",
             "children" => [
                 "Entry" => [
                     "route" => "anser_list",
@@ -77,7 +77,7 @@ return [
         ],
         "Service" => [
             "route" => "#",
-            "icon" => "fa-dashboard",
+            "icon" => "fa-suitcase",
             "children" => [
                 "Panel" => [
                     "route" => "view_panel_list",
@@ -171,7 +171,7 @@ return [
         ],
         "Report" => [
             "route" => "#",
-            "icon" => "fa-dashboard",
+            "icon" => "fa-list-alt",
             "children" => [
                 "View Ansar In Guard" => [
                     "route" => "guard_report",
@@ -233,7 +233,7 @@ return [
         ],
         "DG Forms" => [
             "route" => "#",
-            "icon" => "fa-dashboard",
+            "icon" => "fa-wrench",
             "children" => [
                 "Direct Offer" => [
                     "route" => "direct_offer",
@@ -293,7 +293,7 @@ return [
         ],
         "Admin" => [
             "route" => "#",
-            "icon" => "fa-dashboard",
+            "icon" => "fa-male",
             "children" => [
                 "Global Parameter" => [
                     "route" => "global_parameter",
@@ -316,7 +316,7 @@ return [
         ],
         "General Settings" => [
             "route" => "#",
-            "icon" => "fa-dashboard",
+            "icon" => "fa-cogs",
             "children" => [
                 "Session Information" => [
                     "route" => "view_session_list",
