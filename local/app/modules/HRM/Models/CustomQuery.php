@@ -5634,6 +5634,7 @@ class CustomQuery
 
     public static function embodedAnsarListforReport($offset, $limit, $from_date, $to_date, $unit, $thana)
     {
+        DB::enableQueryLog();
         $ansarQuery = "";
         if ((strcasecmp($unit, "all") == 0) && (strcasecmp($thana, "all") == 0)) {
             $ansarQuery = DB::table('tbl_embodiment')
@@ -5682,6 +5683,7 @@ class CustomQuery
 
         $ansars = $ansarQuery->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
             'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')->skip($offset)->limit($limit)->get();
+        //return DB::getQueryLog();
         return View::make('HRM::Report.selected_ansar_embodiment_report')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
     }
 
