@@ -1590,7 +1590,7 @@ a:hover, a:active, a:focus {
 }
 
 .box.box-primary {
-    border-top-color: forestgreen;
+    border-top-color: #00302d;
 }
 
 .box.box-info {

@@ -26,7 +26,8 @@
             $scope.currentPage = 0;
             $scope.showDialog = false;
             $scope.result = '';
-            $scope.blockStatus = []
+            $scope.blockStatus = [];
+            $scope.allLoading = false;
             $scope.confirmURL = "";
             $scope.isSearching = false;
             $scope.noFound = false;
@@ -35,6 +36,7 @@
             for (var i = 0; i < $scope.totalPages; i++) $scope.pages[i] = {pageNum: i, totalCount: totalCount}
             $scope.loadPage = function (pageNum, event) {
                 if (event != null) event.preventDefault();
+                $scope.allLoading = true;
                 $scope.currentPage = pageNum;
                 $http({
                     url: '{{action('UserController@getAllUser')}}',
@@ -46,6 +48,7 @@
                     $scope.users.forEach(function (v) {
                         $scope.blockStatus.push(v.status)
                     })
+                    $scope.allLoading = false;
                 })
             }
             $scope.blockUser = function (id, index) {
@@ -75,6 +78,7 @@
                     $scope.loadPage(0, null);
                     return;
                 }
+                $scope.allLoading = true;
                 $scope.loading = true;
                 $scope.isSearching = true;
                 $http({
@@ -88,6 +92,7 @@
                     $scope.searchedUser.forEach(function (v) {
                         $scope.blockStatus.push(v.status)
                     })
+                    $scope.allLoading = false;
                     // console.log($scope.searchedUser);
                 })
             }
@@ -132,6 +137,11 @@
         @endif
         <section class="content">
             <div class="box box-primary">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="row">
                     <div class="col-sm-9">
                         <h4 style="padding-left: 8px;padding-top: 6px">Total users : [[total]]</h4>
