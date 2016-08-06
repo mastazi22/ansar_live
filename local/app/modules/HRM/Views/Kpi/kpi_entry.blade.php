@@ -36,7 +36,7 @@
                 })
             }
             if ($scope.isAdmin == 11) {
-                $scope.getNameService.getDivision();
+                getNameService.getDivision();
             }
             else {
                 if (!isNaN($scope.dcDistrict)) {

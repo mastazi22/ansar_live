@@ -84,7 +84,7 @@
 .skin-blue .sidebar-menu > li:hover > a, .skin-blue .sidebar-menu > li.active > a {
     color: #fff;
     background: #1e282c;
-    border-left-color: forestgreen;
+    border-left-color: #016961;
 }
 
 .skin-blue .sidebar-menu > li > .treeview-menu {
