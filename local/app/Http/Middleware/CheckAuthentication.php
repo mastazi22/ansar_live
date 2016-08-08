@@ -19,7 +19,7 @@ class CheckAuthentication
     public function handle($request, Closure $next)
     {
         if (auth()->guest()) {
-            Session::flash('redirect_url',$request->url());
+            Session::put('redirect_url',$request->url());
             If($request->ajax()){
                 return Response::json(['status'=>'logout','loc'=>action('UserController@login')]);
             }

@@ -19,9 +19,11 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Intervention\Image\Facades\Image;
@@ -33,6 +35,7 @@ class UserController extends Controller
     function handleLogin()
     {
         $credential = array('user_name' => Input::get('user_name'), 'password' => Input::get('password'));
+        Log::info("Previous URL Handle: ".Session::get('redirect_url'));
         if (Auth::attempt($credential)) {
             $user = Auth::user();
             if ($user->status == 0) {
@@ -42,7 +45,12 @@ class UserController extends Controller
             $user->userLog->last_login = Carbon::now();
             if ($user->userLog->user_status == 0) $user->userLog->user_status = 1;
             $user->userLog->save();
-            if(Session::get('redirect_url'))return Redirect::to(Session::get('redirect_url'));
+            Log::info("Previous URL Handle: ".Session::get('redirect_url'));
+            if(Session::has('redirect_url')){
+                $url = Session::get('redirect_url');
+                Session::forget('redirect_url');
+                return Redirect::to($url);
+            }
             else return Redirect::to('/');
         } else {
             return Redirect::action('UserController@login')->with('error', 'Invalid user name or password');
@@ -58,6 +66,8 @@ class UserController extends Controller
 
     function login()
     {
+        //Log::info("Previous URL: ".Session::get('redirect_url'));
+        //Session::put("redirect_url",URL::previous());
         if (Auth::check()) return Redirect::to('/');
         return View::make('login_screen');
     }
