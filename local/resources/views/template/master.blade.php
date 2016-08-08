@@ -11,7 +11,7 @@
             })
             $(window).load(function () {
                 var text = $.trim($(".module-menu-container > ul.module-menu>li.active>a").text());
-                $(".module-menu-container > .module-small-header > .header-content").text(text?text:"ERP");
+                $(".module-menu-container > .module-small-header > .header-content").text(text ? text : "ERP");
             })
             $('#national_id_no,#birth_certificate_no,#mobile_no_self').keypress(function (e) {
                 var code = e.keyCode ? e.keyCode : e.which;
@@ -29,7 +29,7 @@
                 })
             })
             $(window).resize(function () {
-                if($(this).width()>864){
+                if ($(this).width() > 864) {
                     $(".module-menu").removeAttr('style')
                     $(".module-menu").removeClass('still')
                     $(".module-small-header>.icon>i").addClass('fa-angle-down').removeClass('fa-angle-up')
@@ -85,13 +85,13 @@
 
         });
         GlobalApp.directive('showAlert', function () {
-            return{
-                restrict:'AEC',
-                scope:{
-                    alerts:"=",
-                    close:"&"
+            return {
+                restrict: 'AEC',
+                scope: {
+                    alerts: "=",
+                    close: "&"
                 },
-                templateUrl:'{{asset('dist/template/alert_template.html')}}'
+                templateUrl: '{{asset('dist/template/alert_template.html')}}'
             }
         })
         GlobalApp.controller('MenuController', function ($scope) {
@@ -113,7 +113,8 @@
 <div class="wrapper" ng-cloak>
     <div class="header-top">
         <div class="logo">
-            <a href="{{URL::route('home')}}"><img src="{{asset('dist/img/erp-logo.png')}}" class="img-responsive" alt=""></a>
+            <a href="{{URL::route('home')}}"><img src="{{asset('dist/img/erp-logo.png')}}" class="img-responsive"
+                                                  alt=""></a>
         </div>
         <div class="middle_header_logo">
             <img src="{{asset('dist/img/erp-hdeader.png')}}" class="img-responsive" alt="" width="400" height="400">
@@ -123,10 +124,10 @@
     </div>
     <header class="main-header">
         <!-- Logo -->
-        <?php $title = request()->route()?request()->route()->getPrefix():''; ?>
+        <?php $title = request()->route() ? request()->route()->getPrefix() : ''; ?>
         <a href="{{URL::to("/{$title}")}}" class="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
-            <?php $title = request()->route()?request()->route()->getPrefix():''; ?>
+            <?php $title = request()->route() ? request()->route()->getPrefix() : ''; ?>
             <span class="logo-mini">{{config("app.title_mini_{$title}")}}</span>
             <!-- logo for regular state and mobile devices -->
             <span class="logo-lg" style="font-size: 16px;"><b>{{config("app.title_lg_{$title}")}}</b></span>
@@ -137,6 +138,7 @@
             <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
                 <span class="sr-only">Toggle navigation</span>
             </a>
+
             <div class="module-menu-container">
                 <div class="module-small-header">
                     <span class="header-content">HRM</span>
@@ -144,7 +146,9 @@
                 </div>
                 <ul class="module-menu">
                     @foreach(config('app.modules') as $module)
-                        <li><a href="{{URL::to($module['route'])}}" @if(!is_null(request()->route())&&strcasecmp(request()->route()->getPrefix(),$module['name'])==0) class="active" @endif>{{$module['name']}}</a></li>
+                        <li><a href="{{URL::to($module['route'])}}"
+                               @if(!is_null(request()->route())&&strcasecmp(request()->route()->getPrefix(),$module['name'])==0) class="active" @endif>{{$module['name']}}</a>
+                        </li>
                     @endforeach
                 </ul>
             </div>
@@ -261,9 +265,12 @@
             }
             //alert(p.text())
             if (p.parents('.sidebar-menu').length > 0) {
-                p.parents('li').eq(0).parents('ul').eq(0).addClass('menu-open').css('display', 'block');
-                if (p.parents('li').length > 1) {
-                    if (p.parents('li').parents('ol').length <= 0)p.parents('li').eq(0).addClass('active-submenu');
+//                p.parents('li').eq(0).parents('ul').eq(0).addClass('menu-open').css('display', 'block');
+                //alert(p.parents('li').eq(1).html())
+                if (p.parents('li').length > 1 && p.parents('.module-menu').length <= 0) {
+                    if (p.parents('li').parents('ol').length <= 0){
+                        p.parents('li').eq(0).addClass('active-submenu');
+                    }
                     p.parents('li').not(':eq(0)').addClass('active');
                 }
                 else {

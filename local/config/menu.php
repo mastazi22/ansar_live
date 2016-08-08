@@ -81,11 +81,11 @@ return [
             "children" => [
                 "Panel" => [
                     "route" => "view_panel_list",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-users",
                 ],
                 "Offer" => [
                     "route" => "make_offer",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-mobile",
                 ],
                 "Offer Quota" => [
                     "route" => "offer_quota",
@@ -111,7 +111,7 @@ return [
                             "route" => "disembodiment_date_correction_view",
                             "icon" => "fa-dashboard",
                         ],
-                        "Embodiment Memorandum ID Correction" => [
+                        "Embodiment Mem. ID Correction" => [
                             "route" => "embodiment_memorandum_id_correction_view",
                             "icon" => "fa-dashboard",
                         ],
@@ -175,59 +175,59 @@ return [
             "children" => [
                 "View Ansar In Guard" => [
                     "route" => "guard_report",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-file-pdf-o",
                 ],
                 "Ansar Transfer History" => [
                     "route" => "transfer_ansar_history",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-file-pdf-o",
                 ],
                 "Ansar Service Record" => [
                     "route" => "view_ansar_service_record",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-file-pdf-o",
                 ],
                 "View Ansar Service Report" => [
                     "route" => "ansar_service_report_view",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-file-pdf-o",
                 ],
                 "View Embodied Ansar Report" => [
                     "route" => "embodiment_report_view",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-file-pdf-o",
                 ],
                 "View Disembodied Ansar Report" => [
                     "route" => "disembodiment_report_view",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-file-pdf-o",
                 ],
                 "Blocklist Information" => [
                     "route" => "blocklist_view",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-file-pdf-o",
                 ],
                 "Blacklist Information" => [
                     "route" => "blacklist_view",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-file-pdf-o",
                 ],
                 "Three Years Over List" => [
                     "route" => "three_year_over_report_view",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-file-pdf-o",
                 ],
                 "Ansar Service Record Unit Wise" => [
                     "route" => "service_record_unitwise_view",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-file-pdf-o",
                 ],
                 "Print Transfer Letter" => [
                     "route" => "transfer_letter_view",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-envelope",
                 ],
                 "Print Embodiment Letter" => [
                     "route" => "embodiment_letter_view",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-envelope",
                 ],
                 "Print Dis-embodiment Letter" => [
                     "route" => "disembodiment_letter_view",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-envelope",
                 ],
                 "Offer Report" => [
                     "route" => "offer_report",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-file-pdf-o",
                 ],
             ]
         ],
@@ -237,15 +237,15 @@ return [
             "children" => [
                 "Direct Offer" => [
                     "route" => "direct_offer",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-mobile",
                 ],
                 "Direct Panel" => [
                     "route" => "direct_panel_view",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-users",
                 ],
                 "Direct Cancel Panel" => [
                     "route" => "direct_panel_cancel_view",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-users",
                 ],
                 "Direct Embodiment" => [
                     "route" => "direct_embodiment",
@@ -261,7 +261,7 @@ return [
                 ],
                 "Direct Blacklist" => [
                     "route" => "#",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-times",
                     "children" => [
                         "Add Ansar In Black List" => [
                             "route" => "dg_blacklist_entry_view",
@@ -276,7 +276,7 @@ return [
                 ],
                 "Direct Blocklist" => [
                     "route" => "#",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-times",
                     "children" => [
                         "Add Ansar In Block List" => [
                             "route" => "dg_blocklist_entry_view",
@@ -320,23 +320,23 @@ return [
             "children" => [
                 "Session Information" => [
                     "route" => "view_session_list",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-cog",
                 ],
                 "Thana Setting" => [
                     "route" => "thana_view",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-cog",
                 ],
                 "Unit Setting" => [
                     "route" => "unit_view",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-cog",
                 ],
                 "Disease Information" => [
                     "route" => "disease_view",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-cog",
                 ],
                 "Skill Setting" => [
                     "route" => "skill_view",
-                    "icon" => "fa-dashboard",
+                    "icon" => "fa-cog",
                 ],
             ]
         ]
