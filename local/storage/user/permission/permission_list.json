@@ -112,7 +112,7 @@
   {
     "controller":{"value":"GeneralController","name":"General Settings"},
     "routes":[
-      {"value":"view_session_list","name":"Session Information","type":"menu"},
+      {"value":"session_view","name":"Session Information","type":"menu"},
       {"value":"thana_view","name":"Thana Setting","type":"menu"},
       {"value":"unit_view","name":"Unit Setting","type":"menu"},
       {"value":"skill_view","name":"Skill Setting","type":"menu"}
@@ -166,7 +166,6 @@
     "controller":{"value":"SessionController","name":"Session"},
     "routes":[
       {"value":"create_session","name":"Add New Session"},
-      {"value":"view_session_list","name":"View Session List"},
       {"value":"edit_session","name":"Edit Session"}
     ]
   }

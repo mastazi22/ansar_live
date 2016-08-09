@@ -17,12 +17,14 @@ class UserPermission
     private $permissionFile = 'permission_list.json';
     private $permissionList;
     private $currentUserPermission;
+    private $search;
 
     public function __construct()
     {
         $permissions = file_get_contents(storage_path("user/permission/{$this->permissionFile}"));
         $this->permissionList = collect(json_decode($permissions));
         $this->currentUserPermission = Auth::user()->userPermission->permission_list;
+        $this->search = '';
     }
 
     public function getPermissionList()
@@ -33,11 +35,15 @@ class UserPermission
     public function isPermissionExists($name)
     {
         $this->search = $name;
+//        return $this->search;
         foreach ($this->permissionList->all() as $item) {
             $search = collect($item->routes);
-            $isFound = $search->search(function ($item, $key) {
-                return $item->value == $this->search;
-            });
+            $isFound = false;
+            foreach($search->all() as $route){
+                $isFound = $route->value==$this->search;
+                if($isFound) break;
+            }
+            //echo "IS FOUND: ".($isFound==true?"found":"not").'<br>';
             if (!$isFound) continue;
             return true;
         }

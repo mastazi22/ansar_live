@@ -26,6 +26,7 @@ class CustomValidation extends Validator
         'array_length_max' => ':attribute length is overflow',
         'array_length_min' => ':attribute length is underflow',
         'array_length_same' => ':attribute length does not match with :other',
+        'date_validity' => ':attribute date is not valid',
     ];
 
     public function __construct(TranslatorInterface $translator, array $data, array $rules, array $messages = [], array $customAttributes = [])
@@ -139,5 +140,11 @@ class CustomValidation extends Validator
         Log::info(count($parameters));
         return $length == $same;
     }
-
+    public function validateDateValidity($attribute, $value, $parameters)
+    {
+        if(preg_match('/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/',$value)){
+            return true;
+        }
+        return false;
+    }
 }

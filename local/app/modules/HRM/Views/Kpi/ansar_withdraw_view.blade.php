@@ -122,15 +122,6 @@
                         scope.kpi_withdraw_date = "";
                         scope.$digest()
                         $("#withrdaw-option").modal("toggle")
-//                        $("#withrdaw-option").on('show.bs.modal', function () {
-//                            alert("hh")
-//                            scope.memorandumId = "";
-//                            scope.kpi_withdraw_reason = "";
-//                            scope.kpi_withdraw_date = "";
-//                        })
-//                        $("#withrdaw-option").on('hide.bs.modal', function () {
-//                            //modalOpen = false;
-//                        })
                     })
                 }
             }
@@ -145,6 +136,14 @@
                 <div class="alert alert-success">
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                     <span class="glyphicon glyphicon-ok"></span> {{Session::get('success_message')}}
+                </div>
+            </div>
+        @endif
+        @if(Session::has('error_message'))
+            <div style="padding: 10px 20px 0 20px;">
+                <div class="alert alert-danger">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <span class="fa fa-warning"></span> {{Session::get('error_message')}}
                 </div>
             </div>
         @endif

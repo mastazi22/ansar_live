@@ -319,7 +319,7 @@ return [
             "icon" => "fa-cogs",
             "children" => [
                 "Session Information" => [
-                    "route" => "view_session_list",
+                    "route" => "session_view",
                     "icon" => "fa-cog",
                 ],
                 "Thana Setting" => [

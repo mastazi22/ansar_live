@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
@@ -280,6 +281,15 @@ class KpiController extends Controller
 
     public function ansarWithdrawUpdate(Request $request)
     {
+        $rules = [
+          'kpi_id_withdraw'=>'required|numeric|regex:/^[0-9]+$/',
+          'memorandum_id'=>'required',
+          'kpi_withdraw_date'=>'required|date_format:d-M-Y|date_validity',
+        ];
+        $valid = Validator::make($request->all(),$rules);
+        if($valid->fails()){
+            return Redirect::back()->with('error_message',"Invalid request");
+        }
         DB::beginTransaction();
         try {
             $kpi_id = $request->input('kpi_id_withdraw');
@@ -329,11 +339,13 @@ class KpiController extends Controller
                 CustomQuery::addActionlog($user, true);
                 CustomQuery::addActionlog(['ansar_id' => $kpi_id, 'action_type' => 'WITHDRAW KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]);
             }
+            else throw new \Exception("Invalid request");
             return Redirect::route('ansar-withdraw-view')->with('success_message', 'Ansar/s Withdrawn Successfully!');
         } catch
-        (Exception $e) {
+        (\Exception $e) {
             DB::rollback();
-            return $e->getMessage();
+            Log::info("error code".$e->getCode());
+            return Redirect::back()->with('error_message',$e->getMessage());
         }
     }
 

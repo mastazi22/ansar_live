@@ -10,20 +10,11 @@
 @section('content')
 
     <div>
-        {{--<div class="breadcrumbplace">--}}
-            {{--{!! Breadcrumbs::render('entryform') !!}--}}
-        {{--</div>--}}
-        <!-- Content Header (Page header) -->
-
-        <!-- Main content -->
         <section class="content">
             <div class="row">
                 <!-- left column -->
                 <div class="col-lg-8 col-centered">
 
-                    <!-- general form elements -->
-
-                    <!-- Request addon -->
 
                     <div class="box box-info">
 

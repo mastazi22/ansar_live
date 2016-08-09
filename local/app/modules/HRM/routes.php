@@ -1,4 +1,6 @@
 <?php
+use Illuminate\Support\Facades\Input;
+
 Route::group(['prefix'=>'HRM','middleware'=>'manageDatabase','namespace'=>'\App\modules\HRM\Controllers'],function (){
     Route::any('/send_sms', 'SMSController@sendSMS');
     Route::post('/receive_sms', ['as'=>'receive_sms','uses'=>'SMSController@receiveSMS']);
@@ -11,17 +13,8 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 
         //DASHBOARD
         Route::get('/tesst',function(){
-            $data = [
-                'name'=>[1,2,3,4,5,6,7],
-                'sas'=>[1,2,3,4,5,6,7]
-            ];
-            $valid = Validator::make($data,[
-                'name'=>'array_length_same:7,5'
-            ]);
-            if($valid->fails()){
-                return $valid->messages();
-            }
-            return "true";
+//            return (UserPermission::getPermissionList());
+            return (UserPermission::isPermissionExists(Input::get('q'))?"found":"not found");
         });
         Route::get('/', ['as'=>'HRM','uses'=>'HrmController@hrmDashboard']);
         Route::get('/getTotalAnsar', ['as' => 'dashboard_total_ansar', 'uses' => 'HrmController@getTotalAnsar']);
@@ -127,7 +120,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 
         Route::get('/session', ['as' => 'create_session', 'uses' => 'SessionController@index']);
         Route::post('/save-session-entry', ['as' => 'save-session-entry', 'uses' => 'SessionController@saveSessionEntry']);
-        Route::get('/session_view', ['as' => 'view_session_list', 'uses' => 'SessionController@sessionView']);
+        Route::get('/session_view', ['as' => 'session_view', 'uses' => 'SessionController@sessionView']);
         Route::get('/session-delete/{id}', ['as' => 'delete_session', 'uses' => 'SessionController@sessionDelete']);
         Route::get('/session-edit/{id}/{page}', ['as' => 'edit_session', 'uses' => 'SessionController@sessionEdit'])->where('id','[0-9]+')->where('page', '[0-9]+');
         Route::post('/session-update', ['as' => 'session-update', 'uses' => 'SessionController@sessionUpdate']);

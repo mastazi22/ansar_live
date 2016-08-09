@@ -3583,7 +3583,7 @@ select[multiple].form-group-lg .form-control, textarea.form-group-lg .form-contr
 
 .btn-link {
     font-weight: 400;
-    color: #166f16;
+    color: #002f2c;
     border-radius: 0
 }
 
@@ -3598,7 +3598,7 @@ select[multiple].form-group-lg .form-control, textarea.form-group-lg .form-contr
 }
 
 .btn-link:focus, .btn-link:hover {
-    color: #34d234;
+    color: #01665e;
     text-decoration: underline;
     background-color: transparent
 }

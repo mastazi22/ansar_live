@@ -399,7 +399,7 @@ Breadcrumbs::register('gs', function($breadcrumbs) {
 });
 Breadcrumbs::register('session_information_list', function($breadcrumbs) {
     $breadcrumbs->parent('gs');
-    $breadcrumbs->push('Session Information', URL::route('view_session_list'));
+    $breadcrumbs->push('Session Information', URL::route('session_view'));
 });
 Breadcrumbs::register('session_information_edit', function($breadcrumbs,$id,$page) {
     $breadcrumbs->parent('session_information_list');
