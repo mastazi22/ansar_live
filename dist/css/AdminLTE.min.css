@@ -3276,7 +3276,8 @@ table.text-center, table.text-center td, table.text-center th {
 }
 
 .login-page, .register-page {
-    background: #d2d6de
+    background: url('../img/login_back.jpg');
+    background-size: cover;
 }
 
 .login-box, .register-box {

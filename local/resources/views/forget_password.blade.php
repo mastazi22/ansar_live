@@ -129,10 +129,10 @@
 <body class="login-page">
 <div class="login-box" style="margin: 1% auto !important;">
     <div class="login-logo">
-        <a href="home.html"><b>Ansar & VDP</b>ERP</a>
+        <a href="{{URL::to('/')}}" style="color: #ffffff;"><b>Ansar & VDP</b>ERP</a>
     </div>
     <!-- /.login-logo -->
-    <div class="login-box-body">
+    <div class="login-box-body" style="background: rgba(255,255,255,.32)">
         {{--<p class="login-box-msg">Sign in to start your session</p>--}}
         @if(Session::has('error'))
             <p class="text text-danger"
@@ -145,7 +145,7 @@
         <form action="{{URL::route('forget_password_request_handle')}}" method="post">
             {{csrf_field()}}
             <div class="form-group">
-                <label>Enter your user name</label>
+                <label style="color: #000;">Enter your user name</label>
                 <input type="text" name="user_name" class="form-control" value="{{Request::old('user_name')}}" placeholder="User Name"/>
                 @if($errors->has('user_name'))
                     <p class="text text-danger">{{$errors->first('user_name')}}</p>
@@ -153,7 +153,7 @@
             </div>
             <button type="submit" class="btn btn-primary btn-block btn-flat">Submit password change request</button>
         </form>
-        <a class="btn btn-link" href="{{URL::route('login')}}" style="padding-left: 0"><i class="fa fa-angle-left"></i> &nbsp;&nbsp;Back to login</a>
+        <a class="btn btn-link" href="{{URL::route('login')}}" style="padding-left: 0;color: #ffffff;"><i class="fa fa-angle-left"></i> &nbsp;&nbsp;Back to login</a>
     </div>
 
 </div>

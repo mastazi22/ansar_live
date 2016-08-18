@@ -4,7 +4,7 @@
     @include('template.resource')
     <style>
         .table > tbody > tr > td, .table > thead > tr > td, .table > tr > td, .table > tr > th {
-            background: #ffffff !important;
+            background: rgba(255, 255, 255, .4) !important;
         }
     </style>
     <script>
@@ -38,16 +38,25 @@
             })
         }])
     </script>
+    <style>
+        table > tbody > tr > th {
+            background: rgba(255, 255, 255, .5) !important;
+        }
+
+        table > tbody > tr {
+            background: transparent !important;
+        }
+    </style>
 
 </head>
 <body class="login-page" ng-app="LoginApp">
 <div class="login-box" style="margin: 1% auto !important;">
     <div class="login-logo">
-        <a href="home.html"><b>Ansar & VDP</b>ERP</a>
+        <a href="{{URL::to('/')}}" style="color: #ffffff;"><b>Ansar & VDP</b>ERP</a>
     </div>
     <!-- /.login-logo -->
-    <div class="login-box-body">
-        <p class="login-box-msg">Sign in to start your session</p>
+    <div class="login-box-body" style="background: rgba(255, 255, 255, 0.32);">
+        <p class="login-box-msg" style="color: #000;font-weight: bold">Sign in to start your session</p>
         @if(Session::has('error'))
             <p class="text-danger" style="text-align: center;text-transform: uppercase">{{Session::get('error')}}</p>
         @endif
@@ -69,24 +78,21 @@
                 <!-- /.col -->
             </div>
         </form>
-        <a href="{{URL::route('forget_password_request')}}">I forgot my password</a><br>
+        <a href="{{URL::route('forget_password_request')}}" style="color: #ffffff">I forgot my password</a><br>
 
     </div>
-    <div class="box box-solid" ng-controller="loginController" style="margin-top: 8px;position: relative">
+    <div class="box box-solid" ng-controller="loginController"
+         style="margin-top: 8px;position: relative;background: rgba(255, 255, 255, 0.32);">
         <div class="overlay" ng-if="loading">
                     <span class="fa">
                         <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
                     </span>
         </div>
         <div class="box-header with-border">
-            <h3 class="box-title">কেন্দ্রীয় প্যানেল তালিকা</h3>
-
-            <div class="box-tools pull-right">
-                <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-            </div>
+            <h3 class="box-title" id="cccc" data-status="show" style="text-align: center;width: 100%;cursor: pointer">কেন্দ্রীয় প্যানেল তালিকা<img style="width: 27px;padding: 0 5px;vertical-align: top;-webkit-transform: rotate(-180deg);-moz-transform: rotate(-180deg);-ms-transform: rotate(-180deg);-o-transform: rotate(-180deg);transform: rotate(-180deg);" src="{{asset('dist/img/arrow.png')}}"></h3>
         </div>
 
-        <div class="box-body">
+        <div class="box-body" id="ssss">
             <div class="table-responsive">
                 <table class="table table-bordered" style="margin-bottom: 0 !important;">
                     <tr>
@@ -141,6 +147,36 @@
         </div>
     </div>
 </div>
-
+<script>
+    $("#cccc").on('click', function () {
+        var b = $(this);
+        if ($(this).attr('data-status') == 'show') {
+            $("#ssss").slideUp(200, function () {
+                b.attr('data-status', 'hide')
+                b.children('img').css({
+                    transform:'rotate(0deg)',
+                    webkitTransform:'rotate(0deg)',
+                    msTransform:'rotate(0deg)',
+                    oTransform:'rotate(0deg)',
+                    mozTransform:'rotate(0deg)',
+                    transition:'all .3s'
+                })
+            })
+        }
+        else {
+            $("#ssss").slideDown(200, function () {
+                b.attr('data-status', 'show')
+                b.children('img').css({
+                    transform:'rotate(-180deg)',
+                    webkitTransform:'rotate(-180deg)',
+                    msTransform:'rotate(-180deg)',
+                    oTransform:'rotate(-180deg)',
+                    mozTransform:'rotate(-180deg)',
+                    transition:'all .3s'
+                })
+            })
+        }
+    })
+</script>
 </body>
 </html>
