@@ -93,9 +93,9 @@ class FormSubmitHandler extends Controller
                     }
                 }
                 $inputall = serialize(Input::except(['profile_pic', 'sign_pic', 'thumb_pic']));
-                $myfile = fopen(storage_path() . '/drafts/' . "$time.txt", "w") or die("Unable to open file!");
+                $myfile = fopen(storage_path() . '/drafts/' . "{$time}.txt", "w") or die("Unable to open file!");
 
-                chmod(storage_path() . '/drafts/' . "$time.txt", 0777);
+                //chmod(storage_path() . '/drafts/' . "$time.txt", 0777);
                 fwrite($myfile, $inputall);
                 fclose($myfile);
                 if ($request->file('profile_pic')) {
