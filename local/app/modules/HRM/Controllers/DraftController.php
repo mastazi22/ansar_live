@@ -61,16 +61,25 @@ class DraftController extends Controller
 //    Deleting the draft file
     public function draftDelete($id)
     {
-        $dir = storage_path() . '/drafts/';
-        if ($handle = opendir($dir)) {
-            while (($file = readdir($handle)) !== false) {
-                if (!in_array($file, array('.', '..')) && !is_dir($dir . $file))
-                    if ($id == $file) {
-                        unlink($dir . '/' . $file);
-                        return redirect()->back();
-                    }
+        $files = File::files(storage_path() . '/drafts/');
+        //return $files;
+        foreach($files as $file){
+            //echo pathinfo($file,PATHINFO_BASENAME)."<br>";
+            if(strcmp(pathinfo($file,PATHINFO_BASENAME),$id)==0){
+                File::delete($file);
+                return redirect()->back()->with('success',"{$id} remove from draft list successfully");
             }
         }
+        return redirect()->back()->with('error',"{$id} not found in draft list");
+//        if ($handle = opendir($dir)) {
+//            while (($file = readdir($handle)) !== false) {
+//                if (!in_array($file, array('.', '..')) && !is_dir($dir . $file))
+//                    if ($id == $file) {
+//                        unlink($dir . '/' . $file);
+//                        return redirect()->back();
+//                    }
+//            }
+//        }
     }
 
 //    Showing single draft value

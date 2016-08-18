@@ -66,7 +66,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         //Draft entry
         Route::get('entrydraft', ['as' => 'entry_draft', 'uses' => 'DraftController@draftList']);
 //        Route::get('entrysingledraft', ['as'=>'entrysingledraft','uses'=>'DraftController@entrySingleDraft']);
-        Route::get('draftdelete/{draftid}', ['as' => 'draftDelete', 'uses' => 'DraftController@draftDelete']);
+        Route::get('draftdelete/{draftid}', ['as' => 'draftDelete', 'uses' => 'DraftController@draftDelete'])->where('draftid','[0-9]+\.txt');
         Route::get('getdraftlist', ['as'=>'getdraftlist','uses'=>'DraftController@getDraftList']);
         Route::get('singledraftedit/{id}', ['as' => 'draftEdit', 'uses' => 'DraftController@singleDraftEdit']);
         Route::get('entrysingledraft/{id}', ['as'=>'entrysingledraft','uses'=>'DraftController@entrySingleDraft']);

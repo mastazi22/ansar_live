@@ -2,7 +2,7 @@
 @section('title','Draft Entry List')
 @section('breadcrumb')
     {!! Breadcrumbs::render('draft_list') !!}
-    @endsection
+@endsection
 @section('content')
     <script>
         GlobalApp.controller('draftController', function ($scope, getDraftService) {
@@ -25,26 +25,27 @@
     </script>
     <div ng-controller="draftController">
         {{--<div class="breadcrumbplace">--}}
-            {{--{!! Breadcrumbs::render('draft_entry') !!}--}}
+        {{--{!! Breadcrumbs::render('draft_entry') !!}--}}
         {{--</div>--}}
-        @if (Session::has('success'))
-            <div style="width:87%;margin:0 auto;">
+        <section class="content">
+            @if (Session::has('success'))
                 <div class="alert alert-success">
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <span class="glyphicon glyphicon-ok"></span>Ansar with ID: {{Session::get('success')}} Added Successfully
+                    <span class="glyphicon glyphicon-ok"></span>{{Session::get('success')}}
                 </div>
-            </div>
-        @endif
-        @if(Session::has('add_success'))
-            <div style="width:90%;margin: 0 auto">
+            @endif
+            @if (Session::has('error'))
+                <div class="alert alert-danger">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <span class="glyphicon glyphicon-ok"></span>{{Session::get('error')}}
+                </div>
+            @endif
+            @if(Session::has('add_success'))
                 <div class="alert alert-success">
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                     <span class="glyphicon glyphicon-ok"></span>{{Session::get('add_success')}}
                 </div>
-            </div>
-        @endif
-        <section class="content">
-
+            @endif
             <div class="box box-solid">
                 <div class="box-body" id="change-body">
                     <div class="loading-data"><i class="fa fa-4x fa-refresh fa-spin loading-icon"></i>
