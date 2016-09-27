@@ -26,10 +26,14 @@
                     url: '{{URL::route('load_ansar_for_freeze')}}',
                     params: {ansar_id: id}
                 }).then(function (response) {
+                    $scope.error = false;
                     $scope.ansarDetail = response.data
                     console.log($scope.ansarDetail)
                     $scope.loadingAnsar = false;
                     $scope.totalLength--;
+                },function(response){
+                    $scope.error = true
+                    $scope.loadingAnsar = false;
                 })
             }
             $scope.makeQueue = function (id) {
@@ -72,9 +76,6 @@
     </script>
 
     <div ng-controller="FreezeController">
-        {{--<div class="breadcrumbplace">--}}
-            {{--{!! Breadcrumbs::render('freeze_view') !!}--}}
-        {{--</div>--}}
         @if(Session::has('success_message'))
             <div style="padding: 10px 20px 0 20px;">
                 <div class="alert alert-success">
@@ -121,14 +122,12 @@
                                         width="16" style="margin-top: -2px">Freeze
                             </button>
                         </div>
-                        <div class="col-sm-6 col-sm-offset-2"
-                             style="min-height: 400px;border-left: 1px solid #CCCCCC">
-                            <div id="loading-box" ng-if="loadingAnsar">
-                            </div>
-                            <div ng-if="ansarDetail.name==undefined">
+                        <div class="col-sm-6 col-sm-offset-2" style="min-height: 400px;border-left: 1px solid #CCCCCC">
+                            <div id="loading-box" ng-if="loadingAnsar"></div>
+                            <div ng-if="ansarDetail.name==undefined&&!error">
                                 <h3 style="text-align: center">No Ansar Found</h3>
                             </div>
-                            <div ng-if="ansarDetail.name!=undefined">
+                            <div ng-if="ansarDetail.name!=undefined&&!error">
                                 <div class="form-group">
                                     <label class="control-label">Name</label>
 
@@ -192,6 +191,9 @@
                                         [[convertDate(ansarDetail.j_date)]]
                                     </p>
                                 </div>
+                            </div>
+                            <div ng-if="error">
+                                An Server Occur. Contact with system administrator
                             </div>
                         </div>
                     </div>

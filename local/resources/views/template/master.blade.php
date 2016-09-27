@@ -41,6 +41,7 @@
             $interpolateProvider.startSymbol('[[');
             $interpolateProvider.endSymbol(']]');
             $httpProvider.useApplyAsync(true)
+            var retryCount = 0;
             $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
             $httpProvider.interceptors.push(function ($q, $injector) {
                 return {
@@ -63,13 +64,18 @@
                                 break;
                             case 500:
                                 var d = $q.defer();
-                                retryHttpRequest(response.config, d);
-                                return d.promise;
+                                if (retryCount < 4) {
+                                    retryHttpRequest(response.config, d);
+                                    return d.promise;
+                                }
+                                retryCount = 0;
+                                break;
                         }
                         return $q.reject(response);
                     }
                 }
                 function retryHttpRequest(config, deferred) {
+                    retryCount++;
                     function successCallback(response) {
                         deferred.resolve(response);
                     }
@@ -268,7 +274,7 @@
 //                p.parents('li').eq(0).parents('ul').eq(0).addClass('menu-open').css('display', 'block');
                 //alert(p.parents('li').eq(1).html())
                 if (p.parents('li').length > 1 && p.parents('.module-menu').length <= 0) {
-                    if (p.parents('li').parents('ol').length <= 0){
+                    if (p.parents('li').parents('ol').length <= 0) {
                         p.parents('li').eq(0).addClass('active-submenu');
                     }
                     p.parents('li').not(':eq(0)').addClass('active');
