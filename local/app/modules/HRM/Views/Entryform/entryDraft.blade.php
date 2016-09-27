@@ -46,6 +46,13 @@
                     <span class="glyphicon glyphicon-ok"></span>{{Session::get('add_success')}}
                 </div>
             @endif
+                @if(Session::has('update_draft'))
+                    <div class="alert alert-success">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <span class="glyphicon glyphicon-ok"></span>{{Session::get('update_draft')}}
+                        <?php Session::forget('update_draft'); ?>
+                    </div>
+                @endif
             <div class="box box-solid">
                 <div class="box-body" id="change-body">
                     <div class="loading-data"><i class="fa fa-4x fa-refresh fa-spin loading-icon"></i>

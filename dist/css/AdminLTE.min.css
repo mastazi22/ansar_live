@@ -2153,6 +2153,7 @@ a:hover, a:active, a:focus {
 .info-box-text {
 / / text-transform: uppercase;
 / / margin-left: 10 px;
+font-weight: bold;
 }
 
 .info-box-more {

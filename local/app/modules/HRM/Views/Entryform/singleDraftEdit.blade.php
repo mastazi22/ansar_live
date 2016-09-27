@@ -444,17 +444,17 @@
                                 scope.formSubmitResult = responseText;
                                 console.log(scope.formSubmitResult);
                                 $(".overlay").css('display','none');
-                                if (scope.formSubmitResult.status == true) {
+                                if (scope.formSubmitResult.status == "update") {
                                     $(element).resetForm();
                                     window.location = "{{URL::route('entry_draft')}}";
                                 }
-                                if (scope.formSubmitResult.status == 'save') {
+                                if (scope.formSubmitResult.status == 'saved') {
                                     $(element).resetForm();
                                     window.location = "{{URL::route('entry_draft')}}";
                                 }
                                 scope.$digest();
                             }, error: function (responseText, statusText, xhr, $form) {
-                                scope.error = $sce.trustAsHtml(xhr.responseText);
+
                                 $(".overlay").css('display','none');
                                 console.log(responseText);
                                 console.log(responseText);
@@ -875,14 +875,14 @@
                                             </div>
 
                                         </div>
-                                        <div class="form-horizontal col-md-12"ng-show="isAdmin==22">
+                                        {{--<div class="form-horizontal col-md-12"ng-show="isAdmin==22">--}}
 
-                                            <label class="control-label col-sm-2" for="email">বিভাগ:</label>
-                                            <div class="col-sm-10">
-                                                <input type="text" class="form-control" value="{{Auth::user()->district->division->division_name_bng}}" disabled>
-                                            </div>
+                                            {{--<label class="control-label col-sm-2" for="email">বিভাগ:</label>--}}
+                                            {{--<div class="col-sm-10">--}}
+                                                {{--<input type="text" class="form-control" value="{{Auth::user()->district->division->division_name_bng}}" disabled>--}}
+                                            {{--</div>--}}
 
-                                        </div>
+                                        {{--</div>--}}
                                         <div class="form-horizontal col-md-12 "
                                              ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.unit_name_eng[0]}">
 

@@ -150,8 +150,10 @@ class DraftController extends Controller
                     Image::make($request->file('thumb_pic'))->resize(220, 90)->save($path . '/' . 'thumb' . '.' . 'jpg');
 
                 }
-                return Response::json(['status' => 'save', 'data' => $id]);
-            } else {
+                Session::put("update_draft","Draft updated complete");
+                return Response::json(['status' => 'update', 'data' => $id]);
+            }
+            else {
 
                 $rules = [
                     'ansar_name_eng' => 'required',
@@ -464,7 +466,7 @@ class DraftController extends Controller
                             }
                             CustomQuery::addActionlog(['ansar_id' => $ansarid, 'action_type' => 'ADD ENTRY', 'from_state' => '', 'to_state' => 'ENTRY', 'action_by' => auth()->user()->id]);
                             Session::flash('success', $ansarid);
-                            return Response::json(['status' => true, 'data' => 'value added successfully']);
+                            return Response::json(['status' => 'saved', 'data' => 'value added successfully']);
                         }
                         throw new Exception();
                     } catch (Exception $rollback) {
