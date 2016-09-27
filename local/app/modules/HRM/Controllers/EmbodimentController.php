@@ -157,7 +157,7 @@ class EmbodimentController extends Controller
             if (!is_null($ansar_id) && !is_null($kpi_id)) {
                 $ansar_rank = PersonalInfo::where('tbl_ansar_parsonal_info.ansar_id', $ansar_id)->select('designation_id')->first();
                 $rules = [
-                    'ansar_id' => 'required|numeric|regex:/^[0-9]+$/|is_eligible:ansar_id,kpi_id',
+                    'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
                     'memorandum_id' => 'required|unique:hrm.tbl_memorandum_id',
                     'division_name_eng' => 'required|numeric|regex:/^[0-9]+$/',
                     'thana_name_eng' => 'required|numeric|regex:/^[0-9]+$/',
@@ -180,7 +180,8 @@ class EmbodimentController extends Controller
                     'kpi_id.numeric' => 'KPI format is invalid',
                     'kpi_id.regex' => 'KPI format is invalid',
                 ];
-            } else {
+            }
+            else {
                 $rules = [
                     'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
                     'memorandum_id' => 'required|unique:hrm.tbl_memorandum_id',
@@ -209,7 +210,7 @@ class EmbodimentController extends Controller
             if (!is_null($ansar_id) && !is_null($kpi_id)) {
                 $rules = [
                     'kpi_id' => 'required|numeric|regex:/^[0-9]+$/',
-                    'ansar_id' => 'required|numeric|regex:/^[0-9]+$/|is_eligible:ansar_id,kpi_id',
+                    'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
                     'memorandum_id' => 'required|unique:hrm.tbl_memorandum_id',
                     'reporting_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
                     'joining_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
@@ -367,7 +368,7 @@ class EmbodimentController extends Controller
             DB::rollback();
             return $e->getMessage();
         }
-        return Redirect::route('go_to_new_embodiment_page')->with('success_message', 'Ansar is Embodied Successfully!');
+        return Redirect::route('go_to_new_embodiment_page')->with(['success_message'=>'Ansar is Embodied Successfully!','memid'=>$memorandum_id,'unit_id'=>$request->get('division_name_eng')]);
     }
 
     public function transferProcessView()
@@ -446,131 +447,6 @@ class EmbodimentController extends Controller
         $t_id = Input::get('unit_id');
         return Response::json(CustomQuery::getEmbodiedAnsarV($t_id, $u_id));
     }
-
-    public function downloadBankForm($id)
-    {
-        $ansar = PersonalInfo::where('ansar_id', $id)->first();
-        //return View::make('template.bank_form_view')->with(['ansar' => $ansar]);
-        $pdf = App::make('snappy.pdf.wrapper');
-        $pdf->loadView('template.bank_form_view', ['ansar' => $ansar]);
-        $pdf->setOption('margin-top', '1mm');
-        $pdf->setOption('margin-bottom', '1mm');
-        return $pdf->download($id . '.pdf');
-    }
-
-//    public function generateBankForm()
-//    {
-////        $ansar = PersonalInfo::where('ansar_id', $id)->first();
-////        //return View::make('template.bank_form_view')->with(['ansar' => $ansar]);
-////        $pdf = App::make('snappy.pdf.wrapper');
-////        $pdf->loadView('template.bank_form_view', ['ansar' => $ansar]);
-////        $pdf->setOption('margin-top', '1mm');
-////        $pdf->setOption('margin-bottom', '1mm');
-//        $thana = Input::get('thana_id');
-//        $unit = Input::get('unit_id');
-//        $file = public_path() . '/bank/' . District::find($unit)->unit_name_eng . '/';
-//        if (!file_exists($file)) mkdir($file, 0777, true);
-//        if (file_exists($file . Thana::find($thana)->thana_name_eng . '.xls')) return Response::json(['status' => true]);
-////        $status = $pdf->save($file . $id . '.pdf');
-//        $header = ['Ansar Id', 'Ansar Name', 'Mobile', 'Father Name', 'Mother Name', 'Nationality', 'Birth Date', 'Sex', 'Occupation', 'National Id No', 'permDivision', 'permDistrict', 'permThana', 'permUnion', 'MailOffice', 'MailDivision', 'MailDistrict', 'MailThana', 'SL. NO', 'Nominee Nema', 'Relationship', 'Share', 'SL. NO', 'Nominee Nema', 'Relationship', 'Share'];
-//        $ansar = CustomQuery::getEmbodiedAnsarV($unit, $thana);
-//        //return $ansar;
-//        Excel::create(Thana::find($thana)->thana_name_eng, function ($excel) use ($ansar, $header) {
-//            $excel->sheet('Ansar Detail', function ($sheet) use ($ansar, $header) {
-//                $sheet->row(1, $header);
-//                $c = 2;
-//                foreach ($ansar as $a) {
-//                    $ansarn = DB::table('tbl_ansar_parsonal_info')
-//                        ->join('tbl_amsar_nominee_info', 'tbl_amsar_nominee_info.annsar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-//                        ->where('tbl_ansar_parsonal_info.ansar_id', $a->ansar_id)->take(2)
-//                        ->select('tbl_amsar_nominee_info.name_of_nominee as nn', 'tbl_amsar_nominee_info.relation_with_nominee as rn')
-//                        ->get();
-//                    $p = count($ansarn) >= 2 ? 50 : 100;
-//                    $r = [$a->ansar_id, $a->name, $a->phone, $a->fatherName, $a->motherName, 'Bangladeshi', $a->birthDate, $a->sex, 'Public Service', $a->id ? $a->id : "NULL", $a->division_name_eng, $a->unit_name_eng, $a->thana_name_eng, $a->union_name_eng, 'DCA`s Office', $a->kdd, $a->kuu, $a->ktt];
-//                    $i = 1;
-//                    foreach ($ansarn as $b) {
-//                        array_push($r, $i);
-//                        array_push($r, $b->nn);
-//                        array_push($r, $b->rn);
-//                        array_push($r, $p);
-//                        $i++;
-//                    }
-//                    echo $c . "INSERT<br>";
-//                    $sheet->row($c, $r);
-//                    $c++;
-//
-//                }
-//
-//
-//            });
-//        })->store('xls', $file);
-//        return Response::json(['status' => true]);
-//    }
-//
-//    public function downloadAllBankForm()
-//    {
-//        $file = public_path() . '/bank/bank_receipt.zip';
-//        //return Response::json(['status'=>file_exists($file)]);
-//        return Response::download($file);
-//    }
-//
-//    public function makingZipAllBankForm()
-//    {
-//        //return View::make('template.bank_form_view')->with(['ansar' => $ansar]);
-//        $zip = new \ZipArchive();
-//        $file = public_path() . "/bank/";
-//        if (file_exists($file . 'bank_receipt')) unlink($file . 'bank_receipt.zip');
-//        $status = $zip->open($file . 'bank_receipt.zip', \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
-//        //if(file_exists($file))unlink($file);
-//        $this->getZipFile($zip, $file);
-//        //$this->removeAllFile($file);
-//        $zip->close();
-//        if (!$status) {
-//            return Response::json(['status' => false]);
-//        }
-//        return Response::json(['status' => true]);
-//    }
-//
-//    public function getZipFile(&$zip, $path)
-//    {
-//        $allFile = scandir($path);
-//        for ($i = 0; $i < count($allFile); $i++) {
-//            if (strcasecmp($allFile[$i], '.') == 0 || strcasecmp($allFile[$i], '..') == 0) {
-//
-//            } else {
-//                if (is_dir($path . $allFile[$i])) {
-//                    //echo str_replace(public_path().'/bank/','',$path.$allFile[$i]).'<br>';
-//                    $this->getZipFile($zip, $path . $allFile[$i] . '/');
-//                } else {
-//                    if (strcasecmp(pathinfo($allFile[$i], PATHINFO_EXTENSION), 'zip')) $zip->addFile($path . $allFile[$i], str_replace(public_path() . '/bank/', '', $path . $allFile[$i]));
-//                }
-//            }
-//        }
-//    }
-//
-//    public function bankRecipt()
-//    {
-//        return View::make('template.bank_from');
-//    }
-//
-//
-//    public function removeAllFile($path)
-//    {
-//        $allFile = scandir($path);
-//        for ($i = 0; $i < count($allFile); $i++) {
-//            if (strcasecmp($allFile[$i], '.') == 0 || strcasecmp($allFile[$i], '..') == 0) {
-//
-//            } else {
-//                if (is_dir($path . $allFile[$i])) {
-//                    //echo str_replace(public_path().'/bank/','',$path.$allFile[$i]).'<br>';
-//                    $this->removeAllFile($path . $allFile[$i] . '/');
-//                } else {
-//                    if (strcasecmp(pathinfo($allFile[$i], PATHINFO_EXTENSION), 'zip')) unlink($path . $allFile[$i]);
-//                }
-//            }
-//        }
-//        if (strcasecmp($path, public_path() . '/bank/')) rmdir($path);
-//    }
 
     public function newDisembodimentView()
     {

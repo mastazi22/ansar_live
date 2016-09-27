@@ -72,6 +72,7 @@
                     url:'{{URL::to('HRM/send_offer')}}',
                     data:{offered_ansar:$scope.ansarId,district_id:$scope.selectedDistrict,type:s}
                 }).then(function (response) {
+                    $scope.error=false;
                     $scope.submitResult  = response.data;
                     $scope.loadingSubmit = false;
                     $scope.ansarId = "";
@@ -80,6 +81,7 @@
                 },function (response) {
                     console.log(response)
                     $scope.loadingSubmit = false;
+                    $scope.error = true;
                 })
             }
         })
@@ -109,7 +111,7 @@
                     $(elem).confirmDialog({
                         message: 'Are you sure want to send offer this ansar',
                         ok_callback: function (element) {
-                            alert(scope.ansarDetail.asi.block_list_status)
+//                            alert(scope.ansarDetail.asi.block_list_status)
                             if(scope.ansarDetail.asi.block_list_status==1){
                                 $('body').notifyDialog({type: 'error', message: 'You can`t send offer to this ansar. Because he is blocked.'}).showDialog()
                                 return;
@@ -157,6 +159,7 @@
                             <button class="btn btn-primary" ng-disabled="!ansarId||!selectedDistrict" confirm-dialog>
                                 <img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16">
                                 Send Offer</button>
+                            <p class="text text-danger" ng-if="error">Server error occur. Please contact with system administrator</p>
                         </div>
                         <div class="col-sm-8" style="min-height: 400px;border-left: 1px solid #CCCCCC">
                             <div id="loading-box" ng-if="loadingAnsar">

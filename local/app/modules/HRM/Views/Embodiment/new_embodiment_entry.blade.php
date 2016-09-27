@@ -189,7 +189,7 @@
                                     <p class="text-danger">{{$errors->first('memorandum_id')}}</p>
                                 @endif
                             </div>
-                            <div ng-show="isAdmin!=22">
+                            <div ng-if="isAdmin!=22">
                                 <div class="form-group required" ng-init="reporting_date='{{Request::old('reporting_date')}}'">
                                     <label for="reporting_date" class="control-label">Reporting Date</label>
                                     {!! Form::text('reporting_date', $value = Request::old('reporting_date'), $attributes = array('class' => 'form-control', 'id' => 'reporting_date', 'ng-model' => 'reporting_date', 'required')) !!}
@@ -206,7 +206,7 @@
                                 </div>
                             </div>
                             <!---->
-                            <div ng-show="isAdmin==22">
+                            <div ng-if="isAdmin==22">
                                 <div class="form-group">
                                     <label for="r_date" class="control-label">Reporting Date</label>
                                     {!! Form::text('r_date', $value = null, $attributes = array('class' => 'form-control', 'id' => 'r_date', 'disabled')) !!}
@@ -351,6 +351,9 @@
                         </div>
                     </div>
                     {!! Form::close() !!}
+                    @if(Session::has('success_message'))
+                        <a href="{{URL::route('print_letter',['id'=>Session::get('memid'),'type'=>'EMBODIMENT','unit'=>Session::get('unit_id')])}}" class="btn btn-primary" style="margin-top: 10px">Print Embodiment Letter</a>
+                    @endif
                 </div>
             </div>
         </section>

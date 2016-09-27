@@ -1,7 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="{{asset('dist/css/user_css.css')}}">
+    <link href="{{asset('bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{asset('dist/css/AdminLTE.min.css')}}" rel="stylesheet" type="text/css"/>
+</head>
+<body>
 <h3 style="text-align: center">Embodiment Letter&nbsp;&nbsp;<a href="#" id="print-report"><span class="glyphicon glyphicon-print"></span></a></h3>
 <div class="letter">
     <div class="letter-header">
-        <div class="header-top">
+        <div class="header-top" style="background: none !important;">
             <h4>গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</br>
                 আনসার ও গ্রাম প্রতিরক্ষা বাহিনী
                 <br>
@@ -102,3 +111,17 @@
         </div>
     </div>
 </div>
+<script src="{{asset('plugins/jQuery/jQuery-2.1.4.min.js')}}" type="text/javascript"></script>
+<script>
+
+    $(function () {
+        $(document).on('click','#print-report', function (e) {
+            e.preventDefault();
+            $('body').append('<div id="print-area" class="letter">'+$(".letter").html()+'</div>')
+            window.print();
+            $("#print-area").remove()
+        })
+    })
+</script>
+</body>
+</html>

@@ -11,6 +11,7 @@ use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\OfferSmsLog;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
+use App\modules\HRM\Models\PersonalInfo;
 use App\modules\HRM\Models\ReceiveSMSModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -93,7 +94,7 @@ class OfferController extends Controller
     {
         $rules = [];
         if(Auth::user()->type==11){
-            $rules['offered_ansar']='required|array|array_type:int';
+            $rules['offered_ansar']='required';
             $rules['district_id']='required|numeric|regex:/^[0-9]+$/';
         }
         else if(Auth::user()->type==33){
@@ -126,6 +127,8 @@ class OfferController extends Controller
             DB::beginTransaction();
             try {
                 for ($i = 0; $i < count($ansar_ids); $i++) {
+                    $mos = PersonalInfo::where('ansar_id',$ansar_ids[$i])->first()->mobile_no_self;
+                    if(!$mos&&!preg_match('/^(+88)?0[0-9]{10}/',$mos)) throw new Exception("Invalid mobile number");
                     $offer = new OfferSMS;
                     $offer->ansar_id = $ansar_ids[$i];
                     $offer->sms_send_datetime = Carbon::now();
@@ -136,7 +139,6 @@ class OfferController extends Controller
                     if (!$offer->save()) throw new Exception("An Error Occur While Send Offer. Please Try Again Later");
                     $this->removeFromPanel($ansar_ids[$i]);
                     array_push($user, ['ansar_id' => $ansar_ids[$i], 'action_type' => 'SEND OFFER', 'from_state' => 'PANEL', 'to_state' => 'OFFER', 'action_by' => auth()->user()->id]);
-                    $result['success']++;
 
                 }
                 DB::commit();
@@ -149,6 +151,8 @@ class OfferController extends Controller
         } else {
             DB::beginTransaction();
             try {
+                $mos = PersonalInfo::where('ansar_id',$ansar_ids)->first()->mobile_no_self;
+                if(!$mos&&!preg_match('/^(+88)?0[0-9]{10}/',$mos)) throw new Exception("Invalid mobile number");
                 $offer = new OfferSMS;
                 $offer->ansar_id = $ansar_ids;
                 $offer->sms_send_datetime = Carbon::now();
