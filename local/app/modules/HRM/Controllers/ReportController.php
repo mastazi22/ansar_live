@@ -390,9 +390,9 @@ class ReportController extends Controller
             'view' => 'regex:/^[a-z]+/',
             'limit' => 'numeric',
             'offset' => 'numeric',
-            'unit' => 'numeric',
-            'ansar_rank' => 'numeric',
-            'ansar_sex' => 'regex:/^[A-Za-z]+$/',
+            'unit' => 'required',
+            'ansar_rank' => 'required',
+            'ansar_sex' => 'regex:/^[A-Za-z]+$/|required',
         ];
         $valid = Validator::make(Input::all(), $rules);
 
@@ -401,14 +401,12 @@ class ReportController extends Controller
             return response("Invalid Request(400)", 400);
         } else {
             if (strcasecmp($view, 'view') == 0) {
-                if (!is_null($unit) && !is_null($ansar_rank) && !is_null($ansar_sex)) {
-                    return CustomQuery::threeYearsOverAnsarList($offset, $limit, $unit, $ansar_rank, $ansar_sex);
-                }
+                return CustomQuery::threeYearsOverAnsarList($offset, $limit, $unit, $ansar_rank, $ansar_sex);
 
-            } else {
-                if (!is_null($unit) && !is_null($ansar_rank) && !is_null($ansar_sex)) {
-                    return CustomQuery::threeYearsOverAnsarCount($unit, $ansar_rank, $ansar_sex);
-                }
+
+            }
+            else {
+                return CustomQuery::threeYearsOverAnsarCount($unit, $ansar_rank, $ansar_sex);
             }
         }
     }
@@ -460,8 +458,7 @@ class ReportController extends Controller
                     'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')
                 ->get();
             return Response::json($ansar_details);
-        }
-        elseif (!$unit && $thana) {
+        } elseif (!$unit && $thana) {
             $ansar_details = DB::table('tbl_embodiment')
                 ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
                 ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
@@ -474,8 +471,7 @@ class ReportController extends Controller
                     'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')
                 ->get();
             return Response::json($ansar_details);
-        }
-        elseif ($unit && $thana) {
+        } elseif ($unit && $thana) {
             $ansar_details = DB::table('tbl_embodiment')
                 ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
                 ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')

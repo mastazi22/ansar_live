@@ -131,8 +131,7 @@ class FormSubmitHandler extends Controller
                 }
                 Session::flash('add_success', 'Draft Added Successfully');
                 return Response::json(['status' => true, 'url' => URL::route('entry_draft')]);
-            }
-            else {
+            } else {
 
 
                 $rules = [
@@ -839,12 +838,12 @@ class FormSubmitHandler extends Controller
     public function getNotVerifiedAnsar()
     {
         $rules = [
-          'limit'=>'required|numeric|regex:/^[0-9]+$/',
-          'offset'=>'required|numeric|regex:/^[0-9]+$/',
+            'limit' => 'required|numeric|regex:/^[0-9]+$/',
+            'offset' => 'required|numeric|regex:/^[0-9]+$/',
         ];
-        $valid = Validator::make(Input::all(),$rules);
-        if($valid->fails()){
-            return response("Invalid request(400)",400);
+        $valid = Validator::make(Input::all(), $rules);
+        if ($valid->fails()) {
+            return response("Invalid request(400)", 400);
         }
         if (Input::exists('chunk')) return response()->json(CustomQuery::getNotVerifiedChunkAnsar(Input::get('limit'), Input::get('offset')));
         return response()->json(CustomQuery::getNotVerifiedAnsar(Input::get('limit'), Input::get('offset')));
@@ -1010,12 +1009,16 @@ class FormSubmitHandler extends Controller
     public function idsearch(Request $request)
     {
         $ansarID = $request->input('ansarId');
-        $exist = file_exists(public_path('/data/originalinfo/frontside') . "/" . $ansarID . ".jpg");
         $find = PersonalInfo::where('ansar_id', $ansarID)->select('id')->first();
-        if ($find && $exist)
-            return Response::json(['yes' => "yes", 'value' => $ansarID, 'exist' => "yes"]);
-        else
-            return Response::json(['no' => "no", 'exist' => "no"]);
+        if ($find) {
+            $file_font = $find->ansar_id . 'jpg';
+            $file_back = $find->ansar_id . 'jpg';
+            return Response::json(['status' => true, 'url' => [
+                'font'=>URL::route('view_image', ['file' => $file_font]),
+                'back'=>URL::route('view_image', ['file' => $file_back])
+            ]]);
+        } else
+            return Response::json(['status' => false, 'url' => null]);
     }
 
     public function chunkVerify()
@@ -1026,5 +1029,21 @@ class FormSubmitHandler extends Controller
     public function getAnsarRank()
     {
         return Response::json(Designation::orderBy('id', 'desc')->get());
+    }
+
+    public function getImage($file)
+    {
+        $file = storage_path('data/orginalinfo/' . $file);
+        if (File::exists($file)) {
+            try {
+                $image = Image::make($file);
+                return $image->response();
+            } catch (\Exception $e) {
+                return response($e->getMessage(),500,['content-type'=>'text/plain']);
+            }
+        }
+        else{
+            return response("image not found",404,['content-type'=>'text/plain']);
+        }
     }
 }

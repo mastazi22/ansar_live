@@ -31,9 +31,12 @@
                     method: 'post',
                     data: {ansarId: id}
                 }).then(function (response) {
-//                        alert(JSON.stringify(response.data));
                     $scope.searchedAnsar = response.data;
+                    $scope.fontURL = $scope.searchedAnsar.url.font
+                    $scope.backURL = $scope.searchedAnsar.url.back
                     console.log($scope.searchedAnsar);
+                }, function (response) {
+                    $scope.searchedAnsar = {status:false}
                 })
             }
             }
@@ -44,21 +47,25 @@
     <section class="content">
         <div class="box box-solid">
             <div class="box-body">
-                <form method="post">
-                    <div class="center-search">
-                        <input ng-keypress="fullInfo($event,Id)" ng-model="Id" type="text" placeholder="Enter Ansar ID to see Original Information">
-                        <button ng-click="fullInfo($event,Id)" class="btn btn-success btn-lg" style="display: block;margin: 20px auto;">View Original Information</button>
-                    </div>
-                </form>
-                <div ng-show="searchedAnsar.yes == 'yes'" class="fullinfo">
-                    <div class="info-front-side">
-                        <img class="img-responsive" src="{{asset('/data/originalinfo/frontside')}}/[[ searchedAnsar.value ]].jpg">
-                    </div><br>
-                    <div class="info-back-side">
-                        <img class="img-responsive" src="{{asset('/data/originalinfo/backside')}}/[[ searchedAnsar.value ]].jpg">
+                <div class="row">
+                    <div class="col-sm-8 col-md-8 col-xs-12 col-lg-6 col-centered">
+                        <form method="post">
+                            <div class="center-search">
+                                <input ng-keypress="fullInfo($event,Id)" ng-model="Id" type="text" placeholder="Enter Ansar ID to see Original Information">
+                                <button ng-click="fullInfo($event,Id)" class="btn btn-success btn-md" style="display: block;margin: 20px auto;">View Original Information</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div ng-show="searchedAnsar.no == 'no'" class="noinfo">
+                <div ng-show="searchedAnsar.status" class="fullinfo">
+                    <div class="info-front-side">
+                        <img class="img-responsive" ng-src="fontURL">
+                    </div><br>
+                    <div class="info-back-side">
+                        <img class="img-responsive" ng-src="backURL">
+                    </div>
+                </div>
+                <div ng-show="!searchedAnsar.status" class="noinfo">
                     <h4 style="text-align: center;color:red">No original information or wrong Ansar ID</h4><br>
                 </div>
             </div>

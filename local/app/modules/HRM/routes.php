@@ -11,6 +11,7 @@ Route::group(['prefix'=>'HRM','middleware'=>'manageDatabase','namespace'=>'\App\
 Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserType','permission'] ],function(){
     Route::group(['namespace'=>'\App\modules\HRM\Controllers'],function(){
 
+        Route::get('view_image/{file}',['as'=>'view_image','uses'=>'FormSubmitHandler@getImage']);
         //DASHBOARD
         Route::get('/tesst',function(){
 //            return (UserPermission::getPermissionList());

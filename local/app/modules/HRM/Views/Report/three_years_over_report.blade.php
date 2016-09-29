@@ -12,9 +12,9 @@
         GlobalApp.controller('ReportThreeYearsOverList', function ($scope, $http, $sce) {
             $scope.total = 0;
             $scope.numOfPage = 0;
-            $scope.selectedDistrict = "";
-            $scope.selectedRank = "";
-            $scope.selectedSex= "";
+            $scope.selectedDistrict = "all";
+            $scope.selectedRank = "all";
+            $scope.selectedSex= "all";
             $scope.districts = [];
             $scope.itemPerPage = parseInt("{{config('app.item_per_page')}}");
             $scope.currentPage = 0;
@@ -25,6 +25,7 @@
             $scope.loadingSex = false;
             $scope.allLoading = false;
             $scope.loadingPage = [];
+            $scope.reportType = 'eng'
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
             $scope.loadPagination = function () {
                 $scope.pages = [];
@@ -185,7 +186,7 @@
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select class="form-control" ng-model="selectedDistrict">
-                                    <option value="">--Select a District--</option>
+                                    <option value="all">All</option>
                                     <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
                                     </option>
                                 </select>
@@ -197,7 +198,7 @@
                                     Select Rank
                                 </label>
                                 <select name="ansar_rank" class="form-control" ng-model="selectedRank">
-                                    <option value="" disabled>--Select Rank--</option>
+                                    <option value="all">All</option>
                                     <option value="1">Ansar</option>
                                     <option value="2">APC</option>
                                     <option value="3">PC</option>
@@ -211,7 +212,7 @@
                                     Select Sex
                                 </label>
                                 <select name="ansar_sex" class="form-control" ng-model="selectedSex">
-                                    <option value="" disabled>--Select Sex--</option>
+                                    <option value="all">All</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
                                     <option value="Other">Other</option>
