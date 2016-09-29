@@ -4489,7 +4489,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_rest_info.rest_date')->skip($offset)->limit($limit)->get();
-        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'rest']);
+        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'rest']);
     }
 
     public static function getRecentTotalRestAnsarCount($unit, $thana, $division = null)
@@ -4585,8 +4585,8 @@ class CustomQuery
 
     public static function getRecentTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division = null)
     {
-        $now = Carbon::now()->addHours(6);;
-        $backtime = Carbon::now()->addHours(6)->subDays(7);
+        $now = Carbon::now();
+        $backtime = Carbon::now()->subDays(7);
         if (is_null($division)) {
             if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
                 $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
@@ -4666,7 +4666,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_freezing_info.freez_reason', 'tbl_freezing_info.freez_date')->skip($offset)->limit($limit)->get();
-        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'freeze']);
+        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'freeze']);
     }
 
     public static function getRecentTotalFreezedAnsarCount($unit, $thana, $division = null)
@@ -4822,7 +4822,7 @@ class CustomQuery
         $ansars = $ansarQuery->whereBetween('tbl_blocklist_info.date_for_block', [$backtime, $now])
             ->distinct()->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
                 'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_blocklist_info.comment_for_block', 'tbl_blocklist_info.date_for_block')->skip($offset)->limit($limit)->get();
-        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'block']);
+        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'block']);
     }
 
     public static function getRecentTotalBlockedAnsarCount($unit, $thana, $division = null)
@@ -4992,7 +4992,7 @@ class CustomQuery
             ->distinct()
             ->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
                 'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_blacklist_info.black_list_comment as reason', 'tbl_blacklist_info.black_listed_date as date')->skip($offset)->limit($limit)->get();
-        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'black']);
+        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'black']);
     }
 
     public static function getRecentTotalBlackedAnsarCount($unit, $thana, $division = null)
@@ -5165,7 +5165,7 @@ class CustomQuery
             ->distinct()
             ->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
                 'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id', 'tbl_kpi_info.kpi_name')->skip($offset)->limit($limit)->get();
-        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
+        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
     }
 
     public static function getRecentTotalEmbodiedAnsarCount($unit, $thana, $division = null)
