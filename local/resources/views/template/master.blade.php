@@ -90,6 +90,11 @@
             })
 
         });
+        GlobalApp.filter('dateformat', function () {
+            return function (input,format) {
+                return moment(input).format(format);
+            }
+        })
         GlobalApp.directive('showAlert', function () {
             return {
                 restrict: 'AEC',
@@ -98,6 +103,16 @@
                     close: "&"
                 },
                 templateUrl: '{{asset('dist/template/alert_template.html')}}'
+            }
+        })
+        GlobalApp.directive('templateList',function(){
+            return {
+                restrict:'AE',
+                scope:{
+                    data:'=',
+                    dateFormat:'&'
+                },
+                templateUrl:'{{URL::route('template_list',['key'=>isset($type)?$type:''])}}'
             }
         })
         GlobalApp.controller('MenuController', function ($scope) {

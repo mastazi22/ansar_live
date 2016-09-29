@@ -60,7 +60,7 @@
         <section class="content" style="position: relative;" >
             <notify></notify>
             <div class="box box-solid">
-                {!! Form::open(array('url' => 'cancel_panel_entry_for_dg', 'id' => 'cancel_panel_entry_for_dg')) !!}
+                {!! Form::open(array('url' => 'HRM/cancel_panel_entry_for_dg', 'id' => 'cancel_panel_entry_for_dg')) !!}
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4">

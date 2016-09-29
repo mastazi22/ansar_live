@@ -14,7 +14,7 @@ return [
                     "route" => "ansar-withdraw-view",
                     "icon" => "fa-dashboard",
                 ],
-                "Ansar Before Withdraw List" => [
+                "List Of Ansar Before Withdraw" => [
                     "route" => "ansar_before_withdraw_view",
                     "icon" => "fa-dashboard",
                 ],
@@ -22,7 +22,7 @@ return [
                     "route" => "reduce_guard_strength",
                     "icon" => "fa-dashboard",
                 ],
-                "Ansar Before Reduce List" => [
+                "List Of Ansar Before Reduce" => [
                     "route" => "ansar_before_reduce_view",
                     "icon" => "fa-dashboard",
                 ],
@@ -133,7 +133,7 @@ return [
                     ]
 
                 ],
-                "Black" => [
+                "Black List" => [
                     "route" => "#",
                     "icon" => "fa-dashboard",
                     "children" => [
@@ -148,7 +148,7 @@ return [
                     ]
 
                 ],
-                "Block" => [
+                "Block List" => [
                     "route" => "#",
                     "icon" => "fa-dashboard",
                     "children" => [

@@ -66,8 +66,8 @@
                         view:'view'
                     }
                 }).then(function (response) {
-//                    console.log(response.data);
-                    $scope.ansars = $sce.trustAsHtml(response.data);
+                    console.log(response.data);
+                    $scope.ansars = response.data;
                     $scope.loadingPage[page.pageNum]=false;
                     $scope.allLoading = false;
                 })
@@ -127,6 +127,9 @@
             function capitalizeLetter(s){
                 return s.charAt(0).toUpperCase()+ s.slice(1);
             }
+            $scope.formatDate = function (date) {
+                return moment(date).format("Do MM,YYYY");
+            }
         })
     </script>
 
@@ -166,36 +169,7 @@
                     </div>
                     <h4>Total Ansars :[[total.toLocaleString()]]</h4>
                     <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <tr>
-                                <th>SL. No</th>
-                                <th>Ansar id</th>
-                                <th>Rank</th>
-                                <th>Name</th>
-                                <th>Birth Date</th>
-                                <th>Home District</th>
-                                <th>Thana</th>
-                                <th ng-if="ansarType=='paneled_ansar'">Panel Date & Time</th>
-                                <th ng-if="ansarType=='paneled_ansar'">	Panel Id</th>
-                                <th ng-if="ansarType=='embodied_ansar'||ansarType=='own_embodied_ansar'||ansarType=='embodied_ansar_in_different_district'">Kpi Name</th>
-                                <th ng-if="ansarType=='embodied_ansar'||ansarType=='own_embodied_ansar'||ansarType=='embodied_ansar_in_different_district'">Embodiment Date</th>
-                                <th ng-if="ansarType=='embodied_ansar'||ansarType=='own_embodied_ansar'||ansarType=='embodied_ansar_in_different_district'">Embodiment Id</th>
-                                <th ng-if="ansarType=='offerred_ansar'">Offer Date & Time</th>
-                                <th ng-if="ansarType=='rest_ansar'">Rest Date</th>
-                                <th ng-if="ansarType=='freezed_ansar'">Freeze Reason</th>
-                                <th ng-if="ansarType=='freezed_ansar'">Freeze Date</th>
-                                <th ng-if="ansarType=='blocked_ansar'">Block Reason</th>
-                                <th ng-if="ansarType=='blocked_ansar'">Block Date</th>
-                                <th ng-if="ansarType=='blacked_ansar'">Black Reason</th>
-                                <th ng-if="ansarType=='blacked_ansar'">Black Date</th>
-
-                            </tr>
-                            <tbody ng-bind-html="ansars" style="border:none">
-                            <tr>
-                                <td class="warning" colspan="7">No Ansar Found</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                        <template-list data="ansars"></template-list>
                         <div class="table_pagination" ng-if="pages.length>1">
                             <ul class="pagination">
                                 <li ng-class="{disabled:currentPage == 0}">

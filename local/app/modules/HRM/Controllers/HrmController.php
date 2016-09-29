@@ -629,4 +629,8 @@ class HrmController extends Controller
     {
         return View::make('HRM::global_perameter')->with('gp', GlobalParameter::all());
     }
+
+    function getTemplate($key){
+        return View::make('HRM::Partial_view.'.$key.'_list');
+    }
 }
