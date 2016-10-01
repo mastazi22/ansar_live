@@ -4476,7 +4476,7 @@ table.text-center, table.text-center td, table.text-center th {
 }
 
 .check-boxx:checked + .check-label {
-    background: green;
+    background: darkgreen;
 }
 
 .header-title {
@@ -4681,4 +4681,25 @@ ul.module-menu > li > a:hover {
     content: '';
     display: block;
     clear: both;
+}
+.male{
+    color: blue;
+}
+.female{
+    color: rgb(255,20,147);
+}
+.pc{
+    color: #008000;
+    border-bottom: 1px solid #008000;
+    font-weight: bold;
+}
+.apc{
+    color:#00FF00;
+    border-bottom: 1px solid #00FF00;
+    font-weight: bold;
+}
+.ansar{
+    color: #808000;
+    border-bottom: 1px solid #808000;
+    font-weight: bold;
 }

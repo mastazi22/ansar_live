@@ -19,6 +19,7 @@ use Carbon\Carbon;
 use Hash;
 use Illuminate\Contracts\Pagination;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -1009,13 +1010,13 @@ class FormSubmitHandler extends Controller
     public function idsearch(Request $request)
     {
         $ansarID = $request->input('ansarId');
-        $find = PersonalInfo::where('ansar_id', $ansarID)->select('id')->first();
+        $find = PersonalInfo::where('ansar_id', $ansarID)->select('id','ansar_id')->first();
         if ($find) {
-            $file_font = $find->ansar_id . 'jpg';
-            $file_back = $find->ansar_id . 'jpg';
+            $file_font = $find->ansar_id . '.jpg';
+            $file_back = $find->ansar_id . '.jpg';
             return Response::json(['status' => true, 'url' => [
-                'font'=>URL::route('view_image', ['file' => $file_font]),
-                'back'=>URL::route('view_image', ['file' => $file_back])
+                'font'=>URL::route('view_image', ['type'=>'font','file' => $file_font]),
+                'back'=>URL::route('view_image', ['type'=>'back','file' => $file_back])
             ]]);
         } else
             return Response::json(['status' => false, 'url' => null]);
@@ -1031,19 +1032,21 @@ class FormSubmitHandler extends Controller
         return Response::json(Designation::orderBy('id', 'desc')->get());
     }
 
-    public function getImage($file)
+    public function getImage($type,$file)
     {
-        $file = storage_path('data/orginalinfo/' . $file);
+        if($type=='font')
+        $file = storage_path('data/orginalinfo/frontside/' . $file);
+        else  $file = storage_path('data/orginalinfo/backside/' . $file);
         if (File::exists($file)) {
             try {
                 $image = Image::make($file);
                 return $image->response();
             } catch (\Exception $e) {
-                return response($e->getMessage(),500,['content-type'=>'text/plain']);
+                return Image::make(public_path('dist/img/image-not-found.png'))->response();
             }
         }
         else{
-            return response("image not found",404,['content-type'=>'text/plain']);
+            return Image::make(public_path('dist/img/image-not-found.png'))->response();
         }
     }
 }
