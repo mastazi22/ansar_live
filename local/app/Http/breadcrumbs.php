@@ -248,8 +248,13 @@ Breadcrumbs::register('cancel_blacklist', function($breadcrumbs) {
 ////Transfer
 Breadcrumbs::register('transfer', function($breadcrumbs) {
     $breadcrumbs->parent('service');
-    $breadcrumbs->push('Transfer Ansars', URL::route('transfer_process'));
+    $breadcrumbs->push('Transfer Ansars(Single Kpi)', URL::route('transfer_process'));
 });
+Breadcrumbs::register('multiple_transfer', function($breadcrumbs) {
+    $breadcrumbs->parent('service');
+    $breadcrumbs->push('Transfer Ansars(Multiple Kpi)', URL::route('multiple_kpi_transfer_process'));
+});
+
 //Report
 Breadcrumbs::register('report', function($breadcrumbs) {
     $breadcrumbs->parent('hrm');

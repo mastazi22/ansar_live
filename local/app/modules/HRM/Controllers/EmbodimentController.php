@@ -814,4 +814,39 @@ class EmbodimentController extends Controller
         }
         return Response::json(['detail' => $detail, 'ansar_count' => $embodiment_detail]);
     }
+
+    public function multipleKpiTransferView(){
+        return View::make("HRM::Transfer.multiple_kpi_transfer");
+    }
+    public function getEmbodiedAnsarInfo(Request $request){
+        $valid = Validator::make($request->all(),[
+            'ansar_id'=>'required|numeric'
+        ],[
+            'ansar_id.required'=>'Ansar id required',
+            'ansar_id.numeric'=>'Invalid ansar id',
+        ]);
+
+        if($valid->fails()){
+            return Response::json(['status'=>0,'messages'=>$valid->messages()->all()]);
+        }
+        $query = DB::table('tbl_ansar_parsonal_info')
+            ->join('tbl_embodiment','tbl_embodiment.ansar_id','=','tbl_ansar_parsonal_info.ansar_id')
+            ->join('tbl_kpi_info','tbl_kpi_info.id','=','tbl_embodiment.kpi_id')
+            ->join('tbl_units','tbl_kpi_info.unit_id','=','tbl_units.id')
+            ->join('tbl_thana','tbl_kpi_info.thana_id','=','tbl_thana.id')
+            ->where('tbl_embodiment.ansar_id',$request->get('ansar_id'));
+        if(Auth::user()->type==22){
+            $query = $query->where('tbl_kpi_info.unit_id','=',Auth::user()->district_id);
+        }
+        else if(Auth::user()->type==66){
+            $query = $query->where('tbl_kpi_info.division_id','=',Auth::user()->division_id);
+        }
+        if($query->exists()) {
+            $query = $query->select('tbl_ansar_parsonal_info.ansar_name_eng','tbl_ansar_parsonal_info.ansar_id', 'tbl_kpi_info.kpi_name', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_embodiment.joining_date', 'tbl_units.id');
+            return Response::json(['status' => 1, 'data' => $query->first()]);
+        }
+        else{
+            return Response::json(['status'=>0,'messages'=>['Ansar id not available']]);
+        }
+    }
 }

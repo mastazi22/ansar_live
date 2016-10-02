@@ -163,10 +163,15 @@ return [
                     ]
 
                 ],
-                "Ansar Transfer" => [
+                "Ansar Transfer(Single Kpi)" => [
                     "route" => "transfer_process",
                     "icon" => "fa-dashboard",
-                ]
+                ],
+                "Ansar Transfer(Multiple Kpi)" => [
+                    "route" => "multiple_kpi_transfer_process",
+                    "icon" => "fa-dashboard",
+                ],
+
             ]
         ],
         "Report" => [
