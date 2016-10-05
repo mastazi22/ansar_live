@@ -177,34 +177,34 @@
                 var index = $scope.selectedAnsar.indexOf($scope.ansars[i]);
                 if ($scope.selectAnsar[i]) {
                     if (index == -1) {
-                        switch ($scope.ansars[i].rank) {
-                            case 1:
-                                $scope.tsAnsar += 1;
-                                break
-                            case 2:
-                                $scope.tsAPC += 1;
-                                break
-                            case 3:
-                                $scope.tsPC += 1;
-                                break
-
-                        }
+//                        switch ($scope.ansars[i].rank) {
+//                            case 1:
+//                                $scope.tsAnsar += 1;
+//                                break
+//                            case 2:
+//                                $scope.tsAPC += 1;
+//                                break
+//                            case 3:
+//                                $scope.tsPC += 1;
+//                                break
+//
+//                        }
                         $scope.selectedAnsar.push($scope.ansars[i])
                     }
                 }
                 else {
-                    switch ($scope.selectedAnsar[index].rank) {
-                        case 1:
-                            $scope.tsAnsar -= 1;
-                            break
-                        case 2:
-                            $scope.tsAPC -= 1;
-                            break
-                        case 3:
-                            $scope.tsPC -= 1;
-                            break
-
-                    }
+//                    switch ($scope.selectedAnsar[index].rank) {
+//                        case 1:
+//                            $scope.tsAnsar -= 1;
+//                            break
+//                        case 2:
+//                            $scope.tsAPC -= 1;
+//                            break
+//                        case 3:
+//                            $scope.tsPC -= 1;
+//                            break
+//
+//                    }
                     $scope.selectedAnsar.splice(index, 1);
                 }
                 $scope.selectAll = $scope.selectedAnsar.length == $scope.ansars.length;
@@ -217,8 +217,14 @@
             $scope.changeSelectAll = function () {
                 $scope.selectAnsar = Array.apply(null, new Array($scope.ansars.length)).map(Boolean.prototype.valueOf, $scope.selectAll);
             }
+            $scope.letterOption={
+                id:$scope.memorandumId,
+                unit:$scope.selectedDistrict[1]
+            }
+            $scope.pl = false
             $scope.confirmTransferAnsar = function () {
                 var ansar_id = [];
+                $scope.pl = false
                 $scope.modalOpen = false;
                 $scope.selectedAnsar.forEach(function (a) {
                     ansar_id.push({ansar_id: a.ansar_id, joining_date: a.transfered_date});
@@ -237,10 +243,14 @@
                     data: angular.toJson(data),
                     method: 'post'
                 }).then(function (response) {
+                    $scope.letterOption={
+                        id:angular.copy($scope.memorandumId),
+                        unit:angular.copy($scope.selectedDistrict[1])
+                    }
                     $scope.allLoading = false
                     console.log(response.data)
                     $scope.result = response.data;
-
+                    $scope.pl = true;
                     if ($scope.result.data.success.count > 0) $scope.loadAnsar();
 
 
@@ -330,38 +340,38 @@
                 }
             }
         })
-        GlobalApp.directive('checkKpi', function ($http) {
-            return {
-                restrict: 'AC',
-                link: function (scope, elem, attrs) {
+        {{--GlobalApp.directive('checkKpi', function ($http) {--}}
+            {{--return {--}}
+                {{--restrict: 'AC',--}}
+                {{--link: function (scope, elem, attrs) {--}}
 
-                    $(elem).on('change', function (e) {
-                        var v = $(this).val()
-//                            alert(v)
-                        scope.loadingKPI[1] = true;
-                        $http({
-                            method: 'get',
-                            params: {id: v},
-                            url: "{{URL::route('kpi_detail')}}"
-                        }).then(function (response) {
-                            console.log(response.data);
-                            scope.showKpiStatus = true;
-                            scope.totalKpiAnsar.pc.given = response.data.detail.no_of_pc
-                            scope.totalKpiAnsar.pc.current = response.data.ansar_count[2].total
-                            scope.totalKpiAnsar.apc.given = response.data.detail.no_of_apc
-                            scope.totalKpiAnsar.apc.current = response.data.ansar_count[1].total
-                            scope.totalKpiAnsar.ansar.given = response.data.detail.no_of_ansar
-                            scope.totalKpiAnsar.ansar.current = response.data.ansar_count[0].total
-                            scope.loadingKPI[1] = false;
+                    {{--$(elem).on('change', function (e) {--}}
+                        {{--var v = $(this).val()--}}
+{{--//                            alert(v)--}}
+                        {{--scope.loadingKPI[1] = true;--}}
+                        {{--$http({--}}
+                            {{--method: 'get',--}}
+                            {{--params: {id: v},--}}
+                            {{--url: "{{URL::route('kpi_detail')}}"--}}
+                        {{--}).then(function (response) {--}}
+                            {{--console.log(response.data);--}}
+                            {{--scope.showKpiStatus = true;--}}
+                            {{--scope.totalKpiAnsar.pc.given = response.data.detail.no_of_pc--}}
+                            {{--scope.totalKpiAnsar.pc.current = response.data.ansar_count[2].total--}}
+                            {{--scope.totalKpiAnsar.apc.given = response.data.detail.no_of_apc--}}
+                            {{--scope.totalKpiAnsar.apc.current = response.data.ansar_count[1].total--}}
+                            {{--scope.totalKpiAnsar.ansar.given = response.data.detail.no_of_ansar--}}
+                            {{--scope.totalKpiAnsar.ansar.current = response.data.ansar_count[0].total--}}
+                            {{--scope.loadingKPI[1] = false;--}}
 
-                        }, function (response) {
-                            scope.loadingKPI[1] = false;
-                        })
-                    })
+                        {{--}, function (response) {--}}
+                            {{--scope.loadingKPI[1] = false;--}}
+                        {{--})--}}
+                    {{--})--}}
 
-                }
-            }
-        })
+                {{--}--}}
+            {{--}--}}
+        {{--})--}}
         $(document).ready(function () {
             $("#join_date_in_tk").datePicker(false);
         })
@@ -456,6 +466,9 @@
                         </table>
                     </div>
                     <div>
+                        <a target="_blank" href="{{URL::to('HRM/print_letter')}}?id=[[letterOption.id]]&unit=[[letterOption.unit]]&&view=full&type=TRANSFER" class="pull-left btn btn-primary" ng-if="pl">
+                            <i class="fa fa-print"></i>&nbsp;&nbsp;Print Letter
+                        </a>
                         <button class="pull-right btn btn-primary" open-hide-modal ng-click="modalOpen=true">
                             <i class="fa fa-send"></i>&nbsp;&nbsp;Transfer
                         </button>
@@ -475,32 +488,32 @@
                         </div>
                         <div class="modal-body">
                             <div class="register-box" style="margin: 0;width: auto">
-                                <div class="row" ng-if="showKpiStatus">
-                                    <div class="col-md-8 col-md-offset-2">
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                                <tr style="font-weight: bold;"
-                                                    ng-class="{'text-danger':totalKpiAnsar.pc.given<totalKpiAnsar.pc.current+tsPC,'text-success':totalKpiAnsar.pc.given>=totalKpiAnsar.pc.current+tsPC}">
-                                                    <td>Total PC given : [[totalKpiAnsar.pc.given]]</td>
-                                                    <td>Total PC embodied : [[totalKpiAnsar.pc.current]]</td>
-                                                    <td>Total PC Transferred : [[tsPC]]</td>
-                                                </tr>
-                                                <tr style="font-weight: bold;"
-                                                    ng-class="{'text-danger':totalKpiAnsar.apc.given<totalKpiAnsar.apc.current+tsAPC,'text-success':totalKpiAnsar.apc.given>=totalKpiAnsar.apc.current+tsAPC}">
-                                                    <td>Total APC given : [[totalKpiAnsar.apc.given]]</td>
-                                                    <td>Total APC embodied : [[totalKpiAnsar.apc.current]]</td>
-                                                    <td>Total APC Transferred : [[tsAPC]]</td>
-                                                </tr>
-                                                <tr style="font-weight: bold;"
-                                                    ng-class="{'text-danger':totalKpiAnsar.ansar.given<totalKpiAnsar.ansar.current+tsAnsar,'text-success':totalKpiAnsar.ansar.given>=totalKpiAnsar.ansar.current+tsAnsar}">
-                                                    <td>Total Ansar given : [[totalKpiAnsar.ansar.given]]</td>
-                                                    <td>Total Ansar embodied : [[totalKpiAnsar.ansar.current]]</td>
-                                                    <td>Total Ansar Transferred : [[tsAnsar]]</td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
+                                {{--<div class="row" ng-if="showKpiStatus">--}}
+                                    {{--<div class="col-md-8 col-md-offset-2">--}}
+                                        {{--<div class="table-responsive">--}}
+                                            {{--<table class="table">--}}
+                                                {{--<tr style="font-weight: bold;"--}}
+                                                    {{--ng-class="{'text-danger':totalKpiAnsar.pc.given<totalKpiAnsar.pc.current+tsPC,'text-success':totalKpiAnsar.pc.given>=totalKpiAnsar.pc.current+tsPC}">--}}
+                                                    {{--<td>Total PC given : [[totalKpiAnsar.pc.given]]</td>--}}
+                                                    {{--<td>Total PC embodied : [[totalKpiAnsar.pc.current]]</td>--}}
+                                                    {{--<td>Total PC Transferred : [[tsPC]]</td>--}}
+                                                {{--</tr>--}}
+                                                {{--<tr style="font-weight: bold;"--}}
+                                                    {{--ng-class="{'text-danger':totalKpiAnsar.apc.given<totalKpiAnsar.apc.current+tsAPC,'text-success':totalKpiAnsar.apc.given>=totalKpiAnsar.apc.current+tsAPC}">--}}
+                                                    {{--<td>Total APC given : [[totalKpiAnsar.apc.given]]</td>--}}
+                                                    {{--<td>Total APC embodied : [[totalKpiAnsar.apc.current]]</td>--}}
+                                                    {{--<td>Total APC Transferred : [[tsAPC]]</td>--}}
+                                                {{--</tr>--}}
+                                                {{--<tr style="font-weight: bold;"--}}
+                                                    {{--ng-class="{'text-danger':totalKpiAnsar.ansar.given<totalKpiAnsar.ansar.current+tsAnsar,'text-success':totalKpiAnsar.ansar.given>=totalKpiAnsar.ansar.current+tsAnsar}">--}}
+                                                    {{--<td>Total Ansar given : [[totalKpiAnsar.ansar.given]]</td>--}}
+                                                    {{--<td>Total Ansar embodied : [[totalKpiAnsar.ansar.current]]</td>--}}
+                                                    {{--<td>Total Ansar Transferred : [[tsAnsar]]</td>--}}
+                                                {{--</tr>--}}
+                                            {{--</table>--}}
+                                        {{--</div>--}}
+                                    {{--</div>--}}
+                                {{--</div>--}}
                                 <div class="register-box-body  margin-bottom" style="padding: 0;padding-bottom: 10px">
                                     <div class="row">
                                         <div class="col-sm-4">
