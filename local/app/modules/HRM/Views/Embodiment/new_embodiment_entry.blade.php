@@ -352,7 +352,7 @@
                     </div>
                     {!! Form::close() !!}
                     @if(Session::has('success_message'))
-                        <a href="{{URL::route('print_letter',['id'=>Session::get('memid'),'type'=>'EMBODIMENT','unit'=>Session::get('unit_id')])}}" class="btn btn-primary" style="margin-top: 10px">Print Embodiment Letter</a>
+                        <a target="_blank" href="{{URL::route('print_letter',['id'=>Session::get('memid'),'type'=>'EMBODIMENT','unit'=>Session::get('unit_id'),'view'=>'full'])}}" class="btn btn-primary" style="margin-top: 10px">Print Embodiment Letter</a>
                     @endif
                 </div>
             </div>

@@ -231,6 +231,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/transfer_process', ['as' => 'transfer_process', 'uses' => 'EmbodimentController@transferProcessView']);
         Route::get('/multiple_kpi_transfer_process', ['as' => 'multiple_kpi_transfer_process', 'uses' => 'EmbodimentController@multipleKpiTransferView']);
         Route::post('/search_kpi_by_ansar', ['as' => 'search_kpi_by_ansar', 'uses' => 'EmbodimentController@getEmbodiedAnsarInfo']);
+        Route::post('/confirm_transfer', ['as' => 'confirm_transfer', 'uses' => 'EmbodimentController@confirmTransfer']);
         Route::get('/get_embodied_ansar', ['as'=>'get_embodied_ansar','uses'=>'EmbodimentController@getEmbodiedAnsarOfKpi']);
         Route::post('/complete_transfer_process', ['as'=>'complete_transfer_process','uses'=>'EmbodimentController@completeTransferProcess']);
         //Start Block and Black list for DG

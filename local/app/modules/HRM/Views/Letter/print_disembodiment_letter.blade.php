@@ -1,7 +1,7 @@
 <h3 style="text-align: center">Disembodiment Letter&nbsp;&nbsp;<a href="#" id="print-report"><span class="glyphicon glyphicon-print"></span></a></h3>
 <div class="letter">
     <div class="letter-header">
-        <div class="header-top">
+        <div class="header-top" style="background: none">
             <h4>গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</br>
                 আনসার ও গ্রাম প্রতিরক্ষা বাহিনী
                 <br>

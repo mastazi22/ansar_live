@@ -10,10 +10,6 @@ return [
                     "route" => "kpi_view",
                     "icon" => "fa-dashboard",
                 ],
-                "Ansar Withdraw" => [
-                    "route" => "ansar-withdraw-view",
-                    "icon" => "fa-dashboard",
-                ],
                 "List Of Ansar Before Withdraw" => [
                     "route" => "ansar_before_withdraw_view",
                     "icon" => "fa-dashboard",
@@ -121,6 +117,10 @@ return [
                             "children" => [
                                 "Freeze For Dicplinary Action" => [
                                     "route" => "freeze_view",
+                                    "icon" => "fa-dashboard",
+                                ],
+                                "Freeze For Ansar Withdraw" => [
+                                    "route" => "ansar-withdraw-view",
                                     "icon" => "fa-dashboard",
                                 ],
                                 "After Result" => [

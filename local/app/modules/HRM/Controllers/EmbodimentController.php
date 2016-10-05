@@ -33,6 +33,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
+use Psy\Exception\Exception;
 
 class EmbodimentController extends Controller
 {
@@ -180,8 +181,7 @@ class EmbodimentController extends Controller
                     'kpi_id.numeric' => 'KPI format is invalid',
                     'kpi_id.regex' => 'KPI format is invalid',
                 ];
-            }
-            else {
+            } else {
                 $rules = [
                     'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
                     'memorandum_id' => 'required|unique:hrm.tbl_memorandum_id',
@@ -368,7 +368,7 @@ class EmbodimentController extends Controller
             DB::rollback();
             return $e->getMessage();
         }
-        return Redirect::route('go_to_new_embodiment_page')->with(['success_message'=>'Ansar is Embodied Successfully!','memid'=>$memorandum_id,'unit_id'=>$request->get('division_name_eng')]);
+        return Redirect::route('go_to_new_embodiment_page')->with(['success_message' => 'Ansar is Embodied Successfully!', 'memid' => $memorandum_id, 'unit_id' => $request->get('division_name_eng')]);
     }
 
     public function transferProcessView()
@@ -815,38 +815,86 @@ class EmbodimentController extends Controller
         return Response::json(['detail' => $detail, 'ansar_count' => $embodiment_detail]);
     }
 
-    public function multipleKpiTransferView(){
+    public function multipleKpiTransferView()
+    {
         return View::make("HRM::Transfer.multiple_kpi_transfer");
     }
-    public function getEmbodiedAnsarInfo(Request $request){
-        $valid = Validator::make($request->all(),[
-            'ansar_id'=>'required|numeric'
-        ],[
-            'ansar_id.required'=>'Ansar id required',
-            'ansar_id.numeric'=>'Invalid ansar id',
+
+    public function getEmbodiedAnsarInfo(Request $request)
+    {
+        $valid = Validator::make($request->all(), [
+            'ansar_id' => 'required|numeric',
+            'unit' => 'required|numeric'
+        ], [
+            'ansar_id.required' => 'Ansar id required',
+            'ansar_id.numeric' => 'Invalid ansar id',
         ]);
 
-        if($valid->fails()){
-            return Response::json(['status'=>0,'messages'=>$valid->messages()->all()]);
+        if ($valid->fails()) {
+            return Response::json(['status' => 0, 'messages' => $valid->messages()->all()]);
         }
         $query = DB::table('tbl_ansar_parsonal_info')
-            ->join('tbl_embodiment','tbl_embodiment.ansar_id','=','tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_kpi_info','tbl_kpi_info.id','=','tbl_embodiment.kpi_id')
-            ->join('tbl_units','tbl_kpi_info.unit_id','=','tbl_units.id')
-            ->join('tbl_thana','tbl_kpi_info.thana_id','=','tbl_thana.id')
-            ->where('tbl_embodiment.ansar_id',$request->get('ansar_id'));
-        if(Auth::user()->type==22){
-            $query = $query->where('tbl_kpi_info.unit_id','=',Auth::user()->district_id);
-        }
-        else if(Auth::user()->type==66){
-            $query = $query->where('tbl_kpi_info.division_id','=',Auth::user()->division_id);
-        }
-        if($query->exists()) {
-            $query = $query->select('tbl_ansar_parsonal_info.ansar_name_eng','tbl_ansar_parsonal_info.ansar_id', 'tbl_kpi_info.kpi_name', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_embodiment.joining_date', 'tbl_units.id');
+            ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+            ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
+            ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
+            ->where('tbl_embodiment.ansar_id', $request->get('ansar_id'))
+            ->where('tbl_units.id', $request->get('unit'));
+        if ($query->exists()) {
+            $query = $query->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id as kpi_id', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_embodiment.joining_date', 'tbl_units.id');
             return Response::json(['status' => 1, 'data' => $query->first()]);
+        } else {
+            return Response::json(['status' => 0, 'messages' => ['Ansar id not available']]);
         }
-        else{
-            return Response::json(['status'=>0,'messages'=>['Ansar id not available']]);
+    }
+
+    public function confirmTransfer(Request $request)
+    {
+        $valid = Validator::make($request->all(), [
+            'memId' => 'required|unique:tbl_memorandum_id,memorandum_id'
+        ]);
+        if ($valid->fails()) {
+            return response($valid->messages()->toJson(), 400, ['Content-type' => 'application/json']);
         }
+        $data = $request->ansars;
+        $m_id = $request->memId;
+
+        foreach ($data as $ansar) {
+            $ansar = (object)$ansar;
+
+            DB::beginTransaction();
+            try {
+
+                $e_ansar = EmbodimentModel::where('ansar_id', $ansar->ansarId)->where('kpi_id', $ansar->currentKpi)->first();
+                //print_r($ansar->ansarId); die;
+                if ($e_ansar) {
+                    $e_ansar->kpi_id = $ansar->transferKpi;
+                    $e_ansar->transfered_date = Carbon::createFromFormat("d-M-Y", $ansar->tKpiJoinDate)->format("Y-m-d");
+                    $e_ansar->save();
+                    $transfer = new TransferAnsar;
+                    //print_r($ansar->id);die;
+                    $transfer->ansar_id = $ansar->ansarId;
+                    $transfer->embodiment_id = $e_ansar->id;
+                    $transfer->transfer_memorandum_id = $m_id;
+                    $transfer->present_kpi_id = $ansar->currentKpi;
+                    $transfer->transfered_kpi_id = $ansar->transferKpi;
+                    $transfer->present_kpi_join_date = $ansar->tKpiJoinDate;
+                    $transfer->transfered_kpi_join_date = Carbon::createFromFormat("d-M-Y", $ansar->tKpiJoinDate)->format("Y-m-d");
+                    $transfer->action_by = Auth::user()->id;
+                    $transfer->save();
+                    DB::commit();
+                    //$status['success']['count']++;
+                    //array_push($status['success']['data'], $ansar['ansar_id']);
+                    CustomQuery::addActionlog(['ansar_id' => $ansar->ansarId, 'action_type' => 'TRANSFER', 'from_state' => $ansar->currentKpi, 'to_state' => $ansar->transferKpi, 'action_by' => auth()->user()->id]);
+
+                }
+            } catch (Exception $e) {
+                DB::rollback();
+                return response(collect(['message' => "An error occur while transfer. Please try again later"])->toJson(), 400, ['Content-Type' => 'application/json']);
+            }
+
+
+        }
+        return Response::json(['status' => 1, 'message' => 'Ansar transfer complate', 'memId' => $m_id]);
     }
 }

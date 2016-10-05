@@ -25,7 +25,6 @@
       {"value":"go_to_kpi_page","name":"Add New Kpi","type":"menu"},
       {"value":"Kpi_edit","name":"Kpi Edit"},
       {"value":"kpi_verify","name":"Kpi Verify"},
-      {"value":"ansar-withdraw-view","name":"Ansar Withdraw","type":"menu"},
       {"value":"ansar_before_withdraw_view","name":"Ansar Before Withdraw List","type":"menu"},
       {"value":"reduce_guard_strength","name":"Reduce Guard Strength","type":"menu"},
       {"value":"ansar_before_reduce_view","name":"Ansar Before Reduce List","type":"menu"},
@@ -60,7 +59,8 @@
       {"value":"view_panel_list","name":"Panel","type":"menu"},
       {"value":"make_offer","name":"Offer","type":"menu"},
       {"value":"offer_quota","name":"Offer Quota","type":"menu"},
-      {"value":"transfer_process","name":"Ansar Transfer","type":"menu"}
+      {"value":"transfer_process","name":"Ansar Transfer(Single Kpi)","type":"menu"},
+      {"value":"multiple_kpi_transfer_process","name":"Ansar Transfer(Multiple Kpi)","type":"menu"}
     ]
   },
   {
@@ -145,6 +145,7 @@
     "controller":{"value":"FreezeController","name":"Freeze"},
     "routes":[
       {"value":"freeze_view","name":"Freeze For Dicplinary Action","type":"menu"},
+      {"value":"ansar-withdraw-view","name":"Ansar Withdraw","type":"menu"},
       {"value":"freeze_list","name":"After Result","type":"menu"}
     ]
   },
