@@ -7,8 +7,9 @@
         <th>Birth Date</th>
         <th>Home District</th>
         <th>Thana</th>
-        <th>Freeze Reason</th>
-        <th>Freeze Date</th>
+        <th>Kpi Name</th>
+        <th>Embodiment Date</th>
+        <th>Embodiment Id</th>
 
     </tr>
     <tbody>
@@ -17,14 +18,15 @@
         <td><a href="{{URL::to('HRM/entryreport')}}/[[ansar.id]]">[[ansar.id]]</a></td>
         <td>[[ansar.rank]]</td>
         <td>[[ansar.name]]</td>
-        <td>[[ansar.birth_date|dateformat:"Do MMM,YYYY"]]</td>
+        <td>[[ansar.birth_date|dateformat:"DD MMM,YYYY"]]</td>
         <td>[[ansar.unit]]</td>
         <td>[[ansar.thana]]</td>
-        <td>[[ansar.freez_reason]]</td>
-        <td>[[ansar.freez_date|dateformat:"Do MMM,YYYY"]]</td>
+        <td>[[ansar.kpi_name]]</td>
+        <td>[[ansar.joining_date|dateformat:"DD MMM,YYYY"]]</td>
+        <td>[[ansar.memorandum_id]]</td>
     </tr>
     <tr ng-if="data.ansars.length<=0">
-        <td class="warning" colspan="9">No Ansar Found</td>
+        <td class="warning" colspan="7">No Ansar Found</td>
     </tr>
     </tbody>
 </table>

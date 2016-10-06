@@ -90,7 +90,8 @@
                     }
                     else {
                         $scope.noAnsar = true;
-                        $scope.showLoadingAnsar = true;
+                        $scope.showLoadScreen = true;
+                        alert("No ansar Available")
                         $scope.buttonText = "Send Offer"
                     }
 
@@ -112,6 +113,10 @@
                 $scope.selectedAnsar.forEach(function (v) {
                     $scope.offerAnsarId.push(v.ansar_id);
                 })
+                if($scope.offerAnsarId.length<=0){
+                    alert("No ansar available");
+                    return;
+                }
                 $http({
                     url: '{{URL::to('HRM/send_offer')}}',
                     data: angular.toJson({
@@ -137,7 +142,7 @@
                             console.log(response.data);
                             $scope.alerts = [];
                             $scope.alerts.push(response.data);
-                            $scope.showLoadScreen = true;
+                            $scope.showLoadScreen = false;$scope.showLoadScreen = false;
                             $scope.buttonText = "Send Offer"
                         }
                 )
@@ -220,7 +225,7 @@
                                             </li>
                                         </ul>
                                     </div>
-                                    <div class="col-md-8">
+                                    <div ng-class="{'col-md-8':isAdmin,'col-md-12':!isAdmin}">
                                         <div class="form-group">
                                             <h4 class="pc">PC</h4>
                                             <label class="male">Male</label>

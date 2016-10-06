@@ -7,6 +7,7 @@ namespace App\modules\HRM\Models;
 use App\Helper\Facades\GlobalParameterFacades;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
@@ -21,257 +22,65 @@ class CustomQuery
     public static function getAnsarInfo($pc = array('male' => 0, 'female' => 0), $apc = array('male' => 0, 'female' => 0), $ansar = array('male' => 0, 'female' => 0), $unit_id = [], $exclude_district = null)
     {
         DB::enableQueryLog();
-        if (count($unit_id) == 0) {
-            if (is_null($exclude_district)) {
-                $pc_male = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                    ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
-                    ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
-                    ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
-                    ->orderBy('tbl_panel_info.id')
-                    ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
-                    ->take($pc['male']);
-                $pc_female = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                    ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
-                    ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
-                    ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
-                    ->orderBy('tbl_panel_info.id')
-                    ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
-                    ->take($pc['female']);
-                $apc_male = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                    ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
-                    ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->where('tbl_ansar_parsonal_info.designation_id', '=', 2)
-                    ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
-                    ->orderBy('tbl_panel_info.id')
-                    ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
-                    ->take($apc['male']);
-                $apc_female = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                    ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
-                    ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->where('tbl_ansar_parsonal_info.designation_id', '=', 2)
-                    ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
-                    ->orderBy('tbl_panel_info.id')
-                    ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
-                    ->take($apc['female']);
-                $ansar_male = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                    ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
-                    ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->where('tbl_ansar_parsonal_info.designation_id', '=', 1)
-                    ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
-                    ->orderBy('tbl_panel_info.id')
-                    ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
-                    ->take($ansar['male']);
-                $ansar_female = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                    ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
-                    ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->where('tbl_ansar_parsonal_info.designation_id', '=', 1)
-                    ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
-                    ->orderBy('tbl_panel_info.id')
-                    ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
-                    ->take($ansar['female']);
+        $query = DB::table('tbl_ansar_parsonal_info')
+            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+            ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
+            ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
+            ->join('tbl_units as pu', 'tbl_ansar_parsonal_info.unit_id', '=', 'pu.id');
+        if (Auth::user()->type == 22) {
+            if (in_array($exclude_district, Config::get('app.offer'))) {
+                $query = $query->where('pu.id', '!=', $exclude_district);
             } else {
-                $pc_male = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                    ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
-                    ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
-                    ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
-                    ->where('tbl_ansar_parsonal_info.unit_id', '!=', $exclude_district)->orderBy('tbl_panel_info.id', 'asc')
-                    ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
-                    ->take($pc['male']);
-                $pc_female = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                    ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
-                    ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
-                    ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
-                    ->where('tbl_ansar_parsonal_info.unit_id', '!=', $exclude_district)->orderBy('tbl_panel_info.id', 'asc')
-                    ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
-                    ->take($pc['female']);
-                $apc_male = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                    ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
-                    ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->where('tbl_ansar_parsonal_info.designation_id', '=', 2)
-                    ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
-                    ->where('tbl_ansar_parsonal_info.unit_id', '!=', $exclude_district)->orderBy('tbl_panel_info.id', 'asc')
-                    ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
-                    ->take($apc['male']);
-                $apc_female = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                    ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
-                    ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->where('tbl_ansar_parsonal_info.designation_id', '=', 2)
-                    ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
-                    ->where('tbl_ansar_parsonal_info.unit_id', '!=', $exclude_district)->orderBy('tbl_panel_info.id', 'asc')
-                    ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
-                    ->take($apc['female']);
-                $ansar_male = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                    ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
-                    ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->where('tbl_ansar_parsonal_info.designation_id', '=', 1)
-                    ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
-                    ->where('tbl_ansar_parsonal_info.unit_id', '!=', $exclude_district)->orderBy('tbl_panel_info.id', 'asc')
-                    ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
-                    ->take($ansar['male']);
-                $ansar_female = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                    ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
-                    ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->where('tbl_ansar_parsonal_info.designation_id', '=', 1)
-                    ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
-                    ->where('tbl_ansar_parsonal_info.unit_id', '!=', $exclude_district)->orderBy('tbl_panel_info.id', 'asc')
-                    ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
-                    ->take($ansar['female']);
+                $query = $query->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id')
+                    ->where('pu.id', '!=', $exclude_district)->where('du.id', '=', $exclude_district);
             }
         }
-        else {
-//            return "3";
-            //die();
-            $pc_male = DB::table('tbl_ansar_parsonal_info')
-                ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                //->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
-                ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')
-                ->where('tbl_ansar_status_info.pannel_status', 1)
-                ->where('tbl_ansar_status_info.block_list_status', 0)
-                ->whereIN('tbl_ansar_parsonal_info.unit_id', $unit_id)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
-                ->orderBy('tbl_panel_info.id', 'asc')
-                ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
-                ->take($pc['male']);
-            $pc_female = DB::table('tbl_ansar_parsonal_info')
-                ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                //->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
-                ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')
-                ->where('tbl_ansar_status_info.pannel_status', 1)
-                ->where('tbl_ansar_status_info.block_list_status', 0)
-                ->whereIN('tbl_ansar_parsonal_info.unit_id', $unit_id)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
-                ->orderBy('tbl_panel_info.id', 'asc')
-                ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
-                ->take($pc['female']);
-            $apc_male = DB::table('tbl_ansar_parsonal_info')
-                ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                //->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_ansar_parsonal_info.designation_id', '=', 2)
-                ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')
-                ->where('tbl_ansar_status_info.pannel_status', 1)
-                ->where('tbl_ansar_status_info.block_list_status', 0)
-                ->whereIN('tbl_ansar_parsonal_info.unit_id', $unit_id)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
-                ->orderBy('tbl_panel_info.id', 'asc')
-                ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
-                ->take($apc['male']);
-            $apc_female = DB::table('tbl_ansar_parsonal_info')
-                ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                //->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_ansar_parsonal_info.designation_id', '=', 2)
-                ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')
-                ->where('tbl_ansar_status_info.pannel_status', 1)
-                ->where('tbl_ansar_status_info.block_list_status', 0)
-                ->whereIN('tbl_ansar_parsonal_info.unit_id', $unit_id)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
-                ->orderBy('tbl_panel_info.id', 'asc')
-                ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
-                ->take($apc['female']);
-            $ansar_male = DB::table('tbl_ansar_parsonal_info')
-                ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                //->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_ansar_parsonal_info.designation_id', '=', 1)
-                ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')
-                ->where('tbl_ansar_status_info.pannel_status', 1)
-                ->where('tbl_ansar_status_info.block_list_status', 0)
-                ->whereIN('tbl_ansar_parsonal_info.unit_id', $unit_id)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
-                ->orderBy('tbl_panel_info.id', 'asc')
-                ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
-                ->take($ansar['male']);
-            $ansar_female = DB::table('tbl_ansar_parsonal_info')
-                ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                //->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_ansar_parsonal_info.designation_id', '=', 1)
-                ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')
-                ->where('tbl_ansar_status_info.pannel_status', 1)
-                ->where('tbl_ansar_status_info.block_list_status', 0)
-                ->whereIN('tbl_ansar_parsonal_info.unit_id', $unit_id)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
-                ->orderBy('tbl_panel_info.id', 'asc')
-                ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
-                ->take($ansar['female']);
-            //return DB::getQueryLog();
+        else if(Auth::user()->type == 11||Auth::user()->type == 33||Auth::user()->type == 66){
+            if(is_array($unit_id)){
+                $query = $query->whereIn('pu.id', $unit_id);
+            }
         }
-        $b =  $pc_male->unionAll($pc_female)->unionAll($apc_male)->unionAll($apc_female)->unionAll($ansar_male)->unionAll($ansar_female)->get();
+        $query = $query->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50');
+        $pc_male = clone $query;
+        $pc_female = clone $query;
+        $apc_male = clone $query;
+        $apc_female = clone $query;
+        $ansar_male = clone $query;
+        $ansar_female = clone $query;
+        $pc_male->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
+            ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')
+            ->orderBy('tbl_panel_info.id')
+            ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'pu.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
+            ->take($pc['male']);
+        $pc_female->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
+            ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')
+            ->orderBy('tbl_panel_info.id')
+            ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'pu.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
+            ->take($pc['female']);
+        $ansar_male->where('tbl_ansar_parsonal_info.designation_id', '=', 1)
+            ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')
+            ->orderBy('tbl_panel_info.id')
+            ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'pu.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
+            ->take($ansar['male']);
+        $ansar_female->where('tbl_ansar_parsonal_info.designation_id', '=', 1)
+            ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')
+            ->orderBy('tbl_panel_info.id')
+            ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'pu.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
+            ->take($ansar['female']);
+         $apc_male->where('tbl_ansar_parsonal_info.designation_id', '=', 2)
+            ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')
+            ->orderBy('tbl_panel_info.id')
+            ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'pu.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
+            ->take($apc['male']);
+        $apc_female->where('tbl_ansar_parsonal_info.designation_id', '=', 2)
+            ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')
+            ->orderBy('tbl_panel_info.id')
+            ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'pu.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
+            ->take($apc['female']);
+
+        $b = $pc_male->unionAll($pc_female)->unionAll($apc_male)->unionAll($apc_female)->unionAll($ansar_male)->unionAll($ansar_female)->get();
         return $b;
     }
 
@@ -1242,7 +1051,7 @@ class CustomQuery
             }
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
-            'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_sms_offer_info.sms_send_datetime','ou.unit_name_eng as offer_unit')->skip($offset)->limit($limit)->get();
+            'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_sms_offer_info.sms_send_datetime', 'ou.unit_name_eng as offer_unit')->skip($offset)->limit($limit)->get();
         //return DB::getQueryLog();
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'offer']);
     }
@@ -2300,7 +2109,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_kpi_info.kpi_name', 'tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id')->skip($offset)->limit($limit)->get();
-        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
+        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
     }
 
     public static function getTotalOwnEmbodiedAnsarCount($unit, $thana, $division = null)
@@ -2531,7 +2340,7 @@ class CustomQuery
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_kpi_info.kpi_name', 'tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id')->skip($offset)->limit($limit)->get();
-        return View::make('HRM::Dashboard.ansar_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'diff_embodied']);
+        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'diff_embodied']);
     }
 
     public static function getTotalDiffEmbodiedAnsarCount($unit, $thana, $division = null)
@@ -4286,7 +4095,7 @@ class CustomQuery
             }
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
-            'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_sms_offer_info.sms_send_datetime','ou.unit_name_eng as offer_unit')->skip($offset)->limit($limit)->get();
+            'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_sms_offer_info.sms_send_datetime', 'ou.unit_name_eng as offer_unit')->skip($offset)->limit($limit)->get();
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'offer']);
     }
 
@@ -5494,13 +5303,13 @@ class CustomQuery
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
             ->where('tbl_embodiment.service_ended_date', '<', Carbon::now())
             ->where('tbl_embodiment.emboded_status', '=', 'Emboded');
-        if($unit!='all'){
+        if ($unit != 'all') {
             $ansarQuery = $ansarQuery->where('tbl_kpi_info.unit_id', '=', $unit);
         }
-        if($ansar_rank!='all'){
+        if ($ansar_rank != 'all') {
             $ansarQuery = $ansarQuery->where('tbl_designations.id', '=', $ansar_rank);
         }
-        if($ansar_sex!='all'){
+        if ($ansar_sex != 'all') {
             $ansarQuery = $ansarQuery->where('tbl_ansar_parsonal_info.sex', '=', $ansar_sex);
         }
 //        }
@@ -5530,13 +5339,13 @@ class CustomQuery
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
             ->where('tbl_embodiment.service_ended_date', '<', Carbon::now())
             ->where('tbl_embodiment.emboded_status', '=', 'Emboded');
-        if($unit!='all'){
+        if ($unit != 'all') {
             $ansarQuery = $ansarQuery->where('tbl_kpi_info.unit_id', '=', $unit);
         }
-        if($ansar_rank!='all'){
+        if ($ansar_rank != 'all') {
             $ansarQuery = $ansarQuery->where('tbl_designations.id', '=', $ansar_rank);
         }
-        if($ansar_sex!='all'){
+        if ($ansar_sex != 'all') {
             $ansarQuery = $ansarQuery->where('tbl_ansar_parsonal_info.sex', '=', $ansar_sex);
         }
 //        }
