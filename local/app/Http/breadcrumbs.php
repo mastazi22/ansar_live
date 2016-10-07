@@ -280,10 +280,10 @@ Breadcrumbs::register('service_record_unitwise_view', function($breadcrumbs) {
     $breadcrumbs->parent('report');
     $breadcrumbs->push('Ansar Service Record Unit Wise', URL::route('service_record_unitwise_view'));
 });
-Breadcrumbs::register('three_year_over_report_view', function($breadcrumbs) {
-    $breadcrumbs->parent('report');
-    $breadcrumbs->push('Transfer Letter', URL::route('three_year_over_report_view'));
-});
+//Breadcrumbs::register('three_year_over_report_view', function($breadcrumbs) {
+//    $breadcrumbs->parent('report');
+//    $breadcrumbs->push('Transfer Letter', URL::route('three_year_over_report_view'));
+//});
 Breadcrumbs::register('three_year_over_report_view', function($breadcrumbs) {
     $breadcrumbs->parent('report');
     $breadcrumbs->push('Three Years Over Service Report', URL::route('three_year_over_report_view'));
