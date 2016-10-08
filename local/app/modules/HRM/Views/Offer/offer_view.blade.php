@@ -245,7 +245,7 @@
                                                             <span class="input-group-addon">
                                                                 <i class="fa fa-female female"></i>
                                                             </span>
-                                                <input type="text" ng-model="kpiPCFemale"
+                                                <input type="text" ng-model="kpiPCFemale" ng-change="kpiPCFemale=kpiPCFemale==''?0:getInt(kpiPCFemale)"
                                                        placeholder="Female"
                                                        class="form-control">
                                             </div>
@@ -258,7 +258,7 @@
                                                             <span class="input-group-addon">
                                                                 <i class="fa fa-male male"></i>
                                                             </span>
-                                                <input type="text" ng-model="kpiAPCMale" placeholder="Male"
+                                                <input type="text" ng-model="kpiAPCMale" placeholder="Male" ng-change="kpiAPCMale=kpiAPCMale==''?0:getInt(kpiAPCMale)"
                                                        class="form-control">
                                             </div>
                                             <label class="female">Female</label>
@@ -267,7 +267,7 @@
                                                             <span class="input-group-addon">
                                                                 <i class="fa fa-female female"></i>
                                                             </span>
-                                                <input type="text" ng-model="kpiAPCFemale"
+                                                <input type="text" ng-model="kpiAPCFemale" ng-change="kpiAPCFemale=kpiPCFemale==''?0:getInt(kpiAPCFemale)"
                                                        placeholder="Female"
                                                        class="form-control">
                                             </div>
@@ -280,7 +280,7 @@
                                                             <span class="input-group-addon">
                                                                 <i class="fa fa-male male"></i>
                                                             </span>
-                                                <input type="text" ng-model="kpiAnsarMale"
+                                                <input type="text" ng-model="kpiAnsarMale" ng-change="kpiAnsarMale=kpiAnsarMale==''?0:getInt(kpiAnsarMale)"
                                                        placeholder="Male"
                                                        class="form-control">
                                             </div>
@@ -290,7 +290,7 @@
                                                             <span class="input-group-addon">
                                                                 <i class="fa fa-female female"></i>
                                                             </span>
-                                                <input type="text" ng-model="kpiAnsarFemale"
+                                                <input type="text" ng-model="kpiAnsarFemale" ng-change="kpiAnsarFemale=kpiAnsarFemale==''?0:getInt(kpiAnsarFemale)"
                                                        placeholder="Female"
                                                        class="form-control">
                                             </div>
