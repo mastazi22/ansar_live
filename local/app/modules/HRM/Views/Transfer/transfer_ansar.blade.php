@@ -526,8 +526,7 @@
                                                         ng-model="selectedDistrict[1]"
                                                         ng-change="loadThana()">
                                                     <option value="">Select a district</option>
-                                                    <option ng-repeat="d in allDistrict[1]"
-                                                            ng-disabled="selectedDistrict[0]!=d.id" value="[[d.id]]">
+                                                    <option ng-repeat="d in allDistrict[1]" value="[[d.id]]">
                                                         [[d.unit_name_bng]]
                                                     </option>
                                                 </select>

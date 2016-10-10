@@ -253,7 +253,7 @@
                         </div>
                     </div>
                     <div id="print_ansar_disembodiment_report">
-                        <h3 style="text-align: center" id="report-header">[[report.header]]&nbsp;&nbsp;
+                        <h3 style="text-align: center" id="report-header">[[report.header]]([[total]])&nbsp;&nbsp;
                             <a href="#" title="print" id="print-report">
                                 <span class="glyphicon glyphicon-print"></span>
                             </a></h3>

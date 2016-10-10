@@ -8,6 +8,7 @@ class AnsarStatusInfo extends Model
 {
     protected $connection = 'hrm';
     protected $table="tbl_ansar_status_info";
+    protected $guarded = [];
     function ansar(){
         return $this->belongsTo('App\models\PersonalInfo','ansar_id','ansar_id');
     }

@@ -150,8 +150,8 @@ class OfferController extends Controller
             return Response::json(['type' => 'success', 'message' => "Offer Send Successfully"]);
         } else {
             DB::beginTransaction();
-            try {
-                $mos = PersonalInfo::where('ansar_id',$ansar_ids)->first()->mobile_no_self;
+            try {$mos = PersonalInfo::where('ansar_id',$ansar_ids)->first()->mobile_no_self;
+
                 if(!$mos&&!preg_match('/^(+88)?0[0-9]{10}/',$mos)) throw new Exception("Invalid mobile number");
                 $offer = new OfferSMS;
                 $offer->ansar_id = $ansar_ids;
@@ -194,7 +194,7 @@ class OfferController extends Controller
             $pl->merit_list = $pa->ansar_merit_list;
             $pl->panel_date = $pa->panel_date;
             $pl->old_memorandum_id = !$pa->memorandum_id ? "N\A" : $pa->memorandum_id;
-            $pl->movement_date = Carbon::today()->addHour(6);
+            $pl->movement_date = Carbon::today();
             $pl->come_from = $pa->come_from;
             $pl->move_to = 'Offer';
             $pl->save();

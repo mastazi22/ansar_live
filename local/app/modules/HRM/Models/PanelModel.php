@@ -8,6 +8,7 @@ class PanelModel extends Model
 {
     protected $connection = 'hrm';
     protected $table="tbl_panel_info";
+    protected $guarded = [];
     function ansarInfo(){
         return $this->belongsTo(PersonalInfo::class,'ansar_id');
     }

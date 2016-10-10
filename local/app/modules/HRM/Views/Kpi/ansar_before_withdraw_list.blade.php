@@ -12,6 +12,8 @@
     <script>
         GlobalApp.controller('GuardBeforeWithdrawController', function ($scope, $http, $sce) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}')
+            $scope.selectedDivision = ''
+            $scope.divisions = []
             $scope.districts = [];
             $scope.thanas = [];
             $scope.ansars="";
@@ -20,21 +22,37 @@
             $scope.selectedKpi = "";
             $scope.allLoading = false;
             $scope.loadingUnit = false;
+            $scope.loadingDiv = false;
             $scope.loadingThana = false;
             $scope.loadingKpi = false;
             $scope.errorFound = 0;
             $scope.errorMessage='';
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}')
+            $scope.loadDivision = function () {
+                $scope.loadingDiv = true;
+                $http({
+                    method: 'get',
+                    url: '{{URL::to('HRM/DivisionName')}}'
+                }).then(function (response) {
+                    $scope.loadingDiv = false;
+                    $scope.divisions = response.data;
+                    $scope.loadingDiv = false;
+                })
+            }
             $scope.loadDistrict = function () {
                 $scope.loadingUnit = true;
                 $http({
                     method: 'get',
-                    url: '{{URL::to('HRM/DistrictName')}}'
+                    url: '{{URL::to('HRM/DistrictName')}}',
+                    params:{id:$scope.selectedDivision}
                 }).then(function (response) {
                     $scope.districts = response.data;
                     $scope.loadingUnit = false;
                     $scope.thanas = [];
+                    $scope.guards = [];
                     $scope.selectedThana = "";
+                    $scope.selectedKpi = "";
+                    $scope.selectedDistrict = "";
                 })
             }
             $scope.loadThana = function (id) {
@@ -47,6 +65,8 @@
                     $scope.thanas = response.data;
                     $scope.selectedThana = "";
                     $scope.loadingThana = false;
+                    $scope.guards = [];
+                    $scope.selectedKpi = "";
                 })
             }
             $scope.loadGuard = function (id) {
@@ -78,7 +98,10 @@
                     $scope.allLoading = false;
                 })
             }
-            if ($scope.isAdmin == 11) {
+            if ($scope.isAdmin == 11||$scope.isAdmin == 33) {
+                $scope.loadDivision()
+            }
+            else if ($scope.isAdmin == 66) {
                 $scope.loadDistrict()
             }
             else {
@@ -105,7 +128,23 @@
                 </div>
                 <div class="box-body">
                     <div class="row">
-                        <div class="col-sm-4" ng-show="isAdmin==11">
+                        <div class="col-sm-3" ng-show="isAdmin==11||isAdmin==33">
+                            <div class="form-group">
+                                <label class="control-label">
+                                    Select a Range&nbsp;&nbsp;
+                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
+                                         ng-show="loadingDiv">
+                                </label>
+                                <select class="form-control" ng-disabled="loadingDiv||loadingUnit||loadingThana||loadingKpi"
+                                        ng-model="selectedDivision"
+                                        ng-change="loadDistrict()" name="division_id">
+                                    <option value="">--Select a Division--</option>
+                                    <option ng-repeat="d in divisions" value="[[d.id]]">[[d.division_name_eng]]
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3" ng-show="isAdmin==11||isAdmin==33||isAdmin==66">
                             <div class="form-group">
                                 <label class="control-label">
                                     Select a District&nbsp;&nbsp;
@@ -121,14 +160,14 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label">
                                     Select a Thana&nbsp;&nbsp;
                                     <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
                                          ng-show="loadingThana">
                                 </label>
-                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
+                                <select class="form-control" ng-disabled="loadingDiv||loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedThana"
                                         ng-change="loadGuard(selectedThana)" name="thana_id">
                                     <option value="">--Select a Thana--</option>
@@ -137,14 +176,14 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label">
                                     Select a Guard&nbsp;&nbsp;
                                     <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
                                          ng-show="loadingKpi">
                                 </label>
-                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
+                                <select class="form-control" ng-disabled="loadingDiv||loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedKPI"
                                         ng-change="loadAnsar(selectedKPI)">
                                     <option value="">--Select a Guard--</option>

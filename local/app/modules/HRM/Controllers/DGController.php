@@ -16,6 +16,7 @@ use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\OfferSmsLog;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
+use App\modules\HRM\Models\PersonalInfo;
 use App\modules\HRM\Models\RestInfoLogModel;
 use App\modules\HRM\Models\RestInfoModel;
 use App\modules\HRM\Models\SmsReceiveInfoModel;
@@ -1497,5 +1498,48 @@ class DGController extends Controller
         }
 
         return Redirect::route('direct_panel_view')->with('success_message', 'Ansar Added in the Panel successfully');
+    }
+    public function directOfferSend(Request $request){
+        $rules = [
+            'ansar_id'=>'required|regex:/^[0-9]+$/',
+            'unit_id'=>'required|regex:/^[0-9]+$/',
+            'offer_date'=>'required',
+        ];
+        $valid = Validator::make($request->all(),$rules);
+        if($valid->fails()){
+            return $valid->messages()->toJson();
+        }
+        if(Carbon::parse($request->offer_date)->gt(Carbon::now())){
+
+        }
+        DB::beginTransaction();
+        try{
+            $a = PersonalInfo::where('ansar_id',$request->ansar_id)->first();
+            if(!$a&&!preg_match('/^(+88)?0[0-9]{10}/',$a->mobile_no_self)) throw new Exception("Invalid mobile number");
+            $a->offer_sms_info()->save(new OfferSMS([
+                'sms_send_datetime'=>Carbon::parse($request->offer_date)->format('Y-m-d'),
+                'sms_end_datetime'=>Carbon::parse($request->offer_date)->addHours(48),
+                'district_id'=>$request->unit_id
+            ]));
+            $a->status->update(['pannel_status'=>0,'offer_sms_status'=>1]);
+            $pa = $a->panel;
+            if($pa){
+                $pl = new PanelInfoLogModel;
+                $pl->panel_id_old = $pa->id;
+                $pl->ansar_id = $pa->ansar_id;
+                $pl->merit_list = $pa->ansar_merit_list;
+                $pl->panel_date = $pa->panel_date;
+                $pl->old_memorandum_id = !$pa->memorandum_id ? "N\A" : $pa->memorandum_id;
+                $pl->movement_date = Carbon::today();
+                $pl->come_from = $pa->come_from;
+                $pl->move_to = 'Offer';
+                $pl->save();
+                $pa->delete();
+            }
+            DB::commit();
+        }catch(Exception $e){
+            DB::rollback();
+            return $e->getMessage();
+        }
     }
 }

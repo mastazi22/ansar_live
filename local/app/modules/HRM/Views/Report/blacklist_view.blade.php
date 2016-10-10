@@ -230,7 +230,7 @@
                         </div>
                     </div>
                     <div id="print-blacklisted-ansar-report">
-                        <h3 style="text-align: center" id="report-header">[[report.ansar.ansar_title]]&nbsp;&nbsp;
+                        <h3 style="text-align: center" id="report-header">[[report.ansar.ansar_title]]([[total]])&nbsp;&nbsp;
                             <a href="#" title="print" id="print-report">
                                 <span class="glyphicon glyphicon-print"></span>
                             </a></h3>

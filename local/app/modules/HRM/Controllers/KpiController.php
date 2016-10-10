@@ -462,12 +462,8 @@ class KpiController extends Controller
 
     public function loadAnsarsForBeforeWithdraw()
     {
-        $unit_id=Input::get('unit_id');
-        $thana=Input::get('thana_id');
         $kpi_id = Input::get('kpi_id');
         $rules=[
-            'unit_id'=>'regex:/^[0-9]+$/',
-            'thana_id'=>'regex:/^[0-9]+$/',
             'kpi_id'=>'regex:/^[0-9]+$/'
         ];
         $validation=Validator::make(Input::all(), $rules);
@@ -568,6 +564,7 @@ class KpiController extends Controller
         $rules = [
             'kpiExist'=>'required|numeric|regex:/^[0-9]+$/',
             'kpi_id'=>'required|numeric|regex:/^[0-9]+$/',
+            'mem_id'=>'unique:tbl_memorandum_id,memorandum_id',
             'unit_id'=>'required|numeric|regex:/^[0-9]+$/',
             'thana_id'=>'required|numeric|regex:/^[0-9]+$/',
             'withdraw_date'=>['required','regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
@@ -593,13 +590,39 @@ class KpiController extends Controller
             if($kpiExist==1){
                 DB::beginTransaction();
                 try {
-                    $kpi_withdraw_date_entry = KpiDetailsModel::where('kpi_id', $kpi_id)->first();
-                    $kpi_withdraw_date_entry->kpi_withdraw_date = $modified_withdraw_date;
-                    $kpi_withdraw_date_entry->save();
+                    $m =new MemorandumModel;
+                    $m->memorandum_id = $request->mem_id;
+                    $m->save();
+                    if(Carbon::parse($modified_withdraw_date)->lt(Carbon::now())){
+                        $kpi = KpiGeneralModel::find($kpi_id);
+                        $kpi->update(['withdraw_status' => 1]);
+                        $kpi->details->update(['kpi_withdraw_date'=>null,'kpi_withdraw_mem_id'=>$request->mem_id]);
+                        $embodiment_infos = $kpi->embodiment;
+                        foreach ($embodiment_infos as $embodiment_info) {
+                            $freeze_info_update = new FreezingInfoModel();
+                            $freeze_info_update->ansar_id = $embodiment_info->ansar_id;
+                            $freeze_info_update->freez_reason = "Guard Withdraw";
+                            $freeze_info_update->freez_date = $modified_withdraw_date;
+                            $freeze_info_update->kpi_id = $kpi->id;
+                            $freeze_info_update->ansar_embodiment_id = $embodiment_info->id;
+                            $freeze_info_update->save();
+                            $embodiment_info->emboded_status = "Freeze";
+                            $embodiment_info->save();
+                            AnsarStatusInfo::where('ansar_id', $embodiment_info->ansar_id)->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 1]);
+                            $a = ['ansar_id' => $embodiment_info->ansar_id, 'action_type' => 'WITHDRAW KPI', 'from_state' => 'EMBODIED', 'to_state' => 'FREEZE', 'action_by' => auth()->user()->id];
+                            CustomQuery::addActionlog($a);
+                        }
+                    }
+                    else{
+                        $kpi_withdraw_date_entry = KpiDetailsModel::where('kpi_id', $kpi_id)->first();
+                        $kpi_withdraw_date_entry->kpi_withdraw_date = $modified_withdraw_date;
+                        $kpi_withdraw_date_entry->kpi_withdraw_mem_id = $request->mem_id;
+                        $kpi_withdraw_date_entry->save();
+                    }
 
                     DB::commit();
                 } catch
-                (Exception $e) {
+                (\Exception $e) {
                     DB::rollback();
                     return $e->getMessage();
                 }

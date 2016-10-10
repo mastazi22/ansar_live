@@ -47,7 +47,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         //ANSAR ENTRY
 
         Route::get('entrylist', ['as' => 'anser_list', 'uses' => 'EntryFormController@entrylist']);
-        Route::get('/entryreport/{ansarid}', ['as' => 'entry_report', 'uses' => 'EntryFormController@entryReport'])->where('ansarid','[0-9]+');
+        Route::get('/entryreport/{ansarid}/{type?}', ['as' => 'entry_report', 'uses' => 'EntryFormController@entryReport'])->where('ansarid','[0-9]+');
         Route::get('entryform', ['as' => 'ansar_registration', 'uses' => 'EntryFormController@entryform']);
         Route::get('ansar_rank', ['as' => 'ansar_rank', 'uses' => 'FormSubmitHandler@getAnsarRank']);
         Route::post('handleregistration', 'FormSubmitHandler@handleregistration');
@@ -218,6 +218,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/direct_panel_cancel_view', ['as' => 'direct_panel_cancel_view', 'uses' => 'DGController@directCancelPanelView']);
         Route::get('/cancel_panel_ansar_details', 'DGController@loadAnsarDetailforCancelPanel');
         Route::post('/cancel_panel_entry_for_dg', 'DGController@cancelPanelEntry');
+        Route::post('/direct_offer', 'DGController@directOfferSend');
         Route::get('/dg_blocklist_entry_view', ['as' => 'dg_blocklist_entry_view', 'uses' => 'DGController@blockListEntryView']);
         Route::get('/blocklist_entry_view', ['as' => 'blocklist_entry_view', 'uses' => 'BlockBlackController@blockListEntryView']);
         Route::get('/blocklist_ansar_details', ['as'=>'blocklist_ansar_details','uses'=>'BlockBlackController@loadAnsarDetailforBlock']);
@@ -257,7 +258,6 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/embodiment_letter_view', ['as' => 'embodiment_letter_view', 'uses' => 'LetterController@embodimentLetterView']);
         Route::get('/disembodiment_letter_view', ['as' => 'disembodiment_letter_view', 'uses' => 'LetterController@disembodimentLetterView']);
         Route::get('/print_letter', ['as'=>'print_letter','uses'=>'LetterController@printLetter']);
-        Route::get('KPIName', ['as' => 'kpi_name', 'uses' => 'EmbodimentController@kpiName']);
     //REPORT ROUTE
         Route::get('/guard_report', ['as' => 'guard_report', 'uses' => 'ReportController@reportGuardSearchView']);
         Route::get('offer_report',['as'=>'offer_report','uses'=>'ReportController@offerReportView']);

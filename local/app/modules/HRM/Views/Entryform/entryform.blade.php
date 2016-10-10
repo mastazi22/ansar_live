@@ -112,14 +112,14 @@
                     },
                     {text: "Institute", value: '', name: 'institute_eng[]', type: 'text'},
                     {
-                        text: "Training start date",
+                        text: "Training starting date",
                         value: '',
                         name: 'training_start_eng[]',
                         type: '',
                         class_name: 'date-picker-dir'
                     },
                     {
-                        text: "Training end date",
+                        text: "Training ending date",
                         value: '',
                         name: 'training_end_eng[]',
                         type: '',
@@ -339,7 +339,7 @@
                                 <fieldset>
 
                                     <div class="level-title-session-entry">
-                                        <h5 style="text-align: center;">পারিবারিক তথ্য </h5>
+                                        <h5 style="text-align: center;">বাক্তিগত ও পারিবারিক তথ্য </h5>
                                     </div>
 
                                     <div class="box box-info">
@@ -616,7 +616,7 @@
                                                     <input class="form-control" name="criminal_case_bng" type="text" placeholder="ফৌজদারি মামলা" value="{{Request::old('criminal_case')}}">
                                                 </div>
                                             </div>
-                                            <div class="form group col-md-12">
+                                            <div class="form group col-md-12 hiddden">
                                                 <label class="control-label col-sm-2" for="criminal">সর্বশেষ প্রশিক্ষন সনদ নং:</label>
                                                 <div class="col-sm-10">
                                                     <input class="form-control  " id="certificate_no" name="certificate_no" type="text" placeholder="সর্বশেষ প্রশিক্ষন সনদ নং" value="{{Request::old('certificate_no')}}">
@@ -633,18 +633,26 @@
                                     <div class="box box-info">
                                         <div class="box-body">
                                             <div class="form-horizontal col-md-12">
-                                                <label class="control-label col-sm-2" for="email">Village:</label>
+                                                <label class="control-label col-sm-2" for="email">Village/House No:</label>
 
                                                 <div class="col-sm-10">
                                                     <input class="form-control  " id="village_name" name="village_name" ng-model="village_name" type="text" placeholder=" Village" value="{{Request::old('village_name')}}">
                                                 </div>
                                             </div>
+
                                             <div class="form-horizontal col-md-12">
-                                                <label class="control-label col-sm-2" for="email">গ্রাম:</label>
+                                                <label class="control-label col-sm-2" for="email">গ্রাম/বাড়ি নং:</label>
                                                 <div class="col-sm-10">
                                                     <input class="form-control  " id="village_name_bng" name="village_name_bng" ng-model="village_name_bng" type="text" placeholder=" গ্রাম" value="{{Request::old('village_name_bng')}}">
                                                 </div>
 
+                                            </div>
+                                            <div class="form-horizontal col-md-12">
+                                                <label class="control-label col-sm-2" for="email">Road No:</label>
+
+                                                <div class="col-sm-10">
+                                                    <input class="form-control  " id="road_no" name="road_no" ng-model="road_no" type="text" placeholder=" Road no" value="{{Request::old('road_no')}}">
+                                                </div>
                                             </div>
                                             <div class="form-horizontal col-md-12">
                                                 <label class="control-label col-sm-2" for="email">Post office:</label>
@@ -663,13 +671,13 @@
 
                                             </div>
                                             <div class="form group col-md-12">
-                                                <label class="control-label col-sm-2" for="email">Union:</label>
+                                                <label class="control-label col-sm-2" for="email">Union/Word:</label>
                                                 <div class="col-sm-10">
                                                     <input class="form-control  " id="union_name_eng" name="union_name_eng" ng-model="union_name_eng" type="text" placeholder=" Union Name" value="{{Request::old('union_name_eng')}}">
                                                 </div>
                                             </div>
                                             <div class="form group col-md-12">
-                                                <label class="control-label col-sm-2" for="email">ইউনিয়ন নাম:</label>
+                                                <label class="control-label col-sm-2" for="email">ইউনিয়ন নাম/ওয়ার্ড:</label>
                                                 <div class="col-sm-10">
                                                     <input class="form-control" id="union_name_bng" name="union_name_bng" ng-model="union_name_bng" type="text" placeholder="ইউনিয়ন নাম" value="{{Request::old('union_name_bng')}}">
                                                 </div>

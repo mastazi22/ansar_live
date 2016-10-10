@@ -74,7 +74,39 @@
                         view: 'count'
                     }
                 }).then(function (response) {
-                    $scope.total = response.data.total;
+                    console.log(response.data.total)
+                    if($scope.selectedRank==1) {
+                        $scope.countByRank = {
+                            ansar: response.data.total[0] ? response.data.total[0] : 0,
+                            apc: 0,
+                            pc: 0
+                        }
+                    }
+                    else if($scope.selectedRank==2) {
+                        $scope.countByRank = {
+                            apc: response.data.total[0] ? response.data.total[0] : 0,
+                            ansar: 0,
+                            pc: 0
+                        }
+                    }
+                    else if($scope.selectedRank==3) {
+                        $scope.countByRank = {
+                            pc: response.data.total[0] ? response.data.total[0] : 0,
+                            ansar: 0,
+                            apc: 0
+                        }
+                    }
+                    else  {
+                        $scope.countByRank = {
+                            ansar: response.data.total[0] ? response.data.total[0] : 0,
+                            apc: response.data.total[1] ? response.data.total[1] : 0,
+                            pc: response.data.total[2] ? response.data.total[2] : 0
+                        }
+                    }
+
+                    $scope.total = response.data.total.reduce(function (a, b) {
+                        return a+b;
+                    },0);
                     $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
                     $scope.loadPagination();
                     //alert($scope.total);
@@ -229,7 +261,7 @@
                             <a href="#" title="print" id="print-report">
                                 <span class="glyphicon glyphicon-print"></span>
                             </a></h3>
-
+                        <h4>Total Ansar:PC([[countByRank.pc]]),APC([[countByRank.apc]]),Ansar([[countByRank.ansar]])</h4>
                         <div class="table-responsive">
                             <table class="table table-bordered">
                                 <tr>

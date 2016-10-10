@@ -13,6 +13,7 @@ use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\PersonalInfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Response;
@@ -150,10 +151,10 @@ class EntryFormController extends Controller
         }
     }
 
-    public function entryReport($ansarid)
+    public function entryReport($ansarid,$type='eng')
     {
         $ansardetails = PersonalInfo::where('ansar_id', $ansarid)->first();
-        return View::make('HRM::Entryform/reportEntryForm')->with('ansarAllDetails', $ansardetails);
+        return View::make('HRM::Entryform/reportEntryForm')->with(['ansarAllDetails'=>$ansardetails,'type'=>$type,'title'=>(object)Config::get('report.title'),'label'=>(object)Config::get('report.label')]);
     }
 
     public function getfreezelist()

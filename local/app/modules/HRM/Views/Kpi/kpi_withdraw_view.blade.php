@@ -168,6 +168,13 @@
                                     <p class="text-danger">{{$errors->first('withdraw_date')}}</p>
                                 @endif
                             </div>
+                            <div class="form-group">
+                                <label for="withdraw_date" class="control-label">Memorandum Id</label>
+                                <input type="text" name="mem_id" id="withdraw_date" class="form-control" value="{{Request::old('mem_id')}}">
+                                @if($errors->has('mem_id'))
+                                    <p class="text-danger">{{$errors->first('mem_id')}}</p>
+                                @endif
+                            </div>
                             <button id="withdraw-kpi" class="btn btn-primary">
                                 Withdraw
                             </button>

@@ -5313,7 +5313,7 @@ class CustomQuery
             $ansarQuery = $ansarQuery->where('tbl_ansar_parsonal_info.sex', '=', $ansar_sex);
         }
 //        }
-        $ansars = $ansarQuery->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date',
+        $ansars = $ansarQuery->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date','tbl_designations.id as did',
             'tbl_embodiment.service_ended_date as se_date', 'tbl_kpi_info.kpi_name as kpi', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_units.unit_name_bng as unit', 'tbl_designations.name_bng as rank')->skip($offset)->limit($limit)->get();
         return View::make('HRM::Report.selected_three_years_over_list_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
 
@@ -5349,8 +5349,8 @@ class CustomQuery
             $ansarQuery = $ansarQuery->where('tbl_ansar_parsonal_info.sex', '=', $ansar_sex);
         }
 //        }
-        $total = $ansarQuery->count('tbl_embodiment.ansar_id');
-//        print_r(DB::getQueryLog());
+        $total = $ansarQuery->groupBy('tbl_designations.id')->orderBy('tbl_designations.id')->select(DB::raw('count(tbl_designations.id) as t'))->pluck('t');
+//        return DB::getQueryLog();
         return Response::json(['total' => $total]);
     }
 

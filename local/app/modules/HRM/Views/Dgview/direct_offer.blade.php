@@ -17,6 +17,7 @@
             $scope.ansar_ids = [];
             $scope.totalLength =  0;
             $scope.exist = false;
+            $scope.date = ''
             $scope.loadingSubmit = false;
             $http({
                 method:'get',
@@ -69,9 +70,10 @@
                 $scope.loadingSubmit = true;
                 $http({
                     method:'post',
-                    url:'{{URL::to('HRM/send_offer')}}',
-                    data:{offered_ansar:$scope.ansarId,district_id:$scope.selectedDistrict,type:s}
+                    url:'{{URL::to('HRM/direct_offer')}}',
+                    data:{ansar_id:$scope.ansarId,unit_id:$scope.selectedDistrict,type:s,offer_date:$scope.date}
                 }).then(function (response) {
+                    console.log(response.data)
                     $scope.error=false;
                     $scope.submitResult  = response.data;
                     $scope.loadingSubmit = false;
@@ -155,6 +157,10 @@
                                     <option value="">--Select a District--</option>
                                     <option ng-repeat="d in districts" ng-disabled="ansarDetail.apid.unit_id==d.id" value="[[d.id]]">[[d.unit_name_bng]]</option>
                                 </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="date" class="control-label">Offer Date</label>
+                                <input type="text" id="date" class="form-control" placeholder="Enter Ansar ID" ng-model="date">
                             </div>
                             <button class="btn btn-primary" ng-disabled="!ansarId||!selectedDistrict" confirm-dialog>
                                 <img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16">
@@ -279,4 +285,9 @@
             </div>
         </section>
     </div>
+    <script>
+        $(document).ready(function () {
+            $("#date").datePicker()
+        })
+    </script>
 @stop

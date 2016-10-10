@@ -266,7 +266,7 @@
                             <table class="table table-bordered">
                                 <caption class="table-caption"
                                          style="text-align: center;font-size: 1.5em;font-weight: bold">
-                                    [[report.ansar.ansar_title]]
+                                    [[report.ansar.ansar_title]]([[ansars.length]])
                                 </caption>
                                 <tr>
                                     <th>[[report.ansar.sl_no]]</th>

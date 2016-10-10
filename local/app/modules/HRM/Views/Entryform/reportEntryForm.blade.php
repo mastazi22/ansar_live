@@ -35,49 +35,45 @@
                         <div class="col-md-6 col-md-offset-2">
                             <table class="table borderless">
                                 <tr>
-                                    <td><b>আইডি নং </b></td>
+                                    <td><b>{{$label->id[$type]}}</b></td>
                                     <td>{{ $ansarAllDetails->ansar_id }}</td>
                                 </tr>
                                 <tr>
-                                    <td><b>Name </b></td>
-                                    <td>{{ $ansarAllDetails->ansar_name_eng }}</td>
+                                    <td><b>{{$label->name[$type]}} </b></td>
+                                    <td>{{ $ansarAllDetails->{"ansar_name_".$type} }}</td>
                                 </tr>
                                 <tr>
-                                    <td><b>নাম </b></td>
-                                    <td>{{ $ansarAllDetails->ansar_name_bng}}</td>
+                                    <td><b>{{$label->bd[$type]}}</b></td>
+                                    <td>@if($type=='bng')[[changeToLocal('{{$ansarAllDetails->data_of_birth}}')]] @else {{\Carbon\Carbon::parse($ansarAllDetails->data_of_birth)->format('d-M-Y')}} @endif</td>
                                 </tr>
                                 <tr>
-                                    <td><b>জন্ম তারিখ </b></td>
-                                    <td>[[changeToLocal('{{$ansarAllDetails->data_of_birth}}')]]</td>
+                                    <td><b>{{$label->rank[$type]}}</b></td>
+                                    <td>{{ $ansarAllDetails->designation->{"name_".$type} }}</td>
                                 </tr>
                                 <tr>
-                                    <td><b>বর্তমান পদবী </b></td>
-                                    <td>{{ $ansarAllDetails->designation->name_bng}}</td>
-                                </tr>
-                                <tr>
-                                    <td><b>মোবাইল নং</b></td>
-                                    <td style="word-break: break-all">{{LanguageConverter::engToBng($ansarAllDetails->mobile_no_self)}}</td>
+                                    <td><b>{{$label->mn[$type]}}</b></td>
+                                    <td style="word-break: break-all">{{$type=='bng'?LanguageConverter::engToBng($ansarAllDetails->mobile_no_self):$ansarAllDetails->mobile_no_self}}</td>
                                 </tr>
 
                             </table>
                         </div>
                         <div class="col-md-12" style="margin-bottom: 10px;">
                             <fieldset class="fieldset">
-                                <legend class="legend">পারিবারিক তথ্য:</legend>
+                                <legend class="legend">{{$title->personal_info[$type] }}:</legend>
                                 <div class="col-md-6">
                                     <table class="table borderless">
                                         <tr>
-                                            <td><b>পিতার নাম</b></td>
-                                            <td>{{ $ansarAllDetails->father_name_bng}}</td>
+                                            <td><b>{{$label->fn[$type]}}</b></td>
+                                            <td>{{ $ansarAllDetails->{"father_name_".$type} }}</td>
                                         </tr>
                                         <tr>
-                                            <td><b>বৈবাহিক অবস্থা</b></td>
-                                            <td>{{ strcasecmp($ansarAllDetails->marital_status,"married")==0?"বিবাহিত":(strcasecmp($ansarAllDetails->marital_status,"unmarried")==0?"অবিবাহিত":"তালাকপ্রাপ্ত")}}</td>
+                                            <td><b>{{$label->ms[$type]}}</b></td>
+                                            <td>{{ $type=='bng'?(strcasecmp($ansarAllDetails->marital_status,"married")==0?"বিবাহিত":(strcasecmp($ansarAllDetails->marital_status,"unmarried")==0?"অবিবাহিত":"তালাকপ্রাপ্ত")):$ansarAllDetails->marital_status}}</td>
                                         </tr>
 
                                         <tr>
-                                            <td><b>জাতীয় পরিচয়পত্র নং</b></td>
-                                            <td style="word-break: break-all">{{ LanguageConverter::engToBng($ansarAllDetails->national_id_no) }}</td>
+                                            <td><b>{{$label->nin[$type]}}</b></td>
+                                            <td style="word-break: break-all">{{ $type=='bng'?LanguageConverter::engToBng($ansarAllDetails->national_id_no):$ansarAllDetails->national_id_no }}</td>
                                         </tr>
 
                                     </table>
@@ -87,15 +83,15 @@
                                     <table class="table borderless">
 
                                         <tr>
-                                            <td><b>মাতার নাম </b></td>
-                                            <td>{{ $ansarAllDetails->mother_name_bng}}</td>
+                                            <td><b>{{$label->mtn[$type]}}</b></td>
+                                            <td>{{ $ansarAllDetails->{"mother_name_".$type} }}</td>
                                         </tr>
                                         <tr>
-                                            <td><b>স্ত্রী/স্বামীর নাম </b></td>
-                                            <td>{{ $ansarAllDetails->spouse_name_bng}}</td>
+                                            <td><b>{{$label->hwn[$type]}} </b></td>
+                                            <td>{{ $ansarAllDetails->{"spouse_name_".$type} }}</td>
                                         </tr>
                                         <tr>
-                                            <td><b>জন্ম নিবন্ধন সনদ নং</b></td>
+                                            <td><b>{{$label->bc[$type]}}</b></td>
                                             <td style="word-break: break-all">{{ $ansarAllDetails->birth_certificate_no}}</td>
                                         </tr>
 
@@ -107,21 +103,21 @@
 
                         <div class="col-md-12" style="margin-bottom: 10px;">
                             <fieldset class="fieldset">
-                                <legend class="legend">স্থায়ী ঠিকানা:</legend>
+                                <legend class="legend">{{$title->permanent_address[$type] }}:</legend>
                                 <div class="col-md-6">
                                     <table class="table borderless">
                                         <tr>
-                                            <td><b>গ্রাম</b></td>
-                                            <td>{{$ansarAllDetails->village_name_bng}}</td>
+                                            <td><b>{{$label->vv[$type]}}</b></td>
+                                            <td>{{$ansarAllDetails->{"village_name_".$type} }}</td>
                                         </tr>
                                         <tr>
-                                            <td><b>ইউনিয়ন</b></td>
-                                            <td>{{$ansarAllDetails->union_name_eng }}</td>
+                                            <td><b>{{$label->un[$type]}}</b></td>
+                                            <td>{{$ansarAllDetails->{"union_name_".$type}  }}</td>
 
                                         </tr>
                                         <tr>
-                                            <td><b>জেলা</b></td>
-                                            <td>{{$ansarAllDetails->district->unit_name_bng}}</td>
+                                            <td><b>{{$label->ds[$type]}}</b></td>
+                                            <td>{{$ansarAllDetails->district->{"unit_name_".$type} }}</td>
 
                                         </tr>
 
@@ -132,17 +128,17 @@
                                 <div class="col-md-6">
                                     <table class="table borderless">
                                         <tr>
-                                            <td><b>ডাকঘর </b></td>
-                                            <td>{{$ansarAllDetails->post_office_name_bng}}</td>
+                                            <td><b>{{$label->po[$type]}} </b></td>
+                                            <td>{{$ansarAllDetails->{"post_office_name_".$type} }}</td>
 
                                         </tr>
                                         <tr>
-                                            <td><b>থানা</b></td>
-                                            <td>{{$ansarAllDetails->thana->thana_name_bng}}</td>
+                                            <td><b>{{$label->th[$type]}}</b></td>
+                                            <td>{{$ansarAllDetails->thana->{"thana_name_".$type} }}</td>
                                         </tr>
                                         <tr>
-                                            <td><b>বিভাগ</b></td>
-                                            <td>{{$ansarAllDetails->division->division_name_bng}}</td>
+                                            <td><b>{{$label->dv[$type]}}</b></td>
+                                            <td>{{$ansarAllDetails->division->{"division_name_".$type} }}</td>
                                         </tr>
 
                                     </table>
@@ -153,21 +149,27 @@
 
                         <div class="col-md-12" style="margin-bottom: 10px;">
                             <fieldset class="fieldset">
-                                <legend class="legend">শারীরিক যোগ্যতার তথ্য</legend>
+                                <legend class="legend">{{$title->physical_info[$type] }}</legend>
                                 <div class="col-md-6">
                                     <table class="table borderless">
                                         <tr>
-                                            <td><b>উচ্চতা</b></td>
-                                            <td>{{LanguageConverter::engToBng($ansarAllDetails->hight_feet)}}
+                                            <td><b>{{$label->hh[$type]}}</b></td>
+                                            <td>
+                                                @if($type=='bng')
+                                                {{LanguageConverter::engToBng($ansarAllDetails->hight_feet)}}
                                                 '{{LanguageConverter::engToBng($ansarAllDetails->hight_inch)}}"
+                                                    @else
+                                                    {{$ansarAllDetails->hight_feet}}
+                                                    '{{$ansarAllDetails->hight_inch}}"
+                                                @endif
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td><b>রক্তের গ্রুপ</b></td>
-                                            <td>{{ $ansarAllDetails->blood->blood_group_name_bng }}</td>
+                                            <td><b>{{$label->bg[$type]}}</b></td>
+                                            <td>{{ $ansarAllDetails->blood->{"blood_group_name_".$type} }}</td>
                                         </tr>
                                         <tr>
-                                            <td><b>চোখের রং</b></td>
+                                            <td><b>{{$label->ec[$type]}}</b></td>
                                             <td>{{$ansarAllDetails->eye_color }}</td>
                                         </tr>
 
@@ -178,15 +180,15 @@
                                 <div class="col-md-6">
                                     <table class="table borderless">
                                         <tr>
-                                            <td><b>গায়ের রং</b></td>
-                                            <td>{{$ansarAllDetails->skin_color_bng}}</td>
+                                            <td><b>{{$label->bc[$type]}}</b></td>
+                                            <td>{{$ansarAllDetails->{"skin_color_".$type} }}</td>
                                         </tr>
                                         <tr>
-                                            <td><b>লিঙ্গ</b></td>
+                                            <td><b>{{$label->gen[$type]}}</b></td>
                                             <td>{{strcasecmp($ansarAllDetails->sex,"Male")==0?"পুরুষ":(strcasecmp($ansarAllDetails->sex,"Female")==0?"মহিলা":"অন্যান্য")}}</td>
                                         </tr>
                                         <tr>
-                                            <td><b>সনাক্তকরন চিহ্ন</b></td>
+                                            <td><b>{{$label->im[$type]}}</b></td>
                                             <td>{{$ansarAllDetails->identification_mark}}</td>
                                         </tr>
 
@@ -198,20 +200,20 @@
 
                         <div class="col-md-12" style="margin-bottom: 10px;">
                             <fieldset class="fieldset">
-                                <legend class="legend">শিক্ষাগত যোগ্যতার তথ্য</legend>
+                                <legend class="legend">{{$title->edu_info[$type] }}</legend>
                                 <table class="table borderless">
                                     <tr>
-                                        <td><b>শিক্ষাগত যোগ্যতা</b></td>
-                                        <td><b>শিক্ষা প্রতিষ্ঠানের নাম</b></td>
-                                        <td><b>পাসের সাল</b></td>
-                                        <td><b>বিভাগ / শ্রেণী</b></td>
+                                        <td><b>{{$label->eq[$type]}}</b></td>
+                                        <td><b>{{$label->in[$type]}}</b></td>
+                                        <td><b>{{$label->py[$type]}}</b></td>
+                                        <td><b>{{$label->dc[$type]}}</b></td>
                                     </tr>
                                     @foreach($ansarAllDetails->education as $singleeducation)
 
                                         <tr>
-                                            <td>{{ $singleeducation->educationName->education_deg_bng }}</td>
+                                            <td>{{ $singleeducation->educationName->{"education_deg_".$type}  }}</td>
                                             <td>{{ $singleeducation->institute_name }}</td>
-                                            <td>{{ LanguageConverter::engToBng($singleeducation->passing_year) }}</td>
+                                            <td>{{ $type=='bng'?LanguageConverter::engToBng($singleeducation->passing_year):$singleeducation->passing_year }}</td>
                                             <td>{{ $singleeducation->gade_divission }}</td>
                                         </tr>
                                     @endforeach
@@ -221,15 +223,14 @@
 
                         <div class="col-md-12" style="margin-bottom: 10px;">
                             <fieldset class="fieldset">
-                                <legend class="legend">প্রশিক্ষন সংক্রান্ত তথ্য্</legend>
+                                <legend class="legend">{{$title->train_info[$type] }}</legend>
                                 <table class="table borderless">
                                     <tr>
-                                        <td><b>পদবী</b></td>
-                                        <td><b>প্রতিষ্ঠান</b></td>
-                                        <td><b>প্রশিক্ষন শুরুর তারিখ</b></td>
-                                        <td><b>প্রশিক্ষন শেষের তারিখ</b></td>
-                                        <td><b>সনদ নং</b></td>
-                                        </td>
+                                        <td><b>{{$label->rank[$type]}}</b></td>
+                                        <td><b>{{$label->tin[$type]}}</b></td>
+                                        <td><b>{{$label->tsd[$type]}}</b></td>
+                                        <td><b>{{$label->ted[$type]}}</b></td>
+                                        <td><b>{{$label->cn[$type]}}</b></td>
                                     </tr>
                                     @foreach ($ansarAllDetails->training as $singletraining)
                                         <tr>
@@ -246,20 +247,20 @@
 
                         <div class="col-md-12" style="margin-bottom: 10px;">
                             <fieldset class="fieldset">
-                                <legend class="legend">উত্তরাধিকারীর তথ্য</legend>
+                                <legend class="legend">{{$title->nominee_info[$type] }}</legend>
                                 <table class="table borderless">
                                     <tr>
-                                        <td><b>নাম</b></td>
-                                        <td><b>সম্পর্ক</b></td>
-                                        <td><b>অংশ(%)</b></td>
-                                        <td><b>মোবাইল নং</b></td>
+                                        <td><b>{{$label->name[$type]}}</b></td>
+                                        <td><b>{{$label->rel[$type]}}</b></td>
+                                        <td><b>{{$label->per[$type]}}</b></td>
+                                        <td><b>{{$label->mn[$type]}}</b></td>
                                     </tr>
                                     @foreach ($ansarAllDetails->nominee as $singlenominee)
                                         <tr>
-                                            <td>{{$singlenominee->name_of_nominee}}</td>
+                                            <td>{{$type=='bng'?$singlenominee->name_of_nominee:$singlenominee->name_of_nominee_eng}}</td>
                                             <td>{{$singlenominee->relation_with_nominee}}</td>
                                             <td>{{$singlenominee->nominee_parcentage}}</td>
-                                            <td>{{LanguageConverter::engToBng($singlenominee->nominee_contact_no)}}</td>
+                                            <td>{{$type=='bng'?LanguageConverter::engToBng($singlenominee->nominee_contact_no):$singlenominee->nominee_contact_no}}</td>
                                         </tr>
                                     @endforeach
                                 </table>
@@ -268,16 +269,16 @@
 
                         <div class="col-md-12" style="margin-bottom: 10px;">
                             <fieldset class="fieldset">
-                                <legend class="legend">অন্যান্য তথ্য</legend>
+                                <legend class="legend">{{$title->other_info[$type] }}</legend>
                                 <div class="col-md-6">
                                     <table class="table borderless">
                                         <tr>
                                             <td><b>Mobile no(Self)</b></td>
-                                            <td style="word-break: break-all">{{LanguageConverter::engToBng($ansarAllDetails->mobile_no_self)}}</td>
+                                            <td style="word-break: break-all">{{$type=='bng'?LanguageConverter::engToBng($ansarAllDetails->mobile_no_self):$ansarAllDetails->mobile_no_self}}</td>
                                         </tr>
                                         <tr>
                                             <td><b>Land phone no(self)</b></td>
-                                            <td>{{LanguageConverter::engToBng($ansarAllDetails->land_phone_self) }}</td>
+                                            <td>{{$type=='bng'?LanguageConverter::engToBng($ansarAllDetails->land_phone_self):$ansarAllDetails->land_phone_self }}</td>
                                         </tr>
                                         <tr>
                                             <td><b>Email(Self)</b></td>
@@ -292,11 +293,11 @@
                                     <table class="table borderless">
                                         <tr>
                                             <td><b>Mobile no(Request)</b></td>
-                                            <td>{{LanguageConverter::engToBng($ansarAllDetails->mobile_no_request)}}</td>
+                                            <td>{{$type=='bng'?LanguageConverter::engToBng($ansarAllDetails->mobile_no_request):$ansarAllDetails->mobile_no_request}}</td>
                                         </tr>
                                         <tr>
                                             <td><b>Land phone no(request)</b></td>
-                                            <td>{{LanguageConverter::engToBng($ansarAllDetails->land_phone_request)}}</td>
+                                            <td>{{$type=='bng'?LanguageConverter::engToBng($ansarAllDetails->land_phone_request):$ansarAllDetails->land_phone_request}}</td>
                                         </tr>
 
                                         <tr>
