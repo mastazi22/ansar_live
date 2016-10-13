@@ -15,4 +15,7 @@ class OfferSMS extends Model
     public function ansar(){
         return $this->belongsTo(PersonalInfo::class,'ansar_id','ansar_id');
     }
+    public function district(){
+        return $this->belongsTo(District::class,'district_id');
+    }
 }

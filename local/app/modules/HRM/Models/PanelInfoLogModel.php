@@ -8,4 +8,5 @@ class PanelInfoLogModel extends Model
 {
     protected $connection = 'hrm';
     protected $table="tbl_panel_info_log";
+    protected $guarded = [];
 }

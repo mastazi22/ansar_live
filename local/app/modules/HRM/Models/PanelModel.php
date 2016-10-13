@@ -21,4 +21,7 @@ class PanelModel extends Model
     function thana(){
         return $this->belongsTo(Thana::class,'thana_id');
     }
+    function panelLog(){
+        return $this->hasMany(PanelInfoLogModel::class,'panel_id_old');
+    }
 }

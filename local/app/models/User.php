@@ -2,6 +2,7 @@
 
 namespace App\models;
 
+use App\modules\HRM\Models\ActionUserLog;
 use App\modules\HRM\Models\District;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
@@ -82,5 +83,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
     public function district(){
         return $this->belongsTo(District::class, 'district_id');
+    }
+    public function actionLog(){
+        return $this->hasMany(ActionUserLog::class,'action_by');
     }
 }

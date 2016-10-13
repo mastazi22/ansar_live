@@ -1519,7 +1519,8 @@ class DGController extends Controller
             $a->offer_sms_info()->save(new OfferSMS([
                 'sms_send_datetime'=>Carbon::parse($request->offer_date)->format('Y-m-d'),
                 'sms_end_datetime'=>Carbon::parse($request->offer_date)->addHours(48),
-                'district_id'=>$request->unit_id
+                'district_id'=>$request->unit_id,
+                'action_user_id' => auth()->user()->id
             ]));
             $a->status->update(['pannel_status'=>0,'offer_sms_status'=>1]);
             $pa = $a->panel;

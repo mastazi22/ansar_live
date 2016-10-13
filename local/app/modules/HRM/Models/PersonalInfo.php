@@ -52,7 +52,7 @@ class PersonalInfo extends Model
 
     function panel()
     {
-        return $this->hasOne(PanelModel::class, 'ansar_id');
+        return $this->hasOne(PanelModel::class, 'ansar_id','ansar_id');
     }
 
     public function user()

@@ -48,8 +48,8 @@ class Kernel extends ConsoleKernel
             $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
             $offered_ansar = OfferSMS::where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
             foreach ($offered_ansar as $offer) {
-                $a = PersonalInfo::where('ansar_id', $offer->ansar_id)->first();
-                $dis = District::find($offer->district_id)->unit_name_eng;
+                $a = $offer->ansar->first();
+                $dis = $offer->district->unit_name_eng;
                 $body = 'You (ID:' . $offer->ansar_id . ') are offered for ' . $dis . ' as Rank ' . $a->designation->name_eng . ' Please type (anst YES/anst NO) and send to 6969 within 48 hours. Otherwise your offer will be cancelled - DC ' . strtoupper($dis);
                 $phone = '88' . trim($a->mobile_no_self);
                 $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
@@ -83,7 +83,7 @@ class Kernel extends ConsoleKernel
             $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
             $offered_cancel = OfferCancel::where('sms_status', 0)->take(10)->get();
             foreach ($offered_cancel as $offer) {
-                $a = PersonalInfo::where('ansar_id', $offer->ansar_id)->first();
+                $a = $offer->ansar->first();
                 $body = 'Your offer is cancelled';
                 $phone = '88' . trim($a->mobile_no_self);
                 $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
