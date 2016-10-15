@@ -9,4 +9,5 @@ class ReceiveSMSModel extends Model
     //
     protected $connection = 'hrm';
     protected $table = 'tbl_sms_receive_info';
+    protected $guarded = [];
 }

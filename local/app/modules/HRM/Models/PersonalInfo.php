@@ -94,4 +94,19 @@ class PersonalInfo extends Model
     {
         return $this->hasOne(AllSkill::class, 'skill_id');
     }
+    function receiveSMS(){
+        return $this->hasOne(ReceiveSMSModel::class,'ansar_id','ansar_id');
+    }
+    function panelLog(){
+        return $this->hasMany(PanelInfoLogModel::class,'ansar_id','ansar_id');
+    }
+    function offerCancel(){
+
+        return $this->hasMany(OfferCancel::class,'ansar_id','ansar_id');
+
+    }
+    function offerLog(){
+        return $this->hasMany(OfferSmsLog::class,'ansar_id','ansar_id');
+    }
+
 }

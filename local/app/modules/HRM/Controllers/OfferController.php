@@ -146,6 +146,7 @@ class OfferController extends Controller
             'offer_sms_status'=>1,
         ]);
         $ansar->panel()->save(new PanelInfoLogModel([
+            'panel_id_old'=>$pa->id,
             'ansar_id'=>$pa->ansar_id,
             'merit_list'=>$pa->ansar_merit_list,
             'panel_date'=>$pa->panel_date,
@@ -222,51 +223,53 @@ class OfferController extends Controller
         }
         $result = ['success' => 0, 'fail' => 0];
         $ansar_ids = Input::get('ansar_ids');
-//        return $ansar_ids;
         for ($i = 0; $i < count($ansar_ids); $i++) {
-            //return $ansar_ids[$i];
             DB::beginTransaction();
             try {
-                $offered_ansar = OfferSMS::where('ansar_id', $ansar_ids[$i])->first();
-                if (!$offered_ansar) $received_ansar = ReceiveSMSModel::where('ansar_id', $ansar_ids[$i])->first();
+                $ansar = PersonalInfo::where('ansar_id',$ansar_ids[$i])->first();
+                $offered_ansar = $ansar->offer_sms_info;
+                if (!$offered_ansar) $received_ansar = $ansar->receiveSMS;
                 $offer_log = new OfferSmsLog;
-                $offer_cancel = new OfferCancel;
-                $status_info = AnsarStatusInfo::where('ansar_id', $ansar_ids[$i])->first();
-                $panel_log = PanelInfoLogModel::where('ansar_id', $ansar_ids[$i])->select('old_memorandum_id')->first();
-                $panel_info = new PanelModel;
-                $panel_info->ansar_id = $ansar_ids[$i];
-                $panel_info->memorandum_id = $panel_log->old_memorandum_id;
-                $panel_info->panel_date = Carbon::now()->addHour(6);
-                $panel_info->come_from = 'OfferCancel';
-                $panel_info->ansar_merit_list = 1;
-                $panel_info->action_user_id = auth()->user()->id;
-                $panel_info->save();
-                $status_info->offer_sms_status = 0;
-                $status_info->pannel_status = 1;
-                $status_info->save();
-                $offer_cancel->ansar_id = $ansar_ids[$i];
-                $offer_cancel->offer_cancel_date = Carbon::now();
-                $offer_cancel->save();
+                $panel_log = $ansar->panelLog()->first();
+                $ansar->panel()->save(new PanelModel([
+                    'memorandum_id'=>$panel_log->old_memorandum_id,
+                    'panel_date'=>Carbon::now(),
+                    'come_from'=>'OfferCancel',
+                    'ansar_merit_list'=>1,
+                    'action_user_id'=>auth()->user()->id,
+                ]));
+                $ansar->status()->update([
+                    'offer_sms_status'=>0,
+                    'pannel_status'=>1,
+                ]);
+                $ansar->offerCancel()->save(new OfferCancel([
+                    'offer_cancel_date'=>Carbon::now()
+                ]));
                 if ($offered_ansar) {
-                    $offer_log->ansar_id = $ansar_ids[$i];
-                    $offer_log->offered_date = $offered_ansar->sms_send_datetime;
-                    $offer_log->reply_type = 'No Reply';
-                    $offer_log->action_date = Carbon::now();
-                    $offer_log->offered_district = $offered_ansar->district_id;
-                    $offer_log->action_user_id = auth()->user()->id;
-                    $offer_log->save();
+                    $ansar->offerLog()->save(new OfferSmsLog([
+                        'offered_date'=>$offered_ansar->sms_send_datetime,
+                        'action_date'=>Carbon::now(),
+                        'offered_district'=>$offered_ansar->district_id,
+                        'action_user_id'=>auth()->user()->id,
+                        'reply_type'=>'No Reply',
+                    ]));
                     $offered_ansar->delete();
                 } else {
-                    $offer_log->ansar_id = $ansar_ids[$i];
-                    $offer_log->reply_type = 'Yes';
-                    $offer_log->offered_date = $received_ansar->sms_send_datetime;
-                    $offer_log->offered_district = $received_ansar->offered_district;
-                    $offer_log->action_user_id = auth()->user()->id;
-                    $offer_log->save();
+                    $ansar->offerLog()->save(new OfferSmsLog([
+                        'offered_date'=>$received_ansar->sms_send_datetime,
+                        'offered_district'=>$received_ansar->offered_district,
+                        'action_user_id'=>auth()->user()->id,
+                        'reply_type'=>'Yes',
+                    ]));
                     $received_ansar->delete();
                 }
                 DB::commit();
-                CustomQuery::addActionlog(['ansar_id' => $ansar_ids[$i], 'action_type' => 'CANCEL OFFER', 'from_state' => 'OFFER', 'to_state' => 'PANEL', 'action_by' => auth()->user()->id]);
+                auth()->user()->actionLog()->save(new ActionUserLog([
+                    'ansar_id' => $ansar_ids[$i],
+                    'action_type' => 'CANCEL OFFER',
+                    'from_state' => 'OFFER',
+                    'to_state' => 'PANEL'
+                ]));
                 $result['success']++;
             } catch (\Exception $e) {
                 DB::rollback();
