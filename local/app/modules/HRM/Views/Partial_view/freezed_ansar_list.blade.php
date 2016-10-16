@@ -17,11 +17,11 @@
         <td><a href="{{URL::to('HRM/entryreport')}}/[[ansar.id]]">[[ansar.id]]</a></td>
         <td>[[ansar.rank]]</td>
         <td>[[ansar.name]]</td>
-        <td>[[ansar.birth_date|dateformat:"Do MMM,YYYY"]]</td>
+        <td>[[ansar.birth_date|dateformat:"DD-MMM-YYYY"]]</td>
         <td>[[ansar.unit]]</td>
         <td>[[ansar.thana]]</td>
         <td>[[ansar.freez_reason]]</td>
-        <td>[[ansar.freez_date|dateformat:"Do MMM,YYYY"]]</td>
+        <td>[[ansar.freez_date|dateformat:"DD-MMM-YYYY"]]</td>
     </tr>
     <tr ng-if="data.ansars.length<=0">
         <td class="warning" colspan="9">No Ansar Found</td>

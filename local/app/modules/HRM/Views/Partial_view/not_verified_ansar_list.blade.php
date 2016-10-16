@@ -15,7 +15,7 @@
         <td><a href="{{URL::to('HRM/entryreport')}}/[[ansar.id]]">[[ansar.id]]</a></td>
         <td>[[ansar.rank]]</td>
         <td>[[ansar.name]]</td>
-        <td>[[ansar.birth_date|dateformat:"DD MMM,YYYY"]]</td>
+        <td>[[ansar.birth_date|dateformat:"DD-MMM-YYYY"]]</td>
         <td>[[ansar.unit]]</td>
         <td>[[ansar.thana]]</td>
     </tr>

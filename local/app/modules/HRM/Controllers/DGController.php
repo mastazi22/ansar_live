@@ -1538,7 +1538,7 @@ class DGController extends Controller
                 $pa->delete();
             }
             DB::commit();
-        }catch(Exception $e){
+        }catch(\Exception $e){
             DB::rollback();
             return $e->getMessage();
         }
