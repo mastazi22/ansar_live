@@ -108,7 +108,7 @@ class Kernel extends ConsoleKernel
             Log::info("CALLED START: OFFER NO REPLY");
             $offeredAnsars = OfferSMS::where('sms_end_datetime', '<=', Carbon::now())->get();
             foreach ($offeredAnsars as $ansar) {
-                $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->last();
+                $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
                 $ansar->log()->save(new OfferSmsLog([
                     'offered_date'=>$ansar->sms_send_datetime,
                     'offered_district'=>$ansar->district_id,
