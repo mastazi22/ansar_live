@@ -421,7 +421,7 @@ class FormSubmitHandler extends Controller
                             DB::commit();
                             Session::flash('add_success', $ansarid);
                             CustomQuery::addActionlog(['ansar_id' => $ansarid, 'action_type' => 'ADD ENTRY', 'from_state' => '', 'to_state' => 'ENTRY', 'action_by' => auth()->user()->id]);
-                            return Response::json(['status' => true, 'url' => action('EntryFormController@entrylist')]);
+                            return Response::json(['status' => true, 'url' => URL::route('anser_list')]);
                         }
                         throw new Exception();
                     } catch (Exception $rollback) {
