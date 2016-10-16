@@ -17,6 +17,7 @@ use App\modules\HRM\Models\PersonalInfo;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Nathanmac\Utilities\Parser\Facades\Parser;
 
@@ -109,24 +110,30 @@ class Kernel extends ConsoleKernel
             $offeredAnsars = OfferSMS::where('sms_end_datetime', '<=', Carbon::now())->get();
             foreach ($offeredAnsars as $ansar) {
                 Log::info("CALLED START: OFFER NO REPLY".$ansar->ansar_id);
-                $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
-                $ansar->log()->save(new OfferSmsLog([
-                    'offered_date'=>$ansar->sms_send_datetime,
-                    'offered_district'=>$ansar->district_id,
-                    'action_date'=>Carbon::now(),
-                    'reply_type'=>'No Reply',
-                ]));
-                $ansar->status()->update([
-                    'offer_sms_status'=>0,
-                    'pannel_status'=>1,
-                ]);
-                $ansar->panel()->save(new PanelModel([
-                    'memorandum_id'=>isset($panel_log->old_memorandum_id)?$panel_log->old_memorandum_id:'N\A',
-                    'panel_date'=>Carbon::now(),
-                    'come_from'=>'Offer',
-                    'ansar_merit_list'=>1,
-                ]));
-                $ansar->delete();
+                DB::beginTransaction();
+                try {
+                    $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
+                    $ansar->log()->save(new OfferSmsLog([
+                        'offered_date' => $ansar->sms_send_datetime,
+                        'offered_district' => $ansar->district_id,
+                        'action_date' => Carbon::now(),
+                        'reply_type' => 'No Reply',
+                    ]));
+                    $ansar->status()->update([
+                        'offer_sms_status' => 0,
+                        'pannel_status' => 1,
+                    ]);
+                    $ansar->panel()->save(new PanelModel([
+                        'memorandum_id' => isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
+                        'panel_date' => Carbon::now(),
+                        'come_from' => 'Offer',
+                        'ansar_merit_list' => 1,
+                    ]));
+                    $ansar->delete();
+                }catch(\Exception $e){
+                    DB::rollback();
+                    Log::info("ERROR: ".$e->getMessage());
+                }
             }
         })->everyFiveMinutes()->name("revert_offer")->withoutOverlapping();
 //        $schedule->call(function () {
