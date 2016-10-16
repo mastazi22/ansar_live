@@ -105,9 +105,10 @@ class Kernel extends ConsoleKernel
 //
 //        })->everyMinute()->withoutOverlapping();
         $schedule->call(function () {
-            Log::info("CALLED START: OFFER NO REPLY");
+
             $offeredAnsars = OfferSMS::where('sms_end_datetime', '<=', Carbon::now())->get();
             foreach ($offeredAnsars as $ansar) {
+                Log::info("CALLED START: OFFER NO REPLY".$ansar->ansar_id);
                 $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
                 $ansar->log()->save(new OfferSmsLog([
                     'offered_date'=>$ansar->sms_send_datetime,
