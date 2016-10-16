@@ -18,4 +18,14 @@ class OfferSMS extends Model
     public function district(){
         return $this->belongsTo(District::class,'district_id');
     }
+    public function log(){
+        return $this->hasMany(OfferSmsLog::class,'ansar_id','ansar_id');
+    }
+    public function status(){
+        return $this->hasOne(AnsarStatusInfo::class,'ansar_id','ansar_id');
+    }
+    public function panel(){
+        return $this->hasOne(PanelModel::class,'ansar_id','ansar_id');
+    }
+
 }

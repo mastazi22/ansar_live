@@ -8,4 +8,5 @@ class OfferSmsLog extends Model
 {
     protected $connection = 'hrm';
     protected $table = 'tbl_sms_send_log';
+    protected $guarded = [];
 }

@@ -145,8 +145,7 @@ class OfferController extends Controller
             'pannel_status'=>0,
             'offer_sms_status'=>1,
         ]);
-        $ansar->panel()->save(new PanelInfoLogModel([
-            'panel_id_old'=>$pa->id,
+        $ansar->panel->panelLog()->save(new PanelInfoLogModel([
             'ansar_id'=>$pa->ansar_id,
             'merit_list'=>$pa->ansar_merit_list,
             'panel_date'=>$pa->panel_date,

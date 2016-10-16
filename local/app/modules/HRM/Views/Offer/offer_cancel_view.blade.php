@@ -168,13 +168,16 @@
                             </tr>
                         </table>
                     </div>
+                    <button class="btn btn-primary pull-right" ng-click="cancelUpdate()">
+                        <i ng-show="showLoadScreen" class="fa fa-remove"></i><i ng-hide="showLoadScreen"
+                                                                                class="fa fa-spinner fa-pulse"></i> Cancel Offer
+                    </button>
+                    <div class="clearfix">
+
+                    </div>
                 </div>
             </div>
-            <button class="btn btn-primary pull-right" ng-click="cancelUpdate()">
-                <i ng-show="showLoadScreen" class="fa fa-remove"></i><i ng-hide="showLoadScreen"
-                                                                        class="fa fa-spinner fa-pulse"></i> Cancel Offer
-            </button>
-            <div>[[error]]</div>
+
         </section>
     </div>
 @stop
