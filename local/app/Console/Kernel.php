@@ -127,7 +127,7 @@ class Kernel extends ConsoleKernel
                 ]));
                 $ansar->delete();
             }
-        })->everyFiveMinutes()->withoutOverlapping();
+        })->everyFiveMinutes()->name("revert_offer")->withoutOverlapping();
 //        $schedule->call(function () {
 //            $withdraw_kpi_ids = KpiDetailsModel::where('kpi_withdraw_date', '<=', Carbon::now())->get();
 //            foreach ($withdraw_kpi_ids as $withdraw_kpi_id) {
