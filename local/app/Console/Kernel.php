@@ -130,6 +130,7 @@ class Kernel extends ConsoleKernel
                         'ansar_merit_list' => 1,
                     ]));
                     $ansar->delete();
+                    DB::commit();
                 }catch(\Exception $e){
                     DB::rollback();
                     Log::info("ERROR: ".$e->getMessage());
