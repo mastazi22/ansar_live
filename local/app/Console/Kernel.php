@@ -121,7 +121,7 @@ class Kernel extends ConsoleKernel
                     'pannel_status'=>1,
                 ]);
                 $ansar->panel()->save(new PanelModel([
-                    'memorandum_id'=>$panel_log->old_memorandum_id,
+                    'memorandum_id'=>isset($panel_log->old_memorandum_id)?$panel_log->old_memorandum_id:'N\A',
                     'panel_date'=>Carbon::now(),
                     'come_from'=>'Offer',
                     'ansar_merit_list'=>1,
