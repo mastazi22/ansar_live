@@ -49,30 +49,37 @@ class Kernel extends ConsoleKernel
             $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
             $offered_ansar = OfferSMS::where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
             foreach ($offered_ansar as $offer) {
-                $a = $offer->ansar->first();
-                $dis = $offer->district->unit_name_eng;
-                $body = 'You (ID:' . $offer->ansar_id . ') are offered for ' . $dis . ' as Rank ' . $a->designation->name_eng . ' Please type (anst YES/anst NO) and send to 6969 within 48 hours. Otherwise your offer will be cancelled - DC ' . strtoupper($dis);
-                $phone = '88' . trim($a->mobile_no_self);
-                $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
-                $crl = curl_init();
-                curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, FALSE);
-                curl_setopt($crl, CURLOPT_SSL_VERIFYHOST, 2);
-                curl_setopt($crl, CURLOPT_URL, $url);
-                curl_setopt($crl, CURLOPT_HEADER, 0);
-                curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($crl, CURLOPT_POST, 1);
-                curl_setopt($crl, CURLOPT_POSTFIELDS, $param);
-                $response = curl_exec($crl);
-                curl_close($crl);
-                $r = Parser::xml($response);
-                Log::info(json_encode($r));
-                $offer->sms_try += 1;
-                if (strcasecmp($r['PARAMETER'], 'OK') == 0) {
-                    $offer->sms_status = 'Send';
-                    $offer->save();
-                } else {
-                    $offer->sms_status = 'Failed';
-                    $offer->save();
+                DB::beginTransaction();
+                try {
+                    $a = $offer->ansar->first();
+                    $dis = $offer->district->unit_name_eng;
+                    $body = 'You (ID:' . $offer->ansar_id . ') are offered for ' . $dis . ' as Rank ' . $a->designation->name_eng . ' Please type (anst YES/anst NO) and send to 6969 within 48 hours. Otherwise your offer will be cancelled - DC ' . strtoupper($dis);
+                    $phone = '88' . trim($a->mobile_no_self);
+                    $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
+                    $crl = curl_init();
+                    curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, FALSE);
+                    curl_setopt($crl, CURLOPT_SSL_VERIFYHOST, 2);
+                    curl_setopt($crl, CURLOPT_URL, $url);
+                    curl_setopt($crl, CURLOPT_HEADER, 0);
+                    curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
+                    curl_setopt($crl, CURLOPT_POST, 1);
+                    curl_setopt($crl, CURLOPT_POSTFIELDS, $param);
+                    $response = curl_exec($crl);
+                    curl_close($crl);
+                    $r = Parser::xml($response);
+                    Log::info(json_encode($r));
+                    $offer->sms_try += 1;
+                    if (strcasecmp($r['PARAMETER'], 'OK') == 0) {
+                        $offer->sms_status = 'Send';
+                        $offer->save();
+                    } else {
+                        $offer->sms_status = 'Failed';
+                        $offer->save();
+                    }
+                    DB::commit();
+                } catch (\Exception $e) {
+                    Log::info('OFFER SEND ERROR: '.$e->getMessage());
+                    DB::rollback();
                 }
             }
 
@@ -109,7 +116,7 @@ class Kernel extends ConsoleKernel
 
             $offeredAnsars = OfferSMS::where('sms_end_datetime', '<=', Carbon::now())->get();
             foreach ($offeredAnsars as $ansar) {
-                Log::info("CALLED START: OFFER NO REPLY".$ansar->ansar_id);
+                Log::info("CALLED START: OFFER NO REPLY" . $ansar->ansar_id);
                 DB::beginTransaction();
                 try {
                     $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
@@ -131,9 +138,9 @@ class Kernel extends ConsoleKernel
                     ]));
                     $ansar->delete();
                     DB::commit();
-                }catch(\Exception $e){
+                } catch (\Exception $e) {
                     DB::rollback();
-                    Log::info("ERROR: ".$e->getMessage());
+                    Log::info("ERROR: " . $e->getMessage());
                 }
             }
         })->everyThirtyMinutes()->name("revert_offer")->withoutOverlapping();
