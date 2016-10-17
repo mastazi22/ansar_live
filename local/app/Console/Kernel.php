@@ -52,8 +52,8 @@ class Kernel extends ConsoleKernel
                 DB::beginTransaction();
                 try {
                     $a = $offer->ansar;
-                    Log::info($a);
-                    break;
+//                    Log::info($a);
+//                    break;
                     $dis = $offer->district->unit_name_eng;
                     $body = 'You (ID:' . $offer->ansar_id . ') are offered for ' . $dis . ' as Rank ' . $a->designation->name_eng . ' Please type (anst YES/anst NO) and send to 6969 within 48 hours. Otherwise your offer will be cancelled - DC ' . strtoupper($dis);
                     $phone = '88' . trim($a->mobile_no_self);
