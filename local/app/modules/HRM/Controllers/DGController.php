@@ -26,6 +26,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
@@ -1515,12 +1516,15 @@ class DGController extends Controller
         DB::beginTransaction();
         try{
             $a = PersonalInfo::where('ansar_id',$request->ansar_id)->first();
+            $status = $a->status->getStatus();
+            if((!in_array('panel',$status)&&!in_array('rest',$status))||in_array('block',$status)) throw new \Exception("This ansar not eligible for offer");
             if(!$a&&!preg_match('/^(+88)?0[0-9]{10}/',$a->mobile_no_self)) throw new Exception("Invalid mobile number");
             $a->offer_sms_info()->save(new OfferSMS([
                 'sms_send_datetime'=>Carbon::parse($request->offer_date)->format('Y-m-d'),
                 'sms_end_datetime'=>Carbon::parse($request->offer_date)->addHours(48),
                 'district_id'=>$request->unit_id,
-                'action_user_id' => auth()->user()->id
+                'action_user_id' => auth()->user()->id,
+                'come_from'=>$status[0]
             ]));
             $a->status->update(['pannel_status'=>0,'offer_sms_status'=>1]);
             $pa = $a->panel;
@@ -1540,7 +1544,7 @@ class DGController extends Controller
             DB::commit();
         }catch(\Exception $e){
             DB::rollback();
-            return $e->getMessage();
+            return response(collect(['status'=>false,'data'=>$e->getMessage()])->toJson(),400,['Content-Type'=>'application/json']);
         }
     }
 }

@@ -66,7 +66,7 @@
                 }
             })
             $scope.sendOffer = function (s) {
-
+                $scope.error=false;
                 $scope.loadingSubmit = true;
                 $http({
                     method:'post',
@@ -83,7 +83,8 @@
                 },function (response) {
                     console.log(response)
                     $scope.loadingSubmit = false;
-                    $scope.error = true;
+                    if(response.status==500)$scope.error = true;
+                    $scope.submitResult  = response.data
                 })
             }
         })
