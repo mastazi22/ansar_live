@@ -51,7 +51,7 @@ class Kernel extends ConsoleKernel
             foreach ($offered_ansar as $offer) {
                 DB::beginTransaction();
                 try {
-                    $a = $offer->ansar->first();
+                    $a = $offer->ansar;
                     Log::info($a);
                     break;
                     $dis = $offer->district->unit_name_eng;
