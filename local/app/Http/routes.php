@@ -10,6 +10,8 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+use PhpParser\Parser;
+
 Route::get('/log_in', ['as'=>'login','uses'=>'UserController@login']);
 Route::get('/forget_password_request', ['as'=>'forget_password_request','uses'=>'UserController@forgetPasswordRequest']);
 Route::post('/forget_password_request_handle', ['as'=>'forget_password_request_handle','uses'=>'UserController@handleForgetRequest']);
@@ -48,5 +50,25 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/user_search', ['as' => 'user_search', 'uses' => 'UserController@userSearch']);
     Route::post('change_user_image', 'UserController@changeUserImage');
     Route::post('/verify_memorandum_id', 'UserController@verifyMemorandumId');
+    Route::get('sms_test',function(){
+        $user = env('SSL_USER_ID');
+        $pass = env('SSL_PASSWORD');
+        $sid = env('SSL_SID');
+        $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
+        $phone = '8801913074991';
+        $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode("testsmsm") . "&sid=$sid";
+        $crl = curl_init();
+        curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($crl, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($crl, CURLOPT_URL, $url);
+        curl_setopt($crl, CURLOPT_HEADER, 0);
+        curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($crl, CURLOPT_POST, 1);
+        curl_setopt($crl, CURLOPT_POSTFIELDS, $param);
+        $response = curl_exec($crl);
+        curl_close($crl);
+        $r = Parser::xml($response);
+        return $r;
+    });
     //end user route
 });

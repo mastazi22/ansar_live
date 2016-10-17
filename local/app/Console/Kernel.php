@@ -84,34 +84,34 @@ class Kernel extends ConsoleKernel
             }
 
         })->everyMinute()->name("send_offer")->withoutOverlapping();
-//        $schedule->call(function () {
-//            $user = env('SSL_USER_ID');
-//            $pass = env('SSL_PASSWORD');
-//            $sid = env('SSL_SID');
-//            $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
-//            $offered_cancel = OfferCancel::where('sms_status', 0)->take(10)->get();
-//            foreach ($offered_cancel as $offer) {
-//                $a = $offer->ansar->first();
-//                $body = 'Your offer is cancelled';
-//                $phone = '88' . trim($a->mobile_no_self);
-//                $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
-//                $crl = curl_init();
-//                curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, FALSE);
-//                curl_setopt($crl, CURLOPT_SSL_VERIFYHOST, 2);
-//                curl_setopt($crl, CURLOPT_URL, $url);
-//                curl_setopt($crl, CURLOPT_HEADER, 0);
-//                curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
-//                curl_setopt($crl, CURLOPT_POST, 1);
-//                curl_setopt($crl, CURLOPT_POSTFIELDS, $param);
-//                $response = curl_exec($crl);
-//                curl_close($crl);
-//                $r = simplexml_load_string($response);
-//                Log::info(json_encode($r));
-//                $offer->sms_status = 1;
-//                $offer->save();
-//            }
-//
-//        })->everyMinute()->withoutOverlapping();
+        $schedule->call(function () {
+            $user = env('SSL_USER_ID');
+            $pass = env('SSL_PASSWORD');
+            $sid = env('SSL_SID');
+            $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
+            $offered_cancel = OfferCancel::where('sms_status', 0)->take(10)->get();
+            foreach ($offered_cancel as $offer) {
+                $a = $offer->ansar->first();
+                $body = 'Your offer is cancelled';
+                $phone = '88' . trim($a->mobile_no_self);
+                $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
+                $crl = curl_init();
+                curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, FALSE);
+                curl_setopt($crl, CURLOPT_SSL_VERIFYHOST, 2);
+                curl_setopt($crl, CURLOPT_URL, $url);
+                curl_setopt($crl, CURLOPT_HEADER, 0);
+                curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($crl, CURLOPT_POST, 1);
+                curl_setopt($crl, CURLOPT_POSTFIELDS, $param);
+                $response = curl_exec($crl);
+                curl_close($crl);
+                $r = simplexml_load_string($response);
+                Log::info(json_encode($r));
+                $offer->sms_status = 1;
+                $offer->save();
+            }
+
+        })->everyMinute()->name("offer_cancel")->withoutOverlapping();
         $schedule->call(function () {
 
             $offeredAnsars = OfferSMS::where('sms_end_datetime', '<=', Carbon::now())->get();
