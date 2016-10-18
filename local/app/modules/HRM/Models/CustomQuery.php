@@ -5691,105 +5691,56 @@ class CustomQuery
         return Response::json(['total' => $total]);
     }
 
-    public static function withdrawnKpiInfo($offset, $limit, $unit, $thana)
+    public static function withdrawnKpiInfo($offset, $limit, $unit, $thana,$division)
     {
-        if ((strcasecmp($unit, "all") == 0) && (strcasecmp($thana, "all") == 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                ->join('tbl_division', 'tbl_division.id', '=', 'tbl_kpi_info.division_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                ->whereNotNull('tbl_kpi_detail_info.kpi_withdraw_date')
-                ->where('tbl_kpi_info.withdraw_status', '=', 0)
-                ->where('tbl_kpi_info.status_of_kpi', '=', 1);
+        $kpiQuery = DB::table('tbl_kpi_info')
+            ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
+            ->join('tbl_division', 'tbl_division.id', '=', 'tbl_kpi_info.division_id')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
+            ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
+            ->whereNotNull('tbl_kpi_detail_info.kpi_withdraw_date')
+            ->where('tbl_kpi_info.withdraw_status', '=', 0)
+            ->where('tbl_kpi_info.status_of_kpi', '=', 1);
+        if (strcasecmp($unit, "all") != 0) {
+            $kpiQuery->where('tbl_kpi_info.unit_id', '=', $unit);
 
-        } elseif ((strcasecmp($unit, "all") != 0) && (strcasecmp($thana, "all") == 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                ->join('tbl_division', 'tbl_division.id', '=', 'tbl_kpi_info.division_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                ->whereNotNull('tbl_kpi_detail_info.kpi_withdraw_date')
-                ->where('tbl_kpi_info.withdraw_status', '=', 0)
-                ->where('tbl_kpi_info.status_of_kpi', '=', 1)
-                ->where('tbl_kpi_info.unit_id', '=', $unit);
-
-        } elseif ((strcasecmp($unit, "all") == 0) && (strcasecmp($thana, "all") != 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                ->join('tbl_division', 'tbl_division.id', '=', 'tbl_kpi_info.division_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                ->whereNotNull('tbl_kpi_detail_info.kpi_withdraw_date')
-                ->where('tbl_kpi_info.withdraw_status', '=', 0)
-                ->where('tbl_kpi_info.status_of_kpi', '=', 1)
-                ->where('tbl_kpi_info.thana_id', '=', $thana);
-
-        } elseif ((strcasecmp($unit, "all") != 0) && (strcasecmp($thana, "all") != 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                ->join('tbl_division', 'tbl_division.id', '=', 'tbl_kpi_info.division_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                ->whereNotNull('tbl_kpi_detail_info.kpi_withdraw_date')
-                ->where('tbl_kpi_info.withdraw_status', '=', 0)
-                ->where('tbl_kpi_info.status_of_kpi', '=', 1)
-                ->where('tbl_kpi_info.unit_id', '=', $unit)
-                ->where('tbl_kpi_info.thana_id', '=', $thana);
         }
+        if (strcasecmp($thana, "all") != 0) {
+            $kpiQuery->where('tbl_kpi_info.thana_id', '=', $thana);
 
+        }
+        if (strcasecmp($division, "all") != 0) {
+            $kpiQuery->where('tbl_kpi_info.division_id', '=', $division);
+
+        }
         $kpis = $kpiQuery->select('tbl_kpi_info.id', 'tbl_kpi_info.kpi_name as kpi', 'tbl_kpi_info.withdraw_status', 'tbl_kpi_detail_info.kpi_withdraw_date as date', 'tbl_division.division_name_eng as division', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana')->skip($offset)->limit($limit)->get();
 //        return View::make('kpi.selected_kpi_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'kpis' => $kpis]);
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'kpis' => $kpis]);
 
     }
 
-    public static function withdrawnKpiInfoCount($unit, $thana)
+    public static function withdrawnKpiInfoCount($unit, $thana,$division)
     {
         DB::enableQueryLog();
-        if ((strcasecmp($unit, "all") == 0) && (strcasecmp($thana, "all") == 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                ->join('tbl_division', 'tbl_division.id', '=', 'tbl_kpi_info.division_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                ->whereNotNull('tbl_kpi_detail_info.kpi_withdraw_date')
-                ->where('tbl_kpi_info.withdraw_status', '=', 0)
-                ->where('tbl_kpi_info.status_of_kpi', '=', 1);
+        $kpiQuery = DB::table('tbl_kpi_info')
+            ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
+            ->join('tbl_division', 'tbl_division.id', '=', 'tbl_kpi_info.division_id')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
+            ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
+            ->whereNotNull('tbl_kpi_detail_info.kpi_withdraw_date')
+            ->where('tbl_kpi_info.withdraw_status', '=', 0)
+            ->where('tbl_kpi_info.status_of_kpi', '=', 1);
+        if (strcasecmp($unit, "all") != 0) {
+            $kpiQuery->where('tbl_kpi_info.unit_id', '=', $unit);
 
-        } elseif ((strcasecmp($unit, "all") != 0) && (strcasecmp($thana, "all") == 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                ->join('tbl_division', 'tbl_division.id', '=', 'tbl_kpi_info.division_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                ->whereNotNull('tbl_kpi_detail_info.kpi_withdraw_date')
-                ->where('tbl_kpi_info.withdraw_status', '=', 0)
-                ->where('tbl_kpi_info.status_of_kpi', '=', 1)
-                ->where('tbl_kpi_info.unit_id', '=', $unit);
+        }
+        if (strcasecmp($thana, "all") != 0) {
+            $kpiQuery->where('tbl_kpi_info.thana_id', '=', $thana);
 
-        } elseif ((strcasecmp($unit, "all") == 0) && (strcasecmp($thana, "all") != 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                ->join('tbl_division', 'tbl_division.id', '=', 'tbl_kpi_info.division_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                ->whereNotNull('tbl_kpi_detail_info.kpi_withdraw_date')
-                ->where('tbl_kpi_info.withdraw_status', '=', 0)
-                ->where('tbl_kpi_info.status_of_kpi', '=', 1)
-                ->where('tbl_kpi_info.thana_id', '=', $thana);
+        }
+        if (strcasecmp($division, "all") != 0) {
+            $kpiQuery->where('tbl_kpi_info.division_id', '=', $division);
 
-        } elseif ((strcasecmp($unit, "all") != 0) && (strcasecmp($thana, "all") != 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                ->join('tbl_division', 'tbl_division.id', '=', 'tbl_kpi_info.division_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                ->whereNotNull('tbl_kpi_detail_info.kpi_withdraw_date')
-                ->where('tbl_kpi_info.withdraw_status', '=', 0)
-                ->where('tbl_kpi_info.status_of_kpi', '=', 1)
-                ->where('tbl_kpi_info.unit_id', '=', $unit)
-                ->where('tbl_kpi_info.thana_id', '=', $thana);
         }
         $total = $kpiQuery->count('tbl_kpi_info.id');
 //        print_r(DB::getQueryLog());

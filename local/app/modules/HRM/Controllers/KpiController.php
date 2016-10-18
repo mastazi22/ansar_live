@@ -460,16 +460,25 @@ class KpiController extends Controller
         return view('HRM::Kpi.ansar_before_withdraw_list');
     }
 
-    public function loadAnsarsForBeforeWithdraw()
+    public function loadAnsarsForBeforeWithdraw(Request $request)
     {
         $kpi_id = Input::get('kpi_id');
         $rules=[
-            'kpi_id'=>'regex:/^[0-9]+$/'
+            'kpi_id'=>['regex:/^([0-9]+)|(all)$/','required'],
+            'division_id'=>['regex:/^([0-9]+)|(all)$/','required'],
+            'unit_id'=>['regex:/^([0-9]+)|(all)$/','required'],
+            'thana_id'=>['regex:/^([0-9]+)|(all)$/','required'],
         ];
-        $validation=Validator::make(Input::all(), $rules);
+        $validation=Validator::make($request->all(), $rules);
         if($validation->fails()){
             return response('Invalid Request (400)', 400);
         }else{
+            if(Auth::user()->type==22){
+                $request->unit_id = Auth::user()->district_id;
+            }
+            if(Auth::user()->type==66){
+                $request->division_id = Auth::user()->division_id;
+            }
             $freeze_reason = "Guard Withdraw";
 
             $guards_before_withdraw = DB::table('tbl_freezing_info')
@@ -479,13 +488,25 @@ class KpiController extends Controller
                 ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
                 ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_freezing_info.kpi_id')
                 ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                ->where('tbl_freezing_info.freez_reason', '=', $freeze_reason)
-                ->where('tbl_freezing_info.kpi_id', '=', $kpi_id)
-                ->distinct()
+                ->where('tbl_freezing_info.freez_reason', '=', $freeze_reason);
+            if($request->division_id!='all'){
+                $guards_before_withdraw->where('tbl_kpi_info.division_id',$request->division_id);
+            }
+            if($request->kpi_id!='all'){
+                $guards_before_withdraw->where('tbl_freezing_info.kpi_id', '=', $kpi_id);
+            }
+            if($request->thana_id!='all'){
+                $guards_before_withdraw->where('tbl_kpi_info.thana_id', '=', $request->thana_id);
+            }
+            if($request->unit_id!='all'){
+                $guards_before_withdraw->where('tbl_kpi_info.unit_id', '=', $request->unit_id);
+            }
+
+            $data = $guards_before_withdraw->distinct()
                 ->select('tbl_freezing_info.ansar_id as id', 'tbl_freezing_info.freez_date as date', 'tbl_freezing_info.comment_on_freez as reason', 'tbl_ansar_parsonal_info.ansar_name_eng as name', 'tbl_designations.name_eng as rank', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana', 'tbl_kpi_info.kpi_name',
                     'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.reporting_date as r_date', 'tbl_kpi_info.kpi_name')->get();
 //        return Response::json($guards_before_withdraw);
-            return $guards_before_withdraw;
+            return $data;
         }
     }
 
@@ -494,20 +515,27 @@ class KpiController extends Controller
         return view('HRM::Kpi.ansar_before_reduce_list');
     }
 
-    public function loadAnsarsForBeforeReduce()
+    public function loadAnsarsForBeforeReduce(Request $request)
     {
         $unit_id=Input::get('unit_id');
         $thana=Input::get('thana_id');
         $kpi_id = Input::get('kpi_id');
         $rules=[
-            'unit_id'=>'regex:/^[0-9]+$/',
-            'thana_id'=>'regex:/^[0-9]+$/',
-            'kpi_id'=>'regex:/^[0-9]+$/'
+            'kpi_id'=>['regex:/^([0-9]+)|(all)$/','required'],
+            'division_id'=>['regex:/^([0-9]+)|(all)$/','required'],
+            'unit_id'=>['regex:/^([0-9]+)|(all)$/','required'],
+            'thana_id'=>['regex:/^([0-9]+)|(all)$/','required'],
         ];
         $validation=Validator::make(Input::all(), $rules);
         if($validation->fails()){
             return response('Invalid Request (400)', 400);
         }else{
+            if(Auth::user()->type==22){
+                $request->unit_id = Auth::user()->district_id;
+            }
+            if(Auth::user()->type==66){
+                $request->division_id = Auth::user()->division_id;
+            }
             $freeze_reason = "Guard Reduce";
 
             $guards_before_reduce = DB::table('tbl_freezing_info')
@@ -517,13 +545,25 @@ class KpiController extends Controller
                 ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
                 ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_freezing_info.kpi_id')
                 ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                ->where('tbl_freezing_info.freez_reason', '=', $freeze_reason)
-                ->where('tbl_freezing_info.kpi_id', '=', $kpi_id)
-                ->distinct()
+                ->where('tbl_freezing_info.freez_reason', '=', $freeze_reason);
+                //        return Response::json($guards_before_withdraw);
+            if($request->division_id!='all'){
+                $guards_before_reduce->where('tbl_kpi_info.division_id',$request->division_id);
+            }
+            if($request->kpi_id!='all'){
+                $guards_before_reduce->where('tbl_freezing_info.kpi_id', '=', $kpi_id);
+            }
+            if($request->thana_id!='all'){
+                $guards_before_reduce->where('tbl_kpi_info.thana_id', '=', $request->thana_id);
+            }
+            if($request->unit_id!='all'){
+                $guards_before_reduce->where('tbl_kpi_info.unit_id', '=', $request->unit_id);
+            }
+            $data = $guards_before_reduce->distinct()
                 ->select('tbl_freezing_info.ansar_id as id', 'tbl_freezing_info.freez_date as date', 'tbl_freezing_info.comment_on_freez as reason', 'tbl_ansar_parsonal_info.ansar_name_eng as name', 'tbl_designations.name_eng as rank', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana', 'tbl_kpi_info.kpi_name',
                     'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.reporting_date as r_date', 'tbl_kpi_info.kpi_name')->get();
-//        return Response::json($guards_before_withdraw);
-            return $guards_before_reduce;
+
+            return $data;
         }
     }
 
@@ -645,12 +685,14 @@ class KpiController extends Controller
         $offset = Input::get('offset');
         $unit = Input::get('unit');
         $thana = Input::get('thana');
+        $division = Input::get('division');
         $view = Input::get('view');
         $rules=[
             'limit'=>'numeric',
             'offset' =>'numeric',
             'unit'=>['regex:/^(all)$|^[0-9]+$/'],
             'thana'=>['regex:/^(all)$|^[0-9]+$/'],
+            'division'=>['regex:/^(all)$|^[0-9]+$/'],
             'view'=>'regex:/[a-z]+/'
         ];
         $validation=Validator::make(Input::all(), $rules);
@@ -658,9 +700,9 @@ class KpiController extends Controller
             return response('Invalid Request (400)', 400);
         }else{
             if (strcasecmp($view, 'view') == 0) {
-                return CustomQuery::withdrawnKpiInfo($offset, $limit, $unit, $thana);
+                return CustomQuery::withdrawnKpiInfo($offset, $limit, $unit, $thana,$division);
             } else {
-                return CustomQuery::withdrawnKpiInfoCount($unit, $thana);
+                return CustomQuery::withdrawnKpiInfoCount($unit, $thana,$division);
             }
         }
     }

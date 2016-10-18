@@ -153,6 +153,10 @@
                                     <p class="text-danger">{{$errors->first('kpi_id')}}</p>
                                 @endif
                             </div>
+                            <div class="form-group">
+                                <label for="mem_id" class="control-label">Memorandum no.</label>
+                                <input type="text" class="form-control" name="mem_id" id="mem_id" placeholder="Memorandum no">
+                            </div>
                             <button id="cancel-withdraw-kpi" class="btn btn-primary">
                                 Cancel Withdraw
                             </button>

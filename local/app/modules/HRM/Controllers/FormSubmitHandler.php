@@ -444,9 +444,13 @@ class FormSubmitHandler extends Controller
     {
         if (Input::exists('id')) {
             $id = $request->input('id');
-            $districts = District::where('division_id', '=', $id)->get();
-        } else
+            if($id=='all'){
+                $districts = District::all();
+            }
+            else $districts = District::where('division_id', '=', $id)->get();
+        } else{
             $districts = District::all();
+        }
         return Response::json($districts);
     }
 

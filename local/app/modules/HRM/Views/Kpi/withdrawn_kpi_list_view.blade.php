@@ -10,11 +10,16 @@
 @section('content')
     <script>
         GlobalApp.controller('KpiWithdrawDateController', function ($scope, $http, $sce, $compile) {
+            $scope.isAdmin = parseInt('{{Auth::user()->type}}')
+            $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}')
             $scope.total = 0;
             $scope.numOfPage = 0;
             $scope.selectedDistrict = "all";
+            $scope.loadingDiv = false;
             $scope.selectedThana = "all";
+            $scope.selectedDivision = "all";
             $scope.allLoading = false;
+            $scope.loadingDiv = false;
             $scope.districts = [];
             $scope.thanas = [];
             $scope.guards = [];
@@ -23,7 +28,7 @@
             $scope.currentPage = 0;
             $scope.ansars = $sce.trustAsHtml("");
             $scope.pages = [];
-            $scope.loadingDistrict = true;
+            $scope.loadingDistrict = false;
             $scope.loadingThana = false;
             $scope.loadingKpi = false;
             $scope.loadingPage = [];
@@ -54,6 +59,7 @@
                         limit: page.limit,
                         unit: $scope.selectedDistrict,
                         thana: $scope.selectedThana,
+                        division: $scope.selectedDivision,
                         view: 'view'
                     }
                 }).then(function (response) {
@@ -73,6 +79,7 @@
                     params: {
                         unit: $scope.selectedDistrict,
                         thana: $scope.selectedThana,
+                        division: $scope.selectedDivision,
                         view: 'count'
                     }
                 }).then(function (response) {
@@ -98,13 +105,33 @@
                     return true;
                 }
             }
-            $http({
-                method: 'get',
-                url: '{{URL::to('HRM/DistrictName')}}'
-            }).then(function (response) {
-                $scope.districts = response.data;
-                $scope.loadingDistrict = false;
-            })
+            $scope.loadDivision = function () {
+                $scope.loadingDiv = true;
+                $http({
+                    method: 'get',
+                    url: '{{URL::to('HRM/DivisionName')}}'
+                }).then(function (response) {
+                    $scope.loadingDiv = false;
+                    $scope.divisions = response.data;
+                    $scope.loadingDiv = false;
+                })
+            }
+            $scope.loadDistrict = function () {
+                $scope.loadingDistrict = true;
+                $http({
+                    method: 'get',
+                    url: '{{URL::to('HRM/DistrictName')}}',
+                    params:{id:$scope.selectedDivision}
+                }).then(function (response) {
+                    $scope.districts = response.data;
+                    $scope.loadingDistrict = false;
+                    $scope.thanas = [];
+                    $scope.selectedThana = "all";
+                    $scope.selectedDistrict = "all";
+                    $scope.loadTotal();
+                })
+            }
+
             $scope.loadThana = function (d_id) {
                 $scope.loadingThana = true;
                 $http({
@@ -120,6 +147,18 @@
             }
             $scope.dateConvert = function (date) {
                 return (moment(date).format('DD-MMM-Y'));
+            }
+
+            if ($scope.isAdmin == 11||$scope.isAdmin == 33) {
+                $scope.loadDivision()
+            }
+            else if ($scope.isAdmin == 66) {
+                $scope.loadDistrict()
+            }
+            else {
+                if (!isNaN($scope.dcDistrict)) {
+                    $scope.loadThana($scope.dcDistrict)
+                }
             }
             $scope.loadTotal();
         })
@@ -150,13 +189,29 @@
                 </div>
                 <div class="box-body">
                     <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-sm-4" ng-show="isAdmin==11||isAdmin==33">
+                            <div class="form-group">
+                                <label class="control-label">
+                                    Select a Range&nbsp;&nbsp;
+                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
+                                         ng-show="loadingDiv">
+                                </label>
+                                <select class="form-control" ng-disabled="loadingDiv||loadingDistrict||loadingThana"
+                                        ng-model="selectedDivision"
+                                        ng-change="loadDistrict()" name="division_id">
+                                    <option value="all">All</option>
+                                    <option ng-repeat="d in divisions" value="[[d.id]]">[[d.division_name_eng]]
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4" ng-show="isAdmin==11||isAdmin==33||isAdmin==66">
                             <div class="form-group">
                                 <label class="control-label">Select a Unit&nbsp;
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select class="form-control" ng-model="selectedDistrict"
-                                        ng-disabled="loadingDistrict||loadingThana"
+                                        ng-disabled="loadingDiv||loadingDistrict||loadingThana"
                                         ng-change="loadThana(selectedDistrict)">
                                     <option value="all">All</option>
                                     <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_eng]]
@@ -171,7 +226,7 @@
                                          width="16">
                                 </label>
                                 <select class="form-control" ng-model="selectedThana"
-                                        ng-change="loadTotal()" ng-disabled="loadingDistrict||loadingThana">
+                                        ng-change="loadTotal()" ng-disabled="loadingDiv||loadingDistrict||loadingThana">
                                     <option value="all">All</option>
                                     <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_eng]]
                                     </option>

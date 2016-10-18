@@ -17,6 +17,7 @@ class CheckUserType
      * @param  \Closure $next
      * @return mixed
      */
+    private $urls =['district_name'];
     public function handle($request, Closure $next)
     {
         $user = Auth::user();

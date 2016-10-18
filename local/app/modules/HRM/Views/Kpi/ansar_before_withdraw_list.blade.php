@@ -12,14 +12,15 @@
     <script>
         GlobalApp.controller('GuardBeforeWithdrawController', function ($scope, $http, $sce) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}')
-            $scope.selectedDivision = ''
+
             $scope.divisions = []
             $scope.districts = [];
             $scope.thanas = [];
             $scope.ansars="";
-            $scope.selectedDistrict = "";
-            $scope.selectedThana = "";
-            $scope.selectedKpi = "";
+            $scope.selectedDivision = 'all'
+            $scope.selectedDistrict = "all";
+            $scope.selectedThana = "all";
+            $scope.selectedKpi = "all";
             $scope.allLoading = false;
             $scope.loadingUnit = false;
             $scope.loadingDiv = false;
@@ -50,9 +51,10 @@
                     $scope.loadingUnit = false;
                     $scope.thanas = [];
                     $scope.guards = [];
-                    $scope.selectedThana = "";
-                    $scope.selectedKpi = "";
-                    $scope.selectedDistrict = "";
+                    $scope.selectedThana = "all";
+                    $scope.selectedKpi = "all";
+                    $scope.selectedDistrict = "all";
+                    $scope.loadAnsar();
                 })
             }
             $scope.loadThana = function (id) {
@@ -63,10 +65,11 @@
                     params: {id: id}
                 }).then(function (response) {
                     $scope.thanas = response.data;
-                    $scope.selectedThana = "";
+                    $scope.selectedThana = "all";
                     $scope.loadingThana = false;
                     $scope.guards = [];
-                    $scope.selectedKpi = "";
+                    $scope.selectedKpi = "all";
+                    $scope.loadAnsar();
                 })
             }
             $scope.loadGuard = function (id) {
@@ -77,16 +80,22 @@
                     params: {id: id}
                 }).then(function (response) {
                     $scope.guards = response.data;
-                    $scope.selectedKpi = "";
+                    $scope.selectedKpi = "all";
                     $scope.loadingKpi = false;
+                    $scope.loadAnsar();
                 })
             }
-            $scope.loadAnsar = function (id) {
+            $scope.loadAnsar = function () {
                 $scope.allLoading = true;
                 $http({
                     method: 'get',
                     url: '{{URL::route('load_ansar_before_withdraw')}}',
-                    params: {kpi_id: id}
+                    params: {
+                        kpi_id: $scope.selectedKpi,
+                        division_id:$scope.selectedDivision,
+                        unit_id:$scope.selectedDistrict,
+                        thana_id:$scope.selectedThana
+                    }
                 }).then(function (response) {
                     $scope.errorFound = 0;
                     $scope.ansars = response.data;
@@ -112,6 +121,7 @@
             $scope.dateConvert=function(date){
                 return (moment(date).format('DD-MMM-Y'));
             }
+            $scope.loadAnsar();
         })
 
     </script>
@@ -138,7 +148,7 @@
                                 <select class="form-control" ng-disabled="loadingDiv||loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedDivision"
                                         ng-change="loadDistrict()" name="division_id">
-                                    <option value="">--Select a Division--</option>
+                                    <option value="all">All</option>
                                     <option ng-repeat="d in divisions" value="[[d.id]]">[[d.division_name_eng]]
                                     </option>
                                 </select>
@@ -154,7 +164,7 @@
                                 <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedDistrict"
                                         ng-change="loadThana(selectedDistrict)" name="unit_id">
-                                    <option value="">--Select a District--</option>
+                                    <option value="all">All</option>
                                     <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
                                     </option>
                                 </select>
@@ -170,7 +180,7 @@
                                 <select class="form-control" ng-disabled="loadingDiv||loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedThana"
                                         ng-change="loadGuard(selectedThana)" name="thana_id">
-                                    <option value="">--Select a Thana--</option>
+                                    <option value="all">All</option>
                                     <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
                                     </option>
                                 </select>
@@ -184,9 +194,9 @@
                                          ng-show="loadingKpi">
                                 </label>
                                 <select class="form-control" ng-disabled="loadingDiv||loadingUnit||loadingThana||loadingKpi"
-                                        ng-model="selectedKPI"
-                                        ng-change="loadAnsar(selectedKPI)">
-                                    <option value="">--Select a Guard--</option>
+                                        ng-model="selectedKpi"
+                                        ng-change="loadAnsar(selectedKpi)">
+                                    <option value="all">All</option>
                                     <option ng-repeat="d in guards" value="[[d.id]]">[[d.kpi_name]]
                                     </option>
                                 </select>
@@ -202,6 +212,7 @@
                                 <th>Rank</th>
                                 <th>Own District</th>
                                 <th>Own Thana</th>
+                                <th>Kpi Name</th>
                                 <th>Ansar Reporting Date</th>
                                 <th>Ansar Joining Date</th>
                                 <th>Withdraw Reason</th>
@@ -209,7 +220,7 @@
                             </tr>
                             <tbody ng-if="errorFound==1" ng-bind-html="errorMessage"></tbody>
                             <tr ng-show="ansars.length==0&&errorFound==0">
-                                <td colspan="10" class="warning no-ansar">
+                                <td colspan="11" class="warning no-ansar">
                                     No Ansar is available to show
                                 </td>
                             </tr>
@@ -231,6 +242,9 @@
                                 </td>
                                 <td>
                                     [[a.thana]]
+                                </td>
+                                <td>
+                                    [[a.kpi_name]]
                                 </td>
                                 <td>
                                     [[dateConvert(a.r_date)]]

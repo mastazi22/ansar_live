@@ -13,17 +13,30 @@
             $scope.isAdmin = parseInt('{{Auth::user()->type}}')
             $scope.districts = [];
             $scope.thanas = [];
-            $scope.selectedDistrict = "";
-            $scope.selectedThana = "";
-            $scope.selectedKpi = "";
+            $scope.selectedDivision = 'all'
+            $scope.selectedDistrict = "all";
+            $scope.selectedThana = "all";
+            $scope.selectedKpi = "all";
             $scope.allLoading = false;
             $scope.loadingUnit = false;
-            $scope.ansars="";
+            $scope.loadingDiv = false;
             $scope.loadingThana = false;
             $scope.loadingKpi = false;
+            $scope.ansars="";
             $scope.errorFound = 0;
             $scope.errorMessage='';
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}')
+            $scope.loadDivision = function () {
+                $scope.loadingDiv = true;
+                $http({
+                    method: 'get',
+                    url: '{{URL::to('HRM/DivisionName')}}'
+                }).then(function (response) {
+                    $scope.loadingDiv = false;
+                    $scope.divisions = response.data;
+                    $scope.loadingDiv = false;
+                })
+            }
             $scope.loadDistrict = function () {
                 $scope.loadingUnit = true;
                 $http({
@@ -33,7 +46,11 @@
                     $scope.districts = response.data;
                     $scope.loadingUnit = false;
                     $scope.thanas = [];
-                    $scope.selectedThana = "";
+                    $scope.guards = [];
+                    $scope.selectedThana = "all";
+                    $scope.selectedKpi = "all";
+                    $scope.selectedDistrict = "all";
+                    $scope.loadAnsar();
                 })
             }
             $scope.loadThana = function (id) {
@@ -44,8 +61,11 @@
                     params: {id: id}
                 }).then(function (response) {
                     $scope.thanas = response.data;
-                    $scope.selectedThana = "";
+                    $scope.selectedThana = "all";
                     $scope.loadingThana = false;
+                    $scope.guards = [];
+                    $scope.selectedKpi = "all";
+                    $scope.loadAnsar();
                 })
             }
             $scope.loadGuard = function (id) {
@@ -56,16 +76,22 @@
                     params: {id: id}
                 }).then(function (response) {
                     $scope.guards = response.data;
-                    $scope.selectedKpi = "";
+                    $scope.selectedKpi = "all";
                     $scope.loadingKpi = false;
+                    $scope.loadAnsar();
                 })
             }
-            $scope.loadAnsar = function (id) {
+            $scope.loadAnsar = function () {
                 $scope.allLoading = true;
                 $http({
                     method: 'get',
                     url: '{{URL::route('load_ansar_before_reduce')}}',
-                    params: {kpi_id: id}
+                    params: {
+                        kpi_id: $scope.selectedKpi,
+                        division_id:$scope.selectedDivision,
+                        unit_id:$scope.selectedDistrict,
+                        thana_id:$scope.selectedThana
+                    }
                 }).then(function (response) {
                     $scope.errorFound = 0;
                     $scope.ansars = response.data;
@@ -77,7 +103,10 @@
                     $scope.allLoading = false;
                 })
             }
-            if ($scope.isAdmin == 11) {
+            if ($scope.isAdmin == 11||$scope.isAdmin == 33) {
+                $scope.loadDivision()
+            }
+            else if ($scope.isAdmin == 66) {
                 $scope.loadDistrict()
             }
             else {
@@ -88,6 +117,7 @@
             $scope.dateConvert=function(date){
                 return (moment(date).format('DD-MMM-Y'));
             }
+            $scope.loadAnsar()
         })
 
     </script>
@@ -104,7 +134,23 @@
                 </div>
                 <div class="box-body">
                     <div class="row">
-                        <div class="col-sm-4" ng-show="isAdmin==11">
+                        <div class="col-sm-3" ng-show="isAdmin==11||isAdmin==33">
+                            <div class="form-group">
+                                <label class="control-label">
+                                    Select a Range&nbsp;&nbsp;
+                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
+                                         ng-show="loadingDiv">
+                                </label>
+                                <select class="form-control" ng-disabled="loadingDiv||loadingUnit||loadingThana||loadingKpi"
+                                        ng-model="selectedDivision"
+                                        ng-change="loadDistrict()" name="division_id">
+                                    <option value="all">All</option>
+                                    <option ng-repeat="d in divisions" value="[[d.id]]">[[d.division_name_eng]]
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3" ng-show="isAdmin==11||isAdmin==33||isAdmin==66">
                             <div class="form-group">
                                 <label class="control-label">
                                     Select a District&nbsp;&nbsp;
@@ -114,13 +160,13 @@
                                 <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedDistrict"
                                         ng-change="loadThana(selectedDistrict)">
-                                    <option value="">--Select a District--</option>
+                                    <option value="all">All</option>
                                     <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
                                     </option>
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label">
                                     Select a Thana&nbsp;&nbsp;
@@ -130,13 +176,13 @@
                                 <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedThana"
                                         ng-change="loadGuard(selectedThana)">
-                                    <option value="">--Select a Thana--</option>
+                                    <option value="all">All</option>
                                     <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
                                     </option>
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label">
                                     Select a Guard&nbsp;&nbsp;
@@ -144,9 +190,9 @@
                                          ng-show="loadingKpi">
                                 </label>
                                 <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                        ng-model="selectedKPI"
-                                        ng-change="loadAnsar(selectedKPI)">
-                                    <option value="">--Select a Guard--</option>
+                                        ng-model="selectedKpi"
+                                        ng-change="loadAnsar()">
+                                    <option value="all">All</option>
                                     <option ng-repeat="d in guards" value="[[d.id]]">[[d.kpi_name]]
                                     </option>
                                 </select>

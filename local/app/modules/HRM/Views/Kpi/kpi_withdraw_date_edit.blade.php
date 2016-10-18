@@ -69,6 +69,12 @@
                                         @endif
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    {!! Form::label('mem_id', 'Memorandum No.:', $attributes = array('class' => 'col-md-3 control-label')) !!}
+                                    <div class="col-md-9">
+                                        {!! Form::text('mem_id', null, $attributes = array('class' => 'form-control','placeholder'=>'Memorandum No.')) !!}
+                                    </div>
+                                </div>
 
                             </div>
                             <!-- /.box-body -->
