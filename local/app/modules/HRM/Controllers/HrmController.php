@@ -379,8 +379,10 @@ class HrmController extends Controller
                     return CustomQuery::getRecentTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division);
                 case 'embodied_ansar':
                     return CustomQuery::getRecentTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division);
-                case 'diff_embodied_ansar':
+                case 'embodied_ansar_in_different_district':
                     return CustomQuery::getRecentTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division);
+                case 'own_embodied_ansar':
+                    return CustomQuery::getRecentTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division);
                 case 'rest_ansar':
                     return CustomQuery::getRecentTotalRestAnsarList($offset, $limit, $unit, $thana, $division);
                 case 'freezed_ansar':
@@ -404,7 +406,9 @@ class HrmController extends Controller
                     return CustomQuery::getRecentTotalPaneledAnsarCount($unit, $thana, $division);
                 case 'embodied_ansar':
                     return CustomQuery::getRecentTotalEmbodiedAnsarCount($unit, $thana, $division);
-                case 'diff_embodied_ansar':
+                case 'own_embodied_ansar':
+                    return CustomQuery::getRecentTotalOwnEmbodiedAnsarCount($unit, $thana, $division);
+                case 'embodied_ansar_in_different_district':
                     return CustomQuery::getRecentTotalDiffEmbodiedAnsarCount($unit, $thana, $division);
                 case 'rest_ansar':
                     return CustomQuery::getRecentTotalRestAnsarCount($unit, $thana, $division);
