@@ -42,9 +42,18 @@ class UserController extends Controller
                 Auth::logout();
                 return Redirect::action('UserController@login')->with('error', 'Your blocked. Please contact with administrator');
             }
-            $user->userLog->last_login = Carbon::now();
-            if ($user->userLog->user_status == 0) $user->userLog->user_status = 1;
-            $user->userLog->save();
+            $log = $user->userLog;
+            if($log) {
+                $user->userLog->last_login = Carbon::now();
+                if ($user->userLog->user_status == 0) $user->userLog->user_status = 1;
+                $user->userLog->save();
+            }
+            else{
+                $user->userLog()->save(new UserLog([
+                    'last_login'=>Carbon::now(),
+                    'login_status'=>1
+                ]));
+            }
             Log::info("Previous URL Handle: ".Session::get('redirect_url'));
             if(Session::has('redirect_url')){
                 $url = Session::get('redirect_url');

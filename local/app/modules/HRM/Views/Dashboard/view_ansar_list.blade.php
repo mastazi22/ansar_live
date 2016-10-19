@@ -102,13 +102,15 @@
                         return true;
                 }
             }
-            $http({
-                method:'get',
-                url:'{{URL::to('HRM/DistrictName')}}'
-            }).then(function (response) {
-                $scope.districts = response.data;
-                $scope.loadingDistrict = false;
-            })
+            $scope.loadUnit = function () {
+                $http({
+                    method:'get',
+                    url:'{{URL::to('HRM/DistrictName')}}'
+                }).then(function (response) {
+                    $scope.districts = response.data;
+                    $scope.loadingDistrict = false;
+                })
+            }
             $scope.loadThana = function (d_id) {
                 $scope.loadingThana = true;
                 $scope.allLoading = true;
@@ -122,6 +124,12 @@
                     $scope.loadingThana = false;
                     $scope.loadTotal()
                 })
+            }
+            if($scope.isDc){
+                $scope.loadThana(parseInt('{{Auth::user()->district_id}}'))
+            }
+            else{
+                $scope.loadUnit();
             }
             $scope.loadTotal()
             function capitalizeLetter(s){
@@ -154,7 +162,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-4" ng-show="!isDc">
+                        <div class="col-sm-4">
                             <div class="form-group">
                                 <label class="control-label">Select a Thana&nbsp;
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
