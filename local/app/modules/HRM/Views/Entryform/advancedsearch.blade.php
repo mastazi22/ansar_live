@@ -391,33 +391,35 @@
                 <div class="box-body" id="change-body">
                     <div class="loading-data"><i class="fa fa-4x fa-refresh fa-spin loading-icon"></i>
                     </div>
-                    <table class="table table-responsive table-bordered table-striped" id="ansar-table">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped" id="ansar-table">
 
-                        <tr>
-                            <th>SL. No</th>
-                            <th>ID No</th>
-                            <th>Rank</th>
-                            <th>Name</th>
-                            <th>Father Name</th>
-                            <th>Sex</th>
-                            <th>District</th>
-                            <th>Date of birth</th>
-                            <th>Mobile No.(Self)</th>
-                        </tr>
+                            <tr>
+                                <th>SL. No</th>
+                                <th>ID No</th>
+                                <th>Rank</th>
+                                <th>Name</th>
+                                <th>Father Name</th>
+                                <th>Sex</th>
+                                <th>District</th>
+                                <th>Date of birth</th>
+                                <th>Mobile No.(Self)</th>
+                            </tr>
 
-                        <tr ng-repeat="ansar in alldata">
-                            <td>[[currentPage?((currentPage*10)+$index+1):$index+1]]</td>
-                            <td><a href="{{ URL::to('HRM/entryreport/') }}/[[ansar.ansar_id]]">[[ansar.ansar_id]]</a>
-                            </td>
-                            <td>[[ansar.name_eng]]</td>
-                            <td>[[ansar.ansar_name_eng]]</td>
-                            <td>[[ansar.father_name_eng]]</td>
-                            <td>[[ansar.sex]]</td>
-                            <td>[[ansar.unit_name_eng]]</td>
-                            <td>[[dateConvert(ansar.data_of_birth)]]</td>
-                            <td>[[ansar.mobile_no_self]]</td>
-                        </tr>
-                    </table>
+                            <tr ng-repeat="ansar in alldata">
+                                <td>[[currentPage?((currentPage*10)+$index+1):$index+1]]</td>
+                                <td><a href="{{ URL::to('HRM/entryreport/') }}/[[ansar.ansar_id]]">[[ansar.ansar_id]]</a>
+                                </td>
+                                <td>[[ansar.name_eng]]</td>
+                                <td>[[ansar.ansar_name_eng]]</td>
+                                <td>[[ansar.father_name_eng]]</td>
+                                <td>[[ansar.sex]]</td>
+                                <td>[[ansar.unit_name_eng]]</td>
+                                <td>[[dateConvert(ansar.data_of_birth)]]</td>
+                                <td>[[ansar.mobile_no_self]]</td>
+                            </tr>
+                        </table>
+                    </div>
                     <!--                    <div ng-show="pages.length>0" class="table_pagination" >
                                             <ul class="pagination">
                                                 <li ng-repeat="p in pages"  >
