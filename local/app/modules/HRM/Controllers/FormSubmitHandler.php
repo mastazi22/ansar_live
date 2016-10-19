@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
@@ -69,7 +70,6 @@ class FormSubmitHandler extends Controller
 
     public function handleregistration(Request $request)
     {
-
         if ($request->ajax()) {
             if (Input::get('action') == 0) {
 //                $rules = [
@@ -152,7 +152,7 @@ class FormSubmitHandler extends Controller
                     'blood_group_name_bng' => 'required',
                     'hight_feet' => 'required',
                     'sex' => 'required',
-                    'mobile_no_self' => 'required|min:11|unique:tbl_ansar_parsonal_info',
+                    'mobile_no_self' => 'required|regex:/^(\+88)?0[0-9]{10}$/|unique:tbl_ansar_parsonal_info',
                 ];
 
                 $messages = [

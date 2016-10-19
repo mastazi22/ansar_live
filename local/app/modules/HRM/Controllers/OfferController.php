@@ -109,7 +109,7 @@ class OfferController extends Controller
         try {
             for ($i = 0; $i < count($ansar_ids); $i++) {
                 $mos = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
-                if (!$mos && !preg_match('/^(+88)?0[0-9]{10}/', $mos->mobile_no_self)) throw new Exception("Invalid mobile number");
+                if (!$mos && !preg_match('/^(\+88)?0[0-9]{10}/', $mos->mobile_no_self)) throw new Exception("Invalid mobile number");
                 $offer = new OfferSMS([
                     'sms_send_datetime' => Carbon::now(),
                     'sms_end_datetime' => Carbon::now()->addHours(48),

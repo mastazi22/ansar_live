@@ -1518,7 +1518,7 @@ class DGController extends Controller
             $a = PersonalInfo::where('ansar_id',$request->ansar_id)->first();
             $status = $a->status->getStatus();
             if((!in_array('panel',$status)&&!in_array('rest',$status))||in_array('block',$status)) throw new \Exception("This ansar not eligible for offer");
-            if(!$a&&!preg_match('/^(+88)?0[0-9]{10}/',$a->mobile_no_self)) throw new Exception("Invalid mobile number");
+            if(!$a&&!preg_match('/^(\+88)?0[0-9]{10}/',$a->mobile_no_self)) throw new Exception("Invalid mobile number");
             $a->offer_sms_info()->save(new OfferSMS([
                 'sms_send_datetime'=>Carbon::parse($request->offer_date)->format('Y-m-d'),
                 'sms_end_datetime'=>Carbon::parse($request->offer_date)->addHours(48),
