@@ -420,14 +420,6 @@
                             </tr>
                         </table>
                     </div>
-                    <!--                    <div ng-show="pages.length>0" class="table_pagination" >
-                                            <ul class="pagination">
-                                                <li ng-repeat="p in pages"  >
-                                                    <span href="#" ng-show="currentPage==p.pageNum" ng-class="{active:currentPage==p.pageNum}">[[p.pageNum]]</span>
-                                                    <a href="#" ng-hide="currentPage==p.pageNum"  ng-click="advancedSearchPage(p.url,$event)">[[p.pageNum]]</a>
-                                                </li>
-                                            </ul>
-                                        </div>-->
                     <div class="table_pagination" ng-if="pages.length>1">
                         <ul class="pagination">
                             <li ng-class="{disabled:currentPage == 0}">
