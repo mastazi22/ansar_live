@@ -254,6 +254,10 @@ class HrmController extends Controller
             $pageTitle = "Total Blacklisted Ansars (Recent)";
         } elseif (strcasecmp($type, 'embodied_ansar') == 0) {
             $pageTitle = "Total Embodied Ansars (Recent)";
+        } elseif (strcasecmp($type, 'embodied_ansar_in_different_district') == 0) {
+            $pageTitle = "Total Embodied Ansars in Diffrenet District (Recent)";
+        } elseif (strcasecmp($type, 'own_embodied_ansar') == 0) {
+            $pageTitle = "Total Embodied Ansars in Own District (Recent)";
         }
         return View::make('HRM::Dashboard.view_recent_ansar_list')->with(['type' => $type,'pageTitle'=>$pageTitle]);
     }
