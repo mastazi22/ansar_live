@@ -124,7 +124,7 @@
                 $scope.loadThana(parseInt('{{Auth::user()->district_id}}'))
             }
             else{
-                $scope.loadUnit();
+                $scope.loadDistrict();
             }
             $scope.loadTotal()
             function capitalizeLetter(s){
