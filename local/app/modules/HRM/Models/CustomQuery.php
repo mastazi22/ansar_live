@@ -573,7 +573,7 @@ class CustomQuery
                     ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)->distinct();
             }
         }
-        $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
+        $ansars = $ansarQuery->orderBy('tbl_ansar_parsonal_info.ansar_id')->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();
         //return DB::getQueryLog();
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
