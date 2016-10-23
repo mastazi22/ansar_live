@@ -206,9 +206,9 @@ class GeneralSettingsController extends Controller
     public function unitEdit($id)
     {
         $unit_info = District::find($id);
-        $division_id = $unit_info->division_id;
-        $division = DB::table('tbl_division')->where('id', $division_id)->select('tbl_division.division_name_eng')->first();
-        return view('HRM::GeneralSettings.unit_edit')->with(['unit_info' => $unit_info, 'division' => $division, 'id' => $id]);
+        $division = Division::pluck('division_name_bng','id');
+        $division->prepend("--Select a division--", '');
+        return view('HRM::GeneralSettings.unit_edit')->with(['unit_info' => $unit_info, 'division' => $division]);
     }
 
     public function thanaEdit($id)
@@ -226,6 +226,7 @@ class GeneralSettingsController extends Controller
         $id = $request->input('id');
         $rules = array(
             'id' => 'required|numeric|min:0|integer',
+            'division_id' => 'required|numeric|min:0|integer',
             'unit_name_eng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
             'unit_name_bng' => 'required',
             'unit_code' => 'required|numeric|integer',
@@ -247,11 +248,8 @@ class GeneralSettingsController extends Controller
         } else {
             DB::beginTransaction();
             try {
-                $unit_info = District::find($id);
-                $unit_info->unit_name_eng = $request->input('unit_name_eng');
-                $unit_info->unit_name_bng = $request->input('unit_name_bng');
-                $unit_info->unit_code = $request->input('unit_code');
-                $unit_info->save();
+                District::find($id)->update($request->all());
+                DB::statement("call update_info(:did,:uid)",['did'=>$request->division_id,'uid'=>$request->id]);
                 DB::commit();
                 //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
             } catch

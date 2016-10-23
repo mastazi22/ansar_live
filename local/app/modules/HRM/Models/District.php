@@ -8,7 +8,7 @@ class District extends Model
 {
     protected $connection = 'hrm';
     protected $table = 'tbl_units';
-
+    protected $guarded = [];
     function kpi()
     {
         return $this->hasMany('App\modules\HRM\Models\KpiGeneralModel', 'unit_id', 'unit_id');
