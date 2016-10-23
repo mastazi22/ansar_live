@@ -306,7 +306,7 @@
                                 <th>District</th>
                                 <th>Thana</th>
                                 <th>Date Of Birth</th>
-                                <th>Sex</th>
+                                <th>Gender</th>
                                 <th>Rank</th>
                                 <th>Mobile</th>
                                 <th>Action</th>

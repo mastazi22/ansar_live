@@ -36,6 +36,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/view_profile/{id}', 'UserController@viewProfile');
     Route::post('/update_profile', 'UserController@updateProfile');
+    Route::get('/action_log/{id?}', 'UserController@viewActionLog');
     Route::get('/user_registration', ['as' => 'create_user', 'uses' => 'UserController@userRegistration']);
     Route::post('/change_user_name', ['as' => 'edit_user_name', 'uses' => 'UserController@changeUserName']);
     Route::post('/change_user_password', ['as' => 'edit_user_password', 'uses' => 'UserController@changeUserPassword']);

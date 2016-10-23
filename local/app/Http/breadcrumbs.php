@@ -146,6 +146,10 @@ Breadcrumbs::register('user_permission', function($breadcrumbs,$id) {
     $breadcrumbs->parent('all_user');
     $breadcrumbs->push('User Permission', URL::route('edit_user_permission',['id'=>$id]));
 });
+Breadcrumbs::register('user_log', function($breadcrumbs) {
+    $breadcrumbs->parent('all_user');
+    $breadcrumbs->push('User Action Log', URL::to('/action_log'));
+});
 Breadcrumbs::register('user_registration', function($breadcrumbs) {
     $breadcrumbs->parent('all_user');
     $breadcrumbs->push('User Registration', URL::route('create_user'));

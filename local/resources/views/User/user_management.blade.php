@@ -186,14 +186,13 @@
                                     <span ng-switch-when="1"> Last Login at&nbsp;[[user.last_login]]</span>
                                     <span ng-switch-default>Blocked</span>
                                 </td>
-                                <td style="width: 100px">
-                                    <div class="row" style="margin-right: 0;min-width: 100px">
+                                <td style="width: 121px">
+                                    <div class="row" style="margin-right: 0;min-width: 121px">
                                         <div class="col-xs-1">
                                             <a class="btn btn-primary btn-xs"
                                                href="{{URL::to('/edit_user')}}/[[user.id]]" title="edit"><span
                                                         class="glyphicon glyphicon-edit"></span></a>
                                         </div>
-
                                         <div class="col-xs-1">
                                             <a class="btn btn-danger btn-xs" ng-show="blockStatus[$index]"
                                                confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"block"}'
@@ -211,6 +210,12 @@
                                                href="{{URL::to('/edit_user_permission')}}/[[user.id]]"
                                                title="edit permission"><span
                                                         class="glyphicon glyphicon-lock"></span></a>
+                                        </div>
+                                        <div class="col-xs-1">
+                                            <a class="btn btn-success btn-xs"
+                                               href="{{URL::to('/action_log')}}/[[user.id]]"
+                                               title="edit permission"><span
+                                                        class="fa fa-history"></span></a>
                                         </div>
                                     </div>
                                 </td>
@@ -227,7 +232,7 @@
                                     <span ng-switch-when="1"> Last Login at&nbsp;[[user.last_login]]</span>
                                     <span ng-switch-default>Blocked</span>
                                 </td>
-                                <td style="width: 100px">
+                                <td style="width: 121px">
                                     <div class="row" style="margin-right: 0;min-width: 100px">
                                         <div class="col-xs-1">
                                             <a class="btn btn-primary btn-xs"
@@ -252,6 +257,12 @@
                                                href="{{URL::to('/edit_user_permission')}}/[[user.id]]"
                                                title="edit permission"><span
                                                         class="glyphicon glyphicon-lock"></span></a>
+                                        </div>
+                                        <div class="col-xs-1">
+                                            <a class="btn btn-success btn-xs"
+                                               href="{{URL::to('/action_log')}}/[[user.id]]"
+                                               title="edit permission"><span
+                                                        class="fa fa-history"></span></a>
                                         </div>
                                     </div>
                                 </td>

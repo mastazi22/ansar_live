@@ -446,6 +446,18 @@ class UserController extends Controller
             return Redirect::back()->with('error',$user.' does not exists');
         }
     }
+    public function viewActionLog($id=null){
+        if($id){
+            $user = User::find($id);
+            $data = $user->actionLog()->select('ansar_id','from_state','to_state','action_type',DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'),DB::raw('DATE_FORMAT(created_at,"%r") as time'))->get();
+        }
+        else {
+            $user = Auth::user();
+            $data =  $user->actionLog()->select('ansar_id','from_state','to_state','action_type',DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'),DB::raw('DATE_FORMAT(created_at,"%r") as time'))->get();
+        }
+
+        return View::make('User.user_activity_log',['logs'=>collect($data)->groupBy('date'),'user'=>$user]);
+    }
 
 } 
 
