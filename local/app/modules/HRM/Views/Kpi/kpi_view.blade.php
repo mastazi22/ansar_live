@@ -198,7 +198,7 @@
                     <div class="row">
                         <div class="col-sm-4" ng-hide="isAdmin==66 || isAdmin==22">
                             <div class="form-group">
-                                <label class="control-label">Select a Division&nbsp;
+                                <label class="control-label">Select Range&nbsp;
                                     <img ng-show="loadingDivision" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select class="form-control" ng-model="selectedDivision"
