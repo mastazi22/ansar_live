@@ -28,8 +28,8 @@ Route::group(['middleware' => 'auth'], function () {
  Route::post('/handle_change_password', ['as'=>'handle_change_password','uses'=>'UserController@handleChangeForgetPassword']);
 
     Route::get('image', ['as'=>'profile_image','uses'=>'UserController@getImage']);
-    Route::get('sign_image', ['as'=>'sign_image','uses'=>'UserController@getSingImage']);
-    Route::get('thumb_image', ['as'=>'thumb_image','uses'=>'UserController@getThumbImage']);
+    Route::get('sign_image/{id}', ['as'=>'sign_image','uses'=>'UserController@getSingImage']);
+    Route::get('thumb_image/{id}', ['as'=>'thumb_image','uses'=>'UserController@getThumbImage']);
     Route::get('/logout', 'UserController@logout');
 
     //user route

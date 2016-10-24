@@ -315,16 +315,14 @@
                             <fieldset class="fieldset">
                                 <legend class="legend">Sign image</legend>
                                 <img class="img-thumbnail"
-                                     src="{{action('UserController@getSingImage',['file'=>$ansarAllDetails->sign_pic])}}"
+                                     src="{{URL::route('sign_image',['id'=>$ansarAllDetails->ansar_id])}}"
                                      style="height:80px;width:100%;"/>
                             </fieldset>
                         </div>
                         <div class="col-md-6" style="margin-bottom: 10px;">
                             <fieldset class="fieldset">
                                 <legend class="legend">Thumb image</legend>
-                                <img class="img-thumbnail"
-                                     src="{{action('UserController@getThumbImage',['file'=>$ansarAllDetails->thumb_pic])}}"
-                                     style="height:80px;width:100%;"/>
+                                <img class="img-thumbnail" src="{{URL::route('thumb_image',['id'=>$ansarAllDetails->ansar_id])}}" style="height:80px;width:100%;"/>
                             </fieldset>
                         </div>
                     </div>

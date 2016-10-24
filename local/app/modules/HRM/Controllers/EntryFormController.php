@@ -154,7 +154,7 @@ class EntryFormController extends Controller
     public function entryReport($ansarid,$type='eng')
     {
         $ansardetails = PersonalInfo::where('ansar_id', $ansarid)->first();
-        return View::make('HRM::Entryform/reportEntryForm')->with(['ansarAllDetails'=>$ansardetails,'type'=>$type,'title'=>(object)Config::get('report.title'),'label'=>(object)Config::get('report.label')]);
+        return View::make('HRM::Entryform.reportEntryForm')->with(['ansarAllDetails'=>$ansardetails,'type'=>$type,'title'=>(object)Config::get('report.title'),'label'=>(object)Config::get('report.label')]);
     }
 
     public function getfreezelist()

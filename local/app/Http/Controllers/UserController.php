@@ -11,6 +11,7 @@ use App\models\UserPermission;
 use App\models\UserProfile;
 use App\models\UserType;
 use App\modules\HRM\Models\ForgetPasswordRequest;
+use App\modules\HRM\Models\PersonalInfo;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -354,25 +355,23 @@ class UserController extends Controller
         //return $image;
         return Image::make($image)->response();
     }
-    public function getSingImage()
+    public function getSingImage($id)
     {
-        $image = storage_path(Input::get('file'));
-        if(!Input::exists('file')) return Image::make(storage_path('data/signature/no-signature.jpg'))->response();
-        if (is_null($image) || !File::exists($image)|| File::isDirectory($image)) {
+        $image = storage_path(PersonalInfo::where('ansar_id',$id)->first()->sign_pic);
+        try {
+            return Image::make($image)->response();
+        }catch (\Exception $e){
             return Image::make(storage_path('data/signature/no-signature.jpg'))->response();
         }
-        //return $image;
-        return Image::make($image)->response();
     }
-    public function getThumbImage()
+    public function getThumbImage($id)
     {
-        $image = storage_path(Input::get('file'));
-        if(!Input::exists('file')) return Image::make(storage_path('data/fingerprint/no-thumb.jpg'))->response();
-        if (is_null($image) || !File::exists($image)|| File::isDirectory($image)) {
+        $image = storage_path(PersonalInfo::where('ansar_id',$id)->first()->thumb_pic);
+        try {
+            return Image::make($image)->response();
+        }catch (\Exception $e){
             return Image::make(storage_path('data/fingerprint/no-thumb.jpg'))->response();
         }
-        //return $image;
-        return Image::make($image)->response();
     }
     function forgetPasswordRequest(){
         return view('forget_password');
