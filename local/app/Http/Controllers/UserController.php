@@ -358,11 +358,11 @@ class UserController extends Controller
     public function getSingImage($id)
     {
         $image = storage_path(PersonalInfo::where('ansar_id',$id)->first()->sign_pic);
-        return File::exists($image)?"exists":"not exists";
+//        return File::exists($image)?"exists":"not exists";
         try {
             return Image::make($image)->response();
         }catch (\Exception $e){
-            return $e->getMessage();
+//            return $e->getMessage();
             return Image::make(storage_path('data/signature/no-signature.jpg'))->response();
         }
     }
