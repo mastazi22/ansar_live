@@ -394,7 +394,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/blacked_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                    <span class="info-box-text">Total Blacklisted</span>
+                    <span class="info-box-text">Total Black Listed</span>
                     <span class="info-box-number">
                        [[allAnsar.totalBlackList]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
@@ -418,7 +418,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/blocked_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                    <span class="info-box-text">Total Block-listed</span>
+                    <span class="info-box-text">Total Block Listed</span>
                     <span class="info-box-number">[[allAnsar.totalBlockList]]
 
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
