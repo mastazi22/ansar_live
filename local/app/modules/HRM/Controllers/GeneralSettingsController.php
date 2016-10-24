@@ -206,7 +206,7 @@ class GeneralSettingsController extends Controller
     public function unitEdit($id)
     {
         $unit_info = District::find($id);
-        $division = Division::pluck('division_name_bng','id');
+        $division = Division::where('id','!=',0)->pluck('division_name_bng','id');
         $division->prepend("--Select a division--", '');
         return view('HRM::GeneralSettings.unit_edit')->with(['unit_info' => $unit_info, 'division' => $division]);
     }
