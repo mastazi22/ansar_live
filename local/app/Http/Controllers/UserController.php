@@ -361,6 +361,7 @@ class UserController extends Controller
         try {
             return Image::make($image)->response();
         }catch (\Exception $e){
+            return $e->getMessage();
             return Image::make(storage_path('data/signature/no-signature.jpg'))->response();
         }
     }
