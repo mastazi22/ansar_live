@@ -4464,7 +4464,7 @@ table.text-center, table.text-center td, table.text-center th {
     padding: 5px 15px;
     margin: 5px 15px 5px 0;
     border-radius: 5px;
-    background: forestgreen;
+    background: #007870;
     color: #ffffff;
     font-size: 1em;
     box-shadow: 1px 1px 1px 1px #cccccc;
@@ -4476,7 +4476,7 @@ table.text-center, table.text-center td, table.text-center th {
 }
 
 .check-boxx:checked + .check-label {
-    background: darkgreen;
+    background: #003834;
 }
 
 .header-title {
@@ -4689,7 +4689,7 @@ ul.module-menu > li > a:hover {
     color: rgb(226, 193, 80);
 }
 .pc{
-    color: #008000;
+    color: #002523;
     border-bottom: 1px solid #008000;
     font-weight: bold;
 }

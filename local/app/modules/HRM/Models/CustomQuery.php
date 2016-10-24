@@ -5252,7 +5252,7 @@ class CustomQuery
                 ->where('tbl_units.division_id', '=', $division);
         }
 
-        $units = $unitQuery->select('tbl_units.id', 'tbl_units.unit_name_eng', 'tbl_units.unit_name_bng', 'tbl_units.unit_code', 'tbl_division.division_name_eng', 'tbl_division.division_code')->skip($offset)->limit($limit)->get();
+        $units = $unitQuery->where('tbl_division.id','!=',0)->select('tbl_units.id', 'tbl_units.unit_name_eng', 'tbl_units.unit_name_bng', 'tbl_units.unit_code', 'tbl_division.division_name_eng', 'tbl_division.division_code')->skip($offset)->limit($limit)->get();
 //        return View::make('kpi.selected_kpi_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'kpis' => $kpis]);
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'units' => $units]);
 
@@ -5269,7 +5269,7 @@ class CustomQuery
                 ->join('tbl_division', 'tbl_units.division_id', '=', 'tbl_division.id')
                 ->where('tbl_units.division_id', '=', $division);
         }
-        $total = $unitQuery->count('tbl_units.id');
+        $total = $unitQuery->where('tbl_division.id','!=',0)->count('tbl_units.id');
 //        print_r(DB::getQueryLog());
         return Response::json(['total' => $total]);
     }
