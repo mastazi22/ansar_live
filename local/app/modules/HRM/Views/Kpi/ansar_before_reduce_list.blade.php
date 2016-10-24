@@ -137,7 +137,7 @@
                         <div class="col-sm-3" ng-show="isAdmin==11||isAdmin==33">
                             <div class="form-group">
                                 <label class="control-label">
-                                    Select a Range&nbsp;&nbsp;
+                                    @lang('title.range')&nbsp;&nbsp;
                                     <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
                                          ng-show="loadingDiv">
                                 </label>
@@ -153,7 +153,7 @@
                         <div class="col-sm-3" ng-show="isAdmin==11||isAdmin==33||isAdmin==66">
                             <div class="form-group">
                                 <label class="control-label">
-                                    Select a District&nbsp;&nbsp;
+                                    @lang('title.unit')&nbsp;&nbsp;
                                     <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
                                          ng-show="loadingUnit">
                                 </label>
@@ -169,7 +169,7 @@
                         <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label">
-                                    Select a Thana&nbsp;&nbsp;
+                                    @lang('title.thana')&nbsp;&nbsp;
                                     <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
                                          ng-show="loadingThana">
                                 </label>
@@ -185,7 +185,7 @@
                         <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label">
-                                    Select a Guard&nbsp;&nbsp;
+                                    @lang('title.kpi')&nbsp;&nbsp;
                                     <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
                                          ng-show="loadingKpi">
                                 </label>

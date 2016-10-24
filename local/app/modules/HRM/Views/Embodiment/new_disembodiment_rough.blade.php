@@ -141,14 +141,14 @@
                         <div class="col-sm-3" ng-show="isAdmin==11">
                             <div class="form-group">
                                 <label class="control-label">
-                                    Select a District&nbsp;&nbsp;
+                                    @lang('title.unit')&nbsp;&nbsp;
                                     <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
                                          ng-show="loadingUnit">
                                 </label>
                                 <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedDistrict"
                                         ng-change="loadThana(selectedDistrict)">
-                                    <option value="">--Select a District--</option>
+                                    <option value="">--@lang('title.unit')--</option>
                                     <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
                                     </option>
                                 </select>
@@ -157,14 +157,14 @@
                         <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label">
-                                    Select a Thana&nbsp;&nbsp;
+                                    @lang('title.thana')&nbsp;&nbsp;
                                     <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
                                          ng-show="loadingThana">
                                 </label>
                                 <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedThana"
                                         ng-change="loadGuard(selectedThana)" name="thana_id">
-                                    <option value="">--Select a Thana--</option>
+                                    <option value="">--@lang('title.thana')--</option>
                                     <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
                                     </option>
                                 </select>
@@ -173,13 +173,13 @@
                         <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label">
-                                    Select a Guard&nbsp;&nbsp;
+                                    @lang('title.kpi')&nbsp;&nbsp;
                                     <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
                                          ng-show="loadingKpi">
                                 </label>
                                 <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedKPI" name="kpi_id">
-                                    <option value="">--Select a Guard--</option>
+                                    <option value="">--@lang('title.kpi')--</option>
                                     {{--<option value=0>All</option>--}}
                                     <option ng-repeat="d in guards" value="[[d.id]]">[[d.kpi_name]]
                                     </option>

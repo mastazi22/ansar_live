@@ -218,13 +218,13 @@
                             </div>
                             <!---->
                             <div class="form-group required" ng-init="selectedUnit='{{Request::old('division_name_eng')}}'">
-                                <label for="e_unit" class="control-label">Select a Unit&nbsp;
+                                <label for="e_unit" class="control-label">@lang('title.unit')&nbsp;
                                     <img ng-show="loadingUnit" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select name="division_name_eng" ng-disabled="loadingUnit" id="e_unit"
                                         class="form-control"
                                         ng-model="selectedUnit" required>
-                                    <option value="">--Select a Unit--</option>
+                                    <option value="">--@lang('title.unit')--</option>
                                     <option ng-repeat="u in units"
                                             ng-class="{'bg-danger':u.id==ansarDetail.unit_id}"
                                             ng-disabled="u.id==ansarDetail.unit_id" value="[[u.id]]">
@@ -236,13 +236,13 @@
                                 @endif
                             </div>
                             <div class="form-group required" ng-init="selectedThana='{{Request::old('thana_name_eng')}}'">
-                                <label for="e_thana" class="control-label">Select a Thana&nbsp;
+                                <label for="e_thana" class="control-label">@lang('title.thana')&nbsp;
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select name="thana_name_eng" ng-disabled="loadingThana" id="e_thana"
                                         class="form-control"
                                         ng-model="selectedThana" required>
-                                    <option value="">--Select a Thana--</option>
+                                    <option value="">--@lang('title.thana')--</option>
                                     <option ng-repeat="t in thanas" value="[[t.id]]" ng-selected="t.id=='{{Request::old('thana_name_eng')}}'">[[t.thana_name_bng]]
                                     </option>
                                 </select>
@@ -251,12 +251,12 @@
                                 @endif
                             </div>
                             <div class="form-group required" ng-init="selectedKpi='{{Request::old('kpi_id')}}'">
-                                <label for="e_kpi" class="control-label">Select a KPI&nbsp;
+                                <label for="e_kpi" class="control-label">@lang('title.kpi')&nbsp;
                                     <img ng-show="loadingKpi" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select name="kpi_id" check-kpi="[[selectedKpi]]" ng-disabled="loadingKpi" id="e_kpi" class="form-control"
                                         ng-model="selectedKpi" required>
-                                    <option value="">--Select a KPI--</option>
+                                    <option value="">--@lang('title.kpi')--</option>
                                     <option ng-repeat="k in kpis" value="[[k.id]]">[[k.kpi_name]]</option>
                                 </select>
                                 @if($errors->has('kpi_id'))

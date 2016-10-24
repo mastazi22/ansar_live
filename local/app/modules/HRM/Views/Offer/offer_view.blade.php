@@ -213,7 +213,7 @@
 
                                 <div class="row">
                                     <div class="col-md-4" ng-if="isAdmin">
-                                        <h4>Select district</h4>
+                                        <h4>@lang('title.unit')</h4>
                                         <ul class="offer-district">
                                             <li ng-repeat="unit in allDistrict">
                                                 <input ng-change="addDistrict()" type="checkbox" class="check-boxx"
@@ -304,7 +304,7 @@
                                                 </div>
                                                 <div class="col-sm-7">
                                                     <select class="form-control" ng-change="checkChange()" ng-model="data.offeredDistrict">
-                                                        <option value="">--Select a district to send offer--</option>
+                                                        <option value="">--@lang('title.unit') to send offer--</option>
                                                         <option ng-repeat="district in allDistrict" ng-disabled="selectedDistrict.indexOf(district.id)>=0" value="[[district.id]]">[[district.unit_name_eng]]
                                                         </option>
                                                     </select>

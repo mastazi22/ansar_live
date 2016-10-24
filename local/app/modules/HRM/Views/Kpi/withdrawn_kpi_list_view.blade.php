@@ -192,7 +192,7 @@
                         <div class="col-sm-4" ng-show="isAdmin==11||isAdmin==33">
                             <div class="form-group">
                                 <label class="control-label">
-                                    Select a Range&nbsp;&nbsp;
+                                    @lang('title.range')&nbsp;&nbsp;
                                     <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
                                          ng-show="loadingDiv">
                                 </label>
@@ -207,7 +207,7 @@
                         </div>
                         <div class="col-sm-4" ng-show="isAdmin==11||isAdmin==33||isAdmin==66">
                             <div class="form-group">
-                                <label class="control-label">Select a Unit&nbsp;
+                                <label class="control-label">@lang('title.unit')&nbsp;
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select class="form-control" ng-model="selectedDistrict"
@@ -221,7 +221,7 @@
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label class="control-label">Select a Thana&nbsp;
+                                <label class="control-label">@lang('title.thana')&nbsp;
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16">
                                 </label>
