@@ -228,7 +228,7 @@
                                     <div ng-class="{'col-md-8':isAdmin,'col-md-12':!isAdmin}">
                                         <div class="form-group">
                                             <h4 class="pc">PC</h4>
-                                            <label class="male">Male</label>
+                                            <label >Male</label>
 
                                             <div class="input-group margin-bottom-input">
                                                             <span class="input-group-addon">
@@ -239,7 +239,7 @@
                                                        placeholder="Male"
                                                        class="form-control">
                                             </div>
-                                            <label class="female">Female</label>
+                                            <label >Female</label>
 
                                             <div class="input-group">
                                                             <span class="input-group-addon">
@@ -251,8 +251,8 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <h4 class="apc">APC</h4>
-                                            <label class="male">Male</label>
+                                            <h4 class="pc">APC</h4>
+                                            <label >Male</label>
 
                                             <div class="input-group margin-bottom-input">
                                                             <span class="input-group-addon">
@@ -261,7 +261,7 @@
                                                 <input type="text" ng-model="kpiAPCMale" placeholder="Male" ng-change="kpiAPCMale=kpiAPCMale==''?0:getInt(kpiAPCMale)"
                                                        class="form-control">
                                             </div>
-                                            <label class="female">Female</label>
+                                            <label >Female</label>
 
                                             <div class="input-group">
                                                             <span class="input-group-addon">
@@ -273,8 +273,8 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <h4 class="ansar">Ansar</h4>
-                                            <label class="male">Male</label>
+                                            <h4 class="pc">Ansar</h4>
+                                            <label >Male</label>
 
                                             <div class="input-group margin-bottom-input">
                                                             <span class="input-group-addon">
@@ -284,7 +284,7 @@
                                                        placeholder="Male"
                                                        class="form-control">
                                             </div>
-                                            <label class="female">Female</label>
+                                            <label >Female</label>
 
                                             <div class="input-group">
                                                             <span class="input-group-addon">
@@ -297,12 +297,12 @@
                                         </div>
                                         <div class="form-group" ng-if="isAdmin">
                                             <div class="row">
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-5">
                                                     <label class="control-label">
                                                         District to send offer
                                                     </label>
                                                 </div>
-                                                <div class="col-sm-9">
+                                                <div class="col-sm-7">
                                                     <select class="form-control" ng-change="checkChange()" ng-model="data.offeredDistrict">
                                                         <option value="">--Select a district to send offer--</option>
                                                         <option ng-repeat="district in allDistrict" ng-disabled="selectedDistrict.indexOf(district.id)>=0" value="[[district.id]]">[[district.unit_name_eng]]

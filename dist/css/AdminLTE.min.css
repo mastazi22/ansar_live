@@ -4683,10 +4683,10 @@ ul.module-menu > li > a:hover {
     clear: both;
 }
 .male{
-    color: blue;
+    color: rgba(0, 120, 112, 0.64);
 }
 .female{
-    color: rgb(255,20,147);
+    color: rgb(226, 193, 80);
 }
 .pc{
     color: #008000;

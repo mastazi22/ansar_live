@@ -436,7 +436,7 @@ class FormSubmitHandler extends Controller
     public function DivisionName()
     {
 
-        $division = Division::all();
+        $division = Division::where('id','!=',0)->get();
         return Response::json($division);
     }
 
@@ -445,11 +445,11 @@ class FormSubmitHandler extends Controller
         if (Input::exists('id')) {
             $id = $request->input('id');
             if($id=='all'){
-                $districts = District::all();
+                $districts = District::where('id','!=',0)->get();
             }
             else $districts = District::where('division_id', '=', $id)->get();
         } else{
-            $districts = District::all();
+            $districts = District::where('id','!=',0)->get();
         }
         return Response::json($districts);
     }

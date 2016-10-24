@@ -102,8 +102,7 @@ class CustomValidation extends Validator
     public function validateArrayType($attribute, $value, $parameters)
     {
         $type = $parameters[0];
-        Log::info($type);
-        //return true;
+        if(!is_array($value)) return false;
         switch ($type) {
             case 'int':
                 foreach ($value as $v) {
