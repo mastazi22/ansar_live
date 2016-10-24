@@ -203,6 +203,7 @@
                             </div>
                         </div>
                     </div>
+                    <h4>Total Ansar : [[ansars.length]]</h4>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr>
