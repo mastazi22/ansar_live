@@ -4461,7 +4461,7 @@ table.text-center, table.text-center td, table.text-center th {
 
 .check-label {
     display: block;
-    padding: 5px 15px;
+    padding: 5px 13px;
     margin: 5px 15px 5px 0;
     border-radius: 5px;
     background: #007870;
