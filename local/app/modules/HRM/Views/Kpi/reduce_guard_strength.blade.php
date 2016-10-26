@@ -202,7 +202,7 @@
                                         <th>Ansar ID</th>
                                         <th>Ansar Name</th>
                                         <th>Ansar Designation</th>
-                                        <th>Ansar Sex</th>
+                                        <th>Ansar Gender</th>
                                         <th>KPI Name</th>
                                         <th>KPI District</th>
                                         <th>KPI Unit</th>

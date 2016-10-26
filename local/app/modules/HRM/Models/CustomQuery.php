@@ -1909,70 +1909,20 @@ class CustomQuery
 
     public static function kpiInfo($offset, $limit, $division, $unit, $thana)
     {
-        $kpiQuery = "";
-        if ((strcasecmp($division, "all") == 0) && (strcasecmp($unit, "all") == 0) && (strcasecmp($thana, "all") == 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id');
-
-        } elseif ((strcasecmp($division, "all") == 0) && (strcasecmp($unit, "all") == 0) && (strcasecmp($thana, "all") != 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_kpi_info.thana_id', '=', $thana);
-
-        } elseif ((strcasecmp($division, "all") == 0) && (strcasecmp($unit, "all") != 0) && (strcasecmp($thana, "all") == 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_kpi_info.unit_id', '=', $unit);
-
-        } elseif ((strcasecmp($division, "all") == 0) && (strcasecmp($unit, "all") != 0) && (strcasecmp($thana, "all") == 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_kpi_info.unit_id', '=', $unit);
-        } elseif ((strcasecmp($division, "all") == 0) && (strcasecmp($unit, "all") != 0) && (strcasecmp($thana, "all") != 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_kpi_info.unit_id', '=', $unit)
-                ->where('tbl_kpi_info.thana_id', '=', $thana);
-        } elseif ((strcasecmp($division, "all") != 0) && (strcasecmp($unit, "all") == 0) && (strcasecmp($thana, "all") == 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_kpi_info.division_id', '=', $division);
-        } elseif ((strcasecmp($division, "all") != 0) && (strcasecmp($unit, "all") == 0) && (strcasecmp($thana, "all") != 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_kpi_info.division_id', '=', $division)
-                ->where('tbl_kpi_info.thana_id', '=', $thana);
-        } elseif ((strcasecmp($division, "all") != 0) && (strcasecmp($unit, "all") != 0) && (strcasecmp($thana, "all") == 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_kpi_info.division_id', '=', $division)
-                ->where('tbl_kpi_info.unit_id', '=', $unit);
-        } elseif ((strcasecmp($division, "all") != 0) && (strcasecmp($unit, "all") != 0) && (strcasecmp($thana, "all") != 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_kpi_info.division_id', '=', $division)
-                ->where('tbl_kpi_info.unit_id', '=', $unit)
-                ->where('tbl_kpi_info.thana_id', '=', $thana);
+        $kpiQuery = $kpiQuery = DB::table('tbl_kpi_info')
+            ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
+            ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
+            ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
+            ->where('tbl_kpi_info.status_of_kpi',1)->where('tbl_kpi_info.withdraw_status',0);
+        if($thana!='all'){
+            $kpiQuery->where('tbl_kpi_info.thana_id', '=', $thana);
         }
-
+        if($division!='all'){
+            $kpiQuery->where('tbl_kpi_info.division_id', '=', $division);
+        }
+        if($unit!='all'){
+            $kpiQuery->where('tbl_kpi_info.unit_id', '=', $unit);
+        }
         $kpis = $kpiQuery->select('tbl_kpi_info.id', 'tbl_kpi_info.status_of_kpi', 'tbl_kpi_info.kpi_name as kpi_bng', 'tbl_kpi_info.kpi_name_eng as kpi_eng', 'tbl_kpi_info.kpi_address as address', 'tbl_kpi_info.kpi_contact_no as contact', 'tbl_division.division_name_eng as division_eng', 'tbl_division.division_name_bng as division_bng', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana')->orderBy('tbl_kpi_info.id', 'asc')->skip($offset)->limit($limit)->get();
 //        return View::make('kpi.selected_kpi_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'kpis' => $kpis]);
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'kpis' => $kpis]);
@@ -1982,68 +1932,19 @@ class CustomQuery
     public static function kpiInfoCount($division, $unit, $thana)
     {
         DB::enableQueryLog();
-        $kpiQuery = "";
-        if ((strcasecmp($division, "all") == 0) && (strcasecmp($unit, "all") == 0) && (strcasecmp($thana, "all") == 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id');
-
-        } elseif ((strcasecmp($division, "all") == 0) && (strcasecmp($unit, "all") == 0) && (strcasecmp($thana, "all") != 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_kpi_info.thana_id', '=', $thana);
-
-        } elseif ((strcasecmp($division, "all") == 0) && (strcasecmp($unit, "all") != 0) && (strcasecmp($thana, "all") == 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_kpi_info.unit_id', '=', $unit);
-
-        } elseif ((strcasecmp($division, "all") == 0) && (strcasecmp($unit, "all") != 0) && (strcasecmp($thana, "all") == 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_kpi_info.unit_id', '=', $unit);
-        } elseif ((strcasecmp($division, "all") == 0) && (strcasecmp($unit, "all") != 0) && (strcasecmp($thana, "all") != 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_kpi_info.unit_id', '=', $unit)
-                ->where('tbl_kpi_info.thana_id', '=', $thana);
-        } elseif ((strcasecmp($division, "all") != 0) && (strcasecmp($unit, "all") == 0) && (strcasecmp($thana, "all") == 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_kpi_info.division_id', '=', $division);
-        } elseif ((strcasecmp($division, "all") != 0) && (strcasecmp($unit, "all") == 0) && (strcasecmp($thana, "all") != 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_kpi_info.division_id', '=', $division)
-                ->where('tbl_kpi_info.thana_id', '=', $thana);
-        } elseif ((strcasecmp($division, "all") != 0) && (strcasecmp($unit, "all") != 0) && (strcasecmp($thana, "all") == 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_kpi_info.division_id', '=', $division)
-                ->where('tbl_kpi_info.unit_id', '=', $unit);
-        } elseif ((strcasecmp($division, "all") != 0) && (strcasecmp($unit, "all") != 0) && (strcasecmp($thana, "all") != 0)) {
-            $kpiQuery = DB::table('tbl_kpi_info')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-                ->where('tbl_kpi_info.division_id', '=', $division)
-                ->where('tbl_kpi_info.unit_id', '=', $unit)
-                ->where('tbl_kpi_info.thana_id', '=', $thana);
+        $kpiQuery = $kpiQuery = DB::table('tbl_kpi_info')
+            ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
+            ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
+            ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
+            ->where('tbl_kpi_info.status_of_kpi',1)->where('tbl_kpi_info.withdraw_status',0);
+        if($thana!='all'){
+            $kpiQuery->where('tbl_kpi_info.thana_id', '=', $thana);
+        }
+        if($division!='all'){
+            $kpiQuery->where('tbl_kpi_info.division_id', '=', $division);
+        }
+        if($unit!='all'){
+            $kpiQuery->where('tbl_kpi_info.unit_id', '=', $unit);
         }
         $total = $kpiQuery->count('tbl_kpi_info.id');
 //        print_r(DB::getQueryLog());

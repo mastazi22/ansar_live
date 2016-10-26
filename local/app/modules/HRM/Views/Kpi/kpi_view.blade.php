@@ -3,7 +3,7 @@
 {{--Time: 12:52 PM--}}
 
 @extends('template.master')
-@section('title','KPI Information')
+@section('title','Active KPI Information')
 @section('small_title')
     <a href="{{URL::route('go_to_kpi_page')}}" class="btn btn-sm btn-info"><span><i class="fa fa-plus"></i></span>&nbsp;&nbsp;Add New KPI</a>
     @endsection
@@ -12,7 +12,7 @@
     @endsection
 @section('content')
     <script>
-        GlobalApp.controller('KpiViewController', function ($scope, $http, $sce, $compile) {
+        GlobalApp.controller('KpiViewController', function ($scope, $http, $sce, httpService) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}');
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
             $scope.rcDivision = parseInt('{{Auth::user()->division_id}}');
@@ -111,22 +111,15 @@
                 }
             }
             $scope.loadDivision = function () {
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/DivisionName')}}'
-                }).then(function (response) {
-                    $scope.divisions = response.data;
+                httpService.range().then(function (data) {
+                    $scope.divisions = data;
                     $scope.loadingDivision = false;
                 })
             }
-            $scope.loadDistrict = function (di_id) {
+            $scope.loadDistrict = function (d_id) {
                 $scope.loadingDistrict = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/DistrictName')}}',
-                    params: {id: di_id}
-                }).then(function (response) {
-                    $scope.districts = response.data;
+                httpService.unit(d_id).then(function (data) {
+                    $scope.districts = data;
                     $scope.selectedDistrict = "all";
                     $scope.selectedThana = "all";
                     $scope.loadingDistrict = false;
@@ -135,12 +128,8 @@
             }
             $scope.loadThana = function (d_id) {
                 $scope.loadingThana = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/ThanaName')}}',
-                    params: {id: d_id}
-                }).then(function (response) {
-                    $scope.thanas = response.data;
+                httpService.thana(d_id).then(function (data) {
+                    $scope.thanas = data;
                     $scope.selectedThana = "all";
                     $scope.loadingThana = false;
                     $scope.loadTotal()
@@ -206,7 +195,7 @@
                                         ng-change="loadDistrict(selectedDivision)">
                                     <option value="all">All</option>
                                     <option ng-repeat="di in divisions" value="[[di.id]]">
-                                        [[di.division_name_eng]]
+                                        [[di.division_name_bng]]
                                     </option>
                                 </select>
                             </div>
@@ -220,7 +209,7 @@
                                         ng-disabled="loadingDistrict||loadingThana"
                                         ng-change="loadThana(selectedDistrict)">
                                     <option value="all">All</option>
-                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_eng]]
+                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
                                     </option>
                                 </select>
                             </div>
@@ -234,7 +223,7 @@
                                 <select class="form-control" ng-model="selectedThana"
                                         ng-change="loadTotal()" ng-disabled="loadingDistrict||loadingThana">
                                     <option value="all">All</option>
-                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_eng]]
+                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
                                     </option>
                                 </select>
                             </div>
@@ -284,36 +273,9 @@
                                 </td>
                                 <td>
                                     <div class="col-xs-1">
-                                        <a href="{{URL::to('HRM/kpi-edit/'.'[[a.id]]')}}"
-                                           class="btn btn-primary btn-xs" title="Edit"><span
-                                                    class="glyphicon glyphicon-edit"></span></a>
-                                    </div>
-
-                                    <div class="col-xs-1"
-                                         style="@if(!auth()->user()->hasKpiVerifyPermission()) display: none; @endif">
-                                        {{--@if(([[a.status_of_kpi]])==0)--}}
-                                        <div ng-if="a.status_of_kpi==0">
-                                            <a class="btn btn-success btn-xs verification" title="verify"
-                                               ng-click="verify(a.id, $index)"
-                                               ng-disabled="verified[$index]"><span
-                                                        class="fa fa-check"
-                                                        ng-hide="verifying[$index]"></span>
-                                                <i class="fa fa-spinner fa-pulse"
-                                                   ng-show="verifying[$index]"></i>
-                                            </a>
-                                        </div>
-                                        {{--@else--}}
-                                        <div ng-if="a.status_of_kpi==1">
-                                            <a class="btn btn-success btn-xs verification" title="verify"
-                                               ng-click="verify(a.id, $index)"
-                                               ng-disabled="!verified[$index]"><span
-                                                        class="fa fa-check"
-                                                        ng-hide="verifying[$index]"></span>
-                                                <i class="fa fa-spinner fa-pulse"
-                                                   ng-show="verifying[$index]"></i>
-                                            </a>
-                                        </div>
-                                        {{--@endif--}}
+                                        <a href="{{URL::to('HRM/kpi-edit/'.'[[a.id]]')}}" class="btn btn-primary btn-xs" title="Edit">
+                                            <span class="glyphicon glyphicon-edit"></span>
+                                        </a>
                                     </div>
                                 </td>
                             </tr>

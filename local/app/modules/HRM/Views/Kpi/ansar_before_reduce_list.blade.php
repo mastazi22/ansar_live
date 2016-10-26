@@ -3,7 +3,7 @@
 {{--Time: 2:42 PM--}}
 
 @extends('template.master')
-@section('title','Ansar List Before Reduction')
+@section('title','List Of Ansar Before Guard Reduce')
 @section('breadcrumb')
     {!! Breadcrumbs::render('ansar_before_reduce_list') !!}
     @endsection
@@ -145,7 +145,7 @@
                                         ng-model="selectedDivision"
                                         ng-change="loadDistrict()" name="division_id">
                                     <option value="all">All</option>
-                                    <option ng-repeat="d in divisions" value="[[d.id]]">[[d.division_name_eng]]
+                                    <option ng-repeat="d in divisions" value="[[d.id]]">[[d.division_name_bng]]
                                     </option>
                                 </select>
                             </div>

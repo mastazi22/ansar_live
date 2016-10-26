@@ -6,25 +6,25 @@ return [
             "route" => "#",
             "icon" => "fa-building",
             "children" => [
-                "Kpi Information" => [
+                "Active Kpi Information" => [
                     "route" => "kpi_view",
                     "icon" => "fa-dashboard",
                 ],
-                "List Of Ansar Before Withdraw" => [
+                "List Of Ansar Before Guard Withdraw" => [
                     "route" => "ansar_before_withdraw_view",
+                    "icon" => "fa-dashboard",
+                ],
+                "List Of Ansar Before Guard Reduce" => [
+                    "route" => "ansar_before_reduce_view",
                     "icon" => "fa-dashboard",
                 ],
                 "Reduce Guard Strength" => [
                     "route" => "reduce_guard_strength",
                     "icon" => "fa-dashboard",
                 ],
-                "List Of Ansar Before Reduce" => [
-                    "route" => "ansar_before_reduce_view",
-                    "icon" => "fa-dashboard",
-                ],
-                "Kpi Withdraw" => [
-                    "route" => "kpi-withdraw-view",
-                    "icon" => "fa-dashboard",
+
+                "Withdraw Kpi" => [
+                    "route" => "kpi-withdraw-view", "icon" => "fa-dashboard",
                 ],
                 "Kpi Withdraw Date Update" => [
                     "route" => "withdrawn_kpi_view",
@@ -82,10 +82,6 @@ return [
                 "Offer" => [
                     "route" => "make_offer",
                     "icon" => "fa-mobile",
-                ],
-                "Offer Quota" => [
-                    "route" => "offer_quota",
-                    "icon" => "fa-dashboard",
                 ],
                 "Embodiment" => [
                     "route" => "#",
@@ -314,6 +310,10 @@ return [
                 ],
                 "Rejected Offer List" => [
                     "route" => "rejected_offer_list",
+                    "icon" => "fa-dashboard",
+                ],
+                "Offer Quota" => [
+                    "route" => "offer_quota",
                     "icon" => "fa-dashboard",
                 ],
             ]
