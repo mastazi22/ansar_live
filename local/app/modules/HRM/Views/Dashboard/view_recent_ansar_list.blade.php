@@ -6,7 +6,7 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('AnsarListController', function ($scope, $http,$sce) {
+        GlobalApp.controller('AnsarListController', function ($scope, $http,$sce,httpService) {
             $scope.ansarType = '{{$type}}';
             var p = $scope.ansarType.split('_');
             $scope.user_type = parseInt("{{auth()->user()->type}}")
@@ -79,7 +79,8 @@
                         view:'count'
                     }
                 }).then(function (response) {
-                    $scope.total = response.data.total;
+                    $scope.total = sum(response.data.total);
+                    $scope.gCount = response.data.total
                     //alert($scope.total)
                     $scope.numOfPage = Math.ceil($scope.total/$scope.itemPerPage);
                     $scope.loadPagination();
@@ -99,22 +100,15 @@
                 }
             }
             $scope.loadDistrict = function () {
-                $http({
-                    method:'get',
-                    url:'{{URL::to('HRM/DistrictName')}}'
-                }).then(function (response) {
-                    $scope.districts = response.data;
+                httpService.unit().then(function (data) {
+                    $scope.districts = data;
                     $scope.loadingDistrict = false;
                 })
             }
             $scope.loadThana = function (d_id) {
                 $scope.loadingThana = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/ThanaName')}}',
-                    params: {id: d_id}
-                }).then(function (response) {
-                    $scope.thanas = response.data;
+                httpService.thana(d_id).then(function (data) {
+                    $scope.thanas = data;
                     $scope.selectedThana = "all";
                     $scope.loadingThana = false;
                     $scope.loadTotal()
@@ -129,6 +123,13 @@
             $scope.loadTotal()
             function capitalizeLetter(s){
                 return s.charAt(0).toUpperCase()+ s.slice(1);
+            }
+            function sum(t){
+                var s = 0;
+                for(var i in t){
+                    s += t[i]
+                }
+                return s;
             }
         })
     </script>
@@ -166,9 +167,9 @@
                             </div>
                         </div>
                     </div>
-                    <h4>{{$pageTitle}}:[[total.toLocaleString()]]</h4>
+                    <h4 class="text text-bold">{{$pageTitle}} :PC([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])&nbsp;APC([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])&nbsp;ANSAR([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</h4>
                     <div class="table-responsive">
-                        <template-list data="ansars"></template-list>
+                        <template-list data="ansars" key="{{$type}}"></template-list>
                         <div class="table_pagination" ng-if="pages.length>1">
                             <ul class="pagination">
                                 <li ng-class="{disabled:currentPage == 0}">

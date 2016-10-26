@@ -198,7 +198,7 @@
                     <div class="row">
                         <div class="col-sm-4" ng-show="isAdmin==11">
                             <div class="form-group">
-                                <label class="control-label">Select a District&nbsp;
+                                <label class="control-label">@lang('title.unit')&nbsp;
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select class="form-control" ng-model="selectedDistrict"
@@ -212,7 +212,7 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label class="control-label">
-                                    Select a Thana
+                                    @lang('title.thana')
                                 </label>
                                 <select class="form-control" ng-model="selectedThana"
                                         ng-change="loadTotal(selectedThana)">

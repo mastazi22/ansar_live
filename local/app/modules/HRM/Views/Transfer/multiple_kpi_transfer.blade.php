@@ -187,13 +187,11 @@
                         <div class="col-md-4">
                             @if(Auth::user()->type==11||Auth::user()->type==33||Auth::user()->type==66)
                                 <div class="form-group">
-                                    <lable class="control-label"
-                                           style="font-weight: bold;margin-bottom: 5px;display: block">Select District
-                                    </lable>
+                                    <lable class="control-label" style="font-weight: bold;margin-bottom: 5px;display: block">@lang('title.unit')</lable>
                                     <select name="unit"
                                             ng-model="selectedUnit" ng-change="loadThana(selectedUnit)"
                                             class="form-control">
-                                        <option value="">--Select a district--</option>
+                                        <option value="">--@lang('title.unit')--</option>
                                         <option ng-repeat="unit in units" value="[[unit.id]]">[[unit.unit_name_eng]]
                                         </option>
                                     </select>
@@ -253,18 +251,16 @@
                                 <select name="thana" ng-disabled="data==undefined||!data.status||!selectedUnit"
                                         ng-model="formData.thana" ng-change="loadGuard(formData.thana)"
                                         class="form-control">
-                                    <option value="">--Select a thana--</option>
+                                    <option value="">--@lang('title.thana')--</option>
                                     <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_eng]]</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <lable class="control-label"
-                                       style="font-weight: bold;margin-bottom: 5px;display: block">Select Kpi
-                                </lable>
+                                <lable class="control-label" style="font-weight: bold;margin-bottom: 5px;display: block">@lang('title.kpi')</lable>
                                 <select name="kpi" ng-disabled="data==undefined||!data.status||!selectedUnit"
                                         ng-model="formData.kpi"
                                         class="form-control">
-                                    <option value="">--Select a kpi--</option>
+                                    <option value="">--@lang('title.kpi')--</option>
                                     <option ng-repeat="k in kpis" ng-value="k.id" ng-disabled="data.data.kpi_id==k.id">
                                         [[k.kpi_name]]
                                     </option>

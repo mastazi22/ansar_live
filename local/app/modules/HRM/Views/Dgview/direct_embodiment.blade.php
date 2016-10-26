@@ -224,26 +224,26 @@
                                 <input type="text" name="jo_date" id="j_date" class="form-control" ng-model="j_date">
                             </div>
                             <div class="form-group">
-                                <label for="e_unit" class="control-label">Select a Unit&nbsp;
+                                <label for="e_unit" class="control-label">@lang('title.unit')&nbsp;
                                     <img ng-show="loadingUnit" src="{{asset('dist/img/facebook.gif')}}" width="16"></label>
                                 <select ng-disabled="loadingUnit" id="e_unit" class="form-control" ng-model="selectedUnit" ng-change="loadThana(selectedUnit)">
-                                    <option value="">--Select a Unit--</option>
+                                    <option value="">--@lang('title.unit')--</option>
                                     <option ng-repeat="u in units" value="[[u.id]]">[[u.unit_name_bng]]</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="e_thana" class="control-label">Select a Thana&nbsp;
+                                <label for="e_thana" class="control-label">@lang('title.thana')&nbsp;
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}" width="16"></label>
                                 <select ng-disabled="loadingThana" id="e_thana" class="form-control" ng-model="selectedThana" ng-change="loadKpi(selectedThana)">
-                                    <option value="">--Select a Thana--</option>
+                                    <option value="">--@lang('title.thana')--</option>
                                     <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="e_kpi" class="control-label">Select a KPI&nbsp;
+                                <label for="e_kpi" class="control-label">@lang('title.kpi')&nbsp;
                                     <img ng-show="loadingKpi" src="{{asset('dist/img/facebook.gif')}}" width="16"></label>
                                 <select ng-disabled="loadingKpi" id="e_kpi" class="form-control" ng-model="selectedKpi">
-                                    <option value="">--Select a KPI--</option>
+                                    <option value="">--@lang('title.kpi')--</option>
                                     <option ng-repeat="k in kpis" value="[[k.id]]">[[k.kpi_name]]</option>
                                 </select>
                             </div>

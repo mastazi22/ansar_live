@@ -149,7 +149,7 @@
                         <div class="col-sm-4" ng-hide="isAdmin==22">
                             <div class="form-group">
                                 <label class="control-label">
-                                    Select a District&nbsp;&nbsp;
+                                    @lang('title.unit')&nbsp;&nbsp;
                                     <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
                                          ng-show="loadingUnit">
                                 </label>
@@ -165,14 +165,14 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label class="control-label">
-                                    Select a Thana&nbsp;&nbsp;
+                                    @lang('title.thana')&nbsp;&nbsp;
                                     <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
                                          ng-show="loadingThana">
                                 </label>
                                 <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
                                         ng-model="selectedThana"
                                         ng-change="loadAnsarDetail(selectedDistrict,selectedThana)">
-                                    <option value="">--Select a Thana--</option>
+                                    <option value="">--@lang('title.thana')--</option>
                                     <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
                                     </option>
                                 </select>
@@ -228,16 +228,16 @@
                                                 [[a.unit]]
                                             </td>
                                             <td>
-                                                [[a.r_date]]
+                                                [[a.r_date|dateformat:'DD-MMM-YYYY']]
                                             </td>
                                             <td>
-                                                [[dateConvert(a.j_date)]]
+                                                [[a.j_date|dateformat:'DD-MMM-YYYY']]
                                             </td>
                                             {{--<td>--}}
                                             {{--[[a.reason_in_bng]]--}}
                                             {{--</td>--}}
                                             <td>
-                                                [[dateConvert(a.se_date)]]
+                                                [[a.se_date|dateformat:'DD-MMM-YYYY']]
                                             </td>
                                             {{--<td>--}}
                                             {{--[[calculate(a.total_service_days)]]--}}

@@ -10,4 +10,5 @@ return [
   'unit'=>'Select Unit',
   'thana'=>'Select Thana',
   'kpi'=>'Select Guard',
+  'reason'=>'Select Reason',
 ];

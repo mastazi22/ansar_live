@@ -13,8 +13,8 @@
             <td>{{$ansar->kpi}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
-            <td>{{$ansar->j_date}}</td>
-            <td>{{$ansar->se_date}}</td>
+            <td>[['{{$ansar->j_date}}'|dateformat:"DD-MMM-YYYY"]]</td>
+            <td>[['{{$ansar->se_date}}'|dateformat:"DD-MMM-YYYY"]]</td>
         </tr>
     @endforeach
 @else

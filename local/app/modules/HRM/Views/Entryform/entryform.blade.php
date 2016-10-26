@@ -779,7 +779,7 @@
                                             </div>
 
                                             <div class="form-horizontal col-md-12 " ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.sex[0]}">
-                                                <label class="control-label col-sm-2" for="email"><sup style="color: #ff0709;font-size: 1em">*</sup>sex</label>
+                                                <label class="control-label col-sm-2" for="email"><sup style="color: #ff0709;font-size: 1em">*</sup>Gender</label>
                                                 <div class="col-sm-10 ">
                                                     <select name="sex" ng-model="sex" class="form-control" id="sell">
                                                         <option value="">--Select an option--</option>

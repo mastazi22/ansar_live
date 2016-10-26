@@ -222,7 +222,7 @@
                                          width="16"></label>
                                 <select ng-disabled="loadingUnit" id="e_unit" class="form-control"
                                         ng-model="selectedUnit" ng-change="loadThana(selectedUnit)">
-                                    <option value="">--Select a Unit--</option>
+                                    <option value="">--@lang('title.unit')--</option>
                                     <option ng-repeat="u in units"
                                             ng-class="{'bg-danger':u.id==ansarDetail.unit_id}"
                                             ng-disabled="u.id==ansarDetail.apid.unit_id" value="[[u.id]]">
@@ -236,7 +236,7 @@
                                          width="16"></label>
                                 <select ng-disabled="loadingThana" id="e_thana" class="form-control"
                                         ng-model="selectedThana" ng-change="loadKpi(selectedThana)">
-                                    <option value="">--Select a Thana--</option>
+                                    <option value="">--@lang('title.thana')--</option>
                                     <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
                                     </option>
                                 </select>
@@ -247,7 +247,7 @@
                                          width="16"></label>
                                 <select ng-disabled="loadingKpi" id="e_kpi" class="form-control"
                                         ng-model="selectedKpi">
-                                    <option value="">--Select a KPI--</option>
+                                    <option value="">--@lang('title.kpi')--</option>
                                     <option ng-repeat="k in kpis" value="[[k.id]]">[[k.kpi_name]]</option>
                                 </select>
                             </div>

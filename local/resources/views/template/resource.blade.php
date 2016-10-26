@@ -40,6 +40,7 @@
 <script src="{{asset('dist/js/alertify.js')}}" type="text/javascript"></script>
 <script src="{{asset('dist/js/ajaxsubmit.js')}}"></script>
 <script src="{{asset('dist/js/angular-filter.js')}}"></script>
+<script src="{{asset('dist/js/angular-app.js')}}"></script>
 <script src="{{asset('dist/js/jquery.cookie.js')}}"></script>
 {{--<script src="{{asset('dist/js/moment.min.js')}}"></script>--}}
 <script src="{{asset('dist/js/moment-locales.min.js')}}"></script>

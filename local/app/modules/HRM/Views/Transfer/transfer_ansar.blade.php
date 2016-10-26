@@ -390,34 +390,34 @@
                 <div class="box-body">
                     <div class="row" style="padding-bottom: 10px">
                         <div class="col-md-4">
-                            <label class="control-label"> Select a District&nbsp;&nbsp;&nbsp;<i
+                            <label class="control-label"> @lang('title.unit')&nbsp;&nbsp;&nbsp;<i
                                         class="fa fa-spinner fa-pulse" ng-show="loadingThana[0]"></i></label>
                             <select class="form-control" ng-model="selectedDistrict[0]"
                                     ng-disabled="loadingAnsar||loadingThana[0]||loadingKPI[0]"
                                     ng-change="loadThana()">
-                                <option value="">--Select a District--</option>
+                                <option value="">--@lang('title.unit')--</option>
                                 <option ng-repeat="d in allDistrict[0]" value="[[d.id]]">[[d.unit_name_bng]]
                                 </option>
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="control-label"> Select a Thana&nbsp;&nbsp;&nbsp;<i
+                            <label class="control-label"> @lang('title.thana')&nbsp;&nbsp;&nbsp;<i
                                         class="fa fa-spinner fa-pulse" ng-show="loadingKPI[0]"></i></label>
                             <select class="form-control" ng-model="selectedThana[0]"
                                     ng-disabled="loadingAnsar||loadingThana[0]||loadingKPI[0]"
                                     ng-change="loadKpi()">
-                                <option value="">--Select a Thana--</option>
+                                <option value="">--@lang('title.thana')--</option>
                                 <option ng-repeat="d in allThana[0]" value="[[d.id]]">[[d.thana_name_bng]]
                                 </option>
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="control-label"> Select a KPI&nbsp;&nbsp;&nbsp;<i
+                            <label class="control-label"> @lang('title.kpi')&nbsp;&nbsp;&nbsp;<i
                                         class="fa fa-spinner fa-pulse" ng-show="loadingAnsar"></i></label>
                             <select class="form-control"
                                     ng-disabled="loadingAnsar||loadingThana[0]||loadingKPI[0]"
                                     ng-model="selectedKPI[0]" ng-change="loadAnsar()">
-                                <option value="">--Select a KPI--</option>
+                                <option value="">--@lang('title.kpi')--</option>
                                 <option ng-repeat="d in allKPI[0]" value="[[d.id]]">[[d.kpi_name]]
                                 </option>
                             </select>
@@ -525,7 +525,7 @@
                                                         ng-disabled="loadingThana[1]||loadingKPI[1]"
                                                         ng-model="selectedDistrict[1]"
                                                         ng-change="loadThana()">
-                                                    <option value="">Select a district</option>
+                                                    <option value="">@lang('title.unit')</option>
                                                     <option ng-repeat="d in allDistrict[1]" value="[[d.id]]">
                                                         [[d.unit_name_bng]]
                                                     </option>
@@ -541,7 +541,7 @@
                                                         ng-disabled="loadingThana[1]||loadingKPI[1]"
                                                         ng-model="selectedThana[1]"
                                                         ng-change="loadKpi()">
-                                                    <option value="">Select a district</option>
+                                                    <option value="">@lang('title.unit')</option>
                                                     <option ng-repeat="d in allThana[1]" value="[[d.id]]">
                                                         [[d.thana_name_bng]]
                                                     </option>
@@ -554,7 +554,7 @@
                                                 <select class="form-control"
                                                         ng-disabled="loadingThana[1]||loadingKPI[1]" check-kpi
                                                         ng-model="selectedKPI[1]">
-                                                    <option value="">Select a kpi</option>
+                                                    <option value="">@lang('title.kpi')</option>
                                                     <option ng-repeat="d in allKPI[1]"
                                                             ng-disabled="selectedKPI[0]==d.id" value="[[d.id]]">
                                                         [[d.kpi_name]]

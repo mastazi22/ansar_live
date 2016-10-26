@@ -10,7 +10,7 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('AnsarServiceEndedListController', function ($scope, $http,$sce) {
+        GlobalApp.controller('AnsarServiceEndedListController', function ($scope, $http,$sce,$compile) {
             $scope.total = 0;
             $scope.numOfPage = 0;
             $scope.selectedDistrict = "all";
@@ -54,7 +54,8 @@
                         view:'view'
                     }
                 }).then(function (response) {
-                    $scope.ansars = $sce.trustAsHtml(response.data);
+                    $scope.ansars = $compile(response.data)($scope);
+
                     $scope.loadingPage[page.pageNum]=false;
                     $scope.allLoading = false;
                 })
@@ -124,7 +125,7 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label class="control-label">Select a Unit&nbsp;
+                                <label class="control-label">@lang('title.unit')&nbsp;
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select class="form-control" ng-model="selectedDistrict" ng-change="loadThana(selectedDistrict)">
@@ -135,7 +136,7 @@
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label class="control-label">Select a Thana&nbsp;
+                                <label class="control-label">@lang('title.thana')&nbsp;
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16">
                                 </label>

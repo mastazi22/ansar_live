@@ -150,13 +150,13 @@
                         <div class="col-sm-4" ng-if="!isDc">
                             <div class="form-group">
                                 <label class="control-label">
-                                    Select a District&nbsp;&nbsp;
+                                    @lang('title.unit')&nbsp;&nbsp;
                                     <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
                                          ng-show="loadingUnit">
                                 </label>
                                 <select class="form-control" ng-disabled="loadingUnit"
                                         ng-model="unit.selectedDistrict">
-                                    <option value="">--Select a District--</option>
+                                    <option value="">--@lang('title.unit')--</option>
                                     <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
                                     </option>
                                 </select>

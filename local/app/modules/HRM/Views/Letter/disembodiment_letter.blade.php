@@ -71,9 +71,9 @@
                         </div>
                         <div class="col-md-4 col-sm-12 col-xs-12">
                             <div class="form-group" ng-if="!isDc">
-                                <label class="control-label">Select a District</label>
+                                <label class="control-label">@lang('title.unit')</label>
                                 <select class="form-control" ng-model="unit.selectedUnit" ng-disabled="units.length==0">
-                                    <option value="">--Select a District--</option>
+                                    <option value="">--@lang('title.unit')--</option>
                                     <option ng-repeat="u in units" value="[[u.id]]">[[u.unit_name_bng]]</option>
                                 </select>
                             </div>

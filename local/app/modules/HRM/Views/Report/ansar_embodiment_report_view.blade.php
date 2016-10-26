@@ -218,7 +218,7 @@
                         <div class="col-md-3 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <label class="control-label">
-                                    Select a District
+                                    @lang('title.unit')
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 </label>
@@ -234,7 +234,7 @@
                         <div class="col-md-3 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <label class="control-label">
-                                    Select a Thana
+                                    @lang('title.thana')
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16">
                                 </label>

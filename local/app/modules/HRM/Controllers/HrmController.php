@@ -289,56 +289,56 @@ class HrmController extends Controller
         if (strcasecmp($view, 'view') == 0) {
             switch ($type) {
                 case 'all_ansar':
-                    return CustomQuery::getAllAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getAllAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'not_verified_ansar':
-                    return CustomQuery::getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'free_ansar':
-                    return CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'paneled_ansar':
-                    return CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'embodied_ansar':
-                    return CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'rest_ansar':
-                    return CustomQuery::getTotalRestAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalRestAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'freezed_ansar':
-                    return CustomQuery::getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'blocked_ansar':
-                    return CustomQuery::getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'blacked_ansar':
-                    return CustomQuery::getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'offerred_ansar':
-                    return CustomQuery::getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'own_embodied_ansar':
-                    return CustomQuery::getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'embodied_ansar_in_different_district':
-                    return CustomQuery::getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME);
             }
         } else {
             switch ($type) {
                 case 'all_ansar':
-                    return CustomQuery::getAllAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getAllAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'not_verified_ansar':
-                    return CustomQuery::getTotalNotVerifiedAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalNotVerifiedAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'free_ansar':
-                    return CustomQuery::getTotalFreeAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalFreeAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'paneled_ansar':
-                    return CustomQuery::getTotalPaneledAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalPaneledAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'embodied_ansar':
-                    return CustomQuery::getTotalEmbodiedAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalEmbodiedAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'rest_ansar':
-                    return CustomQuery::getTotalRestAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalRestAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'freezed_ansar':
-                    return CustomQuery::getTotalFreezedAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalFreezedAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'blocked_ansar':
-                    return CustomQuery::getTotalBlockedAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalBlockedAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'blacked_ansar':
-                    return CustomQuery::getTotalBlackedAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalBlackedAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'offerred_ansar':
-                    return CustomQuery::getTotalOfferedAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalOfferedAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'own_embodied_ansar':
-                    return CustomQuery::getTotalOwnEmbodiedAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalOwnEmbodiedAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME);
                 case 'embodied_ansar_in_different_district':
-                    return CustomQuery::getTotalDiffEmbodiedAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalDiffEmbodiedAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME);
             }
         }
     }
@@ -370,56 +370,56 @@ class HrmController extends Controller
         if (strcasecmp($view, 'view') == 0) {
             switch ($type) {
                 case 'all_ansar':
-                    return CustomQuery::getAllRecentAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getAllAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT);
                 case 'not_verified_ansar':
-                    return CustomQuery::getRecentTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT);
                 case 'free_ansar':
-                    return CustomQuery::getRecentTotalFreeAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT);
                 case 'paneled_ansar':
-                    return CustomQuery::getRecentTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT);
                 case 'embodied_ansar':
-                    return CustomQuery::getRecentTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT);
                 case 'embodied_ansar_in_different_district':
-                    return CustomQuery::getRecentTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT);
                 case 'own_embodied_ansar':
-                    return CustomQuery::getRecentTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT);
                 case 'rest_ansar':
-                    return CustomQuery::getRecentTotalRestAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalRestAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT);
                 case 'freezed_ansar':
-                    return CustomQuery::getRecentTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT);
                 case 'blocked_ansar':
-                    return CustomQuery::getRecentTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT);
                 case 'blacked_ansar':
-                    return CustomQuery::getRecentTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT);
                 case 'offerred_ansar':
-                    return CustomQuery::getRecentTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division);
+                    return CustomQuery::getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT);
             }
         } else {
             switch ($type) {
                 case 'all_ansar':
-                    return CustomQuery::getAllRecentAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getAllAnsarCount($unit, $thana, $division,CustomQuery::RECENT);
                 case 'not_verified_ansar':
-                    return CustomQuery::getRecentTotalNotVerifiedAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalNotVerifiedAnsarCount($unit, $thana, $division,CustomQuery::RECENT);
                 case 'free_ansar':
-                    return CustomQuery::getRecentTotalFreeAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalFreeAnsarCount($unit, $thana, $division,CustomQuery::RECENT);
                 case 'paneled_ansar':
-                    return CustomQuery::getRecentTotalPaneledAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalPaneledAnsarCount($unit, $thana, $division,CustomQuery::RECENT);
                 case 'embodied_ansar':
-                    return CustomQuery::getRecentTotalEmbodiedAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalEmbodiedAnsarCount($unit, $thana, $division,CustomQuery::RECENT);
                 case 'own_embodied_ansar':
-                    return CustomQuery::getRecentTotalOwnEmbodiedAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalOwnEmbodiedAnsarCount($unit, $thana, $division,CustomQuery::RECENT);
                 case 'embodied_ansar_in_different_district':
-                    return CustomQuery::getRecentTotalDiffEmbodiedAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalDiffEmbodiedAnsarCount($unit, $thana, $division,CustomQuery::RECENT);
                 case 'rest_ansar':
-                    return CustomQuery::getRecentTotalRestAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalRestAnsarCount($unit, $thana, $division,CustomQuery::RECENT);
                 case 'freezed_ansar':
-                    return CustomQuery::getRecentTotalFreezedAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalFreezedAnsarCount($unit, $thana, $division,CustomQuery::RECENT);
                 case 'blocked_ansar':
-                    return CustomQuery::getRecentTotalBlockedAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalBlockedAnsarCount($unit, $thana, $division,CustomQuery::RECENT);
                 case 'blacked_ansar':
-                    return CustomQuery::getRecentTotalBlackedAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalBlackedAnsarCount($unit, $thana, $division,CustomQuery::RECENT);
                 case 'offerred_ansar':
-                    return CustomQuery::getRecentTotalOfferedAnsarCount($unit, $thana, $division);
+                    return CustomQuery::getTotalOfferedAnsarCount($unit, $thana, $division,CustomQuery::RECENT);
             }
         }
     }

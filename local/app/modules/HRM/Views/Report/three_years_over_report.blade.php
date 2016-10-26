@@ -214,7 +214,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label class="control-label">Select a District&nbsp;
+                                <label class="control-label">@lang('title.unit')&nbsp;
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
                                 <select class="form-control" ng-model="selectedDistrict">
@@ -241,7 +241,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="control-label">
-                                    Select Sex
+                                    Select Gender
                                 </label>
                                 <select name="ansar_sex" class="form-control" ng-model="selectedSex">
                                     <option value="all">All</option>

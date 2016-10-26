@@ -182,7 +182,7 @@
                                 <label for="dis-reason" class="control-label">Disembodiment Reason&nbsp;
                                     <img ng-show="loadingReason" src="{{asset('dist/img/facebook.gif')}}" width="16"></label>
                                 <select ng-disabled="loadingReason" id="dis-reason" class="form-control" ng-model="selectedReason" ng-change="loadThana(selectedReason)">
-                                    <option value="">--Select a Reason--</option>
+                                    <option value="">--@lang('title.reason')--</option>
                                     <option ng-repeat="u in disEmbodimentReason" value="[[u.id]]">[[u.reason_in_bng]]</option>
                                 </select>
                             </div>

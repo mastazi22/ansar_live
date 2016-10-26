@@ -5,6 +5,7 @@ namespace App\modules\HRM\Models;
 
 
 use App\Helper\Facades\GlobalParameterFacades;
+use App\Helper\QueryHelper;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -18,7 +19,8 @@ use Services_Twilio;
 class CustomQuery
 {
     protected $connection = 'hrm';
-
+    const ALL_TIME=1;
+    const RECENT=2;
     public static function getAnsarInfo($pc = array('male' => 0, 'female' => 0), $apc = array('male' => 0, 'female' => 0), $ansar = array('male' => 0, 'female' => 0), $unit_id = [], $exclude_district = null)
     {
         DB::enableQueryLog();
@@ -36,9 +38,8 @@ class CustomQuery
                 $query = $query->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id')
                     ->where('pu.id', '!=', $exclude_district)->where('du.id', '=', $exclude_district);
             }
-        }
-        else if(Auth::user()->type == 11||Auth::user()->type == 33||Auth::user()->type == 66){
-            if(is_array($unit_id)){
+        } else if (Auth::user()->type == 11 || Auth::user()->type == 33 || Auth::user()->type == 66) {
+            if (is_array($unit_id)) {
                 $query = $query->whereIn('pu.id', $unit_id);
             }
         }
@@ -69,7 +70,7 @@ class CustomQuery
             ->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'pu.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
             ->take($ansar['female']);
-         $apc_male->where('tbl_ansar_parsonal_info.designation_id', '=', 2)
+        $apc_male->where('tbl_ansar_parsonal_info.designation_id', '=', 2)
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')
             ->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'pu.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
@@ -516,1877 +517,587 @@ class CustomQuery
         return $ansarAdvancedSearch;
     }
 
-    public static function getAllAnsarList($offset, $limit, $unit, $thana, $division = null)
+// Dashboard all ansar list
+    public static function getAllAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
     {
         //DB::enableQueryLog();
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_thana.id', $thana)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_units.id', $unit)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')->where('tbl_ansar_parsonal_info.division_id', $division)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_thana.id', $thana)->where('tbl_ansar_parsonal_info.division_id', $division)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)->distinct();
-            }
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::ALL_ANSARS);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
-        $ansars = $ansarQuery->orderBy('tbl_ansar_parsonal_info.ansar_id')->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_units.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime]);
+        }
+        $ansars = $ansarQuery->distinct()->orderBy('tbl_ansar_parsonal_info.ansar_id')->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();
         //return DB::getQueryLog();
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
 
     }
 
-    public static function getAllAnsarCount($unit, $thana, $division = null)
+    public static function getAllAnsarCount($unit, $thana, $division = null,$time)
     {
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')->distinct();
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_thana.id', $thana)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_units.id', $unit)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')->where('tbl_ansar_parsonal_info.division_id', $division)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_thana.id', $thana)->where('tbl_ansar_parsonal_info.division_id', $division)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            }
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::ALL_ANSARS);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-        return Response::json(['total' => $total]);
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_units.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime]);
+        }
+        $total = $ansarQuery->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        return Response::json(['total' => collect($total->get())->pluck('t', 'code')]);
 
     }
 
-    public static function getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division = null)
+// Dashboard free ansar list
+    public static function getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
     {
-        if (!is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::FREE);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
+        }
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_units.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
     }
 
-    public static function getTotalFreeAnsarCount($unit, $thana, $division = null)
+    public static function getTotalFreeAnsarCount($unit, $thana, $division = null,$time)
     {
-        if (!is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
+        DB::enableQueryLog();
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::FREE);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-        return Response::json(['total' => $total]);
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_units.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
+        }
+        $total = $ansarQuery->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        //$d = collect($total->get())->pluck('t','code');
+        //return DB::getQueryLog();
+        return Response::json(['total' => collect($total->get())->pluck('t', 'code')]);
     }
 
-    public static function getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division = null)
+// Dashboard panel ansar list
+    public static function getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
     {
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.pannel_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct()
-                    ->orderBy('tbl_panel_info.panel_date', 'asc');
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.pannel_status', 1)
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct()->orderBy('tbl_panel_info.panel_date', 'asc');
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct()->orderBy('tbl_panel_info.panel_date', 'asc');
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct()->orderBy('tbl_panel_info.panel_date', 'asc');
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct()->orderBy('tbl_panel_info.panel_date', 'asc');
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct()->orderBy('tbl_panel_info.panel_date', 'asc');
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct()->orderBy('tbl_panel_info.panel_date', 'asc');
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct()->orderBy('tbl_panel_info.panel_date', 'asc');
-            }
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::PANEL);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
+        }
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_units.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_panel_info.panel_date', [$backTime, $recentTime]);
         }
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_panel_info.created_at', 'tbl_panel_info.memorandum_id')->skip($offset)->limit($limit)->get();
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'pannel']);
     }
 
-    public static function getTotalPaneledAnsarCount($unit, $thana, $division = null)
+    public static function getTotalPaneledAnsarCount($unit, $thana, $division = null,$time)
     {
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.pannel_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.pannel_status', 1)
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::PANEL);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-        return Response::json(['total' => $total]);
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_units.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_panel_info.panel_date', [$backTime, $recentTime]);
+        }
+        $total = $ansarQuery->distinct()->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        //$d = collect($total->get())->pluck('t','code');
+        //return DB::getQueryLog();
+        return Response::json(['total' => collect($total->get())->pluck('t', 'code')]);
     }
 
-    public static function getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division = null)
+// Dashboard offered ansar list
+    public static function getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
     {
         // DB::enableQueryLog();
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('ot.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('ou.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('ot.id', $thana)->where('ou.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('ou.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('ou.division_id', $division)
-                    ->where('ot.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('ou.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('ot.id', $thana)->where('ou.id', $unit)->where('ou.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::OFFER);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('ou.division_id', $division);
         }
-        $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
+        if ($unit != 'all') {
+            $ansarQuery->where('ou.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('ot.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
+        }
+        $ansars = $ansarQuery->distinct()->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_sms_offer_info.sms_send_datetime', 'ou.unit_name_eng as offer_unit')->skip($offset)->limit($limit)->get();
         //return DB::getQueryLog();
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'offer']);
     }
 
-    public static function getTotalOfferedAnsarCount($unit, $thana, $division = null)
+    public static function getTotalOfferedAnsarCount($unit, $thana, $division = null,$time)
     {
-        //DB::enableQueryLog();
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('ot.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('ou.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('ot.id', $thana)->where('ou.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('ou.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('ou.division_id', $division)
-                    ->where('ot.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('ou.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('ot.id', $thana)->where('ou.id', $unit)->where('ou.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::OFFER);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('ou.division_id', $division);
         }
-
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
+        if ($unit != 'all') {
+            $ansarQuery->where('ou.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('ot.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
+        }
+        $total = $ansarQuery->distinct()->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        //$d = collect($total->get())->pluck('t','code');
         //return DB::getQueryLog();
-        return Response::json(['total' => $total]);
+        return Response::json(['total' => collect($total->get())->pluck('t', 'code')]);
     }
 
-    public static function getTotalRestAnsarList($offset, $limit, $unit, $thana, $division = null)
+// Dashboard rested ansar list
+    public static function getTotalRestAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
     {
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')->where('tbl_ansar_status_info.rest_status', 1)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::REST);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
-        $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_units.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_rest_info.updated_at', [$backTime, $recentTime]);
+        }
+        $ansars = $ansarQuery->distinct()->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_rest_info.rest_date')->skip($offset)->limit($limit)->get();
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'rest']);
     }
 
-    public static function getTotalRestAnsarCount($unit, $thana, $division = null)
+    public static function getTotalRestAnsarCount($unit, $thana, $division = null,$time)
     {
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')->where('tbl_ansar_status_info.rest_status', 1)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::REST);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-        return Response::json(['total' => $total]);
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_units.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_rest_info.updated_at', [$backTime, $recentTime]);
+        }
+        $total = $ansarQuery->distinct()->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        //$d = collect($total->get())->pluck('t','code');
+        //return DB::getQueryLog();
+        return Response::json(['total' => collect($total->get())->pluck('t', 'code')]);
     }
 
-    public static function getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division = null)
+
+// Dashboard freezed ansar list
+    public static function getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
     {
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_freezing_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct()
-                    ->orderBy('tbl_freezing_info.freez_date', 'asc');
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_freezing_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct()
-                    ->orderBy('tbl_freezing_info.freez_date', 'asc');
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_freezing_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct()
-                    ->orderBy('tbl_freezing_info.freez_date', 'asc');
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct()
-                    ->orderBy('tbl_freezing_info.freez_date', 'asc');
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_freezing_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct()
-                    ->orderBy('tbl_freezing_info.freez_date', 'asc');
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_freezing_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct()
-                    ->orderBy('tbl_freezing_info.freez_date', 'asc');
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_freezing_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct()
-                    ->orderBy('tbl_freezing_info.freez_date', 'asc');
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_freezing_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct()
-                    ->orderBy('tbl_freezing_info.freez_date', 'asc');
-            }
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::FREEZE);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
-        $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_units.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
+        }
+        $ansars = $ansarQuery->distinct()->orderBy('tbl_freezing_info.freez_date', 'asc')->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_freezing_info.freez_reason', 'tbl_freezing_info.freez_date')->skip($offset)->limit($limit)->get();
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'freeze']);
     }
 
-    public static function getTotalFreezedAnsarCount($unit, $thana, $division = null)
+    public static function getTotalFreezedAnsarCount($unit, $thana, $division = null,$time)
     {
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::FREEZE);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-        return Response::json(['total' => $total]);
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_units.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
+        }
+        $total = $ansarQuery->distinct()->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        return Response::json(['total' => collect($total->get())->pluck('t', 'code')]);
     }
 
-    public static function getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division = null)
+// Dashboard blocked ansar list
+    public static function getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
     {
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_blocklist_info.date_for_unblock', '=', null)
-                    ->distinct();
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::BLOCK);
 
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_blocklist_info.date_for_unblock', '=', null)
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 1)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_blocklist_info.date_for_unblock', '=', null)
-                    ->where('tbl_units.id', $unit)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_blocklist_info.date_for_unblock', '=', null)
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_blocklist_info.date_for_unblock', '=', null)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_blocklist_info.date_for_unblock', '=', null)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_thana.id', $thana)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_blocklist_info.date_for_unblock', '=', null)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_units.id', $unit)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_blocklist_info.date_for_unblock', '=', null)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->distinct();
-            }
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
-        $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_units.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_blocklist_info.date_for_block', [$backTime, $recentTime]);
+        }
+        $ansars = $ansarQuery->distinct()->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_blocklist_info.comment_for_block', 'tbl_blocklist_info.date_for_block')->skip($offset)->limit($limit)->get();
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'block']);
     }
 
-    public static function getTotalBlockedAnsarCount($unit, $thana, $division = null)
+    public static function getTotalBlockedAnsarCount($unit, $thana, $division = null,$time)
     {
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_blocklist_info.date_for_unblock', '=', null)
-                    ->distinct();
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::BLOCK);
 
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_blocklist_info.date_for_unblock', '=', null)
-                    ->where('tbl_thana.id', $thana)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_blocklist_info.date_for_unblock', '=', null)
-                    ->where('tbl_units.id', $unit)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_blocklist_info.date_for_unblock', '=', null)
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_blocklist_info.date_for_unblock', '=', null)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_blocklist_info.date_for_unblock', '=', null)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_thana.id', $thana)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_blocklist_info.date_for_unblock', '=', null)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_units.id', $unit)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_blocklist_info.date_for_unblock', '=', null)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->distinct();
-            }
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-        return Response::json(['total' => $total]);
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_units.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_blocklist_info.date_for_block', [$backTime, $recentTime]);
+        }
+        $total = $ansarQuery->distinct()->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        //$d = collect($total->get())->pluck('t','code');
+        //return DB::getQueryLog();
+        return Response::json(['total' => collect($total->get())->pluck('t', 'code')]);
     }
 
-    public static function getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division = null)
+// Dashboard blacked ansar list
+    public static function getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
     {
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_blacklist_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_blacklist_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_blacklist_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_blacklist_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)
-                    ->where('tbl_thana.id', $thana)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_blacklist_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_blacklist_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)
-                    ->where('tbl_units.id', $unit)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_blacklist_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_blacklist_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_blacklist_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_blacklist_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_blacklist_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_blacklist_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)
-                    ->where('tbl_thana.id', $thana)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_blacklist_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_blacklist_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)
-                    ->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_blacklist_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_blacklist_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            }
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::BLACK);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
-        $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_ansar_parsonal_info.sex',
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_units.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
+        }
+        $ansars = $ansarQuery->distinct()->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_ansar_parsonal_info.sex',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_blacklist_info.black_list_comment as reason', 'tbl_blacklist_info.black_listed_date as date')->skip($offset)->limit($limit)->get();
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'black']);
 
     }
 
-    public static function getTotalBlackedAnsarCount($unit, $thana, $division = null)
+    public static function getTotalBlackedAnsarCount($unit, $thana, $division = null,$time)
     {
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)
-                    ->where('tbl_thana.id', $thana)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)
-                    ->where('tbl_units.id', $unit)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)
-                    ->where('tbl_thana.id', $thana)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)
-                    ->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            }
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::BLACK);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-        return Response::json(['total' => $total]);
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_units.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
+        }
+        $total = $ansarQuery->distinct()->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        return Response::json(['total' => collect($total->get())->pluck('t', 'code')]);
     }
 
-    public static function getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null)
+// Dashboard embodied ansar list
+    public static function getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
     {
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_embodiment', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_embodiment', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)
-                    ->where('tbl_kpi_info.thana_id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_embodiment', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->where('tbl_kpi_info.unit_id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_embodiment', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->where('tbl_kpi_info.thana_id', $thana)->where('tbl_kpi_info.unit_id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_embodiment', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_embodiment', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)
-                    ->where('tbl_kpi_info.thana_id', $thana)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_embodiment', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->where('tbl_kpi_info.unit_id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_embodiment', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->where('tbl_kpi_info.thana_id', $thana)->where('tbl_kpi_info.unit_id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::EMBODIED);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
-        $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_kpi_info.unit_id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_kpi_info.thana_id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
+        }
+        $ansars = $ansarQuery->distinct()->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_kpi_info.kpi_name', 'tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id')->skip($offset)->limit($limit)->get();
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
     }
 
-    public static function getTotalEmbodiedAnsarCount($unit, $thana, $division = null)
+    public static function getTotalEmbodiedAnsarCount($unit, $thana, $division = null,$time)
     {
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::EMBODIED);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-
-        return Response::json(['total' => $total]);
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_units.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
+        }
+        $total = $ansarQuery->distinct()->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        //$d = collect($total->get())->pluck('t','code');
+        //return DB::getQueryLog();
+        return Response::json(['total' => collect($total->get())->pluck('t', 'code')]);
     }
 
-    public static function getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null)
+// Dashboard own embodied ansar list(DC,RC)
+    public static function getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
     {
-        $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-            ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-            ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-            ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
-            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->join('tbl_units as ku', 'ku.id', '=', 'tbl_kpi_info.unit_id')
-            ->join('tbl_thana as kt', 'tbl_kpi_info.thana_id', '=', 'kt.id')
-            ->where('tbl_ansar_status_info.embodied_status', 1)
-            ->where('tbl_ansar_status_info.block_list_status', 0);
-        if($division&&$division!='all'){
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::OWN_EMBODIED);
+        if ($division && $division != 'all') {
             $ansarQuery->where('tbl_kpi_info.division_id', $division);
         }
-        if($unit!='all'){
+        if ($unit != 'all') {
             $ansarQuery->where('ku.id', $unit);
         }
-        if($thana!='all'){
+        if ($thana != 'all') {
             $ansarQuery->where('kt.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
         }
         $ansars = $ansarQuery->distinct()->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_kpi_info.kpi_name', 'tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id')->skip($offset)->limit($limit)->get();
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
     }
 
-    public static function getTotalOwnEmbodiedAnsarCount($unit, $thana, $division = null)
+    public static function getTotalOwnEmbodiedAnsarCount($unit, $thana, $division = null,$time)
     {
         DB::enableQueryLog();
-        $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-            ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-            ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-            ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
-            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->join('tbl_units as ku', 'ku.id', '=', 'tbl_kpi_info.unit_id')
-            ->join('tbl_thana as kt', 'tbl_kpi_info.thana_id', '=', 'kt.id')
-            ->where('tbl_ansar_status_info.embodied_status', 1)
-            ->where('tbl_ansar_status_info.block_list_status', 0);
-        if($division&&$division!='all'){
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::OWN_EMBODIED);
+        if ($division && $division != 'all') {
             $ansarQuery->where('tbl_kpi_info.division_id', $division);
         }
-        if($unit!='all'){
+        if ($unit != 'all') {
             $ansarQuery->where('ku.id', $unit);
         }
-        if($thana!='all'){
+        if ($thana != 'all') {
             $ansarQuery->where('kt.id', $thana);
         }
-        $total = $ansarQuery->distinct()->count('tbl_ansar_parsonal_info.ansar_id');
-        //return DB::getQueryLog();
-        return Response::json(['total' => $total]);
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
+        }
+        $total = $ansarQuery->distinct()->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        return Response::json(['total' => collect($total->get())->pluck('t', 'code')]);
     }
 
-    public static function getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null)
+// Dashboard diff embodied ansar list(DC,RC)
+    public static function getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
     {
-        $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-            ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-            ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-            ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
-            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->join('tbl_units as ku', 'ku.id', '=', 'tbl_kpi_info.unit_id')
-            ->join('tbl_thana as kt', 'tbl_kpi_info.thana_id', '=', 'kt.id')
-            ->where('tbl_ansar_status_info.embodied_status', 1)
-            ->where('tbl_ansar_status_info.block_list_status', 0);
-        if($division&&$division!='all'){
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::DIFF_EMBODIED);
+        if ($division && $division != 'all') {
             $ansarQuery->where('tbl_kpi_info.division_id', '!=', $division);
         }
-        if($unit!='all'){
+        if ($unit != 'all') {
             $ansarQuery->where('ku.id', '!=', $unit);
             $ansarQuery->where('pu.id', '=', $unit);
         }
-        if($thana!='all'){
+        if ($thana != 'all') {
             $ansarQuery->where('kt.id', '!=', $thana);
             $ansarQuery->where('pt.id', '=', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
         }
         $ansars = $ansarQuery->distinct()->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_kpi_info.kpi_name', 'tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id')->skip($offset)->limit($limit)->get();
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'diff_embodied']);
     }
 
-    public static function getTotalDiffEmbodiedAnsarCount($unit, $thana, $division = null)
+    public static function getTotalDiffEmbodiedAnsarCount($unit, $thana, $division = null,$time)
     {
         DB::enableQueryLog();
-        $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-            ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-            ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-            ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
-            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->join('tbl_units as ku', 'ku.id', '=', 'tbl_kpi_info.unit_id')
-            ->join('tbl_thana as kt', 'tbl_kpi_info.thana_id', '=', 'kt.id')
-            ->where('tbl_ansar_status_info.embodied_status', 1)
-            ->where('tbl_ansar_status_info.block_list_status', 0);
-        if($division&&$division!='all'){
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::DIFF_EMBODIED);
+        if ($division && $division != 'all') {
             $ansarQuery->where('tbl_kpi_info.division_id', '!=', $division);
         }
-        if($unit!='all'){
+        if ($unit != 'all') {
             $ansarQuery->where('ku.id', '!=', $unit);
             $ansarQuery->where('pu.id', '=', $unit);
         }
-        if($thana!='all'){
+        if ($thana != 'all') {
             $ansarQuery->where('kt.id', '!=', $thana);
             $ansarQuery->where('pt.id', '=', $thana);
         }
-        $total = $ansarQuery->distinct()->count('tbl_ansar_parsonal_info.ansar_id');
-//        return DB::getQueryLog();
-        return Response::json(['total' => $total]);
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
+        }
+        $total = $ansarQuery->distinct()->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        return Response::json(['total' => collect($total->get())->pluck('t', 'code')]);
     }
 
-    public static function getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division = null)
+// Dashboard not verified ansar list
+    public static function getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
     {
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])
-                    ->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])
-                    ->where('tbl_thana.id', $thana)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])
-                    ->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::UNVERIFIED);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
-        $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_units.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_parsonal_info.updated_at', [$backTime, $recentTime]);
+        }
+        $ansars = $ansarQuery->distinct()->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
     }
 
-    public static function getTotalNotVerifiedAnsarCount($unit, $thana, $division = null)
+    public static function getTotalNotVerifiedAnsarCount($unit, $thana, $division = null,$time)
     {
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])
-                    ->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])
-                    ->where('tbl_thana.id', $thana)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])
-                    ->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)->distinct();
-            }
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::UNVERIFIED);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-        return Response::json(['total' => $total]);
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_units.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if($time==self::RECENT){
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_parsonal_info.updated_at', [$backTime, $recentTime]);
+        }
+        $total = $ansarQuery->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        return Response::json(['total' => collect($total->get())->pluck('t', 'code')]);
     }
+//End dashboard
+
 
     public static function ansarListForServiceEnded($offset, $limit, $unit, $thana, $division = null)
     {
         DB::enableQueryLog();
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_embodiment')
-                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.black_list_status', 0)
-                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                    ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)')
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_embodiment')
-                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.black_list_status', 0)
-                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                    ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)')
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_embodiment')
-                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.black_list_status', 0)
-                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                    ->where('tbl_kpi_info.unit_id', $unit)
-                    ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)')
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_embodiment')
-                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.black_list_status', 0)
-                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                    ->where('tbl_kpi_info.unit_id', $unit)
-                    ->where('tbl_kpi_info.thana_id', $thana)
-                    ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)')
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_embodiment')
-                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.black_list_status', 0)
-                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                    ->where('tbl_kpi_info.division_id', '=', $division)
-                    ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)')
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_embodiment')
-                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.black_list_status', 0)
-                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                    ->where('tbl_kpi_info.division_id', '=', $division)
-                    ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)')
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_embodiment')
-                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.black_list_status', 0)
-                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                    ->where('tbl_kpi_info.unit_id', $unit)
-                    ->where('tbl_kpi_info.division_id', '=', $division)
-                    ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)')
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_embodiment')
-                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.black_list_status', 0)
-                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                    ->where('tbl_kpi_info.division_id', '=', $division)
-                    ->where('tbl_kpi_info.unit_id', $unit)
-                    ->where('tbl_kpi_info.thana_id', $thana)
-                    ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)')
-                    ->distinct();
-            }
+        $ansarQuery = DB::table('tbl_embodiment')
+            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+            ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
+            ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
+            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+            ->where('tbl_ansar_status_info.block_list_status', 0)
+            ->where('tbl_ansar_status_info.black_list_status', 0)
+            ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
+            ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)');
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_kpi_info.division_id', '=', $division);
+        }
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_kpi_info.unit_id', '=', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_kpi_info.thana_id', '=', $thana);
         }
 
         $ansars = $ansarQuery->select('tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_kpi_info.kpi_name as kpi', 'tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();
@@ -2942,1762 +1653,6 @@ class CustomQuery
     }
 
 
-    //get recent ansar
-    public static function getRecentTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null)
-    {
-        $recentTime = Carbon::now();
-        $backTime = Carbon::now()->subDays(7);
-        $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-            ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-            ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-            ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
-            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->join('tbl_units as ku', 'ku.id', '=', 'tbl_kpi_info.unit_id')
-            ->join('tbl_thana as kt', 'tbl_kpi_info.thana_id', '=', 'kt.id')
-            ->where('tbl_ansar_status_info.embodied_status', 1)
-            ->where('tbl_ansar_status_info.block_list_status', 0);
-        if($division&&$division!='all'){
-            $ansarQuery->where('tbl_kpi_info.division_id', $division);
-        }
-        if($unit!='all'){
-            $ansarQuery->where('ku.id', $unit);
-        }
-        if($thana!='all'){
-            $ansarQuery->where('kt.id', $thana);
-        }
-        $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at',[$backTime,$recentTime]);
-        $ansars = $ansarQuery->distinct()->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
-            'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_kpi_info.kpi_name', 'tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id')->skip($offset)->limit($limit)->get();
-        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
-    }
-
-    public static function getRecentTotalOwnEmbodiedAnsarCount($unit, $thana, $division = null)
-    {
-        DB::enableQueryLog();
-        $recentTime = Carbon::now();
-        $backTime = Carbon::now()->subDays(7);
-        $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-            ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-            ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-            ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
-            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->join('tbl_units as ku', 'ku.id', '=', 'tbl_kpi_info.unit_id')
-            ->join('tbl_thana as kt', 'tbl_kpi_info.thana_id', '=', 'kt.id')
-            ->where('tbl_ansar_status_info.embodied_status', 1)
-            ->where('tbl_ansar_status_info.block_list_status', 0);
-        if($division&&$division!='all'){
-            $ansarQuery->where('tbl_kpi_info.division_id', $division);
-        }
-        if($unit!='all'){
-            $ansarQuery->where('ku.id', $unit);
-        }
-        if($thana!='all'){
-            $ansarQuery->where('kt.id', $thana);
-        }
-        $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at',[$backTime,$recentTime]);
-        $total = $ansarQuery->distinct()->count('tbl_ansar_parsonal_info.ansar_id');
-        //return DB::getQueryLog();
-        return Response::json(['total' => $total]);
-    }
-
-    public static function getAllRecentAnsarList($offset, $limit, $unit, $thana, $division = null)
-    {
-        $recentTime = Carbon::now();
-        $backTime = Carbon::now()->subDays(7);
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_thana.id', $thana)->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime])
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime])
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime])
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime])
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_thana.id', $thana)->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime])
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime])
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime])
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            }
-        }
-        $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
-            'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();
-        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
-
-    }
-
-    public static function getAllRecentAnsarCount($unit, $thana, $division = null)
-    {
-        $recentTime = Carbon::now()->addHours(6);
-        $backTime = Carbon::now()->addHours(6)->subDays(7);
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_thana.id', $thana)->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime])
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime])
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime])
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime])
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_thana.id', $thana)->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime])
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime])
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime])
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            }
-        }
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-        return Response::json(['total' => $total]);
-
-    }
-
-    public static function getRecentTotalFreeAnsarList($offset, $limit, $unit, $thana, $division = null)
-    {
-        $now = Carbon::now();
-        $backtime = Carbon::now()->subDays(7);
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_status_info.free_status', 1)
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_thana.id', $thana)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_units.id', $unit)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_status_info.free_status', 1)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_thana.id', $thana)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            }
-        }
-        $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
-            'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();
-        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
-    }
-
-    public static function getRecentTotalFreeAnsarCount($unit, $thana, $division = null)
-    {
-        $now = Carbon::now()->addHours(6);;
-        $backtime = Carbon::now()->addHours(6)->subDays(7);
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_status_info.free_status', 1)
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_thana.id', $thana)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_units.id', $unit)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_status_info.free_status', 1)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.free_status', 1)
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_thana.id', $thana)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_status_info.free_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            }
-        }
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-        return Response::json(['total' => $total]);
-    }
-
-    public static function getRecentTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division = null)
-    {
-        $now = Carbon::now();
-        $backtime = Carbon::now()->subDays(7);
-        $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-            ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-            ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
-            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->where('tbl_ansar_status_info.block_list_status', 0)
-            ->where('tbl_ansar_status_info.pannel_status', 1);
-        if($division&&$division!='all'){
-            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
-        }
-        if($unit!='all'){
-            $ansarQuery->where('tbl_units.id', $unit);
-        }
-        if($thana!='all'){
-            $ansarQuery->where('tbl_thana.id', $thana);
-        }
-        $ansarQuery->whereBetween('tbl_panel_info.panel_date',[$backtime,$now]);
-        $ansars = $ansarQuery->distinct()
-            ->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
-                'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_panel_info.created_at', 'tbl_panel_info.memorandum_id')->skip($offset)->limit($limit)->get();
-//        return DB::getQueryLog();
-        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'pannel']);
-    }
-
-    public static function getRecentTotalPaneledAnsarCount($unit, $thana, $division = null)
-    {
-//        DB::enableQueryLog();
-        $now = Carbon::now();
-        $backtime = Carbon::now()->subDays(7);
-        $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-            ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-            ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
-            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->where('tbl_ansar_status_info.block_list_status', 0)
-            ->where('tbl_ansar_status_info.pannel_status', 1);
-        if($division&&$division!='all'){
-            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
-        }
-        if($unit!='all'){
-            $ansarQuery->where('tbl_units.id', $unit);
-        }
-        if($thana!='all'){
-            $ansarQuery->where('tbl_thana.id', $thana);
-        }
-        $ansarQuery->whereBetween('tbl_panel_info.panel_date',[$backtime,$now]);
-        $total = $ansarQuery->distinct()->count('tbl_ansar_parsonal_info.ansar_id');
-//        return DB::getQueryLog();
-        return Response::json(['total' => $total]);
-    }
-
-    public static function getRecentTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division = null)
-    {
-        $now = Carbon::now();
-        $backtime = Carbon::now()->subDays(7);
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])
-                    ->whereBetween('tbl_ansar_parsonal_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])
-                    ->where('tbl_thana.id', $thana)->whereBetween('tbl_ansar_parsonal_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->whereBetween('tbl_ansar_parsonal_info.updated_at', [$backtime, $now])
-                    ->where('tbl_units.id', $unit)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->whereBetween('tbl_ansar_parsonal_info.updated_at', [$backtime, $now])
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->whereBetween('tbl_ansar_parsonal_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_thana.id', $thana)->whereBetween('tbl_ansar_parsonal_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->whereBetween('tbl_ansar_parsonal_info.updated_at', [$backtime, $now])
-                    ->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->whereBetween('tbl_ansar_parsonal_info.updated_at', [$backtime, $now])
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            }
-        }
-        $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
-            'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_units.unit_name_bng as unit')->skip($offset)->limit($limit)->get();
-        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
-    }
-
-    public static function getRecentTotalNotVerifiedAnsarCount($unit, $thana, $division = null)
-    {
-        $now = Carbon::now()->addHours(6);;
-        $backtime = Carbon::now()->addHours(6)->subDays(7);
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])
-                    ->whereBetween('tbl_ansar_parsonal_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])
-                    ->where('tbl_thana.id', $thana)->whereBetween('tbl_ansar_parsonal_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->whereBetween('tbl_ansar_parsonal_info.updated_at', [$backtime, $now])
-                    ->where('tbl_units.id', $unit)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->whereBetween('tbl_ansar_parsonal_info.updated_at', [$backtime, $now])
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->whereBetween('tbl_ansar_parsonal_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_thana.id', $thana)->whereBetween('tbl_ansar_parsonal_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->whereBetween('tbl_ansar_parsonal_info.updated_at', [$backtime, $now])
-                    ->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->whereBetween('tbl_ansar_parsonal_info.updated_at', [$backtime, $now])
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            }
-        }
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-        return Response::json(['total' => $total]);
-    }
-
-    public static function getRecentTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division = null)
-    {
-        $now = Carbon::now();
-        $backtime = Carbon::now()->subDays(7);
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('ot.id', $thana)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('ou.id', $unit)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('ot.id', $thana)->where('ou.id', $unit)
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('ou.division_id', $division)
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('ou.division_id', $division)
-                    ->where('ot.id', $thana)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('ou.id', $unit)->where('ou.division_id', $division)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('ot.id', $thana)->where('ou.id', $unit)->where('ou.division_id', $division)
-                    ->distinct();
-            }
-        }
-        $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
-            'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_sms_offer_info.sms_send_datetime', 'ou.unit_name_eng as offer_unit')->skip($offset)->limit($limit)->get();
-        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'offer']);
-    }
-
-    public static function getRecentTotalOfferedAnsarCount($unit, $thana, $division = null)
-    {
-        DB::enableQueryLog();
-        $now = Carbon::now();
-        $backtime = Carbon::now()->subDays(7);
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('tbl_thana.id', $thana)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_units.id', $unit)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_thana.id', $thana)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                    ->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
-                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
-                    ->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            }
-        }
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-        //return DB::getQueryLog();
-        return Response::json(['total' => $total]);
-    }
-
-    public static function getRecentTotalRestAnsarList($offset, $limit, $unit, $thana, $division = null)
-    {
-        $now = Carbon::now();
-        $backtime = Carbon::now()->subDays(7);
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->whereBetween('tbl_rest_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->whereBetween('tbl_rest_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->whereBetween('tbl_rest_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->whereBetween('tbl_rest_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->whereBetween('tbl_rest_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->whereBetween('tbl_rest_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->whereBetween('tbl_rest_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->whereBetween('tbl_rest_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            }
-        }
-        $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
-            'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_rest_info.rest_date')->skip($offset)->limit($limit)->get();
-        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'rest']);
-    }
-
-    public static function getRecentTotalRestAnsarCount($unit, $thana, $division = null)
-    {
-        $now = Carbon::now()->addHours(6);;
-        $backtime = Carbon::now()->addHours(6)->subDays(7);
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)
-                    ->whereBetween('tbl_rest_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_thana.id', $thana)
-                    ->whereBetween('tbl_rest_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_units.id', $unit)
-                    ->whereBetween('tbl_rest_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->whereBetween('tbl_rest_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->whereBetween('tbl_rest_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_thana.id', $thana)
-                    ->whereBetween('tbl_rest_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_units.id', $unit)
-                    ->whereBetween('tbl_rest_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_rest_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.rest_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->whereBetween('tbl_rest_info.updated_at', [$backtime, $now])
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            }
-        }
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-        return Response::json(['total' => $total]);
-    }
-
-    public static function getRecentTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division = null)
-    {
-        $now = Carbon::now();
-        $backtime = Carbon::now()->subDays(7);
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')->join('tbl_freezing_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')->join('tbl_freezing_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_thana.id', $thana)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')->join('tbl_freezing_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')->join('tbl_freezing_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')->join('tbl_freezing_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')->join('tbl_freezing_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')->join('tbl_freezing_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')->join('tbl_freezing_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            }
-        }
-        $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
-            'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_freezing_info.freez_reason', 'tbl_freezing_info.freez_date')->skip($offset)->limit($limit)->get();
-        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'freeze']);
-    }
-
-    public static function getRecentTotalFreezedAnsarCount($unit, $thana, $division = null)
-    {
-        $now = Carbon::now();
-        $backtime = Carbon::now()->subDays(7);
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_thana.id', $thana)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_thana.id', $thana)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.freezing_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            }
-        }
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-        return Response::json(['total' => $total]);
-    }
-
-    public static function getRecentTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division = null)
-    {
-        $now = Carbon::now();
-        $backtime = Carbon::now()->subDays(7);
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1);
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_thana.id', $thana);
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)->where('tbl_units.id', $unit);
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit);
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division);
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_thana.id', $thana);
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division);
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division);
-            }
-        }
-        $ansars = $ansarQuery->whereBetween('tbl_blocklist_info.date_for_block', [$backtime, $now])
-            ->distinct()->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
-                'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_blocklist_info.comment_for_block', 'tbl_blocklist_info.date_for_block')->skip($offset)->limit($limit)->get();
-        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'block']);
-    }
-
-    public static function getRecentTotalBlockedAnsarCount($unit, $thana, $division = null)
-    {
-        $now = Carbon::now()->addHours(6);;
-        $backtime = Carbon::now()->addHours(6)->subDays(7);
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->whereBetween('tbl_blocklist_info.date_for_block', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_thana.id', $thana)->whereBetween('tbl_blocklist_info.date_for_block', [$backtime, $now])
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)->where('tbl_units.id', $unit)
-                    ->whereBetween('tbl_blocklist_info.date_for_block', [$backtime, $now])
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->whereBetween('tbl_blocklist_info.date_for_block', [$backtime, $now])
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->whereBetween('tbl_blocklist_info.date_for_block', [$backtime, $now])
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_thana.id', $thana)->whereBetween('tbl_blocklist_info.date_for_block', [$backtime, $now])
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)->where('tbl_units.id', $unit)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->whereBetween('tbl_blocklist_info.date_for_block', [$backtime, $now])
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_blocklist_info', 'tbl_blocklist_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)
-                    ->whereBetween('tbl_blocklist_info.date_for_block', [$backtime, $now])
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->distinct();
-            }
-        }
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-        return Response::json(['total' => $total]);
-    }
-
-    public static function getRecentTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division = null)
-    {
-        $now = Carbon::now();
-        $backtime = Carbon::now()->subDays(7);
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_blacklist_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_blacklist_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1);
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_blacklist_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_blacklist_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)
-                    ->where('tbl_thana.id', $thana);
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_blacklist_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_blacklist_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)->where('tbl_units.id', $unit);
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_blacklist_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_blacklist_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit);
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_blacklist_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_blacklist_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.black_list_status', 1);
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_blacklist_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_blacklist_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.black_list_status', 1)
-                    ->where('tbl_thana.id', $thana);
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_blacklist_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_blacklist_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.black_list_status', 1)->where('tbl_units.id', $unit);
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_blacklist_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_blacklist_info.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.black_list_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit);
-            }
-        }
-        $ansars = $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-            ->distinct()
-            ->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
-                'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_blacklist_info.black_list_comment as reason', 'tbl_blacklist_info.black_listed_date as date')->skip($offset)->limit($limit)->get();
-        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'black']);
-    }
-
-    public static function getRecentTotalBlackedAnsarCount($unit, $thana, $division = null)
-    {
-        $now = Carbon::now()->addHours(6);;
-        $backtime = Carbon::now()->addHours(6)->subDays(7);
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_thana.id', $thana)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.black_list_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.black_list_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.black_list_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_thana.id', $thana)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.black_list_status', 1)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.black_list_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            }
-        }
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-        return Response::json(['total' => $total]);
-    }
-
-    public static function getRecentTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null)
-    {
-        $now = Carbon::now();
-        $backtime = Carbon::now()->subDays(7);
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_embodiment', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.embodied_status', 1);
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_embodiment', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.embodied_status', 1)
-                    ->where('tbl_thana.id', $thana);
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_embodiment', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->where('tbl_units.id', $unit);
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_embodiment', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit);
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_embodiment', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.embodied_status', 1);
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_embodiment', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.embodied_status', 1)
-                    ->where('tbl_thana.id', $thana);
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_embodiment', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->where('tbl_units.id', $unit);
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_embodiment', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit);
-            }
-        }
-        $ansars = $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-            ->distinct()
-            ->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
-                'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id', 'tbl_kpi_info.kpi_name')->skip($offset)->limit($limit)->get();
-        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
-    }
-
-    public static function getRecentTotalEmbodiedAnsarCount($unit, $thana, $division = null)
-    {
-        $now = Carbon::now()->addHours(6);;
-        $backtime = Carbon::now()->addHours(6)->subDays(7);
-        if (!is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_thana.id', $thana)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', $division)
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->where('tbl_thana.id', $thana)
-                    ->distinct();
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.embodied_status', 1)->where('tbl_thana.id', $thana)->where('tbl_units.id', $unit)->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])
-                    ->distinct();
-            }
-        }
-        $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-
-        return Response::json(['total' => $total]);
-    }
-
-    public static function getRecentTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null)
-    {
-        $now = Carbon::now();
-        $backtime = Carbon::now()->subDays(7);
-        $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-            ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-            ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-            ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
-            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->join('tbl_units as ku', 'ku.id', '=', 'tbl_kpi_info.unit_id')
-            ->join('tbl_thana as kt', 'tbl_kpi_info.thana_id', '=', 'kt.id')
-            ->where('tbl_ansar_status_info.embodied_status', 1)
-            ->where('tbl_ansar_status_info.block_list_status', 0);
-        if($division&&$division!='all'){
-            $ansarQuery->where('tbl_kpi_info.division_id', '!=', $division);
-        }
-        if($unit!='all'){
-            $ansarQuery->where('ku.id', '!=', $unit);
-            $ansarQuery->where('pu.id', '=', $unit);
-        }
-        if($thana!='all'){
-            $ansarQuery->where('kt.id', '!=', $thana);
-            $ansarQuery->where('pt.id', '=', $thana);
-        }
-        $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at',[$backtime,$now]);
-        $ansars = $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backtime, $now])->distinct()
-            ->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
-                'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id')->skip($offset)->limit($limit)->get();
-        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
-    }
-
-    public static function getRecentTotalDiffEmbodiedAnsarCount($unit, $thana, $division = null)
-    {
-        $now = Carbon::now()->addHours(6);;
-        $backtime = Carbon::now()->addHours(6)->subDays(7);
-
-        $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-            ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-            ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
-            ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
-            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->join('tbl_units as ku', 'ku.id', '=', 'tbl_kpi_info.unit_id')
-            ->join('tbl_thana as kt', 'tbl_kpi_info.thana_id', '=', 'kt.id')
-            ->where('tbl_ansar_status_info.embodied_status', 1)
-            ->where('tbl_ansar_status_info.block_list_status', 0);
-        if($division&&$division!='all'){
-            $ansarQuery->where('tbl_kpi_info.division_id', '!=', $division);
-        }
-        if($unit!='all'){
-            $ansarQuery->where('ku.id', '!=', $unit);
-            $ansarQuery->where('pu.id', '=', $unit);
-        }
-        if($thana!='all'){
-            $ansarQuery->where('kt.id', '!=', $thana);
-            $ansarQuery->where('pt.id', '=', $thana);
-        }
-        $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at',[$backtime,$now]);
-        $total = $ansarQuery->distinct()->count('tbl_ansar_parsonal_info.ansar_id');
-
-        return Response::json(['total' => $total]);
-    }
-
     public static function threeYearsOverAnsarList($offset, $limit, $unit, $ansar_rank, $ansar_sex)
     {
         $ansarQuery = DB::table('tbl_embodiment')
@@ -4717,7 +1672,7 @@ class CustomQuery
             $ansarQuery = $ansarQuery->where('tbl_ansar_parsonal_info.sex', '=', $ansar_sex);
         }
 //        }
-        $ansars = $ansarQuery->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date','tbl_designations.id as did',
+        $ansars = $ansarQuery->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_designations.id as did',
             'tbl_embodiment.service_ended_date as se_date', 'tbl_kpi_info.kpi_name as kpi', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_units.unit_name_bng as unit', 'tbl_designations.name_bng as rank')->skip($offset)->limit($limit)->get();
         return View::make('HRM::Report.selected_three_years_over_list_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
 
@@ -5095,7 +2050,7 @@ class CustomQuery
         return Response::json(['total' => $total]);
     }
 
-    public static function withdrawnKpiInfo($offset, $limit, $unit, $thana,$division)
+    public static function withdrawnKpiInfo($offset, $limit, $unit, $thana, $division)
     {
         $kpiQuery = DB::table('tbl_kpi_info')
             ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
@@ -5123,7 +2078,7 @@ class CustomQuery
 
     }
 
-    public static function withdrawnKpiInfoCount($unit, $thana,$division)
+    public static function withdrawnKpiInfoCount($unit, $thana, $division)
     {
         DB::enableQueryLog();
         $kpiQuery = DB::table('tbl_kpi_info')
@@ -5252,7 +2207,7 @@ class CustomQuery
                 ->where('tbl_units.division_id', '=', $division);
         }
 
-        $units = $unitQuery->where('tbl_division.id','!=',0)->select('tbl_units.id', 'tbl_units.unit_name_eng', 'tbl_units.unit_name_bng', 'tbl_units.unit_code', 'tbl_division.division_name_eng', 'tbl_division.division_code')->skip($offset)->limit($limit)->get();
+        $units = $unitQuery->where('tbl_division.id', '!=', 0)->select('tbl_units.id', 'tbl_units.unit_name_eng', 'tbl_units.unit_name_bng', 'tbl_units.unit_code', 'tbl_division.division_name_eng', 'tbl_division.division_code')->skip($offset)->limit($limit)->get();
 //        return View::make('kpi.selected_kpi_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'kpis' => $kpis]);
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'units' => $units]);
 
@@ -5269,7 +2224,7 @@ class CustomQuery
                 ->join('tbl_division', 'tbl_units.division_id', '=', 'tbl_division.id')
                 ->where('tbl_units.division_id', '=', $division);
         }
-        $total = $unitQuery->where('tbl_division.id','!=',0)->count('tbl_units.id');
+        $total = $unitQuery->where('tbl_division.id', '!=', 0)->count('tbl_units.id');
 //        print_r(DB::getQueryLog());
         return Response::json(['total' => $total]);
     }

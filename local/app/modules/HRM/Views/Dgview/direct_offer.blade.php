@@ -155,7 +155,7 @@
                                 <label for="district" class="control-label">Select District to send Offer&nbsp;
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}" width="16"></label>
                                 <select class="form-control" ng-model="selectedDistrict" ng-disabled="loadingDistrict">
-                                    <option value="">--Select a District--</option>
+                                    <option value="">--@lang('title.unit')--</option>
                                     <option ng-repeat="d in districts" ng-disabled="ansarDetail.apid.unit_id==d.id" value="[[d.id]]">[[d.unit_name_bng]]</option>
                                 </select>
                             </div>

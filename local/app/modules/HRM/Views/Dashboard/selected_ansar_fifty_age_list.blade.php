@@ -8,7 +8,7 @@
             <td>{{$ansar->rank}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
-            <td>{{$ansar->birth_date}}</td>
+            <td>[['{{$ansar->birth_date}}'|dateformat:'DD-MMM-YYYY']]</td>
             <td>{{$ansar->sex}}</td>
         </tr>
     @endforeach

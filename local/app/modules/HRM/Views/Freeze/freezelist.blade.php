@@ -545,7 +545,7 @@
                                 </label>
                                 <select ng-model="child.selectedUnit" name="unit" ng-change="loadThana()"
                                         class="form-control">
-                                    <option value="">---Select a Unit---</option>
+                                    <option value="">---@lang('title.unit')---</option>
                                     <option ng-repeat="k in units" value="[[k.id]]">[[k.unit_name_bng]]</option>
                                 </select>
                             </div>
@@ -555,7 +555,7 @@
                                 </label>
                                 <select ng-disabled="loadingThana||loadingKpi" ng-model="selectedThana" name="thana"
                                         class="form-control" ng-change="loadKpi()">
-                                    <option value="">---Select a Thana---</option>
+                                    <option value="">---@lang('title.thana')---</option>
                                     <option ng-repeat="k in thanas" value="[[k.id]]">[[k.thana_name_bng]]</option>
                                 </select>
                             </div>
@@ -565,7 +565,7 @@
                                 </label>
                                 <select ng-disabled="loadingKpi||loadingThana" ng-model="selectedKpi"
                                         name="transfered_kpi" class="form-control">
-                                    <option value="">---Select a KPI---</option>
+                                    <option value="">---@lang('title.kpi')---</option>
                                     <option ng-repeat="k in kpis" value="[[k.id]]" ng-disabled="k.id==getSingleRow.id">
                                         [[k.kpi_name]]
                                     </option>

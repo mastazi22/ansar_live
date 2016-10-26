@@ -173,7 +173,7 @@
                             <div class="row">
                                 <div class="col-sm-4">
                                     <div class="form-group">
-                                        <label class="control-label">Select a Division&nbsp;
+                                        <label class="control-label">@lang('title.range')&nbsp;
                                             <img ng-show="loadingDivision" src="{{asset('dist/img/facebook.gif')}}"
                                                  width="16"></label>
                                         <select class="form-control" ng-model="selectedDivision"
@@ -186,7 +186,7 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-group">
-                                        <label class="control-label">Select a District&nbsp;
+                                        <label class="control-label">@lang('title.unit')&nbsp;
                                             <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
                                                  width="16">
                                         </label>
