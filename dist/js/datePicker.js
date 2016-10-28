@@ -33,7 +33,8 @@
             today:0,
             todayMonth:0,
             todayYear:0,
-            defaultValue:option,
+            defaultValue:moment(),
+            dateFormat:'DD-MMM-YYYY'
         }
         this.init()
     }
@@ -42,7 +43,7 @@
         var _self = this;
         var b = 'defaultValue'
         $('body').append(_self.getCalenderView());
-        $(this.element).attr('placeholder','YYYY-MM-DD')
+        //$(this.element).attr('placeholder','YYYY-MM-DD')
         $(this.element).attr('data-target','#'+_self.option.element)
         $(this.element).attr('id',_self.option.ppp)
         _self.addEventListener();
@@ -56,7 +57,7 @@
         _self.option.todayMonth = date.getMonth();
         _self.option.todayYear = date.getFullYear();
         var d = date.getFullYear()+"-"+(date.getMonth()+1<10?"0"+(date.getMonth()+1):date.getMonth()+1)+"-"+date.getDate();
-        if(_self.option.defaultValue)$(this.element).val(moment(d).format("D-MMM-YYYY")).trigger('input')
+        if(_self.option.defaultValue)$(this.element).val(moment(d).format(_self.option.dateFormat)).trigger('input')
         var d = _self.getCurrentDate();
         _self.option.currentDay = d.getDate();
         _self.option.currentMonth = d.getMonth();
@@ -411,7 +412,7 @@
                         //$(_self.element).focus()
                         var date = _self.option.currentYear + "-" + (_self.option.currentMonth + 1 < 10 ? '0' + (_self.option.currentMonth + 1) : _self.option.currentMonth + 1) + "-" + (parseInt($(this).text().trim())<10?"0"+$(this).text():$(this).text());
                         //alert(date)
-                        $(_self.element).val(moment(date).format("DD-MMM-YYYY")).trigger('input')
+                        $(_self.element).val(moment(date).format(_self.option.dateFormat)).trigger('input')
                         $('#'+_self.option.element).addClass('not-visible')
                     }
                     break;

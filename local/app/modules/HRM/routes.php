@@ -339,22 +339,24 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/ansar-reduce-update', ['as'=>'ansar-reduce-update','uses'=>'KpiController@ansarReduceUpdate']);
 
         Route::get('/kpi-withdraw-view', ['as' => 'kpi-withdraw-view', 'uses' => 'KpiController@kpiWithdrawView']);
+        Route::get('/kpi-withdraw-action-view', ['as' => 'kpi-withdraw-action-view', 'uses' => 'KpiController@kpiWithdrawActionView']);
+        Route::get('/kpiinfo/{id}', ['as' => 'single-kpi-info', 'uses' => 'KpiController@singleKpiInfo']);
         Route::get('/kpi_list_for_withdraw', ['as' => 'kpi_list_for_withdraw', 'uses' => 'KpiController@loadKpiForWithdraw']);
-        Route::post('/kpi-withdraw-update', ['as' => 'kpi_withdraw_update', 'uses' => 'KpiController@kpiWithdrawUpdate']);
+        Route::post('/kpi-withdraw-update/{id}', ['as' => 'kpi_withdraw_update', 'uses' => 'KpiController@kpiWithdrawUpdate'])->where('id','^[0-9]+$');
 
         Route::get('/withdrawn_kpi_view', ['as' => 'withdrawn_kpi_view', 'uses' => 'KpiController@withdrawnKpiView']);
         Route::get('/withdrawn_kpi_list', ['as' => 'withdrawn_kpi_list', 'uses' => 'KpiController@withdrawnKpiList']);
-        Route::get('/withdraw-date-edit/{id}', ['as' => 'withdraw-date-edit', 'uses' => 'KpiController@kpiWithdrawDateEdit'])->where('id','[0-9]+');
+        Route::get('/withdraw-date-edit/{id}', ['as' => 'withdraw-date-edit', 'uses' => 'KpiController@kpiWithdrawDateEdit'])->where('id','^[0-9]+$');
         Route::post('/withdraw-date-update', ['as' => 'withdraw-date-update', 'uses' => 'KpiController@kpiWithdrawDateUpdate']);
 
         Route::get('/inactive_kpi_view', ['as' => 'inactive_kpi_view', 'uses' => 'KpiController@inactiveKpiView']);
         Route::get('/inactive_kpi_list', ['as' => 'inactive_kpi_list', 'uses' => 'KpiController@inactiveKpiList']);
-        Route::get('/active_kpi/{id}', ['as' => 'active_kpi', 'uses' => 'KpiController@activeKpi'])->where('id','[0-9]+');
+        Route::post('/active_kpi/{id}', ['as' => 'active_kpi', 'uses' => 'KpiController@activeKpi'])->where('id','[0-9]+');
 
         Route::get('/withdrawn_kpi_name', ['as'=>'withdrawn_kpi_name','uses'=>'KpiController@withdrawnKpiName']);
         Route::get('/kpi_withdraw_cancel_view', ['as' => 'kpi_withdraw_cancel_view', 'uses' => 'KpiController@kpiWithdrawCancelView']);
         Route::get('/kpi_list_for_withdraw_cancel', ['as'=>'kpi_list_for_withdraw_cancel','uses'=>'KpiController@kpiListForWithdrawCancel']);
-        Route::post('/kpi-withdraw-cancel-update', ['as'=>'kpi-withdraw-cancel-update','uses'=>'KpiController@kpiWithdrawCancelUpdate']);
+        Route::post('/kpi-withdraw-cancel-update/{id}', ['as'=>'kpi-withdraw-cancel-update','uses'=>'KpiController@kpiWithdrawCancelUpdate'])->where('id','^[0-9]+$');
 //End KPI
         Route::get('testt',function(){
            return UserPermission::isPermissionExists('ansar_not_interested1');

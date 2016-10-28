@@ -15,6 +15,9 @@ class KpiGeneralModel extends Model
     function unit(){
         return $this->belongsTo('App\modules\HRM\Models\District','unit_id');
     }
+    function division(){
+        return $this->belongsTo(Division::class,'division_id');
+    }
 //    function thana(){
 //        return $this->belongsTo('App\models\Thana','thana_id');
 //    }

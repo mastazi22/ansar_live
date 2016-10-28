@@ -2,7 +2,7 @@
  * Created by arafat on 10/25/2016.
  */
 var prefix = '';
-var GlobalApp = angular.module('GlobalApp', ['angular.filter'], function ($interpolateProvider, $httpProvider,$sceProvider) {
+var GlobalApp = angular.module('GlobalApp', ['angular.filter','ngRoute'], function ($interpolateProvider, $httpProvider,$sceProvider,$routeProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
     $sceProvider.enabled(false)
@@ -53,6 +53,19 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter'], function ($inter
             var $http = $injector.get('$http');
             $http(config).then(successCallback, errorCallback);
         }
+    })
+    $routeProvider.when('/withdraw/:id',{
+        templateUrl:'/'+prefix+'HRM/kpi-withdraw-action-view',
+        controller:'WithdrawActionController',
+        resolve:{
+            kpiInfo: function ($http,$route) {
+                return $http.get('/'+prefix+'HRM/kpiinfo/'+$route.current.params.id).then(function (response) {
+                    return response.data;
+                });
+            }
+        }
+    }).otherwise({
+        redirectTo:'/'
     })
 
 });
@@ -135,5 +148,49 @@ GlobalApp.factory('httpService', function ($http) {
             })
 
         },
+    }
+})
+GlobalApp.factory('notificationService', function () {
+    return{
+        notify: function (type,message) {
+            $.noty.closeAll();
+            noty({
+                type:type,
+                text:message,
+                layout:'top',
+                maxVisible:1,
+                timeout:3000
+            })
+
+        }
+    }
+})
+GlobalApp.controller('WithdrawActionController', function ($scope,$http,kpiInfo,$routeParams,$location,notificationService) {
+    $scope.info = kpiInfo;
+    //alert(id)
+    $scope.isSubmitting = false;
+    $scope.formData = {};
+    $scope.submitForm = function () {
+        $scope.isSubmitting = true;
+        $scope.error = undefined
+        $http({
+            url:'/'+prefix+'HRM/kpi-withdraw-update/'+$routeParams.id,
+            method:'post',
+            data:angular.toJson($scope.formData)
+        }).then(function (response) {
+            $scope.isSubmitting = false;
+            console.log(response.data)
+            if(response.data.status){
+                $location.path('/')
+                notificationService.notify('success',response.data.message);
+                $scope.$parent.loadTotal()
+            }
+            else{
+                notificationService.notify('error',response.data.message);
+            }
+        }, function (response) {
+            $scope.isSubmitting = false;
+            if(response.status==422)$scope.error = response.data;
+        })
     }
 })

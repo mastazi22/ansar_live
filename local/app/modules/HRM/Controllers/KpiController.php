@@ -353,7 +353,13 @@ class KpiController extends Controller
         $kpi_names = KpiGeneralModel::where('status_of_kpi', 1)->get();
         return view('HRM::Kpi.reduce_guard_strength')->with('kpi_names', $kpi_names);
     }
-
+    public function kpiWithdrawActionView(){
+        return view('HRM::Kpi.withdraw_actionView');
+    }
+    public function singleKpiInfo($id){
+        $info = KpiGeneralModel::with(['unit','division'])->find($id);
+        return $info;
+    }
     public function ansarListForReduce()
     {
         $unit_id = Input::get('unit_id');
@@ -592,84 +598,68 @@ class KpiController extends Controller
         }
     }
 
-    public function kpiWithdrawUpdate(Request $request)
+    public function kpiWithdrawUpdate(Request $request,$id)
     {
-        $kpi_id = $request->input('kpi_id');
-        $unit_id = Input::get('unit_id');
-        $thana_id = Input::get('thana_id');
-        $withdraw_date = $request->input('withdraw_date');
-        $kpiExist = $request->input('kpiExist');
-
+//        return $request->all();
+        $kpi_id = $request->get('id');
+        $withdraw_date = $request->get('date');
+        $a = $request->all();
+        $a['validate_id']=(int)$id;
+//        return $a;
         $rules = [
-            'kpiExist' => 'required|numeric|regex:/^[0-9]+$/',
-            'kpi_id' => 'required|numeric|regex:/^[0-9]+$/',
+            'id'=>'numeric|required|same:validate_id',
             'mem_id' => 'unique:tbl_memorandum_id,memorandum_id',
-            'unit_id' => 'required|numeric|regex:/^[0-9]+$/',
-            'thana_id' => 'required|numeric|regex:/^[0-9]+$/',
-            'withdraw_date' => ['required', 'regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+            'date' => ['required', 'regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
         ];
         $message = [
-            'kpi_id.required' => 'KPI is required',
-            'unit_id.required' => 'Unit is required',
-            'thana_id.required' => 'Thana is required',
-            'withdraw_date.required' => 'Withdraw Date is required',
-            'kpi_id.numeric' => 'Select a valid KPI',
-            'kpi_id.regex' => 'Select a valid KPI',
-            'unit_id.numeric' => 'Select a valid Unit',
-            'unit_id.regex' => 'Select a valid Unit',
-            'thana_id.numeric' => 'Select a valid Thana',
-            'thana_id.regex' => 'Select a valid Thana',
-            'withdraw_date.regex' => 'Select a valid Date',
+            'id.required' => 'KPI is required',
+            'date.required' => 'Withdraw Date is required',
+            'id.numeric' => 'Select a valid KPI',
+            'date.regex' => 'Select a valid Date',
         ];
-        $validation = Validator::make(Input::all(), $rules, $message);
-        if ($validation->fails()) {
-            return Redirect::back()->withInput(Input::all())->withErrors($validation);
-        } else {
-            $modified_withdraw_date = Carbon::parse($withdraw_date)->format('Y-m-d');
-            if ($kpiExist == 1) {
-                DB::beginTransaction();
-                try {
-                    $m = new MemorandumModel;
-                    $m->memorandum_id = $request->mem_id;
-                    $m->save();
-                    if (Carbon::parse($modified_withdraw_date)->lt(Carbon::now())) {
-                        $kpi = KpiGeneralModel::find($kpi_id);
-                        $kpi->update(['withdraw_status' => 1]);
-                        $kpi->details->update(['kpi_withdraw_date' => null, 'kpi_withdraw_mem_id' => $request->mem_id]);
-                        $embodiment_infos = $kpi->embodiment;
-                        foreach ($embodiment_infos as $embodiment_info) {
-                            $freeze_info_update = new FreezingInfoModel();
-                            $freeze_info_update->ansar_id = $embodiment_info->ansar_id;
-                            $freeze_info_update->freez_reason = "Guard Withdraw";
-                            $freeze_info_update->freez_date = $modified_withdraw_date;
-                            $freeze_info_update->kpi_id = $kpi->id;
-                            $freeze_info_update->ansar_embodiment_id = $embodiment_info->id;
-                            $freeze_info_update->save();
-                            $embodiment_info->emboded_status = "Freeze";
-                            $embodiment_info->save();
-                            AnsarStatusInfo::where('ansar_id', $embodiment_info->ansar_id)->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 1]);
-                            $a = ['ansar_id' => $embodiment_info->ansar_id, 'action_type' => 'WITHDRAW KPI', 'from_state' => 'EMBODIED', 'to_state' => 'FREEZE', 'action_by' => auth()->user()->id];
-                            CustomQuery::addActionlog($a);
-                        }
-                    } else {
-                        $kpi_withdraw_date_entry = KpiDetailsModel::where('kpi_id', $kpi_id)->first();
-                        $kpi_withdraw_date_entry->kpi_withdraw_date = $modified_withdraw_date;
-                        $kpi_withdraw_date_entry->kpi_withdraw_mem_id = $request->mem_id;
-                        $kpi_withdraw_date_entry->save();
-                    }
-
-                    DB::commit();
-                } catch
-                (\Exception $e) {
-                    DB::rollback();
-                    return $e->getMessage();
+        $validation = Validator::make($a, $rules, $message);
+        if($validation->fails()){
+            return response($validation->messages()->toJson(),422,['Content-Type'=>'application/json']);
+        }
+        $modified_withdraw_date = Carbon::parse($withdraw_date)->format('Y-m-d');
+        DB::beginTransaction();
+        try {
+            $m = new MemorandumModel;
+            $m->memorandum_id = $request->mem_id;
+            $m->save();
+            if (Carbon::parse($modified_withdraw_date)->lte(Carbon::now())) {
+                $kpi = KpiGeneralModel::find($kpi_id);
+                $kpi->update(['withdraw_status' => 1,'status_of_kpi'=>0]);
+                $kpi->details->update(['kpi_withdraw_date' => null, 'kpi_withdraw_mem_id' => $request->mem_id]);
+                $embodiment_infos = $kpi->embodiment;
+                foreach ($embodiment_infos as $embodiment_info) {
+                    $freeze_info_update = new FreezingInfoModel();
+                    $freeze_info_update->ansar_id = $embodiment_info->ansar_id;
+                    $freeze_info_update->freez_reason = "Guard Withdraw";
+                    $freeze_info_update->freez_date = $modified_withdraw_date;
+                    $freeze_info_update->kpi_id = $kpi->id;
+                    $freeze_info_update->ansar_embodiment_id = $embodiment_info->id;
+                    $freeze_info_update->save();
+                    $embodiment_info->emboded_status = "Freeze";
+                    $embodiment_info->save();
+                    AnsarStatusInfo::where('ansar_id', $embodiment_info->ansar_id)->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 1]);
+                    $a = ['ansar_id' => $embodiment_info->ansar_id, 'action_type' => 'WITHDRAW KPI', 'from_state' => 'EMBODIED', 'to_state' => 'FREEZE', 'action_by' => auth()->user()->id];
+                    CustomQuery::addActionlog($a);
                 }
-                return Redirect::route('kpi-withdraw-view')->with('success_message', 'KPI Withdraw Date is Saved Successfully!');
             } else {
-                return Redirect::route('kpi-withdraw-view')->with('error_message', 'KPI is already Withdrawn!');
+                $kpi_withdraw_date_entry = KpiDetailsModel::where('kpi_id', $kpi_id)->first();
+                $kpi_withdraw_date_entry->kpi_withdraw_date = $modified_withdraw_date;
+                $kpi_withdraw_date_entry->kpi_withdraw_mem_id = $request->mem_id;
+                $kpi_withdraw_date_entry->save();
             }
 
+            DB::commit();
+        } catch
+        (\Exception $e) {
+            DB::rollback();
+            return Response::json(['status'=>false,'message'=>$e->getMessage()]);
         }
+        return Response::json(['status'=>true,'message'=>'Kpi Withdraw Complete']);
     }
 
     public function withdrawnKpiView()
@@ -762,12 +752,14 @@ class KpiController extends Controller
         $offset = Input::get('offset');
         $unit = Input::get('unit');
         $thana = Input::get('thana');
+        $division = Input::get('division');
         $view = Input::get('view');
         $rules = [
             'limit' => 'numeric',
             'offset' => 'numeric',
-            'unit' => ['regex:/^(all)$|^[0-9]+$/'],
-            'thana' => ['regex:/^(all)$|^[0-9]+$/'],
+            'unit' => ['required','regex:/^(all)$|^[0-9]+$/'],
+            'thana' => ['required','regex:/^(all)$|^[0-9]+$/'],
+            'division' => ['required','regex:/^(all)$|^[0-9]+$/'],
             'view' => 'regex:/[a-z]+/'
         ];
         $validation = Validator::make(Input::all(), $rules);
@@ -775,28 +767,34 @@ class KpiController extends Controller
             return response('Invalid Request(400)', 400);
         } else {
             if (strcasecmp($view, 'view') == 0) {
-                return CustomQuery::inactiveKpiInfo($offset, $limit, $unit, $thana);
+                return CustomQuery::inactiveKpiInfo($offset, $limit, $unit, $thana,$division);
             } else {
-                return CustomQuery::inactiveKpiInfoCount($unit, $thana);
+                return CustomQuery::inactiveKpiInfoCount($unit, $thana,$division);
             }
         }
     }
 
-    public function activeKpi($id)
+    public function activeKpi($id,Request $request)
     {
-        if (!preg_match('/^[0-9]+$/', $id)) {
-            return Redirect::route('inactive_kpi_view')->with('error_message', 'Invalid Request!');
-        } else {
+        $a = $request->all();
+        $a['id']=(int)$id;
+        $valid = Validator::make($a,[
+            'id'=>'same:verified_id|regex:/^[0-9]+$/'
+        ]);
+        if ($valid->fails()) {
+            return Response::json(['status'=>false,'message'=>'Invalid Request']);
+        }
+        else {
             DB::beginTransaction();
             try {
-                KpiGeneralModel::where('id', $id)->update(['withdraw_status' => 0]);
+                KpiGeneralModel::find($id)->update(['withdraw_status' => 0,'status_of_kpi'=>1]);
                 DB::commit();
             } catch
-            (Exception $e) {
+            (\Exception $e) {
                 DB::rollback();
-                return Redirect::route('inactive_kpi_view')->with('error_message', 'KPI has not been Active!');
+                return Response::json(['status'=>false,'message'=>$e->getMessage()]);
             }
-            return Redirect::route('inactive_kpi_view')->with('success_message', 'KPI is Active Successfully!');
+            return Response::json(['status'=>true,'message'=>'Kpi Active Successfully']);
         }
     }
 
@@ -835,54 +833,42 @@ class KpiController extends Controller
         return Response::json($kpi_info);
     }
 
-    public function kpiWithdrawCancelUpdate(Request $request)
+    public function kpiWithdrawCancelUpdate(Request $request,$id)
     {
-        $unit = Input::get('unit_id');
-        $thana = Input::get('thana_id');
-        $kpi_id = $request->input('kpi_id');
-        $kpiExist = $request->input('kpiExist');
+        $a =$request->all();
+        $a['id'] = (int)$id;
         $rules = [
-            'kpiExist' => 'required|numeric|regex:/^[0-9]+$/',
-            'kpi_id' => 'required|numeric|regex:/^[0-9]+$/',
-            'unit_id' => 'required|numeric|regex:/^[0-9]+$/',
-            'thana_id' => 'required|numeric|regex:/^[0-9]+$/',
+            'kpi_id' => 'required|same:id|numeric|regex:/^[0-9]+$/',
             'mem_id' => 'unique:tbl_memorandum_id,memorandum_id',
         ];
         $message = [
-            'kpi_id.required' => 'KPI is required',
-            'unit_id.required' => 'Unit is required',
-            'thana_id.required' => 'Thana is required',
-            'kpi_id.numeric' => 'Select a valid KPI',
-            'kpi_id.regex' => 'Select a valid KPI',
-            'unit_id.numeric' => 'Select a valid Unit',
-            'unit_id.regex' => 'Select a valid Unit',
-            'thana_id.numeric' => 'Select a valid Thana',
-            'thana_id.regex' => 'Select a valid Thana',
+            'mem_id.unique'=>'Memorandum no. must be unique'
         ];
-        $validation = Validator::make(Input::all(), $rules, $message);
+        $validation = Validator::make($a, $rules, $message);
         if ($validation->fails()) {
-            return Redirect::back()->withInput(Input::all())->withErrors($validation);
-        } else {
-            $kpi_withdraw_date_cancel = KpiDetailsModel::where('kpi_id', $kpi_id)->first();
-            if (empty($kpi_withdraw_date_cancel->kpi_withdraw_date)) {
-                return Redirect::route('kpi_withdraw_cancel_view')->with('error_message', 'KPI Withdrawal cannot be Cancelled!');
+            return response($validation->messages()->toJson(),422,['Content-Type'=>'application/json']);
+        }
+        else {
+            $kpi = KpiGeneralModel::find($id);
+            if (!$kpi->details->kpi_withdraw_date) {
+                return Response::json(['status'=>false,'message'=>"Invalid kpi"]);
             }
             DB::beginTransaction();
             try {
-                $kpi_withdraw_date_cancel = KpiDetailsModel::where('kpi_id', $kpi_id)->first();
-                $kpi_withdraw_date_cancel->kpi_withdraw_date = NULL;
-                $kpi_withdraw_date_cancel->kpi_withdraw_cancel_mem_id = $request->mem_id;
-                $kpi_withdraw_date_cancel->save();
-
-                $kpi_withdraw_status_change = KpiGeneralModel::find($kpi_id);
-                $kpi_withdraw_status_change->withdraw_status = 0;
-                $kpi_withdraw_status_change->save();
+                $kpi->details()->update([
+                    'kpi_withdraw_date'=>null,
+                    'kpi_withdraw_cancel_mem_id'=>$request->mem_id,
+                ]);
+                $kpi->update([
+                    'withdraw_status'=>0,
+                    'status_of_kpi'=>1,
+                ]);
 
                 DB::commit();
-                return Redirect::route('kpi_withdraw_cancel_view')->with('success_message', 'KPI Withdrawal Cancelled Successfully!');
+                return Response::json(['status'=>true,'message'=>"Kpi withdraw cancel successfully"]);
             } catch (\Exception $e) {
                 DB::rollback();
-                return Redirect::route('kpi_withdraw_cancel_view')->with('error_message', 'KPI Withdrawal cannot be Cancelled!');
+                return Response::json(['status'=>false,'message'=>"An occur while cancel withdraw. Try again later"]);
             }
         }
     }

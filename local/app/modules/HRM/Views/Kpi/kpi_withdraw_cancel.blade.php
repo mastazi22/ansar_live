@@ -10,229 +10,382 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('KpiWithdrawCancelController', function ($scope, $http) {
-            $scope.selectedUnit = "";
-            $scope.selectedThana = "";
-            $scope.selectedKpi = "";
-            $scope.units = [];
+        GlobalApp.controller('KpiWithdrawCancelController', function ($scope, $http, $sce, httpService, notificationService) {
+            $scope.isAdmin = parseInt('{{Auth::user()->type}}');
+            $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
+            $scope.rcDivision = parseInt('{{Auth::user()->division_id}}');
+            $scope.total = 0;
+            $scope.formData = {};
+            $scope.showLoadingScreen = true;
+            $scope.numOfPage = 0;
+            $scope.selectedDivision = "all";
+            $scope.selectedDistrict = "all";
+            $scope.selectedThana = "all";
+            $scope.allLoading = false;
+            $scope.divisions = [];
+            $scope.districts = [];
             $scope.thanas = [];
-            $scope.kpis = {};
-            $scope.loadingKpi = false;
-            $scope.loadingUnit = true;
+            $scope.guards = [];
+            $scope.kpis = [];
+            $scope.itemPerPage = 20;
+            $scope.currentPage = 0;
+            $scope.pages = [];
+            $scope.loadingDivision = true;
+            $scope.loadingDistrict = false;
             $scope.loadingThana = false;
             $scope.loadingKpi = false;
-            $scope.exist = false;
-            $http({
-                method: 'get',
-                url: '{{URL::to('HRM/DistrictName')}}'
-            }).then(function (response) {
-                $scope.units = response.data
-                $scope.loadingUnit = false;
-            })
+            $scope.loadingPage = [];
+            $scope.verified = [];
+            $scope.withdrawId=''
+            $scope.verifying = [];
+            $scope.errorMessage = '';
+            $scope.errorFound = 0;
+            $scope.loadPagination = function () {
+                $scope.pages = [];
+                for (var i = 0; i < $scope.numOfPage; i++) {
+                    $scope.pages.push({
+                        pageNum: i,
+                        offset: i * $scope.itemPerPage,
+                        limit: $scope.itemPerPage
+                    })
+                    $scope.loadingPage[i] = false;
+                }
+                if ($scope.numOfPage > 0)$scope.loadPage($scope.pages[0]);
+                else $scope.loadPage({pageNum: 0, offset: 0, limit: $scope.itemPerPage, view: 'view'});
+            }
+            $scope.loadPage = function (page, $event) {
+                if ($event != undefined)  $event.preventDefault();
+                $scope.currentPage = page.pageNum;
+                $scope.loadingPage[page.pageNum] = true;
+                $http({
+                    url: '{{URL::route('inactive_kpi_list')}}',
+                    method: 'get',
+                    params: {
+                        offset: page.offset,
+                        limit: page.limit,
+                        division: $scope.selectedDivision,
+                        unit: $scope.selectedDistrict,
+                        thana: $scope.selectedThana,
+                        view: 'view'
+                    }
+                }).then(function (response) {
+                    $scope.kpis = response.data.kpis;
+                    console.log($scope.kpis)
+//                    $compile($scope.ansars)
+                    $scope.loadingPage[page.pageNum] = false;
+                })
+            }
+            $scope.loadTotal = function () {
+                $scope.allLoading = true;
+                //alert($scope.selectedDivision)
+                $http({
+
+                    url: '{{URL::route('inactive_kpi_list')}}',
+                    method: 'get',
+                    params: {
+                        division: $scope.selectedDivision,
+                        unit: $scope.selectedDistrict,
+                        thana: $scope.selectedThana,
+                        view: 'count'
+                    }
+                }).then(function (response) {
+                    $scope.errorFound = 0;
+                    $scope.total = response.data.total;
+                    $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
+                    $scope.loadPagination();
+                    $scope.allLoading = false;
+                    //alert($scope.total)
+                }, function (response) {
+                    $scope.errorFound = 1;
+                    $scope.total = 0;
+                    $scope.kpis = [];
+                    $scope.errorMessage = $sce.trustAsHtml("<tr class='warning'><td colspan='" + $('.table').find('tr').find('th').length + "'>" + response.data + "</td></tr>");
+                    $scope.pages = [];
+                    $scope.allLoading = false;
+                })
+            }
+            $scope.filterMiddlePage = function (value, index, array) {
+                var minPage = $scope.currentPage - 3 < 0 ? 0 : ($scope.currentPage > array.length - 4 ? array.length - 8 : $scope.currentPage - 3);
+                var maxPage = minPage + 7;
+                if (value.pageNum >= minPage && value.pageNum <= maxPage) {
+                    return true;
+                }
+            }
+            $scope.loadDivision = function () {
+                httpService.range().then(function (data) {
+                    $scope.divisions = data;
+                    $scope.loadingDivision = false;
+                })
+            }
+            $scope.loadDistrict = function (d_id) {
+                $scope.loadingDistrict = true;
+                httpService.unit(d_id).then(function (data) {
+                    $scope.districts = data;
+                    $scope.selectedDistrict = "all";
+                    $scope.selectedThana = "all";
+                    $scope.loadingDistrict = false;
+                    $scope.loadTotal()
+                })
+            }
             $scope.loadThana = function (d_id) {
                 $scope.loadingThana = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/ThanaName')}}',
-                    params: {id: d_id}
-                }).then(function (response) {
-                    $scope.thanas = response.data;
-                    $scope.selectedThana = "";
+                httpService.thana(d_id).then(function (data) {
+                    $scope.thanas = data;
+                    $scope.selectedThana = "all";
                     $scope.loadingThana = false;
-                    $scope.selectedThana = "{{Request::old('thana_id')}}";
+                    $scope.loadTotal()
                 })
             }
-            $scope.loadKpi = function (t_id) {
-                $scope.loadingKpi = true;
+            $scope.verify = function (id, i) {
+                $scope.verifying[i] = true;
                 $http({
-                    method: 'get',
-                    url: '{{URL::route('withdrawn_kpi_name')}}',
-                    params: {id: t_id}
+                    url: "{{URL::to('HRM/active_kpi')}}/" + id,
+                    data: {verified_id: id},
+                    method: 'post'
                 }).then(function (response) {
-                    $scope.kpis = response.data
-                    $scope.selectedKpi = "";
-                    $scope.loadingKpi = false;
-                    $scope.selectedKpi = "{{Request::old('kpi_id')}}";
+                    //alert(JSON.stringify(response.data));
+                    $scope.verifying[parseInt(i)] = false;
+                    if (response.data.status) {
+                        notificationService.notify('success', response.data.message)
+                        $scope.loadTotal();
+                    }
+                    else {
+                        notificationService.notify('error', response.data.message)
+                    }
+//                    $scope.verified++;
+                }, function (resonse) {
+                    $scope.verifying[parseInt(i)] = false;
+                    notificationService.notify('error', "An undefined error occur. Error code-" + response.status)
                 })
             }
-            $scope.loadKpiDetail = function (id) {
-                $scope.loadingKpi = true;
+            $scope.ppp = function(id){
+                $scope.withdrawId = id;
+            }
+            $scope.cancelWithdraw = function (id) {
+                $scope.canceling = true;
+                $scope.error = undefined;
                 $http({
-                    method: 'get',
-                    url: '{{URL::route('kpi_list_for_withdraw_cancel')}}',
-                    params: {kpi_id: id}
+                    url: "{{URL::to('HRM/kpi-withdraw-cancel-update')}}/" + id,
+                    data: {kpi_id: id},
+                    method: 'post'
                 }).then(function (response) {
-                    $scope.kpiDetail = response.data
-//                    alert(Object.keys($scope.kpiDetail).length)
-                    $scope.loadingKpi = false;
-                   // console.log($scope.kpiDetail)
-                },function(response){
-                    alert(reponse.data)
+                    $scope.canceling = false;
+                    if (response.data.status) {
+                        $("#withdraw-cancel").modal('hide')
+                        notificationService.notify('success', response.data.message)
+                        $scope.loadTotal();
+                    }
+                    else {
+                        notificationService.notify('error', response.data.message)
+                    }
+                }, function (response) {
+                    $scope.canceling = false;
+                    if (response.status == 422) {
+                        $scope.error = response.data;
+                        return;
+                    }
+                    notificationService.notify('error', "An undefined error occur. Error code-" + response.status)
                 })
             }
-            $scope.isEmpty = function (object) {
-                if(!object) return true;
-                return Object.keys(object).length==0
+            if ($scope.isAdmin == 11) {
+                $scope.loadDivision()
             }
-            $scope.$watch('selectedUnit', function(n, o){
-                if(n){
-                    $scope.loadThana(n);
+            else {
+                if (!isNaN($scope.dcDistrict)) {
+                    $scope.loadThana($scope.dcDistrict);
+                    console.log($scope.dcDistrict);
                 }
-            })
-            $scope.$watch('selectedThana', function(n, o){
-                if(n){
-                    $scope.loadKpi(n);
+                else if (!isNaN($scope.rcDivision)) {
+                    $scope.loadDistrict($scope.rcDivision);
                 }
-            })
+            }
+            $scope.loadTotal();
         })
     </script>
     <div ng-controller="KpiWithdrawCancelController">
-        {{--<div class="breadcrumbplace">--}}
-            {{--{!! Breadcrumbs::render('withdraw_kpi') !!}--}}
-        {{--</div>--}}
-        @if(Session::has('success_message'))
-            <div style="padding: 10px 20px 0 20px;">
-                <div class="alert alert-success">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <span class="glyphicon glyphicon-ok"></span> {{Session::get('success_message')}}
-                </div>
-            </div>
-        @endif
-        @if(Session::has('error_message'))
-            <div style="padding: 10px 20px 0 20px;">
-                <div class="alert alert-danger">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <<span class="glyphicon glyphicon-exclamation-sign"></span> {{Session::get('error_message')}}
-                </div>
-            </div>
-        @endif
-        {!! Form::open(array('route' => 'kpi-withdraw-cancel-update', 'id' => 'kpi-withdraw-cancel-entry')) !!}
         <section class="content">
-            <notify></notify>
             <div class="box box-solid">
+                <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="row">
-                        <div class="col-sm-4">
-                            <div class="form-group required" ng-init="selectedUnit='{{Request::old('unit_id')}}'">
-                                <label for="e_unit" class="control-label">@lang('title.unit')&nbsp;
-                                    <img ng-show="loadingUnit" src="{{asset('dist/img/facebook.gif')}}"
+                        <div class="col-sm-4" ng-hide="isAdmin==66 || isAdmin==22">
+                            <div class="form-group">
+                                <label class="control-label">@lang('title.range')&nbsp;
+                                    <img ng-show="loadingDivision" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16"></label>
-                                <select ng-disabled="loadingUnit" id="e_unit" class="form-control"
-                                        ng-model="selectedUnit" name="unit_id">
-                                    <option value="">--@lang('title.unit')--</option>
-                                    <option ng-repeat="u in units" value="[[u.id]]" ng-selected="u.id=='{{Request::old('unit_id')}}'">[[u.unit_name_eng]]</option>
-                                </select>
-                                @if($errors->has('unit_id'))
-                                    <p class="text-danger">{{$errors->first('unit_id')}}</p>
-                                @endif
-                            </div>
-                            <div class="form-group required" ng-init="selectedThana='{{Request::old('thana_id')}}'">
-                                <label for="e_thana" class="control-label">@lang('title.thana')&nbsp;
-                                    <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
-                                         width="16"></label>
-                                <select ng-disabled="loadingThana" id="e_thana" class="form-control"
-                                        ng-model="selectedThana" name="thana_id">
-                                    <option value="">--@lang('title.thana')--</option>
-                                    <option ng-repeat="t in thanas" value="[[t.id]]" ng-selected="t.id=='{{Request::old('thana_id')}}'">[[t.thana_name_eng]]
+                                <select class="form-control" ng-model="selectedDivision"
+                                        ng-disabled="loadingDivision||loadingDistrict||loadingThana"
+                                        ng-change="loadDistrict(selectedDivision)">
+                                    <option value="all">All</option>
+                                    <option ng-repeat="di in divisions" value="[[di.id]]">
+                                        [[di.division_name_bng]]
                                     </option>
                                 </select>
-                                @if($errors->has('thana_id'))
-                                    <p class="text-danger">{{$errors->first('thana_id')}}</p>
-                                @endif
                             </div>
-                            <div class="form-group required" ng-init="selectedKpi='{{Request::old('kpi_id')}}'">
-                                <label for="e_kpi" class="control-label">@lang('title.kpi')&nbsp;
-                                    <img ng-show="loadingKpi" src="{{asset('dist/img/facebook.gif')}}"
-                                         width="16"></label>
-                                <select ng-disabled="loadingKpi" id="e_kpi" class="form-control"
-                                        ng-model="selectedKpi" ng-change="loadKpiDetail(selectedKpi)" name="kpi_id">
-                                    <option value="">--@lang('title.kpi')--</option>
-                                    <option ng-repeat="k in kpis" value="[[k.id]]" ng-selected="k.id=='{{Request::old('kpi_id')}}'">[[k.kpi_name]]</option>
-                                </select>
-                                @if($errors->has('kpi_id'))
-                                    <p class="text-danger">{{$errors->first('kpi_id')}}</p>
-                                @endif
-                            </div>
-                            <div class="form-group">
-                                <label for="mem_id" class="control-label">Memorandum no.</label>
-                                <input type="text" class="form-control" name="mem_id" id="mem_id" placeholder="Memorandum no">
-                            </div>
-                            <button id="cancel-withdraw-kpi" class="btn btn-primary">
-                                Cancel Withdraw
-                            </button>
                         </div>
-                        <div class="col-sm-6 col-sm-offset-2"
-                             style="min-height: 400px;border-left: 1px solid #CCCCCC">
-                            <div id="loading-box" ng-if="loadingAnsar">
+                        <div class="col-sm-4" ng-hide="isAdmin==22">
+                            <div class="form-group">
+                                <label class="control-label">@lang('title.unit')&nbsp;
+                                    <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
+                                         width="16"></label>
+                                <select class="form-control" ng-model="selectedDistrict"
+                                        ng-disabled="loadingDistrict||loadingThana"
+                                        ng-change="loadThana(selectedDistrict)">
+                                    <option value="all">All</option>
+                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
+                                    </option>
+                                </select>
                             </div>
-                            <div ng-if="isEmpty(kpiDetail)">
-                                <input type="hidden" name="kpiExist" value="0">
-                                <h3 style="text-align: center">No KPI Information Found</h3>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">@lang('title.thana')&nbsp;
+                                    <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
+                                         width="16">
+                                </label>
+                                <select class="form-control" ng-model="selectedThana"
+                                        ng-change="loadTotal()" ng-disabled="loadingDistrict||loadingThana">
+                                    <option value="all">All</option>
+                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
+                                    </option>
+                                </select>
                             </div>
-                            <div ng-if="!isEmpty(kpiDetail)">
-                                <input type="hidden" name="kpiExist" value="1">
-                                <div class="form-group">
-                                    <div class="col-sm-8 col-sm-offset-2">
-                                        <h3 style="text-align: center">KPI Information</h3>
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered">
-                                                <tr>
-                                                    <th>KPI Name</th>
-                                                    <td>[[kpiDetail.kpi]]</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Division</th>
-                                                    <td>[[kpiDetail.division]]</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Unit</th>
-                                                    <td>[[kpiDetail.unit]]</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Thana</th>
-                                                    <td>[[kpiDetail.thana]]</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Total Ansar Request</th>
-                                                    <td>[[kpiDetail.tar]]</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Total Ansar Given</th>
-                                                    <td>[[kpiDetail.tag]]</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Weapon Number</th>
-                                                    <td>[[kpiDetail.weapon]]</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Number of Bullets</th>
-                                                    <td>[[kpiDetail.bullet]]</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Activation Date</th>
-                                                    <td>[[kpiDetail.a_date]]</td>
-                                                </tr>
-                                                <tr>
-                                                    <th>KPI Withdraw Date</th>
-                                                    <td>[[kpiDetail.w_date]]</td>
-                                                </tr>
-                                            </table>
-                                        </div>
+                        </div>
+                    </div>
+                    <h4>Total KPI: [[total.toLocaleString()]]</h4>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>SL. No</th>
+                                <th>KPI Name</th>
+                                <th>Division</th>
+                                <th>Unit</th>
+                                <th>Thana</th>
+                                <th>Withdraw Status</th>
+                                <th style="width:120px;">Action</th>
+                            </tr>
+                            <tbody ng-if="errorFound==1" ng-bind-html="errorMessage"></tbody>
+                            <tbody>
+                            <tr ng-if="kpis.length==0&&errorFound==0">
+                                <td colspan="8" class="warning no-ansar">
+                                    No KPI is available to show.
+                                </td>
+                            </tr>
+                            <tr ng-if="kpis.length>0" ng-repeat="a in kpis">
+                                <td>
+                                    [[((currentPage)*itemPerPage)+$index+1]]
+                                </td>
+                                <td>
+                                    [[a.kpi_name]]
+                                </td>
+                                <td>
+                                    [[a.division]]
+                                </td>
+                                <td>
+                                    [[a.unit]]
+                                </td>
+                                <td>
+                                    [[a.thana]]
+                                </td>
+                                <td>
+                                    [[a.withdraw_status==1?"Already Withdraw":a.date!=null?"Withdraw on
+                                    "+a.date:"Inactive"]]
+                                </td>
+                                <td style="vertical-align: middle">
+                                    <div class="col-xs-1">
+                                        <a href="" ng-disabled="a.withdraw_status==1||a.status==0"
+                                           class="btn btn-info btn-xs" title="Date Update">
+                                            <i class="fa fa-calendar"></i>
+                                        </a>
                                     </div>
-                                </div>
-                            </div>
+                                    <div class="col-xs-1">
+                                        <a href="" data-toggle="modal" ng-click="ppp(a.id)"
+                                           data-target="#withdraw-cancel"
+                                           ng-disabled="a.withdraw_status==1||a.status==0" class="btn btn-danger btn-xs"
+                                           title="Withdraw Cancel">
+                                            <i class="fa fa-remove"></i>
+                                        </a>
+                                    </div>
+                                    <div class="col-xs-1">
+                                        <a href="" ng-click="verify(a.id,$index)"
+                                           ng-disabled="(a.withdraw_status==0&&a.status==1&&a.date!=null)||verifying[$index]"
+                                           class="btn btn-info btn-xs" title="Restore">
+                                            <i class="fa fa-check" ng-if="!verifying[$index]"></i>
+                                            <i class="fa fa-spinner fa-pulse" ng-if="verifying[$index]"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="table_pagination" ng-if="pages.length>1">
+                            <ul class="pagination">
+                                <li ng-class="{disabled:currentPage == 0}">
+                                    <a href="#" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>
+                                </li>
+                                <li ng-class="{disabled:currentPage == 0}">
+                                    <a href="#" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
+                                </li>
+                                <li ng-repeat="page in pages|filter:filterMiddlePage"
+                                    ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
+                                    <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
+                                    <a href="#" ng-click="loadPage(page,$event)"
+                                       ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
+                                            <span ng-show="loadingPage[page.pageNum]" style="position: relative"><i
+                                                        class="fa fa-spinner fa-pulse"
+                                                        style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
+                                </li>
+                                <li ng-class="{disabled:currentPage==pages.length-1}">
+                                    <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
+                                </li>
+                                <li ng-class="{disabled:currentPage==pages.length-1}">
+                                    <a href="#"
+                                       ng-click="loadPage(pages[pages.length-1],$event)">&raquo;&raquo;</a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-        {!! Form::close() !!}
+        <div class="modal fade" role="dialog" id="withdraw-cancel">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Cancel Withdraw</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form ng-submit="cancelWithdraw(withdrawId)">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-10 col-xs-12">
+                                    <div class="form-group" ng-class="{'has-error':error!=undefined}">
+                                        <label for="">Memorandum No.</label>
+                                        <input type="text" ng-model="formData.mem_id" class="form-control" placeholder="Memorandum No.">
+                                        <p ng-if="error!=undefined" class="text text-danger">[[error.mem_id]]</p>
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-info" type="submit">
+                                            <i class="fa fa-spinner fa-pulse" ng-if="canceling"></i>&nbsp;Cancel Withdraw
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <script>
         $("#cancel-withdraw-kpi").confirmDialog({
-            message:'Are you sure to Cancel the Withdrawal of this KPI',
-            ok_button_text:'Confirm',
-            cancel_button_text:'Cancel',
+            message: 'Are you sure to Cancel the Withdrawal of this KPI',
+            ok_button_text: 'Confirm',
+            cancel_button_text: 'Cancel',
             ok_callback: function (element) {
                 $("#kpi-withdraw-cancel-entry").submit()
             },
