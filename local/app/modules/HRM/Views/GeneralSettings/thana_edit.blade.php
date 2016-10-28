@@ -46,7 +46,7 @@
                             <div class="form-group">
                                 {!! Form::label('unit_id', 'Unit:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                 <div class="col-sm-8">
-                                    {!! Form::text('unit_id', $thana_info->district->division_name_bng, $attributes = array('class' => 'form-control', 'disabled')) !!}
+                                    {!! Form::text('unit_id', $thana_info->district->unit_name_bng, $attributes = array('class' => 'form-control', 'disabled')) !!}
                                 </div>
                             </div>
                             <div class="form-group required">
