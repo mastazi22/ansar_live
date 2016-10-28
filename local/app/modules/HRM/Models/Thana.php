@@ -13,12 +13,12 @@ class Thana extends Model
     }
     
     public function personalinfo(){
-        return $this->hasOne('App\models\PersonalInfo','thana_id');
+        return $this->hasOne(PersonalInfo::class,'thana_id');
     }
     public function division(){
-        return $this->belongsTo('App\models\Division','division_id');
+        return $this->belongsTo(Division::class,'division_id');
     }
     public function district(){
-        return $this->belongsTo('App\models\District','unit_id');
+        return $this->belongsTo(District::class,'unit_id');
     }
 }

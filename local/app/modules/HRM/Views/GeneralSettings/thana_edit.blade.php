@@ -4,7 +4,7 @@
 @extends('template.master')
 @section('title','Edit Thana Information')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('thana_information_edit',$id) !!}
+    {!! Breadcrumbs::render('thana_information_edit',$thana_info->id) !!}
 @endsection
 @section('content')
     <script>
@@ -34,25 +34,25 @@
                 <div class="box box-info">
                     <div class="box-body">
 
-                        {!! Form::open(array('route' => 'thana_update', 'class' => 'form-horizontal', 'name' => 'thanaForm', 'ng-controller' => 'ThanaController', 'novalidate')) !!}
+                        {!! Form::model($thana_info,array('route' => 'thana_update', 'class' => 'form-horizontal', 'name' => 'thanaForm', 'ng-controller' => 'ThanaController', 'novalidate')) !!}
                         <div class="box-body">
                             <div class="form-group">
-                                {!! Form::label('division_id', 'Division:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
+                                {!! Form::label('division_id', 'Range:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                 <div class="col-sm-8">
-                                    {!! Form::text('thana_name_eng', $value = $division->division_name_eng, $attributes = array('class' => 'form-control', 'disabled')) !!}
+                                    {!! Form::text('division_id', $thana_info->division->division_name_bng, $attributes = array('class' => 'form-control', 'disabled')) !!}
                                 </div>
                             </div>
                             <input type="hidden" name="id" class="form-control" value="{{ $thana_info->id }}">
                             <div class="form-group">
-                                {!! Form::label('division_id', 'Division:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
+                                {!! Form::label('unit_id', 'Unit:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                 <div class="col-sm-8">
-                                    {!! Form::text('thana_name_eng', $value = $unit->unit_name_eng, $attributes = array('class' => 'form-control', 'disabled')) !!}
+                                    {!! Form::text('unit_id', $thana_info->district->division_name_bng, $attributes = array('class' => 'form-control', 'disabled')) !!}
                                 </div>
                             </div>
                             <div class="form-group required">
                                 {!! Form::label('thana_name_eng', 'Thana Name:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                 <div class="col-sm-8 @if($errors->has('thana_name_eng')) has-error @endif">
-                                    {!! Form::text('thana_name_eng', $value = null, $attributes = array('class' => 'form-control', 'id' => 'thana_name_eng', 'placeholder' => 'Enter Thana Name in English')) !!}
+                                    {!! Form::text('thana_name_eng', null, $attributes = array('class' => 'form-control', 'id' => 'thana_name_eng', 'placeholder' => 'Enter Thana Name in English')) !!}
                                     @if($errors->has('thana_name_eng'))
                                         <p class="text-danger">{{$errors->first('thana_name_eng')}}</p>
                                     @endif
@@ -61,7 +61,7 @@
                             <div class="form-group required">
                                 {!! Form::label('thana_name_bng', 'থানার নাম:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                 <div class="col-sm-8 @if($errors->has('thana_name_bng')) has-error @endif">
-                                    {!! Form::text('thana_name_bng', $value = Request::old('thana_name_bng'), $attributes = array('class' => 'form-control', 'id' => 'thana_name_bng', 'placeholder' => 'থানার নাম লিখুন বাংলায়')) !!}
+                                    {!! Form::text('thana_name_bng',null, $attributes = array('class' => 'form-control', 'id' => 'thana_name_bng', 'placeholder' => 'থানার নাম লিখুন বাংলায়')) !!}
                                     @if($errors->has('thana_name_bng'))
                                         <p class="text-danger">{{$errors->first('thana_name_bng')}}</p>
                                     @endif
@@ -70,7 +70,7 @@
                             <div class="form-group required">
                                 {!! Form::label('thana_code', 'Thana Code:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                 <div class="col-sm-8 @if($errors->has('thana_code')) has-error @endif">
-                                    {!! Form::text('thana_code', $value = Request::old('thana_code'), $attributes = array('class' => 'form-control', 'id' => 'thana_code', 'placeholder' => 'Enter Thana Code')) !!}
+                                    {!! Form::text('thana_code', null, $attributes = array('class' => 'form-control', 'id' => 'thana_code', 'placeholder' => 'Enter Thana Code')) !!}
                                     @if($errors->has('thana_code'))
                                         <p class="text-danger">{{$errors->first('thana_code')}}</p>
                                     @endif

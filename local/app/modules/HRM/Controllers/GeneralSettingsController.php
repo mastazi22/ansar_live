@@ -213,12 +213,9 @@ class GeneralSettingsController extends Controller
 
     public function thanaEdit($id)
     {
-        $thana_info = Thana::find($id);
-        $division_id = $thana_info->division_id;
-        $unit_id = $thana_info->unit_id;
-        $division = DB::table('tbl_division')->where('id', $division_id)->select('tbl_division.division_name_eng')->first();
-        $unit = DB::table('tbl_units')->where('id', $unit_id)->select('tbl_units.unit_name_eng')->first();
-        return view('HRM::GeneralSettings.thana_edit')->with(['thana_info' => $thana_info, 'division' => $division, 'unit' => $unit, 'id' => $id]);
+        $thana_info = Thana::with(['division','district'])->find($id);
+//        return $thana_info;
+        return view('HRM::GeneralSettings.thana_edit')->with(['thana_info' => $thana_info]);
     }
 
     public function updateUnit(Request $request)
@@ -268,7 +265,7 @@ class GeneralSettingsController extends Controller
         $rules = array(
             'id' => 'required|numeric|integer|min:0',
             'thana_name_eng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
-            'thana_name_bng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
+            'thana_name_bng' => 'required',
             'thana_code' => 'required|numeric|integer',
         );
         $messages = array(
@@ -295,7 +292,7 @@ class GeneralSettingsController extends Controller
                 DB::commit();
                 //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
             } catch
-            (Exception $e) {
+            (\Exception $e) {
                 DB::rollback();
                 return Redirect::route('thana_view')->with('error_message', $e->getMessage());
             }
