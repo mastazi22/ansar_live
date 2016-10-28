@@ -30,10 +30,10 @@ return [
                     "route" => "withdrawn_kpi_view",
                     "icon" => "fa-dashboard",
                 ],
-                "Inactive Kpi List" => [
-                    "route" => "inactive_kpi_view",
-                    "icon" => "fa-dashboard",
-                ],
+//                "Inactive Kpi List" => [
+//                    "route" => "inactive_kpi_view",
+//                    "icon" => "fa-dashboard",
+//                ],
                 "KPI Withdraw Cancel" => [
                     "route" => "kpi_withdraw_cancel_view",
                     "icon" => "fa-dashboard",
