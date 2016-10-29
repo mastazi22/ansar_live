@@ -1076,7 +1076,7 @@ class CustomQuery
 //End dashboard
 
 
-    public static function ansarListForServiceEnded($offset, $limit, $unit, $thana, $division = null)
+    public static function ansarListForServiceEnded($offset, $limit, $unit, $thana, $division = null,$interval=2)
     {
         DB::enableQueryLog();
         $ansarQuery = DB::table('tbl_embodiment')
@@ -1089,7 +1089,7 @@ class CustomQuery
             ->where('tbl_ansar_status_info.block_list_status', 0)
             ->where('tbl_ansar_status_info.black_list_status', 0)
             ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-            ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)');
+            ->whereRaw("service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL {$interval} MONTH)");
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_kpi_info.division_id', '=', $division);
         }
@@ -1101,140 +1101,38 @@ class CustomQuery
         }
 
         $ansars = $ansarQuery->select('tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_kpi_info.kpi_name as kpi', 'tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();
-        return View::make('HRM::Dashboard.selected_service_ended_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
+        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
 //        return DB::getQueryLog();
     }
 
-    public static function ansarListForServiceEndedCount($unit, $thana, $division = null)
+    public static function ansarListForServiceEndedCount($unit, $thana, $division = null,$interval=2)
     {
         DB::enableQueryLog();
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_embodiment')
-                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.black_list_status', 0)
-                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                    ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)')
-                    ->distinct();
 
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_embodiment')
-                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.black_list_status', 0)
-                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                    ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)')
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_embodiment')
-                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.black_list_status', 0)
-                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                    ->where('tbl_kpi_info.unit_id', $unit)
-                    ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)')
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_embodiment')
-                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.black_list_status', 0)
-                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                    ->where('tbl_kpi_info.unit_id', $unit)
-                    ->where('tbl_kpi_info.thana_id', $thana)
-                    ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)')
-                    ->distinct();
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_embodiment')
-                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.black_list_status', 0)
-                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                    ->where('tbl_kpi_info.division_id', '=', $division)
-                    ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)')
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_embodiment')
-                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.black_list_status', 0)
-                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                    ->where('tbl_kpi_info.division_id', '=', $division)
-                    ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)')
-                    ->distinct();
-
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_embodiment')
-                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.black_list_status', 0)
-                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                    ->where('tbl_kpi_info.unit_id', $unit)
-                    ->where('tbl_kpi_info.division_id', '=', $division)
-                    ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)')
-                    ->distinct();
-            } else {
-                $ansarQuery = DB::table('tbl_embodiment')
-                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->where('tbl_ansar_status_info.black_list_status', 0)
-                    ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                    ->where('tbl_kpi_info.division_id', '=', $division)
-                    ->where('tbl_kpi_info.unit_id', $unit)
-                    ->where('tbl_kpi_info.thana_id', $thana)
-                    ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)')
-                    ->distinct();
-            }
+        $ansarQuery = DB::table('tbl_embodiment')
+            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+            ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
+            ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
+            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+            ->where('tbl_ansar_status_info.block_list_status', 0)
+            ->where('tbl_ansar_status_info.black_list_status', 0)
+            ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
+            ->whereRaw("service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL {$interval} MONTH)");
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_kpi_info.division_id', '=', $division);
+        }
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_kpi_info.unit_id', '=', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_kpi_info.thana_id', '=', $thana);
         }
 
-        $total = $ansarQuery->count('tbl_embodiment.ansar_id');
+        $total = $ansarQuery->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_embodiment.ansar_id') as total"),'tbl_designations.code');
 //        print_r(DB::getQueryLog());
-        return Response::json(['total' => $total]);
+        return Response::json(['total' => collect($total->get())->pluck('total','code')]);
     }
 
     public static function ansarListWithFiftyYears($offset, $limit, $unit, $thana, $division = null)
