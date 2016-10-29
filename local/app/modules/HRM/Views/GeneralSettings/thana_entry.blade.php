@@ -46,8 +46,7 @@
     <div>
 
         <!-- Content Header (Page header) -->
-        {!! Form::open(array('url' => 'HRM/thana_entry', 'class' => 'form-horizontal', 'name' => 'thanaForm', 'ng-controller' => 'ThanaEntryController', 'novalidate')) !!}
-                <!-- Main content -->
+               <!-- Main content -->
         <section class="content">
             <div class="row">
                 <!-- left column -->
@@ -61,7 +60,9 @@
 
                     <div class="box box-info">
                         <div class="box-body">
+                            {{--{{var_dump(Request::old())}}--}}
                             <div class="box-body">
+                                {!! Form::model(Request::old(),array('url' => 'HRM/thana_entry', 'class' => 'form-horizontal', 'name' => 'thanaForm', 'ng-controller' => 'ThanaEntryController', 'novalidate')) !!}
                                 <div class="form-group required">
                                     {!! Form::label('division_id', 'Division:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                     <div class="col-sm-8 @if($errors->has('division_name_eng')) has-error @endif" ng-init="SelectedDivision='{{Request::old('division_name_eng')}}'">
@@ -92,7 +93,7 @@
                                 <div class="form-group required">
                                     {!! Form::label('thana_name_eng', 'Thana Name:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                     <div class="col-sm-8 @if($errors->has('thana_name_eng')) has-error @endif">
-                                        {!! Form::text('thana_name_eng', $value = Request::old('thana_name_eng'), $attributes = array('class' => 'form-control', 'id' => 'thana_name_eng', 'placeholder' => 'Enter Thana Name in English', 'required', 'ng-model' => 'thana_name_eng')) !!}
+                                        {!! Form::text('thana_name_eng', null, $attributes = array('class' => 'form-control', 'id' => 'thana_name_eng', 'placeholder' => 'Enter Thana Name in English', 'required', 'ng-model' => 'thana_name_eng')) !!}
                                         @if($errors->has('thana_name_eng'))
                                             <p class="text-danger">{{$errors->first('thana_name_eng')}}</p>
                                         @endif
@@ -101,7 +102,7 @@
                                 <div class="form-group required">
                                     {!! Form::label('thana_name_bng', 'থানার নাম:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                     <div class="col-sm-8 @if($errors->has('thana_name_bng')) has-error @endif">
-                                        {!! Form::text('thana_name_bng', $value = Request::old('thana_name_bng'), $attributes = array('class' => 'form-control', 'id' => 'thana_name_bng', 'placeholder' => 'থানার নাম লিখুন বাংলায়', 'required', 'ng-model' => 'thana_name_bng')) !!}
+                                        {!! Form::text('thana_name_bng', null, $attributes = array('class' => 'form-control', 'id' => 'thana_name_bng', 'placeholder' => 'থানার নাম লিখুন বাংলায়', 'required', 'ng-model' => 'thana_name_bng')) !!}
                                         @if($errors->has('thana_name_bng'))
                                             <p class="text-danger">{{$errors->first('thana_name_bng')}}</p>
                                         @endif
@@ -110,12 +111,19 @@
                                 <div class="form-group required">
                                     {!! Form::label('thana_code', 'Thana Code:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                     <div class="col-sm-8 @if($errors->has('thana_code')) has-error @endif">
-                                        {!! Form::text('thana_code', $value = Request::old('thana_code'), $attributes = array('class' => 'form-control', 'id' => 'thana_code', 'placeholder' => 'Enter Thana Code', 'required', 'ng-model' => 'thana_code')) !!}
+                                        {!! Form::text('thana_code', null, $attributes = array('class' => 'form-control', 'id' => 'thana_code', 'placeholder' => 'Enter Thana Code', 'required', 'ng-model' => 'thana_code')) !!}
                                         @if($errors->has('thana_code'))
                                             <p class="text-danger">{{$errors->first('thana_code')}}</p>
                                         @endif
                                     </div>
                                 </div>
+                                <div>
+                                    <button type="submit" class="btn btn-info pull-right">
+                                        Submit
+                                    </button>
+                                </div>
+                                <!-- /.box-footer -->
+                                {!! Form::close() !!}
                             </div>
                             <!-- /.box-body -->
                         </div>
@@ -123,13 +131,7 @@
 
                     </div>
                     <!-- /.box -->
-                    <div>
-                        <button type="submit" class="btn btn-info pull-right">
-                            Submit
-                        </button>
-                    </div>
-                    <!-- /.box-footer -->
-                    {!! Form::close() !!}
+
 
                 </div>
                 <!--/.col (left) -->

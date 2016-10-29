@@ -153,7 +153,7 @@ class GeneralSettingsController extends Controller
         $rules = array(
             'division_name_eng' => 'required|numeric|integer|min:0',
             'unit_name_eng' => 'required|numeric|integer|min:0',
-            'thana_name_eng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
+            'thana_name_eng' => 'required|regex:/^[\sa-zA-Z0-9_-]+$/',
             'thana_name_bng' => 'required',
             'thana_code' => 'required|numeric|integer',
         );
@@ -177,7 +177,7 @@ class GeneralSettingsController extends Controller
         $validation = Validator::make(Input::all(), $rules, $messages);
 
         if ($validation->fails()) {
-            return Redirect::back()->withInput(Input::all())->withErrors($validation);
+            return Redirect::back()->withInput($request->all())->withErrors($validation);
         } else {
             DB::beginTransaction();
             try {
