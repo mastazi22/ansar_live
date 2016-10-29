@@ -852,12 +852,12 @@ class FormSubmitHandler extends Controller
             return response("Invalid request(400)", 400);
         }
         if (Input::exists('chunk')) return response()->json(CustomQuery::getNotVerifiedChunkAnsar(Input::get('limit'), Input::get('offset')));
-        return response()->json(CustomQuery::getNotVerifiedAnsar(Input::get('limit'), Input::get('offset'),Input::get('offset')));
+        return response()->json(CustomQuery::getNotVerifiedAnsar(Input::get('limit'), Input::get('offset'),Input::get('sort')));
     }
 
     public function getVerifiedAnsar()
     {
-        return response()->json(CustomQuery::getVerifiedAnsar(Input::get('limit'), Input::get('offset')));
+        return response()->json(CustomQuery::getVerifiedAnsar(Input::get('limit'), Input::get('offset'),Input::get('sort')));
     }
 
     public function getTotalAnsar()

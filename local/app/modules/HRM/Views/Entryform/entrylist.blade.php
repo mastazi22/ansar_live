@@ -12,7 +12,7 @@
         GlobalApp.controller('AnsarController', function ($scope, $http, notificationService) {
             $scope.AllAnsar = [];
             $scope.loadType = 0;
-            $scope.sort = 'asc'
+            $scope.sort = 'desc'
             $scope.userType = parseInt('{{Auth::user()->type}}');
             $scope.notVerified = parseInt("{{$notVerified}}");
             $scope.Verified = parseInt("{{$Verified}}");
@@ -45,7 +45,6 @@
                 if ($event != undefined)  $event.preventDefault();
                 $scope.currentPage = page.pageNum;
                 $scope.loadingPage[page.pageNum] = true
-                console.log($scope.currentPage == page.pageNum)
                 $scope.searchedAnsar = "";
                 $scope.isSearching = false;
                 $scope.loading = true;
