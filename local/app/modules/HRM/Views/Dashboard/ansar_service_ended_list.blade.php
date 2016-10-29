@@ -10,20 +10,23 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('AnsarServiceEndedListController', function ($scope, $http,$sce,$compile) {
+        GlobalApp.controller('AnsarServiceEndedListController', function ($scope, $http,$sce,httpService) {
             $scope.total = 0;
             $scope.numOfPage = 0;
             $scope.selectedDistrict = "all";
+            $scope.user_type = parseInt("{{auth()->user()->type}}")
             $scope.selectedThana = "all"
+            $scope.interval = "2";
             $scope.districts = [];
             $scope.thanas = [];
-            $scope.itemPerPage = 20
+            $scope.itemPerPage = parseInt('{{config('app.item_per_page')}}')
             $scope.currentPage = 0;
             $scope.ansars = $sce.trustAsHtml("");
             $scope.pages = [];
-            $scope.loadingDistrict = true;
+            $scope.loadingDistrict = false;
             $scope.loadingThana = false;
             $scope.loadingPage = [];
+            $scope.selectedDivision = 'all'
             $scope.allLoading = true;
             $scope.loadPagination = function(){
                 $scope.pages = [];
@@ -51,10 +54,12 @@
                         limit: page.limit,
                         unit:$scope.selectedDistrict,
                         thana:$scope.selectedThana,
+                        interval:$scope.interval,
+                        division:$scope.selectedDivision,
                         view:'view'
                     }
                 }).then(function (response) {
-                    $scope.ansars = $compile(response.data)($scope);
+                    $scope.ansars = response.data
 
                     $scope.loadingPage[page.pageNum]=false;
                     $scope.allLoading = false;
@@ -68,13 +73,15 @@
                     params: {
                         unit:$scope.selectedDistrict,
                         thana:$scope.selectedThana,
+                        interval:$scope.interval,
+                        division:$scope.selectedDivision,
                         view:'count'
                     }
                 }).then(function (response) {
-                    $scope.total = response.data.total;
+                    $scope.total = sum(response.data.total);
+                    $scope.gCount = response.data.total;
                     $scope.numOfPage = Math.ceil($scope.total/$scope.itemPerPage);
                     $scope.loadPagination();
-                    //alert($scope.total)
                 }, function (response) {
                     $scope.total = 0;
                     $scope.ansars = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
@@ -89,28 +96,48 @@
                     return true;
                 }
             }
-            $http({
-                method:'get',
-                url:'{{URL::to('HRM/DistrictName')}}'
-            }).then(function (response) {
-                $scope.districts = response.data;
-                $scope.loadingDistrict = false;
-            })
+            $scope.loadDivision = function () {
+                httpService.range().then(function (result) {
+                    $scope.divisions = result;
+                })
+            }
+            $scope.loadUnit = function (id) {
+                $scope.loadingDistrict = true;
+                httpService.unit(id).then(function (data) {
+                    $scope.districts = data;
+                    $scope.selectedDistrict = 'all'
+                    $scope.thanas = [];
+                    $scope.loadingDistrict = false;
+                    $scope.loadTotal();
+                })
+            }
             $scope.loadThana = function (d_id) {
                 $scope.loadingThana = true;
                 $scope.allLoading = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/ThanaName')}}',
-                    params: {id: d_id}
-                }).then(function (response) {
-                    $scope.thanas = response.data;
+                httpService.thana(d_id).then(function (data) {
+                    $scope.thanas = data;
                     $scope.selectedThana = "all";
                     $scope.loadingThana = false;
                     $scope.loadTotal()
                 })
             }
+            if($scope.user_type==11||$scope.user_type==33){
+                $scope.loadDivision();
+            }
+            else if($scope.user_type==66){
+                $scope.loadUnit(parseInt('{{Auth::user()->division_id}}'))
+            }
+            else if($scope.user_type==22){
+                $scope.loadThana(parseInt('{{Auth::user()->district_id}}'))
+            }
             $scope.loadTotal()
+            function sum(t){
+                var s = 0;
+                for(var i in t){
+                    s += t[i]
+                }
+                return s;
+            }
         })
     </script>
     <div ng-controller="AnsarServiceEndedListController">
@@ -123,7 +150,18 @@
                 </div>
                 <div class="box-body">
                     <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-sm-3" ng-show="user_type==11||user_type==33">
+                            <div class="form-group">
+                                <label class="control-label">@lang('title.range')&nbsp;
+                                    <img ng-show="loadingDivision" src="{{asset('dist/img/facebook.gif')}}"
+                                         width="16"></label>
+                                <select class="form-control" ng-model="selectedDivision" ng-change="loadUnit(selectedDivision)">
+                                    <option value="all">All</option>
+                                    <option ng-repeat="d in divisions" value="[[d.id]]">[[d.division_name_bng]]</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-3" ng-show="user_type==11||user_type==33||user_type==66">
                             <div class="form-group">
                                 <label class="control-label">@lang('title.unit')&nbsp;
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
@@ -134,7 +172,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label">@lang('title.thana')&nbsp;
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
@@ -146,27 +184,24 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="control-label">Select Month&nbsp;
+                                </label>
+                                <select class="form-control" ng-model="interval" ng-change="loadTotal()">
+                                    <option value="1">1 Months</option>
+                                    <option value="2">2 Months</option>
+                                    <option value="3">3 Months</option>
+                                    <option value="4">4 Months</option>
+                                    <option value="5">5 Months</option>
+                                    <option value="6">6 Months</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    <h4>Total Ansars: [[total.toLocaleString()]]</h4>
+                    <h4 class="text text-bold">Total Ansars :PC([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])&nbsp;APC([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])&nbsp;ANSAR([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</h4>
                     <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <tr>
-                                <th>SL. No</th>
-                                <th>Ansar id</th>
-                                <th>Name</th>
-                                <th>Rank</th>
-                                <th>Current KPI Name</th>
-                                <th>KPI Unit</th>
-                                <th>KPI Thana</th>
-                                <th>Joining Date</th>
-                                <th>Service Ended Date</th>
-                            </tr>
-                            <tbody ng-bind-html="ansars">
-                            <tr>
-                                <td class="warning" colspan="7">No Ansar Found</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                        <template-list data="ansars" key="selected_service_ended_ansar"></template-list>
                         <div class="table_pagination" ng-if="pages.length>1">
                             <ul class="pagination">
                                 <li ng-class="{disabled:currentPage == 0}">

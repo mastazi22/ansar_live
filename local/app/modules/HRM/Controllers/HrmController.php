@@ -438,11 +438,13 @@ class HrmController extends Controller
         $thana = Input::get('thana');
         $view = Input::get('view');
         $division = Input::get('division');
-
+        $interval = Input::get('interval');
+//        return $offset;
         $rules = [
             'view'=>'regex:/[a-z]+/',
             'limit'=>'numeric',
             'offset'=>'numeric',
+            'interval'=>'numeric|regex:/^[0-9]+$/',
             'thana'=>['regex:/^(all)$|^[0-9]+$/'],
             'unit'=>['regex:/^(all)$|^[0-9]+$/'],
             'division'=>['regex:/^(all)$|^[0-9]+$/'],
@@ -454,9 +456,9 @@ class HrmController extends Controller
             return response("Invalid Request(400)",400);
         }
         if (strcasecmp($view, 'view') == 0) {
-            return CustomQuery::ansarListForServiceEnded($offset, $limit, $unit, $thana,$division);
+            return CustomQuery::ansarListForServiceEnded($offset, $limit, $unit, $thana,$division,$interval);
         } else {
-            return CustomQuery::ansarListForServiceEndedCount($unit, $thana,$division);
+            return CustomQuery::ansarListForServiceEndedCount($unit, $thana,$division,$interval);
         }
     }
 

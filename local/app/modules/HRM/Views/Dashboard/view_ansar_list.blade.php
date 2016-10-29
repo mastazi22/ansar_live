@@ -32,11 +32,11 @@
             $scope.currentPage = 0;
             $scope.ansars = $sce.trustAsHtml("");
             $scope.pages = [];
-            $scope.loadingDistrict = true;
+            $scope.loadingDistrict = false;
             $scope.loadingThana = false;
             $scope.loadingPage = []
             $scope.allLoading = true;
-
+            $scope.selectedDivision = 'all'
 //Start pagination
             $scope.loadPagination = function(){
                 $scope.pages = [];
@@ -65,6 +65,7 @@
                         limit: page.limit,
                         unit:$scope.selectedDistrict,
                         thana:$scope.selectedThana,
+                        division:$scope.selectedDivision,
                         view:'view'
                     }
                 }).then(function (response) {
@@ -75,6 +76,7 @@
                 })
             }
             $scope.loadTotal = function () {
+//                alert($scope.selectedDistrict)
                 $scope.allLoading = true;
                 $http({
                     url: '{{URL::to('HRM/get_ansar_list')}}',
@@ -83,6 +85,7 @@
                         type: $scope.ansarType,
                         unit:$scope.selectedDistrict,
                         thana:$scope.selectedThana,
+                        division:$scope.selectedDivision,
                         view:'count'
                     }
                 }).then(function (response) {
@@ -107,11 +110,18 @@
                 }
             }
 //End pagination
-
-            $scope.loadUnit = function () {
-                httpService.unit().then(function (data) {
+            $scope.loadDivision = function () {
+                httpService.range().then(function (result) {
+                    $scope.divisions = result;
+                })
+            }
+            $scope.loadUnit = function (id) {
+                $scope.loadingDistrict = true;
+                httpService.unit(id).then(function (data) {
                     $scope.districts = data;
+                    $scope.thanas = [];
                     $scope.loadingDistrict = false;
+                    $scope.loadTotal();
                 })
             }
             $scope.loadThana = function (d_id) {
@@ -124,11 +134,14 @@
                     $scope.loadTotal()
                 })
             }
-            if($scope.isDc){
-                $scope.loadThana(parseInt('{{Auth::user()->district_id}}'))
+            if($scope.user_type==11||$scope.user_type==33){
+                $scope.loadDivision();
             }
-            else{
-                $scope.loadUnit();
+            else if($scope.user_type==66){
+                $scope.loadUnit(parseInt('{{Auth::user()->division_id}}'))
+            }
+            else if($scope.user_type==22){
+                $scope.loadThana(parseInt('{{Auth::user()->district_id}}'))
             }
             $scope.loadTotal()
             function capitalizeLetter(s){
@@ -157,7 +170,18 @@
                 </div>
                 <div class="box-body">
                     <div class="row">
-                        <div class="col-sm-4" ng-show="!isDc">
+                        <div class="col-sm-4" ng-show="user_type==11||user_type==33">
+                            <div class="form-group">
+                                <label class="control-label">@lang('title.range')&nbsp;
+                                    <img ng-show="loadingDivision" src="{{asset('dist/img/facebook.gif')}}"
+                                         width="16"></label>
+                                <select class="form-control" ng-model="selectedDivision" ng-change="loadUnit(selectedDivision)">
+                                    <option value="all">All</option>
+                                    <option ng-repeat="d in divisions" value="[[d.id]]">[[d.division_name_bng]]</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-4" ng-show="user_type==11||user_type==66||user_type==33">
                             <div class="form-group">
                                 <label class="control-label">@lang('title.unit')&nbsp;
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
