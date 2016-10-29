@@ -678,7 +678,7 @@
                                             <div class="col-sm-10">
                                                 <input class="form-control  " id="national_id_no"
                                                        name="national_id_no" ng-model="national_id_no" type="text"
-                                                       placeholder="National Id no(Numeric 17 digit)"
+                                                       placeholder="National Id no(Numeric 17 digit for 13 digit add birth year before id no.)"
                                                        ng-value="draft.national_id_no ">
                                                     <span style="color:red"
                                                           ng-show="formSubmitResult.error.national_id_no[0]">[[ formSubmitResult.error.national_id_no[0] ]]</span>
@@ -1018,7 +1018,7 @@
                                              ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.sex[0]}">
 
                                             <label class="control-label col-sm-2" for="email"><sup
-                                                        style="color: #ff0709;font-size: 1em">*</sup>sex:</label>
+                                                        style="color: #ff0709;font-size: 1em">*</sup>Gender:</label>
 
                                             <div class="col-sm-10 ">
                                                 <select name="sex" ng-model="sex" class="form-control" id="sell">

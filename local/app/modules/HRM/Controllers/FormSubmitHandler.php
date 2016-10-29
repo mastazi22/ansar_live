@@ -206,7 +206,7 @@ class FormSubmitHandler extends Controller
 
                     $personalinfo->criminal_case = $request->input('criminal_case');
                     $personalinfo->criminal_case_bng = $request->input('criminal_case_bng');
-                    $personalinfo->certificate_no = $request->input('certificate_no');
+//                    $personalinfo->certificate_no = $request->input('certificate_no');
                     $personalinfo->village_name = $request->input('village_name');
                     $personalinfo->village_name_bng = $request->input('village_name_bng');
                     $personalinfo->post_office_name = $request->input('post_office_name');
@@ -619,7 +619,7 @@ class FormSubmitHandler extends Controller
 
                 $personalinfo->criminal_case = $request->input('criminal_case');
                 $personalinfo->criminal_case_bng = $request->input('criminal_case_bng');
-                $personalinfo->certificate_no = $request->input('certificate_no');
+//                $personalinfo->certificate_no = $request->input('certificate_no');
                 $personalinfo->village_name = $request->input('village_name');
                 $personalinfo->village_name_bng = $request->input('village_name_bng');
                 $personalinfo->post_office_name = $request->input('post_office_name');

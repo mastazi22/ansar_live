@@ -347,7 +347,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/withdrawn_kpi_view', ['as' => 'withdrawn_kpi_view', 'uses' => 'KpiController@withdrawnKpiView']);
         Route::get('/withdrawn_kpi_list', ['as' => 'withdrawn_kpi_list', 'uses' => 'KpiController@withdrawnKpiList']);
         Route::get('/withdraw-date-edit/{id}', ['as' => 'withdraw-date-edit', 'uses' => 'KpiController@kpiWithdrawDateEdit'])->where('id','^[0-9]+$');
-        Route::post('/withdraw-date-update', ['as' => 'withdraw-date-update', 'uses' => 'KpiController@kpiWithdrawDateUpdate']);
+        Route::post('/withdraw-date-update/{id}', ['as' => 'withdraw-date-update', 'uses' => 'KpiController@kpiWithdrawDateUpdate'])->where('id','^[0-9]+$');
 
         Route::get('/inactive_kpi_view', ['as' => 'inactive_kpi_view', 'uses' => 'KpiController@inactiveKpiView']);
         Route::get('/inactive_kpi_list', ['as' => 'inactive_kpi_list', 'uses' => 'KpiController@inactiveKpiList']);

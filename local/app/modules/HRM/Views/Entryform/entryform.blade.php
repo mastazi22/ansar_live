@@ -537,7 +537,7 @@
                                                 <div class="col-sm-10">
                                                     <input class="form-control  " id="national_id_no"
                                                            name="national_id_no" ng-model="national_id_no" type="text"
-                                                           placeholder="National Id no(Numeric 17 digit)"
+                                                           placeholder="National Id no(Numeric 17 digit for 13 digit add birth year before id no.)"
                                                            value="{{Request::old('national_id_no')}}">
                                                     <span style="color:red"
                                                           ng-show="formSubmitResult.error.national_id_no[0]">[[ formSubmitResult.error.national_id_no[0] ]]</span>
@@ -616,12 +616,12 @@
                                                     <input class="form-control" name="criminal_case_bng" type="text" placeholder="ফৌজদারি মামলা" value="{{Request::old('criminal_case')}}">
                                                 </div>
                                             </div>
-                                            <div class="form group col-md-12 hiddden">
-                                                <label class="control-label col-sm-2" for="criminal">সর্বশেষ প্রশিক্ষন সনদ নং:</label>
-                                                <div class="col-sm-10">
-                                                    <input class="form-control  " id="certificate_no" name="certificate_no" type="text" placeholder="সর্বশেষ প্রশিক্ষন সনদ নং" value="{{Request::old('certificate_no')}}">
-                                                </div>
-                                            </div>
+                                            {{--<div class="form group col-md-12 hiddden">--}}
+                                                {{--<label class="control-label col-sm-2" for="criminal">সর্বশেষ প্রশিক্ষন সনদ নং:</label>--}}
+                                                {{--<div class="col-sm-10">--}}
+                                                    {{--<input class="form-control  " id="certificate_no" name="certificate_no" type="text" placeholder="সর্বশেষ প্রশিক্ষন সনদ নং" value="{{Request::old('certificate_no')}}">--}}
+                                                {{--</div>--}}
+                                            {{--</div>--}}
                                         </div>
                                     </div>
 

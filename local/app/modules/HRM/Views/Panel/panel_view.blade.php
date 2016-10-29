@@ -94,7 +94,7 @@
                                                 <th>Ansar Unit</th>
                                                 <th>Ansar Thana</th>
                                                 <th>Date of Birth</th>
-                                                <th>Sex</th>
+                                                <th>Gender</th>
                                                 <th>Merit List</th>
                                                 <th>
                                                     <div class="styled-checkbox">

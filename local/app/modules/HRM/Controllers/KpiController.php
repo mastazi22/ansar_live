@@ -705,27 +705,28 @@ class KpiController extends Controller
     public function kpiWithdrawDateUpdate(Request $request,$id)
     {
 //        return $request->all();
-        $id = $request->input('id');
+//        $id = $request->input('id');
         $a = $request->all();
-        $a['id'] = $id;
-        $withdraw_date = $request->input('withdraw-date');
+//        return $a;
+        $a['id'] = (int)$id;
+        $withdraw_date = $request->get('date');
         $rules = array(
             'id' => 'required|numeric|min:0|integer|same:kpi_id',
-            'withdraw-date' => ['required', 'regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+            'date' => ['required', 'regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
             'mem_id' => 'unique:tbl_memorandum_id,memorandum_id',
         );
         $messages = array(
             'withdraw-date.required' => 'Withdraw Date is required.',
             'withdraw-date.regex' => 'Withdraw Date format is invalid',
         );
-        $validation = Validator::make($request->all(), $rules, $messages);
+        $validation = Validator::make($a, $rules, $messages);
 
         if ($validation->fails()) {
-            return Redirect::back()->withInput(Input::all())->withErrors($validation);
+            return response($validation->messages()->toJson(),422,['Content-Type'=>'application/json']);
         } else {
             DB::beginTransaction();
             try {
-                $kpi_details = KpiDetailsModel::find($id);
+                $kpi_details = KpiDetailsModel::where('kpi_id',$id)->first();
 //                return $kpi_details;
                 $modified_activation_date = Carbon::parse($withdraw_date)->format('Y-m-d');
                 $kpi_details->kpi_withdraw_date = $modified_activation_date;
@@ -737,9 +738,9 @@ class KpiController extends Controller
             } catch
             (\Exception $e) {
                 DB::rollback();
-                return Redirect::route('withdrawn_kpi_view')->with('error_message', 'KPI withdraw Date has not been Updated!');
+                return Response::json(['status'=>false,'message'=>$e->getMessage()]);
             }
-            return Redirect::route('withdrawn_kpi_view')->with('success_message', 'KPI withdraw Date is Updated Successfully!');
+            return Response::json(['status'=>true,'message'=>'KPI withdraw Date is Updated Successfully']);
         }
     }
 

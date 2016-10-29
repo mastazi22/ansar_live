@@ -190,12 +190,15 @@
             }
             $scope.withdrawDateUpdate = function (id) {
                 $scope.updating = true;
+                $scope.formData.kpi_id = id;
+//                console.log($scope.formData)
                 $scope.error = undefined;
                 $http({
-                    url: "{{URL::to('HRM/kpi-withdraw-cancel-update')}}/" + id,
-                    data: {kpi_id: id},
+                    url: "{{URL::to('HRM/withdraw-date-update')}}/" + id,
+                    data: angular.toJson($scope.formData),
                     method: 'post'
                 }).then(function (response) {
+                    console.log(response.data);
                     $scope.updating = false;
                     if (response.data.status) {
                         $("#withdraw-date-update").modal('hide')
@@ -321,7 +324,7 @@
                                 </td>
                                 <td>
                                     [[a.withdraw_status==1?"Already Withdraw":a.date!=null?"Withdraw on
-                                    "+a.date:"Inactive"]]
+                                    "+(a.date|dateformat:'DD-MMM-YYYY'):"Inactive"]]
                                 </td>
                                 <td style="vertical-align: middle">
                                     <div class="col-xs-1">
@@ -417,11 +420,17 @@
                     <div class="modal-body">
                         <form ng-submit="withdrawDateUpdate(withdrawId)">
                             <div class="row">
-                                <div class="col-md-6 col-sm-10 col-xs-12">
+                                <input type="hidden" ng-model="formData.kpi_id" ng-value="withdrawId">
+                                <div class="col-md-6 col-sm-6 col-xs-12">
                                     <div class="form-group" ng-class="{'has-error':error!=undefined&&error.date!=undefined}">
                                         <label for="">Withdraw Date</label>
                                         <input type="text" id="date-picker" ng-model="formData.date" ng-value="kpis[kpiIndex].date|dateformat:'DD-MMM-YYYY'" class="form-control" placeholder="Withdraw Date">
                                         <p ng-if="error!=undefined&&error.date!=undefined" class="text text-danger">[[error.date]]</p>
+                                    </div>
+                                    <div class="form-group" ng-class="{'has-error':error!=undefined&&error.date!=undefined}">
+                                        <label for="">Memorandum No.</label>
+                                        <input type="text" ng-model="formData.mem_id"  class="form-control" placeholder="Memorandum No.">
+                                        <p ng-if="error!=undefined&&error.mem_id!=undefined" class="text text-danger">[[error.mem_id[0] ]]</p>
                                     </div>
                                     <div class="form-group">
                                         <button class="btn btn-info" type="submit">

@@ -97,6 +97,28 @@ GlobalApp.directive('templateList',function(){
         }
     }
 })
+GlobalApp.directive('confirm', function () {
+    return {
+        restrict:'A',
+        scope:{
+            callback:'&',
+            data:'='
+        },
+        link: function (scope, element, attrs) {
+            $(element).confirmDialog({
+                message: 'Are you sure to verify this ansar',
+                ok_button_text: 'Confirm',
+                cancel_button_text: 'Cancel',
+                ok_callback: function (element) {
+                    scope.callback(scope.data)
+                },
+                cancel_callback: function (element) {
+                }
+            })
+
+        }
+    }
+})
 GlobalApp.factory('httpService', function ($http) {
     return{
         range: function () {

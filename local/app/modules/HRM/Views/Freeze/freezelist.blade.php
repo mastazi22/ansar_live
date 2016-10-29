@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','After Result of Freezing')
+@section('title','Freezed Ansar List')
 @section('breadcrumb')
     {!! Breadcrumbs::render('freezelist') !!}
 @endsection

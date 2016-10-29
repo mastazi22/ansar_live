@@ -2,14 +2,14 @@
 @section('title','Entry Information')
 @section('small_title')
     <a href="{{URL::to('HRM/entryform')}}" class="btn btn-info btn-sm"><span
-                class="glyphicon glyphicon-user"></span>  Add New</a>
+                class="glyphicon glyphicon-user"></span> Add New</a>
 @endsection
 @section('breadcrumb')
     {!! Breadcrumbs::render('entry_list') !!}
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('AnsarController', function ($scope, $http) {
+        GlobalApp.controller('AnsarController', function ($scope, $http, notificationService) {
             $scope.AllAnsar = [];
             $scope.loadType = 0;
             $scope.userType = parseInt('{{Auth::user()->type}}');
@@ -49,7 +49,7 @@
                 $scope.isSearching = false;
                 $scope.loading = true;
                 $scope.noFound = false;
-                $scope.AllAnsar=[];
+                $scope.AllAnsar = [];
                 $http({
                     url: $scope.loadType == 0 ? "{{URL::to('HRM/getnotverifiedansar')}}" : "{{URL::to('HRM/getverifiedansar')}}",
                     method: 'get',
@@ -83,6 +83,7 @@
             })
 
             $scope.verify = function (id, i) {
+//                alert(id+"  "+i);return;
                 $scope.noFound = false;
                 $scope.verifying[i] = true;
                 $http({
@@ -92,16 +93,14 @@
                 }).then(function (response) {
                     console.log(JSON.stringify(response.data));
                     if (response.data.status != undefined && response.data.status == false) {
-//                        alert(response.data.message);
-                        $('body').notifyDialog({
-                            type: 'error',
-                            message: response.data.message
-                        }).showDialog()
                         $scope.verifying[i] = false;
+                        notificationService.notify('error', "<p class='text text-bold' style='font-size: 1.2em'><i  class='fa fa-warning'></i>&nbsp"+response.data.message+"</p>");
                         return;
                     }
                     $scope.loadType = 0;
                     //$scope.loadAnsar();
+
+                    notificationService.notify('success', "<p class='text text-bold' style='font-size: 1.2em'><i  class='fa fa-check'></i>&nbspAnsar verification complete</p>");
                     $scope.verifying[i] = false;
                     $scope.verified[i] = true;
                     $scope.notVerified--;
@@ -149,7 +148,7 @@
                 }
             }
             $scope.searchId = function () {
-                if(!$scope.searchAnsarId){
+                if (!$scope.searchAnsarId) {
                     $scope.isSearching = false;
                     $scope.loadPagination();
                     return;
@@ -280,9 +279,11 @@
                     <div class="col-sm-3">
                         <form ng-submit="searchId()" class="sidebar-form">
                             <div class="input-group">
-                                <input type="text" name="q" autocomplete="off" class="form-control" ng-model="searchAnsarId" placeholder="Search by ansar id...">
+                                <input type="text" name="q" autocomplete="off" class="form-control"
+                                       ng-model="searchAnsarId" placeholder="Search by ansar id...">
                                 <span class="input-group-btn">
-                                    <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+                                    <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i
+                                                class="fa fa-search"></i></button>
                                  </span>
                             </div>
                         </form>
@@ -290,8 +291,10 @@
 
                 </div>
                 <div class="box-header" ng-if="!isSearching">
-                    <h4 style="margin-top: 0" ng-if="loadType==0">Total unverified ansars : [[notVerified.toLocaleString()]]</h4>
-                    <h4 style="margin-top: 0" ng-if="loadType==1">Total verified ansars : [[Verified.toLocaleString()]]</h4>
+                    <h4 style="margin-top: 0" ng-if="loadType==0">Total unverified ansars :
+                        [[notVerified.toLocaleString()]]</h4>
+                    <h4 style="margin-top: 0" ng-if="loadType==1">Total verified ansars :
+                        [[Verified.toLocaleString()]]</h4>
                 </div>
                 <div class="box-body" id="change-body">
 
@@ -303,7 +306,7 @@
                                 <th>ID No</th>
                                 <th>Name</th>
                                 <th>Father Name</th>
-                                <th>District</th>
+                                <th>Unit</th>
                                 <th>Thana</th>
                                 <th>Date Of Birth</th>
                                 <th>Gender</th>
@@ -340,8 +343,9 @@
                                         {{--data entry verify--}}
                                         <a style="margin-left: 2px" ng-if="userType == 55 && ansar.verified == 0"
                                            class="btn btn-success btn-xs verification" title="verify"
-                                           ng-click="verify(ansar.ansar_id, $index)"><span class="fa fa-check"
-                                                                                           ng-hide="verifying[$index]"></span><i
+                                           confirm callback="verify(id,i)" data="{id:ansar.ansar_id, i:$index}"><span
+                                                    class="fa fa-check"
+                                                    ng-hide="verifying[$index]"></span><i
                                                     class="fa fa-spinner fa-pulse" ng-show="verifying[$index]"></i></a>
                                         {{--checker edit --}}
                                         <a ng-if="userType == 44 && ansar.verified == 1" class="btn btn-primary btn-xs"
@@ -357,7 +361,7 @@
                                         {{--checker verify--}}
                                         <a style="margin-left: 2px" ng-if="userType == 44 && ansar.verified == 1"
                                            class="btn btn-success btn-xs verification" title="verify"
-                                           ng-click="verify(ansar.ansar_id, $index)"
+                                           confirm callback="verify(id,i)" data="{id:ansar.ansar_id, i:$index}"
                                         ><span
                                                     class="fa fa-check" ng-hide="verifying[$index]"></span>
                                             <i class="fa fa-spinner fa-pulse" ng-show="verifying[$index]"></i>
@@ -389,7 +393,7 @@
                                         <a style="margin-left: 2px"
                                            ng-if="(userType == 11 || userType == 22 || userType == 33 || userType == 66) && (ansar.verified == 0 || ansar.verified == 1)"
                                            class="btn btn-success btn-xs verification" title="verify"
-                                           ng-click="verify(ansar.ansar_id, $index)"
+                                           confirm callback="verify(id,i)" data="{id:ansar.ansar_id, i:$index}"
                                         ><span
                                                     class="fa fa-check" ng-hide="verifying[$index]"></span>
                                             <i class="fa fa-spinner fa-pulse" ng-show="verifying[$index]"></i>
@@ -435,7 +439,7 @@
                 </div>
 
 
-        </div>
+            </div>
         </section>
     </div>
 @stop

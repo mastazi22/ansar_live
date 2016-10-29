@@ -213,7 +213,7 @@ Breadcrumbs::register('freeze', function($breadcrumbs) {
 //});
 Breadcrumbs::register('freezelist', function($breadcrumbs) {
     $breadcrumbs->parent('fr');
-    $breadcrumbs->push('After Result of Freezing', URL::route('freeze_list'));
+    $breadcrumbs->push('Freezed Ansar List', URL::route('freeze_list'));
 });
 ////Blocklist
 Breadcrumbs::register('blockl', function($breadcrumbs) {

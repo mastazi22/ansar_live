@@ -26,10 +26,10 @@ return [
                 "Withdraw Kpi" => [
                     "route" => "kpi-withdraw-view", "icon" => "fa-dashboard",
                 ],
-                "Kpi Withdraw Date Update" => [
-                    "route" => "withdrawn_kpi_view",
-                    "icon" => "fa-dashboard",
-                ],
+//                "Kpi Withdraw Date Update" => [
+//                    "route" => "withdrawn_kpi_view",
+//                    "icon" => "fa-dashboard",
+//                ],
 //                "Inactive Kpi List" => [
 //                    "route" => "inactive_kpi_view",
 //                    "icon" => "fa-dashboard",
@@ -107,24 +107,25 @@ return [
                             "route" => "embodiment_memorandum_id_correction_view",
                             "icon" => "fa-dashboard",
                         ],
-                        "Freeze" => [
-                            "route" => "#",
-                            "icon" => "fa-dashboard",
-                            "children" => [
-                                "Freeze For Dicplinary Action" => [
-                                    "route" => "freeze_view",
-                                    "icon" => "fa-dashboard",
-                                ],
-                                "Freeze For Ansar Withdraw" => [
-                                    "route" => "ansar-withdraw-view",
-                                    "icon" => "fa-dashboard",
-                                ],
-                                "After Result" => [
-                                    "route" => "freeze_list",
-                                    "icon" => "fa-dashboard",
-                                ]
-                            ]
 
+                    ]
+
+                ],
+                "Freeze" => [
+                    "route" => "#",
+                    "icon" => "fa-dashboard",
+                    "children" => [
+                        "Freeze For Dicplinary Action" => [
+                            "route" => "freeze_view",
+                            "icon" => "fa-dashboard",
+                        ],
+                        "Freeze For Ansar Withdraw" => [
+                            "route" => "ansar-withdraw-view",
+                            "icon" => "fa-dashboard",
+                        ],
+                        "Freezed Ansar List" => [
+                            "route" => "freeze_list",
+                            "icon" => "fa-dashboard",
                         ]
                     ]
 
