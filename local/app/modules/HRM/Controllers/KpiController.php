@@ -702,13 +702,15 @@ class KpiController extends Controller
         return view('HRM::Kpi.kpi_withdraw_date_edit', ['id' => $id])->with(['kpi_info' => $kpi_info, 'kpi_details' => $kpi_details, 'id' => $id]);
     }
 
-    public function kpiWithdrawDateUpdate(Request $request)
+    public function kpiWithdrawDateUpdate(Request $request,$id)
     {
 //        return $request->all();
         $id = $request->input('id');
+        $a = $request->all();
+        $a['id'] = $id;
         $withdraw_date = $request->input('withdraw-date');
         $rules = array(
-            'id' => 'required|numeric|min:0|integer',
+            'id' => 'required|numeric|min:0|integer|same:kpi_id',
             'withdraw-date' => ['required', 'regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
             'mem_id' => 'unique:tbl_memorandum_id,memorandum_id',
         );

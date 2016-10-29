@@ -264,7 +264,7 @@ class GeneralSettingsController extends Controller
         $id = $request->input('id');
         $rules = array(
             'id' => 'required|numeric|integer|min:0',
-            'thana_name_eng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
+            'thana_name_eng' => 'required|regex:/^[\sa-zA-Z0-9_-]+$/',
             'thana_name_bng' => 'required',
             'thana_code' => 'required|numeric|integer',
         );

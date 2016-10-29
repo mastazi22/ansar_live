@@ -187,6 +187,32 @@
                     notificationService.notify('error', "An undefined error occur. Error code-" + response.status)
                 })
             }
+            $scope.withdrawDateUpdate = function (id) {
+                $scope.updating = true;
+                $scope.error = undefined;
+                $http({
+                    url: "{{URL::to('HRM/kpi-withdraw-cancel-update')}}/" + id,
+                    data: {kpi_id: id},
+                    method: 'post'
+                }).then(function (response) {
+                    $scope.updating = false;
+                    if (response.data.status) {
+                        $("#withdraw-date-update").modal('hide')
+                        notificationService.notify('success', response.data.message)
+                        $scope.loadTotal();
+                    }
+                    else {
+                        notificationService.notify('error', response.data.message)
+                    }
+                }, function (response) {
+                    $scope.updating = false;
+                    if (response.status == 422) {
+                        $scope.error = response.data;
+                        return;
+                    }
+                    notificationService.notify('error', "An undefined error occur. Error code-" + response.status)
+                })
+            }
             if ($scope.isAdmin == 11) {
                 $scope.loadDivision()
             }
@@ -371,6 +397,33 @@
                                     <div class="form-group">
                                         <button class="btn btn-info" type="submit">
                                             <i class="fa fa-spinner fa-pulse" ng-if="canceling"></i>&nbsp;Cancel Withdraw
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" role="dialog" id="withdraw-date-update">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Withdraw Date Update</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form ng-submit="withdrawDateUpdate(withdrawId)">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-10 col-xs-12">
+                                    <div class="form-group" ng-class="{'has-error':error!=undefined&&error.date!=undefined}">
+                                        <label for="">Withdraw Date</label>
+                                        <input type="text" ng-model="formData.date" class="form-control" placeholder="Memorandum No.">
+                                        <p ng-if="error!=undefined&&&error.date!=undefined" class="text text-danger">[[error.date]]</p>
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-info" type="submit">
+                                            <i class="fa fa-spinner fa-pulse" ng-if="updating"></i>&nbsp;Update Withdraw Date
                                         </button>
                                     </div>
                                 </div>
