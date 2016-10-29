@@ -36,6 +36,7 @@
             defaultValue:moment(),
             dateFormat:'DD-MMM-YYYY'
         }
+        $.extend(this.option,option);
         this.init()
     }
 
@@ -57,7 +58,10 @@
         _self.option.todayMonth = date.getMonth();
         _self.option.todayYear = date.getFullYear();
         var d = date.getFullYear()+"-"+(date.getMonth()+1<10?"0"+(date.getMonth()+1):date.getMonth()+1)+"-"+date.getDate();
-        if(_self.option.defaultValue)$(this.element).val(moment(d).format(_self.option.dateFormat)).trigger('input')
+        if(_self.option.defaultValue){
+            //alert('asdadadads')
+            $(this.element).val(moment(d).format(_self.option.dateFormat)).trigger('input')
+        }
         var d = _self.getCurrentDate();
         _self.option.currentDay = d.getDate();
         _self.option.currentMonth = d.getMonth();

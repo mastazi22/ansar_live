@@ -158,8 +158,9 @@
                     notificationService.notify('error', "An undefined error occur. Error code-" + response.status)
                 })
             }
-            $scope.ppp = function(id){
+            $scope.ppp = function(id,i){
                 $scope.withdrawId = id;
+                $scope.kpiIndex = i;
             }
             $scope.cancelWithdraw = function (id) {
                 $scope.canceling = true;
@@ -324,7 +325,8 @@
                                 </td>
                                 <td style="vertical-align: middle">
                                     <div class="col-xs-1">
-                                        <a href="" ng-disabled="a.withdraw_status==1||a.status==0"
+                                        <a href="" data-toggle="modal" ng-click="ppp(a.id,$index)"
+                                           data-target="#withdraw-date-update" ng-disabled="a.withdraw_status==1||a.status==0"
                                            class="btn btn-info btn-xs" title="Date Update">
                                             <i class="fa fa-calendar"></i>
                                         </a>
@@ -418,8 +420,8 @@
                                 <div class="col-md-6 col-sm-10 col-xs-12">
                                     <div class="form-group" ng-class="{'has-error':error!=undefined&&error.date!=undefined}">
                                         <label for="">Withdraw Date</label>
-                                        <input type="text" ng-model="formData.date" class="form-control" placeholder="Memorandum No.">
-                                        <p ng-if="error!=undefined&&&error.date!=undefined" class="text text-danger">[[error.date]]</p>
+                                        <input type="text" id="date-picker" ng-model="formData.date" ng-value="kpis[kpiIndex].date|dateformat:'DD-MMM-YYYY'" class="form-control" placeholder="Withdraw Date">
+                                        <p ng-if="error!=undefined&&error.date!=undefined" class="text text-danger">[[error.date]]</p>
                                     </div>
                                     <div class="form-group">
                                         <button class="btn btn-info" type="submit">
@@ -444,6 +446,9 @@
             },
             cancel_callback: function (element) {
             }
+        })
+        $("#date-picker").datePicker({
+            defaultValue:false
         })
     </script>
 @stop
