@@ -12,6 +12,7 @@
         GlobalApp.controller('AnsarController', function ($scope, $http, notificationService) {
             $scope.AllAnsar = [];
             $scope.loadType = 0;
+            $scope.sort = 'asc'
             $scope.userType = parseInt('{{Auth::user()->type}}');
             $scope.notVerified = parseInt("{{$notVerified}}");
             $scope.Verified = parseInt("{{$Verified}}");
@@ -53,7 +54,7 @@
                 $http({
                     url: $scope.loadType == 0 ? "{{URL::to('HRM/getnotverifiedansar')}}" : "{{URL::to('HRM/getverifiedansar')}}",
                     method: 'get',
-                    params: {limit: page.limit, offset: page.offset},
+                    params: {limit: page.limit, offset: page.offset,sort:$scope.sort},
 
                 }).then(function (response) {
 //                alert(JSON.stringify(response.data));

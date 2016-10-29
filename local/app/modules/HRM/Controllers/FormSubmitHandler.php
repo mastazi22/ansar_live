@@ -845,13 +845,14 @@ class FormSubmitHandler extends Controller
         $rules = [
             'limit' => 'required|numeric|regex:/^[0-9]+$/',
             'offset' => 'required|numeric|regex:/^[0-9]+$/',
+            'sort' => 'required|regex:/^[a-z]+$/',
         ];
         $valid = Validator::make(Input::all(), $rules);
         if ($valid->fails()) {
             return response("Invalid request(400)", 400);
         }
         if (Input::exists('chunk')) return response()->json(CustomQuery::getNotVerifiedChunkAnsar(Input::get('limit'), Input::get('offset')));
-        return response()->json(CustomQuery::getNotVerifiedAnsar(Input::get('limit'), Input::get('offset')));
+        return response()->json(CustomQuery::getNotVerifiedAnsar(Input::get('limit'), Input::get('offset'),Input::get('offset')));
     }
 
     public function getVerifiedAnsar()
