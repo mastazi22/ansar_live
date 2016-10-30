@@ -302,7 +302,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         //  reembodied
         Route::get('freezeRembodied/{ansarid}', ['as'=>'freezeRembodied','uses'=>'FreezeController@freezeRembodied']);
         //  disembodied
-        Route::post('freezeDisEmbodied/{ansarid}', ['as'=>'freezeDisEmbodied','uses'=>'FreezeController@freezeDisEmbodied']);
+        Route::post('freezeDisEmbodied', ['as'=>'freezeDisEmbodied','uses'=>'FreezeController@freezeDisEmbodied']);
         //  Black from freeze
         Route::post('freezeblack/{ansarid}', ['as'=>'freezeblack','uses'=>'FreezeController@freezeBlack']);
         //Start KPI

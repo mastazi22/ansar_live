@@ -4,10 +4,21 @@
     {!! Breadcrumbs::render('freezelist') !!}
 @endsection
 @section('content')
-
+<style>
+    .temp-label{
+        float: left;
+        padding: 5px 10px;
+        box-shadow: 0px 1px 4px 0px #cccccc;
+        border-radius: 5px;
+        margin: 5px 5px 5px;
+    }
+    .temp-label:last-child{
+        margin-right: 0;
+    }
+</style>
     <script>
 
-        GlobalApp.controller('freezeController', function ($scope, $http) {
+        GlobalApp.controller('freezeController', function ($scope, $http,notificationService) {
 //        $scope.filter_name = "0";
             $scope.allLoading = false;
             $scope.allFreezeAnsar = [];
@@ -163,24 +174,68 @@
                     $scope.verifying = false;
                 })
             }
-            $scope.disEmbodied = function (ansarid, index) {
+            $scope.disEmbodied = function (ansarid) {
                 if (ansarid) {
+                    $scope.submitting = true;
                     $http({
-                        url: "{{URL::to('HRM/freezeDisEmbodied')}}/" + $scope.getSingleRow.ansar_id,
+                        url: "{{URL::to('HRM/freezeDisEmbodied')}}" ,
                         method: 'post',
-                        data: {
+                        data: angular.toJson({
                             memorandum: $scope.memorandum,
                             rest_date: $scope.rest_date,
-                            reason: $scope.disembodiment_reason_id,
+                            disembodiment_reason_id: $scope.disembodiment_reason_id,
                             comment: $scope.comment,
-                        }
+                            ansarId:[$scope.getSingleRow.ansar_id]
+                        })
                     }).then(function (response) {
 //                    alert(JSON.stringify(response.data));
+                        $scope.submitting = false;
+                        if(response.data.status){
+                            notificationService.notify('success',response.data.message);
+                            $("#myModal").modal('hide')
+                        }
+                        else{
+                            notificationService.notify('error',response.data.message)
+                        }
                         $scope.allFreezeAnsar.splice($scope.allFreezeAnsar.indexOf($scope.getSingleRow), 1)
                     }, function (response) {
-                        document.getElementById("error").innerHTML = response.data;
+                        $scope.submitting = false;
+                        notificationService.notify('error',"An unexpected error occur. Error code :"+response.status);
                     })
                 }
+            }
+            $scope.disEmbodiedChecked = function () {
+                var ansarIds = [];
+                $scope.checked.forEach(function (value, index,array) {
+                    if(value!==false){
+                        ansarIds.push($scope.allFreezeAnsar[value].ansar_id)
+                    }
+                })
+                $scope.formData['ansarId'] = ansarIds
+//                console.log($scope.formData);return;
+                    $scope.submitting = true;
+                    $http({
+                        url: "{{URL::to('HRM/freezeDisEmbodied')}}" ,
+                        method: 'post',
+                        data: angular.toJson($scope.formData)
+                    }).then(function (response) {
+                        console.log(response.data)
+//                    alert(JSON.stringify(response.data));
+                        $scope.submitting = false;
+                        if(response.data.status){
+                            notificationService.notify('success',response.data.message);
+                            $("#dis-embodied-model-multiple").modal('hide')
+                            $scope.getFreezeList();
+                        }
+                        else{
+                            notificationService.notify('error',response.data.message)
+                        }
+                        //$scope.allFreezeAnsar.splice($scope.allFreezeAnsar.indexOf($scope.getSingleRow), 1)
+                    }, function (response) {
+                        $scope.submitting = false;
+                        notificationService.notify('error',"An unexpected error occur. Error code :"+response.status);
+                    })
+
             }
             $scope.blackAnsar = function (ansarid, index) {
                 if (ansarid) {
@@ -202,18 +257,17 @@
             $scope.doAction = function (i) {
                 var ansar = $scope.allFreezeAnsar[i];
 //                alert($scope.action[i])
-                switch($scope.action[i]){
+                switch($scope.action){
                     case 'continue':
                         $scope.reEmbodied(ansar.ansar_id,i)
                         break;
                     case 'reembodied':
-                            alert($scope.action)
                         $scope.getSingleRow = $scope.allFreezeAnsar[i];
-                        $("#re-embodied-model").modal('show')
+                        $("#re-embodied-model-multiple").modal('show')
                         break;
                     case 'disembodied':
                         $scope.getSingleRow = $scope.allFreezeAnsar[i];
-                        $("#mymodal").modal('show')
+                        $("#dis-embodied-model-multiple").modal('show')
                         break;
                     case 'black':
                         $scope.getSingleRow = $scope.allFreezeAnsar[i];
@@ -233,21 +287,26 @@
 
                 })
             }
-            $scope.check = function(){
-                //console.log($scope.checked)
-                var r = $scope.checked.every(function (i) {
+            $scope.$watch('checked', function (n,o) {
+                if(n.length<=0) return;
+                var r = n.every(function (i) {
                     return i!==false;
                 })
                 $scope.checkedAll = r;
-            }
+            },true)
             $scope.checkAll = function () {
                 if(!$scope.checkedAll)$scope.checked = Array.apply(null,Array($scope.allFreezeAnsar.length)).map(Boolean.prototype.valueOf,false);
                 else{
                     $scope.allFreezeAnsar.forEach(function (value, index) {
-                        $scope.checked[index] = value.ansar_id;
+                        $scope.checked[index] = index;
                     })
                 }
                 console.log($scope.checked)
+            }
+            $scope.actualValue = function (value,index,array) {
+
+                return value!==false;
+
             }
             $scope.convertDate = function (d) {
                 return moment(d).format('DD-MMM-YYYY')
@@ -426,7 +485,7 @@
                                     </tr>
                                     <tr ng-show="allFreezeAnsar.length>0" ng-repeat="freezeAnsar in allFreezeAnsar">
                                         <td>
-                                            <input type="checkbox" ng-true-value="[[freezeAnsar.ansar_id]]" ng-false-value="false" ng-model="checked[$index]" ng-change="check()">
+                                            <input type="checkbox" ng-true-value="[[$index]]" ng-false-value="false" ng-model="checked[$index]">
                                         </td>
                                         <td>[[$index+1]]</td>
                                         <td>
@@ -505,7 +564,7 @@
 
                 <!-- Modal content-->
                 <div class="box-body modal-content">
-                    <form class="form" role="form" method="post">
+                    <form class="form" role="form" method="post" ng-submit="disEmbodied(getSingleRow.ansar_id)">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title">Ansar
@@ -560,10 +619,8 @@
                                 <input type="text" class="form-control" id="comment" ng-model="comment" name="comment">
                             </div>
                             <div class="form-group col-md-offset-1 col-md-4">
-                                <button type="button" class="btn btn-default" data-dismiss="modal"
-                                        confirm-dialog='{"ansarid":"[[getSingleRow.ansar_id]]","index":"[[getSingleRow.index]]","action":"dis-embodied"}'
-                                        ng-disabled="!disembodiment_reason_id || !memorandum || !rest_date || verify">
-                                    Submit
+                                <button type="submit" class="btn btn-default"  ng-disabled="!disembodiment_reason_id || !memorandum || !rest_date || verify||submitting">
+                                    <i class="fa fa-spinner fa-pulse" ng-if="submitting"></i>Submit
                                 </button>
                             </div>
                         </div>
@@ -689,6 +746,90 @@
                                 >
                                     Submit
                                 </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <div id="dis-embodied-model-multiple" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <form class="form" role="form" method="post" ng-submit="disEmbodiedChecked()">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">
+                                Dis-Embodied
+                            </h4>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="row" style="margin-bottom: 10px">
+                                <div class="col-sm-12">
+                                    <div class="temp-label" ng-repeat="c in checked|filter:actualValue">
+                                        <span style="vertical-align: middle">[[allFreezeAnsar[c].ansar_name_bng]]</span>
+                                        <span>
+                                            <button class="btn btn-box-tool" ng-click="checked[checked.indexOf(c)]=false">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-offset-1 col-md-10">
+                                    <label class="control-label" for="memorandum_id">
+                                        *স্বারক নংঃ <span style="font-weight: normal" ng-if="verifying"><i
+                                                    class="fa fa-pulse fa-spinner"></i> Verifying</span>
+                                    </label><span style="color:red" ng-if="verify"> This id has already been taken</span>
+                                    <input ng-blur="checkMemorandum(formData.memorandum,0)" type="text" class="form-control"
+                                           id="memorandum_id" ng-model="formData.memorandum" name="memorandum_id">
+                                </div>
+
+                                <div class="form-group col-md-offset-1 col-md-10">
+                                    <label class="control-label" for="rest_date">
+                                        *Disembodiment Date:
+                                    </label>
+                                    <input type="text" class="form-control" id="rest_date" id="memorandum_id"
+                                           ng-model="formData.rest_date"
+                                           name="rest_date">
+                                </div>
+
+                                <div class="form-group col-md-offset-1 col-md-10">
+                                    <label class="control-label" for="disembodiment_reason_id">
+                                        *Reason:
+                                    </label>
+                                    <select ng-model="formData.disembodiment_reason_id" name="disembodiment_reason_id"
+                                            class="form-control">
+                                        <option value="">---অ-অঙ্গীভূত এর কারণ নির্বাচন করুন---</option>
+                                        <option value=1>অঙ্গীভূত কাল শেষ  হলে</option>
+                                        <option value=2>পদত্যাগ পত্র গৃহীত হলে</option>
+                                        <option value=3>পেশাগত কাজে অযোগ্য</option>
+                                        <option value=4>শারীরিক ও মানসিক ভাবে অক্ষম</option>
+                                        <option value=5>শৃ্ঙ্খলা ভঙ্গের কারনে শাস্তিপ্রাপ্ত</option>
+                                        <option value=6>সংশ্লিষ্ট সংস্থা বা প্রতিষ্ঠানে অঙ্গীভূত আনসার নিযুক্ত রাখার
+                                            প্রয়োজনীয়তা শেষ হলে
+                                        </option>
+                                        <option value=7>মহাপরিচালক কর্তৃক নির্ধারিত অন্যান্য কারনে</option>
+                                        <option value=8>অন্যান্য কারনে</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-md-offset-1 col-md-10">
+                                    <label class="control-label" for="comment">
+                                        Comment:
+                                    </label>
+                                    <input type="text" class="form-control" id="comment" ng-model="formData.comment" name="comment">
+                                </div>
+                                <div class="form-group col-md-offset-1 col-md-4">
+                                    <button type="submit" class="btn btn-default"
+                                            ng-disabled="!formData.disembodiment_reason_id || !formData.memorandum || !formData.rest_date || verify||submitting">
+                                        <i class="fa fa-pulse fa-spinner" ng-if="submitting"></i>Submit
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </form>

@@ -8,4 +8,5 @@ class RestInfoModel extends Model
 {
     protected $connection = 'hrm';
     protected $table="tbl_rest_info";
+    protected $guarded = [];
 }

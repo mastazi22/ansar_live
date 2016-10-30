@@ -8,7 +8,7 @@ class EmbodimentLogModel extends Model
 {
     protected $connection = 'hrm';
     protected $table="tbl_embodiment_log";
-
+    protected $guarded = [];
     function ansar(){
         return $this->belongsTo(PersonalInfo::class,'ansar_id','ansar_id');
     }
