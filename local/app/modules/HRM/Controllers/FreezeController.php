@@ -250,7 +250,7 @@ class FreezeController extends Controller
                 return 'Re-embodied successfully';
             }
             throw new Exception();
-        } catch (Exception $rollback) {
+        } catch (\Exception $rollback) {
             DB::rollback();
             return 'Could not Re-embodied';
         }

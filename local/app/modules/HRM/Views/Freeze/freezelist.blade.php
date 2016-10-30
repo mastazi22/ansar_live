@@ -13,8 +13,11 @@
             $scope.allFreezeAnsar = [];
             $scope.loadingThana = false;
             $scope.loadingKpi = false;
+            $scope.checked = [];
+            $scope.checkedAll = false;
             $scope.units = [];
             $scope.thanas = [];
+            $scope.action = ''
             $scope.child = {
                 selectedUnit: ""
             }
@@ -27,6 +30,25 @@
             $scope.verifying = false;
             $scope.isDc = false;
             $scope.isRC = false;
+            $scope.actions = [
+                {
+                    value: 'continue',
+                    text: 'Continue Service'
+                },
+                {
+                    value: 'reembodied',
+                    text: 'Re-Embodied'
+                },
+                {
+                    value: 'disembodied',
+                    text: 'Disembodied'
+                },
+                {
+                    value: 'black',
+                    text: 'Black'
+                },
+
+            ]
             var userType = parseInt('{{auth()->user()->type}}')
             $scope.loadKpi = function () {
                 $scope.loadingKpi = true;
@@ -93,6 +115,8 @@
                 }).then(function (response) {
 //            alert(JSON.stringify(response.data));
                     $scope.allFreezeAnsar = response.data;
+                    $scope.checked = Array.apply(null,Array($scope.allFreezeAnsar.length)).map(Boolean.prototype.valueOf,false);
+                    console.log($scope.checked)
                     $scope.allLoading = false;
                 }, function (response) {
                     $scope.allLoading = false;
@@ -174,6 +198,56 @@
                         document.getElementById("error").innerHTML = response.data;
                     })
                 }
+            }
+            $scope.doAction = function (i) {
+                var ansar = $scope.allFreezeAnsar[i];
+//                alert($scope.action[i])
+                switch($scope.action[i]){
+                    case 'continue':
+                        $scope.reEmbodied(ansar.ansar_id,i)
+                        break;
+                    case 'reembodied':
+                            alert($scope.action)
+                        $scope.getSingleRow = $scope.allFreezeAnsar[i];
+                        $("#re-embodied-model").modal('show')
+                        break;
+                    case 'disembodied':
+                        $scope.getSingleRow = $scope.allFreezeAnsar[i];
+                        $("#mymodal").modal('show')
+                        break;
+                    case 'black':
+                        $scope.getSingleRow = $scope.allFreezeAnsar[i];
+                        $("#blackModal").modal('show')
+                        break;
+
+                }
+            }
+            $scope.reEmbodiedAll = function (data) {
+                $http({
+                    url:'{{URL::route('confirm_transfer')}}',
+                    method:'post',
+                    data:angular.toJson(data)
+                }).then(function (response) {
+
+                }, function (response) {
+
+                })
+            }
+            $scope.check = function(){
+                //console.log($scope.checked)
+                var r = $scope.checked.every(function (i) {
+                    return i!==false;
+                })
+                $scope.checkedAll = r;
+            }
+            $scope.checkAll = function () {
+                if(!$scope.checkedAll)$scope.checked = Array.apply(null,Array($scope.allFreezeAnsar.length)).map(Boolean.prototype.valueOf,false);
+                else{
+                    $scope.allFreezeAnsar.forEach(function (value, index) {
+                        $scope.checked[index] = value.ansar_id;
+                    })
+                }
+                console.log($scope.checked)
             }
             $scope.convertDate = function (d) {
                 return moment(d).format('DD-MMM-YYYY')
@@ -336,7 +410,9 @@
                                 <table class="table  table-bordered table-striped" id="ansar-table">
 
                                     <tr>
+                                        <th class="text-center"> <input type="checkbox" ng-model="checkedAll" ng-change="checkAll()"></th>
                                         <th class="text-center"> ক্রঃ নং</th>
+
                                         <th class="text-center">আইডি</th>
                                         <th class="text-center">পদবি</th>
                                         <th class="text-center">নাম</th>
@@ -345,10 +421,13 @@
                                         <th class="text-center">ফ্রিজ করনের তারিখ</th>
                                         <th class="text-center">ফ্রিজকালীন ক্যাম্পের নাম</th>
                                         <th class="text-center">ফ্রিজকরনের কারণ</th>
-                                        <th class="text-center" style="width:100px;">কার্যক্রম/Action</th>
+                                        <th class="text-center" style="width:160px;">কার্যক্রম/Action</th>
 
                                     </tr>
                                     <tr ng-show="allFreezeAnsar.length>0" ng-repeat="freezeAnsar in allFreezeAnsar">
+                                        <td>
+                                            <input type="checkbox" ng-true-value="[[freezeAnsar.ansar_id]]" ng-false-value="false" ng-model="checked[$index]" ng-change="check()">
+                                        </td>
                                         <td>[[$index+1]]</td>
                                         <td>
                                             <a href="{{ URL::to('/entryreport/') }}/[[freezeAnsar.ansar_id]]">[[freezeAnsar.ansar_id]]</a>
@@ -401,6 +480,19 @@
                                         <td class="warning" colspan="10">No information found</td>
                                     </tr>
                                 </table>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="" class="control-label">
+                                            With Selected
+                                        </label>
+                                        <select name="" id="" class="form-control" ng-model="action" ng-change="doAction()">
+                                            <option value="">--Select Action--</option>
+                                            <option ng-repeat="a in actions" value="[[a.value]]">[[a.text]]</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -586,14 +678,15 @@
                                               ng-if="verifyTransfer"> This ID has already been taken</span>
                                 <input ng-blur="checkMemorandum(memorandum_transfer,1)" type="text" class="form-control"
                                        id="memorandum_id"
-                                       ng-model="memorandum_transfer" name="memorandum_id" placeholder="Enter Memorandum ID">
+                                       ng-model="memorandum_transfer" name="memorandum_id"
+                                       placeholder="Enter Memorandum ID">
                             </div>
 
                             <div class="form-group col-md-offset-1 col-md-4">
                                 <button type="button" class="btn btn-info" data-dismiss="modal"
                                         ng-disabled="!memorandum_transfer||!joining_date||!selectedKpi||verifyTransfer||verifying"
                                         ng-click="transferAnsar(getSingleRow.ansar_id,memorandum_transfer,joining_date,selectedKpi)"
-                                        >
+                                >
                                     Submit
                                 </button>
                             </div>
