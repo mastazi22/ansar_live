@@ -835,7 +835,7 @@
 
                 <!-- Modal content-->
                 <div class="box-body modal-content">
-                    <form class="form" role="form" method="post" ng-submit="transChecker()">
+                    <form class="form" role="form" method="post" ng-submit="transChecked()">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" onclick="event.preventDefault()">&times;</button>
                             <h4 class="modal-title">

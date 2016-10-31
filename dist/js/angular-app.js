@@ -2,7 +2,7 @@
  * Created by arafat on 10/25/2016.
  */
 var prefix = '';
-var GlobalApp = angular.module('GlobalApp', ['angular.filter','ngRoute'], function ($interpolateProvider, $httpProvider,$sceProvider,$routeProvider) {
+var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], function ($interpolateProvider, $httpProvider, $sceProvider, $routeProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
     $sceProvider.enabled(false)
@@ -54,57 +54,57 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter','ngRoute'], functi
             $http(config).then(successCallback, errorCallback);
         }
     })
-    $routeProvider.when('/withdraw/:id',{
-        templateUrl:'/'+prefix+'HRM/kpi-withdraw-action-view',
-        controller:'WithdrawActionController',
-        resolve:{
-            kpiInfo: function ($http,$route) {
-                return $http.get('/'+prefix+'HRM/kpiinfo/'+$route.current.params.id).then(function (response) {
+    $routeProvider.when('/withdraw/:id', {
+        templateUrl: '/' + prefix + 'HRM/kpi-withdraw-action-view',
+        controller: 'WithdrawActionController',
+        resolve: {
+            kpiInfo: function ($http, $route) {
+                return $http.get('/' + prefix + 'HRM/kpiinfo/' + $route.current.params.id).then(function (response) {
                     return response.data;
                 });
             }
         }
     }).otherwise({
-        redirectTo:'/'
+        redirectTo: '/'
     })
 
 });
 GlobalApp.filter('dateformat', function () {
-    return function (input,format) {
+    return function (input, format) {
         return moment(input).format(format);
     }
 })
 GlobalApp.directive('showAlert', function () {
     return {
-            restrict: 'AEC',
-            scope: {
-                alerts: "=",
-                close: "&"
-            },
-            templateUrl: 'dist/template/alert_template.html'
-}
+        restrict: 'AEC',
+        scope: {
+            alerts: "=",
+            close: "&"
+        },
+        templateUrl: 'dist/template/alert_template.html'
+    }
 })
-GlobalApp.directive('templateList',function(){
+GlobalApp.directive('templateList', function () {
     return {
-        restrict:'AE',
-        scope:{
-            data:'=',
-            dateFormat:'&'
+        restrict: 'AE',
+        scope: {
+            data: '=',
+            dateFormat: '&'
         },
         templateUrl: function (elem, attrs) {
 
-            return '/'+prefix+'HRM/template_list/'+attrs.key
+            return '/' + prefix + 'HRM/template_list/' + attrs.key
         }
     }
 })
 GlobalApp.directive('confirm', function () {
     return {
-        restrict:'A',
-        scope:{
-            callback:'&',
-            data:'=',
-            message:'@',
-            event:'@'
+        restrict: 'A',
+        scope: {
+            callback: '&',
+            data: '=',
+            message: '@',
+            event: '@'
         },
         link: function (scope, element, attrs) {
             //alert(scope.event)
@@ -112,7 +112,7 @@ GlobalApp.directive('confirm', function () {
                 message: scope.message,
                 ok_button_text: 'Confirm',
                 cancel_button_text: 'Cancel',
-                event:scope.event,
+                event: scope.event,
                 ok_callback: function (element) {
                     scope.callback(scope.data)
                 },
@@ -123,12 +123,41 @@ GlobalApp.directive('confirm', function () {
         }
     }
 })
+GlobalApp.directive('datePicker', function () {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            //alert(scope.event)
+            $(element).datePicker()
+
+        }
+    }
+})
+GlobalApp.directive('modal', function () {
+    return {
+        restrict: 'A',
+        scope: {
+            show: '&',
+            hide: '&'
+        },
+        link: function (scope, element, attrs) {
+            //alert(scope.event)
+            $(element).on('hide.bs.modal', function () {
+                scope.hide();
+            })
+            $(element).on('hide.bs.show', function () {
+                scope.show()
+            })
+
+        }
+    }
+})
 GlobalApp.factory('httpService', function ($http) {
-    return{
+    return {
         range: function () {
             return $http({
-                method:'get',
-                url:'/'+prefix+'HRM/DivisionName'
+                method: 'get',
+                url: '/' + prefix + 'HRM/DivisionName'
             }).then(function (response) {
                 return response.data
             })
@@ -136,17 +165,17 @@ GlobalApp.factory('httpService', function ($http) {
         },
         unit: function (id) {
             var http = '';
-            if(id==undefined){
+            if (id == undefined) {
                 http = $http({
-                    method:'get',
-                    url:'/'+prefix+'HRM/DistrictName'
+                    method: 'get',
+                    url: '/' + prefix + 'HRM/DistrictName'
                 })
             }
-            else{
+            else {
                 http = $http({
-                    method:'get',
-                    url:'/'+prefix+'HRM/DistrictName',
-                    params:{id:id}
+                    method: 'get',
+                    url: '/' + prefix + 'HRM/DistrictName',
+                    params: {id: id}
                 })
             }
             return http.then(function (response) {
@@ -156,17 +185,17 @@ GlobalApp.factory('httpService', function ($http) {
         },
         thana: function (id) {
             var http = '';
-            if(id==undefined){
+            if (id == undefined) {
                 http = $http({
-                    method:'get',
-                    url:'/'+prefix+'HRM/ThanaName'
+                    method: 'get',
+                    url: '/' + prefix + 'HRM/ThanaName'
                 })
             }
-            else{
+            else {
                 http = $http({
-                    method:'get',
-                    url:'/'+prefix+'HRM/ThanaName',
-                    params:{id:id}
+                    method: 'get',
+                    url: '/' + prefix + 'HRM/ThanaName',
+                    params: {id: id}
                 })
             }
             return http.then(function (response) {
@@ -177,22 +206,22 @@ GlobalApp.factory('httpService', function ($http) {
     }
 })
 GlobalApp.factory('notificationService', function () {
-    return{
-        notify: function (type,message) {
+    return {
+        notify: function (type, message) {
             //$.noty.closeAll();
             noty({
-                type:type,
-                text:message,
-                layout:'top',
-                maxVisible:5,
-                timeout:3000,
+                type: type,
+                text: message,
+                layout: 'top',
+                maxVisible: 5,
+                timeout: 5000,
                 dismissQueue: true
             })
 
         }
     }
 })
-GlobalApp.controller('WithdrawActionController', function ($scope,$http,kpiInfo,$routeParams,$location,notificationService) {
+GlobalApp.controller('WithdrawActionController', function ($scope, $http, kpiInfo, $routeParams, $location, notificationService) {
     $scope.info = kpiInfo;
     //alert(id)
     $scope.isSubmitting = false;
@@ -201,23 +230,23 @@ GlobalApp.controller('WithdrawActionController', function ($scope,$http,kpiInfo,
         $scope.isSubmitting = true;
         $scope.error = undefined
         $http({
-            url:'/'+prefix+'HRM/kpi-withdraw-update/'+$routeParams.id,
-            method:'post',
-            data:angular.toJson($scope.formData)
+            url: '/' + prefix + 'HRM/kpi-withdraw-update/' + $routeParams.id,
+            method: 'post',
+            data: angular.toJson($scope.formData)
         }).then(function (response) {
             $scope.isSubmitting = false;
             console.log(response.data)
-            if(response.data.status){
+            if (response.data.status) {
                 $location.path('/')
-                notificationService.notify('success',response.data.message);
+                notificationService.notify('success', response.data.message);
                 $scope.$parent.loadTotal()
             }
-            else{
-                notificationService.notify('error',response.data.message);
+            else {
+                notificationService.notify('error', response.data.message);
             }
         }, function (response) {
             $scope.isSubmitting = false;
-            if(response.status==422)$scope.error = response.data;
+            if (response.status == 422)$scope.error = response.data;
         })
     }
 })

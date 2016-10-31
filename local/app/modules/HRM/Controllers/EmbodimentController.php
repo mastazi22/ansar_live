@@ -378,6 +378,7 @@ class EmbodimentController extends Controller
 
     function completeTransferProcess()
     {
+//        return Input::get('transferred_ansar');
         $rules = [
             'transfer_date' => ['required', 'date_format:d-M-Y', 'regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
             'kpi_id' => 'required|is_array|array_length_same:2|array_type:int',
@@ -400,6 +401,7 @@ class EmbodimentController extends Controller
             foreach ($transferred_ansar as $ansar) {
                 DB::beginTransaction();
                 try {
+
                     $e_id = EmbodimentModel::where('ansar_id', $ansar['ansar_id'])->where('kpi_id', $kpi_id[0])->first();
                     if ($e_id) {
                         $e_id->kpi_id = $kpi_id[1];
@@ -411,19 +413,20 @@ class EmbodimentController extends Controller
                         $transfer->transfer_memorandum_id = $m_id;
                         $transfer->present_kpi_id = $kpi_id[0];
                         $transfer->transfered_kpi_id = $kpi_id[1];
-                        $transfer->present_kpi_join_date = $ansar['joining_date'];
+                        $transfer->present_kpi_join_date = Carbon::parse($ansar['joining_date']);
                         $transfer->transfered_kpi_join_date = Carbon::createFromFormat("d-M-Y", $t_date)->format("Y-m-d");
                         $transfer->action_by = Auth::user()->id;
                         $transfer->save();
-                        DB::commit();
+
                         $status['success']['count']++;
                         array_push($status['success']['data'], $ansar['ansar_id']);
                         CustomQuery::addActionlog(['ansar_id' => $ansar['ansar_id'], 'action_type' => 'TRANSFER', 'from_state' => $kpi_id[0], 'to_state' => $kpi_id[1], 'action_by' => auth()->user()->id]);
+                        DB::commit();
                     }
                 } catch (\Exception $e) {
                     DB::rollback();
                     $status['error']['count']++;
-                    array_push($status['error']['data'], $ansar['ansar_id']);
+                    array_push($status['error']['data'], $e->getMessage());
                 }
             }
             DB::commit();

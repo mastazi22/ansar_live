@@ -18,7 +18,7 @@ return [
                     "route" => "ansar_before_reduce_view",
                     "icon" => "fa-dashboard",
                 ],
-                "Reduce Guard Strength" => [
+                "Reduce Ansar In Guard Strength" => [
                     "route" => "reduce_guard_strength",
                     "icon" => "fa-dashboard",
                 ],

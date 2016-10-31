@@ -362,17 +362,17 @@ class KpiController extends Controller
     }
     public function ansarListForReduce()
     {
-        $unit_id = Input::get('unit_id');
-        $thana = Input::get('thana_id');
-        $selctedReducedAnsars = Input::get('selected_name');
+        $unit_id = Input::get('unit');
+        $thana = Input::get('thana');
+        $selctedReducedAnsars = Input::get('kpi');
         $rules = [
-            'unit_id' => 'regex:/^[0-9]+$/',
-            'thana_id' => 'regex:/^[0-9]+$/',
-            'selected_name' => 'regex:/^[0-9]+$/'
+            'unit' => 'regex:/^[0-9]+$/',
+            'thana' => 'regex:/^[0-9]+$/',
+            'kpi' => 'regex:/^[0-9]+$/'
         ];
         $validation = Validator::make(Input::all(), $rules);
         if ($validation->fails()) {
-            return Response::json(array('valid' => true));
+            return response('Invalid request',400,['Content-Type'=>'text/html']);
         } else {
             $kpi_infos = DB::table('tbl_embodiment')
                 ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
@@ -383,14 +383,16 @@ class KpiController extends Controller
                 ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                 ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
                 ->where('tbl_embodiment.kpi_id', '=', $selctedReducedAnsars)
+                ->where('tbl_kpi_info.unit_id', '=', $unit_id)
+                ->where('tbl_kpi_info.thana_id', '=', $thana)
                 ->where('tbl_ansar_status_info.block_list_status', '=', 0)
                 ->where('tbl_ansar_status_info.black_list_status', '=', 0)
                 ->where('tbl_embodiment.emboded_status', '=', "Emboded")
                 ->distinct()
                 ->select('tbl_embodiment.*', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_kpi_info.kpi_name', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_designations.name_eng')
                 ->get();
-            if (count($kpi_infos) <= 0) return Response::json(array('result' => true));
-            return view('HRM::Kpi.selected_reduce_guard_strength')->with('kpi_infos', $kpi_infos);
+//            if (count($kpi_infos) <= 0) return Response::json(array('result' => true));
+            return Response::json($kpi_infos);
         }
     }
 
@@ -400,20 +402,21 @@ class KpiController extends Controller
         $kpi_id = '';
         try {
             if ($request->ajax()) {
-                $selected_ansars = Input::get('ansaridget');
-                $mi = Input::get('memorandum_id');
-                $rd = Input::get('reduce_date');
+                $selected_ansars = $request->ansarId;
+                $mi = $request->memorandumId;
+                $rd = $request->reduce_guard_strength_date;
                 $modified_reduce_date = Carbon::parse($rd)->format('Y-m-d');
                 $reduce_reason = Input::get('reduce_reason');
                 $memorandum_entry = new MemorandumModel();
                 $memorandum_entry->memorandum_id = $mi;
                 $memorandum_entry->save();
                 $user = [];
-                if (!is_null($selected_ansars)) {
-                    for ($i = 0; $i < count($selected_ansars); $i++) {
+                if (is_array($selected_ansars)) {
+                    $kpi = KpiGeneralModel::find($request->kpiId);
+                    foreach($selected_ansars as $reduced_ansar) {
 
-                        $reduced_ansar = $selected_ansars[$i];
-                        $ansar_ids = EmbodimentModel::where('ansar_id', $reduced_ansar)->where('emboded_status', 'Emboded')->get();
+//                        $reduced_ansar = $selected_ansars[$i];
+                        $ansar_ids = $kpi->embodiment()->where('ansar_id', $reduced_ansar)->where('emboded_status', 'Emboded')->get();
                         foreach ($ansar_ids as $ansar_id) {
                             $reduced_ansar_id = $ansar_id->ansar_id;
                             $kpi_id = $ansar_id->kpi_id;
@@ -448,14 +451,22 @@ class KpiController extends Controller
                             array_push($user, ['ansar_id' => $ansar_id->ansar_id, 'action_type' => 'FREEZE', 'from_state' => 'EMBODIED', 'to_state' => 'FREEZE', 'action_by' => auth()->user()->id]);
                         }
                     }
+                    CustomQuery::addActionlog($user, true);
+                    CustomQuery::addActionlog(['ansar_id' => $kpi_id, 'action_type' => 'REDUCE KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]);
+                    DB::commit();
                 }
+                else {
+                    return Response::json(['status' => false, 'message' => "Invalid Request"]);
+                }
+
             }
-            DB::commit();
-            CustomQuery::addActionlog($user, true);
-            CustomQuery::addActionlog(['ansar_id' => $kpi_id, 'action_type' => 'REDUCE KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]);
-        } catch (Exception $e) {
+            else{
+                return Response::json(['status' => false, 'message' => "Invalid Request"]);
+            }
+
+        } catch (\Exception $e) {
             DB::rollback();
-            return Response::json(['status' => false, 'message' => "Ansar(s) have not been Reduced!"]);
+            return Response::json(['status' => false, 'message' => $e->getMessage()]);
         }
         return Response::json(['status' => true, 'message' => "Ansar/s Reduced Successfully!"]);
     }

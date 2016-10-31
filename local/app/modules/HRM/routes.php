@@ -337,7 +337,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 
         Route::post('/ansar-withdraw-update', ['as'=>'ansar-withdraw-update','uses'=>'KpiController@ansarWithdrawUpdate']);
         Route::post('/kpi-update', ['as'=>'kpi-update','uses'=>'KpiController@updateKpi']);
-        Route::get('/ansar-reduce-update', ['as'=>'ansar-reduce-update','uses'=>'KpiController@ansarReduceUpdate']);
+        Route::post('/ansar-reduce-update', ['as'=>'ansar-reduce-update','uses'=>'KpiController@ansarReduceUpdate']);
 
         Route::get('/kpi-withdraw-view', ['as' => 'kpi-withdraw-view', 'uses' => 'KpiController@kpiWithdrawView']);
         Route::get('/kpi-withdraw-action-view', ['as' => 'kpi-withdraw-action-view', 'uses' => 'KpiController@kpiWithdrawActionView']);

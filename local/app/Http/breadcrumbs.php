@@ -64,7 +64,7 @@ Breadcrumbs::register('ansar_before_withdraw_list', function($breadcrumbs) {
 });
 Breadcrumbs::register('reduce_guard_strength', function($breadcrumbs) {
     $breadcrumbs->parent('kpi');
-    $breadcrumbs->push('Reduce Guard Strength', URL::route('reduce_guard_strength'));
+    $breadcrumbs->push('Reduce Ansar In Guard Strength', URL::route('reduce_guard_strength'));
 });
 Breadcrumbs::register('ansar_before_reduce_list', function($breadcrumbs) {
     $breadcrumbs->parent('kpi');
