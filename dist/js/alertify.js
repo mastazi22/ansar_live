@@ -18,6 +18,7 @@
             ok_button_text:'Confirm',
             cancel_button_text:'Cancel',
             id:'confirm-dialog-'+(i++),
+            event:'click',
             ok_callback: function (element) {
             },
             cancel_callback: function (element) {
@@ -50,8 +51,9 @@
     }
     Plugin.prototype.init = function (option) {
         //$('.confirm-box-shadow').remove();
+        //alert(_self.settings.event)
         var _self = this
-        $(_self.element).on('click', function (e) {
+        $(_self.element).on(_self.settings.event, function (e) {
             //alert(_self.element.className)
             e.preventDefault()
             _self.showConfirmDialog()

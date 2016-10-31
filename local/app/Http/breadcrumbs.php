@@ -12,6 +12,10 @@ Breadcrumbs::register('dashboard_menu', function($breadcrumbs,$title,$type) {
     $breadcrumbs->parent('hrm');
     $breadcrumbs->push($title, URL::route('show_ansar_list',['type'=>$type]));
 });
+Breadcrumbs::register('toal5', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Total number of Ansars who accept the offer last 5 days', URL::route('show_ansar_list',['type'=>'offerred_ansar']));
+});
 Breadcrumbs::register('dashboard_menu_recent', function($breadcrumbs,$title,$type) {
     $breadcrumbs->parent('hrm');
     $breadcrumbs->push($title, URL::route('show_recent_ansar_list',['type'=>$type]));

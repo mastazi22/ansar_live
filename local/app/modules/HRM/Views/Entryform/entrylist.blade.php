@@ -343,7 +343,7 @@
                                         {{--data entry verify--}}
                                         <a style="margin-left: 2px" ng-if="userType == 55 && ansar.verified == 0"
                                            class="btn btn-success btn-xs verification" title="verify"
-                                           confirm callback="verify(id,i)" data="{id:ansar.ansar_id, i:$index}"><span
+                                           confirm event="click" message="Are you sure want to verify this ansar" callback="verify(id,i)" data="{id:ansar.ansar_id, i:$index}"><span
                                                     class="fa fa-check"
                                                     ng-hide="verifying[$index]"></span><i
                                                     class="fa fa-spinner fa-pulse" ng-show="verifying[$index]"></i></a>
@@ -361,7 +361,7 @@
                                         {{--checker verify--}}
                                         <a style="margin-left: 2px" ng-if="userType == 44 && ansar.verified == 1"
                                            class="btn btn-success btn-xs verification" title="verify"
-                                           confirm callback="verify(id,i)" data="{id:ansar.ansar_id, i:$index}"
+                                           confirm event="click" message="Are you sure want to verify this ansar" callback="verify(id,i)" data="{id:ansar.ansar_id, i:$index}"
                                         ><span
                                                     class="fa fa-check" ng-hide="verifying[$index]"></span>
                                             <i class="fa fa-spinner fa-pulse" ng-show="verifying[$index]"></i>
@@ -393,7 +393,7 @@
                                         <a style="margin-left: 2px"
                                            ng-if="(userType == 11 || userType == 22 || userType == 33 || userType == 66) && (ansar.verified == 0 || ansar.verified == 1)"
                                            class="btn btn-success btn-xs verification" title="verify"
-                                           confirm callback="verify(id,i)" data="{id:ansar.ansar_id, i:$index}"
+                                           confirm event="click" message="Are you sure want to verify this ansar" callback="verify(id,i)" data="{id:ansar.ansar_id, i:$index}"
                                         ><span
                                                     class="fa fa-check" ng-hide="verifying[$index]"></span>
                                             <i class="fa fa-spinner fa-pulse" ng-show="verifying[$index]"></i>

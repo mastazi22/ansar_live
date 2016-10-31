@@ -108,48 +108,60 @@ class FreezeController extends Controller
         return response()->json(CustomQuery::getFreezeList());
     }
 
-    public function freezeRembodied($ansarid)
+    public function freezeRembodied(Request $request)
     {
-        $date = Carbon::now();
 
-        $freezeLog = new FreezingInfoLog();
-        $frezeInfo = FreezingInfoModel::where('ansar_id', $ansarid)->first();
-        $date_differ = $date->diffInDays(Carbon::parse($frezeInfo->freez_date), true);
-        $freezeLog->old_freez_id = $frezeInfo->id;
-        $freezeLog->ansar_id = $ansarid;
-        $freezeLog->ansar_embodiment_id = $frezeInfo->ansar_embodiment_id;
-        $freezeLog->freez_reason = $frezeInfo->freez_reason;
-        $freezeLog->freez_date = $frezeInfo->freez_date;
-        $freezeLog->comment_on_freez = $frezeInfo->comment_on_freez;
-        $freezeLog->move_frm_freez_date = $date;
-        $freezeLog->move_to = 'Emodiment';
-        $freezeLog->comment_on_move = $frezeInfo->comment_on_freez;
+        $ansarids = $request->ansarId;
+        $results = [];
+        if (is_array($ansarids)) {
 
-        DB::beginTransaction();
-        try {
-            $frezeDelete = FreezingInfoModel::where('ansar_id', $ansarid)->delete();
-            $freezeLogSave = $freezeLog->save();
-            $updateEmbodiment = EmbodimentModel::where('ansar_id', $ansarid)->first();
-            $updateEmbodiment->service_ended_date = Carbon::parse($updateEmbodiment->service_ended_date)->addDays($date_differ);
-            $updateEmbodiment->emboded_status = 'Emboded';
-            $updateStatus = AnsarStatusInfo::where('ansar_id', $ansarid)->update(['freezing_status' => 0, 'embodied_status' => 1]);
-            if ($frezeDelete && $freezeLogSave && $updateEmbodiment->save() && $updateStatus) {
-                DB::commit();
-                CustomQuery::addActionlog(['ansar_id' => $ansarid, 'action_type' => 'EMBODIED', 'from_state' => 'FREEZE', 'to_state' => 'EMBODIED', 'action_by' => auth()->user()->id]);
-                return 'Re-embodied successfully';
+            foreach ($ansarids as $ansarid) {
+                DB::beginTransaction();
+                try {
+                    $frezeInfo = FreezingInfoModel::where('ansar_id', $ansarid)->first();
+                    $updateEmbodiment = $frezeInfo->embodiment;
+//                    return $updateEmbodiment;
+                    if (!$frezeInfo || !$updateEmbodiment) throw new \Exception("{$ansarid} is invalid");
+                    $kpi = $updateEmbodiment->kpi;
+                    if (!$kpi) throw new \Exception("This ansar kpi not found");
+                    if (!$kpi || $kpi->status_of_kpi == 0 || $kpi->withdraw_status == 1) throw new \Exception("This ansar id:{$ansarid} kpi already withdraw");
+                    $date = Carbon::now();
+                    $date_differ = $date->diffInDays(Carbon::parse($frezeInfo->freez_date), true);
+                    FreezingInfoLog::create([
+                        'old_freez_id' => $frezeInfo->id,
+                        'ansar_embodiment_id' => $frezeInfo->ansar_embodiment_id,
+                        'freez_reason' => $frezeInfo->freez_reason,
+                        'freez_date' => $frezeInfo->freez_date,
+                        'comment_on_freez' => $frezeInfo->comment_on_freez,
+                        'comment_on_move' => $frezeInfo->comment_on_freez,
+                        'move_to' => 'Emodiment',
+                        'move_frm_freez_date' => $date,
+                        'ansar_id' => $ansarid,
+                    ]);
+                    $frezeInfo->delete();
+                    $updateEmbodiment->service_ended_date = Carbon::parse($updateEmbodiment->service_ended_date)->addDays($date_differ);
+                    $updateEmbodiment->emboded_status = 'Emboded';
+                    $updateEmbodiment->save();
+                    AnsarStatusInfo::where('ansar_id', $ansarid)->update(['freezing_status' => 0, 'embodied_status' => 1]);
+                    CustomQuery::addActionlog(['ansar_id' => $ansarid, 'action_type' => 'EMBODIED', 'from_state' => 'FREEZE', 'to_state' => 'EMBODIED', 'action_by' => auth()->user()->id]);
+                    DB::commit();
+                    array_push($results, ['status' => true, 'message' => $ansarid . ' Re-embodied successfully']);
+                } catch (\Exception $rollback) {
+                    DB::rollback();
+                    array_push($results, ['status' => false, 'message' => $rollback->getMessage()]);
+                }
             }
-            throw new Exception();
-        } catch (Exception $rollback) {
-            DB::rollback();
-            return 'Could not Re-embodied';
+            return Response::json($results);
+        } else {
+            return Response::json(['status' => false, 'message' => 'Invalid Request']);
         }
     }
 
     public function freezeDisEmbodied(Request $request)
     {
 //        return $request->all();
-        if(is_array($request->ansarId)){
-            foreach($request->ansarId as $ansarId){
+        if (is_array($request->ansarId)) {
+            foreach ($request->ansarId as $ansarId) {
                 $frezeInfo = FreezingInfoModel::where('ansar_id', $ansarId)->first();
                 $embodiment = $frezeInfo->embodiment;
 
@@ -172,7 +184,7 @@ class FreezeController extends Controller
                         'ansar_id' => $ansarId,
                         'reporting_date' => $embodiment->reporting_date,
                         'joining_date' => $embodiment->joining_date,
-                        'kpi_id'=>$embodiment->kpi_id,
+                        'kpi_id' => $embodiment->kpi_id,
                         'move_to' => 'rest',
                         'disembodiment_reason_id' => $request->disembodiment_reason_id,
                         'release_date' => Carbon::parse($request->rest_date)->format('Y-m-d'),
@@ -201,108 +213,132 @@ class FreezeController extends Controller
 
 
 //            throw new Exception();
+                } catch (\Exception $rollback) {
+                    DB::rollback();
+                    return Response::json(['status' => false, 'message' => $rollback->getMessage()]);
+                }
+            }
+            return Response::json(['status' => true, 'message' => 'dis-embodied successfully']);
+        } else {
+            return Response::json(['status' => false, 'message' => "Invalid Request"]);
+        }
+    }
+
+    public function transferFreezedAnsar(Request $request)
+    {
+
+        $ansarids = $request->ansarIds;
+        if(is_array($ansarids)) {
+            DB::beginTransaction();
+            foreach($ansarids as $ansarid){
+                try {
+                    $frezeInfo = FreezingInfoModel::where('ansar_id', $ansarid)->first();
+                    $updateEmbodiment = $frezeInfo->embodiment;
+                    $date = Carbon::now();
+                    $date_differ = $date->diffInDays(Carbon::parse($frezeInfo->freez_date), true);
+                    if(!$frezeInfo||!$updateEmbodiment)
+                    FreezingInfoLog::create([
+                        'old_freez_id' => $frezeInfo->id,
+                        'ansar_id' => $ansarid,
+                        'freez_reason' => $frezeInfo->freez_reason,
+                        'freez_date' => $frezeInfo->freez_date,
+                        'ansar_embodiment_id' => $frezeInfo->ansar_embodiment_id,
+                        'comment_on_freez' => $frezeInfo->comment_on_freez,
+                        'move_frm_freez_date' => $date,
+                        'move_to' => 'Emodiment',
+                        'comment_on_move' => $frezeInfo->comment_on_freez,
+                    ]);
+
+                    $frezeInfo->delete();
+                    $transfer = new TransferAnsar;
+                    $transfer->ansar_id = $ansarid;
+                    $transfer->embodiment_id = $updateEmbodiment->id;
+                    $transfer->transfer_memorandum_id = $request->memorandum_transfer;
+                    $transfer->present_kpi_id = $updateEmbodiment->kpi_id;
+                    $transfer->transfered_kpi_id = $request->selectedKpi;
+                    $transfer->present_kpi_join_date = $updateEmbodiment->transfered_date;
+                    $transfer->transfered_kpi_join_date = Carbon::createFromFormat("d-M-Y", $request->joining_date)->format("Y-m-d");
+                    $transfer->action_by = Auth::user()->id;
+                    $transfer->save();
+                    $updateEmbodiment->service_ended_date = Carbon::parse($updateEmbodiment->service_ended_date)->addDays($date_differ);
+                    $updateEmbodiment->emboded_status = 'Emboded';
+                    $updateEmbodiment->transfered_date = Carbon::createFromFormat("d-M-Y", $request->joining_date)->format("Y-m-d");
+                    $updateEmbodiment->kpi_id = $request->selectedKpi;
+                    $updateEmbodiment->save();
+                    AnsarStatusInfo::where('ansar_id', $ansarid)->update(['freezing_status' => 0, 'embodied_status' => 1]);
+                    CustomQuery::addActionlog(['ansar_id' => $ansarid, 'action_type' => 'EMBODIED', 'from_state' => 'FREEZE', 'to_state' => 'EMBODIED', 'action_by' => auth()->user()->id]);
+                    DB::commit();
+
                 }
                 catch (\Exception $rollback) {
                     DB::rollback();
                     return Response::json(['status' => false, 'message' => $rollback->getMessage()]);
                 }
             }
-            return Response::json(['status' => true, 'message' => 'dis-embodied successfully']);
+            return Response::json(['status' => true, 'message' => "Transfer complete successfully"]);
         }
         else{
-            return Response::json(['status' => false, 'message' => "Invalid Request"]);
+            return Response::json(['status' => false, 'message' => "Invalid request"]);
         }
     }
 
-    public function transferFreezedAnsar()
+    public function freezeBlack(Request $request)
     {
-        $date = Carbon::now();
-        $ansarid = Input::get('ansar_id');
-        $freezeLog = new FreezingInfoLog();
-        $frezeInfo = FreezingInfoModel::where('ansar_id', $ansarid)->first();
-        $date_differ = $date->diffInDays(Carbon::parse($frezeInfo->freez_date), true);
-        $freezeLog->old_freez_id = $frezeInfo->id;
-        $freezeLog->ansar_id = $ansarid;
-        $freezeLog->ansar_embodiment_id = $frezeInfo->ansar_embodiment_id;
-        $freezeLog->freez_reason = $frezeInfo->freez_reason;
-        $freezeLog->freez_date = $frezeInfo->freez_date;
-        $freezeLog->comment_on_freez = $frezeInfo->comment_on_freez;
-        $freezeLog->move_frm_freez_date = $date;
-        $freezeLog->move_to = 'Emodiment';
-        $freezeLog->comment_on_move = $frezeInfo->comment_on_freez;
-        DB::beginTransaction();
-        try {
-            $frezeDelete = FreezingInfoModel::where('ansar_id', $ansarid)->delete();
-            $freezeLogSave = $freezeLog->save();
-            $updateEmbodiment = EmbodimentModel::where('ansar_id', $ansarid)->first();
-            $transfer = new TransferAnsar;
-            $transfer->ansar_id = $ansarid;
-            $transfer->embodiment_id = $updateEmbodiment->id;
-            $transfer->transfer_memorandum_id = Input::get('mem_id');
-            $transfer->present_kpi_id = $updateEmbodiment->kpi_id;
-            $transfer->transfered_kpi_id = Input::get('kpi_id');
-            $transfer->present_kpi_join_date = $updateEmbodiment->transfered_date;
-            $transfer->transfered_kpi_join_date = Carbon::createFromFormat("d-M-Y", Input::get('transfered_date'))->format("Y-m-d");
-            $transfer->action_by = Auth::user()->id;
-            $updateEmbodiment->service_ended_date = Carbon::parse($updateEmbodiment->service_ended_date)->addDays($date_differ);
-            $updateEmbodiment->emboded_status = 'Emboded';
-            $updateEmbodiment->transfered_date = Carbon::createFromFormat("d-M-Y", Input::get('transfered_date'))->format("Y-m-d");
-            $updateEmbodiment->kpi_id = Input::get('kpi_id');
-            $updateStatus = AnsarStatusInfo::where('ansar_id', $ansarid)->update(['freezing_status' => 0, 'embodied_status' => 1]);
-            if ($frezeDelete && $freezeLogSave && $updateEmbodiment->save() && $transfer->save() && $updateStatus) {
-                DB::commit();
-                CustomQuery::addActionlog(['ansar_id' => $ansarid, 'action_type' => 'EMBODIED', 'from_state' => 'FREEZE', 'to_state' => 'EMBODIED', 'action_by' => auth()->user()->id]);
-                return 'Re-embodied successfully';
-            }
-            throw new Exception();
-        } catch (\Exception $rollback) {
-            DB::rollback();
-            return 'Could not Re-embodied';
-        }
-    }
-
-    public function freezeBlack(Request $request, $ansarId)
-    {
-        $ansar_status = "Emboded";
-        $ansar_id = $ansarId;
+        $ansar_ids = $request->ansarid;
         $black_date = $request->input('black_date');
         $black_comment = $request->input('black_comment');
+        if (is_array($ansar_ids)) {
+            foreach ($ansar_ids as $ansar_id) {
+                DB::beginTransaction();
+                try {
+                    $frezeInfo = FreezingInfoModel::where('ansar_id', $ansar_id)->first();
+                    $embodiment = $frezeInfo->embodiment;
+                    if (!$frezeInfo || !$embodiment) throw new \Exception('Invalid request sasfssdfdsfsf');
+                    FreezingInfoLog::create([
+                        'old_freez_id' => $frezeInfo->id,
+                        'ansar_id' => $ansar_id,
+                        'freez_reason' => $frezeInfo->freez_reason,
+                        'comment_on_freez' => $frezeInfo->comment_on_freez,
+                        'move_frm_freez_date' => Carbon::parse($request->rest_date)->format('Y-m-d'),
+                        'move_to' => 'rest',
+                        'comment_on_move' => $request->comment ? $request->comment : 'No Comment',
+                    ]);
+                    EmbodimentLogModel::create([
+                        'old_embodiment_id' => $embodiment->id,
+                        'old_memorandum_id' => $embodiment->memorandum_id,
+                        'ansar_id' => $ansar_id,
+                        'reporting_date' => $embodiment->reporting_date,
+                        'joining_date' => $embodiment->joining_date,
+                        'kpi_id' => $embodiment->kpi_id,
+                        'move_to' => 'Blacklist',
+                        'comment' => $black_comment,
+                        'disembodiment_reason_id' => 0,
+                        'release_date' => Carbon::parse($request->rest_date)->format('Y-m-d'),
+                        'action_user_id' => Auth::id(),
+                    ]);
+                    BlackListModel::create([
+                        'ansar_id' => $ansar_id,
+                        'black_list_from' => 'Freeze',
+                        'from_id' => $embodiment->id,
+                        'black_listed_date' => Carbon::parse($black_date)->format('Y-m-d'),
+                        'black_list_comment' => $black_comment,
+                        'action_user_id' => Auth::user()->id,
+                    ]);
+                    $frezeInfo->delete();
+                    $embodiment->delete();
+                    AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['freezing_status' => 0, 'black_list_status' => 1]);
+                    CustomQuery::addActionlog(['ansar_id' => $ansar_id, 'action_type' => 'BLACKED', 'from_state' => 'FREEZE', 'to_state' => 'BLACKED', 'action_by' => auth()->user()->id]);
+                    DB::commit();
 
-        DB::beginTransaction();
-        try {
-            $blacklist_entry = new BlackListModel();
-            $embodiment_info = EmbodimentModel::where('ansar_id', $ansar_id)->first();
-            $embodiment_log_save = new EmbodimentLogModel();
-            $embodiment_log_save->old_embodiment_id = $embodiment_info->id;
-            $embodiment_log_save->old_memorandum_id = $embodiment_info->memorandum_id;
-            $embodiment_log_save->ansar_id = $ansar_id;
-            $embodiment_log_save->kpi_id = $embodiment_info->kpi_id;
-            $embodiment_log_save->reporting_date = $embodiment_info->reporting_date;
-            $embodiment_log_save->joining_date = $embodiment_info->joining_date;
-            $embodiment_log_save->release_date = $black_date;
-            $embodiment_log_save->move_to = "Blacklist";
-            $embodiment_log_save->comment = $black_comment;
-            $embodiment_log_save->action_user_id = Auth::user()->id;
-            $successembodimentlog = $embodiment_log_save->save();
-
-            $blacklist_entry->ansar_id = $ansar_id;
-            $blacklist_entry->black_list_from = "Embodiment";
-            $blacklist_entry->from_id = $embodiment_info->id;
-            $blacklist_entry->black_listed_date = $black_date;
-            $blacklist_entry->black_list_comment = $black_comment;
-            $blacklist_entry->action_user_id = Auth::user()->id;
-            $successblack = $blacklist_entry->save();
-            $successembodiment = $embodiment_info->delete();
-
-            $updateStatus = AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['freezing_status' => 0, 'black_list_status' => 1]);
-            if ($successembodimentlog && $successblack && $successembodiment && $updateStatus) {
-                DB::commit();
-                CustomQuery::addActionlog(['ansar_id' => $ansar_id, 'action_type' => 'BLACKED', 'from_state' => 'FREEZE', 'to_state' => 'BLACKED', 'action_by' => auth()->user()->id]);
-                return "Blacklisted Successfully!";
+                } catch (Exception $rollback) {
+                    DB::rollback();
+                    return Response::json(['status' => false, 'message' => $rollback->getMessage()]);
+                }
             }
-        } catch (Exception $rollback) {
-            DB::rollback();
-            return 'Could not Black listed!';
+            return Response::json(['status' => true, 'message' => 'Blacklisted successfully complete!']);
+        } else {
+            return Response::json(['status' => false, 'message' => 'Invalid request']);
         }
+
     }
 }

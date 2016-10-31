@@ -261,7 +261,9 @@ class HrmController extends Controller
         }
         return View::make('HRM::Dashboard.view_recent_ansar_list')->with(['type' => $type,'pageTitle'=>$pageTitle]);
     }
-
+    public function offerAcceptLastFiveDays(){
+        return view('HRM::Dashboard.offer_accept_last_5_days');
+    }
     public function getAnsarList()
     {
         $type = Input::get('type');

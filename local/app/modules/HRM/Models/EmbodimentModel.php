@@ -9,10 +9,10 @@ class EmbodimentModel extends Model
     protected $connection = 'hrm';
     protected $table='tbl_embodiment';
     function kpi(){
-        return $this->belongsTo('App\modelsApp\modules\HRM\Models\KpiGeneralModel','kpi_id');
+        return $this->belongsTo(KpiGeneralModel::class,'kpi_id');
     }
     function ansar(){
-        return $this->hasOne('AApp\modules\HRM\Models\PersonalInfo','ansar_id','ansar_id');
+        return $this->hasOne(PersonalInfo::class,'ansar_id','ansar_id');
     }
 //    function transfer(){
 //        return $this->hasMany('App\models\TransferAnsar','embodiment_id');

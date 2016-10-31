@@ -102,13 +102,17 @@ GlobalApp.directive('confirm', function () {
         restrict:'A',
         scope:{
             callback:'&',
-            data:'='
+            data:'=',
+            message:'@',
+            event:'@'
         },
         link: function (scope, element, attrs) {
+            //alert(scope.event)
             $(element).confirmDialog({
-                message: 'Are you sure to verify this ansar',
+                message: scope.message,
                 ok_button_text: 'Confirm',
                 cancel_button_text: 'Cancel',
+                event:scope.event,
                 ok_callback: function (element) {
                     scope.callback(scope.data)
                 },
@@ -175,13 +179,14 @@ GlobalApp.factory('httpService', function ($http) {
 GlobalApp.factory('notificationService', function () {
     return{
         notify: function (type,message) {
-            $.noty.closeAll();
+            //$.noty.closeAll();
             noty({
                 type:type,
                 text:message,
                 layout:'top',
-                maxVisible:1,
-                timeout:3000
+                maxVisible:5,
+                timeout:3000,
+                dismissQueue: true
             })
 
         }

@@ -530,7 +530,7 @@
                         </div>
                         <br style="clear: left;"/>
                     </div>
-                    <div class="label-hrm">
+                    <div class="label-hrm" style="border-bottom: 1px solid rgba(153, 153, 153, 0.52)">
                         <div class="label-hrm-title">
                             <span class="info-box-text"
                                   style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial">Total number of Ansars who are not interested to join after 10 or more reminders </span>
@@ -545,26 +545,20 @@
                         </div>
                         <br style="clear: left;"/>
                     </div>
-                    {{--<div class="progress">--}}
-                    {{--<div class="progress-bar progress-bar-green" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">--}}
-                    {{--<span class="sr-only">40% Complete (success)</span>--}}
-                    {{--</div>--}}
-                    {{--</div>--}}
-                    {{--<div class="progress">--}}
-                    {{--<div class="progress-bar progress-bar-aqua" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">--}}
-                    {{--<span class="sr-only">20% Complete</span>--}}
-                    {{--</div>--}}
-                    {{--</div>--}}
-                    {{--<div class="progress">--}}
-                    {{--<div class="progress-bar progress-bar-yellow" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">--}}
-                    {{--<span class="sr-only">60% Complete (warning)</span>--}}
-                    {{--</div>--}}
-                    {{--</div>--}}
-                    {{--<div class="progress">--}}
-                    {{--<div class="progress-bar progress-bar-red" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%">--}}
-                    {{--<span class="sr-only">80% Complete</span>--}}
-                    {{--</div>--}}
-                    {{--</div>--}}
+                    <div class="label-hrm">
+                        <div class="label-hrm-title">
+                            <span class="info-box-text"
+                                  style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial">Total number of Ansars who accept the offer last 5 days </span>
+                        </div>
+
+                        <div class="label-hrm-calculation">
+                            <span class="info-box-text" style="color: #000000">
+                                <a style="font-size: 18px" href="{{URL::route('offer_accept_last_5_day')}}" class="btn-link">[[allAnsar.totalOffered]]</a>
+                                <img src="{{asset('dist/img/facebook.gif')}}" width="20" ng-show="loadingProgressInfo"></span>
+                        </div>
+                        <br style="clear: left;"/>
+                    </div>
+
                 </div>
                 <!-- /.box-body -->
             </div>

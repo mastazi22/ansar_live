@@ -27,6 +27,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/show_ansar_list/{type}', ['as' => 'show_ansar_list', 'uses' => 'HrmController@showAnsarList'])->where('type','^[a-z]+(_[a-z]+)+$');
         Route::get('/get_ansar_list', ['as' => 'get_ansar_list', 'uses' => 'HrmController@getAnsarList']);
         Route::get('/service_ended_in_three_years/{count}', ['as' => 'service_ended_in_three_years', 'uses' => 'HrmController@showAnsarForServiceEnded'])->where('count','^[0-9,]+$');
+        Route::get('/offer_accept_last_5_day', ['as' => 'offer_accept_last_5_day', 'uses' => 'HrmController@offerAcceptLastFiveDays']);
         Route::get('/service_ended_info_details', ['as' => 'service_ended_info_details', 'uses' => 'HrmController@serviceEndedInfoDetails']);
 
         Route::get('/ansar_not_interested/{count}', ['as' => 'ansar_not_interested', 'uses' => 'HrmController@showAnsarForNotInterested'])->where('count','^[0-9,]+$');
@@ -300,11 +301,11 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('getfreezelist', ['as'=>'getfreezelist','uses'=>'FreezeController@getfreezelist']);
         Route::post('transfer_freezed_ansar',['as'=>'transfer_freezed_ansar','uses'=>'FreezeController@transferFreezedAnsar']);
         //  reembodied
-        Route::get('freezeRembodied/{ansarid}', ['as'=>'freezeRembodied','uses'=>'FreezeController@freezeRembodied']);
+        Route::post('freezeRembodied/', ['as'=>'freezeRembodied','uses'=>'FreezeController@freezeRembodied']);
         //  disembodied
         Route::post('freezeDisEmbodied', ['as'=>'freezeDisEmbodied','uses'=>'FreezeController@freezeDisEmbodied']);
         //  Black from freeze
-        Route::post('freezeblack/{ansarid}', ['as'=>'freezeblack','uses'=>'FreezeController@freezeBlack']);
+        Route::post('freezeblack', ['as'=>'freezeblack','uses'=>'FreezeController@freezeBlack']);
         //Start KPI
         Route::get('/blacklist_entry_view', ['as' => 'blacklist_entry_view', 'uses' => 'BlockBlackController@blackListEntryView']);
         Route::get('/blacklist_ansar_details', ['as'=>'blacklist_ansar_details','uses'=>'BlockBlackController@loadAnsarDetailforBlack']);

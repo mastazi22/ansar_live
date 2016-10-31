@@ -8,4 +8,5 @@ class BlackListModel extends Model
 {
     protected $connection = 'hrm';
     protected $table="tbl_blacklist_info";
+    protected $guarded = [];
 }

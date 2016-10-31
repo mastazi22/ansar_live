@@ -8,6 +8,7 @@ class TransferAnsar extends Model
 {
     protected $connection = 'hrm';
     protected $table = 'tbl_transfer_ansar';
+    protected $guarded = [];
     function presentKpi(){
         return $this->belongsTo(KpiGeneralModel::class,'present_kpi_id');
     }
