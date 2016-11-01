@@ -147,6 +147,11 @@
                     return true;
                 }
             }
+            $scope.changeSort = function () {
+                if($scope.sort=='desc') $scope.sort='asc';
+                else $scope.sort='desc'
+                $scope.loadPagination();
+            }
             $scope.searchId = function () {
                 if (!$scope.searchAnsarId) {
                     $scope.isSearching = false;
@@ -303,7 +308,7 @@
                         <table class="table table-bordered table-striped" id="ansar-table">
 
                             <tr>
-                                <th>ID No</th>
+                                <th><a  ng-click="changeSort()" style="cursor: pointer">ID No</a></th>
                                 <th>Name</th>
                                 <th>Father Name</th>
                                 <th>Unit</th>
