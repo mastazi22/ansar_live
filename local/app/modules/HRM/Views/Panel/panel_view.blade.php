@@ -10,6 +10,7 @@
             $scope.memorandumId = "";
             $scope.joinDate = "";
             $scope.isVerified = false;
+            $scope.formData = {};
             $scope.isVerifying = false;
 
             $scope.verifyMemorandumId = function () {
@@ -22,6 +23,19 @@
 //                    alert(response.data.status)
                     $scope.isVerified = response.data.status;
                     $scope.isVerifying = false;
+                }, function (response) {
+
+                })
+            }
+            $scope.loadPanel = function () {
+                $scope.allLodaing =true;
+                $http({
+                    url:'{{URL::route('select_status')}}',
+                    params:$scope.formData,
+                    method:'get'
+                }).then(function (response) {
+                    $scope.allLodaing = false;
+                    $scope.ansars = response.data;
                 }, function (response) {
 
                 })

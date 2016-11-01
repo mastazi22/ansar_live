@@ -14,7 +14,7 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller("PanelController", function ($scope, $http, $sce, $compile) {
+        GlobalApp.controller("PanelController", function ($scope, $http, notificationService) {
 
             $scope.joinDate = "";
             $scope.isVerified = false;
@@ -25,7 +25,9 @@
             };
             $scope.ansarsForPanel = [];
             $scope.formData = {merit: [], ch: []};
-            $scope.panelFormData = {};
+            $scope.panelFormData = {
+                type:1
+            };
             $scope.panelData = [];
             $scope.submitEntryPanelData = {};
             $scope.checkAll = false;
@@ -55,7 +57,7 @@
                     initializeArray();
                     $scope.loading.loading_ansar_for_panel = false;
                     $("#panel-modal").modal('hide');
-                    $scope.panelFormData = {};
+                    $scope.panelFormData = {type:1};
                 }, function (response) {
                     $scope.ansarLoaderror = response.data;
                     $scope.loading.loading_ansar_for_panel = false;
@@ -113,14 +115,16 @@
                     $scope.alerts = [];
                     if($scope.result.status){
                         initializeArray();
-                        $scope.alerts.push({type:'success',message:$scope.result.message})
+//                        alert('asassasas')
+                        notificationService.notify('success',$scope.result.message)
                         removeData();
                     }
                     else{
-                        $scope.alerts.push({type:'error',message:$scope.result.message})
+                        notificationService.notify('error',$scope.result.message)
+//                        $scope.alerts.push({type:'error',message:$scope.result.message})
                     }
                 }, function (response) {
-                    $scope.add_to_panel_error = response.data;
+                    notificationService.notify('error',"An unknown error occur. Error code : "+response.status)
                     $scope.loading.loading_add_to_panel = false;
                 })
             }
@@ -161,7 +165,6 @@
         <!-- Main content -->
 
         <section class="content">
-            <show-alert alerts="alerts" close="closeAlert()"></show-alert>
             <div class="box box-solid">
                 <div class="box-body">
                     <div class="row">
@@ -243,51 +246,52 @@
                                 <div class="box-body">
                                     <form role="form" id="load_ansar_for_panel" ng-submit="loadForPanel()">
                                         <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="form-group row">
-                                                    <div class="col-sm-12">
-                                                        <div class="form-group required">
-                                                            <label class="control-label"> Select a Status</label>
-                                                            <select name='come_from_where' ng-model="panelFormData.come_from_where" id='come_from_where' class="form-control" ng-change="submitEntryPanelData.come_from_where=panelFormData.come_from_where">
-                                                                <option value="" disabled selected>--Select a Status--
-                                                                </option>
-                                                                <option value="1">Rest Status</option>
-                                                                <option value="2">Free Status</option>
-                                                            </select>
-                                                            <p ng-if="ansarLoaderror.come_from_where!=undefined" class="text text-danger">[[ansarLoaderror.come_from_where[0] ]]</p>
-                                                        </div>
-                                                    </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group required">
+                                                    <label class="control-label"> Select a Status</label>
+                                                    <select name='come_from_where' ng-model="panelFormData.come_from_where" id='come_from_where' class="form-control" ng-change="submitEntryPanelData.come_from_where=panelFormData.come_from_where">
+                                                        <option value="" disabled selected>--Select a Status--
+                                                        </option>
+                                                        <option value="1">Rest Status</option>
+                                                        <option value="2">Free Status</option>
+                                                    </select>
+                                                    <p ng-if="ansarLoaderror.come_from_where!=undefined" class="text text-danger">[[ansarLoaderror.come_from_where[0] ]]</p>
                                                 </div>
                                             </div>
-                                            <div class="col-md-8">
-                                                <div class="form-group required">
-                                                    <ul style="list-style: none; margin-left: 0 !important;padding: 0"
-                                                        class="row custom-selected">
-                                                        <li class="form-group col-md-5 custom-selected" id="from-id">
-                                                            <label class="control-label">From (ID)</label>
-                                                            <input type="text" ng-model="panelFormData.from_id"
-                                                                   name="from-id" class="form-control"
-                                                                   placeholder="Ansar ID">
-                                                            <p ng-if="ansarLoaderror.from_id!=undefined" class="text text-danger">[[ansarLoaderror.from_id[0] ]]</p>
-                                                        </li>
-                                                        <li class="col-sm-1"
-                                                            style="text-align: center;font-size: 1.2em;padding: 0;width: auto;">
-                                                            <label style="display: block">&nbsp;</label>
-                                                            to
-                                                        </li>
-                                                        <li class="form-group required col-md-5" id="to_id">
-                                                            <label class="control-label">To (ID)</label>
-                                                            <input type="text" ng-model="panelFormData.to_id"
-                                                                   name="to-id" class="form-control"
-                                                                   placeholder="Ansar ID">
-                                                            <p ng-if="ansarLoaderror.to_id!=undefined" class="text text-danger">[[ansarLoaderror.to_id[0] ]]</p>
-                                                        </li>
-                                                    </ul>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="" class="control-label">&nbsp;</label>
+                                                    <div>
+                                                        <label style="padding:5px 10px">
+                                                            <input type="radio" name="type" style="vertical-align: top" ng-model="panelFormData.type" ng-value="1">Multiple
+                                                        </label>
+                                                        <label style="padding:5px 10px">
+                                                            <input type="radio" name="type" style="vertical-align: top" ng-model="panelFormData.type" ng-value="2">Single
+                                                        </label>
+                                                    </div>
                                                 </div>
                                             </div>
 
                                         </div>
-                                        <div class="row">
+                                        <div class="row" ng-if="panelFormData.type==1">
+                                            <div class="col-md-3">
+                                                <div class="form-group required">
+                                                    <label class="control-label">From (ID)</label>
+                                                    <input type="text" ng-model="panelFormData.from_id"
+                                                           name="from-id" class="form-control"
+                                                           placeholder="Ansar ID">
+                                                    <p ng-if="ansarLoaderror.from_id!=undefined" class="text text-danger">[[ansarLoaderror.from_id[0] ]]</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 ">
+                                               <div class="form-group required">
+                                                   <label class="control-label">To (ID)</label>
+                                                   <input type="text" ng-model="panelFormData.to_id"
+                                                          name="to-id" class="form-control"
+                                                          placeholder="Ansar ID">
+                                                   <p ng-if="ansarLoaderror.to_id!=undefined" class="text text-danger">[[ansarLoaderror.to_id[0] ]]</p>
+                                               </div>
+                                            </div>
                                             <div class=" form-group col-sm-6 required">
                                                 <label class="control-label">Select no. of Ansars to Load</label>
                                                 <select class="form-control" ng-model="panelFormData.ansar_num"
@@ -305,6 +309,14 @@
                                                     <option value="100">100</option>
                                                 </select>
                                                 <p ng-if="ansarLoaderror.ansar_num!=undefined" class="text text-danger">[[ansarLoaderror.ansar_num[0] ]]</p>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-if="panelFormData.type==2">
+                                            <div class="col-sm-6 col-centered">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" placeholder="Ansar Id" ng-model="panelFormData.ansar_id">
+                                                    <p ng-if="ansarLoaderror.ansar_id!=undefined" class="text text-danger">[[ansarLoaderror.ansar_id[0] ]]</p>
+                                                </div>
                                             </div>
                                         </div>
                                         <button type="submit" class="btn btn-info pull-right" id="load-panel">

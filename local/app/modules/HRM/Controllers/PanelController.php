@@ -28,60 +28,114 @@ class PanelController extends Controller
 
     public function statusSelection(Request $request)
     {
-        $rules = [
-            'come_from_where'=>['required','numeric','regex:/^(1|2)$/'],
-            'from_id'=>'required|numeric|regex:/^[0-9]+$/',
-            'to_id'=>'required|numeric|regex:/^[0-9]+$/',
-            'ansar_num'=>'required|numeric|max:100|min:1|regex:/^[0-9]+$/'
-        ];
-        $valid = Validator::make($request->all(),$rules);
-        if($valid->fails()){
-            return response($valid->messages()->toJson(),400,['Content-type','application/json']);
-        }
-        $statusSelected = $request->get('come_from_where');
+        if($request->type==1) {
+            $rules = [
+                'come_from_where' => ['required', 'numeric', 'regex:/^(1|2)$/'],
+                'from_id' => 'required|numeric|regex:/^[0-9]+$/',
+                'to_id' => 'required|numeric|regex:/^[0-9]+$/',
+                'ansar_num' => 'required|numeric|max:100|min:1|regex:/^[0-9]+$/'
+            ];
+            $valid = Validator::make($request->all(),$rules);
+            if($valid->fails()){
+                return response($valid->messages()->toJson(),400,['Content-type','application/json']);
+            }
+            $statusSelected = $request->get('come_from_where');
 //        $select = Input::get('select');
-        $from_id=$request->get('from_id');
-        $to_id=$request->get('to_id');
-        $count=$request->get('ansar_num');
-        if ($statusSelected == 1) {
-            //$ansar_status = AnsarStatusInfo::where('rest_status', 1)->get();
+            $from_id=$request->get('from_id');
+            $to_id=$request->get('to_id');
+            $count=$request->get('ansar_num');
+            if ($statusSelected == 1) {
+                //$ansar_status = AnsarStatusInfo::where('rest_status', 1)->get();
 
-            $ansar_status = DB::table('tbl_rest_info')
-                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
-                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-                ->where('tbl_ansar_status_info.block_list_status', '=', 0)
-                ->where('tbl_ansar_status_info.black_list_status', '=', 0)
-                ->where('tbl_ansar_status_info.rest_status', '=', 1)
-                ->whereBetween('tbl_rest_info.ansar_id', array($from_id, $to_id))
-                ->whereBetween('tbl_rest_info.disembodiment_reason_id', array(3, 8))
-                ->whereNotNull('tbl_ansar_parsonal_info.mobile_no_self')
-                ->distinct()
-                ->select('tbl_rest_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', DB::raw('DATE_FORMAT(tbl_ansar_parsonal_info.data_of_birth,"%d-%b-%Y") as data_of_birth'), 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.created_at')
-                ->skip(0)
-                ->take($count)
-                ->get();
-        } elseif ($statusSelected == 2) {
+                $ansar_status = DB::table('tbl_rest_info')
+                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
+                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
+                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
+                    ->where('tbl_ansar_status_info.block_list_status', '=', 0)
+                    ->where('tbl_ansar_status_info.black_list_status', '=', 0)
+                    ->where('tbl_ansar_status_info.rest_status', '=', 1)
+                    ->whereBetween('tbl_rest_info.ansar_id', array($from_id, $to_id))
+                    ->whereBetween('tbl_rest_info.disembodiment_reason_id', array(3, 8))
+                    ->whereNotNull('tbl_ansar_parsonal_info.mobile_no_self')
+                    ->distinct()
+                    ->select('tbl_rest_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', DB::raw('DATE_FORMAT(tbl_ansar_parsonal_info.data_of_birth,"%d-%b-%Y") as data_of_birth'), 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.created_at')
+                    ->skip(0)
+                    ->take($count)
+                    ->get();
+            }
+            elseif ($statusSelected == 2) {
 
-            $ansar_status = DB::table('tbl_ansar_status_info')
-                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_ansar_status_info.ansar_id')
-                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-                ->where('tbl_ansar_status_info.block_list_status', '=', 0)
-                ->where('tbl_ansar_status_info.black_list_status', '=', 0)
-                ->where('tbl_ansar_status_info.free_status', '=', 1)
-                ->whereBetween('tbl_ansar_parsonal_info.ansar_id', array($from_id, $to_id))
-                ->whereNotNull('tbl_ansar_parsonal_info.mobile_no_self')
-                ->distinct()
-                ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', DB::raw('DATE_FORMAT(tbl_ansar_parsonal_info.data_of_birth,"%d-%b-%Y") as data_of_birth'), 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.created_at')
-                ->skip(0)
-                ->take($count)
-                ->get();
+                $ansar_status = DB::table('tbl_ansar_status_info')
+                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_ansar_status_info.ansar_id')
+                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
+                    ->where('tbl_ansar_status_info.block_list_status', '=', 0)
+                    ->where('tbl_ansar_status_info.black_list_status', '=', 0)
+                    ->where('tbl_ansar_status_info.free_status', '=', 1)
+                    ->whereBetween('tbl_ansar_parsonal_info.ansar_id', array($from_id, $to_id))
+                    ->whereNotNull('tbl_ansar_parsonal_info.mobile_no_self')
+                    ->distinct()
+                    ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', DB::raw('DATE_FORMAT(tbl_ansar_parsonal_info.data_of_birth,"%d-%b-%Y") as data_of_birth'), 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.created_at')
+                    ->skip(0)
+                    ->take($count)
+                    ->get();
+            }
         }
-        return $ansar_status;
+        else if($request->type==2){
+            $rules = [
+                'come_from_where' => ['required', 'numeric', 'regex:/^(1|2)$/'],
+                'ansar_id' => 'required|numeric|regex:/^[0-9]+$/'
+            ];$valid = Validator::make($request->all(),$rules);
+            if($valid->fails()){
+                return response($valid->messages()->toJson(),400,['Content-type','application/json']);
+            }
+
+            $statusSelected = $request->get('come_from_where');
+            if ($statusSelected == 1) {
+                //$ansar_status = AnsarStatusInfo::where('rest_status', 1)->get();
+
+                $ansar_status = DB::table('tbl_rest_info')
+                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
+                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
+                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
+                    ->where('tbl_ansar_status_info.block_list_status', '=', 0)
+                    ->where('tbl_ansar_status_info.black_list_status', '=', 0)
+                    ->where('tbl_ansar_status_info.rest_status', '=', 1)
+                    ->where('tbl_rest_info.ansar_id', $request->ansar_id)
+                    ->whereBetween('tbl_rest_info.disembodiment_reason_id', array(3, 8))
+                    ->whereNotNull('tbl_ansar_parsonal_info.mobile_no_self')
+                    ->distinct()
+                    ->select('tbl_rest_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', DB::raw('DATE_FORMAT(tbl_ansar_parsonal_info.data_of_birth,"%d-%b-%Y") as data_of_birth'), 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.created_at')
+                    ->get();
+            }
+            elseif ($statusSelected == 2) {
+
+                $ansar_status = DB::table('tbl_ansar_status_info')
+                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_ansar_status_info.ansar_id')
+                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
+                    ->where('tbl_ansar_status_info.block_list_status', '=', 0)
+                    ->where('tbl_ansar_status_info.black_list_status', '=', 0)
+                    ->where('tbl_ansar_status_info.free_status', '=', 1)
+                    ->where('tbl_ansar_parsonal_info.ansar_id', $request->ansar_id)
+                    ->whereNotNull('tbl_ansar_parsonal_info.mobile_no_self')
+                    ->distinct()
+                    ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', DB::raw('DATE_FORMAT(tbl_ansar_parsonal_info.data_of_birth,"%d-%b-%Y") as data_of_birth'), 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.created_at')
+                    ->get();
+            }
+        }
+        else {
+            return response("Invalid Request",400,['Content-type','text/html']);
+        }
+
+
+        return Response::json($ansar_status);
     }
 
     public function savePanelEntry(Request $request)
