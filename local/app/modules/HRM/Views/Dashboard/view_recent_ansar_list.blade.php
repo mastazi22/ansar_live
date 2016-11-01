@@ -200,7 +200,7 @@
                             </div>
                         </div>
                     </div>
-                    <h4 class="text text-bold">{{$pageTitle}} :PC(<a href="#" ng-click="changeRank(3)">[[gCount.PC!=undefined?gCount.PC.toLocaleString():0]]</a>)&nbsp;APC(<a href="#" ng-click="changeRank(2)">[[gCount.APC!=undefined?gCount.APC.toLocaleString():0]]</a>)&nbsp;ANSAR(<a href="#" ng-click="changeRank(1)">[[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]]</a>)</h4>
+                    <h4 class="text text-bold"><a href="#" ng-click="changeRank('all')" style="color:black">{{$pageTitle}}</a> :PC(<a href="#" ng-click="changeRank(3)">[[gCount.PC!=undefined?gCount.PC.toLocaleString():0]]</a>)&nbsp;APC(<a href="#" ng-click="changeRank(2)">[[gCount.APC!=undefined?gCount.APC.toLocaleString():0]]</a>)&nbsp;ANSAR(<a href="#" ng-click="changeRank(1)">[[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]]</a>)</h4>
                     <div class="table-responsive">
                         <template-list data="ansars" key="{{$type}}"></template-list>
                         <div class="table_pagination" ng-if="pages.length>1">
