@@ -313,7 +313,7 @@
 
                         <div class="col-md-6" style="margin-bottom: 10px;">
                             <fieldset class="fieldset">
-                                <legend class="legend">Sign image</legend>
+                                <legend class="legend">Signature image</legend>
                                 <img class="img-thumbnail"
                                      src="{{URL::route('sign_image',['id'=>$ansarAllDetails->ansar_id])}}"
                                      style="height:80px;width:100%;"/>
