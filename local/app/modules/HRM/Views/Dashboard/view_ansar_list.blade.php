@@ -10,6 +10,7 @@
     <script>
         GlobalApp.controller('AnsarListController', function ($scope, $http,$sce,httpService) {
            $scope.ansarType = '{{$type}}';
+            $scope.rank = 'all'
             $scope.user_type = parseInt("{{auth()->user()->type}}")
             $scope.isDc = false;
             if($scope.user_type==22){
@@ -66,7 +67,8 @@
                         unit:$scope.selectedDistrict,
                         thana:$scope.selectedThana,
                         division:$scope.selectedDivision,
-                        view:'view'
+                        view:'view',
+                        rank:$scope.rank,
                     }
                 }).then(function (response) {
                     console.log(response.data);
@@ -86,7 +88,8 @@
                         unit:$scope.selectedDistrict,
                         thana:$scope.selectedThana,
                         division:$scope.selectedDivision,
-                        view:'count'
+                        view:'count',
+                        rank:$scope.rank,
                     }
                 }).then(function (response) {
                     $scope.total = sum(response.data.total);
@@ -114,6 +117,10 @@
                 httpService.range().then(function (result) {
                     $scope.divisions = result;
                 })
+            }
+            $scope.changeRank = function (i) {
+                $scope.rank = i;
+                $scope.loadTotal()
             }
             $scope.loadUnit = function (id) {
                 $scope.loadingDistrict = true;
@@ -205,7 +212,7 @@
                             </div>
                         </div>
                     </div>
-                    <h4 class="text text-bold">Total Ansars :PC([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])&nbsp;APC([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])&nbsp;ANSAR([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</h4>
+                    <h4 class="text text-bold">Total Ansars :PC(<a href="#" ng-click="changeRank(3)">[[gCount.PC!=undefined?gCount.PC.toLocaleString():0]]</a>)&nbsp;APC(<a href="#" ng-click="changeRank(2)">[[gCount.APC!=undefined?gCount.APC.toLocaleString():0]]</a>)&nbsp;ANSAR(<a href="#" ng-click="changeRank(1)">[[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]]</a>)</h4>
                     <div class="table-responsive">
                         <template-list data="ansars" key="{{$type}}"></template-list>
                         <div class="table_pagination" ng-if="pages.length>1">

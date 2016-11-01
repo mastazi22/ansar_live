@@ -518,12 +518,15 @@ class CustomQuery
     }
 
 // Dashboard all ansar list
-    public static function getAllAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
+    public static function getAllAnsarList($offset, $limit, $unit, $thana, $division = null,$time,$rank)
     {
         //DB::enableQueryLog();
         $ansarQuery = QueryHelper::getQuery(QueryHelper::ALL_ANSARS);
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
+        }
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
         }
         if ($unit != 'all') {
             $ansarQuery->where('tbl_units.id', $unit);
@@ -543,9 +546,12 @@ class CustomQuery
 
     }
 
-    public static function getAllAnsarCount($unit, $thana, $division = null,$time)
+    public static function getAllAnsarCount($unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::ALL_ANSARS);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
@@ -566,9 +572,12 @@ class CustomQuery
     }
 
 // Dashboard free ansar list
-    public static function getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
+    public static function getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::FREE);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
@@ -588,10 +597,13 @@ class CustomQuery
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
     }
 
-    public static function getTotalFreeAnsarCount($unit, $thana, $division = null,$time)
+    public static function getTotalFreeAnsarCount($unit, $thana, $division = null,$time,$rank)
     {
         DB::enableQueryLog();
         $ansarQuery = QueryHelper::getQuery(QueryHelper::FREE);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
@@ -613,9 +625,12 @@ class CustomQuery
     }
 
 // Dashboard panel ansar list
-    public static function getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
+    public static function getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::PANEL);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
@@ -635,9 +650,12 @@ class CustomQuery
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'pannel']);
     }
 
-    public static function getTotalPaneledAnsarCount($unit, $thana, $division = null,$time)
+    public static function getTotalPaneledAnsarCount($unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::PANEL);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
@@ -659,10 +677,13 @@ class CustomQuery
     }
 
 // Dashboard offered ansar list
-    public static function getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
+    public static function getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division = null,$time,$rank)
     {
         // DB::enableQueryLog();
         $ansarQuery = QueryHelper::getQuery(QueryHelper::OFFER);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('ou.division_id', $division);
         }
@@ -683,9 +704,12 @@ class CustomQuery
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'offer']);
     }
 
-    public static function getTotalOfferedAnsarCount($unit, $thana, $division = null,$time)
+    public static function getTotalOfferedAnsarCount($unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::OFFER);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('ou.division_id', $division);
         }
@@ -707,9 +731,12 @@ class CustomQuery
     }
 
 // Dashboard rested ansar list
-    public static function getTotalRestAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
+    public static function getTotalRestAnsarList($offset, $limit, $unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::REST);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
@@ -729,9 +756,12 @@ class CustomQuery
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'rest']);
     }
 
-    public static function getTotalRestAnsarCount($unit, $thana, $division = null,$time)
+    public static function getTotalRestAnsarCount($unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::REST);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
@@ -754,9 +784,12 @@ class CustomQuery
 
 
 // Dashboard freezed ansar list
-    public static function getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
+    public static function getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::FREEZE);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
@@ -776,9 +809,12 @@ class CustomQuery
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'freeze']);
     }
 
-    public static function getTotalFreezedAnsarCount($unit, $thana, $division = null,$time)
+    public static function getTotalFreezedAnsarCount($unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::FREEZE);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
@@ -798,10 +834,12 @@ class CustomQuery
     }
 
 // Dashboard blocked ansar list
-    public static function getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
+    public static function getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::BLOCK);
-
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
@@ -821,10 +859,12 @@ class CustomQuery
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'block']);
     }
 
-    public static function getTotalBlockedAnsarCount($unit, $thana, $division = null,$time)
+    public static function getTotalBlockedAnsarCount($unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::BLOCK);
-
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
@@ -846,9 +886,12 @@ class CustomQuery
     }
 
 // Dashboard blacked ansar list
-    public static function getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
+    public static function getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::BLACK);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
@@ -869,9 +912,12 @@ class CustomQuery
 
     }
 
-    public static function getTotalBlackedAnsarCount($unit, $thana, $division = null,$time)
+    public static function getTotalBlackedAnsarCount($unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::BLACK);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
@@ -891,9 +937,12 @@ class CustomQuery
     }
 
 // Dashboard embodied ansar list
-    public static function getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
+    public static function getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::EMBODIED);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
@@ -913,9 +962,12 @@ class CustomQuery
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
     }
 
-    public static function getTotalEmbodiedAnsarCount($unit, $thana, $division = null,$time)
+    public static function getTotalEmbodiedAnsarCount($unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::EMBODIED);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
@@ -937,9 +989,12 @@ class CustomQuery
     }
 
 // Dashboard own embodied ansar list(DC,RC)
-    public static function getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
+    public static function getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::OWN_EMBODIED);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_kpi_info.division_id', $division);
         }
@@ -959,10 +1014,13 @@ class CustomQuery
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'embodied']);
     }
 
-    public static function getTotalOwnEmbodiedAnsarCount($unit, $thana, $division = null,$time)
+    public static function getTotalOwnEmbodiedAnsarCount($unit, $thana, $division = null,$time,$rank)
     {
         DB::enableQueryLog();
         $ansarQuery = QueryHelper::getQuery(QueryHelper::OWN_EMBODIED);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_kpi_info.division_id', $division);
         }
@@ -982,9 +1040,12 @@ class CustomQuery
     }
 
 // Dashboard diff embodied ansar list(DC,RC)
-    public static function getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
+    public static function getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::DIFF_EMBODIED);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_kpi_info.division_id', '!=', $division);
         }
@@ -1006,10 +1067,13 @@ class CustomQuery
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'diff_embodied']);
     }
 
-    public static function getTotalDiffEmbodiedAnsarCount($unit, $thana, $division = null,$time)
+    public static function getTotalDiffEmbodiedAnsarCount($unit, $thana, $division = null,$time,$rank)
     {
         DB::enableQueryLog();
         $ansarQuery = QueryHelper::getQuery(QueryHelper::DIFF_EMBODIED);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_kpi_info.division_id', '!=', $division);
         }
@@ -1031,9 +1095,12 @@ class CustomQuery
     }
 
 // Dashboard not verified ansar list
-    public static function getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division = null,$time)
+    public static function getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::UNVERIFIED);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
@@ -1053,9 +1120,12 @@ class CustomQuery
         return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
     }
 
-    public static function getTotalNotVerifiedAnsarCount($unit, $thana, $division = null,$time)
+    public static function getTotalNotVerifiedAnsarCount($unit, $thana, $division = null,$time,$rank)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::UNVERIFIED);
+        if($rank!='all'){
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
