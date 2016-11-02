@@ -310,11 +310,11 @@ Breadcrumbs::register('blocklist_view', function($breadcrumbs) {
 });
 Breadcrumbs::register('disembodiment_report_view', function($breadcrumbs) {
     $breadcrumbs->parent('report');
-    $breadcrumbs->push('Disembodied Ansar Report', URL::route('disembodiment_report_view'));
+    $breadcrumbs->push('View Disembodied Report', URL::route('disembodiment_report_view'));
 });
 Breadcrumbs::register('embodiment_report_view', function($breadcrumbs) {
     $breadcrumbs->parent('report');
-    $breadcrumbs->push('Embodied Ansar Report', URL::route('embodiment_report_view'));
+    $breadcrumbs->push('View Previous Service Report', URL::route('embodiment_report_view'));
 });
 Breadcrumbs::register('ansar_service_report_view', function($breadcrumbs) {
     $breadcrumbs->parent('report');
@@ -322,7 +322,7 @@ Breadcrumbs::register('ansar_service_report_view', function($breadcrumbs) {
 });
 Breadcrumbs::register('view_ansar_service_record', function($breadcrumbs) {
     $breadcrumbs->parent('report');
-    $breadcrumbs->push('Ansar Service Record', URL::route('view_ansar_service_record'));
+    $breadcrumbs->push('View Service Record', URL::route('view_ansar_service_record'));
 });
 Breadcrumbs::register('transfer_ansar_history', function($breadcrumbs) {
     $breadcrumbs->parent('report');
@@ -398,7 +398,7 @@ Breadcrumbs::register('offer_cancel', function($breadcrumbs) {
 });
 Breadcrumbs::register('id_card', function($breadcrumbs) {
     $breadcrumbs->parent('admin');
-    $breadcrumbs->push('Printed ID Card List', URL::route('print_id_list'));
+    $breadcrumbs->push('Id Print List', URL::route('print_id_list'));
 });
 Breadcrumbs::register('rejected_offer_list', function($breadcrumbs) {
     $breadcrumbs->parent('admin');

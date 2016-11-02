@@ -845,7 +845,7 @@ class FormSubmitHandler extends Controller
         $rules = [
             'limit' => 'required|numeric|regex:/^[0-9]+$/',
             'offset' => 'required|numeric|regex:/^[0-9]+$/',
-            'sort' => 'required|regex:/^[a-z]+$/',
+            'sort' => 'regex:/^[a-z]+$/',
         ];
         $valid = Validator::make(Input::all(), $rules);
         if ($valid->fails()) {

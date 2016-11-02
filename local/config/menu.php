@@ -130,7 +130,7 @@ return [
                     ]
 
                 ],
-                "Black List" => [
+                "Black Listing" => [
                     "route" => "#",
                     "icon" => "fa-dashboard",
                     "children" => [
@@ -145,7 +145,7 @@ return [
                     ]
 
                 ],
-                "Block List" => [
+                "Block Listing" => [
                     "route" => "#",
                     "icon" => "fa-dashboard",
                     "children" => [
@@ -183,7 +183,7 @@ return [
                     "route" => "transfer_ansar_history",
                     "icon" => "fa-file-pdf-o",
                 ],
-                "Ansar Service Record" => [
+                "View Service Record" => [
                     "route" => "view_ansar_service_record",
                     "icon" => "fa-file-pdf-o",
                 ],
@@ -191,11 +191,11 @@ return [
                     "route" => "ansar_service_report_view",
                     "icon" => "fa-file-pdf-o",
                 ],
-                "View Embodied Ansar Report" => [
+                "View Previous Service Report" => [
                     "route" => "embodiment_report_view",
                     "icon" => "fa-file-pdf-o",
                 ],
-                "View Disembodied Ansar Report" => [
+                "View Disembodied Report" => [
                     "route" => "disembodiment_report_view",
                     "icon" => "fa-file-pdf-o",
                 ],
@@ -261,36 +261,36 @@ return [
                     "route" => "direct_transfer",
                     "icon" => "fa-dashboard",
                 ],
-                "Direct Blacklist" => [
-                    "route" => "#",
-                    "icon" => "fa-times",
-                    "children" => [
-                        "Add Ansar In Black List" => [
-                            "route" => "dg_blacklist_entry_view",
-                            "icon" => "fa-dashboard",
-                        ],
-                        "Remove Ansar From Black List" => [
-                            "route" => "dg_unblacklist_entry_view",
-                            "icon" => "fa-dashboard",
-                        ],
-                    ]
-
-                ],
-                "Direct Blocklist" => [
-                    "route" => "#",
-                    "icon" => "fa-times",
-                    "children" => [
-                        "Add Ansar In Block List" => [
-                            "route" => "dg_blocklist_entry_view",
-                            "icon" => "fa-dashboard",
-                        ],
-                        "Remove Ansar From Block List" => [
-                            "route" => "dg_unblocklist_entry_view",
-                            "icon" => "fa-dashboard",
-                        ],
-                    ]
-
-                ]
+//                "Direct Blacklist" => [
+//                    "route" => "#",
+//                    "icon" => "fa-times",
+//                    "children" => [
+//                        "Add Ansar In Black List" => [
+//                            "route" => "dg_blacklist_entry_view",
+//                            "icon" => "fa-dashboard",
+//                        ],
+//                        "Remove Ansar From Black List" => [
+//                            "route" => "dg_unblacklist_entry_view",
+//                            "icon" => "fa-dashboard",
+//                        ],
+//                    ]
+//
+//                ],
+//                "Direct Blocklist" => [
+//                    "route" => "#",
+//                    "icon" => "fa-times",
+//                    "children" => [
+//                        "Add Ansar In Block List" => [
+//                            "route" => "dg_blocklist_entry_view",
+//                            "icon" => "fa-dashboard",
+//                        ],
+//                        "Remove Ansar From Block List" => [
+//                            "route" => "dg_unblocklist_entry_view",
+//                            "icon" => "fa-dashboard",
+//                        ],
+//                    ]
+//
+//                ]
             ]
         ],
         "Admin" => [
@@ -305,7 +305,7 @@ return [
                     "route" => "cancel_offer",
                     "icon" => "fa-dashboard",
                 ],
-                "Ansar Id List" => [
+                "Id Print List" => [
                     "route" => "print_id_list",
                     "icon" => "fa-dashboard",
                 ],
