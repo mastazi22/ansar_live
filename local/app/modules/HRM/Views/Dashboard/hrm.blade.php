@@ -218,7 +218,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/not_verified_ansar" class="btn-link"
                        style="color: #FFFFFF !important;">
-                        <span class="info-box-text">Total Unverified</span>
+                        <span class="info-box-text">@lang('title.tu')</span>
                     <span class="info-box-number" style="font-weight: normal">[[allAnsar.totalNotVerified]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
                     </span>
@@ -245,7 +245,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/offerred_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">Total Offered</span>
+                        <span class="info-box-text">@lang('title.to')</span>
                     <span class="info-box-number" style="font-weight: normal">
                        [[allAnsar.totalOffered]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
@@ -274,7 +274,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/freezed_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">Total Frozen</span>
+                        <span class="info-box-text">@lang('title.tfr')</span>
                     <span class="info-box-number" style="font-weight: normal">[[allAnsar.totalFreeze]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
                     </span>
@@ -300,7 +300,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/all_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">Total Ansars</span>
+                        <span class="info-box-text">@lang('title.ta')</span>
                     <span class="info-box-number" style="font-weight: normal">
                         [[allAnsar.totalAnsar]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
@@ -326,7 +326,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/free_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">Total Free</span>
+                        <span class="info-box-text">@lang('title.tf')</span>
                     <span class="info-box-number" style="font-weight: normal">
                         [[allAnsar.totalFree]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
@@ -351,7 +351,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/rest_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">Total Resting</span>
+                        <span class="info-box-text">@lang('title.tr')</span>
                     <span class="info-box-number" style="font-weight: normal">
                       [[allAnsar.totalRest]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
@@ -378,7 +378,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/blocked_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">Total Block Listed</span>
+                        <span class="info-box-text">@lang('title.tb')</span>
                     <span class="info-box-number" style="font-weight: normal">
                         [[allAnsar.totalBlockList]]
 
@@ -418,7 +418,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/paneled_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">Total Paneled</span>
+                        <span class="info-box-text">@lang('title.tp')</span>
                     <span class="info-box-number" style="font-weight: normal">
                        [[allAnsar.totalPanel]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar"></span>
@@ -442,7 +442,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/embodied_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">Total Embodied</span>
+                        <span class="info-box-text">@lang('title.te')</span>
                     <span class="info-box-number" style="font-weight: normal">
                        [[allAnsar.totalEmbodied]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar"></span>
@@ -468,7 +468,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/blacked_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">Total Black Listed</span>
+                        <span class="info-box-text">@lang('title.tba')</span>
                     <span class="info-box-number" style="font-weight: normal">
                       [[allAnsar.totalBlackList]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar"></span>

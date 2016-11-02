@@ -7,12 +7,11 @@ use App\Http\Requests;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\District;
-use App\modules\HRM\Models\ForgetPasswordRequest;
 use App\modules\HRM\Models\GlobalParameter;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
@@ -21,7 +20,7 @@ class HrmController extends Controller
 {
     function hrmDashboard()
     {
-       // return $optional.' '.$type;
+        // return $optional.' '.$type;
         $type = auth()->user()->type;
         if ($type == 22 || $type == 66) {
             return View::make('HRM::Dashboard.hrm-rc-dc');
@@ -224,7 +223,7 @@ class HrmController extends Controller
             $pageTitle = "Total Embodied Ansars";
         } elseif (strcasecmp($type, 'own_embodied_ansar') == 0) {
             $pageTitle = "Own Embodied Ansars";
-        }elseif (strcasecmp($type, 'embodied_ansar_in_different_district') == 0) {
+        } elseif (strcasecmp($type, 'embodied_ansar_in_different_district') == 0) {
             $pageTitle = "Embodied Ansar in Different District";
         }
 
@@ -259,11 +258,14 @@ class HrmController extends Controller
         } elseif (strcasecmp($type, 'own_embodied_ansar') == 0) {
             $pageTitle = "Total Embodied Ansars in Own District (Recent)";
         }
-        return View::make('HRM::Dashboard.view_recent_ansar_list')->with(['type' => $type,'pageTitle'=>$pageTitle]);
+        return View::make('HRM::Dashboard.view_recent_ansar_list')->with(['type' => $type, 'pageTitle' => $pageTitle]);
     }
-    public function offerAcceptLastFiveDays(){
+
+    public function offerAcceptLastFiveDays()
+    {
         return view('HRM::Dashboard.offer_accept_last_5_days');
     }
+
     public function getAnsarList()
     {
         $type = Input::get('type');
@@ -275,74 +277,74 @@ class HrmController extends Controller
         $view = Input::get('view');
         $rank = Input::get('rank');
         $rules = [
-            'type'=>'regex:/[a-z]+/',
-            'view'=>'regex:/[a-z]+/',
-            'limit'=>'numeric',
-            'offset'=>'numeric',
-            'thana'=>['regex:/^(all)$|^[0-9]+$/'],
-            'unit'=>['regex:/^(all)$|^[0-9]+$/'],
-            'division'=>['regex:/^(all)$|^[0-9]+$/'],
-            'rank'=>['regex:/^(all)$|^[0-9]+$/'],
+            'type' => 'regex:/[a-z]+/',
+            'view' => 'regex:/[a-z]+/',
+            'limit' => 'numeric',
+            'offset' => 'numeric',
+            'thana' => ['regex:/^(all)$|^[0-9]+$/'],
+            'unit' => ['regex:/^(all)$|^[0-9]+$/'],
+            'division' => ['regex:/^(all)$|^[0-9]+$/'],
+            'rank' => ['regex:/^(all)$|^[0-9]+$/'],
         ];
-        $valid = Validator::make(Input::all(),$rules);
+        $valid = Validator::make(Input::all(), $rules);
 
-        if($valid->fails()){
+        if ($valid->fails()) {
             //return print_r($valid->messages());
-            return response("Invalid Request(400)",400);
+            return response("Invalid Request(400)", 400);
         }
         if (strcasecmp($view, 'view') == 0) {
             switch ($type) {
                 case 'all_ansar':
-                    return CustomQuery::getAllAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getAllAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'not_verified_ansar':
-                    return CustomQuery::getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'free_ansar':
-                    return CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'paneled_ansar':
-                    return CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'embodied_ansar':
-                    return CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'rest_ansar':
-                    return CustomQuery::getTotalRestAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalRestAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'freezed_ansar':
-                    return CustomQuery::getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'blocked_ansar':
-                    return CustomQuery::getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'blacked_ansar':
-                    return CustomQuery::getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'offerred_ansar':
-                    return CustomQuery::getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'own_embodied_ansar':
-                    return CustomQuery::getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'embodied_ansar_in_different_district':
-                    return CustomQuery::getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
             }
         } else {
             switch ($type) {
                 case 'all_ansar':
-                    return CustomQuery::getAllAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getAllAnsarCount($unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'not_verified_ansar':
-                    return CustomQuery::getTotalNotVerifiedAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalNotVerifiedAnsarCount($unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'free_ansar':
-                    return CustomQuery::getTotalFreeAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalFreeAnsarCount($unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'paneled_ansar':
-                    return CustomQuery::getTotalPaneledAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalPaneledAnsarCount($unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'embodied_ansar':
-                    return CustomQuery::getTotalEmbodiedAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalEmbodiedAnsarCount($unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'rest_ansar':
-                    return CustomQuery::getTotalRestAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalRestAnsarCount($unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'freezed_ansar':
-                    return CustomQuery::getTotalFreezedAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalFreezedAnsarCount($unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'blocked_ansar':
-                    return CustomQuery::getTotalBlockedAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalBlockedAnsarCount($unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'blacked_ansar':
-                    return CustomQuery::getTotalBlackedAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalBlackedAnsarCount($unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'offerred_ansar':
-                    return CustomQuery::getTotalOfferedAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalOfferedAnsarCount($unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'own_embodied_ansar':
-                    return CustomQuery::getTotalOwnEmbodiedAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalOwnEmbodiedAnsarCount($unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
                 case 'embodied_ansar_in_different_district':
-                    return CustomQuery::getTotalDiffEmbodiedAnsarCount($unit, $thana, $division,CustomQuery::ALL_TIME,$rank);
+                    return CustomQuery::getTotalDiffEmbodiedAnsarCount($unit, $thana, $division, CustomQuery::ALL_TIME, $rank);
             }
         }
     }
@@ -358,74 +360,74 @@ class HrmController extends Controller
         $rank = Input::get('rank');
         $division = Input::get('division');
         $rules = [
-            'type'=>'regex:/[a-z]+/',
-            'view'=>'regex:/[a-z]+/',
-            'limit'=>'numeric',
-            'offset'=>'numeric',
-            'thana'=>['regex:/^(all)$|^[0-9]+$/'],
-            'unit'=>['regex:/^(all)$|^[0-9]+$/'],
-            'division'=>['regex:/^(all)$|^[0-9]+$/'],
-            'rank'=>['regex:/^(all)$|^[0-9]+$/'],
+            'type' => 'regex:/[a-z]+/',
+            'view' => 'regex:/[a-z]+/',
+            'limit' => 'numeric',
+            'offset' => 'numeric',
+            'thana' => ['regex:/^(all)$|^[0-9]+$/'],
+            'unit' => ['regex:/^(all)$|^[0-9]+$/'],
+            'division' => ['regex:/^(all)$|^[0-9]+$/'],
+            'rank' => ['regex:/^(all)$|^[0-9]+$/'],
         ];
-        $valid = Validator::make(Input::all(),$rules);
+        $valid = Validator::make(Input::all(), $rules);
 
-        if($valid->fails()){
+        if ($valid->fails()) {
             //return print_r($valid->messages());
-            return response("Invalid Request(400)",400);
+            return response("Invalid Request(400)", 400);
         }
         if (strcasecmp($view, 'view') == 0) {
             switch ($type) {
                 case 'all_ansar':
-                    return CustomQuery::getAllAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getAllAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'not_verified_ansar':
-                    return CustomQuery::getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'free_ansar':
-                    return CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'paneled_ansar':
-                    return CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'embodied_ansar':
-                    return CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'embodied_ansar_in_different_district':
-                    return CustomQuery::getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'own_embodied_ansar':
-                    return CustomQuery::getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'rest_ansar':
-                    return CustomQuery::getTotalRestAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalRestAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'freezed_ansar':
-                    return CustomQuery::getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'blocked_ansar':
-                    return CustomQuery::getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'blacked_ansar':
-                    return CustomQuery::getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'offerred_ansar':
-                    return CustomQuery::getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank);
             }
         } else {
             switch ($type) {
                 case 'all_ansar':
-                    return CustomQuery::getAllAnsarCount($unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getAllAnsarCount($unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'not_verified_ansar':
-                    return CustomQuery::getTotalNotVerifiedAnsarCount($unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalNotVerifiedAnsarCount($unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'free_ansar':
-                    return CustomQuery::getTotalFreeAnsarCount($unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalFreeAnsarCount($unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'paneled_ansar':
-                    return CustomQuery::getTotalPaneledAnsarCount($unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalPaneledAnsarCount($unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'embodied_ansar':
-                    return CustomQuery::getTotalEmbodiedAnsarCount($unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalEmbodiedAnsarCount($unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'own_embodied_ansar':
-                    return CustomQuery::getTotalOwnEmbodiedAnsarCount($unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalOwnEmbodiedAnsarCount($unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'embodied_ansar_in_different_district':
-                    return CustomQuery::getTotalDiffEmbodiedAnsarCount($unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalDiffEmbodiedAnsarCount($unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'rest_ansar':
-                    return CustomQuery::getTotalRestAnsarCount($unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalRestAnsarCount($unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'freezed_ansar':
-                    return CustomQuery::getTotalFreezedAnsarCount($unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalFreezedAnsarCount($unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'blocked_ansar':
-                    return CustomQuery::getTotalBlockedAnsarCount($unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalBlockedAnsarCount($unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'blacked_ansar':
-                    return CustomQuery::getTotalBlackedAnsarCount($unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalBlackedAnsarCount($unit, $thana, $division, CustomQuery::RECENT, $rank);
                 case 'offerred_ansar':
-                    return CustomQuery::getTotalOfferedAnsarCount($unit, $thana, $division,CustomQuery::RECENT,$rank);
+                    return CustomQuery::getTotalOfferedAnsarCount($unit, $thana, $division, CustomQuery::RECENT, $rank);
             }
         }
     }
@@ -447,24 +449,24 @@ class HrmController extends Controller
         $interval = Input::get('interval');
 //        return $offset;
         $rules = [
-            'view'=>'regex:/[a-z]+/',
-            'limit'=>'numeric',
-            'offset'=>'numeric',
-            'interval'=>'numeric|regex:/^[0-9]+$/',
-            'thana'=>['regex:/^(all)$|^[0-9]+$/'],
-            'unit'=>['regex:/^(all)$|^[0-9]+$/'],
-            'division'=>['regex:/^(all)$|^[0-9]+$/'],
+            'view' => 'regex:/[a-z]+/',
+            'limit' => 'numeric',
+            'offset' => 'numeric',
+            'interval' => 'numeric|regex:/^[0-9]+$/',
+            'thana' => ['regex:/^(all)$|^[0-9]+$/'],
+            'unit' => ['regex:/^(all)$|^[0-9]+$/'],
+            'division' => ['regex:/^(all)$|^[0-9]+$/'],
         ];
-        $valid = Validator::make(Input::all(),$rules);
+        $valid = Validator::make(Input::all(), $rules);
 
-        if($valid->fails()){
+        if ($valid->fails()) {
             //return print_r($valid->messages());
-            return response("Invalid Request(400)",400);
+            return response("Invalid Request(400)", 400);
         }
         if (strcasecmp($view, 'view') == 0) {
-            return CustomQuery::ansarListForServiceEnded($offset, $limit, $unit, $thana,$division,$interval);
+            return CustomQuery::ansarListForServiceEnded($offset, $limit, $unit, $thana, $division, $interval);
         } else {
-            return CustomQuery::ansarListForServiceEndedCount($unit, $thana,$division,$interval);
+            return CustomQuery::ansarListForServiceEndedCount($unit, $thana, $division, $interval);
         }
     }
 
@@ -483,23 +485,23 @@ class HrmController extends Controller
         $view = Input::get('view');
         $division = Input::get('division');
         $rules = [
-            'view'=>'regex:/[a-z]+/',
-            'limit'=>'numeric',
-            'offset'=>'numeric',
-            'thana'=>['regex:/^(all)$|^[0-9]+$/'],
-            'unit'=>['regex:/^(all)$|^[0-9]+$/'],
-            'division'=>['regex:/^(all)$|^[0-9]+$/'],
+            'view' => 'regex:/[a-z]+/',
+            'limit' => 'numeric',
+            'offset' => 'numeric',
+            'thana' => ['regex:/^(all)$|^[0-9]+$/'],
+            'unit' => ['regex:/^(all)$|^[0-9]+$/'],
+            'division' => ['regex:/^(all)$|^[0-9]+$/'],
         ];
-        $valid = Validator::make(Input::all(),$rules);
+        $valid = Validator::make(Input::all(), $rules);
 
-        if($valid->fails()){
+        if ($valid->fails()) {
             //return print_r($valid->messages());
-            return response("Invalid Request(400)",400);
+            return response("Invalid Request(400)", 400);
         }
         if (strcasecmp($view, 'view') == 0) {
-            return CustomQuery::ansarListWithFiftyYears($offset, $limit, $unit, $thana,$division);
+            return CustomQuery::ansarListWithFiftyYears($offset, $limit, $unit, $thana, $division);
         } else {
-            return CustomQuery::getansarWithFiftyYearsCount($unit, $thana,$division);
+            return CustomQuery::getansarWithFiftyYearsCount($unit, $thana, $division);
         }
     }
 
@@ -518,23 +520,23 @@ class HrmController extends Controller
         $view = Input::get('view');
         $division = Input::get('division');
         $rules = [
-            'view'=>'regex:/[a-z]+/',
-            'limit'=>'numeric',
-            'offset'=>'numeric',
-            'thana'=>['regex:/^(all)$|^[0-9]+$/'],
-            'unit'=>['regex:/^(all)$|^[0-9]+$/'],
-            'division'=>['regex:/^(all)$|^[0-9]+$/'],
+            'view' => 'regex:/[a-z]+/',
+            'limit' => 'numeric',
+            'offset' => 'numeric',
+            'thana' => ['regex:/^(all)$|^[0-9]+$/'],
+            'unit' => ['regex:/^(all)$|^[0-9]+$/'],
+            'division' => ['regex:/^(all)$|^[0-9]+$/'],
         ];
-        $valid = Validator::make(Input::all(),$rules);
+        $valid = Validator::make(Input::all(), $rules);
 
-        if($valid->fails()){
+        if ($valid->fails()) {
             //return print_r($valid->messages());
-            return response("Invalid Request(400)",400);
+            return response("Invalid Request(400)", 400);
         }
         if (strcasecmp($view, 'view') == 0) {
-            return CustomQuery::ansarListForNotInterested($offset, $limit, $unit, $thana,$division);
+            return CustomQuery::ansarListForNotInterested($offset, $limit, $unit, $thana, $division);
         } else {
-            return CustomQuery::getansarForNotInterestedCount($unit, $thana,$division);
+            return CustomQuery::getansarForNotInterestedCount($unit, $thana, $division);
         }
     }
 
@@ -601,24 +603,24 @@ class HrmController extends Controller
     function updateGlobalParameter()
     {
         $rules = [
-            'id'=>'required|numeric',
-            'pv'=>'required|numeric|regex:/^[0-9]+$/',
-            'pu'=>'regex:/^[a-zA-Z]+$/',
-            'pd'=>'regex:/^[a-zA-Z\s]+$/',
-            'pp'=>'numeric|regex:/^[0-9]+$/'
+            'id' => 'required|numeric',
+            'pv' => 'required|numeric|regex:/^[0-9]+$/',
+            'pu' => 'regex:/^[a-zA-Z]+$/',
+            'pd' => 'regex:/^[a-zA-Z\s]+$/',
+            'pp' => 'numeric|regex:/^[0-9]+$/'
         ];
         $messages = [
-            'pv.required'=>'Parameter value is required',
-            'pv.numeric'=>'Parameter value must be numeric.eg 1,2..',
-            'pv.regex'=>'Parameter value must be numeric.eg 1,2..',
-            'pp.numeric'=>'Parameter unit must be numeric.eg 1,2..',
-            'pp.regex'=>'Parameter unit must be numeric.eg 1,2..',
-            'pu.regex'=>'Parameter unit is invalid',
-            'pd.regex'=>'Parameter description only contain a-z,A-Z and space',
+            'pv.required' => 'Parameter value is required',
+            'pv.numeric' => 'Parameter value must be numeric.eg 1,2..',
+            'pv.regex' => 'Parameter value must be numeric.eg 1,2..',
+            'pp.numeric' => 'Parameter unit must be numeric.eg 1,2..',
+            'pp.regex' => 'Parameter unit must be numeric.eg 1,2..',
+            'pu.regex' => 'Parameter unit is invalid',
+            'pd.regex' => 'Parameter description only contain a-z,A-Z and space',
         ];
-        $valid = Validator::make(Input::all(),$rules,$messages);
-        if($valid->fails()){
-            return response($valid->messages()->toJson(),400,['Content-Type'=>'application/json']);
+        $valid = Validator::make(Input::all(), $rules, $messages);
+        if ($valid->fails()) {
+            return response($valid->messages()->toJson(), 400, ['Content-Type' => 'application/json']);
         }
         $id = Input::get('id');
         $pv = Input::get('pv');
@@ -646,7 +648,30 @@ class HrmController extends Controller
         return View::make('HRM::global_perameter')->with('gp', GlobalParameter::all());
     }
 
-    function getTemplate($key){
-        return View::make('HRM::Partial_view.'.$key.'_list');
+    function getTemplate($key)
+    {
+        return View::make('HRM::Partial_view.' . $key . '_list');
+    }
+
+    function ansarAcceptOfferLastFiveDays(Request $request)
+    {
+        $rules = [
+            'division' => ['required','regex:/^(all)||[0-9]+$/'],
+            'unit' => ['required','regex:/^(all)||[0-9]+$/'],
+            'thana' => ['required','regex:/^(all)||[0-9]+$/'],
+            'rank' => ['required','regex:/^(all)||[0-9]+$/'],
+            'sex' => ['required','regex:/^(all)||[0-9]+$/'],
+            'offset'=>'numeric',
+            'limit'=>'numeric',
+        ];
+        $valid = Validator::make($request->all(),$rules);
+        if($valid->fails()){
+            return response($valid->messages()->toJson(),422,['Content-Type'=>'application/json']);
+        }
+        $result = CustomQuery::ansarAcceptOfferLastFiveDays($request->division,$request->unit,$request->thana,$request->rank,$request->sex,$request->type,$request->offset,$request->limit);
+        if($result===false){
+            return response("Invalid Request",400,['Content-Type'=>'text/html']);
+        }
+        return $result;
     }
 }

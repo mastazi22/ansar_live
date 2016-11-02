@@ -10,6 +10,20 @@
     <script>
         GlobalApp.controller('AnsarListController', function ($scope, $http,$sce,httpService) {
            $scope.ansarType = 'offerred_ansar';
+            $scope.genders = [
+                {
+                    text:'Male',
+                    value:'Male'
+                },
+                {
+                    text:'Female',
+                    value:'Female'
+                },
+                {
+                    text:'Other',
+                    value:'Other'
+                }
+            ]
             $scope.user_type = parseInt("{{auth()->user()->type}}")
             $scope.isDc = false;
             if($scope.user_type==22){
@@ -26,6 +40,9 @@
             $scope.numOfPage = 0
             $scope.selectedDistrict = "all";
             $scope.selectedThana = "all";
+            $scope.gender = 'all'
+            $scope.gCount = {};
+            $scope.rank = 'all'
             $scope.districts = [];
             $scope.thanas = [];
             $scope.itemPerPage = parseInt("{{config('app.item_per_page')}}");
@@ -57,16 +74,17 @@
                 $scope.loadingPage[page.pageNum]=true;
                 $scope.allLoading = true;
                 $http({
-                    url: '{{URL::to('HRM/get_ansar_list')}}',
+                    url: '{{URL::to('HRM/offer_accept_last_5_day_data')}}',
                     method: 'get',
                     params: {
-                        type: $scope.ansarType,
                         offset: page.offset,
                         limit: page.limit,
+                        type: 'view',
                         unit:$scope.selectedDistrict,
                         thana:$scope.selectedThana,
                         division:$scope.selectedDivision,
-                        view:'view'
+                        rank:$scope.rank,
+                        sex:$scope.gender
                     }
                 }).then(function (response) {
                     console.log(response.data);
@@ -79,19 +97,19 @@
 //                alert($scope.selectedDistrict)
                 $scope.allLoading = true;
                 $http({
-                    url: '{{URL::to('HRM/get_ansar_list')}}',
+                    url: '{{URL::to('HRM/offer_accept_last_5_day_data')}}',
                     method: 'get',
                     params: {
-                        type: $scope.ansarType,
+                        type: 'count',
                         unit:$scope.selectedDistrict,
                         thana:$scope.selectedThana,
                         division:$scope.selectedDivision,
-                        view:'count'
+                        rank:$scope.rank,
+                        sex:$scope.gender
                     }
                 }).then(function (response) {
-                    $scope.total = sum(response.data.total);
-                    $scope.gCount = response.data.total
-//                    sum($scope.total)
+                    $scope.total = sum(response.data);
+//                    alert($scope.total)
                     $scope.numOfPage = Math.ceil($scope.total/$scope.itemPerPage);
                     $scope.loadPagination();
                 }, function (response) {
@@ -134,6 +152,9 @@
                     $scope.loadTotal()
                 })
             }
+            httpService.rank().then(function (ranks) {
+                $scope.ranks = ranks;
+            })
             if($scope.user_type==11||$scope.user_type==33){
                 $scope.loadDivision();
             }
@@ -153,7 +174,11 @@
             function sum(t){
                 var s = 0;
                 for(var i in t){
-                    s += t[i]
+                    $scope.gCount[i] = 0;
+                    for(var j =0 ;j<t[i].length;j++){
+                        s += t[i][j].total;
+                        $scope.gCount[i] += t[i][j].total;
+                    }
                 }
                 return s;
             }
@@ -170,7 +195,7 @@
                 </div>
                 <div class="box-body">
                     <div class="row">
-                        <div class="col-sm-4" ng-show="user_type==11||user_type==33">
+                        <div class="col-md-3 col-sm-4 col-xs-12" ng-show="user_type==11||user_type==33">
                             <div class="form-group">
                                 <label class="control-label">@lang('title.range')&nbsp;
                                     <img ng-show="loadingDivision" src="{{asset('dist/img/facebook.gif')}}"
@@ -181,7 +206,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-4" ng-show="user_type==11||user_type==66||user_type==33">
+                        <div class="col-md-3 col-sm-4 col-xs-12" ng-show="user_type==11||user_type==66||user_type==33">
                             <div class="form-group">
                                 <label class="control-label">@lang('title.unit')&nbsp;
                                     <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
@@ -192,7 +217,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-md-2 col-sm-4 col-xs-12">
                             <div class="form-group">
                                 <label class="control-label">@lang('title.thana')&nbsp;
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
@@ -204,10 +229,30 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-md-2 col-sm-4 col-xs-12">
+                            <div class="form-group">
+                                <label class="control-label">@lang('title.sex')
+                                </label>
+                                <select class="form-control" ng-model="gender" ng-change="loadTotal()">
+                                    <option value="all">All</option>
+                                    <option ng-repeat="t in genders" value="[[t.value]]">[[t.text]]</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-sm-4 col-xs-12">
+                            <div class="form-group">
+                                <label class="control-label">@lang('title.rank')
+                                </label>
+                                <select class="form-control" ng-model="rank" ng-change="loadTotal()">
+                                    <option value="all">All</option>
+                                    <option ng-repeat="t in ranks" value="[[t.id]]">[[t.name_eng]]</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <h4 class="text text-bold">Total Ansars :PC([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])&nbsp;APC([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])&nbsp;ANSAR([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</h4>
                     <div class="table-responsive">
-                        <template-list data="ansars" key="offerred_ansar"></template-list>
+                        <template-list data="ansars" key="offerred_ansar_accept_last_5_days"></template-list>
                         <div class="table_pagination" ng-if="pages.length>1">
                             <ul class="pagination">
                                 <li ng-class="{disabled:currentPage == 0}">

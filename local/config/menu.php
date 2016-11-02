@@ -2,11 +2,11 @@
 
 return [
     "hrm" => [
-        "Kpi Branch" => [
+        "KPI Branch" => [
             "route" => "#",
             "icon" => "fa-building",
             "children" => [
-                "Active Kpi Information" => [
+                "Active KPI Information" => [
                     "route" => "kpi_view",
                     "icon" => "fa-dashboard",
                 ],
@@ -23,14 +23,14 @@ return [
                     "icon" => "fa-dashboard",
                 ],
 
-                "Withdraw Kpi" => [
+                "Withdraw KPI" => [
                     "route" => "kpi-withdraw-view", "icon" => "fa-dashboard",
                 ],
-//                "Kpi Withdraw Date Update" => [
+//                "KPI Withdraw Date Update" => [
 //                    "route" => "withdrawn_kpi_view",
 //                    "icon" => "fa-dashboard",
 //                ],
-//                "Inactive Kpi List" => [
+//                "Inactive KPI List" => [
 //                    "route" => "inactive_kpi_view",
 //                    "icon" => "fa-dashboard",
 //                ],
@@ -160,11 +160,11 @@ return [
                     ]
 
                 ],
-                "Ansar Transfer(Single Kpi)" => [
+                "Ansar Transfer(Single KPI)" => [
                     "route" => "transfer_process",
                     "icon" => "fa-dashboard",
                 ],
-                "Ansar Transfer(Multiple Kpi)" => [
+                "Ansar Transfer(Multiple KPI)" => [
                     "route" => "multiple_kpi_transfer_process",
                     "icon" => "fa-dashboard",
                 ],

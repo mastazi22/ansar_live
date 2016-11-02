@@ -203,6 +203,14 @@ GlobalApp.factory('httpService', function ($http) {
             })
 
         },
+        rank: function () {
+            return $http({
+                url: '/' + prefix + 'HRM/ansar_rank',
+                method: 'get'
+            }).then(function (response) {
+                return response.data;
+            })
+        }
     }
 })
 GlobalApp.factory('notificationService', function () {

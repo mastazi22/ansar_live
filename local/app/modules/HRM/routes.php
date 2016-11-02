@@ -28,6 +28,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/get_ansar_list', ['as' => 'get_ansar_list', 'uses' => 'HrmController@getAnsarList']);
         Route::get('/service_ended_in_three_years/{count}', ['as' => 'service_ended_in_three_years', 'uses' => 'HrmController@showAnsarForServiceEnded'])->where('count','^[0-9,]+$');
         Route::get('/offer_accept_last_5_day', ['as' => 'offer_accept_last_5_day', 'uses' => 'HrmController@offerAcceptLastFiveDays']);
+        Route::get('/offer_accept_last_5_day_data', ['as' => 'offer_accept_last_5_day_data', 'uses' => 'HrmController@ansarAcceptOfferLastFiveDays']);
         Route::get('/service_ended_info_details', ['as' => 'service_ended_info_details', 'uses' => 'HrmController@serviceEndedInfoDetails']);
 
         Route::get('/ansar_not_interested/{count}', ['as' => 'ansar_not_interested', 'uses' => 'HrmController@showAnsarForNotInterested'])->where('count','^[0-9,]+$');
@@ -360,7 +361,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('/kpi-withdraw-cancel-update/{id}', ['as'=>'kpi-withdraw-cancel-update','uses'=>'KpiController@kpiWithdrawCancelUpdate'])->where('id','^[0-9]+$');
 //End KPI
         Route::get('testt',function(){
-           return UserPermission::isPermissionExists('ansar_not_interested1');
+           return \App\modules\HRM\Models\CustomQuery::ansarAcceptOfferLastFiveDays('all','all','all','all','all','count');
         });
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
