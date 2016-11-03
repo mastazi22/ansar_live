@@ -12,16 +12,11 @@
         GlobalApp.controller('AnsarFiftyYearsReachedListController', function ($scope, $http,$sce,$compile) {
             $scope.total = 0;
             $scope.numOfPage = 0;
-            $scope.selectedDistrict = "all";
-            $scope.selectedThana = "all"
-            $scope.districts = [];
-            $scope.thanas = [];
+            $scope.param = {}
             $scope.itemPerPage = 20
             $scope.currentPage = 0;
             $scope.ansars = $sce.trustAsHtml("");
             $scope.pages = [];
-            $scope.loadingDistrict = true;
-            $scope.loadingThana = false;
             $scope.loadingPage = [];
             $scope.allLoading = true;
             $scope.errorFound=0;
@@ -49,24 +44,27 @@
                     params: {
                         offset: page.offset,
                         limit: page.limit,
-                        unit:$scope.selectedDistrict,
-                        thana:$scope.selectedThana,
+                        unit:$scope.param.unit,
+                        thana:$scope.param.thana,
+                        division:$scope.param.range,
                         view:'view'
                     }
                 }).then(function (response) {
-                    $scope.ansars = $compile(response.data)($scope);
+                    $scope.ansars = $sce.trustAsHtml(response.data);
                     $scope.loadingPage[page.pageNum]=false;
                     $scope.allLoading = false;
                 })
             }
-            $scope.loadTotal = function () {
+            $scope.loadTotal = function (param) {
+                $scope.param = param;
                 $scope.allLoading = true;
                 $http({
                     url: '{{URL::route('ansar_reached_fifty_details')}}',
                     method: 'get',
                     params: {
-                        unit:$scope.selectedDistrict,
-                        thana:$scope.selectedThana,
+                        unit:param.unit,
+                        thana:param.thana,
+                        division:param.range,
                         view:'count'
                     }
                 }).then(function (response) {
@@ -75,10 +73,7 @@
                     $scope.loadPagination();
                     //alert($scope.total)
                 }, function (response) {
-                    $scope.total = 0;
-                    $scope.ansars = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
-                    $scope.allLoading = false;
-                    $scope.pages = [];
+
                 })
             }
             $scope.filterMiddlePage = function (value, index, array) {
@@ -88,28 +83,6 @@
                     return true;
                 }
             }
-            $http({
-                method:'get',
-                url:'{{URL::to('HRM/DistrictName')}}'
-            }).then(function (response) {
-                $scope.districts = response.data;
-                $scope.loadingDistrict = false;
-            })
-            $scope.loadThana = function (d_id) {
-                $scope.loadingThana = true;
-                $scope.allLoading = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/ThanaName')}}',
-                    params: {id: d_id}
-                }).then(function (response) {
-                    $scope.thanas = response.data;
-                    $scope.selectedThana = "all";
-                    $scope.loadingThana = false;
-                    $scope.loadTotal()
-                })
-            }
-            $scope.loadTotal()
         })
     </script>
     <div ng-controller="AnsarFiftyYearsReachedListController">
@@ -121,31 +94,18 @@
                     </span>
                 </div>
                 <div class="box-body">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label">@lang('title.unit')&nbsp;
-                                    <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
-                                         width="16"></label>
-                                <select class="form-control" ng-model="selectedDistrict" ng-change="loadThana(selectedDistrict)">
-                                    <option value="all">All</option>
-                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label">@lang('title.thana')&nbsp;
-                                    <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
-                                         width="16">
-                                </label>
-                                <select class="form-control" ng-model="selectedThana" ng-change="loadTotal()">
-                                    <option value="all">All</option>
-                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                    <filter-template
+                            show-item="['range','unit','thana']"
+                            type="all"
+                            range-change="loadTotal(param)"
+                            unit-change="loadTotal(param)"
+                            thana-change="loadTotal(param)"
+                            range-load="loadTotal(param)"
+                            start-load="range"
+                            field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
+                    >
+
+                    </filter-template>
                     <h4>Total Ansars: [[total.toLocaleString()]]</h4>
                     <div class="table-responsive">
                         <table class="table table-bordered">

@@ -13,21 +13,10 @@
             $('#kpi_withdraw_date').datePicker(true);
         })
         GlobalApp.controller('ReportGuardSearchController', function ($scope, $http, $sce) {
-            $scope.isAdmin = parseInt('{{Auth::user()->type}}')
-            $scope.districts = [];
-            $scope.thanas = [];
-            $scope.selectedDistrict = "";
-            $scope.selectedThana = "";
-            $scope.selectedKpi = "";
-            $scope.guards = [];
-            $scope.guardDetail = [];
             $scope.ansars = [];
-            $scope.loadingUnit = false;
-            $scope.loadingThana = false;
-            $scope.loadingKpi = false;
-            $scope.report = {};
             $scope.reportType = 'eng';
             $scope.memorandumId = "";
+            $scope.params = ''
             $scope.isVerified = false;
             $scope.isVerifying = false;
             $scope.allLoading = false;
@@ -50,65 +39,23 @@
 
                 })
             }
-            $scope.loadDistrict = function () {
-                $scope.loadingUnit = true;
+            $scope.loadAnsar = function (param) {
+                $scope.allLoading = true;
                 $http({
                     method: 'get',
-                    url: '{{URL::to('HRM/DistrictName')}}'
-                }).then(function (response) {
-                    $scope.districts = response.data;
-                    $scope.loadingUnit = false;
-                    $scope.thanas = [];
-                    $scope.selectedThana = "";
-                })
-            }
-            $scope.loadThana = function (id) {
-                $scope.loadingThana = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/ThanaName')}}',
-                    params: {id: id}
-                }).then(function (response) {
-                    $scope.thanas = response.data;
-                    $scope.selectedThana = "";
-                    $scope.loadingThana = false;
-                })
-            }
-            $scope.loadGuard = function (id) {
-                $scope.loadingKpi = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::route('kpi_name')}}',
-                    params: {id: id}
-                }).then(function (response) {
-                    $scope.guards = response.data;
-                    $scope.selectedKpi = "";
-                    $scope.loadingKpi = false;
-                })
-            }
-            $scope.loadAnsar = function (id) {
-                $http({
-                    method: 'get',
-                    url: '{{URL::route('guard_list')}}',
-                    params: {kpi_id: id}
+                    url: '{{URL::route('ansar_list_for_withdraw')}}',
+                    params: param
                 }).then(function (response) {
                     $scope.errorFound = 0;
-                    $scope.ansars = response.data.ansars;
-                    $scope.guardDetail = response.data.guard;
+                    $scope.ansars = response.data;
+                    $scope.allLoading = false;
                 },function(response){
+                    $scope.allLoading = false;
                     $scope.errorFound = 1;
                     $scope.ansars = [];
                     $scope.guardDetail = [];
                     $scope.errorMessage = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
                 })
-            }
-            if ($scope.isAdmin == 11) {
-                $scope.loadDistrict()
-            }
-            else {
-                if (!isNaN($scope.dcDistrict)) {
-                    $scope.loadThana($scope.dcDistrict)
-                }
             }
 
         })
@@ -149,83 +96,49 @@
         @endif
         <section class="content">
             <div class="box box-solid">
-                <div class="overlay" id="all-loading" style="display: none;">
+                <div class="overlay" ng-if="allLoading">
                     <span class="fa">
                         <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
                     </span>
                 </div>
                 <div class="box-body">
+                    <filter-template
+                            show-item="['range','unit','thana','kpi]"
+                            type="single"
+                            kpi-change="loadAnsar(param)"
+                            start-load="range"
+                            field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
+                            data="params"
+                    ></filter-template>
                     <div class="row">
-                        <div class="col-sm-4" ng-show="isAdmin==11">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    @lang('title.unit')&nbsp;&nbsp;
-                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                         ng-show="loadingUnit">
-                                </label>
-                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                        ng-model="selectedDistrict"
-                                        ng-change="loadThana(selectedDistrict)" name="unit_id">
-                                    <option value="">--@lang('title.unit')--</option>
-                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    @lang('title.thana')&nbsp;&nbsp;
-                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                         ng-show="loadingThana">
-                                </label>
-                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                        ng-model="selectedThana"
-                                        ng-change="loadGuard(selectedThana)" name="thana_id">
-                                    <option value="">--@lang('title.thana')--</option>
-                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    @lang('title.kpi')&nbsp;&nbsp;
-                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                         ng-show="loadingKpi">
-                                </label>
-                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                        ng-model="selectedKPI"
-                                        id="kpi_name_list" name="kpi_name_list">
-                                    <option value="">--@lang('title.kpi')--</option>
-                                    <option ng-repeat="d in guards" value="[[d.id]]">[[d.kpi_name]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
                         <div class="col-md-12">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="pc-table">
+                                <table class="table table-bordered">
 
                                     <tr>
                                         <th>Sl No.</th>
                                         <th>Ansar ID</th>
                                         <th>Ansar Name</th>
                                         <th>Ansar Designation</th>
-                                        <th>Ansar Sex</th>
-                                        <th>KPI Name</th>
-                                        <th>KPI District</th>
-                                        <th>KPI Unit</th>
+                                        <th>Ansar Gender</th>
+                                        <th>Home District</th>
                                         <th>Reporting Date</th>
                                         <th>Embodiment Date</th>
                                     </tr>
-                                    <tbody ng-if="errorFound==1" ng-bind-html="errorMessage"></tbody>
-                                    <tbody id="ansar-all" class="status">
-                                    <tr colspan="10" class="warning" id="not-find-info" ng-if="errorFound==0">
+                                    <tr ng-repeat="a in ansars">
+                                        <td>[[$index+1]]</td>
+                                        <td>[[a.ansar_id]]</td>
+                                        <td>[[a.ansar_name_eng]]</td>
+                                        <td>[[a.name_bng]]</td>
+                                        <td>[[a.sex]]</td>
+                                        <td>[[a.unit_name_bng]]</td>
+                                        <td>[[a.reporting_date|dateformat:'DD-MMM-YYYY']]</td>
+                                        <td>[[a.joining_date|dateformat:'DD-MMM-YYYY']]</td>
+                                    </tr>
+
+                                    <tr colspan="7" class="warning" ng-if="ansars.length<=0">
                                         <td colspan="10">No Ansar is available to Withdraw</td>
                                     </tr>
-                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -234,7 +147,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <button class="pull-right btn btn-primary" id="withdraw-guard-confirmation" open-hide-modal disabled>
+                    <button class="pull-right btn btn-primary" id="withdraw-guard-confirmation" ng-disabled="ansars.length<=0||!params.kpi" open-hide-modal>
                         Withdraw Ansar
                     </button>
                 </div>
@@ -317,63 +230,4 @@
             <!-- /.row -->
         </section>
     </div>
-    <script>
-        var h = "";
-        $.ajaxSetup({
-            headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'}
-        })
-        //$('#withdraw-guard-confirmation').prop('disabled', true);
-
-        $('#kpi_name_list').change(function () {
-            $("#all-loading").css('display', 'block');
-            var selectedKPIName = $('select[name=kpi_name_list]').val();
-            $.ajax({
-                url: '{{URL::route('ansar_list_for_withdraw')}}',
-                type: 'get',
-                data: {selected_name: selectedKPIName},
-                success: function (data) {
-//                    $("#ansar-all").html(data);
-//                    h = data;
-//                    var rowCount = $('#ansar-withdraw-table tbody tr').length;
-//                    if(($("tbody").is(":empty"))){
-//                        $('#withdraw-guard-confirmation').prop('disabled', true);
-//                    } else {
-//                        $('#withdraw-guard-confirmation').prop('disabled', false);
-//                    }
-                    $("#all-loading").css('display', 'none');
-
-                    if (data.result == undefined && data.valid == undefined) {
-                        $('#withdraw-guard-confirmation').prop('disabled', false);
-                        $("#ansar-all").html(data);
-                        h = data;
-                    }
-                    else if (data.result!=undefined && data.valid == undefined){
-                        $('#withdraw-guard-confirmation').prop('disabled', true);
-//                        alert($("#status-all").html())
-                        $("#ansar-all").html('<tr colspan="11" class="warning" id="not-find-info"> <td colspan="11">No Ansar is available to Withdraw</td></tr>');
-                    }else if(data.result==undefined && data.valid != undefined){
-                        $('#withdraw-guard-confirmation').prop('disabled', true);
-//                        alert($("#status-all").html())
-                        $("#ansar-all").html('<tr colspan="11" class="warning" id="not-find-info"> <td colspan="11">Invalid Request (400)</td></tr>');
-                    }
-                }
-            });
-        })
-
-
-        $('#withdraw-guard-confirmation').click(function (e) {
-            e.preventDefault();
-            if (h) {
-                $('#cansar-all').html(h);
-                var l = $('#cansar-all').children('tr').children('td').length;
-                if (l > 1) {
-                    $('#cansar-all').children('tr').each(function () {
-                        $($(this).children('td')[$(this).children('td').length - 1]).remove()
-                        $($(this).children('td')[$(this).children('td').length - 1]).remove()
-//                        $($(this).children('td')[$(this).children('td').length - 3]).remove()
-                    })
-                }
-            }
-        });
-    </script>
 @stop

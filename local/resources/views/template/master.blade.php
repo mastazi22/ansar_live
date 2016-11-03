@@ -37,7 +37,7 @@
             })
         });
 
-        GlobalApp.controller('MenuController', function ($scope) {
+        GlobalApp.controller('MenuController', function ($scope,$rootScope) {
             $scope.menu = [];
             var permission = '{{auth()->user()->userPermission->permission_list?auth()->user()->userPermission->permission_list:""}}'
             var p_type = parseInt('{{auth()->user()->userPermission->permission_type}}')
@@ -179,6 +179,13 @@
                 <small class="small-title">@yield('small_title')</small>
             </h1>
         </section>
+        <div class="fade" ng-if="loadingView" ng-class="{in:loadingView}" style="position: absolute;width:100%;height: 100%;z-index:10;background: #ffffff">
+            <div style="position: absolute;margin-top: 25%;margin-left: 50%;transform: translate(-50%,-50%);font-size: 1.2em">
+                <i class="fa fa-spinner fa-pulse fa-2x"></i>&nbsp;&nbsp;<span class="text text-bold" style="vertical-align: super">
+                    LOADING......
+                </span>
+            </div>
+        </div>
         @yield('content')
     </div>
 
@@ -196,15 +203,10 @@
                 //console.log({beforeurl:$.cookie('ftt')})
                 $.cookie('ftt', null);
                 $.cookie('ftt', url);
-
-                console.log({afterurl: $.cookie()})
-                //console.log({afterurl:url})
             }
             else {
                 var s = $.cookie();
                 p = $('a[href="' + s.ftt + '"]')
-                console.log($.cookie())
-                console.log({sss: s.ftt})
             }
             //alert(p.text())
             if (p.parents('.sidebar-menu').length > 0) {

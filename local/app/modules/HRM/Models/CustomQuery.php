@@ -136,55 +136,78 @@ class CustomQuery
 
     }
 
-    public static function getNotVerifiedAnsar($limit, $offset, $sort = "desc")
+    public static function getNotVerifiedAnsar($limit, $offset, $sort = "desc",$division=null,$unit=null,$thana=null,$type)
     {
         $user = Auth::user();
         $usertype = $user->type;
-        if ($usertype == 11 || $usertype == 22 || $usertype == 33) {
+        $ansar = [];
+        DB::enableQueryLog();
+        if ($usertype == 11 || $usertype == 22 || $usertype == 33||$usertype==66) {
             $ansar = DB::table('tbl_ansar_parsonal_info')
                 ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
                 ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
                 ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                ->where('tbl_ansar_parsonal_info.verified', 0)->orWhere('tbl_ansar_parsonal_info.verified', 1)->skip($offset)->take($limit)->orderBy('tbl_ansar_parsonal_info.ansar_id', $sort)
-                ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.verified', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.father_name_eng', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.data_of_birth')
-                ->get();
-            return $ansar;
+                ->where(function($q){
+                    $q->where('tbl_ansar_parsonal_info.verified', 0)->orWhere('tbl_ansar_parsonal_info.verified', 1);
+                });
+
+//            return $ansar;
         } elseif ($usertype == 44) {
             $ansar = DB::table('tbl_ansar_parsonal_info')
                 ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
                 ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
                 ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                ->where('tbl_ansar_parsonal_info.verified', 1)->where('tbl_ansar_parsonal_info.ansar_id', '>', GlobalParameterFacades::getValue("last_ansar_id"))->skip($offset)->take($limit)->orderBy('tbl_ansar_parsonal_info.ansar_id', $sort)
-                ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.verified', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.father_name_eng', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.data_of_birth')
-                ->get();
-            return $ansar;
+                ->where('tbl_ansar_parsonal_info.verified', 1)->where('tbl_ansar_parsonal_info.ansar_id', '>', GlobalParameterFacades::getValue("last_ansar_id"));
+//            return $ansar;
         } elseif ($usertype == 55) {
             $ansar = DB::table('tbl_ansar_parsonal_info')
                 ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
                 ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
                 ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                ->where('tbl_ansar_parsonal_info.verified', 0)->where('tbl_ansar_parsonal_info.user_id', $user->id)->skip($offset)->take($limit)->orderBy('tbl_ansar_parsonal_info.ansar_id', $sort)
+                ->where('tbl_ansar_parsonal_info.verified', 0)->where('tbl_ansar_parsonal_info.user_id', $user->id);
+//            return $ansar;
+        }
+        else{
+            return false;
+        }
+        if($division&&$division!='all'){
+            $ansar->where('tbl_ansar_parsonal_info.division_id',$division);
+        }
+        if($unit&&$unit!='all'){
+            $ansar->where('tbl_ansar_parsonal_info.unit_id',$unit);
+        }
+        if($thana&&$thana!='all'){
+            $ansar->where('tbl_ansar_parsonal_info.thana_id',$thana);
+        }
+        if($type=='view') {
+            $b = $ansar->skip($offset)->take($limit)->orderBy('tbl_ansar_parsonal_info.ansar_id', $sort)
                 ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.verified', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.father_name_eng', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.data_of_birth')
                 ->get();
-            return $ansar;
+            return $b;
         }
+        else{
+//            return "asdaasdasdsa";
+            $t = $ansar->count();
+//            return DB::getQueryLog();
+            return ['total'=>$t];
+        }
+//        return DB::getQueryLog();
+
     }
 
-    public static function getVerifiedAnsar($limit, $offset, $sort = 'desc')
+    public static function getVerifiedAnsar($limit, $offset, $sort = 'desc',$division=null,$unit=null,$thana=null,$type)
     {
         $user = Auth::user();
         $usertype = $user->type;
         $userId = $user->id;
+        $ansar = '';
         if ($usertype == 11 || $usertype == 22 || $usertype == 33) {
             $ansar = DB::table('tbl_ansar_parsonal_info')
                 ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
                 ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
                 ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                ->where('tbl_ansar_parsonal_info.verified', 2)->skip($offset)->take($limit)
-                ->orderBy('tbl_ansar_parsonal_info.ansar_id', $sort)
-                ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.verified', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.father_name_eng', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.data_of_birth')
-                ->get();
-            return $ansar;
+                ->where('tbl_ansar_parsonal_info.verified', 2);
+            //return $ansar;
         } elseif ($usertype == 44) {
             $ansar = DB::table('tbl_ansar_parsonal_info')
                 ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
@@ -193,22 +216,41 @@ class CustomQuery
                 ->join('tbl_user_action_log', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_user_action_log.ansar_id')
                 ->where('tbl_user_action_log.to_state', '=', 'FREE')
                 ->where('tbl_user_action_log.action_by', '=', $userId)
-                ->where('tbl_ansar_parsonal_info.verified', 2)->where('tbl_ansar_parsonal_info.ansar_id', '>', GlobalParameterFacades::getValue("last_ansar_id"))->skip($offset)->take($limit)
-                ->orderBy('tbl_ansar_parsonal_info.ansar_id', $sort)
-                ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.verified', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.father_name_eng', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.data_of_birth')
-                ->get();
-            return $ansar;
+                ->where('tbl_ansar_parsonal_info.verified', 2)->where('tbl_ansar_parsonal_info.ansar_id', '>', GlobalParameterFacades::getValue("last_ansar_id"));
+           // return $ansar;
         } elseif ($usertype == 55) {
             $ansar = DB::table('tbl_ansar_parsonal_info')
                 ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
                 ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
                 ->join('tbl_user_action_log', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_user_action_log.ansar_id')
                 ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                ->where('tbl_ansar_parsonal_info.verified', 1)->where('tbl_user_action_log.action_type', 'VERIFIED')->where('tbl_user_action_log.action_by', $user->id)->skip($offset)->take($limit)
+                ->where('tbl_ansar_parsonal_info.verified', 1)->where('tbl_user_action_log.action_type', 'VERIFIED')->where('tbl_user_action_log.action_by', $user->id);
+            //return $ansar;
+        }
+        else {
+            return false;
+        }
+        if($division&&$division!='all'){
+            $ansar->where('tbl_ansar_parsonal_info.division_id',$division);
+        }
+        if($unit&&$unit!='all'){
+            $ansar->where('tbl_ansar_parsonal_info.unit_id',$unit);
+        }
+        if($thana&&$thana!='all'){
+            $ansar->where('tbl_ansar_parsonal_info.thana_id',$thana);
+        }
+        if($type=='view') {
+            $b = $ansar->skip($offset)->take($limit)
                 ->orderBy('tbl_ansar_parsonal_info.ansar_id', $sort)
                 ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.verified', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.father_name_eng', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.data_of_birth')
                 ->get();
-            return $ansar;
+            return $b;
+        }
+        else{
+//            return "asdaasdasdsa";
+            $t = $ansar->count();
+//            return DB::getQueryLog();
+            return ['total'=>$t];
         }
     }
 
@@ -1209,75 +1251,19 @@ class CustomQuery
 
     public static function ansarListWithFiftyYears($offset, $limit, $unit, $thana, $division = null)
     {
-
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.thana_id', '=', $thana)
-                    ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
-
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.unit_id', '=', $unit)
-                    ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.unit_id', '=', $unit)
-                    ->where('tbl_ansar_parsonal_info.thana_id', '=', $thana)
-                    ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', '=', $division)
-                    ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', '=', $division)
-                    ->where('tbl_ansar_parsonal_info.thana_id', '=', $thana)
-                    ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
-
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', '=', $division)
-                    ->where('tbl_ansar_parsonal_info.unit_id', '=', $unit)
-                    ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', '=', $division)
-                    ->where('tbl_ansar_parsonal_info.unit_id', '=', $unit)
-                    ->where('tbl_ansar_parsonal_info.thana_id', '=', $thana)
-                    ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
-            }
+        $ansarQuery = DB::table('tbl_ansar_parsonal_info')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+            ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
+            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+            ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
+        if($division&&$division!='all'){
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', '=', $division);
+        }
+        if($unit!='all'){
+            $ansarQuery->where('tbl_ansar_parsonal_info.unit_id', '=', $unit);
+        }
+        if($thana!='all'){
+            $ansarQuery->where('tbl_ansar_parsonal_info.thana_id', '=', $thana);
         }
 
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();
@@ -1287,77 +1273,24 @@ class CustomQuery
     public static function getansarWithFiftyYearsCount($unit, $thana, $division = null)
     {
         DB::enableQueryLog();
-        if (is_null($division)) {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.thana_id', '=', $thana)
-                    ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
-
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.unit_id', '=', $unit)
-                    ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.unit_id', '=', $unit)
-                    ->where('tbl_ansar_parsonal_info.thana_id', '=', $thana)
-                    ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
-            }
-        } else {
-            if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', '=', $division)
-                    ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
-
-            } else if (strcasecmp($unit, 'all') == 0 && strcasecmp($thana, 'all') != 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', '=', $division)
-                    ->where('tbl_ansar_parsonal_info.thana_id', '=', $thana)
-                    ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
-
-            } else if (strcasecmp($unit, 'all') != 0 && strcasecmp($thana, 'all') == 0) {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', '=', $division)
-                    ->where('tbl_ansar_parsonal_info.unit_id', '=', $unit)
-                    ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
-            } else {
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.division_id', '=', $division)
-                    ->where('tbl_ansar_parsonal_info.unit_id', '=', $unit)
-                    ->where('tbl_ansar_parsonal_info.thana_id', '=', $thana)
-                    ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
-            }
+        //return $division;
+        $ansarQuery = DB::table('tbl_ansar_parsonal_info')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+            ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
+            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+            ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
+        if($division&&$division!='all'){
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', '=', $division);
         }
+        if($unit!='all'){
+            $ansarQuery->where('tbl_ansar_parsonal_info.unit_id', '=', $unit);
+        }
+        if($thana!='all'){
+            $ansarQuery->where('tbl_ansar_parsonal_info.thana_id', '=', $thana);
+        }
+
         $total = $ansarQuery->count('tbl_ansar_parsonal_info.ansar_id');
-//        print_r(DB::getQueryLog());
+//        return DB::getQueryLog();
         return Response::json(['total' => $total]);
     }
 

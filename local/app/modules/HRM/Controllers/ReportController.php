@@ -36,7 +36,7 @@ class ReportController extends Controller
         $kpi = Input::get('kpi_id');
 
         $rules = [
-            'kpi_id' => 'regex:/^[0-9]+$/'
+            'kpi_id' => 'required|regex:/^[0-9]+$/'
         ];
         $valid = Validator::make(Input::all(), $rules);
 
@@ -53,7 +53,7 @@ class ReportController extends Controller
                 ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
                 ->where('tbl_kpi_info.id', '=', $kpi)
                 ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_designations.name_bng',
+                ->select('tbl_ansar_parsonal_info.ansar_id','tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_designations.name_bng',
                     'tbl_units.unit_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.joining_date')->get();
             //return DB::getQueryLog();
             $guards = DB::table('tbl_kpi_info')

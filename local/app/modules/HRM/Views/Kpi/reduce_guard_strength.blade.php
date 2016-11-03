@@ -19,6 +19,7 @@
             $scope.freezeData = {}
             $scope.transData = {}
             $scope.selected = {
+                range:'',
                 unit: '',
                 thana: '',
                 kpi: ''
@@ -26,6 +27,7 @@
             $scope.checked = []
             $scope.checkedAll = false
             $scope.trans = {
+                range:'',
                 unit: '',
                 thana: '',
                 kpi: '',
@@ -56,64 +58,64 @@
 
                 })
             }
-            $scope.loadDistrict = function () {
-                $scope.loadingUnit = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/DistrictName')}}'
-                }).then(function (response) {
-                    $scope.districts = response.data;
-                    $scope.ddistricts = response.data;
-                    $scope.loadingUnit = false;
-                    if (!$scope.trans.open) {
-                        $scope.thanas = [];
-                    }
-                    else {
-                        $scope.tthanas = [];
-                    }
-                    $scope.selected.thana = "";
-                })
-            }
-            $scope.loadThana = function (id) {
-                $scope.loadingThana = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/ThanaName')}}',
-                    params: {id: id}
-                }).then(function (response) {
-                    if (!$scope.trans.open) {
-                        $scope.thanas = response.data;
-                        $scope.selected.thana = "";
-                        $scope.guards = [];
-                        $scope.selected.kpi = "";
-                    }
-                    else {
-                        $scope.tthanas = response.data;
-                        $scope.trans.thana = "";
-                        $scope.gguards = [];
-                        $scope.trans.kpi = "";
-                    }
-                    $scope.loadingThana = false;
-                })
-            }
-            $scope.loadGuard = function (id) {
-                $scope.loadingKpi = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::route('kpi_name')}}',
-                    params: {id: id}
-                }).then(function (response) {
-                    if (!$scope.trans.open) {
-                        $scope.guards = response.data;
-                        $scope.selected.kpi = "";
-                    }
-                    else {
-                        $scope.gguards = response.data;
-                        $scope.trans.kpi = "";
-                    }
-                    $scope.loadingKpi = false;
-                })
-            }
+            {{--$scope.loadDistrict = function () {--}}
+                {{--$scope.loadingUnit = true;--}}
+                {{--$http({--}}
+                    {{--method: 'get',--}}
+                    {{--url: '{{URL::to('HRM/DistrictName')}}'--}}
+                {{--}).then(function (response) {--}}
+                    {{--$scope.districts = response.data;--}}
+                    {{--$scope.ddistricts = response.data;--}}
+                    {{--$scope.loadingUnit = false;--}}
+                    {{--if (!$scope.trans.open) {--}}
+                        {{--$scope.thanas = [];--}}
+                    {{--}--}}
+                    {{--else {--}}
+                        {{--$scope.tthanas = [];--}}
+                    {{--}--}}
+                    {{--$scope.selected.thana = "";--}}
+                {{--})--}}
+            {{--}--}}
+            {{--$scope.loadThana = function (id) {--}}
+                {{--$scope.loadingThana = true;--}}
+                {{--$http({--}}
+                    {{--method: 'get',--}}
+                    {{--url: '{{URL::to('HRM/ThanaName')}}',--}}
+                    {{--params: {id: id}--}}
+                {{--}).then(function (response) {--}}
+                    {{--if (!$scope.trans.open) {--}}
+                        {{--$scope.thanas = response.data;--}}
+                        {{--$scope.selected.thana = "";--}}
+                        {{--$scope.guards = [];--}}
+                        {{--$scope.selected.kpi = "";--}}
+                    {{--}--}}
+                    {{--else {--}}
+                        {{--$scope.tthanas = response.data;--}}
+                        {{--$scope.trans.thana = "";--}}
+                        {{--$scope.gguards = [];--}}
+                        {{--$scope.trans.kpi = "";--}}
+                    {{--}--}}
+                    {{--$scope.loadingThana = false;--}}
+                {{--})--}}
+            {{--}--}}
+            {{--$scope.loadGuard = function (id) {--}}
+                {{--$scope.loadingKpi = true;--}}
+                {{--$http({--}}
+                    {{--method: 'get',--}}
+                    {{--url: '{{URL::route('kpi_name')}}',--}}
+                    {{--params: {id: id}--}}
+                {{--}).then(function (response) {--}}
+                    {{--if (!$scope.trans.open) {--}}
+                        {{--$scope.guards = response.data;--}}
+                        {{--$scope.selected.kpi = "";--}}
+                    {{--}--}}
+                    {{--else {--}}
+                        {{--$scope.gguards = response.data;--}}
+                        {{--$scope.trans.kpi = "";--}}
+                    {{--}--}}
+                    {{--$scope.loadingKpi = false;--}}
+                {{--})--}}
+            {{--}--}}
             $scope.loadAnsar = function (id) {
                 $scope.allLoading = true;
                 $http({
@@ -204,6 +206,7 @@
             $scope.submitTransData = function () {
                 $scope.transData['kpi_id'].push($scope.trans.kpi)
                 console.log($scope.transData);
+//                return;
                 $scope.submitting = true;
                 $http({
                     url: '{{URL::route('complete_transfer_process')}}',
@@ -226,28 +229,29 @@
                     notificationService.notify('error', 'An Unknown error occur. Error Code : ' + response.status)
                 })
             }
-            $scope.actualValue = function (value, index, array) {
-
-                return value !== false;
-
-            }
             $scope.resetForm = function () {
                 $scope.trans.open = false;
                 $scope.transData = {};
                 $scope.trans.unit = ''
+                $scope.trans.range = ''
                 $scope.trans.thana = ''
                 $scope.trans.kpi = ''
                 $scope.tthanas = []
                 $scope.gguards = []
             }
-            if ($scope.isAdmin == 11) {
-                $scope.loadDistrict()
+            $scope.actualValue = function (value, index, array) {
+
+                return value !== false;
+
             }
-            else {
-                if (!isNaN($scope.dcDistrict)) {
-                    $scope.loadThana($scope.dcDistrict)
-                }
-            }
+//            if ($scope.isAdmin == 11) {
+//                $scope.loadDistrict()
+//            }
+//            else {
+//                if (!isNaN($scope.dcDistrict)) {
+//                    $scope.loadThana($scope.dcDistrict)
+//                }
+//            }
 
         })
     </script>
@@ -271,55 +275,65 @@
                     </span>
                 </div>
                 <div class="box-body">
+                    <filter-template
+                            show-item="['range','unit','thana','kpi']"
+                            type="single"
+                            kpi-change="loadAnsar()"
+                            start-load="range"
+                            field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
+                            data = "selected"
+                    >
+
+                    </filter-template>
                     <div class="row">
-                        <div class="col-sm-4" ng-show="isAdmin==11">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    @lang('title.unit')&nbsp;&nbsp;
-                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                         ng-show="loadingUnit">
-                                </label>
-                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                        ng-model="selected.unit"
-                                        ng-change="loadThana(selected.unit)">
-                                    <option value="">--@lang('title.unit')--</option>
-                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    @lang('title.thana')&nbsp;&nbsp;
-                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                         ng-show="loadingThana">
-                                </label>
-                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                        ng-model="selected.thana"
-                                        ng-change="loadGuard(selected.thana)">
-                                    <option value="">--@lang('title.thana')--</option>
-                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    @lang('title.kpi')&nbsp;&nbsp;
-                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                         ng-show="loadingKpi">
-                                </label>
-                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                        ng-model="selected.kpi" ng-change="loadAnsar()"
-                                        id="kpi_name_list_for_reduce" name="kpi_name_list_for_reduce">
-                                    <option value="">--@lang('title.kpi')--</option>
-                                    <option ng-repeat="d in guards" value="[[d.id]]">[[d.kpi_name]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
+                        {{--<div class="col-sm-4" ng-show="isAdmin==11">--}}
+                            {{--<div class="form-group">--}}
+                                {{--<label class="control-label">--}}
+                                    {{--@lang('title.unit')&nbsp;&nbsp;--}}
+                                    {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
+                                         {{--ng-show="loadingUnit">--}}
+                                {{--</label>--}}
+                                {{--<select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
+                                        {{--ng-model="selected.unit"--}}
+                                        {{--ng-change="loadThana(selected.unit)">--}}
+                                    {{--<option value="">--@lang('title.unit')--</option>--}}
+                                    {{--<option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]--}}
+                                    {{--</option>--}}
+                                {{--</select>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                        {{--<div class="col-sm-4">--}}
+                            {{--<div class="form-group">--}}
+                                {{--<label class="control-label">--}}
+                                    {{--@lang('title.thana')&nbsp;&nbsp;--}}
+                                    {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
+                                         {{--ng-show="loadingThana">--}}
+                                {{--</label>--}}
+                                {{--<select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
+                                        {{--ng-model="selected.thana"--}}
+                                        {{--ng-change="loadGuard(selected.thana)">--}}
+                                    {{--<option value="">--@lang('title.thana')--</option>--}}
+                                    {{--<option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]--}}
+                                    {{--</option>--}}
+                                {{--</select>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                        {{--<div class="col-sm-4">--}}
+                            {{--<div class="form-group">--}}
+                                {{--<label class="control-label">--}}
+                                    {{--@lang('title.kpi')&nbsp;&nbsp;--}}
+                                    {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
+                                         {{--ng-show="loadingKpi">--}}
+                                {{--</label>--}}
+                                {{--<select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
+                                        {{--ng-model="selected.kpi" ng-change="loadAnsar()"--}}
+                                        {{--id="kpi_name_list_for_reduce" name="kpi_name_list_for_reduce">--}}
+                                    {{--<option value="">--@lang('title.kpi')--</option>--}}
+                                    {{--<option ng-repeat="d in guards" value="[[d.id]]">[[d.kpi_name]]--}}
+                                    {{--</option>--}}
+                                {{--</select>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
                         <div class="col-md-12">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="pc-table">
@@ -467,58 +481,67 @@
                                 <h4 class="modal-title">Transfer Ansar</h4>
                             </div>
                             <div class="modal-body">
+                                <filter-template
+                                        show-item="['range','unit','thana','kpi']"
+                                        type="single"
+                                        start-load="range"
+                                        field-width="{range:'col-sm-7 col-centered',unit:'col-sm-7 col-centered',thana:'col-sm-7 col-centered',kpi:'col-sm-7 col-centered'}"
+                                        data = "trans"
+                                >
+
+                                </filter-template>
                                 <div class="row">
-                                    <div class="col-sm-7 col-centered" ng-show="isAdmin==11">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                @lang('title.unit')&nbsp;&nbsp;
-                                                <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                                     ng-show="loadingUnit">
-                                            </label>
-                                            <select class="form-control"
-                                                    ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                                    ng-model="trans.unit"
-                                                    ng-change="loadThana(trans.unit)">
-                                                <option value="">--@lang('title.unit')--</option>
-                                                <option ng-repeat="d in ddistricts" value="[[d.id]]">[[d.unit_name_bng]]
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-7 col-centered">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                @lang('title.thana')&nbsp;&nbsp;
-                                                <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                                     ng-show="loadingThana">
-                                            </label>
-                                            <select class="form-control"
-                                                    ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                                    ng-model="trans.thana"
-                                                    ng-change="loadGuard(trans.thana)">
-                                                <option value="">--@lang('title.thana')--</option>
-                                                <option ng-repeat="t in tthanas" value="[[t.id]]">[[t.thana_name_bng]]
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-7 col-centered">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                @lang('title.kpi')&nbsp;&nbsp;
-                                                <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                                     ng-show="loadingKpi">
-                                            </label>
-                                            <select class="form-control"
-                                                    ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                                    ng-model="trans.kpi"
-                                                    id="kpi_name_list_for_reduce" name="kpi_name_list_for_reduce">
-                                                <option value="">--@lang('title.kpi')--</option>
-                                                <option ng-repeat="d in gguards" value="[[d.id]]">[[d.kpi_name]]
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
+                                    {{--<div class="col-sm-7 col-centered" ng-show="isAdmin==11">--}}
+                                        {{--<div class="form-group">--}}
+                                            {{--<label class="control-label">--}}
+                                                {{--@lang('title.unit')&nbsp;&nbsp;--}}
+                                                {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
+                                                     {{--ng-show="loadingUnit">--}}
+                                            {{--</label>--}}
+                                            {{--<select class="form-control"--}}
+                                                    {{--ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
+                                                    {{--ng-model="trans.unit"--}}
+                                                    {{--ng-change="loadThana(trans.unit)">--}}
+                                                {{--<option value="">--@lang('title.unit')--</option>--}}
+                                                {{--<option ng-repeat="d in ddistricts" value="[[d.id]]">[[d.unit_name_bng]]--}}
+                                                {{--</option>--}}
+                                            {{--</select>--}}
+                                        {{--</div>--}}
+                                    {{--</div>--}}
+                                    {{--<div class="col-sm-7 col-centered">--}}
+                                        {{--<div class="form-group">--}}
+                                            {{--<label class="control-label">--}}
+                                                {{--@lang('title.thana')&nbsp;&nbsp;--}}
+                                                {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
+                                                     {{--ng-show="loadingThana">--}}
+                                            {{--</label>--}}
+                                            {{--<select class="form-control"--}}
+                                                    {{--ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
+                                                    {{--ng-model="trans.thana"--}}
+                                                    {{--ng-change="loadGuard(trans.thana)">--}}
+                                                {{--<option value="">--@lang('title.thana')--</option>--}}
+                                                {{--<option ng-repeat="t in tthanas" value="[[t.id]]">[[t.thana_name_bng]]--}}
+                                                {{--</option>--}}
+                                            {{--</select>--}}
+                                        {{--</div>--}}
+                                    {{--</div>--}}
+                                    {{--<div class="col-sm-7 col-centered">--}}
+                                        {{--<div class="form-group">--}}
+                                            {{--<label class="control-label">--}}
+                                                {{--@lang('title.kpi')&nbsp;&nbsp;--}}
+                                                {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
+                                                     {{--ng-show="loadingKpi">--}}
+                                            {{--</label>--}}
+                                            {{--<select class="form-control"--}}
+                                                    {{--ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
+                                                    {{--ng-model="trans.kpi"--}}
+                                                    {{--id="kpi_name_list_for_reduce" name="kpi_name_list_for_reduce">--}}
+                                                {{--<option value="">--@lang('title.kpi')--</option>--}}
+                                                {{--<option ng-repeat="d in gguards" value="[[d.id]]">[[d.kpi_name]]--}}
+                                                {{--</option>--}}
+                                            {{--</select>--}}
+                                        {{--</div>--}}
+                                    {{--</div>--}}
                                     <div class="col-sm-7 col-centered">
                                         <div class="form-group">
                                             <label class="control-label">Memorandum no.&nbsp;&nbsp;&nbsp;<span
@@ -564,58 +587,67 @@
                                 <h4 class="modal-title">Transfer Ansar</h4>
                             </div>
                             <div class="modal-body">
+                                <filter-template
+                                        show-item="['range','unit','thana','kpi']"
+                                        type="single"
+                                        start-load="range"
+                                        field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
+                                        data = "trans"
+                                >
+
+                                </filter-template>
                                 <div class="row">
-                                    <div class="col-sm-4" ng-show="isAdmin==11">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                @lang('title.unit')&nbsp;&nbsp;
-                                                <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                                     ng-show="loadingUnit">
-                                            </label>
-                                            <select class="form-control"
-                                                    ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                                    ng-model="trans.unit"
-                                                    ng-change="loadThana(trans.unit)">
-                                                <option value="">--@lang('title.unit')--</option>
-                                                <option ng-repeat="d in ddistricts" value="[[d.id]]">[[d.unit_name_bng]]
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                @lang('title.thana')&nbsp;&nbsp;
-                                                <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                                     ng-show="loadingThana">
-                                            </label>
-                                            <select class="form-control"
-                                                    ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                                    ng-model="trans.thana"
-                                                    ng-change="loadGuard(trans.thana)">
-                                                <option value="">--@lang('title.thana')--</option>
-                                                <option ng-repeat="t in tthanas" value="[[t.id]]">[[t.thana_name_bng]]
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label class="control-label">
-                                                @lang('title.kpi')&nbsp;&nbsp;
-                                                <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                                     ng-show="loadingKpi">
-                                            </label>
-                                            <select class="form-control"
-                                                    ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                                    ng-model="trans.kpi"
-                                                    id="kpi_name_list_for_reduce" name="kpi_name_list_for_reduce">
-                                                <option value="">--@lang('title.kpi')--</option>
-                                                <option ng-repeat="d in gguards" value="[[d.id]]">[[d.kpi_name]]
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
+                                    {{--<div class="col-sm-4" ng-show="isAdmin==11">--}}
+                                        {{--<div class="form-group">--}}
+                                            {{--<label class="control-label">--}}
+                                                {{--@lang('title.unit')&nbsp;&nbsp;--}}
+                                                {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
+                                                     {{--ng-show="loadingUnit">--}}
+                                            {{--</label>--}}
+                                            {{--<select class="form-control"--}}
+                                                    {{--ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
+                                                    {{--ng-model="trans.unit"--}}
+                                                    {{--ng-change="loadThana(trans.unit)">--}}
+                                                {{--<option value="">--@lang('title.unit')--</option>--}}
+                                                {{--<option ng-repeat="d in ddistricts" value="[[d.id]]">[[d.unit_name_bng]]--}}
+                                                {{--</option>--}}
+                                            {{--</select>--}}
+                                        {{--</div>--}}
+                                    {{--</div>--}}
+                                    {{--<div class="col-sm-4">--}}
+                                        {{--<div class="form-group">--}}
+                                            {{--<label class="control-label">--}}
+                                                {{--@lang('title.thana')&nbsp;&nbsp;--}}
+                                                {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
+                                                     {{--ng-show="loadingThana">--}}
+                                            {{--</label>--}}
+                                            {{--<select class="form-control"--}}
+                                                    {{--ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
+                                                    {{--ng-model="trans.thana"--}}
+                                                    {{--ng-change="loadGuard(trans.thana)">--}}
+                                                {{--<option value="">--@lang('title.thana')--</option>--}}
+                                                {{--<option ng-repeat="t in tthanas" value="[[t.id]]">[[t.thana_name_bng]]--}}
+                                                {{--</option>--}}
+                                            {{--</select>--}}
+                                        {{--</div>--}}
+                                    {{--</div>--}}
+                                    {{--<div class="col-sm-4">--}}
+                                        {{--<div class="form-group">--}}
+                                            {{--<label class="control-label">--}}
+                                                {{--@lang('title.kpi')&nbsp;&nbsp;--}}
+                                                {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
+                                                     {{--ng-show="loadingKpi">--}}
+                                            {{--</label>--}}
+                                            {{--<select class="form-control"--}}
+                                                    {{--ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
+                                                    {{--ng-model="trans.kpi"--}}
+                                                    {{--id="kpi_name_list_for_reduce" name="kpi_name_list_for_reduce">--}}
+                                                {{--<option value="">--@lang('title.kpi')--</option>--}}
+                                                {{--<option ng-repeat="d in gguards" value="[[d.id]]">[[d.kpi_name]]--}}
+                                                {{--</option>--}}
+                                            {{--</select>--}}
+                                        {{--</div>--}}
+                                    {{--</div>--}}
                                     <div class="col-sm-4">
                                         <div class="form-group">
                                             <label class="control-label">Memorandum no.&nbsp;&nbsp;&nbsp;<span

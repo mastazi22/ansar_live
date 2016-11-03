@@ -11,12 +11,6 @@
         GlobalApp.controller('AnsarListController', function ($scope, $http,$sce,httpService) {
            $scope.ansarType = '{{$type}}';
             $scope.rank = 'all'
-            $scope.user_type = parseInt("{{auth()->user()->type}}")
-            $scope.isDc = false;
-            if($scope.user_type==22){
-                $scope.isDc = true;
-                $scope.selectedDistrict = parseInt("{{auth()->user()->district_id}}");
-            }
             var p = $scope.ansarType.split('_');
             $scope.pageTitle = '';
             for(var i=0;i< p.length;i++){
@@ -24,20 +18,14 @@
                 if(i< p.length-1)$scope.pageTitle += " ";
             }
             $scope.total = 0
+            $scope.param = {};
             $scope.numOfPage = 0
-            $scope.selectedDistrict = "all";
-            $scope.selectedThana = "all";
-            $scope.districts = [];
-            $scope.thanas = [];
             $scope.itemPerPage = parseInt("{{config('app.item_per_page')}}");
             $scope.currentPage = 0;
             $scope.ansars = $sce.trustAsHtml("");
             $scope.pages = [];
-            $scope.loadingDistrict = false;
-            $scope.loadingThana = false;
             $scope.loadingPage = []
             $scope.allLoading = true;
-            $scope.selectedDivision = 'all'
 //Start pagination
             $scope.loadPagination = function(){
                 $scope.pages = [];
@@ -64,9 +52,9 @@
                         type: $scope.ansarType,
                         offset: page.offset,
                         limit: page.limit,
-                        unit:$scope.selectedDistrict,
-                        thana:$scope.selectedThana,
-                        division:$scope.selectedDivision,
+                        unit:$scope.param.unit==undefined?'all':$scope.param.unit,
+                        thana:$scope.param.thana==undefined?'all':$scope.param.thana,
+                        division:$scope.param.range==undefined?'all':$scope.param.range,
                         view:'view',
                         rank:$scope.rank,
                     }
@@ -77,17 +65,17 @@
                     $scope.allLoading = false;
                 })
             }
-            $scope.loadTotal = function () {
-//                alert($scope.selectedDistrict)
+            $scope.loadTotal = function (param) {
+                $scope.param = param;
                 $scope.allLoading = true;
                 $http({
                     url: '{{URL::to('HRM/get_ansar_list')}}',
                     method: 'get',
                     params: {
                         type: $scope.ansarType,
-                        unit:$scope.selectedDistrict,
-                        thana:$scope.selectedThana,
-                        division:$scope.selectedDivision,
+                        unit:param.unit,
+                        thana:param.thana,
+                        division:param.range,
                         view:'count',
                         rank:$scope.rank,
                     }
@@ -113,49 +101,13 @@
                 }
             }
 //End pagination
-            $scope.loadDivision = function () {
-                httpService.range().then(function (result) {
-                    $scope.divisions = result;
-                })
-            }
             $scope.changeRank = function (i) {
                 $scope.rank = i;
-                $scope.loadTotal()
+                $scope.loadTotal($scope.param)
             }
-            $scope.loadUnit = function (id) {
-                $scope.loadingDistrict = true;
-                httpService.unit(id).then(function (data) {
-                    $scope.districts = data;
-                    $scope.thanas = [];
-                    $scope.loadingDistrict = false;
-                    $scope.loadTotal();
-                })
-            }
-            $scope.loadThana = function (d_id) {
-                $scope.loadingThana = true;
-                $scope.allLoading = true;
-                httpService.thana(d_id).then(function (data) {
-                    $scope.thanas = data;
-                    $scope.selectedThana = "all";
-                    $scope.loadingThana = false;
-                    $scope.loadTotal()
-                })
-            }
-            if($scope.user_type==11||$scope.user_type==33){
-                $scope.loadDivision();
-            }
-            else if($scope.user_type==66){
-                $scope.loadUnit(parseInt('{{Auth::user()->division_id}}'))
-            }
-            else if($scope.user_type==22){
-                $scope.loadThana(parseInt('{{Auth::user()->district_id}}'))
-            }
-            $scope.loadTotal()
+//            $scope.loadTotal()
             function capitalizeLetter(s){
                 return s.charAt(0).toUpperCase()+ s.slice(1);
-            }
-            $scope.formatDate = function (date) {
-                return moment(date).format("Do MM,YYYY");
             }
             function sum(t){
                 var s = 0;
@@ -176,43 +128,55 @@
                     </span>
                 </div>
                 <div class="box-body">
-                    <div class="row">
-                        <div class="col-sm-4" ng-show="user_type==11||user_type==33">
-                            <div class="form-group">
-                                <label class="control-label">@lang('title.range')&nbsp;
-                                    <img ng-show="loadingDivision" src="{{asset('dist/img/facebook.gif')}}"
-                                         width="16"></label>
-                                <select class="form-control" ng-model="selectedDivision" ng-change="loadUnit(selectedDivision)">
-                                    <option value="all">All</option>
-                                    <option ng-repeat="d in divisions" value="[[d.id]]">[[d.division_name_bng]]</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-4" ng-show="user_type==11||user_type==66||user_type==33">
-                            <div class="form-group">
-                                <label class="control-label">@lang('title.unit')&nbsp;
-                                    <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
-                                         width="16"></label>
-                                <select class="form-control" ng-model="selectedDistrict" ng-change="loadThana(selectedDistrict)">
-                                    <option value="all">All</option>
-                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label">@lang('title.thana')&nbsp;
-                                    <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
-                                         width="16">
-                                </label>
-                                <select class="form-control" ng-model="selectedThana" ng-change="loadTotal()">
-                                    <option value="all">All</option>
-                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <h4 class="text text-bold"><a href="#" ng-click="changeRank('all')" style="color:black">Total Ansars</a> :PC(<a href="#" ng-click="changeRank(3)">[[gCount.PC!=undefined?gCount.PC.toLocaleString():0]]</a>)&nbsp;APC(<a href="#" ng-click="changeRank(2)">[[gCount.APC!=undefined?gCount.APC.toLocaleString():0]]</a>)&nbsp;Ansar(<a href="#" ng-click="changeRank(1)">[[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]]</a>)</h4>
+                    <filter-template
+                            show-item="['range','unit','thana']"
+                            type="all"
+                            range-change="loadTotal(param)"
+                            unit-change="loadTotal(param)"
+                            thana-change="loadTotal(param)"
+                            range-load="loadTotal(param)"
+                            start-load="range"
+                            field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
+                    >
+
+                    </filter-template>
+                    {{--<div class="row">--}}
+                        {{--<div class="col-sm-4" ng-show="user_type==11||user_type==33">--}}
+                            {{--<div class="form-group">--}}
+                                {{--<label class="control-label">@lang('title.range')&nbsp;--}}
+                                    {{--<img ng-show="loadingDivision" src="{{asset('dist/img/facebook.gif')}}"--}}
+                                         {{--width="16"></label>--}}
+                                {{--<select class="form-control" ng-model="selectedDivision" ng-change="loadUnit(selectedDivision)">--}}
+                                    {{--<option value="all">All</option>--}}
+                                    {{--<option ng-repeat="d in divisions" value="[[d.id]]">[[d.division_name_bng]]</option>--}}
+                                {{--</select>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                        {{--<div class="col-sm-4" ng-show="user_type==11||user_type==66||user_type==33">--}}
+                            {{--<div class="form-group">--}}
+                                {{--<label class="control-label">@lang('title.unit')&nbsp;--}}
+                                    {{--<img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"--}}
+                                         {{--width="16"></label>--}}
+                                {{--<select class="form-control" ng-model="selectedDistrict" ng-change="loadThana(selectedDistrict)">--}}
+                                    {{--<option value="all">All</option>--}}
+                                    {{--<option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]</option>--}}
+                                {{--</select>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                        {{--<div class="col-sm-4">--}}
+                            {{--<div class="form-group">--}}
+                                {{--<label class="control-label">@lang('title.thana')&nbsp;--}}
+                                    {{--<img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"--}}
+                                         {{--width="16">--}}
+                                {{--</label>--}}
+                                {{--<select class="form-control" ng-model="selectedThana" ng-change="loadTotal()">--}}
+                                    {{--<option value="all">All</option>--}}
+                                    {{--<option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]</option>--}}
+                                {{--</select>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
+                    <h4 class="text text-bold"><a href="#" ng-click="changeRank('all')" style="color:black">Total Ansars</a> :PC(<a href="#" ng-click="changeRank(3)">[[gCount.PC!=undefined?gCount.PC.toLocaleString():0]]</a>)&nbsp;APC(<a href="#" ng-click="changeRank(2)">[[gCount.APC!=undefined?gCount.APC.toLocaleString():0]]</a>)&nbsp;ANSAR(<a href="#" ng-click="changeRank(1)">[[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]]</a>)</h4>
                     <div class="table-responsive">
                         <template-list data="ansars" key="{{$type}}"></template-list>
                         <div class="table_pagination" ng-if="pages.length>1">

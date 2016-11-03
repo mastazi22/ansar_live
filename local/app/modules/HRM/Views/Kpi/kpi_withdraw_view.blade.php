@@ -10,28 +10,16 @@
 @section('content')
     <script>
         GlobalApp.controller('KpiViewController', function ($scope, $http, $sce, httpService,$location,$timeout) {
-            $scope.isAdmin = parseInt('{{Auth::user()->type}}');
-            $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
-            $scope.rcDivision = parseInt('{{Auth::user()->division_id}}');
+            $scope.params = ''
             $scope.total = 0;
             $scope.showLoadingScreen = true;
             $scope.numOfPage = 0;
-            $scope.selectedDivision = "all";
-            $scope.selectedDistrict = "all";
-            $scope.selectedThana = "all";
             $scope.allLoading = false;
-            $scope.divisions = [];
-            $scope.districts = [];
-            $scope.thanas = [];
             $scope.guards = [];
             $scope.kpis = [];
-            $scope.itemPerPage = 20;
+            $scope.itemPerPage = parseInt('{{config('app.item_per_page')}}');
             $scope.currentPage = 0;
             $scope.pages = [];
-            $scope.loadingDivision = true;
-            $scope.loadingDistrict = false;
-            $scope.loadingThana = false;
-            $scope.loadingKpi = false;
             $scope.loadingPage = [];
             $scope.verified = [];
             $scope.verifying = [];
@@ -60,9 +48,9 @@
                     params: {
                         offset: page.offset,
                         limit: page.limit,
-                        division: $scope.selectedDivision,
-                        unit: $scope.selectedDistrict,
-                        thana: $scope.selectedThana,
+                        division: $scope.params.range,
+                        unit: $scope.params.unit,
+                        thana: $scope.params.thana,
                         view: 'view'
                     }
                 }).then(function (response) {
@@ -80,9 +68,9 @@
                     url: '{{URL::route('kpi_view_details')}}',
                     method: 'get',
                     params: {
-                        division: $scope.selectedDivision,
-                        unit: $scope.selectedDistrict,
-                        thana: $scope.selectedThana,
+                        division: $scope.params.range,
+                        unit: $scope.params.unit,
+                        thana: $scope.params.thana,
                         view: 'count'
                     }
                 }).then(function (response) {
@@ -108,31 +96,6 @@
                     return true;
                 }
             }
-            $scope.loadDivision = function () {
-                httpService.range().then(function (data) {
-                    $scope.divisions = data;
-                    $scope.loadingDivision = false;
-                })
-            }
-            $scope.loadDistrict = function (d_id) {
-                $scope.loadingDistrict = true;
-                httpService.unit(d_id).then(function (data) {
-                    $scope.districts = data;
-                    $scope.selectedDistrict = "all";
-                    $scope.selectedThana = "all";
-                    $scope.loadingDistrict = false;
-                    $scope.loadTotal()
-                })
-            }
-            $scope.loadThana = function (d_id) {
-                $scope.loadingThana = true;
-                httpService.thana(d_id).then(function (data) {
-                    $scope.thanas = data;
-                    $scope.selectedThana = "all";
-                    $scope.loadingThana = false;
-                    $scope.loadTotal()
-                })
-            }
             $scope.verify = function (id, i) {
                 $scope.verifying[i] = true;
                 $http({
@@ -149,20 +112,6 @@
                     $scope.verified[parseInt(i)] = false;
                 })
             }
-            if ($scope.isAdmin == 11) {
-                $scope.loadDivision()
-            }
-            else {
-                if (!isNaN($scope.dcDistrict)) {
-                    $scope.loadThana($scope.dcDistrict);
-                    console.log($scope.dcDistrict);
-                }
-                else if(!isNaN($scope.rcDivision))
-                {
-                    $scope.loadDistrict($scope.rcDivision);
-                }
-            }
-            $scope.loadTotal();
             $scope.$on('$routeChangeStart', function (event, current, previous) {
                 //alert("start")
                 if(current.$$route!=undefined) {
@@ -201,51 +150,17 @@
                     </span>
                 </div>
                 <div class="box-body">
-                    <div class="row">
-                        <div class="col-sm-4" ng-hide="isAdmin==66 || isAdmin==22">
-                            <div class="form-group">
-                                <label class="control-label">@lang('title.range')&nbsp;
-                                    <img ng-show="loadingDivision" src="{{asset('dist/img/facebook.gif')}}"
-                                         width="16"></label>
-                                <select class="form-control" ng-model="selectedDivision"
-                                        ng-disabled="loadingDivision||loadingDistrict||loadingThana"
-                                        ng-change="loadDistrict(selectedDivision)">
-                                    <option value="all">All</option>
-                                    <option ng-repeat="di in divisions" value="[[di.id]]">
-                                        [[di.division_name_bng]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-4" ng-hide="isAdmin==22">
-                            <div class="form-group">
-                                <label class="control-label">@lang('title.unit')&nbsp;
-                                    <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
-                                         width="16"></label>
-                                <select class="form-control" ng-model="selectedDistrict"
-                                        ng-disabled="loadingDistrict||loadingThana"
-                                        ng-change="loadThana(selectedDistrict)">
-                                    <option value="all">All</option>
-                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label">@lang('title.thana')&nbsp;
-                                    <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
-                                         width="16">
-                                </label>
-                                <select class="form-control" ng-model="selectedThana"
-                                        ng-change="loadTotal()" ng-disabled="loadingDistrict||loadingThana">
-                                    <option value="all">All</option>
-                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                    <filter-template
+                            show-item="['range','unit','thana']"
+                            type="all"
+                            range-change="loadTotal()"
+                            unit-change="loadTotal()"
+                            thana-change="loadTotal()"
+                            start-load="range"
+                            field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
+                            data = "params"
+                            on-load="loadTotal()"
+                    ></filter-template>
                     <h4>Total KPI: [[total.toLocaleString()]]</h4>
                     <div class="table-responsive">
                         <table class="table table-bordered">

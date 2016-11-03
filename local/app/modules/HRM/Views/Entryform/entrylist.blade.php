@@ -12,12 +12,15 @@
         GlobalApp.controller('AnsarController', function ($scope, $http, notificationService) {
             $scope.AllAnsar = [];
             $scope.loadType = 0;
+            $scope.param = {
+
+            }
             $scope.sort = 'desc'
             $scope.userType = parseInt('{{Auth::user()->type}}');
             $scope.notVerified = parseInt("{{$notVerified}}");
             $scope.Verified = parseInt("{{$Verified}}");
             $scope.numOfPage = 0
-            $scope.Item = parseInt("{{config('app.item_per_page')}}");
+            $scope.itemPerPage = parseInt("{{config('app.item_per_page')}}");
             $scope.currentPage = 0;
             $scope.pages = [];
             $scope.isSearching = false;
@@ -27,17 +30,18 @@
             $scope.noFound = false;
             $scope.loadingPage = [];
             $scope.loadPagination = function () {
+               // alert($scope.totalPages)
                 $scope.pages = [];
                 for (var i = 0; i < $scope.totalPages; i++) {
                     $scope.pages.push({
                         pageNum: i,
-                        offset: i * $scope.Item,
-                        limit: $scope.Item
+                        offset: i * $scope.itemPerPage,
+                        limit: $scope.itemPerPage
                     })
                     $scope.loadingPage[i] = false;
                 }
                 if ($scope.numOfPage > 0)$scope.loadAnsar($scope.pages[0]);
-                else $scope.loadAnsar({pageNum: 0, offset: 0, limit: $scope.Item});
+                else $scope.loadAnsar({pageNum: 0, offset: 0, limit: $scope.itemPerPage});
 
             }
             //alert($scope.Verified + " " + $scope.notVerified);
@@ -53,7 +57,15 @@
                 $http({
                     url: $scope.loadType == 0 ? "{{URL::to('HRM/getnotverifiedansar')}}" : "{{URL::to('HRM/getverifiedansar')}}",
                     method: 'get',
-                    params: {limit: page.limit, offset: page.offset,sort:$scope.sort},
+                    params: {
+                        limit: page.limit,
+                        offset: page.offset,
+                        sort:$scope.sort,
+                        division:$scope.param.range,
+                        unit:$scope.param.unit,
+                        thana:$scope.param.thana,
+                        type:'view'
+                    },
 
                 }).then(function (response) {
 //                alert(JSON.stringify(response.data));
@@ -65,6 +77,27 @@
                         $scope.noFound = true;
                 })
             }
+            $scope.loadTotal = function (page, $event) {
+                if ($event != undefined)  $event.preventDefault();
+                $scope.loading = true;
+                $http({
+                    url: $scope.loadType == 0 ? "{{URL::to('HRM/getnotverifiedansar')}}" : "{{URL::to('HRM/getverifiedansar')}}",
+                    method: 'get',
+                    params: {
+                        division:$scope.param.range,
+                        unit:$scope.param.unit,
+                        thana:$scope.param.thana,
+                        type:'count'
+                    },
+
+                }).then(function (response) {
+                    $scope.total = response.data.total;
+                    $scope.gCount = response.data.total
+                    //alert($scope.total)
+                    $scope.totalPages = Math.ceil($scope.total/$scope.itemPerPage);
+                    $scope.loadPagination();
+                })
+            }
             $scope.$watch(function (scope) {
                 return scope.loadType;
             }, function (newValue, oldValue) {
@@ -72,13 +105,7 @@
                 $scope.verified = [];
                 $scope.rejecting = [];
                 $scope.pages = [];
-                if (newValue == 0) {
-                    $scope.totalPages = Math.ceil($scope.notVerified / $scope.Item);
-                }
-                else if (newValue == 1) {
-                    $scope.totalPages = Math.ceil($scope.Verified / $scope.Item);
-                }
-                $scope.loadPagination();
+                $scope.loadTotal()
                 $scope.currentPage = 0;
             })
 
@@ -106,7 +133,7 @@
                     $scope.notVerified--;
                     $scope.Verified++;
                     $scope.totalPages = Math.ceil($scope.notVerified / $scope.Item);
-                    $scope.loadPagination();
+                    $scope.loadTotal();
 //                    $scope.Verified++;
                 }, function () {
                     $scope.verifying[i] = false;
@@ -130,7 +157,7 @@
                     $scope.rejecting[i] = false;
                     $scope.notVerified--;
                     $scope.totalPages = Math.ceil($scope.notVerified / $scope.Item);
-                    $scope.loadPagination();
+                    $scope.loadTotal();
 //                    $scope.verified[i] = true;
 
 //                    alert($scope.verified[i]);
@@ -150,12 +177,12 @@
             $scope.changeSort = function () {
                 if($scope.sort=='desc') $scope.sort='asc';
                 else $scope.sort='desc'
-                $scope.loadPagination();
+                $scope.loadAnsar($scope.pages[$scope.currentPage]);
             }
             $scope.searchId = function () {
                 if (!$scope.searchAnsarId) {
                     $scope.isSearching = false;
-                    $scope.loadPagination();
+                    $scope.loadTotal();
                     return;
                 }
                 $scope.noFound = false;
@@ -177,10 +204,7 @@
                 $scope.searchedAnsar = "";
                 $scope.Id = "";
                 $scope.isSearching = false;
-                $scope.loadPagination();
-            }
-            $scope.changeDateFormat = function (d) {
-                return moment(d).format('D-MMM-YYYY')
+                $scope.loadTotal()();
             }
 
         })
@@ -297,12 +321,23 @@
                 </div>
                 <div class="box-header" ng-if="!isSearching">
                     <h4 style="margin-top: 0" ng-if="loadType==0">Total unverified ansars :
-                        [[notVerified.toLocaleString()]]</h4>
+                        [[total.toLocaleString()]]</h4>
                     <h4 style="margin-top: 0" ng-if="loadType==1">Total verified ansars :
-                        [[Verified.toLocaleString()]]</h4>
+                        [[total.toLocaleString()]]</h4>
                 </div>
                 <div class="box-body" id="change-body">
+                    <filter-template
+                            show-item="['range','unit','thana']"
+                            type="all"
+                            range-change="loadTotal()"
+                            unit-change="loadTotal()"
+                            thana-change="loadTotal()"
+                            start-load="range"
+                            field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
+                            data = "param"
+                    >
 
+                    </filter-template>
 
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped" id="ansar-table">
@@ -331,7 +366,7 @@
                                 <td>[[ansar.father_name_eng]]</td>
                                 <td>[[ ansar.unit_name_eng ]]</td>
                                 <td>[[ ansar.thana_name_eng ]]</td>
-                                <td>[[changeDateFormat(ansar.data_of_birth) ]]</td>
+                                <td>[[ansar.data_of_birth|dateformat:'DD-MMM-YYYY' ]]</td>
                                 <td>[[ ansar.sex ]]</td>
                                 <td>[[ ansar.name_eng ]]</td>
                                 <td>[[ ansar.mobile_no_self ]]</td>

@@ -5,7 +5,7 @@ var prefix = '';
 var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], function ($interpolateProvider, $httpProvider, $sceProvider, $routeProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
-    $sceProvider.enabled(false)
+    //$sceProvider.enabled(false)
     $httpProvider.useApplyAsync(true)
     var retryCount = 0;
     $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
@@ -68,6 +68,18 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
         redirectTo: '/'
     })
 
+    //console.log(this)
+
+}).run(function ($rootScope) {
+    $rootScope.userType = {
+        admin:11,
+        dc:22,
+        rc:66,
+        checker:44,
+        dataEntry:55,
+        dg:33
+    }
+    $rootScope.loadingView = false;
 });
 GlobalApp.filter('dateformat', function () {
     return function (input, format) {
@@ -153,6 +165,7 @@ GlobalApp.directive('modal', function () {
     }
 })
 GlobalApp.factory('httpService', function ($http) {
+
     return {
         range: function () {
             return $http({
@@ -202,6 +215,15 @@ GlobalApp.factory('httpService', function ($http) {
                 return response.data
             })
 
+        },
+        kpi: function (id) {
+            return $http({
+                url:'/'+prefix+"HRM/KPIName",
+                method:'get',
+                params:{id:id}
+            }).then(function (response) {
+                return response.data;
+            })
         },
         rank: function () {
             return $http({
@@ -256,5 +278,132 @@ GlobalApp.controller('WithdrawActionController', function ($scope, $http, kpiInf
             $scope.isSubmitting = false;
             if (response.status == 422)$scope.error = response.data;
         })
+    }
+})
+GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
+    $rootScope.loadingView = true;
+    return {
+        restrict:'E',
+        scope:{
+            showItem:'@',// ['range','unit','thana','kpi']
+            rangeChange:'&',//{func()}
+            unitChange:'&',//{func()}
+            thanaChange:'&',//{func()}
+            kpiChange:'&',//{func()}
+            rangeLoad:'&',//{func()}
+            unitLoad:'&',//{func()}
+            thanaLoad:'&',//{func()}
+            kpiLoad:'&',//{func()}
+            onLoad:"&",
+            type:'@',//['all','single']
+            startLoad:'@',//['range','unit','thana','kpi']
+            fieldWidth:'=',
+            data:'='
+        },
+        controller: function ($scope,$rootScope,httpService) {
+            $scope.selected = {
+                range:$scope.type=='all'?'all':'',
+                unit:$scope.type=='all'?'all':'',
+                thana:$scope.type=='all'?'all':'',
+                kpi:$scope.type=='all'?'all':'',
+            }
+            $scope.loading = {
+                range:false,
+                unit:false,
+                thana:false,
+                kpi:false,
+            }
+            $scope.show = function (item) {
+                return $scope.showItem.indexOf(item)>-1;
+            }
+            $scope.loadRange = function () {
+
+                if(!$scope.show('range')) return;
+                $scope.loading.range = true;
+                httpService.range().then(function (data) {
+                    $scope.ranges = data;
+                    $scope.loading.range = false;
+                })
+                $scope.rangeLoad({param:$scope.selected});
+            }
+            $scope.loadUnit = function (id) {
+                console.log($rootScope.userType)
+                if(!$scope.show('unit')) return;
+                $scope.units = $scope.thanas = $scope.kpis = []
+                $scope.loading.unit = true;
+                httpService.unit(id).then(function (data) {
+                    $scope.units = data;
+                    $scope.loading.unit = false;
+                })
+                $scope.unitLoad({param:$scope.selected});
+            }
+            $scope.loadThana = function (id) {
+                if(!$scope.show('thana')) return;
+                $scope.thanas = $scope.kpis = []
+                $scope.loading.thana = true;
+                httpService.thana(id).then(function (data) {
+                    $scope.thanas = data;
+                    $scope.loading.thana = false;
+                })
+                $scope.thanaLoad({param:$scope.selected});
+            }
+            $scope.loadKPI = function (id) {
+
+                //$scope.kpiChange({param:$scope.selected});
+                if(!$scope.show('kpi')) return;
+                $scope.loading.kpi = true;
+                httpService.kpi(id).then(function (data) {
+                    $scope.kpis = data;
+                    $scope.loading.kpi = false;
+
+                })
+                $scope.kpiLoad({param:$scope.selected});
+            }
+            switch($scope.startLoad){
+                case 'range':
+                    $scope.loadRange();
+                    break;
+                case 'unit':
+                    $scope.loadUnit();
+                    break;
+                case 'thana':
+                    $scope.loadThana();
+                    break;
+                case 'kpi':
+                    $scope.loadKpi();
+                    break;
+
+            }
+
+        },
+        templateUrl:'/' + prefix + 'HRM/template_list/range_unit_thana_kpi_rank_gender_template',
+        link: function (scope,element,attrs) {
+            //alert("aise")
+            $rootScope.loadingView = false;
+            scope.data = scope.selected;
+            $timeout(function () {
+                scope.onLoad();
+            })
+
+            $(element).on('change',"#range", function () {
+                //alert('aSsas')
+                scope.selected.unit = scope.type=='all'?'all':''
+                scope.selected.thana = scope.type=='all'?'all':''
+                scope.selected.kpi = scope.type=='all'?'all':''
+                scope.rangeChange({param:scope.selected})
+            })
+            $(element).on('change','#unit', function () {
+                scope.selected.thana = scope.type=='all'?'all':''
+                scope.selected.kpi = scope.type=='all'?'all':''
+                scope.unitChange({param:scope.selected})
+            })
+            $(element).on('change',"#thana", function () {
+                scope.selected.kpi = scope.type=='all'?'all':''
+                scope.thanaChange({param:scope.selected})
+            })
+            $(element).on('change',"#kpi", function () {
+                scope.kpiChange({param:scope.selected})
+            })
+        }
     }
 })

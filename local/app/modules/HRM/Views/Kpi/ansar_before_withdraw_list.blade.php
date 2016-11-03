@@ -12,89 +12,21 @@
     <script>
         GlobalApp.controller('GuardBeforeWithdrawController', function ($scope, $http, $sce) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}')
-
-            $scope.divisions = []
-            $scope.districts = [];
-            $scope.thanas = [];
             $scope.ansars="";
-            $scope.selectedDivision = 'all'
-            $scope.selectedDistrict = "all";
-            $scope.selectedThana = "all";
-            $scope.selectedKpi = "all";
+            $scope.params = ''
             $scope.allLoading = false;
-            $scope.loadingUnit = false;
-            $scope.loadingDiv = false;
-            $scope.loadingThana = false;
-            $scope.loadingKpi = false;
             $scope.errorFound = 0;
             $scope.errorMessage='';
-            $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}')
-            $scope.loadDivision = function () {
-                $scope.loadingDiv = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/DivisionName')}}'
-                }).then(function (response) {
-                    $scope.loadingDiv = false;
-                    $scope.divisions = response.data;
-                    $scope.loadingDiv = false;
-                })
-            }
-            $scope.loadDistrict = function () {
-                $scope.loadingUnit = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/DistrictName')}}',
-                    params:{id:$scope.selectedDivision}
-                }).then(function (response) {
-                    $scope.districts = response.data;
-                    $scope.loadingUnit = false;
-                    $scope.thanas = [];
-                    $scope.guards = [];
-                    $scope.selectedThana = "all";
-                    $scope.selectedKpi = "all";
-                    $scope.selectedDistrict = "all";
-                    $scope.loadAnsar();
-                })
-            }
-            $scope.loadThana = function (id) {
-                $scope.loadingThana = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/ThanaName')}}',
-                    params: {id: id}
-                }).then(function (response) {
-                    $scope.thanas = response.data;
-                    $scope.selectedThana = "all";
-                    $scope.loadingThana = false;
-                    $scope.guards = [];
-                    $scope.selectedKpi = "all";
-                    $scope.loadAnsar();
-                })
-            }
-            $scope.loadGuard = function (id) {
-                $scope.loadingKpi = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::route('kpi_name')}}',
-                    params: {id: id}
-                }).then(function (response) {
-                    $scope.guards = response.data;
-                    $scope.selectedKpi = "all";
-                    $scope.loadingKpi = false;
-                    $scope.loadAnsar();
-                })
-            }
             $scope.loadAnsar = function () {
                 $scope.allLoading = true;
                 $http({
                     method: 'get',
                     url: '{{URL::route('load_ansar_before_withdraw')}}',
                     params: {
-                        kpi_id: $scope.selectedKpi,
-                        division_id:$scope.selectedDivision,
-                        unit_id:$scope.selectedDistrict,
-                        thana_id:$scope.selectedThana
+                        kpi_id: $scope.params.kpi,
+                        division_id:$scope.params.range,
+                        unit_id:$scope.params.unit,
+                        thana_id:$scope.params.thana
                     }
                 }).then(function (response) {
                     $scope.errorFound = 0;
@@ -107,21 +39,7 @@
                     $scope.allLoading = false;
                 })
             }
-            if ($scope.isAdmin == 11||$scope.isAdmin == 33) {
-                $scope.loadDivision()
-            }
-            else if ($scope.isAdmin == 66) {
-                $scope.loadDistrict()
-            }
-            else {
-                if (!isNaN($scope.dcDistrict)) {
-                    $scope.loadThana($scope.dcDistrict)
-                }
-            }
-            $scope.dateConvert=function(date){
-                return (moment(date).format('DD-MMM-Y'));
-            }
-            $scope.loadAnsar();
+//            $scope.loadAnsar();
         })
 
     </script>
@@ -137,72 +55,85 @@
                     </span>
                 </div>
                 <div class="box-body">
-                    <div class="row">
-                        <div class="col-sm-3" ng-show="isAdmin==11||isAdmin==33">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    @lang('title.range')&nbsp;&nbsp;
-                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                         ng-show="loadingDiv">
-                                </label>
-                                <select class="form-control" ng-disabled="loadingDiv||loadingUnit||loadingThana||loadingKpi"
-                                        ng-model="selectedDivision"
-                                        ng-change="loadDistrict()" name="division_id">
-                                    <option value="all">All</option>
-                                    <option ng-repeat="d in divisions" value="[[d.id]]">[[d.division_name_bng]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-3" ng-show="isAdmin==11||isAdmin==33||isAdmin==66">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    @lang('title.unit')&nbsp;&nbsp;
-                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                         ng-show="loadingUnit">
-                                </label>
-                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                        ng-model="selectedDistrict"
-                                        ng-change="loadThana(selectedDistrict)" name="unit_id">
-                                    <option value="all">All</option>
-                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    @lang('title.thana')&nbsp;&nbsp;
-                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                         ng-show="loadingThana">
-                                </label>
-                                <select class="form-control" ng-disabled="loadingDiv||loadingUnit||loadingThana||loadingKpi"
-                                        ng-model="selectedThana"
-                                        ng-change="loadGuard(selectedThana)" name="thana_id">
-                                    <option value="all">All</option>
-                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    @lang('title.kpi')&nbsp;&nbsp;
-                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                         ng-show="loadingKpi">
-                                </label>
-                                <select class="form-control" ng-disabled="loadingDiv||loadingUnit||loadingThana||loadingKpi"
-                                        ng-model="selectedKpi"
-                                        ng-change="loadAnsar(selectedKpi)">
-                                    <option value="all">All</option>
-                                    <option ng-repeat="d in guards" value="[[d.id]]">[[d.kpi_name]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                    <filter-template
+                            show-item="['range','unit','thana','kpi']"
+                            type="all"
+                            range-change="loadAnsar()"
+                            unit-change="loadAnsar()"
+                            thana-change="loadAnsar()"
+                            start-load="range"
+                            on-load="loadAnsar()"
+                            field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
+                            data = "params"
+                    >
+
+                    </filter-template>
+                    {{--<div class="row">--}}
+                        {{--<div class="col-sm-3" ng-show="isAdmin==11||isAdmin==33">--}}
+                            {{--<div class="form-group">--}}
+                                {{--<label class="control-label">--}}
+                                    {{--@lang('title.range')&nbsp;&nbsp;--}}
+                                    {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
+                                         {{--ng-show="loadingDiv">--}}
+                                {{--</label>--}}
+                                {{--<select class="form-control" ng-disabled="loadingDiv||loadingUnit||loadingThana||loadingKpi"--}}
+                                        {{--ng-model="selectedDivision"--}}
+                                        {{--ng-change="loadDistrict()" name="division_id">--}}
+                                    {{--<option value="all">All</option>--}}
+                                    {{--<option ng-repeat="d in divisions" value="[[d.id]]">[[d.division_name_bng]]--}}
+                                    {{--</option>--}}
+                                {{--</select>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                        {{--<div class="col-sm-3" ng-show="isAdmin==11||isAdmin==33||isAdmin==66">--}}
+                            {{--<div class="form-group">--}}
+                                {{--<label class="control-label">--}}
+                                    {{--@lang('title.unit')&nbsp;&nbsp;--}}
+                                    {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
+                                         {{--ng-show="loadingUnit">--}}
+                                {{--</label>--}}
+                                {{--<select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
+                                        {{--ng-model="selectedDistrict"--}}
+                                        {{--ng-change="loadThana(selectedDistrict)" name="unit_id">--}}
+                                    {{--<option value="all">All</option>--}}
+                                    {{--<option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]--}}
+                                    {{--</option>--}}
+                                {{--</select>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                        {{--<div class="col-sm-3">--}}
+                            {{--<div class="form-group">--}}
+                                {{--<label class="control-label">--}}
+                                    {{--@lang('title.thana')&nbsp;&nbsp;--}}
+                                    {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
+                                         {{--ng-show="loadingThana">--}}
+                                {{--</label>--}}
+                                {{--<select class="form-control" ng-disabled="loadingDiv||loadingUnit||loadingThana||loadingKpi"--}}
+                                        {{--ng-model="selectedThana"--}}
+                                        {{--ng-change="loadGuard(selectedThana)" name="thana_id">--}}
+                                    {{--<option value="all">All</option>--}}
+                                    {{--<option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]--}}
+                                    {{--</option>--}}
+                                {{--</select>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                        {{--<div class="col-sm-3">--}}
+                            {{--<div class="form-group">--}}
+                                {{--<label class="control-label">--}}
+                                    {{--@lang('title.kpi')&nbsp;&nbsp;--}}
+                                    {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
+                                         {{--ng-show="loadingKpi">--}}
+                                {{--</label>--}}
+                                {{--<select class="form-control" ng-disabled="loadingDiv||loadingUnit||loadingThana||loadingKpi"--}}
+                                        {{--ng-model="selectedKpi"--}}
+                                        {{--ng-change="loadAnsar(selectedKpi)">--}}
+                                    {{--<option value="all">All</option>--}}
+                                    {{--<option ng-repeat="d in guards" value="[[d.id]]">[[d.kpi_name]]--}}
+                                    {{--</option>--}}
+                                {{--</select>--}}
+                            {{--</div>--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
                     <h4>Total Ansar : [[ansars.length]]</h4>
                     <div class="table-responsive">
                         <table class="table table-bordered">
@@ -248,16 +179,16 @@
                                     [[a.kpi_name]]
                                 </td>
                                 <td>
-                                    [[dateConvert(a.r_date)]]
+                                    [[a.r_date|dateformat:'DD-MMM-YYYY']]
                                 </td>
                                 <td>
-                                    [[dateConvert(a.j_date)]]
+                                    [[a.j_date|dateformat:'DD-MMM-YYYY']]
                                 </td>
                                 <td>
                                     [[a.reason]]
                                 </td>
                                 <td>
-                                    [[dateConvert(a.date)]]
+                                    [[a.date|dateformat:'DD-MMM-YYYY']]
                                 </td>
                             </tr>
                         </table>

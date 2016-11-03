@@ -244,38 +244,37 @@ class KpiController extends Controller
         return view('HRM::Kpi.ansar_withdraw_view')->with('kpi_names', $kpi_names);
     }
 
-    public function ansarListForWithdraw()
+    public function ansarListForWithdraw(Request $request)
     {
-        $unit_id = Input::get('unit_id');
-        $thana = Input::get('thana_id');
-        $statusSelected = Input::get('selected_name');
         $rules = [
-            'unit_id' => 'regex:/^[0-9]+$/',
-            'thana_id' => 'regex:/^[0-9]+$/',
-            'selected_name' => 'regex:/^[0-9]+$/'
+            'range' => 'regex:/^[0-9]+$/',
+            'unit' => 'regex:/^[0-9]+$/',
+            'thana' => 'regex:/^[0-9]+$/',
+            'kpi' => 'required|regex:/^[0-9]+$/'
         ];
-        $validation = Validator::make(Input::all(), $rules);
+        $validation = Validator::make($request->all(), $rules);
         if ($validation->fails()) {
             return Response::json(array('valid' => true));
         } else {
             $kpi_infos = DB::table('tbl_embodiment')
                 ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
-                ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-                ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-                ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
                 ->join('tbl_ansar_parsonal_info', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                ->join('tbl_units as pu', 'tbl_ansar_parsonal_info.unit_id', '=', 'pu.id')
                 ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                 ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                ->where('tbl_embodiment.kpi_id', '=', $statusSelected)
+                ->where('tbl_embodiment.kpi_id', '=', $request->kpi)
                 ->where('tbl_ansar_status_info.block_list_status', '=', 0)
                 ->where('tbl_ansar_status_info.black_list_status', '=', 0)
-                ->where('tbl_embodiment.emboded_status', '=', "Emboded")
-                ->distinct()
-                ->select('tbl_embodiment.*', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_kpi_info.kpi_name', 'tbl_division.division_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_designations.name_eng')
+                ->where('tbl_embodiment.emboded_status', '=', "Emboded");
+            if($request->range) $kpi_infos->where('tbl_kpi_info.division_id',$request->range);
+            if($request->unit) $kpi_infos->where('tbl_kpi_info.unit_id',$request->unit);
+            if($request->thana) $kpi_infos->where('tbl_kpi_info.thana_id',$request->thana);
+
+            $data = $kpi_infos->distinct()
+                ->select('tbl_embodiment.reporting_date', 'tbl_embodiment.joining_date','tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng','pu.unit_name_bng')
                 ->get();
-            //$kpi_infos = EmbodimentModel::where('kpi_id', $statusSelected)->get();
-            if (count($kpi_infos) <= 0) return Response::json(array('result' => true));
-            return view('HRM::Kpi.selected_ansar_withrdaw_view')->with('kpi_infos', $kpi_infos);
+//            if (count($kpi_infos) <= 0) return Response::json(array('result' => true));
+            return Response::json($data);
         }
     }
 

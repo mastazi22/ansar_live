@@ -12,6 +12,8 @@
             $scope.tsPC = 0;
             $scope.tsAPC = 0;
             $scope.tsAnsar = 0;
+            $scope.params = '';
+            $scope.trans = '';
             $scope.showKpiStatus = false;
             $scope.totalKpiAnsar = {
                 pc: {
@@ -25,11 +27,6 @@
                 }
             }
             $scope.noAnsar = true;
-            $scope.selectedDistrict = ["", ""];
-            $scope.selectedThana = ["", ""];
-            $scope.selectedKPI = ["", ""];
-            $scope.loadingThana = [false, false];
-            $scope.loadingKPI = [false, false];
             $scope.loadingAnsar = false;
             $scope.ansars = [];
             $scope.allDistrict = []
@@ -46,106 +43,10 @@
             $scope.showDialog = false;
             $scope.allLoading = false;
             $scope.result = {};
-            var userType = parseInt("{{Auth::user()->type}}");
-            $scope.loadDistrict = function () {
-                $scope.showKpiStatus = false
-                $http({
-                    url: "{{URL::to('HRM/DistrictName')}}",
-                    method: 'get'
-                }).then(function (response) {
-                    if ($scope.modalOpen)$scope.allDistrict[1] = response.data;
-                    else $scope.allDistrict[0] = response.data;
-                }, function (response) {
-
-                })
-            }
-            $scope.loadThana = function () {
-                $scope.showKpiStatus = false
-                if ($scope.modalOpen) {
-                    $scope.loadingThana[1] = true;
-                    if (!$scope.selectedDistrict[1]) {
-                        $scope.allThana[1] = []
-                        $scope.allKPI[1] = []
-                        $scope.selectedThana[1] = "";
-                        $scope.selectedKPI[1] = "";
-                        $scope.loadingThana[1] = false;
-                        return;
-                    }
-                }
-                else {
-                    $scope.loadingThana[0] = true;
-                    if (!$scope.selectedDistrict[0]) {
-                        $scope.allThana[0] = []
-                        $scope.allKPI[0] = []
-                        $scope.selectedThana[0] = "";
-                        $scope.selectedKPI[0] = "";
-                        $scope.loadingThana[0] = false;
-                        return;
-                    }
-                }
-                $http({
-                    url: "{{URL::to('HRM/ThanaName')}}",
-                    method: 'get',
-                    params: {id: $scope.modalOpen ? $scope.selectedDistrict[1] : $scope.selectedDistrict[0]}
-                }).then(function (response) {
-                    if ($scope.modalOpen) {
-                        $scope.allThana[1] = response.data;
-                        $scope.loadingThana[1] = false;
-                        $scope.selectedThana[1] = "";
-                        $scope.selectedKPI[1] = "";
-                    }
-                    else {
-                        $scope.allThana[0] = response.data;
-                        $scope.loadingThana[0] = false;
-                        $scope.selectedThana[0] = "";
-                        $scope.selectedKPI[0] = "";
-                    }
-                }, function (response) {
-                    $scope.loadingThana = false;
-                })
-            }
-            $scope.loadKpi = function () {
-                if ($scope.modalOpen) {
-                    $scope.loadingKPI[1] = true;
-                    if (!$scope.selectedThana[1]) {
-                        $scope.selectedKPI[1] = "";
-                        $scope.allKPI[1] = []
-                        $scope.loadingKPI[1] = false;
-                        return;
-                    }
-                }
-                else {
-                    $scope.loadingKPI[0] = true;
-                    if (!$scope.selectedThana[0]) {
-                        $scope.selectedKPI[0] = "";
-                        $scope.allKPI[0] = []
-                        $scope.loadingKPI[0] = false;
-                        return;
-                    }
-                }
-                $http({
-                    url: "{{URL::route('kpi_name')}}",
-                    method: 'get',
-                    params: {id: $scope.modalOpen ? $scope.selectedThana[1] : $scope.selectedThana[0]}
-                }).then(function (response) {
-
-                    if ($scope.modalOpen) {
-                        $scope.allKPI[1] = response.data;
-                        $scope.loadingKPI[1] = false;
-                        $scope.selectedKPI[1] = "";
-                    }
-                    else {
-                        $scope.allKPI[0] = response.data;
-                        $scope.loadingKPI[0] = false;
-                        $scope.selectedKPI[0] = "";
-                    }
-                }, function (response) {
-                    $scope.loadingKPI = false;
-                })
-            }
             $scope.loadAnsar = function () {
                 $scope.loadingAnsar = true;
-                if (!$scope.selectedKPI[0]) {
+                $scope.allLoading = true;
+                if (!$scope.params.kpi) {
                     $scope.selectAll = false;
                     $scope.selectedAnsar = [];
                     $scope.selectAnsar = [];
@@ -156,7 +57,7 @@
                 $http({
                     url: "{{URL::route('get_embodied_ansar')}}",
                     method: 'get',
-                    params: {kpi_id: $scope.selectedKPI[0]}
+                    params: {kpi_id: $scope.params.kpi}
                 }).then(function (response) {
                     $scope.ansars = response.data;
                     $scope.selectAnsar = new Array($scope.ansars.length);
@@ -219,7 +120,7 @@
             }
             $scope.letterOption={
                 id:$scope.memorandumId,
-                unit:$scope.selectedDistrict[1]
+                unit:$scope.trans.unit
             }
             $scope.pl = false
             $scope.confirmTransferAnsar = function () {
@@ -234,9 +135,9 @@
                 var data = {
                     memorandum_id: $scope.memorandumId,
                     transfer_date: $scope.joinDate,
-                    kpi_id: $scope.selectedKPI,
+                    kpi_id: [$scope.params.kpi,$scope.trans.kpi],
                     transferred_ansar: ansar_id,
-                    unit: $scope.selectedDistrict[1]
+                    unit: $scope.trans.unit
                 }
                 $http({
                     url: '{{URL::route('complete_transfer_process')}}',
@@ -245,7 +146,7 @@
                 }).then(function (response) {
                     $scope.letterOption={
                         id:angular.copy($scope.memorandumId),
-                        unit:angular.copy($scope.selectedDistrict[1])
+                        unit:angular.copy($scope.trans.unit)
                     }
                     $scope.allLoading = false
                     console.log(response.data)
@@ -276,9 +177,6 @@
                 }, function (response) {
 
                 })
-            }
-            $scope.formatDate = function (d) {
-                return moment(d).format("DD-MMM-YYYY")
             }
 
         })
@@ -313,72 +211,34 @@
                 }
             }
         })
-        GlobalApp.directive('notificationMessage', function () {
+        GlobalApp.directive('notificationMessage', function (notificationService) {
             return {
                 restrict: 'ACE',
                 link: function (scope, elem, attrs) {
                     scope.$watch('result', function (newValue, oldValue) {
                         if (Object.keys(newValue).length > 0) {
                             if (!newValue.status) {
-                                $('body').notifyDialog({type: 'error', message: newValue.message}).showDialog()
+                                notificationService.notify('error', newValue.message)
                             }
                             if (newValue.data.success.count > 0) {
-                                $('body').notifyDialog({
-                                    type: 'success',
-                                    message: "Success " + newValue.data.success.count + ", Failed " + newValue.data.error.count
-                                }).showDialog()
+                                notificationService.notify(
+                                    'success', "Success " + newValue.data.success.count + ", Failed " + newValue.data.error.count
+                                )
 
                             }
                             else {
-                                $('body').notifyDialog({
-                                    type: 'error',
-                                    message: "Transfer Failed. Pleas try again later"
-                                }).showDialog()
+                                notificationService.notify('error', "Transfer Failed. Pleas try again later")
                             }
                         }
                     })
                 }
             }
         })
-        {{--GlobalApp.directive('checkKpi', function ($http) {--}}
-            {{--return {--}}
-                {{--restrict: 'AC',--}}
-                {{--link: function (scope, elem, attrs) {--}}
-
-                    {{--$(elem).on('change', function (e) {--}}
-                        {{--var v = $(this).val()--}}
-{{--//                            alert(v)--}}
-                        {{--scope.loadingKPI[1] = true;--}}
-                        {{--$http({--}}
-                            {{--method: 'get',--}}
-                            {{--params: {id: v},--}}
-                            {{--url: "{{URL::route('kpi_detail')}}"--}}
-                        {{--}).then(function (response) {--}}
-                            {{--console.log(response.data);--}}
-                            {{--scope.showKpiStatus = true;--}}
-                            {{--scope.totalKpiAnsar.pc.given = response.data.detail.no_of_pc--}}
-                            {{--scope.totalKpiAnsar.pc.current = response.data.ansar_count[2].total--}}
-                            {{--scope.totalKpiAnsar.apc.given = response.data.detail.no_of_apc--}}
-                            {{--scope.totalKpiAnsar.apc.current = response.data.ansar_count[1].total--}}
-                            {{--scope.totalKpiAnsar.ansar.given = response.data.detail.no_of_ansar--}}
-                            {{--scope.totalKpiAnsar.ansar.current = response.data.ansar_count[0].total--}}
-                            {{--scope.loadingKPI[1] = false;--}}
-
-                        {{--}, function (response) {--}}
-                            {{--scope.loadingKPI[1] = false;--}}
-                        {{--})--}}
-                    {{--})--}}
-
-                {{--}--}}
-            {{--}--}}
-        {{--})--}}
         $(document).ready(function () {
             $("#join_date_in_tk").datePicker(false);
         })
     </script>
     <div notification-message ng-controller="TransferController">
-        {{--<div class="breadcrumbplace">--}}
-        {{--{!! Breadcrumbs::render('transfer') !!}--}}
 
         <section class="content">
             <div class="box box-solid">
@@ -388,41 +248,14 @@
                     </span>
                 </div>
                 <div class="box-body">
-                    <div class="row" style="padding-bottom: 10px">
-                        <div class="col-md-4">
-                            <label class="control-label"> @lang('title.unit')&nbsp;&nbsp;&nbsp;<i
-                                        class="fa fa-spinner fa-pulse" ng-show="loadingThana[0]"></i></label>
-                            <select class="form-control" ng-model="selectedDistrict[0]"
-                                    ng-disabled="loadingAnsar||loadingThana[0]||loadingKPI[0]"
-                                    ng-change="loadThana()">
-                                <option value="">--@lang('title.unit')--</option>
-                                <option ng-repeat="d in allDistrict[0]" value="[[d.id]]">[[d.unit_name_bng]]
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="control-label"> @lang('title.thana')&nbsp;&nbsp;&nbsp;<i
-                                        class="fa fa-spinner fa-pulse" ng-show="loadingKPI[0]"></i></label>
-                            <select class="form-control" ng-model="selectedThana[0]"
-                                    ng-disabled="loadingAnsar||loadingThana[0]||loadingKPI[0]"
-                                    ng-change="loadKpi()">
-                                <option value="">--@lang('title.thana')--</option>
-                                <option ng-repeat="d in allThana[0]" value="[[d.id]]">[[d.thana_name_bng]]
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="control-label"> @lang('title.kpi')&nbsp;&nbsp;&nbsp;<i
-                                        class="fa fa-spinner fa-pulse" ng-show="loadingAnsar"></i></label>
-                            <select class="form-control"
-                                    ng-disabled="loadingAnsar||loadingThana[0]||loadingKPI[0]"
-                                    ng-model="selectedKPI[0]" ng-change="loadAnsar()">
-                                <option value="">--@lang('title.kpi')--</option>
-                                <option ng-repeat="d in allKPI[0]" value="[[d.id]]">[[d.kpi_name]]
-                                </option>
-                            </select>
-                        </div>
-                    </div>
+                    <filter-template
+                            show-item="['range','unit','thana','kpi']"
+                            type="single"
+                            kpi-change="loadAnsar()"
+                            start-load="range"
+                            field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
+                            data = "params"
+                    ></filter-template>
                     <div class="table-responsive">
                         <table class="table table-bordered" id="pc-table">
                             <tr>
@@ -453,7 +286,7 @@
                                 <td>[[ansar.division_name_bng]]</td>
                                 <td>[[ansar.unit_name_bng]]</td>
                                 <td>[[ansar.kpi_name]]</td>
-                                <td>[[formatDate(ansar.transfered_date)]]</td>
+                                <td>[[ansar.transfered_date|dateformat:'DD-MMM-YYYY']]</td>
                                 <td>
                                     <div class="styled-checkbox">
                                         <input type="checkbox" id="a_[[ansar.ansar_id]]"
@@ -515,54 +348,61 @@
                                     {{--</div>--}}
                                 {{--</div>--}}
                                 <div class="register-box-body  margin-bottom" style="padding: 0;padding-bottom: 10px">
-                                    <div class="row">
-                                        <div class="col-sm-4">
-                                            <div class="form-group">
-                                                <label class="control-label">Transferred District
-                                                    &nbsp;&nbsp;&nbsp;<i class="fa fa-spinner fa-pulse"
-                                                                         ng-show="loadingThana[1]"></i></label>
-                                                <select class="form-control"
-                                                        ng-disabled="loadingThana[1]||loadingKPI[1]"
-                                                        ng-model="selectedDistrict[1]"
-                                                        ng-change="loadThana()">
-                                                    <option value="">@lang('title.unit')</option>
-                                                    <option ng-repeat="d in allDistrict[1]" value="[[d.id]]">
-                                                        [[d.unit_name_bng]]
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <div class="form-group">
-                                                <label class="control-label">Transferred Thana
-                                                    &nbsp;&nbsp;&nbsp;<i class="fa fa-spinner fa-pulse"
-                                                                         ng-show="loadingKPI[1]"></i></label>
-                                                <select class="form-control"
-                                                        ng-disabled="loadingThana[1]||loadingKPI[1]"
-                                                        ng-model="selectedThana[1]"
-                                                        ng-change="loadKpi()">
-                                                    <option value="">@lang('title.unit')</option>
-                                                    <option ng-repeat="d in allThana[1]" value="[[d.id]]">
-                                                        [[d.thana_name_bng]]
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <div class="form-group">
-                                                <label class="control-label">Transferred KPI</label>
-                                                <select class="form-control"
-                                                        ng-disabled="loadingThana[1]||loadingKPI[1]" check-kpi
-                                                        ng-model="selectedKPI[1]">
-                                                    <option value="">@lang('title.kpi')</option>
-                                                    <option ng-repeat="d in allKPI[1]"
-                                                            ng-disabled="selectedKPI[0]==d.id" value="[[d.id]]">
-                                                        [[d.kpi_name]]
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <filter-template
+                                            show-item="['range','unit','thana','kpi']"
+                                            type="single"
+                                            start-load="range"
+                                            field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
+                                            data = "trans"
+                                    ></filter-template>
+                                    {{--<div class="row">--}}
+                                        {{--<div class="col-sm-4">--}}
+                                            {{--<div class="form-group">--}}
+                                                {{--<label class="control-label">Transferred District--}}
+                                                    {{--&nbsp;&nbsp;&nbsp;<i class="fa fa-spinner fa-pulse"--}}
+                                                                         {{--ng-show="loadingThana[1]"></i></label>--}}
+                                                {{--<select class="form-control"--}}
+                                                        {{--ng-disabled="loadingThana[1]||loadingKPI[1]"--}}
+                                                        {{--ng-model="selectedDistrict[1]"--}}
+                                                        {{--ng-change="loadThana()">--}}
+                                                    {{--<option value="">@lang('title.unit')</option>--}}
+                                                    {{--<option ng-repeat="d in allDistrict[1]" value="[[d.id]]">--}}
+                                                        {{--[[d.unit_name_bng]]--}}
+                                                    {{--</option>--}}
+                                                {{--</select>--}}
+                                            {{--</div>--}}
+                                        {{--</div>--}}
+                                        {{--<div class="col-sm-4">--}}
+                                            {{--<div class="form-group">--}}
+                                                {{--<label class="control-label">Transferred Thana--}}
+                                                    {{--&nbsp;&nbsp;&nbsp;<i class="fa fa-spinner fa-pulse"--}}
+                                                                         {{--ng-show="loadingKPI[1]"></i></label>--}}
+                                                {{--<select class="form-control"--}}
+                                                        {{--ng-disabled="loadingThana[1]||loadingKPI[1]"--}}
+                                                        {{--ng-model="selectedThana[1]"--}}
+                                                        {{--ng-change="loadKpi()">--}}
+                                                    {{--<option value="">@lang('title.unit')</option>--}}
+                                                    {{--<option ng-repeat="d in allThana[1]" value="[[d.id]]">--}}
+                                                        {{--[[d.thana_name_bng]]--}}
+                                                    {{--</option>--}}
+                                                {{--</select>--}}
+                                            {{--</div>--}}
+                                        {{--</div>--}}
+                                        {{--<div class="col-sm-4">--}}
+                                            {{--<div class="form-group">--}}
+                                                {{--<label class="control-label">Transferred KPI</label>--}}
+                                                {{--<select class="form-control"--}}
+                                                        {{--ng-disabled="loadingThana[1]||loadingKPI[1]" check-kpi--}}
+                                                        {{--ng-model="selectedKPI[1]">--}}
+                                                    {{--<option value="">@lang('title.kpi')</option>--}}
+                                                    {{--<option ng-repeat="d in allKPI[1]"--}}
+                                                            {{--ng-disabled="selectedKPI[0]==d.id" value="[[d.id]]">--}}
+                                                        {{--[[d.kpi_name]]--}}
+                                                    {{--</option>--}}
+                                                {{--</select>--}}
+                                            {{--</div>--}}
+                                        {{--</div>--}}
+                                    {{--</div>--}}
                                     <div class="row">
                                         <div class="col-sm-4">
                                             <div class="form-group">
@@ -607,12 +447,12 @@
                                                 <td>[[ansar.division_name_bng]]</td>
                                                 <td>[[ansar.unit_name_bng]]</td>
                                                 <td>[[ansar.kpi_name]]</td>
-                                                <td>[[formatDate(ansar.joining_date)]]</td>
+                                                <td>[[ansar.joining_date|dateformat:'DD-MMM-YYYY']]</td>
                                             </tr>
                                         </table>
                                     </div>
                                     <button class="btn btn-primary pull-right" open-hide-modal
-                                            ng-disabled="selectedAnsar.length<=0||!memorandumId||!joinDate||!selectedKPI[1]||isVerified||isVerifying||(tsPC>0&&totalKpiAnsar.pc.given<totalKpiAnsar.pc.current+tsPC)||(tsAPC>0&&totalKpiAnsar.apc.given<totalKpiAnsar.apc.current+tsAPC)||(tsAnsar>0&&totalKpiAnsar.ansar.given<totalKpiAnsar.ansar.current+tsAnsar)"
+                                            ng-disabled="selectedAnsar.length<=0||!memorandumId||!joinDate||!trans.kpi||isVerified||isVerifying"
                                             ng-click="confirmTransferAnsar()">
                                         <i class="fa fa-check"></i>&nbsp;Confirm
                                     </button>

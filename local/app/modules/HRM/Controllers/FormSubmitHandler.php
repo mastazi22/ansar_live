@@ -554,7 +554,7 @@ class FormSubmitHandler extends Controller
                 'mother_name_bng' => 'required',
                 'data_of_birth' => 'required',
                 'marital_status' => 'required',
-                'national_id_no' => 'required:min:17',
+                'national_id_no' => 'required|min:17|numeric|regex:/^[0-9]{17}$/',
                 'division_name_eng' => 'required',
                 'unit_name_eng' => 'required',
                 'thana_name_eng' => 'required',
@@ -566,6 +566,7 @@ class FormSubmitHandler extends Controller
 
             $messages = [
                 'required' => 'This field is required',
+                'national_id_no.regex'=>'National id no must be numeric and 17 digit.For 13 digit add birth year before id no'
             ];
             $validator = Validator:: make($request->all(), $rules, $messages);
 
@@ -830,9 +831,9 @@ class FormSubmitHandler extends Controller
                         return Response::json(['status' => true, 'data' => 'value updated successfully']);
                     }
                     throw new Exception();
-                } catch (Exception $rollback) {
+                } catch (\Exception $rollback) {
                     DB::rollback();
-                    return Response::json(['status' => false, 'data' => 'value not updated successfully']);
+                    return response($rollback->getMessage(),400,['Content-type'=>'text/html']);
                 }
             }
 
@@ -843,21 +844,36 @@ class FormSubmitHandler extends Controller
     public function getNotVerifiedAnsar()
     {
         $rules = [
-            'limit' => 'required|numeric|regex:/^[0-9]+$/',
-            'offset' => 'required|numeric|regex:/^[0-9]+$/',
+            'limit' => 'numeric|regex:/^[0-9]+$/',
+            'offset' => 'numeric|regex:/^[0-9]+$/',
             'sort' => 'regex:/^[a-z]+$/',
+            'thana' => ['regex:/^(all)$|^[0-9]+$/'],
+            'unit' => ['regex:/^(all)$|^[0-9]+$/'],
+            'division' => ['regex:/^(all)$|^[0-9]+$/'],
         ];
         $valid = Validator::make(Input::all(), $rules);
         if ($valid->fails()) {
             return response("Invalid request(400)", 400);
         }
         if (Input::exists('chunk')) return response()->json(CustomQuery::getNotVerifiedChunkAnsar(Input::get('limit'), Input::get('offset')));
-        return response()->json(CustomQuery::getNotVerifiedAnsar(Input::get('limit'), Input::get('offset'),Input::get('sort')));
+        return response()->json(CustomQuery::getNotVerifiedAnsar(Input::get('limit'), Input::get('offset'),Input::get('sort'),Input::get('division'), Input::get('unit'),Input::get('thana'),Input::get('type')));
     }
 
     public function getVerifiedAnsar()
     {
-        return response()->json(CustomQuery::getVerifiedAnsar(Input::get('limit'), Input::get('offset'),Input::get('sort')));
+        $rules = [
+            'limit' => 'numeric|regex:/^[0-9]+$/',
+            'offset' => 'numeric|regex:/^[0-9]+$/',
+            'sort' => 'regex:/^[a-z]+$/',
+            'thana' => ['regex:/^(all)$|^[0-9]+$/'],
+            'unit' => ['regex:/^(all)$|^[0-9]+$/'],
+            'division' => ['regex:/^(all)$|^[0-9]+$/'],
+        ];
+        $valid = Validator::make(Input::all(), $rules);
+        if ($valid->fails()) {
+            return response("Invalid request(400)", 400);
+        }
+        return response()->json(CustomQuery::getVerifiedAnsar(Input::get('limit'), Input::get('offset'),Input::get('sort'),Input::get('division'), Input::get('unit'),Input::get('thana'),Input::get('type')));
     }
 
     public function getTotalAnsar()

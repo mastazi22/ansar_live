@@ -389,7 +389,7 @@
             }
 
         });
-        GlobalApp.directive('formSubmit', function ($sce) {
+        GlobalApp.directive('formSubmit', function ($sce,notificationService) {
             return {
                 restrict: 'A',
                 link: function (scope, element, attribute) {
@@ -421,9 +421,9 @@
                                 scope.$digest();
                             }, error: function (responseText, statusText, xhr, $form) {
                                 $(".overlay").css('display','none');
-                                scope.error = $sce.trustAsHtml(xhr.responseText);
+                                notificationService.notify('error','An unknown error occur. Error code : '+responseText.status)
+                                //scope.error = $sce.trustAsHtml(xhr.responseText);
 
-                                console.log(responseText);
                                 console.log(responseText);
                             }, beforeSubmit: function (arr, $form, options) {
                                 arr.push({name: 'action', type: 'text', value: b})
