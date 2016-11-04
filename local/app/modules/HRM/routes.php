@@ -225,6 +225,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/blocklist_entry_view', ['as' => 'blocklist_entry_view', 'uses' => 'BlockBlackController@blockListEntryView']);
         Route::get('/blocklist_ansar_details', ['as'=>'blocklist_ansar_details','uses'=>'BlockBlackController@loadAnsarDetailforBlock']);
         Route::post('/blocklist_entry', ['as'=>'blocklist_entry','uses'=>'BlockBlackController@blockListEntry']);
+        Route::post('/multi_blocklist_entry', ['as'=>'multi_blocklist_entry','uses'=>'BlockBlackController@arrayBlockListEntry']);
 
 
         Route::get('/unblocklist_entry_view', ['as' => 'unblocklist_entry_view', 'uses' => 'BlockBlackController@unblockListEntryView']);

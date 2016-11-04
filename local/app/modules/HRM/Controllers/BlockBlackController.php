@@ -229,6 +229,118 @@ class BlockBlackController extends Controller
         }
         return Redirect::route('blocklist_entry_view')->with('success_message', 'Ansar Blocked Successfully');
     }
+    public function arrayBlockListEntry(Request $request)
+    {
+//        return $request->all();
+        $ansar = $request->input('ansar');
+        $block_date = $request->input('block_date');
+        $modified_block_date = Carbon::parse($block_date)->format('Y-m-d');
+        $block_comment = $request->input('block_comment');
+        $from_id = $request->input('from_id');
+
+        DB::beginTransaction();
+        foreach($ansar as $a){
+            //return $a;
+            $ansar_id = $a['ansar_id'];
+            try {
+                switch ($a['status']) {
+
+                    case "Entry":
+                        $blocklist_entry = new BlockListModel();
+                        $blocklist_entry->ansar_id = $ansar_id;
+                        $blocklist_entry->block_list_from = "Entry";
+                        $blocklist_entry->from_id = $from_id;
+                        $blocklist_entry->date_for_block = $modified_block_date;
+                        $blocklist_entry->comment_for_block = $block_comment;
+                        $blocklist_entry->action_user_id = Auth::user()->id;
+                        $blocklist_entry->save();
+//                    Event::fire(new ActionUserEvent(['ansar_id'=>$ansar_id,'action_type'=>'BLOCKED','from_state'=>'ENTRY','to_state'=>'BLOCKED','action_by'=>auth()->user()->id]));
+                        CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'ENTRY', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
+
+                    case "Free":
+                        $blocklist_entry = new BlockListModel();
+                        $blocklist_entry->ansar_id = $ansar_id;
+                        $blocklist_entry->block_list_from = "Free";
+                        $blocklist_entry->from_id = $from_id;
+                        $blocklist_entry->date_for_block = $modified_block_date;
+                        $blocklist_entry->comment_for_block = $block_comment;
+                        $blocklist_entry->action_user_id = Auth::user()->id;
+                        $blocklist_entry->save();
+//                    Event::fire(new ActionUserEvent(['ansar_id'=>$ansar_id,'action_type'=>'BLOCKED','from_state'=>'FREE','to_state'=>'BLOCKED','action_by'=>auth()->user()->id]));
+                        CustomQuery::addActionlog(['ansar_id' => $ansar_id, 'action_type' => 'BLOCKED', 'from_state' => 'FREE', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
+
+                    case "Paneled":
+                        $blocklist_entry = new BlockListModel();
+                        $blocklist_entry->ansar_id = $ansar_id;
+                        $blocklist_entry->block_list_from = "Panel";
+                        $blocklist_entry->from_id = $from_id;
+                        $blocklist_entry->date_for_block = $modified_block_date;
+                        $blocklist_entry->comment_for_block = $block_comment;
+                        $blocklist_entry->action_user_id = Auth::user()->id;
+                        $blocklist_entry->save();
+//                    Event::fire(new ActionUserEvent(['ansar_id'=>$ansar_id,'action_type'=>'BLOCKED','from_state'=>'PANEL','to_state'=>'BLOCKED','action_by'=>auth()->user()->id]));
+                        CustomQuery::addActionlog(['ansar_id' => $ansar_id, 'action_type' => 'BLOCKED', 'from_state' => 'PANEL', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
+
+                    case "Offer":
+                        $blocklist_entry = new BlockListModel();
+                        $blocklist_entry->ansar_id = $ansar_id;
+                        $blocklist_entry->block_list_from = "Offer";
+                        $blocklist_entry->from_id = $from_id;
+                        $blocklist_entry->date_for_block = $modified_block_date;
+                        $blocklist_entry->comment_for_block = $block_comment;
+                        $blocklist_entry->action_user_id = Auth::user()->id;
+                        $blocklist_entry->save();
+//                    Event::fire(new ActionUserEvent(['ansar_id'=>$ansar_id,'action_type'=>'BLOCKED','from_state'=>'OFFER','to_state'=>'BLOCKED','action_by'=>auth()->user()->id]));
+                        CustomQuery::addActionlog(['ansar_id' => $ansar_id, 'action_type' => 'BLOCKED', 'from_state' => 'OFFER', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
+
+                    case "Embodied":
+                        $blocklist_entry = new BlockListModel();
+                        $blocklist_entry->ansar_id = $ansar_id;
+                        $blocklist_entry->block_list_from = "Embodiment";
+                        $blocklist_entry->from_id = $from_id;
+                        $blocklist_entry->date_for_block = $modified_block_date;
+                        $blocklist_entry->comment_for_block = $block_comment;
+                        $blocklist_entry->action_user_id = Auth::user()->id;
+                        $blocklist_entry->save();
+//                    Event::fire(new ActionUserEvent(['ansar_id'=>$ansar_id,'action_type'=>'BLOCKED','from_state'=>'EMBODIED','to_state'=>'BLOCKED','action_by'=>auth()->user()->id]));
+                        CustomQuery::addActionlog(['ansar_id' => $ansar_id, 'action_type' => 'BLOCKED', 'from_state' => 'EMBODIED', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
+
+                    case "Rest":
+                        $blocklist_entry = new BlockListModel();
+                        $blocklist_entry->ansar_id = $ansar_id;
+                        $blocklist_entry->block_list_from = "Rest";
+                        $blocklist_entry->from_id = $from_id;
+                        $blocklist_entry->date_for_block = $modified_block_date;
+                        $blocklist_entry->comment_for_block = $block_comment;
+                        $blocklist_entry->action_user_id = Auth::user()->id;
+                        $blocklist_entry->save();
+//                    Event::fire(new ActionUserEvent(['ansar_id'=>$ansar_id,'action_type'=>'BLOCKED','from_state'=>'REST','to_state'=>'BLOCKED','action_by'=>auth()->user()->id]));
+                        CustomQuery::addActionlog(['ansar_id' => $ansar_id, 'action_type' => 'BLOCKED', 'from_state' => 'REST', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
+                    default:
+                        if ($request->ajax()) {
+                            return Response::json(['status' => false,'message'=>'Invalid Request']);
+                        }
+
+                }
+                AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['block_list_status' => 1]);
+            }
+            catch (\Exception $e) {
+                DB::rollBack();
+                return Response::json(['status' => false,'message'=>$e->getMessage()]);
+            }
+        }
+        DB::commit();
+        if ($request->ajax()) {
+            return Response::json(['status' => true,'message'=>"Ansars successfully blocked"]);
+        }
+        return Response::json(['status' => false,'message'=>'Invalid Request']);
+    }
 
     public function unblockListEntryView()
     {
