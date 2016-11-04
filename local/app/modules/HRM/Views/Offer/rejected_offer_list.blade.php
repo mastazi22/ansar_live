@@ -5,14 +5,14 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('ReportGuardSearchController', function ($scope, $http) {
+        GlobalApp.controller('ReportGuardSearchController', function ($scope, $http,notificationService) {
             $scope.fromDate = "";
             $scope.toDate = "";
             $scope.ansars = [];
             $scope.isLoading = false;
             $scope.isBlocking = [];
             $scope.noOfRejection="10"
-            $scope.status = "";
+            $scope.p = {status :""};
             $scope.getRejectedAnsarList = function () {
                 $scope.isLoading = true
                 $http({
@@ -40,25 +40,46 @@
                     console.log(response)
                 })
             }
-            $scope.blockAnsar = function (id,i) {
+            $scope.blockAnsar = function () {
+                var i = $scope.ansars.indexOf($scope.blockedAnsar)
+                if(i<0) return;
+                console.log({ansar_status:$scope.p.status,
+                    ansar_id:$scope.blockedAnsar.ansar_id,
+                    block_date:moment().format("d-MMM-YYYY"),
+                    block_comment:$scope.blockReason==undefined?'':$scope.blockReason,
+                    from_id:0})
                 $scope.isBlocking[i] = true;
+                $scope.blocking = true;
                 $http({
                     method:'post',
                     url:"{{URL::route('blocklist_entry')}}",
                     data:{
-                        ansar_status:$scope.status,
-                        ansar_id:id,
+                        ansar_status:$scope.p.status,
+                        ansar_id:$scope.blockedAnsar.ansar_id,
                         block_date:moment().format("d-MMM-YYYY"),
-                        block_comment:"",
+                        block_comment:$scope.blockReason==undefined?'':$scope.blockReason,
                         from_id:0
                     }
                 }).then(function (response) {
                     $scope.isBlocking[i] = false;
                     $scope.ansars[i].block_list_status=1;
-                    console.log(response.data)
+                    if(response.data.status){
+                        notificationService.notify('success',response.data.message)
+                        $("#block-modal").modal('hide')
+                    }
+                    else{
+                        notificationService.notify('error',response.data.message)
+                    }
+                    $scope.blocking = false;
                 }, function (response) {
                     $scope.isBlocking[i] = false;
+                    notificationService.notify('error',"An unknown error occur. Error code : "+response.status);
+                    $scope.blocking = false;
                 })
+            }
+            $scope.blockModal = function (a) {
+                $scope.blockedAnsar = a;
+                $("#block-modal").modal('show')
             }
         })
         $(document).ready(function (e) {
@@ -130,22 +151,22 @@
                                 <td>[[a.ansar_name_bng]]</td>
                                 <td>[[a.name_bng]]</td>
                                 <td>[[a.unit_name_bng]]</td>
-                                <td ng-if="1==a.block_list_status" ng-init="status='Blocked'">Blocked</td>
+                                <td ng-if="1==a.block_list_status" ng-init="p.status='Blocked'">Blocked</td>
                                 <td ng-if="0==a.block_list_status">
-                                    <span ng-if="1==a.free_status"  ng-init="status='Free'">Free</span>
-                                    <span ng-if="1==a.pannel_status"  ng-init="status='Panneled'">Panel</span>
-                                    <span ng-if="1==a.offer_sms_status"  ng-init="status='Offer'">Offered</span>
-                                    <span ng-if="1==a.embodied_status"  ng-init="status='Embodded'">Embodied</span>
-                                    <span ng-if="1==a.freezing_status"  ng-init="status='Freeze'">Freeze</span>
-                                    <span ng-if="1==a.early_retierment_statBlockedus"  ng-init="status='EarlyRet'">Early retirement</span>
+                                    <span ng-if="1==a.free_status"  ng-init="p.status='Free'">Free</span>
+                                    <span ng-if="1==a.pannel_status"  ng-init="p.status='Paneled'">Panel</span>
+                                    <span ng-if="1==a.offer_sms_status"  ng-init="p.status='Offer'">Offered</span>
+                                    <span ng-if="1==a.embodied_status"  ng-init="p.status='Embodied'">Embodied</span>
+                                    <span ng-if="1==a.freezing_status"  ng-init="p.status='Freeze'">Freeze</span>
+                                    <span ng-if="1==a.early_retierment_statBlockedus"  ng-init="p.status='EarlyRet'">Early retirement</span>
                                     {{--<span ng-if="1==a.block_list_status"  ng-init="status='Blocked'"></span>--}}
-                                    <span ng-if="1==a.black_list_status"  ng-init="status='Blacked'">Blacked</span>
-                                    <span ng-if="1==a.rest_status"  ng-init="status='Rest'">Rest</span>
-                                    <span ng-if="1==a.retierment_status"  ng-init="status='Retirement'">Retirement</span>
+                                    <span ng-if="1==a.black_list_status"  ng-init="p.status='Blacked'">Blacked</span>
+                                    <span ng-if="1==a.rest_status"  ng-init="p.status='Rest'">Rest</span>
+                                    <span ng-if="1==a.retierment_status"  ng-init="p.status='Retirement'">Retirement</span>
                                 </td>
                                 <td>
-                                    <button class="btn btn-danger btn-xs" ng-click="blockAnsar(a.ansar_id,$index)" ng-disabled="isBlocking[$index]||a.block_list_status==1||a.black_list_status==1">
-                                        <i class="fa" ng-class="{'fa-close':!isBlocking[$index],'fa-spinner fa-pulse':isBlocking[$index]}"></i>&nbsp;Block
+                                    <button class="btn btn-danger btn-xs" ng-click="blockModal(a)" ng-disabled="isBlocking[$index]||a.block_list_status==1||a.black_list_status==1">
+                                        <i class="fa fa-remove"></i>&nbsp;Block
                                     </button>
                                 </td>
                             </tr>
@@ -154,6 +175,27 @@
                 </div>
             </div>
         </section>
+        <div class="modal fade" id="block-modal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Block</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="">Block Reason</label>
+                            <input type="text" placeholder="Enter block reason" ng-model="blockReason" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="pull-right btn btn-primary" ng-click="blockAnsar()">
+                            <i class="fa fa-spinner fa-pulse" ng-if="blocking"></i>&nbsp;&nbsp;Confirm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
 
 @stop

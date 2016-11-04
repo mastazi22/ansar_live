@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Mockery\Exception;
 
@@ -103,9 +104,19 @@ class FreezeController extends Controller
         return View::make('HRM::Freeze.freezelist');
     }
 
-    public function getfreezelist()
+    public function getfreezelist(Request $request)
     {
-        return response()->json(CustomQuery::getFreezeList());
+        $rules = [
+            'thana' => ['regex:/^(all)$|^[0-9]+$/'],
+            'unit' => ['regex:/^(all)$|^[0-9]+$/'],
+            'range' => ['regex:/^(all)$|^[0-9]+$/'],
+            'filter'=>'required|regex:/^[0-9]+$/'
+        ];
+        $valid = Validator::make($request->all(), $rules);
+        if ($valid->fails()) {
+            return response($valid->messages()->toJson(), 422,['Content-Type'=>'application/json']);
+        }
+        return response()->json(CustomQuery::getFreezeList($request->range,$request->unit,$request->thana,$request->filter));
     }
 
     public function freezeRembodied(Request $request)

@@ -140,42 +140,6 @@
                     >
 
                     </filter-template>
-                    {{--<div class="row">--}}
-                        {{--<div class="col-sm-4" ng-show="user_type==11||user_type==33">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<label class="control-label">@lang('title.range')&nbsp;--}}
-                                    {{--<img ng-show="loadingDivision" src="{{asset('dist/img/facebook.gif')}}"--}}
-                                         {{--width="16"></label>--}}
-                                {{--<select class="form-control" ng-model="selectedDivision" ng-change="loadUnit(selectedDivision)">--}}
-                                    {{--<option value="all">All</option>--}}
-                                    {{--<option ng-repeat="d in divisions" value="[[d.id]]">[[d.division_name_bng]]</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                        {{--<div class="col-sm-4" ng-show="user_type==11||user_type==66||user_type==33">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<label class="control-label">@lang('title.unit')&nbsp;--}}
-                                    {{--<img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"--}}
-                                         {{--width="16"></label>--}}
-                                {{--<select class="form-control" ng-model="selectedDistrict" ng-change="loadThana(selectedDistrict)">--}}
-                                    {{--<option value="all">All</option>--}}
-                                    {{--<option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                        {{--<div class="col-sm-4">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<label class="control-label">@lang('title.thana')&nbsp;--}}
-                                    {{--<img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"--}}
-                                         {{--width="16">--}}
-                                {{--</label>--}}
-                                {{--<select class="form-control" ng-model="selectedThana" ng-change="loadTotal()">--}}
-                                    {{--<option value="all">All</option>--}}
-                                    {{--<option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
                     <h4 class="text text-bold"><a href="#" ng-click="changeRank('all')" style="color:black">Total Ansars</a> :PC(<a href="#" ng-click="changeRank(3)">[[gCount.PC!=undefined?gCount.PC.toLocaleString():0]]</a>)&nbsp;APC(<a href="#" ng-click="changeRank(2)">[[gCount.APC!=undefined?gCount.APC.toLocaleString():0]]</a>)&nbsp;ANSAR(<a href="#" ng-click="changeRank(1)">[[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]]</a>)</h4>
                     <div class="table-responsive">
                         <template-list data="ansars" key="{{$type}}"></template-list>

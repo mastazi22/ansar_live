@@ -27,6 +27,7 @@
             $scope.loadingKpi = false;
             $scope.checked = [];
             $scope.checkedAll = false;
+            $scope.params = ''
             $scope.units = [];
             $scope.thanas = [];
             $scope.action = ''
@@ -119,11 +120,13 @@
                     break;
             }
             $scope.getFreezeList = function () {
+                var data = $scope.params;
+                data['filter'] = $scope.filter_name;
                 $scope.allLoading = true;
                 $http({
                     url: "{{URL::route('getfreezelist')}}",
                     method: 'get',
-                    params: {filter: $scope.filter_name}
+                    params: data
                 }).then(function (response) {
 //            alert(JSON.stringify(response.data));
                     $scope.allFreezeAnsar = response.data;
@@ -397,9 +400,6 @@
                 return value !== false;
 
             }
-            $scope.convertDate = function (d) {
-                return moment(d).format('DD-MMM-YYYY')
-            }
             $scope.modal = function (index) {
                 $scope.getSingleRow = $scope.allFreezeAnsar[index];
             }
@@ -481,11 +481,24 @@
                                     <option value="3">Disciplinary Actions</option>
                                 </select>
                             </div>
+                            <filter-template
+                                    show-item="['range','unit','thana']"
+                                    type="all"
+                                    range-change="getFreezeList()"
+                                    unit-change="getFreezeList()"
+                                    thana-change="getFreezeList()"
+                                    start-load="range"
+                                    field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
+                                    data="params"
+                            ></filter-template>
                             <div class="loading-data"><i class="fa fa-4x fa-refresh fa-spin loading-icon"></i>
                             </div>
                             <div class="table-responsive">
                                 <table class="table  table-bordered table-striped" id="ansar-table">
-
+                                    <caption>
+                                        <span class="text text-bold" style="color:#000000;font-size: 1.1em">Total : [[results==undefined?0:results.length]]</span>
+                                        <input type="text" class="pull-right" ng-model="q" placeholder="Search in this table">
+                                    </caption>
                                     <tr>
                                         <th class="text-center"><input type="checkbox" ng-model="checkedAll"
                                                                        ng-change="checkAll()"></th>
@@ -502,9 +515,9 @@
                                         <th class="text-center" style="width:160px;">কার্যক্রম/Action</th>
 
                                     </tr>
-                                    <tr ng-show="allFreezeAnsar.length>0" ng-repeat="freezeAnsar in allFreezeAnsar">
+                                    <tr ng-show="allFreezeAnsar.length>0" ng-repeat="freezeAnsar in allFreezeAnsar|filter:q as results">
                                         <td>
-                                            <input type="checkbox" ng-true-value="[[$index]]" ng-false-value="false"
+                                            <input type="checkbox"  ng-true-value="[[$index]]" ng-false-value="false"
                                                    ng-model="checked[$index]">
                                         </td>
                                         <td>[[$index+1]]</td>
@@ -514,8 +527,8 @@
                                         <td>[[freezeAnsar.name_bng]]</td>
                                         <td>[[freezeAnsar.ansar_name_bng]]</td>
                                         <td>[[freezeAnsar.unit_name_bng]]</td>
-                                        <td>[[convertDate(freezeAnsar.reporting_date)]]</td>
-                                        <td>[[convertDate(freezeAnsar.freez_date)]]</td>
+                                        <td>[[freezeAnsar.reporting_date|dateformat:'DD-MMM-YYYY']]</td>
+                                        <td>[[freezeAnsar.freez_date|dateformat:'DD-MMM-YYYY']]</td>
                                         <td>[[freezeAnsar.kpi_name]]</td>
                                         <td>[[freezeAnsar.freez_reason]]</td>
                                         <td>

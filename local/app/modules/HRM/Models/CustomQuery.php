@@ -291,190 +291,37 @@ class CustomQuery
     }
 
 
-    public static function getFreezeList()
+    public static function getFreezeList($division,$unit,$thana,$filter)
     {
-        $user = Auth::user();
-        $filter = Input::get('filter');
-        switch ($user->type) {
-            case 22:
-                if ($filter == "1") {
-                    $freeze = DB::table('tbl_freezing_info')
-                        ->join('tbl_ansar_parsonal_info', 'tbl_freezing_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                        ->where('tbl_freezing_info.freez_reason', '=', 'Guard Withdraw')
-                        ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                        ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                        ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                        ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                        ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                        ->where('tbl_kpi_info.unit_id', $user->district_id)
-                        ->orderBy('tbl_freezing_info.freez_date', 'asc')
-                        ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.reporting_date',
-                            'tbl_units.unit_name_bng', 'tbl_designations.name_bng', 'tbl_freezing_info.*', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status')->get();
-                    return $freeze;
-                }
-                if ($filter == "2") {
-                    $freeze = DB::table('tbl_freezing_info')
-                        ->join('tbl_ansar_parsonal_info', 'tbl_freezing_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                        ->where('tbl_freezing_info.freez_reason', '=', 'Guard Reduce')
-                        ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                        ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                        ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                        ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                        ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                        ->where('tbl_kpi_info.unit_id', $user->district_id)
-                        ->orderBy('tbl_freezing_info.freez_date', 'asc')
-                        ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.reporting_date',
-                            'tbl_units.unit_name_bng', 'tbl_designations.name_bng', 'tbl_freezing_info.*', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status')->get();
-                    return $freeze;
-                }
-                if ($filter == "3") {
-                    $freeze = DB::table('tbl_freezing_info')
-                        ->join('tbl_ansar_parsonal_info', 'tbl_freezing_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                        ->where('tbl_freezing_info.freez_reason', '=', 'Disciplinary Actions')
-                        ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                        ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                        ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                        ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                        ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                        ->where('tbl_kpi_info.unit_id', $user->district_id)
-                        ->orderBy('tbl_freezing_info.freez_date', 'asc')
-                        ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.reporting_date',
-                            'tbl_units.unit_name_bng', 'tbl_designations.name_bng', 'tbl_freezing_info.*', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status')->get();
-                    return $freeze;
-                }
-                if ($filter == "0") {
-                    $freeze = DB::table('tbl_freezing_info')
-                        ->join('tbl_ansar_parsonal_info', 'tbl_freezing_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                        ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                        ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                        ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                        ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                        ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                        ->where('tbl_kpi_info.unit_id', $user->district_id)
-                        ->orderBy('tbl_freezing_info.freez_date', 'asc')
-                        ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.reporting_date',
-                            'tbl_units.unit_name_bng', 'tbl_designations.name_bng', 'tbl_freezing_info.*', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status')->get();
-                    return $freeze;
-                }
-                break;
-            case 66:
-                if ($filter == "1") {
-                    $freeze = DB::table('tbl_freezing_info')
-                        ->join('tbl_ansar_parsonal_info', 'tbl_freezing_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                        ->where('tbl_freezing_info.freez_reason', '=', 'Guard Withdraw')
-                        ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                        ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                        ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                        ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                        ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                        ->where('tbl_kpi_info.division_id', $user->division_id)
-                        ->orderBy('tbl_freezing_info.freez_date', 'asc')
-                        ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.reporting_date',
-                            'tbl_units.unit_name_bng', 'tbl_designations.name_bng', 'tbl_freezing_info.*', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status')->get();
-                    return $freeze;
-                }
-                if ($filter == "2") {
-                    $freeze = DB::table('tbl_freezing_info')
-                        ->join('tbl_ansar_parsonal_info', 'tbl_freezing_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                        ->where('tbl_freezing_info.freez_reason', '=', 'Guard Reduce')
-                        ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                        ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                        ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                        ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                        ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                        ->where('tbl_kpi_info.division_id', $user->division_id)
-                        ->orderBy('tbl_freezing_info.freez_date', 'asc')
-                        ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.reporting_date',
-                            'tbl_units.unit_name_bng', 'tbl_designations.name_bng', 'tbl_freezing_info.*', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status')->get();
-                    return $freeze;
-                }
-                if ($filter == "3") {
-                    $freeze = DB::table('tbl_freezing_info')
-                        ->join('tbl_ansar_parsonal_info', 'tbl_freezing_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                        ->where('tbl_freezing_info.freez_reason', '=', 'Disciplinary Actions')
-                        ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                        ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                        ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                        ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                        ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                        ->where('tbl_kpi_info.division_id', $user->division_id)
-                        ->orderBy('tbl_freezing_info.freez_date', 'asc')
-                        ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.reporting_date',
-                            'tbl_units.unit_name_bng', 'tbl_designations.name_bng', 'tbl_freezing_info.*', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status')->get();
-                    return $freeze;
-                }
-                if ($filter == "0") {
-                    $freeze = DB::table('tbl_freezing_info')
-                        ->join('tbl_ansar_parsonal_info', 'tbl_freezing_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                        ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                        ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                        ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                        ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                        ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                        ->where('tbl_kpi_info.division_id', $user->division_id)
-                        ->orderBy('tbl_freezing_info.freez_date', 'asc')
-                        ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.reporting_date',
-                            'tbl_units.unit_name_bng', 'tbl_designations.name_bng', 'tbl_freezing_info.*', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status')->get();
-                    return $freeze;
-                }
-                break;
-            default:
-                if ($filter == "1") {
-                    $freeze = DB::table('tbl_freezing_info')
-                        ->join('tbl_ansar_parsonal_info', 'tbl_freezing_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                        ->where('tbl_freezing_info.freez_reason', '=', 'Guard Withdraw')
-                        ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                        ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                        ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                        ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                        ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                        ->orderBy('tbl_freezing_info.freez_date', 'asc')
-                        ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.reporting_date',
-                            'tbl_units.unit_name_bng', 'tbl_designations.name_bng', 'tbl_freezing_info.*', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status')->get();
-                    return $freeze;
-                }
-                if ($filter == "2") {
-                    $freeze = DB::table('tbl_freezing_info')
-                        ->join('tbl_ansar_parsonal_info', 'tbl_freezing_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                        ->where('tbl_freezing_info.freez_reason', '=', 'Guard Reduce')
-                        ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                        ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                        ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                        ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                        ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                        ->orderBy('tbl_freezing_info.freez_date', 'asc')
-                        ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.reporting_date',
-                            'tbl_units.unit_name_bng', 'tbl_designations.name_bng', 'tbl_freezing_info.*', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status')->get();
-                    return $freeze;
-                }
-                if ($filter == "3") {
-                    $freeze = DB::table('tbl_freezing_info')
-                        ->join('tbl_ansar_parsonal_info', 'tbl_freezing_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                        ->where('tbl_freezing_info.freez_reason', '=', 'Disciplinary Actions')
-                        ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                        ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                        ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                        ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                        ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                        ->orderBy('tbl_freezing_info.freez_date', 'asc')
-                        ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.reporting_date',
-                            'tbl_units.unit_name_bng', 'tbl_designations.name_bng', 'tbl_freezing_info.*', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status')->get();
-                    return $freeze;
-                }
-                if ($filter == "0") {
-                    $freeze = DB::table('tbl_freezing_info')
-                        ->join('tbl_ansar_parsonal_info', 'tbl_freezing_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                        ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                        ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                        ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
-                        ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                        ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-                        ->orderBy('tbl_freezing_info.freez_date', 'asc')
-                        ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.reporting_date',
-                            'tbl_units.unit_name_bng', 'tbl_designations.name_bng', 'tbl_freezing_info.*', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status')->get();
-                    return $freeze;
-                }
+        $freeze = DB::table('tbl_freezing_info')
+            ->join('tbl_ansar_parsonal_info', 'tbl_freezing_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+            ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
+            ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+            ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id');
+        if ($filter == "1") {
+            $freeze->where('tbl_freezing_info.freez_reason', '=', 'Guard Withdraw');
         }
+        else if ($filter == "2") {
+            $freeze->where('tbl_freezing_info.freez_reason', '=', 'Guard Reduce');
+        }
+        else if ($filter == "3") {
+            $freeze->where('tbl_freezing_info.freez_reason', '=', 'Disciplinary Actions');
+        }
+        if ($division&&$division!='all') {
+            $freeze->where('tbl_kpi_info.division_id', $division);
+        }
+        if ($unit&&$unit!='all') {
+            $freeze->where('tbl_kpi_info.unit_id', $unit);
+        }
+        if ($thana&&$thana!='all') {
+            $freeze->where('tbl_kpi_info.thana_id', $thana);
+        }
+        $data = $freeze->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.reporting_date',
+        'tbl_units.unit_name_bng', 'tbl_designations.name_bng', 'tbl_freezing_info.*', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status')->get();
+
+        return $data;
 
     }
 

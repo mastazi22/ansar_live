@@ -232,6 +232,24 @@ GlobalApp.factory('httpService', function ($http) {
             }).then(function (response) {
                 return response.data;
             })
+        },
+        disease: function () {
+            return $http.get('/'+prefix+'HRM/getDiseaseName').then(function (response) {
+                return response.data;
+            })
+        },
+        skill: function () {
+            return $http.get('/'+prefix+'HRM/getallskill')
+        },
+        education: function () {
+            return $http.get('/'+prefix+'HRM/getalleducation').then(function (response) {
+                return response.data;
+            })
+        },
+        bloodGroup: function () {
+            return $http.get('/'+prefix+'HRM/getBloodName').then(function (response) {
+                return response.data;
+            })
         }
     }
 })

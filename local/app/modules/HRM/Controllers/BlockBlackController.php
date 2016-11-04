@@ -215,17 +215,17 @@ class BlockBlackController extends Controller
                     break;
                 default:
                     if ($request->ajax()) {
-                        return Response::json(['status' => false]);
+                        return Response::json(['status' => false,'message'=>'Invalid Request']);
                     }
 
             }
             AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['block_list_status' => 1]);
             DB::commit();
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (\Exception $e) {
+            return Response::json(['status' => false,'message'=>'Invalid Request']);
         }
         if ($request->ajax()) {
-            return Response::json(['status' => true]);
+            return Response::json(['status' => true,'message'=>'Ansar id '.$ansar_id." successfully blocked"]);
         }
         return Redirect::route('blocklist_entry_view')->with('success_message', 'Ansar Blocked Successfully');
     }

@@ -19,12 +19,10 @@ use Carbon\Carbon;
 use Hash;
 use Illuminate\Contracts\Pagination;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
@@ -436,7 +434,7 @@ class FormSubmitHandler extends Controller
     public function DivisionName()
     {
 
-        $division = Division::where('id','!=',0)->get();
+        $division = Division::where('id', '!=', 0)->get();
         return Response::json($division);
     }
 
@@ -444,12 +442,11 @@ class FormSubmitHandler extends Controller
     {
         if (Input::exists('id')) {
             $id = $request->input('id');
-            if($id=='all'){
-                $districts = District::where('id','!=',0)->get();
-            }
-            else $districts = District::where('division_id', '=', $id)->get();
-        } else{
-            $districts = District::where('id','!=',0)->get();
+            if ($id == 'all') {
+                $districts = District::where('id', '!=', 0)->get();
+            } else $districts = District::where('division_id', '=', $id)->get();
+        } else {
+            $districts = District::where('id', '!=', 0)->get();
         }
         return Response::json($districts);
     }
@@ -566,7 +563,7 @@ class FormSubmitHandler extends Controller
 
             $messages = [
                 'required' => 'This field is required',
-                'national_id_no.regex'=>'National id no must be numeric and 17 digit.For 13 digit add birth year before id no'
+                'national_id_no.regex' => 'National id no must be numeric and 17 digit.For 13 digit add birth year before id no'
             ];
             $validator = Validator:: make($request->all(), $rules, $messages);
 
@@ -739,8 +736,8 @@ class FormSubmitHandler extends Controller
                             $training[$i]->ansar_id = $ansarId;
                             $training[$i]->training_designation = $training_designation[$i];
                             $training[$i]->training_institute_name = $training_institute_name[$i];
-                            $training[$i]->training_start_date = $training_start_date[$i]?Carbon::parse($training_start_date[$i])->format("Y-m-d"):'0000-00-00';
-                            $training[$i]->training_end_date = $training_end_date[$i]?Carbon::parse($training_end_date[$i])->format("Y-m-d"):'0000-00-00';
+                            $training[$i]->training_start_date = $training_start_date[$i] ? Carbon::parse($training_start_date[$i])->format("Y-m-d") : '0000-00-00';
+                            $training[$i]->training_end_date = $training_end_date[$i] ? Carbon::parse($training_end_date[$i])->format("Y-m-d") : '0000-00-00';
                             $training[$i]->trining_certificate_no = $trining_certificate_no[$i];
                             $training[$i]->training_designation_eng = $training_designation_eng[$i];
                             $training[$i]->training_institute_name_eng = $training_institute_name_eng[$i];
@@ -833,7 +830,7 @@ class FormSubmitHandler extends Controller
                     throw new Exception();
                 } catch (\Exception $rollback) {
                     DB::rollback();
-                    return response($rollback->getMessage(),400,['Content-type'=>'text/html']);
+                    return response($rollback->getMessage(), 400, ['Content-type' => 'text/html']);
                 }
             }
 
@@ -856,7 +853,7 @@ class FormSubmitHandler extends Controller
             return response("Invalid request(400)", 400);
         }
         if (Input::exists('chunk')) return response()->json(CustomQuery::getNotVerifiedChunkAnsar(Input::get('limit'), Input::get('offset')));
-        return response()->json(CustomQuery::getNotVerifiedAnsar(Input::get('limit'), Input::get('offset'),Input::get('sort'),Input::get('division'), Input::get('unit'),Input::get('thana'),Input::get('type')));
+        return response()->json(CustomQuery::getNotVerifiedAnsar(Input::get('limit'), Input::get('offset'), Input::get('sort'), Input::get('division'), Input::get('unit'), Input::get('thana'), Input::get('type')));
     }
 
     public function getVerifiedAnsar()
@@ -873,7 +870,7 @@ class FormSubmitHandler extends Controller
         if ($valid->fails()) {
             return response("Invalid request(400)", 400);
         }
-        return response()->json(CustomQuery::getVerifiedAnsar(Input::get('limit'), Input::get('offset'),Input::get('sort'),Input::get('division'), Input::get('unit'),Input::get('thana'),Input::get('type')));
+        return response()->json(CustomQuery::getVerifiedAnsar(Input::get('limit'), Input::get('offset'), Input::get('sort'), Input::get('division'), Input::get('unit'), Input::get('thana'), Input::get('type')));
     }
 
     public function getTotalAnsar()
@@ -939,87 +936,30 @@ class FormSubmitHandler extends Controller
 
     public function advancedEntrySearchSubmit(Request $request)
     {
-
-        if ($request->input('height_name')) {
-            $height = $request->input('height_name') * 12;
-        } else {
-            $height = 0;
-        }
-        if ($request->input('inch_name')) {
-            $height = $request->input('inch_name') + $height;
-
-        }
-        if ($request->input('birth_from_name')) {
-            $end_date = date('Y-m-d', date(strtotime("+1 day", strtotime($request->input('birth_from_name')))));
-        } else {
-            $end_date = "";
-        }
-        $allData = array(
-            'search_name' => $request->input('search_name'),
-            'father_name_type' => $request->input('father_name_type'),
-            'search_father_name' => $request->input('search_father_name'),
-            'blood_type' => $request->input('blood_type'),
-            'blood_name' => $request->input('blood_name'),
-            'height_type' => $request->input('height_type'),
-            'height_name' => $height,
-            'birth_type' => $request->input('birth_type'),
-            'birth_from_name' => $end_date,
-            'division_type' => $request->input('division_type'),
-            'division_name' => $request->input('division_name'),
-            'district_type' => $request->input('district_type'),
-            'district_name' => $request->input('district_name'),
-            'thana_type' => $request->input('thana_type'),
-            'thana_name' => $request->input('thana_name'),
-            'mobile_no_self_type' => $request->input('mobile_no_self_type'),
-            'mobile_no_req_type' => $request->input('mobile_no_req_type'),
-            'mobile_no_self' => $request->input('mobile_no_self'),
-            'mobile_no_request' => $request->input('mobile_no_request'),
-            'nid_type' => $request->input('nid_type'),
-            'nid' => $request->input('nid')
-
-        );
-
+//        return $request->all();
+        DB::enableQueryLog();
         $ansarAdvancedSearch = DB::table('tbl_ansar_parsonal_info')
             ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
             ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
             ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
             ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.father_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_division.division_name_eng', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng');
 
-        if ($request->input('search_name')) {
-            $ansarAdvancedSearch = $ansarAdvancedSearch->where('ansar_name_eng', 'LIKE', '%' . $request->input('search_name') . '%');
+        foreach ($request->except('page') as $key => $value) {
+            $value = json_decode($value);
+//            return $value;
+            if ($key == 'education') {
+                if($value->value) $ansarAdvancedSearch->join('tbl_ansar_education_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_ansar_education_info.ansar_id')
+                    ->where('tbl_ansar_education_info.education_id', $value->compare, $value->value);
+            } else if ($key == 'disease_id') {
+                if($value->value && strcasecmp($value->value,'type'))$ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->value);
+            } else {
+                if ($value->value) {
+                    $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->compare=='LIKE'?"%".$value->value."%":$value->value);
+                }
+            }
         }
-        if ($allData['birth_from_name']) {
-            $ansarAdvancedSearch = $ansarAdvancedSearch->where('data_of_birth', $allData['birth_type'], $allData['birth_from_name']);
-        }
-        if ($request->input('search_father_name')) {
-            $ansarAdvancedSearch = $ansarAdvancedSearch->where('father_name_eng', 'LIKE', '%' . $request->input('search_father_name') . '%');
-        }
-        if ($request->input('blood_name')) {
-            $ansarAdvancedSearch = $ansarAdvancedSearch->where('blood_group_id', '=', $request->input('blood_name'));
-        }
-        if ($height > 0) {
-            $ansarAdvancedSearch = $ansarAdvancedSearch->where(DB::raw('tbl_ansar_parsonal_info.hight_feet*12+tbl_ansar_parsonal_info.hight_inch'), $allData['height_type'], $height);
-        }
-        if ($request->input('division_name')) {
-            $ansarAdvancedSearch = $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.division_id', '=', $request->input('division_name'));
-        }
-        if ($request->input('district_name')) {
-            $ansarAdvancedSearch = $ansarAdvancedSearch->where('unit_id', '=', $request->input('district_name'));
-        }
-        if ($request->input('thana_name')) {
-            $ansarAdvancedSearch = $ansarAdvancedSearch->where('thana_id', '=', $request->input('thana_name'));
-        }
-        if ($request->input('mobile_no_self')) {
-            $ansarAdvancedSearch = $ansarAdvancedSearch->where('mobile_no_self', '=', $request->input('mobile_no_self'));
-        }
-        if ($request->input('mobile_no_request')) {
-            $ansarAdvancedSearch = $ansarAdvancedSearch->where('mobile_no_request', '=', $request->input('mobile_no_request'));
-        }
-        if ($request->input('nid')) {
-            $ansarAdvancedSearch = $ansarAdvancedSearch->where('national_id_no', '=', $request->input('nid'));
-        }
-        $ansarAdvancedSearch = $ansarAdvancedSearch->paginate(config('app.item_per_page'));
-        return Response::json($ansarAdvancedSearch);
+        $data = $ansarAdvancedSearch->paginate(config('app.item_per_page'));
+        return Response::json($data);
     }
 
     public function handleEdit($param)
@@ -1031,13 +971,13 @@ class FormSubmitHandler extends Controller
     public function idsearch(Request $request)
     {
         $ansarID = $request->input('ansarId');
-        $find = PersonalInfo::where('ansar_id', $ansarID)->select('id','ansar_id')->first();
+        $find = PersonalInfo::where('ansar_id', $ansarID)->select('id', 'ansar_id')->first();
         if ($find) {
             $file_font = $find->ansar_id . '.jpg';
             $file_back = $find->ansar_id . '.jpg';
             return Response::json(['status' => true, 'url' => [
-                'font'=>URL::route('view_image', ['type'=>'font','file' => $file_font]),
-                'back'=>URL::route('view_image', ['type'=>'back','file' => $file_back])
+                'font' => URL::route('view_image', ['type' => 'font', 'file' => $file_font]),
+                'back' => URL::route('view_image', ['type' => 'back', 'file' => $file_back])
             ]]);
         } else
             return Response::json(['status' => false, 'url' => null]);
@@ -1053,10 +993,10 @@ class FormSubmitHandler extends Controller
         return Response::json(Designation::orderBy('id', 'desc')->get());
     }
 
-    public function getImage($type,$file)
+    public function getImage($type, $file)
     {
-        if($type=='font')
-        $file = storage_path('data/orginalinfo/frontside/' . $file);
+        if ($type == 'font')
+            $file = storage_path('data/orginalinfo/frontside/' . $file);
         else  $file = storage_path('data/orginalinfo/backside/' . $file);
         if (File::exists($file)) {
             try {
@@ -1065,8 +1005,7 @@ class FormSubmitHandler extends Controller
             } catch (\Exception $e) {
                 return Image::make(public_path('dist/img/image-not-found.png'))->response();
             }
-        }
-        else{
+        } else {
             return Image::make(public_path('dist/img/image-not-found.png'))->response();
         }
     }
