@@ -852,7 +852,7 @@ class FormSubmitHandler extends Controller
         if ($valid->fails()) {
             return response("Invalid request(400)", 400);
         }
-        if (Input::exists('chunk')) return response()->json(CustomQuery::getNotVerifiedChunkAnsar(Input::get('limit'), Input::get('offset')));
+        if (Input::exists('chunk')) return response()->json(CustomQuery::getNotVerifiedChunkAnsar(Input::get('limit'), Input::get('offset'),Input::get('division'), Input::get('unit'), Input::get('thana')));
         return response()->json(CustomQuery::getNotVerifiedAnsar(Input::get('limit'), Input::get('offset'), Input::get('sort'), Input::get('division'), Input::get('unit'), Input::get('thana'), Input::get('type')));
     }
 

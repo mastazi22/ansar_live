@@ -123,16 +123,30 @@ class CustomQuery
         return $users;
     }
 
-    public static function getNotVerifiedChunkAnsar($limit, $offset)
+    public static function getNotVerifiedChunkAnsar($limit, $offset,$division=null,$unit=null,$thana=null)
     {
+        DB::enableQueryLog();
         $ansar = DB::table('tbl_ansar_parsonal_info')
             ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
             ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
             ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-            ->where('tbl_ansar_parsonal_info.verified', 0)->orWhere('tbl_ansar_parsonal_info.verified', 1)->orderBy('tbl_ansar_parsonal_info.ansar_id', 'asc')->skip($offset)->take($limit)
+            ->where(function($query){
+                $query->where('tbl_ansar_parsonal_info.verified', 0)->orWhere('tbl_ansar_parsonal_info.verified', 1);
+            })->orderBy('tbl_ansar_parsonal_info.ansar_id', 'asc');
+        if($division&&$division!='all'){
+            $ansar->where('tbl_ansar_parsonal_info.division_id',$division);
+        }
+        if($unit&&$unit!='all'){
+            $ansar->where('tbl_ansar_parsonal_info.unit_id',$unit);
+        }
+        if($thana&&$thana!='all'){
+            $ansar->where('tbl_ansar_parsonal_info.thana_id',$thana);
+        }
+        $b = $ansar->skip($offset)->take($limit)
             ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_ansar_parsonal_info.sex', 'tbl_units.unit_name_bng', 'tbl_thana.thana_name_bng', 'tbl_designations.name_bng')
             ->get();
-        return $ansar;
+//        return DB::getQueryLog();
+        return $b;
 
     }
 

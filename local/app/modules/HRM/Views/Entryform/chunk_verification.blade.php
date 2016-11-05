@@ -9,6 +9,7 @@
         GlobalApp.controller('ChunkVerificationController', function ($scope, $http, $interval) {
             $scope.showAnsar = '10';
             $scope.ansars = []
+            $scope.params = {}
             $scope.selectAll = false
             $scope.messages=[];
             $scope.selected = [];
@@ -18,7 +19,7 @@
                 $http({
                     method: 'get',
                     url: '{{URL::to('HRM/getnotverifiedansar')}}',
-                    params: {chunk: 'chunk', limit: $scope.showAnsar, offset: 0}
+                    params: {chunk: 'chunk', limit: $scope.showAnsar, offset: 0,division:$scope.params.range,unit:$scope.params.unit,thana:$scope.params.thana}
                 }).then(function (response) {
                     $scope.loading = false;
                     $scope.ansars = response.data
@@ -104,7 +105,7 @@
             <i class="fa fa-arrow-up fa-2x"></i>
         </button>
 
-        <section class="content" ng-init="loadAnsar()">
+        <section class="content">
             <div class="box box-solid">
                 <div class="overlay" ng-if="loading">
                     <span class="fa">
@@ -140,6 +141,20 @@
                             <i class="fa fa-check"></i>&nbsp;Verify Ansar
                         </button>
                     </div>
+                    <filter-template
+                            show-item="['range','unit','thana']"
+                            type="all"
+                            range-change="loadAnsar()"
+                            unit-change="loadAnsar()"
+                            thana-change="loadAnsar()"
+                            range-load="loadAnsar()"
+                            start-load="range"
+                            field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
+                            data="params"
+                            on-load="loadAnsar()"
+                    >
+
+                    </filter-template>
                     <div class="table-responsive">
                         <form id="not-verified-form" method="post" action="{{URL::to('HRM/entryVerify')}}">
                             <input type="hidden" name="chunk_verification" value="chunk_verification">
