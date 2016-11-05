@@ -131,7 +131,7 @@ class BlockBlackController extends Controller
         $modified_block_date = Carbon::parse($block_date)->format('Y-m-d');
         $block_comment = $request->input('block_comment');
         $from_id = $request->input('from_id');
-
+        return $request->all();
         DB::beginTransaction();
         try {
             switch ($ansar_status) {
@@ -215,7 +215,7 @@ class BlockBlackController extends Controller
                     break;
                 default:
                     if ($request->ajax()) {
-                        return Response::json(['status' => false,'message'=>'Invalid Request']);
+                        return Response::json(['status' => false,'message'=>'Invalid Request ajax']);
                     }
 
             }
