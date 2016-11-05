@@ -641,7 +641,7 @@ class KpiController extends Controller
                 $kpi = KpiGeneralModel::find($kpi_id);
                 $kpi->update(['withdraw_status' => 1,'status_of_kpi'=>0]);
                 $kpi->details->update(['kpi_withdraw_date' => null, 'kpi_withdraw_mem_id' => $request->mem_id]);
-                $embodiment_infos = $kpi->embodiment;
+                $embodiment_infos = $kpi->embodiment->where('emboded_status','Emboded');
                 foreach ($embodiment_infos as $embodiment_info) {
                     $freeze_info_update = new FreezingInfoModel();
                     $freeze_info_update->ansar_id = $embodiment_info->ansar_id;
