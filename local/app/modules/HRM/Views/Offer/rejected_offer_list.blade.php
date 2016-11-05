@@ -46,6 +46,8 @@
             }
             $scope.blockAnsar = function () {
                 var i = $scope.ansars.indexOf($scope.blockedAnsar)
+                console.log($scope.blockedAnsar);
+//                return;
                 if(i<0) return;
                 $scope.isBlocking[i] = true;
                 $scope.blocking = true;
@@ -53,7 +55,7 @@
                     method:'post',
                     url:"{{URL::route('blocklist_entry')}}",
                     data:{
-                        ansar_status:$scope.p.status,
+                        ansar_status:$scope.p.statuss[i],
                         ansar_id:$scope.blockedAnsar.ansar_id,
                         block_date:moment().format("d-MMM-YYYY"),
                         block_comment:$scope.blockReason==undefined?'':$scope.blockReason,
@@ -61,9 +63,10 @@
                     }
                 }).then(function (response) {
                     $scope.isBlocking[i] = false;
-                    $scope.ansars[i].block_list_status=1;
+//                    $scope.ansars[i].block_list_status=1;
                     if(response.data.status){
                         notificationService.notify('success',response.data.message)
+                        $scope.ansars[i].block_list_status=1;
                         $("#block-modal").modal('hide')
                     }
                     else{
