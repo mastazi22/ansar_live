@@ -119,7 +119,36 @@
                 }
             })
         }
+        $scope.fiveDaysOffer = function () {
+            $http({
+                url: "{{URL::route('offer_accept_last_5_day_data')}}",
+                method: 'get',
+                params: {
+                    type: 'count',
+                    unit:'all',
+                    thana:'all',
+                    division:'all',
+                    rank:'all',
+                    sex:'all'
+                }
+            }).then(function (response) {
+                $scope.offerAcceptLastFiveDays = sum(response.data);
+                $scope.loadingProgressInfo = false;
+            }, function (response) {
+                $scope.loadingProgressInfo = false;
+            })
+        }
+        function sum(t){
+            var s = 0;
+            for(var i in t){
+                for(var j =0 ;j<t[i].length;j++){
+                    s += t[i][j].total;
+                }
+            }
+            return s;
+        }
         $scope.progressData();
+        $scope.fiveDaysOffer();
         $http({
             url: "{{URL::to('HRM/graph_embodiment')}}",
             method: 'get',
@@ -479,7 +508,7 @@
                         </div>
                         <br style="clear: left;"/>
                     </div>
-                    <div class="label-hrm">
+                    <div class="label-hrm" style="border-bottom: 1px solid rgba(153, 153, 153, 0.52)">
                         <div class="label-hrm-title">
                             <span class="info-box-text"
                                   style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial">Total number of Ansars who are not interested to join after 10 or more reminders </span>
@@ -491,6 +520,19 @@
                                         class="btn-link">[[progressInfo.totalNotInterestedMembersUptoTenTimes]]</a><img
                                         src="{{asset('dist/img/facebook.gif')}}" width="20"
                                         ng-show="loadingProgressInfo"></span>
+                        </div>
+                        <br style="clear: left;"/>
+                    </div>
+                    <div class="label-hrm">
+                        <div class="label-hrm-title">
+                            <span class="info-box-text"
+                                  style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial">Total number of Ansars who accept the offer last 5 days </span>
+                        </div>
+
+                        <div class="label-hrm-calculation">
+                            <span class="info-box-text" style="color: #000000">
+                                <a style="font-size: 18px" href="{{URL::route('offer_accept_last_5_day')}}" class="btn-link">[[offerAcceptLastFiveDays==undefined?0:offerAcceptLastFiveDays]]</a>
+                                <img src="{{asset('dist/img/facebook.gif')}}" width="20" ng-show="loadingProgressInfo"></span>
                         </div>
                         <br style="clear: left;"/>
                     </div>
