@@ -222,7 +222,7 @@ class BlockBlackController extends Controller
             AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['block_list_status' => 1]);
             DB::commit();
         } catch (\Exception $e) {
-            return Response::json(['status' => false,'message'=>'Invalid Request']);
+            return Response::json(['status' => false,'message'=>$e->getMessage()]);
         }
         if ($request->ajax()) {
             return Response::json(['status' => true,'message'=>'Ansar id '.$ansar_id." successfully blocked"]);
