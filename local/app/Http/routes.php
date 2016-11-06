@@ -71,5 +71,6 @@ Route::group(['middleware' => 'auth'], function () {
         $r = Parser::xml($response);
         return $r;
     });
+    Route::get('user_data','UserController@getUserData');
     //end user route
 });

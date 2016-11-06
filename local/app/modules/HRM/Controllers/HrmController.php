@@ -141,61 +141,110 @@ class HrmController extends Controller
         return Response::json($graph_disembodiment);
     }
 
-    public function getRecentAnsar()
+    public function getRecentAnsar(Request $request)
     {
 
         $recentTime = Carbon::now();
         $backTime = Carbon::now()->subDays(7);
-        if (Input::exists('division_id')) {
-            $units = District::where('division_id', Input::get('division_id'))->select('id')->get();
-            $unit = [];
-            foreach ($units as $u) array_push($unit, $u->id);
-            $recentStatus = array(
-                'recentAnsar' => DB::table('tbl_ansar_parsonal_info')->where('division_id', Input::get('division_id'))->whereBetween('created_at', array($backTime, $recentTime))->count('ansar_id'),
-                'recentNotVerified' => DB::table('tbl_ansar_parsonal_info')->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('block_list_status', 0)->where('division_id', Input::get('district_id'))->whereBetween('tbl_ansar_parsonal_info.updated_at', array($backTime, $recentTime))->select('ansar_id')->count(),
-                'recentFree' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('free_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'recentPanel' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('pannel_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'recentOffered' => DB::table('tbl_ansar_status_info')->join('tbl_sms_offer_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('offer_sms_status', 1)->where('block_list_status', 0)->where('tbl_sms_offer_info.district_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_status_info.ansar_id'),
-                //'recentReceived' => DB::table('tbl_sms_receive_info')->join('tbl_sms_offer_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('tbl_sms_receive_info.sms_status', 'ACCEPTED')->where('tbl_sms_offer_info.district_id', Input::get('district_id'))->whereBetween('tbl_sms_receive_info.created_at', array($backTime, $recentTime))->count(),
-                'recentEmbodiedDiff' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 0)->where('embodied_status', 1)->where('division_id', Input::get('division_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'recentEmbodiedOwn' => DB::table('tbl_ansar_status_info')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1)->where('tbl_kpi_info.division_id', Input::get('division_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_embodiment.ansar_id'),
-                'recentFreeze' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('freezing_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'recentBlockList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 1)->where('division_id', Input::get('division_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'recentBlackList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('black_list_status', 1)->where('division_id', Input::get('division_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'recentRest' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('rest_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-            );
-        } else if (Input::exists('district_id')) {
-
-            $recentStatus = array(
-                'recentAnsar' => DB::table('tbl_ansar_parsonal_info')->where('unit_id', Input::get('district_id'))->whereBetween('created_at', array($backTime, $recentTime))->count('ansar_id'),
-                'recentNotVerified' => DB::table('tbl_ansar_parsonal_info')->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('block_list_status', 0)->where('unit_id', Input::get('district_id'))->whereBetween('tbl_ansar_parsonal_info.updated_at', array($backTime, $recentTime))->select('ansar_id')->count(),
-                'recentFree' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('free_status', 1)->where('block_list_status', 0)->where('unit_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'recentPanel' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('pannel_status', 1)->where('block_list_status', 0)->where('unit_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'recentOffered' => DB::table('tbl_ansar_status_info')->join('tbl_sms_offer_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('offer_sms_status', 1)->where('block_list_status', 0)->where('tbl_sms_offer_info.district_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_status_info.ansar_id'),
-                //'recentReceived' => DB::table('tbl_sms_receive_info')->join('tbl_sms_offer_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('tbl_sms_receive_info.sms_status', 'ACCEPTED')->where('tbl_sms_offer_info.district_id', Input::get('district_id'))->whereBetween('tbl_sms_receive_info.created_at', array($backTime, $recentTime))->count(),
-                'recentEmbodiedDiff' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 0)->where('embodied_status', 1)->where('unit_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'recentEmbodiedOwn' => DB::table('tbl_ansar_status_info')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1)->where('tbl_kpi_info.unit_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_embodiment.ansar_id'),
-                'recentFreeze' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('freezing_status', 1)->where('block_list_status', 0)->where('unit_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'recentBlockList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 1)->where('unit_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'recentBlackList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('black_list_status', 1)->where('unit_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'recentRest' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('rest_status', 1)->where('block_list_status', 0)->where('unit_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-            );
-        } else {
-            $recentStatus = array(
-                'recentAnsar' => DB::table('tbl_ansar_parsonal_info')->whereBetween('created_at', array($backTime, $recentTime))->count('ansar_id'),
-                'recentNotVerified' => DB::table('tbl_ansar_parsonal_info')->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('block_list_status', 0)->whereBetween('tbl_ansar_parsonal_info.updated_at', array($backTime, $recentTime))->select('ansar_id')->count(),
-                'recentFree' => DB::table('tbl_ansar_status_info')->where('free_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('ansar_id'),
-                'recentPanel' => DB::table('tbl_ansar_status_info')->where('pannel_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('ansar_id'),
-                'recentOffered' => DB::table('tbl_ansar_status_info')->join('tbl_sms_offer_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('offer_sms_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_status_info.ansar_id'),
-                //'recentReceived' => DB::table('tbl_sms_receive_info')->join('tbl_sms_offer_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('tbl_sms_receive_info.sms_status', 'ACCEPTED')->whereBetween('tbl_sms_receive_info.created_at', array($backTime, $recentTime))->count(),
-                'recentEmbodied' => DB::table('tbl_ansar_status_info')->where('embodied_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('ansar_id'),
-                'recentFreeze' => DB::table('tbl_ansar_status_info')->where('freezing_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('ansar_id'),
-                'recentBlockList' => DB::table('tbl_ansar_status_info')->where('block_list_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('ansar_id'),
-                'recentBlackList' => DB::table('tbl_ansar_status_info')->where('black_list_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('ansar_id'),
-                'recentRest' => DB::table('tbl_ansar_status_info')->where('rest_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('ansar_id'),
-            );
+        $allStatus = array(
+            'recentAnsar' => DB::table('tbl_ansar_parsonal_info')->whereBetween('tbl_ansar_parsonal_info.created_at', array($backTime, $recentTime)),
+            'recentNotVerified' => DB::table('tbl_ansar_parsonal_info')->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('block_list_status', 0)->whereBetween('tbl_ansar_parsonal_info.updated_at', array($backTime, $recentTime)),
+            'recentFree' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('free_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_parsonal_info.updated_at', array($backTime, $recentTime)),
+            'recentPanel' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('pannel_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.created_at', array($backTime, $recentTime)),
+            'recentOffered' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_sms_offer_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->join('tbl_units','tbl_sms_offer_info.district_id','=','tbl_units.id')->where('tbl_ansar_status_info.offer_sms_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.created_at', array($backTime, $recentTime)),
+            //'offerReceived' => DB::table('tbl_sms_receive_info')->join('tbl_sms_offer_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('tbl_sms_receive_info.sms_status', 'ACCEPTED')->whereIn('tbl_sms_offer_info.district_id', $unit)->count(),
+            'recentEmbodied' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('embodied_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.created_at', array($backTime, $recentTime)),
+            'recentEmbodiedOwn' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1)->whereBetween('tbl_ansar_status_info.created_at', array($backTime, $recentTime)),
+            'recentEmbodiedDiff' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1)->whereBetween('tbl_ansar_status_info.created_at', array($backTime, $recentTime)),
+            'recentFreeze' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('freezing_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.created_at', array($backTime, $recentTime)),
+            'recentBlockList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 1)->whereBetween('tbl_ansar_status_info.created_at', array($backTime, $recentTime)),
+            'recentBlackList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('black_list_status', 1)->whereBetween('tbl_ansar_status_info.created_at', array($backTime, $recentTime)),
+            'recentRest' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('rest_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.created_at', array($backTime, $recentTime)),
+        );
+        if($request->division_id){
+            $allStatus['recentAnsar']->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
+            $allStatus['recentNotVerified']->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
+            $allStatus['recentFree']->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
+            $allStatus['recentPanel']->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
+            $allStatus['recentOffered']->where('tbl_units.division_id',$request->division_id);
+            $allStatus['recentEmbodied']->where('tbl_kpi_info.division_id',$request->division_id);
+            $allStatus['recentEmbodiedOwn']->where('tbl_kpi_info.division_id',$request->division_id);
+            $allStatus['recentEmbodiedDiff']->where('tbl_kpi_info.division_id',$request->division_id);
+            $allStatus['recentFreeze']->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
+            $allStatus['recentBlockList']->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
+            $allStatus['recentBlackList']->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
+            $allStatus['recentRest']->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
         }
-        return Response::json($recentStatus);
+        if($request->unit_id){
+            $allStatus['recentAnsar']->where('tbl_ansar_parsonal_info.unit_id',$request->unit_id);
+            $allStatus['recentNotVerified']->where('tbl_ansar_parsonal_info.unit_id',$request->unit_id);
+            $allStatus['recentFree']->where('tbl_ansar_parsonal_info.unit_id',$request->unit_id);
+            $allStatus['recentPanel']->where('tbl_ansar_parsonal_info.unit_id',$request->unit_id);
+            $allStatus['recentOffered']->where('tbl_units.id',$request->unit_id);
+            $allStatus['recentEmbodied']->where('tbl_kpi_info.unit_id',$request->unit_id);
+            $allStatus['recentEmbodiedOwn']->where('tbl_kpi_info.unit_id',$request->unit_id);
+            $allStatus['recentEmbodiedDiff']->where('tbl_kpi_info.unit_id',$request->unit_id);
+            $allStatus['recentFreeze']->where('tbl_ansar_parsonal_info.unit_id',$request->unit_id);
+            $allStatus['recentBlockList']->where('tbl_ansar_parsonal_info.unit_id',$request->unit_id);
+            $allStatus['recentBlackList']->where('tbl_ansar_parsonal_info.unit_id',$request->unit_id);
+            $allStatus['recentRest']->where('tbl_ansar_parsonal_info.unit_id',$request->unit_id);
+        }
+//        if (Input::exists('division_id')) {
+//            $units = District::where('division_id', Input::get('division_id'))->select('id')->get();
+//            $unit = [];
+//            foreach ($units as $u) array_push($unit, $u->id);
+//            $recentStatus = array(
+//                'recentAnsar' => DB::table('tbl_ansar_parsonal_info')->where('division_id', Input::get('division_id'))->whereBetween('created_at', array($backTime, $recentTime))->count('ansar_id'),
+//                'recentNotVerified' => DB::table('tbl_ansar_parsonal_info')->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('block_list_status', 0)->where('division_id', Input::get('district_id'))->whereBetween('tbl_ansar_parsonal_info.updated_at', array($backTime, $recentTime))->select('ansar_id')->count(),
+//                'recentFree' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('free_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'recentPanel' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('pannel_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'recentOffered' => DB::table('tbl_ansar_status_info')->join('tbl_sms_offer_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('offer_sms_status', 1)->where('block_list_status', 0)->where('tbl_sms_offer_info.district_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_status_info.ansar_id'),
+//                //'recentReceived' => DB::table('tbl_sms_receive_info')->join('tbl_sms_offer_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('tbl_sms_receive_info.sms_status', 'ACCEPTED')->where('tbl_sms_offer_info.district_id', Input::get('district_id'))->whereBetween('tbl_sms_receive_info.created_at', array($backTime, $recentTime))->count(),
+//                'recentEmbodiedDiff' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 0)->where('embodied_status', 1)->where('division_id', Input::get('division_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'recentEmbodiedOwn' => DB::table('tbl_ansar_status_info')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1)->where('tbl_kpi_info.division_id', Input::get('division_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_embodiment.ansar_id'),
+//                'recentFreeze' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('freezing_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'recentBlockList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 1)->where('division_id', Input::get('division_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'recentBlackList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('black_list_status', 1)->where('division_id', Input::get('division_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'recentRest' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('rest_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//            );
+//        }
+//        else if (Input::exists('district_id')) {
+//
+//            $recentStatus = array(
+//                'recentAnsar' => DB::table('tbl_ansar_parsonal_info')->where('unit_id', Input::get('district_id'))->whereBetween('created_at', array($backTime, $recentTime))->count('ansar_id'),
+//                'recentNotVerified' => DB::table('tbl_ansar_parsonal_info')->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('block_list_status', 0)->where('unit_id', Input::get('district_id'))->whereBetween('tbl_ansar_parsonal_info.updated_at', array($backTime, $recentTime))->select('ansar_id')->count(),
+//                'recentFree' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('free_status', 1)->where('block_list_status', 0)->where('unit_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'recentPanel' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('pannel_status', 1)->where('block_list_status', 0)->where('unit_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'recentOffered' => DB::table('tbl_ansar_status_info')->join('tbl_sms_offer_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('offer_sms_status', 1)->where('block_list_status', 0)->where('tbl_sms_offer_info.district_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_status_info.ansar_id'),
+//                //'recentReceived' => DB::table('tbl_sms_receive_info')->join('tbl_sms_offer_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('tbl_sms_receive_info.sms_status', 'ACCEPTED')->where('tbl_sms_offer_info.district_id', Input::get('district_id'))->whereBetween('tbl_sms_receive_info.created_at', array($backTime, $recentTime))->count(),
+//                'recentEmbodiedDiff' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 0)->where('embodied_status', 1)->where('unit_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'recentEmbodiedOwn' => DB::table('tbl_ansar_status_info')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1)->where('tbl_kpi_info.unit_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_embodiment.ansar_id'),
+//                'recentFreeze' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('freezing_status', 1)->where('block_list_status', 0)->where('unit_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'recentBlockList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 1)->where('unit_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'recentBlackList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('black_list_status', 1)->where('unit_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'recentRest' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('rest_status', 1)->where('block_list_status', 0)->where('unit_id', Input::get('district_id'))->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//            );
+//        }
+//        else {
+//            $recentStatus = array(
+//                'recentAnsar' => DB::table('tbl_ansar_parsonal_info')->whereBetween('created_at', array($backTime, $recentTime))->count('ansar_id'),
+//                'recentNotVerified' => DB::table('tbl_ansar_parsonal_info')->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('block_list_status', 0)->whereBetween('tbl_ansar_parsonal_info.updated_at', array($backTime, $recentTime))->select('ansar_id')->count(),
+//                'recentFree' => DB::table('tbl_ansar_status_info')->where('free_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('ansar_id'),
+//                'recentPanel' => DB::table('tbl_ansar_status_info')->where('pannel_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('ansar_id'),
+//                'recentOffered' => DB::table('tbl_ansar_status_info')->join('tbl_sms_offer_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('offer_sms_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('tbl_ansar_status_info.ansar_id'),
+//                //'recentReceived' => DB::table('tbl_sms_receive_info')->join('tbl_sms_offer_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('tbl_sms_receive_info.sms_status', 'ACCEPTED')->whereBetween('tbl_sms_receive_info.created_at', array($backTime, $recentTime))->count(),
+//                'recentEmbodied' => DB::table('tbl_ansar_status_info')->where('embodied_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('ansar_id'),
+//                'recentFreeze' => DB::table('tbl_ansar_status_info')->where('freezing_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('ansar_id'),
+//                'recentBlockList' => DB::table('tbl_ansar_status_info')->where('block_list_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('ansar_id'),
+//                'recentBlackList' => DB::table('tbl_ansar_status_info')->where('black_list_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('ansar_id'),
+//                'recentRest' => DB::table('tbl_ansar_status_info')->where('rest_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime))->distinct()->count('ansar_id'),
+//            );
+//        }
+        $results = [];
+        foreach($allStatus as $key=>$q){
+            $results[$key] = $q->distinct()->count('tbl_ansar_parsonal_info.ansar_id');
+        }
+        return Response::json($results);
     }
 
     public function showAnsarList($type)
@@ -540,64 +589,113 @@ class HrmController extends Controller
         }
     }
 
-    public function getTotalAnsar()
+    public function getTotalAnsar(Request $request)
     {
 //        return "pppp";
         DB::enableQueryLog();
+        $allStatus = array(
+            'totalAnsar' => DB::table('tbl_ansar_parsonal_info'),
+            'totalNotVerified' => DB::table('tbl_ansar_parsonal_info')->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('block_list_status', 0),
+            'totalFree' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('free_status', 1)->where('block_list_status', 0),
+            'totalPanel' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('pannel_status', 1)->where('block_list_status', 0),
+            'totalOffered' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_sms_offer_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->join('tbl_units','tbl_sms_offer_info.district_id','=','tbl_units.id')->where('tbl_ansar_status_info.offer_sms_status', 1)->where('block_list_status', 0),
+            //'offerReceived' => DB::table('tbl_sms_receive_info')->join('tbl_sms_offer_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('tbl_sms_receive_info.sms_status', 'ACCEPTED')->whereIn('tbl_sms_offer_info.district_id', $unit)->count(),
+            'totalEmbodied' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('embodied_status', 1)->where('block_list_status', 0),
+            'totalEmbodiedOwn' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1),
+            'totalEmbodiedDiff' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1),
+            'totalFreeze' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('freezing_status', 1)->where('block_list_status', 0),
+            'totalBlockList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 1),
+            'totalBlackList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('black_list_status', 1),
+            'totalRest' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('rest_status', 1)->where('block_list_status', 0),
+        );
+        if($request->division_id){
+            $allStatus['totalAnsar']->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
+            $allStatus['totalNotVerified']->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
+            $allStatus['totalFree']->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
+            $allStatus['totalPanel']->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
+            $allStatus['totalOffered']->where('tbl_units.division_id',$request->division_id);
+            $allStatus['totalEmbodied']->where('tbl_kpi_info.division_id',$request->division_id);
+            $allStatus['totalEmbodiedOwn']->where('tbl_kpi_info.division_id',$request->division_id);
+            $allStatus['totalEmbodiedDiff']->where('tbl_kpi_info.division_id',$request->division_id);
+            $allStatus['totalFreeze']->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
+            $allStatus['totalBlockList']->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
+            $allStatus['totalBlackList']->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
+            $allStatus['totalRest']->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
+        }
+        if($request->unit_id){
+            $allStatus['totalAnsar']->where('tbl_ansar_parsonal_info.unit_id',$request->unit_id);
+            $allStatus['totalNotVerified']->where('tbl_ansar_parsonal_info.unit_id',$request->unit_id);
+            $allStatus['totalFree']->where('tbl_ansar_parsonal_info.unit_id',$request->unit_id);
+            $allStatus['totalPanel']->where('tbl_ansar_parsonal_info.unit_id',$request->unit_id);
+            $allStatus['totalOffered']->where('tbl_units.id',$request->unit_id);
+            $allStatus['totalEmbodied']->where('tbl_kpi_info.unit_id',$request->unit_id);
+            $allStatus['totalEmbodiedOwn']->where('tbl_kpi_info.unit_id',$request->unit_id);
+            $allStatus['totalEmbodiedDiff']->where('tbl_kpi_info.unit_id',$request->unit_id);
+            $allStatus['totalFreeze']->where('tbl_ansar_parsonal_info.unit_id',$request->unit_id);
+            $allStatus['totalBlockList']->where('tbl_ansar_parsonal_info.unit_id',$request->unit_id);
+            $allStatus['totalBlackList']->where('tbl_ansar_parsonal_info.unit_id',$request->unit_id);
+            $allStatus['totalRest']->where('tbl_ansar_parsonal_info.unit_id',$request->unit_id);
+        }
+
 //        $p = DB::table('tbl_ansar_status_info')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('tbl_ansar_status_info.block_list_status', 0)->where('tbl_ansar_status_info.embodied_status', 1)->where('tbl_kpi_info.unit_id', 9)->distinct()->count('tbl_embodiment.ansar_id');
 //        return $p;
-        if (Input::exists('division_id')) {
-            $units = District::where('division_id', Input::get('division_id'))->select('id')->get();
-            $unit = [];
-            foreach ($units as $u) array_push($unit, $u->id);
-            $allStatus = array(
-                'totalAnsar' => DB::table('tbl_ansar_parsonal_info')->where('division_id', Input::get('division_id'))->count('ansar_id'),
-                'totalNotVerified' => DB::table('tbl_ansar_parsonal_info')->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('block_list_status', 0)->where('tbl_ansar_parsonal_info.division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'totalFree' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('free_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'totalPanel' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('pannel_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'totalOffered' => DB::table('tbl_ansar_status_info')->join('tbl_sms_offer_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('tbl_ansar_status_info.offer_sms_status', 1)->where('block_list_status', 0)->whereIn('tbl_sms_offer_info.district_id', $unit)->distinct()->count('tbl_ansar_status_info.ansar_id'),
-                //'offerReceived' => DB::table('tbl_sms_receive_info')->join('tbl_sms_offer_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('tbl_sms_receive_info.sms_status', 'ACCEPTED')->whereIn('tbl_sms_offer_info.district_id', $unit)->count(),
-                'totalEmbodied' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('embodied_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'totalEmbodiedOwn' => DB::table('tbl_ansar_status_info')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1)->whereIn('tbl_kpi_info.unit_id', $unit)->distinct()->count('tbl_embodiment.ansar_id'),
-                'totalEmbodiedDiff' => DB::table('tbl_ansar_status_info')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1)->whereNotIn('tbl_kpi_info.unit_id', $unit)->distinct()->count('tbl_embodiment.ansar_id'),
-                'totalFreeze' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('freezing_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'totalBlockList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 1)->where('division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'totalBlackList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('black_list_status', 1)->where('division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'totalRest' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('rest_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-            );
-        } else if (Input::exists('district_id')) {
-            $allStatus = array(
-                'totalAnsar' => DB::table('tbl_ansar_parsonal_info')->where('unit_id', Input::get('district_id'))->count('ansar_id'),
-                'totalNotVerified' => DB::table('tbl_ansar_parsonal_info')->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('block_list_status', 0)->where('unit_id', Input::get('district_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'totalFree' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('free_status', 1)->where('block_list_status', 0)->where('unit_id', Input::get('district_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'totalPanel' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('pannel_status', 1)->where('block_list_status', 0)->where('unit_id', Input::get('district_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'totalOffered' => DB::table('tbl_ansar_status_info')->join('tbl_sms_offer_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('offer_sms_status', 1)->where('block_list_status', 0)->where('tbl_sms_offer_info.district_id', Input::get('district_id'))->distinct()->count('tbl_ansar_status_info.ansar_id'),
-                //'offerReceived' => DB::table('tbl_sms_receive_info')->join('tbl_sms_offer_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('tbl_sms_receive_info.sms_status', 'ACCEPTED')->where('tbl_sms_offer_info.district_id', Input::get('district_id'))->count(),
-                'totalEmbodiedDiff' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 0)->where('embodied_status', 1)->where('unit_id', Input::get('district_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'totalEmbodiedOwn' => DB::table('tbl_ansar_status_info')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1)->where('tbl_kpi_info.unit_id', Input::get('district_id'))->distinct()->count('tbl_embodiment.ansar_id'),
-//                'totalEmbodiedDiff' => DB::table('tbl_ansar_status_info')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1)->where('tbl_kpi_info.unit_id','!=', Input::get('district_id'))->distinct()->count('tbl_embodiment.ansar_id'),
-                'totalFreeze' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('freezing_status', 1)->where('block_list_status', 0)->where('unit_id', Input::get('district_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'totalBlockList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 1)->where('unit_id', Input::get('district_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'totalBlackList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('black_list_status', 1)->where('unit_id', Input::get('district_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'totalRest' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 0)->where('rest_status', 1)->where('unit_id', Input::get('district_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-            );
-        } else {
-            $allStatus = array(
-                'totalAnsar' => $totalAnsar = DB::table('tbl_ansar_parsonal_info')->distinct()->count('ansar_id'),
-                'totalNotVerified' => $notVerified = DB::table('tbl_ansar_parsonal_info')->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('block_list_status', 0)->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
-                'totalFree' => $totalFreeStatus = AnsarStatusInfo::where('free_status', 1)->where('block_list_status', 0)->distinct()->count('ansar_id'),
-                'totalPanel' => $totalpPanel = AnsarStatusInfo::where('pannel_status', 1)->where('block_list_status', 0)->distinct()->count('ansar_id'),
-                'totalOffered' => $totalOfferred = AnsarStatusInfo::where('offer_sms_status', 1)->where('block_list_status', 0)->distinct()->count('ansar_id'),
-                //'offerReceived' => $totalOfferedStatus = ReceiveSMSModel::where('sms_status', 'ACCEPTED')->count(),
-                'totalEmbodied' => $totalEmbodied = AnsarStatusInfo::where('embodied_status', 1)->where('block_list_status', 0)->distinct()->count('ansar_id'),
-                'totalFreeze' => $totalFreeze = AnsarStatusInfo::where('freezing_status', 1)->where('block_list_status', 0)->distinct()->count('ansar_id'),
-                'totalBlockList' => $totalBlockList = AnsarStatusInfo::where('block_list_status', 1)->distinct()->count('ansar_id'),
-                'totalBlackList' => $totalBlackList = AnsarStatusInfo::where('black_list_status', 1)->distinct()->count('ansar_id'),
-                'totalRest' => $totalBlackList = AnsarStatusInfo::where('rest_status', 1)->where('block_list_status', 0)->distinct()->count('ansar_id'),
-            );
-        }
+//        if (Input::exists('division_id')) {
+//            $units = District::where('division_id', Input::get('division_id'))->select('id')->get();
+//            $unit = [];
+//            foreach ($units as $u) array_push($unit, $u->id);
+//            $allStatus = array(
+//                'totalAnsar' => DB::table('tbl_ansar_parsonal_info')->where('division_id', Input::get('division_id'))->count('ansar_id'),
+//                'totalNotVerified' => DB::table('tbl_ansar_parsonal_info')->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('block_list_status', 0)->where('tbl_ansar_parsonal_info.division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'totalFree' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('free_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'totalPanel' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('pannel_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'totalOffered' => DB::table('tbl_ansar_status_info')->join('tbl_sms_offer_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('tbl_ansar_status_info.offer_sms_status', 1)->where('block_list_status', 0)->whereIn('tbl_sms_offer_info.district_id', $unit)->distinct()->count('tbl_ansar_status_info.ansar_id'),
+//                //'offerReceived' => DB::table('tbl_sms_receive_info')->join('tbl_sms_offer_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('tbl_sms_receive_info.sms_status', 'ACCEPTED')->whereIn('tbl_sms_offer_info.district_id', $unit)->count(),
+//                'totalEmbodied' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('embodied_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'totalEmbodiedOwn' => DB::table('tbl_ansar_status_info')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1)->where('tbl_kpi_info.division_id', Input::get('division_id'))->distinct()->count('tbl_embodiment.ansar_id'),
+//                'totalEmbodiedDiff' => DB::table('tbl_ansar_status_info')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1)->where('tbl_kpi_info.division_id','!=',Input::get('division_id'))->distinct()->count('tbl_embodiment.ansar_id'),
+//                'totalFreeze' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('freezing_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'totalBlockList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 1)->where('division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'totalBlackList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('black_list_status', 1)->where('division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'totalRest' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('rest_status', 1)->where('block_list_status', 0)->where('division_id', Input::get('division_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//            );
+//        } else if (Input::exists('district_id')) {
+//            $allStatus = array(
+//                'totalAnsar' => DB::table('tbl_ansar_parsonal_info')->where('unit_id', Input::get('district_id'))->count('ansar_id'),
+//                'totalNotVerified' => DB::table('tbl_ansar_parsonal_info')->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('block_list_status', 0)->where('unit_id', Input::get('district_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'totalFree' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('free_status', 1)->where('block_list_status', 0)->where('unit_id', Input::get('district_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'totalPanel' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('pannel_status', 1)->where('block_list_status', 0)->where('unit_id', Input::get('district_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'totalOffered' => DB::table('tbl_ansar_status_info')->join('tbl_sms_offer_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('offer_sms_status', 1)->where('block_list_status', 0)->where('tbl_sms_offer_info.district_id', Input::get('district_id'))->distinct()->count('tbl_ansar_status_info.ansar_id'),
+//                //'offerReceived' => DB::table('tbl_sms_receive_info')->join('tbl_sms_offer_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('tbl_sms_receive_info.sms_status', 'ACCEPTED')->where('tbl_sms_offer_info.district_id', Input::get('district_id'))->count(),
+//                'totalEmbodiedDiff' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 0)->where('embodied_status', 1)->where('unit_id', Input::get('district_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'totalEmbodiedOwn' => DB::table('tbl_ansar_status_info')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1)->where('tbl_kpi_info.unit_id', Input::get('district_id'))->distinct()->count('tbl_embodiment.ansar_id'),
+////                'totalEmbodiedDiff' => DB::table('tbl_ansar_status_info')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1)->where('tbl_kpi_info.unit_id','!=', Input::get('district_id'))->distinct()->count('tbl_embodiment.ansar_id'),
+//                'totalFreeze' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('freezing_status', 1)->where('block_list_status', 0)->where('unit_id', Input::get('district_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'totalBlockList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 1)->where('unit_id', Input::get('district_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'totalBlackList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('black_list_status', 1)->where('unit_id', Input::get('district_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'totalRest' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 0)->where('rest_status', 1)->where('unit_id', Input::get('district_id'))->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//            );
+//        }
+//        else {
+//            $allStatus = array(
+//                'totalAnsar' => $totalAnsar = DB::table('tbl_ansar_parsonal_info')->distinct()->count('ansar_id'),
+//                'totalNotVerified' => $notVerified = DB::table('tbl_ansar_parsonal_info')->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->whereIn('tbl_ansar_parsonal_info.verified', [0, 1])->where('block_list_status', 0)->distinct()->count('tbl_ansar_parsonal_info.ansar_id'),
+//                'totalFree' => $totalFreeStatus = AnsarStatusInfo::where('free_status', 1)->where('block_list_status', 0)->distinct()->count('ansar_id'),
+//                'totalPanel' => $totalpPanel = AnsarStatusInfo::where('pannel_status', 1)->where('block_list_status', 0)->distinct()->count('ansar_id'),
+//                'totalOffered' => $totalOfferred = AnsarStatusInfo::where('offer_sms_status', 1)->where('block_list_status', 0)->distinct()->count('ansar_id'),
+//                //'offerReceived' => $totalOfferedStatus = ReceiveSMSModel::where('sms_status', 'ACCEPTED')->count(),
+//                'totalEmbodied' => $totalEmbodied = AnsarStatusInfo::where('embodied_status', 1)->where('block_list_status', 0)->distinct()->count('ansar_id'),
+//                'totalFreeze' => $totalFreeze = AnsarStatusInfo::where('freezing_status', 1)->where('block_list_status', 0)->distinct()->count('ansar_id'),
+//                'totalBlockList' => $totalBlockList = AnsarStatusInfo::where('block_list_status', 1)->distinct()->count('ansar_id'),
+//                'totalBlackList' => $totalBlackList = AnsarStatusInfo::where('black_list_status', 1)->distinct()->count('ansar_id'),
+//                'totalRest' => $totalBlackList = AnsarStatusInfo::where('rest_status', 1)->where('block_list_status', 0)->distinct()->count('ansar_id'),
+//            );
+//        }
 //        return DB::getQueryLog();
-        return Response::json($allStatus);
+        $results = [];
+        foreach($allStatus as $key=>$q){
+            $results[$key] = $q->distinct()->count('tbl_ansar_parsonal_info.ansar_id');
+        }
+        return Response::json($results);
     }
 
     function updateGlobalParameter()

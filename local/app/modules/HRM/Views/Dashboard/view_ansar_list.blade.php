@@ -134,7 +134,7 @@
                             range-change="loadTotal(param)"
                             unit-change="loadTotal(param)"
                             thana-change="loadTotal(param)"
-                            {{--on-load="loadTotal(param)"--}}
+                            on-load="loadTotal(param)"
                             start-load="range"
                             field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
                     >
