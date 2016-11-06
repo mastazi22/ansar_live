@@ -60,7 +60,7 @@
         var d = date.getFullYear()+"-"+(date.getMonth()+1<10?"0"+(date.getMonth()+1):date.getMonth()+1)+"-"+date.getDate();
         if(_self.option.defaultValue){
             //alert('asdadadads')
-            $(this.element).val(moment(d).format(_self.option.dateFormat)).trigger('input')
+            $(this.element).val(moment(_self.option.defaultValue).format(_self.option.dateFormat)).trigger('input')
         }
         var d = _self.getCurrentDate();
         _self.option.currentDay = d.getDate();

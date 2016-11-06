@@ -7,7 +7,7 @@
     <script>
         $(document).ready(function () {
             $('#birth_from_name').datePicker({
-                defaultValue:false
+                defaultValue:moment().subtract(18, 'years')
             });
         })
         GlobalApp.controller('advancedEntrySearch', function ($scope, $http, httpService) {
