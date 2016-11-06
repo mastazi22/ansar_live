@@ -6,7 +6,9 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#birth_from_name').datePicker(false);
+            $('#birth_from_name').datePicker({
+                defaultValue:false
+            });
         })
         GlobalApp.controller('advancedEntrySearch', function ($scope, $http, httpService) {
             $scope.searchOption = {

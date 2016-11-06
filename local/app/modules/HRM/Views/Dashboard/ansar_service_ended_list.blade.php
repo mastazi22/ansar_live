@@ -106,6 +106,7 @@
                 httpService.unit(id).then(function (data) {
                     $scope.districts = data;
                     $scope.selectedDistrict = 'all'
+                    $scope.selectedThana = 'all'
                     $scope.thanas = [];
                     $scope.loadingDistrict = false;
                     $scope.loadTotal();
