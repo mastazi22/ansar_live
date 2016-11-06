@@ -121,9 +121,9 @@
                             unit-change="loadTotal()"
                             thana-change="loadTotal()"
                             start-load="range"
-                            range-load="loadTotal()"
                             field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
                             data = "params"
+                            on-load="loadTotal()"
                     >
 
                     </filter-template>
