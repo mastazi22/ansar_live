@@ -4,9 +4,8 @@ namespace App\modules\HRM\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
-use App\modules\HRM\Models\EmbodimentModel;
 use App\modules\HRM\Models\MemorandumModel;
-use App\modules\HRM\Models\TransferAnsar;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
@@ -18,6 +17,31 @@ class LetterController extends Controller
     function transferLetterView()
     {
         return View::make('HRM::Letter.transfer_letter');
+    }
+
+    function getMemorandumIds(Request $requests)
+    {
+        $t = DB::table('tbl_memorandum_id')
+            ->join('tbl_transfer_ansar', 'tbl_transfer_ansar.transfer_memorandum_id', '=', 'tbl_memorandum_id.memorandum_id')
+            ->select('tbl_memorandum_id.*')->distinct();
+        $e = DB::table('tbl_memorandum_id')
+            ->join('tbl_embodiment', 'tbl_embodiment.memorandum_id', '=', 'tbl_memorandum_id.memorandum_id')
+            ->select('tbl_memorandum_id.*');
+        $d = DB::table('tbl_memorandum_id')
+            ->join('tbl_rest_info', 'tbl_rest_info.memorandum_id', '=', 'tbl_memorandum_id.memorandum_id')
+            ->select('tbl_memorandum_id.*');
+
+        switch ($requests->type) {
+            case 'TRANSFER':
+                return $t->get();
+            case 'EMBODIED':
+                return $e->get();
+            case 'DISEMBODIED':
+                return $d->get();
+            default:
+                return [];
+        }
+
     }
 
     function printLetter()
@@ -39,17 +63,17 @@ class LetterController extends Controller
         }
         switch ($type) {
             case 'TRANSFER':
-                return $this->transferLetterPrint($id, $unit,$view);
+                return $this->transferLetterPrint($id, $unit, $view);
             case 'EMBODIMENT':
-                return $this->embodimentLetterPrint($id, $unit,$view);
+                return $this->embodimentLetterPrint($id, $unit, $view);
             case 'DISEMBODIMENT':
-                return $this->disembodimentLetterPrint($id, $unit,$view);
+                return $this->disembodimentLetterPrint($id, $unit, $view);
         }
     }
 
-    function transferLetterPrint($id, $unit,$v)
+    function transferLetterPrint($id, $unit, $v)
     {
-        $mem = MemorandumModel::where('memorandum_id',$id)->select('memorandum_id as transfer_memorandum_id','mem_date as created_at')->first();
+        $mem = MemorandumModel::where('memorandum_id', $id)->select('memorandum_id as transfer_memorandum_id', 'mem_date as created_at')->first();
         //$mem = TransferAnsar::where('transfer_memorandum_id', $id)->select('transfer_memorandum_id', 'created_at')->first();
 
         $user = DB::table('tbl_user')
@@ -63,18 +87,17 @@ class LetterController extends Controller
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
             ->where('tbl_transfer_ansar.transfer_memorandum_id', $id)
             ->select('tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'pk.kpi_name as p_kpi_name', 'tk.kpi_name as t_kpi_name')->get();
-        if ($mem&&$result) {
-            if($v=="full") return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'ta' => $result,'view'=>'print_transfer_letter']);
+        if ($mem && $result) {
+            if ($v == "full") return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'ta' => $result, 'view' => 'print_transfer_letter']);
             else return View::make('HRM::Letter.print_transfer_letter')->with(['mem' => $mem, 'user' => $user, 'ta' => $result]);
-        }
-        else {
-            return View::make('HRM::Letter.no_mem_found')->with(['id'=>$id]);
+        } else {
+            return View::make('HRM::Letter.no_mem_found')->with(['id' => $id]);
         }
     }
 
-    function embodimentLetterPrint($id, $unit,$v)
+    function embodimentLetterPrint($id, $unit, $v)
     {
-        $mem = MemorandumModel::where('memorandum_id',$id)->select('memorandum_id','mem_date as created_at')->first();
+        $mem = MemorandumModel::where('memorandum_id', $id)->select('memorandum_id', 'mem_date as created_at')->first();
         //$mem = EmbodimentModel::where('memorandum_id', $id)->select('memorandum_id', 'created_at')->first();
         $user = DB::table('tbl_user')
             ->join('tbl_user_details', 'tbl_user_details.user_id', '=', 'tbl_user.id')
@@ -88,19 +111,18 @@ class LetterController extends Controller
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
             ->where('tbl_embodiment.memorandum_id', $id)
             ->select('tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'tbl_kpi_info.kpi_name as kpi_name', 'tbl_ansar_parsonal_info.village_name as village_name', 'tbl_ansar_parsonal_info.post_office_name as pon', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_eng as thana', 'tbl_embodiment.joining_date')->get();
-        if ($mem&&$result) {
-            if($v=="full") return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'result' => $result,'view'=>'print_embodiment_letter']);
+        if ($mem && $result) {
+            if ($v == "full") return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'result' => $result, 'view' => 'print_embodiment_letter']);
             else return View::make('HRM::Letter.print_embodiment_letter')->with(['result' => $result, 'user' => $user, 'mem' => $mem]);
-        }
-        else {
-            return View::make('HRM::Letter.no_mem_found')->with('id',$id);
+        } else {
+            return View::make('HRM::Letter.no_mem_found')->with('id', $id);
         }
     }
 
-    function disembodimentLetterPrint($id,$unit,$v)
+    function disembodimentLetterPrint($id, $unit, $v)
     {
         $mem = DB::table('tbl_rest_info')
-            ->join('tbl_memorandum_id','tbl_memorandum_id.memorandum_id','=','tbl_rest_info.memorandum_id')->join('tbl_disembodiment_reason','tbl_disembodiment_reason.id','=','tbl_rest_info.disembodiment_reason_id')->where('tbl_memorandum_id.memorandum_id',$id)->select('tbl_disembodiment_reason.reason_in_bng as reason','tbl_memorandum_id.memorandum_id','tbl_memorandum_id.mem_date as created_at')->first();
+            ->join('tbl_memorandum_id', 'tbl_memorandum_id.memorandum_id', '=', 'tbl_rest_info.memorandum_id')->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_rest_info.disembodiment_reason_id')->where('tbl_memorandum_id.memorandum_id', $id)->select('tbl_disembodiment_reason.reason_in_bng as reason', 'tbl_memorandum_id.memorandum_id', 'tbl_memorandum_id.mem_date as created_at')->first();
         //return Response::json($mem);
         $user = DB::table('tbl_user')
             ->join('tbl_user_details', 'tbl_user_details.user_id', '=', 'tbl_user.id')
@@ -116,12 +138,11 @@ class LetterController extends Controller
             ->where('tbl_rest_info.memorandum_id', $id)
             ->select('tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'tbl_kpi_info.kpi_name as kpi_name', 'tbl_ansar_parsonal_info.village_name as village_name', 'tbl_ansar_parsonal_info.post_office_name as pon', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_eng as thana', 'tbl_embodiment_log.joining_date', 'tbl_embodiment_log.release_date')->get();
 //        return $result;
-        if ($mem&&$result) {
-            if($v=="full") return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'result' => $result,'view'=>'print_disembodiment_letter']);
+        if ($mem && $result) {
+            if ($v == "full") return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'result' => $result, 'view' => 'print_disembodiment_letter']);
             else return View::make('HRM::Letter.print_disembodiment_letter')->with(['result' => $result, 'user' => $user, 'mem' => $mem]);
-        }
-        else {
-            return View::make('HRM::Letter.no_mem_found')->with('id',$id);
+        } else {
+            return View::make('HRM::Letter.no_mem_found')->with('id', $id);
         }
     }
 
