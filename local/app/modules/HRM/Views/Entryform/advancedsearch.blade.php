@@ -7,7 +7,7 @@
     <script>
         $(document).ready(function () {
             $('#birth_from_name').datePicker({
-                defaultValue:moment().subtract(18, 'years')
+                defaultValue:false
             });
         })
         GlobalApp.controller('advancedEntrySearch', function ($scope, $http, httpService) {
@@ -29,6 +29,7 @@
                 education: {compare: '=', value: ''}
             }
             $scope.loading = false;
+            $scope.itemPerPage = parseInt('{{config('app.item_per_page')}}')
             $scope.pages = [];
             $scope.name_type = "LIKE";
             $scope.father_name_type = "LIKE";
@@ -457,7 +458,7 @@
                             </tr>
 
                             <tr ng-repeat="ansar in alldata">
-                                <td>[[currentPage?((currentPage*10)+$index+1):$index+1]]</td>
+                                <td>[[pages[currentPage].pageNum*itemPerPage+1+$index ]]</td>
                                 <td><a href="{{ URL::to('HRM/entryreport/') }}/[[ansar.ansar_id]]">[[ansar.ansar_id]]</a>
                                 </td>
                                 <td>[[ansar.name_eng]]</td>
