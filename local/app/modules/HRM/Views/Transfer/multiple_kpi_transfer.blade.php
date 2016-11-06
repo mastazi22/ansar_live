@@ -128,7 +128,7 @@
                 $http({
                     method: 'post',
                     url: '{{URL::route('confirm_transfer')}}',
-                    data: angular.toJson({ansars: $scope.submitData, memId: $scope.memId})
+                    data: angular.toJson({ansars: $scope.submitData, memId: $scope.memId,mem_date:$scope.memDate})
                 }).then(function (response) {
                     $('body').notifyDialog({
                         type: 'success',
@@ -317,14 +317,25 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4" style="margin-bottom: 10px">
-                            <input type="text" name="mem_id" ng-model="memId" placeholder="Enter memorandum no"
-                                   class="form-control">
+                            <div class="form-group">
+                                <label for="">Memorandum No. & Date</label>
+                                <div class="row">
+                                    <div class="col-md-7" style="padding-right: 0"><input type="text" name="mem_id" ng-model="memId" placeholder="Enter memorandum no"
+                                                                 class="form-control">
 
-                            <p ng-if="error!=undefined&&error.memId!=undefined" class="text text-danger">
-                                [[error.memId[0] ]]
-                            </p>
+                                        <p ng-if="error!=undefined&&error.memId!=undefined" class="text text-danger">
+                                            [[error.memId[0] ]]
+                                        </p></div>
+                                    <div class="col-md-5">
+                                        <input date-picker ng-model="memDate"
+                                               type="text" class="form-control" name="mem_date"
+                                               placeholder="Memorandum Date" >
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-8">
+                            <label for="" style="display: block;">&nbsp;</label>
                             <button ng-disabled="!memId||submitData.length<=0" class="btn btn-primary btn-md"
                                     ng-click="transferAnsar()">Transfer
                             </button>

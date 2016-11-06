@@ -206,16 +206,27 @@
                                     <div class="row">
                                         <div class="col-sm-4">
                                             <div class="form-group">
-                                                <label class="control-label">Memorandum no.&nbsp;&nbsp;&nbsp;<span
+                                                <label class="control-label">Memorandum no. & Date&nbsp;&nbsp;&nbsp;<span
                                                             ng-show="isVerifying"><i
                                                                 class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span><span
                                                             class="text-danger"
                                                             ng-if="isVerified&&!memorandumId">Memorandum ID is required.</span><span
                                                             class="text-danger"
                                                             ng-if="isVerified&&memorandumId">This id already taken.</span></label>
-                                                <input ng-blur="verifyMemorandumId()" ng-model="memorandumId"
-                                                       type="text" class="form-control" name="memorandum_id"
-                                                       placeholder="Enter memorandum id" required>
+
+                                                <div class="row">
+                                                    <div class="col-md-7" style="padding-right: 0"><input ng-blur="verifyMemorandumId()"
+                                                                                 ng-model="memorandumId"
+                                                                                 type="text" class="form-control"
+                                                                                 name="memorandum_id"
+                                                                                 placeholder="Enter memorandum id"
+                                                                                 required></div>
+                                                    <div class="col-md-5">
+                                                        <input date-picker ng-model="memDate"
+                                                               type="text" class="form-control" name="mem_date"
+                                                               placeholder="Memorandum Date" required>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-sm-4">

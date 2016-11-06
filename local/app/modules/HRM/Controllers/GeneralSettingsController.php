@@ -264,6 +264,8 @@ class GeneralSettingsController extends Controller
         $id = $request->input('id');
         $rules = array(
             'id' => 'required|numeric|integer|min:0',
+            'division_id' => 'required|numeric|min:0|integer',
+            'unit_id' => 'required|numeric|min:0|integer',
             'thana_name_eng' => 'required|regex:/^[\sa-zA-Z0-9_-]+$/',
             'thana_name_bng' => 'required',
             'thana_code' => 'required|numeric|integer',
@@ -284,11 +286,8 @@ class GeneralSettingsController extends Controller
         } else {
             DB::beginTransaction();
             try {
-                $thana_info = Thana::find($id);
-                $thana_info->thana_name_eng = $request->input('thana_name_eng');
-                $thana_info->thana_name_bng = $request->input('thana_name_bng');
-                $thana_info->thana_code = $request->input('thana_code');
-                $thana_info->save();
+                $thana_info = Thana::find($id)->update($request->all());
+                DB::statement("call update_thana(:did,:uid,:tid)",['did'=>$request->division_id,'uid'=>$request->unit_id,'tid'=>$request->id]);
                 DB::commit();
                 //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
             } catch

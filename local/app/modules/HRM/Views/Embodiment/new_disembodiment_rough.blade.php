@@ -29,7 +29,8 @@
             $scope.isVerified = false;
             $scope.isVerifying = false;
             $scope.allLoading = false;
-            $scope.disembodiment_date=moment().format("D-MMM-YYYY");;
+            $scope.disembodiment_date = moment().format("D-MMM-YYYY");
+            ;
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
             $scope.loadDistrict = function () {
                 $scope.loadingUnit = true;
@@ -119,7 +120,7 @@
     </script>
     <div ng-controller="NewDisembodimentController">
         {{--<div class="breadcrumbplace">--}}
-            {{--{!! Breadcrumbs::render('disembodiment_entry') !!}--}}
+        {{--{!! Breadcrumbs::render('disembodiment_entry') !!}--}}
         {{--</div>--}}
         @if(Session::has('success_message'))
             <div style="padding: 10px 20px 0 20px;">
@@ -192,7 +193,8 @@
                                 <label class="control-label">
                                 </label>
                                 <button id="load-ansar-for-disembodiment"
-                                        class="pull-right btn btn-primary"><span class="glyphicon glyphicon-save"></span>&nbsp;Load
+                                        class="pull-right btn btn-primary"><span
+                                            class="glyphicon glyphicon-save"></span>&nbsp;Load
                                     Ansar
                                 </button>
                             </div>
@@ -249,9 +251,22 @@
                                                             ng-if="isVerified&&!memorandumId">Memorandum ID is required.</span><span
                                                             class="text-danger"
                                                             ng-if="isVerified&&memorandumId">This id already taken.</span></label>
-                                                <input ng-blur="verifyMemorandumId()" ng-model="memorandumId"
-                                                       type="text" class="form-control" name="memorandum_id"
-                                                       placeholder="Enter memorandum id" required>
+
+                                                <div class="row">
+                                                    <div class="col-md-6" style="padding-right: 0">
+                                                        <input ng-blur="verifyMemorandumId()"
+                                                               ng-model="memorandumId"
+                                                               type="text" class="form-control"
+                                                               name="memorandum_id"
+                                                               placeholder="Enter memorandum id"
+                                                               required>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <input date-picker ng-model="memDate"
+                                                               type="text" class="form-control" name="mem_date"
+                                                               placeholder="Memorandum Date" required>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-sm-4">
@@ -352,11 +367,11 @@
             $('#ansar-all-modal').html(innerHtml)
         });
         $(document).on('change', 'select[name="dis-reason"]', function () {
-            if(!$(this).val()){
-                $(this).parents('tr').find('.ansar-check').prop('disabled',true)
+            if (!$(this).val()) {
+                $(this).parents('tr').find('.ansar-check').prop('disabled', true)
             }
-            else{
-                $(this).parents('tr').find('.ansar-check').prop('disabled',false)
+            else {
+                $(this).parents('tr').find('.ansar-check').prop('disabled', false)
             }
         })
         $(document).on('change', '.ansar-check', function () {
@@ -385,13 +400,21 @@
                     })
                     if (a.status) {
                         $("#all-loading").css('display', 'none');
-                        $('body').notifyDialog({type: 'success', message: a.message}).showDialog()
+                        $.noty({
+                            type: 'success',
+                            text: a.message,
+                            timeout:5000
+                        })
                     }
                 },
                 error: function (a, b, c, d) {
                     $("#all-loading").css('display', 'none');
                     //document.write(a.responseText)
-                    $('body').notifyDialog({type: 'error', message: "Server Error. Please Try again!"}).showDialog()
+                    $.noty({
+                        type: 'error',
+                        text: "Server Error. Please Try again!",
+                        timeout:5000
+                    })
                 },
                 beforeSubmit: function (arr) {
                     // arr.push({type:'text', value: selectedValue, name: 'come_from_where'})

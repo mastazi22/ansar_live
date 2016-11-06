@@ -8,6 +8,7 @@ class Thana extends Model
 {
     protected $connection = 'hrm';
     protected $table = 'tbl_thana';
+    protected $guarded = [];
     function kpi(){
         return $this->hasMany('App\models\KpiGeneralModel','thana_id','thana_id');
     }

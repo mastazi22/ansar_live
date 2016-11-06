@@ -175,16 +175,27 @@
                                 @endif
                             </div>
                             <div class="form-group required" ng-init="memorandumId='{{Request::old('memorandum_id')}}'">
-                                <label class="control-label">Memorandum no.&nbsp;&nbsp;&nbsp;<span
+                                <label class="control-label">Memorandum no. & Date&nbsp;&nbsp;&nbsp;<span
                                             ng-show="isVerifying"><i
                                                 class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span><span
                                             class="text-danger"
                                             ng-if="isVerified&&!memorandumId">Memorandum ID is required.</span><span
                                             class="text-danger"
                                             ng-if="isVerified&&memorandumId">This id already taken.</span></label>
-                                <input ng-blur="verifyMemorandumId()" ng-model="memorandumId"
-                                       type="text" class="form-control" name="memorandum_id"
-                                       placeholder="Enter Memorandum no." required>
+
+                                <div class="row">
+                                    <div class="col-md-7" style="padding-right: 0">
+                                        <input ng-blur="verifyMemorandumId()" ng-model="memorandumId"
+                                               type="text" class="form-control" name="memorandum_id"
+                                               placeholder="Enter Memorandum no." required>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <input date-picker ng-model="memDate"
+                                               type="text" class="form-control" name="mem_date"
+                                               placeholder="Memorandum Date" required>
+                                    </div>
+
+                                </div>
                                 @if($errors->has('memorandum_id'))
                                     <p class="text-danger">{{$errors->first('memorandum_id')}}</p>
                                 @endif

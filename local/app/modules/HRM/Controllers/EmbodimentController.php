@@ -302,6 +302,7 @@ class EmbodimentController extends Controller
             }
             $memorandum_entry = new MemorandumModel();
             $memorandum_entry->memorandum_id = $memorandum_id;
+            $memorandum_entry->mem_date = Carbon::parse($request->mem_date);
             $memorandum_entry->save();
             $embodiment_entry->memorandum_id = $memorandum_id;
 
@@ -364,7 +365,7 @@ class EmbodimentController extends Controller
             CustomQuery::addActionlog(['ansar_id' => $ansar_id, 'action_type' => 'EMBODIED', 'from_state' => 'OFFER', 'to_state' => 'EMBODIED', 'action_by' => auth()->user()->id]);
             $this->dispatch(new SendSms($ansar_id));
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             return $e->getMessage();
         }
@@ -397,6 +398,7 @@ class EmbodimentController extends Controller
         try {
             $memorandum = new MemorandumModel;
             $memorandum->memorandum_id = $m_id;
+            $memorandum->mem_date = Carbon::parse(Input::get('mem_date'));
             $memorandum->save();
             foreach ($transferred_ansar as $ansar) {
                 DB::beginTransaction();
@@ -519,6 +521,7 @@ class EmbodimentController extends Controller
                 if (!is_null($disembodiment_reason)) {
                     $memorandum_entry = new MemorandumModel();
                     $memorandum_entry->memorandum_id = $memorandum_id;
+                    $memorandum_entry->mem_date = Carbon::parse($request->mem_date);
                     $memorandum_entry->save();
                     for ($i = 0; $i < count($disembodiment_reason); $i++) {
                         $embodiment_infos = EmbodimentModel::where('ansar_id', $selected_ansars[$i])->first();
@@ -578,7 +581,7 @@ class EmbodimentController extends Controller
             DB::commit();
             CustomQuery::addActionlog($user, true);
         } catch
-        (Exception $e) {
+        (\Exception $e) {
             DB::rollback();
             return Response::json(['status' => false, 'message' => "Ansar/s not disemboded"]);
         }
@@ -860,43 +863,51 @@ class EmbodimentController extends Controller
             return response($valid->messages()->toJson(), 400, ['Content-type' => 'application/json']);
         }
         $data = $request->ansars;
-        $m_id = $request->memId;
+        DB::beginTransaction();
+        try{
+            $m_id = $request->memId;
+            $memorandum = new MemorandumModel;
+            $memorandum->memorandum_id = $m_id;
+            $memorandum->mem_date = Carbon::parse(Input::get('mem_date'));
+            $memorandum->save();
+            foreach ($data as $ansar) {
+                $ansar = (object)$ansar;
 
-        foreach ($data as $ansar) {
-            $ansar = (object)$ansar;
+                DB::beginTransaction();
+                try {
 
-            DB::beginTransaction();
-            try {
+                    $e_ansar = EmbodimentModel::where('ansar_id', $ansar->ansarId)->where('kpi_id', $ansar->currentKpi)->first();
+                    //print_r($ansar->ansarId); die;
+                    if ($e_ansar) {
+                        $e_ansar->kpi_id = $ansar->transferKpi;
+                        $e_ansar->transfered_date = Carbon::createFromFormat("d-M-Y", $ansar->tKpiJoinDate)->format("Y-m-d");
+                        $e_ansar->save();
+                        $transfer = new TransferAnsar;
+                        //print_r($ansar->id);die;
+                        $transfer->ansar_id = $ansar->ansarId;
+                        $transfer->embodiment_id = $e_ansar->id;
+                        $transfer->transfer_memorandum_id = $m_id;
+                        $transfer->present_kpi_id = $ansar->currentKpi;
+                        $transfer->transfered_kpi_id = $ansar->transferKpi;
+                        $transfer->present_kpi_join_date = $ansar->tKpiJoinDate;
+                        $transfer->transfered_kpi_join_date = Carbon::createFromFormat("d-M-Y", $ansar->tKpiJoinDate)->format("Y-m-d");
+                        $transfer->action_by = Auth::user()->id;
+                        $transfer->save();
+                        DB::commit();
+                        //$status['success']['count']++;
+                        //array_push($status['success']['data'], $ansar['ansar_id']);
+                        CustomQuery::addActionlog(['ansar_id' => $ansar->ansarId, 'action_type' => 'TRANSFER', 'from_state' => $ansar->currentKpi, 'to_state' => $ansar->transferKpi, 'action_by' => auth()->user()->id]);
 
-                $e_ansar = EmbodimentModel::where('ansar_id', $ansar->ansarId)->where('kpi_id', $ansar->currentKpi)->first();
-                //print_r($ansar->ansarId); die;
-                if ($e_ansar) {
-                    $e_ansar->kpi_id = $ansar->transferKpi;
-                    $e_ansar->transfered_date = Carbon::createFromFormat("d-M-Y", $ansar->tKpiJoinDate)->format("Y-m-d");
-                    $e_ansar->save();
-                    $transfer = new TransferAnsar;
-                    //print_r($ansar->id);die;
-                    $transfer->ansar_id = $ansar->ansarId;
-                    $transfer->embodiment_id = $e_ansar->id;
-                    $transfer->transfer_memorandum_id = $m_id;
-                    $transfer->present_kpi_id = $ansar->currentKpi;
-                    $transfer->transfered_kpi_id = $ansar->transferKpi;
-                    $transfer->present_kpi_join_date = $ansar->tKpiJoinDate;
-                    $transfer->transfered_kpi_join_date = Carbon::createFromFormat("d-M-Y", $ansar->tKpiJoinDate)->format("Y-m-d");
-                    $transfer->action_by = Auth::user()->id;
-                    $transfer->save();
-                    DB::commit();
-                    //$status['success']['count']++;
-                    //array_push($status['success']['data'], $ansar['ansar_id']);
-                    CustomQuery::addActionlog(['ansar_id' => $ansar->ansarId, 'action_type' => 'TRANSFER', 'from_state' => $ansar->currentKpi, 'to_state' => $ansar->transferKpi, 'action_by' => auth()->user()->id]);
-
+                    }
+                } catch (Exception $e) {
+                    DB::rollback();
+                    return response(collect(['message' => "An error occur while transfer. Please try again later"])->toJson(), 400, ['Content-Type' => 'application/json']);
                 }
-            } catch (Exception $e) {
-                DB::rollback();
-                return response(collect(['message' => "An error occur while transfer. Please try again later"])->toJson(), 400, ['Content-Type' => 'application/json']);
+
+
             }
-
-
+        }catch(\Exception $e){
+            return response(collect(['message' => "An error occur while transfer. Please try again later"])->toJson(), 400, ['Content-Type' => 'application/json']);
         }
         return Response::json(['status' => 1, 'message' => 'Ansar transfer complate', 'memId' => $m_id]);
     }

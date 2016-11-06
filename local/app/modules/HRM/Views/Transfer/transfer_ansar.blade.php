@@ -137,7 +137,8 @@
                     transfer_date: $scope.joinDate,
                     kpi_id: [$scope.params.kpi,$scope.trans.kpi],
                     transferred_ansar: ansar_id,
-                    unit: $scope.trans.unit
+                    unit: $scope.trans.unit,
+                    mem_date:$scope.memDate
                 }
                 $http({
                     url: '{{URL::route('complete_transfer_process')}}',
@@ -196,9 +197,6 @@
                         $("#transfer-option").modal("toggle")
                         $("#transfer-option").on('show.bs.modal', function () {
                             scope.result = [];
-                            scope.selectedKPI[1] = "";
-                            scope.selectedThana[1] = "";
-                            scope.selectedDistrict[1] = ""
                             scope.memorandumId = "";
                             scope.joinDate = "";
                             scope.showKpiStatus = false;
@@ -406,13 +404,24 @@
                                     <div class="row">
                                         <div class="col-sm-4">
                                             <div class="form-group">
-                                                <label class="control-label">Memorandum no.&nbsp;&nbsp;&nbsp;<span
+                                                <label class="control-label">Memorandum no. & Date&nbsp;&nbsp;&nbsp;<span
                                                             ng-show="isVerifying"><i class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span>
                                                     <span class="text-danger"
                                                           ng-if="isVerified">This id already taken</span></label>
-                                                <input ng-blur="verifyMemorandumId()" ng-model="memorandumId"
-                                                       type="text" class="form-control" name="memorandum_id"
-                                                       placeholder="Enter memorandum id">
+
+                                                <div class="row">
+                                                    <div class="col-md-7" style="padding-right: 0"><input ng-blur="verifyMemorandumId()"
+                                                                                 ng-model="memorandumId"
+                                                                                 type="text" class="form-control"
+                                                                                 name="memorandum_id"
+                                                                                 placeholder="Enter memorandum id">
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <input date-picker ng-model="memDate"
+                                                               type="text" class="form-control" name="mem_date"
+                                                               placeholder="Memorandum Date" required>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-sm-4">
