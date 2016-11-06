@@ -60,14 +60,13 @@
                             </form>
                         </div>
                     </div>
-                    <div ng-show="searchedAnsar.status" class="fullinfo">
-                        <div class="info-front-side">
-                            <img class="img-responsive img-thumbnail" ng-src="[[fontURL]]">
+                    <div ng-show="searchedAnsar.status" class="row">
+                        <div class="col-md-6">
+                            <img class="img-responsive img-thumbnail view-image" ng-src="[[fontURL]]">
                         </div>
-                        <br>
 
-                        <div class="info-back-side">
-                            <img class="img-responsive img-thumbnail" ng-src="[[backURL]]">
+                        <div class="col-md-6">
+                            <img class="img-responsive img-thumbnail view-image" ng-src="[[backURL]]">
                         </div>
                     </div>
                     <div ng-show="!searchedAnsar.status&&searchedAnsar.status!=undefined" class="noinfo">
@@ -77,5 +76,10 @@
             </div>
         </section>
     </div>
-
+    <script>
+        $(".view-image").viewer({
+            navbar:false,
+            toolbar:false
+        })
+    </script>
 @stop

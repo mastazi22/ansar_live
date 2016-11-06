@@ -20,6 +20,7 @@
      folder instead of downloading all of them to reduce the load. -->
 <link href="{{asset('dist/css/skins/_all-skins.min.css')}}" rel="stylesheet" type="text/css"/>
 <link href="{{asset('dist/css/user_css.css')}}" rel="stylesheet" type="text/css"/>
+<link href="{{asset('dist/css/viewer.min.css')}}" rel="stylesheet" type="text/css"/>
 <link href="{{asset('dist/css/session.css')}}" rel="stylesheet" type="text/css"/>
 <link href="{{asset('dist/css/entryform.css')}}" rel="stylesheet" type="text/css"/>
 <link href="{{asset('dist/css/id-card.css')}}" rel="stylesheet" type="text/css"/>
@@ -39,6 +40,7 @@
 <script src="{{asset('dist/js/notify.js')}}" type="text/javascript"></script>
 <script src="{{asset('dist/js/alertify.js')}}" type="text/javascript"></script>
 <script src="{{asset('dist/js/ajaxsubmit.js')}}"></script>
+<script src="{{asset('dist/js/viewer.min.js')}}"></script>
 <script src="{{asset('dist/js/angular-filter.js')}}"></script>
 <script src="{{asset('dist/js/angular-app.js')}}"></script>
 <script src="{{asset('dist/js/angular-route.js')}}"></script>

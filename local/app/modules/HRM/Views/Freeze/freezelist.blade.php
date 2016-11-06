@@ -23,6 +23,7 @@
 //        $scope.filter_name = "0";
             $scope.allLoading = false;
             $scope.allFreezeAnsar = [];
+            $scope.printLetter = false;
             $scope.loadingThana = false;
             $scope.loadingKpi = false;
             $scope.checked = [];
@@ -194,6 +195,8 @@
             $scope.transferAnsar = function (ansarId) {
                 $scope.submitting = true;
                 $scope.transferData['ansarIds'] = ansarId;
+                $scope.printData = '';
+                $scope.printLetter = false;
                 console.log($scope.transferData);
                 $http({
                     url: '{{URL::route('transfer_freezed_ansar')}}',
@@ -203,7 +206,9 @@
                     $scope.submitting = false;
                     if (response.data.status) {
                         notificationService.notify('success', response.data.message);
-                        $("#re-embodied-model,#re-embodied-model-mul").modal('hide')
+                       // $("#re-embodied-model,#re-embodied-model-mul").modal('hide')
+                        $scope.printData = "id="+$scope.transferData.memorandum_transfer+"&unit="+$scope.child.selectedUnit+"&view=full&type=TRANSFER"
+                        $scope.printLetter = true;
                         $scope.transferData = {};
                         $scope.getFreezeList();
                     }
@@ -355,11 +360,10 @@
                         $("#continue-modal").modal('show')
                         break;
                     case 'reembodied':
-                        $scope.getSingleRow = $scope.allFreezeAnsar[i];
+                        $scope.printLetter = false;
                         $("#re-embodied-model-mul").modal('show')
                         break;
                     case 'disembodied':
-                        $scope.getSingleRow = $scope.allFreezeAnsar[i];
                         $("#dis-embodied-model-multiple").modal('show')
                         break;
                     case 'black':
@@ -367,17 +371,6 @@
                         break;
 
                 }
-            }
-            $scope.reEmbodiedAll = function (data) {
-                $http({
-                    url: '{{URL::route('confirm_transfer')}}',
-                    method: 'post',
-                    data: angular.toJson(data)
-                }).then(function (response) {
-
-                }, function (response) {
-
-                })
             }
             $scope.$watch('checked', function (n, o) {
                 if (n.length <= 0) return;
@@ -401,6 +394,7 @@
 
             }
             $scope.modal = function (index) {
+                $scope.printLetter = false;
                 $scope.getSingleRow = $scope.allFreezeAnsar[index];
             }
         })
@@ -432,6 +426,7 @@
                 //alert(cl+"  "+pl)
             })
             $("body").on('click', '#reEmbodied', function (e) {
+//                $scope.printLetter = false;
                 $("#re-embodied-model").modal()
             })
             $("body").on('click', '.test-dropdown-below', function (e) {
@@ -832,11 +827,12 @@
                                        placeholder="Enter Memorandum ID">
                             </div>
 
-                            <div class="form-group col-md-offset-1 col-md-4">
-                                <button type="submit" class="btn btn-default" ng-disabled="!transferData.memorandum_transfer||!transferData.joining_date||!transferData.selectedKpi||verifyTransfer||verifying||submitting">
-                                    <i class="fa fa-pulse fa-spinner" ng-if="submitting"></i>&nbsp;Submit
-                                </button>
-                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary pull-left" ng-disabled="!transferData.memorandum_transfer||!transferData.joining_date||!transferData.selectedKpi||verifyTransfer||verifying||submitting"  ng-if="!printLetter">
+                                <i class="fa fa-pulse fa-spinner" ng-if="submitting"></i>&nbsp;Submit
+                            </button>
+                            <a target="_blank" href="{{URL::to('HRM/print_letter')}}?[[printData]]" class="btn btn-primary pull-right" ng-if="printLetter"><i class="fa fa-print"></i>&nbsp;&nbsp;Print Letter</a>
                         </div>
                     </form>
                 </div>
@@ -921,12 +917,14 @@
                                            ng-model="transferData.memorandum_transfer" name="memorandum_id"
                                            placeholder="Enter Memorandum ID">
                                 </div>
-                                <div class="form-group col-md-offset-1 col-md-4">
-                                    <button type="submit" class="btn btn-default" ng-disabled="!transferData.memorandum_transfer||!transferData.joining_date||!transferData.selectedKpi||verifyTransfer||verifying||submitting">
-                                        <i class="fa fa-pulse fa-spinner" ng-if="submitting"></i>&nbsp;Submit
-                                    </button>
-                                </div>
                             </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-default pull-left" ng-disabled="!transferData.memorandum_transfer||!transferData.joining_date||!transferData.selectedKpi||verifyTransfer||verifying||submitting" ng-if="!printLetter">
+                                <i class="fa fa-pulse fa-spinner" ng-if="submitting"></i>&nbsp;Submit
+                            </button>
+                            <a target="_blank" href="{{URL::to('HRM/print_letter')}}?[[printData]]" class="btn btn-primary pull-right" ng-if="printLetter"><i class="fa fa-print"></i>&nbsp;&nbsp;Print Letter</a>
+
                         </div>
                     </form>
                 </div>
