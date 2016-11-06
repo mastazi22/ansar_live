@@ -952,7 +952,34 @@ class FormSubmitHandler extends Controller
                     ->where('tbl_ansar_education_info.education_id', $value->compare, $value->value);
             } else if ($key == 'disease_id') {
                 if($value->value && strcasecmp($value->value,'type'))$ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->value);
-            } else {
+            }
+            else if($key=='ansar_name'){
+                if($value->value){
+                    global $v;
+                    global $c;
+                    $v = $value->value;
+                    $c = $value->compare;
+                    $ansarAdvancedSearch->where(function($q){
+                        global $v,$c;
+                        $q->where('tbl_ansar_parsonal_info.ansar_name_eng', $c, $c=='LIKE'?"%".$v."%":$v);
+                        $q->orWhere('tbl_ansar_parsonal_info.ansar_name_bng', $c, $c=='LIKE'?"%".$v."%":$v);
+                    });
+                }
+            }
+            else if($key=='father_name'){
+                if($value->value){
+                    global $v;
+                    global $c;
+                    $v = $value->value;
+                    $c = $value->compare;
+                    $ansarAdvancedSearch->where(function($q){
+                        global $v,$c;
+                        $q->where('tbl_ansar_parsonal_info.father_name_eng', $c, $c=='LIKE'?"%".$v."%":$v);
+                        $q->orWhere('tbl_ansar_parsonal_info.father_name_bng', $c, $c=='LIKE'?"%".$v."%":$v);
+                    });
+                }
+            }
+            else {
                 if ($value->value) {
                     $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->compare=='LIKE'?"%".$value->value."%":$value->value);
                 }
