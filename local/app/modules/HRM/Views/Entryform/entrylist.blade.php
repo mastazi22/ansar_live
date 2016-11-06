@@ -320,9 +320,9 @@
 
                 </div>
                 <div class="box-header" ng-if="!isSearching">
-                    <h4 style="margin-top: 0" ng-if="loadType==0">Total unverified ansars :
+                    <h4 style="margin-top: 0" ng-if="loadType==0">Total unverified Ansars :
                         [[total.toLocaleString()]]</h4>
-                    <h4 style="margin-top: 0" ng-if="loadType==1">Total verified ansars :
+                    <h4 style="margin-top: 0" ng-if="loadType==1">Total verified Ansars :
                         [[total.toLocaleString()]]</h4>
                 </div>
                 <div class="box-body" id="change-body">

@@ -250,7 +250,7 @@
                             </div>
                         </div>
                     </div>
-                    <h4 class="text text-bold">Total Ansars :PC([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])&nbsp;APC([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])&nbsp;ANSAR([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</h4>
+                    <h4 class="text text-bold">Total Ansars :PC([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])&nbsp;APC([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])&nbsp;Ansar([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</h4>
                     <div class="table-responsive">
                         <template-list data="ansars" key="offerred_ansar_accept_last_5_days"></template-list>
                         <div class="table_pagination" ng-if="pages.length>1">

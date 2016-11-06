@@ -233,7 +233,7 @@
                     </div>
                 </div>
                 <div class="box-footer">
-                    <button class="btn btn-primary" ng-click="blockSelected()"><i class="fa fa-remove"></i>Block Selected</button>
+                    <button class="btn btn-primary" ng-click="blockSelected()"><i class="fa fa-remove"></i>&nbsp;&nbsp;Block Selected</button>
                 </div>
             </div>
         </section>

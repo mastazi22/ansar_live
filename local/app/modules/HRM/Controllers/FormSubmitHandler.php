@@ -959,6 +959,7 @@ class FormSubmitHandler extends Controller
             }
         }
         $data = $ansarAdvancedSearch->paginate(config('app.item_per_page'));
+//        return DB::getQueryLog();
         return Response::json($data);
     }
 

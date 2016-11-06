@@ -577,7 +577,7 @@
                     <div class="label-hrm">
                         <div class="label-hrm-title">
                             <span class="info-box-text"
-                                  style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial">Total number of Ansars who accept the offer last 5 days </span>
+                                  style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial">Total number of Ansars who accept the offer within last 5 days </span>
                         </div>
 
                         <div class="label-hrm-calculation">
