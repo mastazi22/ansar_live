@@ -154,6 +154,9 @@
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered">
+                            <caption>
+                                <table-search q="q" results="results" ></table-search>
+                            </caption>
                             <tr>
                                 <th>SL. No</th>
                                 <th>Ansar ID</th>
@@ -162,10 +165,10 @@
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
-                            <tr ng-show="ansars.length<=0">
+                            <tr ng-show="ansars.length<=0||results==undefined||results.length<=0">
                                 <td colspan="6" class="warning">No information found</td>
                             </tr>
-                            <tr ng-show="ansars.length>0" ng-repeat="a in ansars">
+                            <tr ng-show="ansars.length>0" ng-repeat="a in ansars|filter:q as results">
                                 <td>[[$index+1]]</td>
                                 <td>[[a.ansar_id]]</td>
                                 <td>[[a.issue_date]]</td>

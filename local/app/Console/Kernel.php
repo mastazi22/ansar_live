@@ -93,7 +93,7 @@ class Kernel extends ConsoleKernel
             $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
             $offered_cancel = OfferCancel::where('sms_status', 0)->take(10)->get();
             foreach ($offered_cancel as $offer) {
-                $a = $offer->ansar->first();
+                $a = $offer->ansar;
                 $body = 'Your offer is cancelled';
                 $phone = '88' . trim($a->mobile_no_self);
                 $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";

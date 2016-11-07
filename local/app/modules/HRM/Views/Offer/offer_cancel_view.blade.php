@@ -108,13 +108,14 @@
             <show-alert alerts="alerts" close="closeAlert()"></show-alert>
             <div class="box box-solid">
                 <div class="box-body">
+
                     <div class="row" style="padding-bottom: 10px">
                         <div class="col-md-4">
-                            <label class="control-label"> Select a District to Cancel Offer&nbsp;&nbsp;&nbsp;<i
+                            <label class="control-label"> @lang('title.unit') to Cancel Offer&nbsp;&nbsp;&nbsp;<i
                                         class="fa fa-spinner fa-pulse" ng-show="loadingAnsar"></i></label>
                             <select class="form-control" ng-model="selectedDistrict"
                                     ng-disabled="loadingAnsar||loadingUnit" ng-change="loadAnsar()">
-                                <option value="">--Select a District--</option>
+                                <option value="">--@lang('title.unit')--</option>
                                 <option ng-repeat="d in allDistrict" value="[[d.id]]">[[d.unit_name_bng]]
                                 </option>
                             </select>
@@ -128,13 +129,16 @@
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered" id="pc-table">
+                            <caption>
+                                <table-search q="q" results="results" ></table-search>
+                            </caption>
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Offer Send Date</th>
                                 <th>Offer Expire Date</th>
                                 <th>District</th>
-                                <th>Sex</th>
+                                <th>Gender</th>
                                 <th>Designation</th>
                                 <th>
                                     <div class="styled-checkbox">
@@ -145,11 +149,11 @@
                                     &nbsp;&nbsp<span>Select All</span>
                                 </th>
                             </tr>
-                            <tr ng-show="noAnsar&&errorLoad==undefined" class="warning">
+                            <tr ng-show="(noAnsar&&errorLoad==undefined)||results==undefined||results.length<=0" class="warning">
                                 <td colspan="8">No Ansar is available to show</td>
                             </tr>
                             <tbody ng-if="errorLoad!=undefined" ng-bind-html="errorLoad"></tbody>
-                            <tr ng-repeat="ansar in selectedAnsar" ng-hide="noAnsar&&errorLoad==undefined">
+                            <tr ng-repeat="ansar in selectedAnsar|filter:q as results" ng-hide="noAnsar&&errorLoad==undefined">
                                 <td ansar-id="[[ansar.ansar_id]]">[[ansar.ansar_id]]</td>
                                 <td>[[ansar.ansar_name_bng]]</td>
                                 <td>[[ansar.sms_send_datetime]]</td>

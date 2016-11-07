@@ -36,15 +36,15 @@ class CheckUserType
             if(!strcasecmp($url,$routeName)){
                 foreach($params as $key=>$type){
                     if($type=='unit'){
-                        if($user->type=22){
+                        if($user->type==22){
                             $input[$key] = $user->district->id;
                         }
                     }
                     else if($type=='range'){
-                        if($user->type=22){
+                        if($user->type==22){
                             $input[$key] = $user->district->division_id;
                         }
-                        else if($user->type=66){
+                        else if($user->type==66){
                             $input[$key] = $user->division_id;
                         }
                     }
