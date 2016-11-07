@@ -256,6 +256,9 @@
                     ></filter-template>
                     <div class="table-responsive">
                         <table class="table table-bordered" id="pc-table">
+                            <caption>
+                                <table-search q="q" results="results"></table-search>
+                            </caption>
                             <tr>
                                 <th>SL. No</th>
                                 <th>ID</th>
@@ -276,7 +279,7 @@
                             <tr class="warning" ng-if="ansars.length<=0">
                                 <td colspan="9">No Ansar Found to Transfer</td>
                             </tr>
-                            <tr ng-repeat="ansar in ansars" ng-if="ansars.length>0">
+                            <tr ng-repeat="ansar in ansars|filter:q as results" ng-if="ansars.length>0">
                                 <td>[[$index+1]]</td>
                                 <td>[[ansar.ansar_id]]</td>
                                 <td>[[ansar.name_bng]]</td>

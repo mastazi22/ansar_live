@@ -27,11 +27,7 @@
                     var d = response.data;
                     var c = Math.ceil(d.length/100);
                     var i=0;
-                    $interval(function () {
-                        console.log(d.slice(i,i+100))
-                        Array.prototype.push.apply($scope.ansars,d.slice(i,i+100))
-                        i = i+100;
-                    },100,c)
+
                     $scope.selected = Array.apply(null, new Array(d.length)).map(Boolean.prototype.valueOf, false)
                     $scope.selectAll = false
                 }, function (response) {
@@ -159,6 +155,9 @@
                         <form id="not-verified-form" method="post" action="{{URL::to('HRM/entryVerify')}}">
                             <input type="hidden" name="chunk_verification" value="chunk_verification">
                             <table class="table table-bordered">
+                                <caption>
+                                    <table-search q="q" results="results"></table-search>
+                                </caption>
                                 <tr>
                                     <th>SL. No</th>
                                     <th>Ansar ID</th>
@@ -174,7 +173,7 @@
                                 <tr ng-if="ansars.length==0||error!=undefined">
                                     <td class="warning" colspan="8">No unverified ansar found</td>
                                 </tr>
-                                <tr ng-repeat="a in ansars" ng-if="ansars.length>0&&error==undefined">
+                                <tr ng-repeat="a in ansars|filter:q as results" ng-if="ansars.length>0&&error==undefined">
                                     <td>[[$index+1]]</td>
                                     <td><a href="{{URL::to('HRM/entryreport')}}/[[a.ansar_id]]">[[a.ansar_id]]</a></td>
                                     <td>[[a.ansar_name_bng]]</td>
