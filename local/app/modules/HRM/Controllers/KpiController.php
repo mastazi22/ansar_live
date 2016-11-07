@@ -41,25 +41,19 @@ class KpiController extends Controller
         $division = Input::get('division');
         $unit = Input::get('unit');
         $thana = Input::get('thana');
-        $view = Input::get('view');
+        $q = Input::get('q');
         $rules = [
             'limit' => 'numeric',
             'offset' => 'numeric',
             'division' => ['regex:/^(all)$|^[0-9]+$/'],
             'unit' => ['regex:/^(all)$|^[0-9]+$/'],
             'thana' => ['regex:/^(all)$|^[0-9]+$/'],
-            'view' => 'regex:/[a-z]+/'
         ];
         $validation = Validator::make(Input::all(), $rules);
         if ($validation->fails()) {
             return response('Invalid Request (400)', 400);
-        } else {
-            if (strcasecmp($view, 'view') == 0) {
-                return CustomQuery::kpiInfo($offset, $limit, $division, $unit, $thana);
-            } else {
-                return CustomQuery::kpiInfoCount($division, $unit, $thana);
-            }
         }
+        return CustomQuery::kpiInfo($offset, $limit, $division, $unit, $thana,$q);
     }
 
 

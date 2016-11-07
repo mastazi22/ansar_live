@@ -31,17 +31,20 @@ class ReportController extends Controller
         return View::make('HRM::Report.report_guard_search');
     }
 
-    function reportAllGuard()
+    function reportAllGuard(Request $request)
     {
         $kpi = Input::get('kpi_id');
 
         $rules = [
-            'kpi_id' => 'required|regex:/^[0-9]+$/'
+            'kpi_id' => 'required|regex:/^[0-9]+$/',
+            'unit' => 'required|regex:/^[0-9]+$/',
+            'thana' => 'required|regex:/^[0-9]+$/',
+            'division' => 'required|regex:/^[0-9]+$/',
         ];
         $valid = Validator::make(Input::all(), $rules);
 
         if ($valid->fails()) {
-            //return print_r($valid->messages());
+            return $valid->messages();
             return response("Invalid Request(400)", 400);
         } else {
             //DB::enableQueryLog();
@@ -52,6 +55,9 @@ class ReportController extends Controller
                 ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
                 ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
                 ->where('tbl_kpi_info.id', '=', $kpi)
+                ->where('tbl_kpi_info.unit_id', '=', $request->unit)
+                ->where('tbl_kpi_info.thana_id', '=', $request->thana)
+                ->where('tbl_kpi_info.division_id', '=', $request->division)
                 ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
                 ->select('tbl_ansar_parsonal_info.ansar_id','tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_designations.name_bng',
                     'tbl_units.unit_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.joining_date')->get();
@@ -62,6 +68,9 @@ class ReportController extends Controller
                 ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
                 ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
                 ->where('tbl_kpi_info.id', '=', $kpi)
+                ->where('tbl_kpi_info.unit_id', '=', $request->unit)
+                ->where('tbl_kpi_info.thana_id', '=', $request->thana)
+                ->where('tbl_kpi_info.division_id', '=', $request->division)
                 ->select('tbl_kpi_info.kpi_name', 'tbl_kpi_info.kpi_address', 'tbl_kpi_detail_info.total_ansar_given', 'tbl_units.unit_name_bng', 'tbl_thana.thana_name_bng')->first();
             return Response::json(['ansars' => $ansar, 'guard' => $guards]);
         }
