@@ -13,6 +13,7 @@
             $scope.total = 0;
             $scope.numOfPage = 0;
             $scope.param = {}
+            $scope.queue = [];
             $scope.itemPerPage = 20
             $scope.currentPage = 0;
             $scope.ansars = $sce.trustAsHtml("");
@@ -30,50 +31,33 @@
                     })
                     $scope.loadingPage[i]=false;
                 }
-                if($scope.numOfPage>0)$scope.loadPage($scope.pages[0]);
-                else $scope.loadPage({pageNum:0,offset:0,limit:$scope.itemPerPage,view:'view'});
             }
             $scope.loadPage = function (page,$event) {
                 if($event!=undefined)  $event.preventDefault();
-                $scope.currentPage = page.pageNum;
-                $scope.loadingPage[page.pageNum]=true;
+                $scope.currentPage = page==undefined?0:page.pageNum;
+                $scope.loadingPage[$scope.currentPage]=true;
                 $scope.allLoading = true;
                 $http({
                     url: '{{URL::route('ansar_reached_fifty_details')}}',
                     method: 'get',
                     params: {
-                        offset: page.offset,
-                        limit: page.limit,
+                        offset: page==undefined?0:page.offset,
+                        limit: page==undefined?$scope.itemPerPage:page.limit,
                         unit:$scope.param.unit,
                         thana:$scope.param.thana,
                         division:$scope.param.range,
-                        view:'view'
+                        q:$scope.q
                     }
                 }).then(function (response) {
-                    $scope.ansars = $sce.trustAsHtml(response.data);
-                    $scope.loadingPage[page.pageNum]=false;
+                    $scope.ansars = response.data;
+                    $scope.queue.shift()
+                    $scope.loadingPage[$scope.currentPage]=false;
                     $scope.allLoading = false;
-                })
-            }
-            $scope.loadTotal = function (param) {
-                $scope.param = param;
-                $scope.allLoading = true;
-                $http({
-                    url: '{{URL::route('ansar_reached_fifty_details')}}',
-                    method: 'get',
-                    params: {
-                        unit:param.unit,
-                        thana:param.thana,
-                        division:param.range,
-                        view:'count'
-                    }
-                }).then(function (response) {
-                    $scope.total = response.data.total;
+                    $scope.total = sum(response.data.total);
+                    $scope.gCount = response.data.total
+                    if($scope.queue.length>1) $scope.loadPage()
                     $scope.numOfPage = Math.ceil($scope.total/$scope.itemPerPage);
                     $scope.loadPagination();
-                    //alert($scope.total)
-                }, function (response) {
-
                 })
             }
             $scope.filterMiddlePage = function (value, index, array) {
@@ -82,6 +66,13 @@
                 if (value.pageNum >= minPage && value.pageNum <= maxPage) {
                     return true;
                 }
+            }
+            function sum(t){
+                var s = 0;
+                for(var i in t){
+                    s += t[i]
+                }
+                return s;
             }
         })
     </script>
@@ -97,34 +88,27 @@
                     <filter-template
                             show-item="['range','unit','thana']"
                             type="all"
-                            range-change="loadTotal(param)"
-                            unit-change="loadTotal(param)"
-                            thana-change="loadTotal(param)"
-                            range-load="loadTotal(param)"
+                            range-change="loadPage()"
+                            unit-change="loadPage()"
+                            thana-change="loadPage()"
+                            on-load="loadPage()"
                             start-load="range"
+                            data="param"
                             field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
                     >
 
                     </filter-template>
-                    <h4>Total Ansars: [[total.toLocaleString()]]</h4>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4 class="text text-bold">Total Ansars :PC([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])&nbsp;APC([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])&nbsp;Ansar([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</h4>
+                        </div>
+                        <div class="col-md-4">
+                            <database-search q="q" queue="queue" on-change="loadPage()"></database-search>
+
+                        </div>
+                    </div>
                     <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <tr>
-                                <th>SL. No</th>
-                                <th>Ansar id</th>
-                                <th>Name</th>
-                                <th>Rank</th>
-                                <th>Unit</th>
-                                <th>Thana</th>
-                                <th>Date of Birth</th>
-                                <th>Sex</th>
-                            </tr>
-                            <tbody ng-bind-html="ansars" style="border:none;">
-                            <tr>
-                                <td class="warning" colspan="8">No Ansar Found</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                        <template-list data="ansars" key="selected_ansar_fifty_age"></template-list>
                         <div class="table_pagination" ng-if="pages.length>1">
                             <ul class="pagination">
                                 <li ng-class="{disabled:currentPage == 0}">

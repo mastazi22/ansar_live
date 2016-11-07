@@ -13,6 +13,7 @@
         GlobalApp.controller('AnsarServiceEndedListController', function ($scope, $http,$sce,httpService) {
             $scope.total = 0;
             $scope.numOfPage = 0;
+            $scope.queue = [];
             $scope.selectedDistrict = "all";
             $scope.user_type = parseInt("{{auth()->user()->type}}")
             $scope.selectedThana = "all"
@@ -38,55 +39,34 @@
                     })
                     $scope.loadingPage[i]=false;
                 }
-                if($scope.numOfPage>0)$scope.loadPage($scope.pages[0]);
-                else $scope.loadPage({pageNum:0,offset:0,limit:$scope.itemPerPage,view:'view'});
             }
             $scope.loadPage = function (page,$event) {
                 if($event!=undefined)  $event.preventDefault();
-                $scope.currentPage = page.pageNum;
-                $scope.loadingPage[page.pageNum]=true;
+                $scope.currentPage = page==undefined?0:page.pageNum;
+                $scope.loadingPage[$scope.currentPage]=true;
                 $scope.allLoading = true;
                 $http({
                     url: '{{URL::route('service_ended_info_details')}}',
                     method: 'get',
                     params: {
-                        offset: page.offset,
-                        limit: page.limit,
+                        offset: page==undefined?0:page.offset,
+                        limit: page==undefined?$scope.itemPerPage:page.limit,
                         unit:$scope.selectedDistrict,
                         thana:$scope.selectedThana,
                         interval:$scope.interval,
                         division:$scope.selectedDivision,
-                        view:'view'
+                        q:$scope.q
                     }
                 }).then(function (response) {
                     $scope.ansars = response.data
-
-                    $scope.loadingPage[page.pageNum]=false;
+                    $scope.queue.shift();
+                    $scope.loadingPage[$scope.currentPage]=false;
                     $scope.allLoading = false;
-                })
-            }
-            $scope.loadTotal = function () {
-                $scope.allLoading = true;
-                $http({
-                    url: '{{URL::route('service_ended_info_details')}}',
-                    method: 'get',
-                    params: {
-                        unit:$scope.selectedDistrict,
-                        thana:$scope.selectedThana,
-                        interval:$scope.interval,
-                        division:$scope.selectedDivision,
-                        view:'count'
-                    }
-                }).then(function (response) {
                     $scope.total = sum(response.data.total);
                     $scope.gCount = response.data.total;
+                    if($scope.queue.length>1) $scope.loadPage();
                     $scope.numOfPage = Math.ceil($scope.total/$scope.itemPerPage);
                     $scope.loadPagination();
-                }, function (response) {
-                    $scope.total = 0;
-                    $scope.ansars = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
-                    $scope.allLoading = false;
-                    $scope.pages = [];
                 })
             }
             $scope.filterMiddlePage = function (value, index, array) {
@@ -109,7 +89,7 @@
                     $scope.selectedThana = 'all'
                     $scope.thanas = [];
                     $scope.loadingDistrict = false;
-                    $scope.loadTotal();
+                    $scope.loadPage();
                 })
             }
             $scope.loadThana = function (d_id) {
@@ -119,7 +99,7 @@
                     $scope.thanas = data;
                     $scope.selectedThana = "all";
                     $scope.loadingThana = false;
-                    $scope.loadTotal()
+                    $scope.loadPage()
                 })
             }
             if($scope.user_type==11||$scope.user_type==33){
@@ -131,7 +111,7 @@
             else if($scope.user_type==22){
                 $scope.loadThana(parseInt('{{Auth::user()->district_id}}'))
             }
-            $scope.loadTotal()
+            $scope.loadPage()
             function sum(t){
                 var s = 0;
                 for(var i in t){
@@ -179,7 +159,7 @@
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16">
                                 </label>
-                                <select class="form-control" ng-model="selectedThana" ng-change="loadTotal()">
+                                <select class="form-control" ng-model="selectedThana" ng-change="loadPage()">
                                     <option value="all">All</option>
                                     <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]</option>
                                 </select>
@@ -189,7 +169,7 @@
                             <div class="form-group">
                                 <label class="control-label">Select Month&nbsp;
                                 </label>
-                                <select class="form-control" ng-model="interval" ng-change="loadTotal()">
+                                <select class="form-control" ng-model="interval" ng-change="loadPage()">
                                     <option value="1">1 Months</option>
                                     <option value="2">2 Months</option>
                                     <option value="3">3 Months</option>
@@ -200,7 +180,15 @@
                             </div>
                         </div>
                     </div>
-                    <h4 class="text text-bold">Total Ansars :PC([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])&nbsp;APC([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])&nbsp;Ansar([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</h4>
+                     <div class="row">
+                        <div class="col-md-8">
+                            <h4 class="text text-bold">Total Ansars :PC([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])&nbsp;APC([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])&nbsp;Ansar([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</h4>
+                        </div>
+                        <div class="col-md-4">
+                                <database-search q="q" queue="queue" on-change="loadPage()"></database-search>
+
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <template-list data="ansars" key="selected_service_ended_ansar"></template-list>
                         <div class="table_pagination" ng-if="pages.length>1">

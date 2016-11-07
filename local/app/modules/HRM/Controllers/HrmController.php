@@ -437,7 +437,7 @@ class HrmController extends Controller
         $offset = Input::get('offset');
         $unit = Input::get('unit');
         $thana = Input::get('thana');
-        $view = Input::get('view');
+        $q = Input::get('q');
         $division = Input::get('division');
         $interval = Input::get('interval');
 //        return $offset;
@@ -456,11 +456,7 @@ class HrmController extends Controller
             //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         }
-        if (strcasecmp($view, 'view') == 0) {
-            return CustomQuery::ansarListForServiceEnded($offset, $limit, $unit, $thana, $division, $interval);
-        } else {
-            return CustomQuery::ansarListForServiceEndedCount($unit, $thana, $division, $interval);
-        }
+        return CustomQuery::ansarListForServiceEnded($offset, $limit, $unit, $thana, $division, $interval,$q);
     }
 
     public function showAnsarForReachedFifty($count)
@@ -475,10 +471,9 @@ class HrmController extends Controller
         $offset = Input::get('offset');
         $unit = Input::get('unit');
         $thana = Input::get('thana');
-        $view = Input::get('view');
+        $q = Input::get('q');
         $division = Input::get('division');
         $rules = [
-            'view' => 'regex:/[a-z]+/',
             'limit' => 'numeric',
             'offset' => 'numeric',
             'thana' => ['regex:/^(all)$|^[0-9]+$/'],
@@ -491,11 +486,7 @@ class HrmController extends Controller
             //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         }
-        if (strcasecmp($view, 'view') == 0) {
-            return CustomQuery::ansarListWithFiftyYears($offset, $limit, $unit, $thana, $division);
-        } else {
-            return CustomQuery::getansarWithFiftyYearsCount($unit, $thana, $division);
-        }
+        return CustomQuery::ansarListWithFiftyYears($offset, $limit, $unit, $thana, $division,$q);
     }
 
     public function showAnsarForNotInterested($count)
@@ -697,6 +688,7 @@ class HrmController extends Controller
 
     function ansarAcceptOfferLastFiveDays(Request $request)
     {
+//        return $request->all();
         $rules = [
             'division' => ['required','regex:/^(all)||[0-9]+$/'],
             'unit' => ['required','regex:/^(all)||[0-9]+$/'],
@@ -710,7 +702,7 @@ class HrmController extends Controller
         if($valid->fails()){
             return response($valid->messages()->toJson(),422,['Content-Type'=>'application/json']);
         }
-        $result = CustomQuery::ansarAcceptOfferLastFiveDays($request->division,$request->unit,$request->thana,$request->rank,$request->sex,$request->type,$request->offset,$request->limit);
+        $result = CustomQuery::ansarAcceptOfferLastFiveDays($request->division,$request->unit,$request->thana,$request->rank,$request->sex,$request->offset,$request->limit,$request->q,$request->type);
         if($result===false){
             return response("Invalid Request",400,['Content-Type'=>'text/html']);
         }
