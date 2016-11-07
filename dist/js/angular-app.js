@@ -72,7 +72,7 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
 
 }).run(function ($rootScope,$http) {
     $rootScope.user = ''
-    $http.get('/user_data').then(function (response) {
+    $http.get('/'+prefix+'user_data').then(function (response) {
         $rootScope.user = response.data;
     })
     $rootScope.loadingView = false;
@@ -451,6 +451,36 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             $(element).on('change',"#kpi", function () {
                 scope.kpiChange({param:scope.selected})
             })
+        }
+    }
+})
+GlobalApp.directive('tableSearch',function () {
+    return{
+        restrict:'ACE',
+        template:'<span class="text text-bold" style="color:black;font-size:1.1em">Total Ansars : [[results==undefined?0:results.length]]</span> <input type="text" class="pull-right"  name="" id="" ng-model="q" placeholder="Search Ansar in this table">',
+        scope:{
+            q:'=',
+            results:'='
+        }
+    }
+})
+GlobalApp.directive('databaseSearch',function () {
+    return{
+        restrict:'ACE',
+        template:'<input type="text" ng-model="q" class="form-control" ng-change="queue.push(1)" placeholder="Search by Ansar id">',
+        scope:{
+            queue:'=',
+            q:'=',
+            onChange:'&'
+        },
+        controller:function ($scope) {
+            $scope.$watch('queue',function (n, o) {
+                //alert(n)
+                if(n.length===1) {
+                    $scope.onChange();
+                }
+                
+            },true)
         }
     }
 })
