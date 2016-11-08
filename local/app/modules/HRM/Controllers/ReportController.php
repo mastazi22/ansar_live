@@ -193,36 +193,32 @@ class ReportController extends Controller
         $from = Input::get('from_date');
         $to = Input::get('to_date');
         $unit = $request->input('unit_id');
+        $division = $request->input('division_id');
         $thana = $request->input('thana_id');
         $limit = Input::get('limit');
         $offset = Input::get('offset');
 
-        $view = Input::get('view');
         $rules = [
-            'view' => 'regex:/^[a-z]+/',
             'limit' => 'numeric',
             'offset' => 'numeric',
             'from_date' => ['regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
             'to_date' => ['regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
             'unit_id' => ['regex:/^(all)$|^[0-9]+$/'],
             'thana_id' => ['regex:/^(all)$|^[0-9]+$/'],
+            'division_id' => ['regex:/^(all)$|^[0-9]+$/'],
         ];
         $valid = Validator::make(Input::all(), $rules);
 
         if ($valid->fails()) {
             //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
-        } else {
-            if (!is_null($from) && !is_null($to) && !is_null($unit) && !is_null($thana)) {
+        }
+        if (!is_null($from) && !is_null($to) && !is_null($unit) && !is_null($thana)) {
                 $from_date = Carbon::parse($from)->format('Y-m-d');
                 $to_date = Carbon::parse($to)->format('Y-m-d');
-                if (strcasecmp($view, 'view') == 0) {
-                    return CustomQuery::disembodedAnsarListforReport($offset, $limit, $from_date, $to_date, $unit, $thana);
-                } else {
-                    return CustomQuery::disembodedAnsarListforReportCount($from_date, $to_date, $unit, $thana);
-                }
-            }
+                return CustomQuery::disembodedAnsarListforReport($offset, $limit, $from_date, $to_date,$division, $unit, $thana);
         }
+        
 
     }
 
@@ -235,13 +231,9 @@ class ReportController extends Controller
     {
         $limit = Input::get('limit');
         $offset = Input::get('offset');
-        if ((Auth::user()->type) == 22) {
-            $unit = Auth::user()->district_id;
-        } else {
-            $unit = Input::get('unit');
-        }
         $thana = Input::get('thana');
-        $view = Input::get('view');
+        $unit = Input::get('unit');
+        $division = Input::get('division');
 
         $rules = [
             'view' => 'regex:/^[a-z]+/',
@@ -249,23 +241,15 @@ class ReportController extends Controller
             'offset' => 'numeric',
             'unit' => ['regex:/^(all)$|^[0-9]+$/'],
             'thana' => ['regex:/^(all)$|^[0-9]+$/'],
+            'division' => ['regex:/^(all)$|^[0-9]+$/'],
         ];
         $valid = Validator::make(Input::all(), $rules);
 
         if ($valid->fails()) {
             //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
-        } else {
-            if (strcasecmp($view, 'view') == 0) {
-                if (!is_null($unit) && !is_null($thana)) {
-                    return CustomQuery::getBlocklistedAnsar($offset, $limit, $unit, $thana);
-                }
-            } else {
-                if (!is_null($unit) && !is_null($thana)) {
-                    return CustomQuery::getTotalBlockedAnsarCount($unit, $thana);
-                }
-            }
         }
+        return CustomQuery::getBlocklistedAnsar($offset, $limit,$division, $unit, $thana);
     }
 
     public function blackListView()
@@ -277,13 +261,9 @@ class ReportController extends Controller
     {
         $limit = Input::get('limit');
         $offset = Input::get('offset');
-        if ((Auth::user()->type) == 22) {
-            $unit = Auth::user()->district_id;
-        } else {
-            $unit = Input::get('unit');
-        }
         $thana = Input::get('thana');
-        $view = Input::get('view');
+        $unit = Input::get('unit');
+        $division = Input::get('division');
         $rules = [
             'view' => 'regex:/^[a-z]+/',
             'limit' => 'numeric',
@@ -296,18 +276,8 @@ class ReportController extends Controller
         if ($valid->fails()) {
             //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
-        } else {
-            if (strcasecmp($view, 'view') == 0) {
-                if (!is_null($unit) && !is_null($thana)) {
-                    return CustomQuery::getBlacklistedAnsar($offset, $limit, $unit, $thana);
-                }
-            } else {
-                if (!is_null($unit) && !is_null($thana)) {
-                    return CustomQuery::getTotalBlackedAnsarCount($unit, $thana);
-                }
-
-            }
         }
+        return CustomQuery::getBlacklistedAnsar($offset, $limit,$division, $unit, $thana);
     }
 
     public function getAnserTransferHistory()
@@ -342,7 +312,7 @@ class ReportController extends Controller
 
     public function embodedAnsarInfo()
     {
-        $view = Input::get('view');
+        $division = Input::get('division_id');
         $limit = Input::get('limit');
         $offset = Input::get('offset');
         $from = Input::get('from_date');
@@ -357,6 +327,7 @@ class ReportController extends Controller
             'to_date' => ['regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
             'unit_id' => ['regex:/^(all)$|^[0-9]+$/'],
             'thana_id' => ['regex:/^(all)$|^[0-9]+$/'],
+            'division_id' => ['regex:/^(all)$|^[0-9]+$/'],
         ];
         $valid = Validator::make(Input::all(), $rules);
 
@@ -367,11 +338,7 @@ class ReportController extends Controller
             if (!is_null($from) && !is_null($to) && !is_null($unit) && !is_null($thana)) {
                 $from_date = Carbon::parse($from)->format('Y-m-d');
                 $to_date = Carbon::parse($to)->format('Y-m-d');
-                if (strcasecmp($view, 'view') == 0) {
-                    return CustomQuery::embodedAnsarListforReport($offset, $limit, $from_date, $to_date, $unit, $thana);
-                } else {
-                    return CustomQuery::embodedAnsarListforReportCount($from_date, $to_date, $unit, $thana);
-                }
+                return CustomQuery::embodedAnsarListforReport($offset, $limit, $from_date, $to_date,$division, $unit, $thana);
             }
         }
     }

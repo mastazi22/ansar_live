@@ -24,7 +24,7 @@
         <td>[[ansar.date|dateformat:"DD-MMM-YYYY"]]</td>
     </tr>
     <tr ng-if="data.ansars.length<=0">
-        <td class="warning" colspan="7">No Ansar Found</td>
+        <td class="warning" colspan="9">No Ansar Found</td>
     </tr>
     </tbody>
 </table>

@@ -10,13 +10,18 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#from_date').datePicker(false);
-            $("#to_date").datePicker(true);
+            $('#from_date').datePicker({
+                defaultValue:false
+            });
+            $("#to_date").datePicker({
+                defaultValue:false
+            });
 
         })
         GlobalApp.controller('ReportAnsarEmbodiment', function ($scope, $http, $sce) {
             $scope.total = 0;
             $scope.numOfPage = 0;
+            $scope.reportType = 'eng'
             $scope.selectedDistrict = "all";
             $scope.selectedThana = "all";
             $scope.districts = [];
@@ -24,7 +29,8 @@
             $scope.allLoading = false;
             $scope.itemPerPage = parseInt("{{config('app.item_per_page')}}");
             $scope.currentPage = 0;
-            $scope.ansars = $sce.trustAsHtml("");
+            $scope.ansars = []
+
             $scope.pages = [];
             $scope.loadingDistrict = true;
             $scope.loadingThana=false;
@@ -44,58 +50,33 @@
                     })
                     $scope.loadingPage[i] = false;
                 }
-                if ($scope.numOfPage > 0)$scope.loadPage($scope.pages[0]);
-                else $scope.loadPage({pageNum: 0, offset: 0, limit: $scope.itemPerPage, view: 'view'});
             }
             $scope.loadPage = function (page, $event) {
-                if ($event != undefined)  $event.preventDefault();
-                $scope.currentPage = page.pageNum;
-                $scope.loadingPage[page.pageNum] = true;
-                $http({
-                    url: '{{URL::route('emboded_ansar_info')}}',
-                    method: 'get',
-                    params: {
-                        offset: page.offset,
-                        limit: page.limit,
-                        unit_id:$scope.selectedDistrict,
-                        thana_id: $scope.selectedThana,
-                        from_date:$scope.from_date,
-                        to_date:$scope.to_date,
-                        view: 'view'
-                    }
-                }).then(function (response) {
-                    $scope.ansars = $sce.trustAsHtml(response.data);
-                    $scope.loadingPage[page.pageNum] = false;
-                })
-            }
-            $scope.loadTotal = function () {
                 $scope.allLoading = true;
-                //alert('here');
-                //alert($scope.selectedDistrict+" "+$scope.selectedRank+" "+$scope.selectedSex)
+                if ($event != undefined)  $event.preventDefault();
+                $scope.currentPage = page==undefined?0:page.pageNum;
+                $scope.loadingPage[$scope.currentPage] = true;
                 $http({
                     url: '{{URL::route('emboded_ansar_info')}}',
                     method: 'get',
                     params: {
-                        unit_id:$scope.selectedDistrict,
-                        thana_id: $scope.selectedThana,
+                        offset: page==undefined?0:page.offset,
+                        limit: page==undefined?$scope.itemPerPage:page.limit,
+                        unit_id:$scope.param.unit,
+                        division_id:$scope.param.range,
+                        thana_id: $scope.param.thana,
                         from_date:$scope.from_date,
                         to_date:$scope.to_date,
-                        view: 'count'
                     }
                 }).then(function (response) {
+                    $scope.ansars = response.data;
+                   // $scope.queue.shift();
+                    $scope.allLoading = false;
+                    $scope.loadingPage[$scope.currentPage] = false;
                     $scope.total = response.data.total;
                     $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
+                    //if($scope.queue.length>1) $scope.loadPage();
                     $scope.loadPagination();
-                    //console.log($scope.total);
-//                    $scope.selectedDistrict = [];
-//                    $scope.selectedRank = [];
-//                    $scope.selectedSex = '';
-                    $scope.allLoading = false;
-                },function(response){
-                    $scope.total = 0;
-                    $scope.ansars = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
-                    $scope.allLoading = false;
-                    $scope.pages = [];
                 })
             }
             $scope.filterMiddlePage = function (value, index, array) {
@@ -104,31 +85,6 @@
                 if (value.pageNum >= minPage && value.pageNum <= maxPage) {
                     return true;
                 }
-            }
-            $http({
-                method: 'get',
-                url: '{{URL::to('HRM/DistrictName')}}'
-            }).then(function (response) {
-                $scope.districts = response.data;
-                $scope.loadingDistrict = false;
-                //$scope.loadTotal();
-
-            })
-            $scope.loadThana = function (id) {
-                $scope.loadingThana=true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/ThanaName')}}',
-                    params: {id: id}
-                }).then(function (response) {
-                    $scope.thanas = response.data;
-                    $scope.selectedThana = "all";
-                    $scope.loadingThana=false;
-                })
-            }
-            $scope.resetValues=function(){
-                $scope.selectedDistrict = "all";
-                $scope.selectedThana = "all";
             }
 
             $scope.loadReportData = function (reportName,type) {
@@ -143,7 +99,6 @@
                 })
             }
             $scope.loadReportData("ansar_embodiment_report","eng")
-            $scope.loadTotal();
 
         })
         $(function () {
@@ -195,15 +150,28 @@
                                              ng-model="reportType">&nbsp;<b>বাংলা</b>
                             </span>
                     </div><br>
+                    <filter-template
+                            show-item="['range','unit','thana']"
+                            type="all"
+                            range-change="loadPage()"
+                            unit-change="loadPage()"
+                            thana-change="loadPage()"
+                            start-load="range"
+                            field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
+                            data="param"
+                            on-load="loadPage()"
+                    >
+
+                    </filter-template>
                     <div class="row">
-                        <div class="col-md-4 col-sm-12 col-xs-12">
+                        <div class="col-md-6 col-sm-12 col-xs-12">
                             <div class="form-group">
                                 <label class="control-label">
                                     Select Date Range
                                 </label></br>
                                 <div class="col-md-5 col-sm-12 col-xs-12" style="margin-left: 0px; padding-left: 0px;margin-right: 0px; padding-right: 0px">
                                     <input type="text" name="from_date" id="from_date" class="form-control"
-                                           placeholder="From Date" ng-model="from_date" ng-change="resetValues()">
+                                           placeholder="From Date" ng-model="from_date">
                                 </div>
                                 <div class="col-md-1 col-sm-12 col-xs-12" style="margin-left: 0px; padding-left: 0px;margin-right: 0px; padding-right: 0px;">
                                     {{--<button class="btn pull-left" style="border: none; background: #ffffff;">to</button><br>--}}
@@ -211,43 +179,12 @@
                                 </div>
                                 <div class="col-md-5 col-sm-12 col-xs-12" style="margin-right: 0px; padding-right: 0px;margin-left: 0px; padding-left: 0px">
                                     <input type="text" name="to_date" id="to_date" class="form-control"
-                                           placeholder="To Date" ng-model="to_date" ng-change="resetValues()">
+                                           placeholder="To Date" ng-model="to_date">
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3 col-sm-12 col-xs-12">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    @lang('title.unit')
-                                    <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
-                                         width="16"></label>
-                                </label>
-                                <select name="unit_id" class="form-control" ng-model="selectedDistrict"
-                                        ng-change="loadThana(selectedDistrict)">
-                                    {{--<option value="" disabled>--Select Unit--</option>--}}
-                                    <option value="all">All</option>
-                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_eng]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-12 col-xs-12">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    @lang('title.thana')
-                                    <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
-                                         width="16">
-                                </label>
-                                <select name="thana_id" class="form-control" ng-model="selectedThana">
-                                    {{--<option value="" disabled>--Select Thana--</option>--}}
-                                    <option value="all">All</option>
-                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_eng]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
                         <div class="col-md-2 col-sm-12 col-xs-12" style="margin-top: 25px">
-                            <a class="btn btn-primary pull-right" ng-click="loadTotal(selectedDistrict,selectedThana,to_date,from_date)">Load Result</a>
+                            <a class="btn btn-primary pull-right" ng-click="loadPage()">Load Result</a>
                         </div>
                     </div>
                     <div id="print_ansar_embodiment_report">
@@ -269,7 +206,22 @@
                                     <th>[[report.ansar.joining_date]]</th>
                                     <th>[[report.ansar.service_ended_date]]</th>
                                 </tr>
-                                <tbody ng-bind-html="ansars"></tbody>
+                                <tr ng-repeat="a in ansars.ansars">
+                                    <td>[[ansars.index+$index]]</td>
+                                    <td>[[a.id]]</td>
+                                    <td>[[a.name]]</td>
+                                    <td>[[a.rank]]</td>
+                                    <td>[[a.kpi]]</td>
+                                    <td>[[a.unit]]</td>
+                                    <td>[[a.r_date|dateformat:'DD-MMM-YYYY']]</td>
+                                    <td>[[a.j_date|dateformat:'DD-MMM-YYYY']]</td>
+                                    <td>[[a.se_date|dateformat:'DD-MMM-YYYY']]</td>
+                                </tr>
+                                <tr ng-if="ansars.ansars==undefined||ansars.ansars.length<=0">
+                                    <td colspan="9" class="warning">
+                                        No Ansar available
+                                    </td>
+                                </tr>
                             </table>
                         </div>
                     </div>
