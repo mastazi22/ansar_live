@@ -133,6 +133,9 @@
                                     </button>
                                 </td>
                             </tr>
+                            <tr ng-if="datas==undefined||datas.length<=0||results.length<=0">
+                                <td class="warning" colspan="5">No Memorandum no. available</td>
+                            </tr>
                         </table>
                     </div>
                     <div ng-bind-html="letterPrintView"></div>

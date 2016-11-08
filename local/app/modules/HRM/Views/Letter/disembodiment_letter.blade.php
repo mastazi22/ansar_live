@@ -133,8 +133,8 @@
                                     </button>
                                 </td>
                             </tr>
-                            <tr ng-if="datas==undefined||datas.length<=0">
-                                <td class="warning" colspan="4">No Memorandum no. available</td>
+                            <tr ng-if="datas==undefined||datas.length<=0||results.length<=0">
+                                <td class="warning" colspan="5">No Memorandum no. available</td>
                             </tr>
                         </table>
                     </div>
