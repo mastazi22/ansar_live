@@ -1537,10 +1537,10 @@ class CustomQuery
             $ansarQuery1->where('ou.id', $unit);
             $ansarQuery2->where('ou.id', $unit);
         }
-        if ($thana != 'all') {
-            $ansarQuery1->where('ot.id', $division);
-            $ansarQuery2->where('ot.id', $division);
-        }
+//        if ($thana != 'all') {
+//            $ansarQuery1->where('ot.id', $division);
+//            $ansarQuery2->where('ot.id', $division);
+//        }
         if ($rank != 'all') {
             $ansarQuery1->where('tbl_designations.id', $rank);
             $ansarQuery2->where('tbl_designations.id', $rank);
