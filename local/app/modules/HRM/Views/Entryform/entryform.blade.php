@@ -1179,7 +1179,7 @@
                                                 <table class="table">
                                                     <tr>
                                                         <th>Profile picture</th>
-                                                        <th>Sign image</th>
+                                                        <th>Signature image</th>
                                                         <th>Thumb image</th>
                                                     </tr>
                                                     <tr>
