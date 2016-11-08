@@ -467,7 +467,7 @@ GlobalApp.directive('tableSearch',function () {
 GlobalApp.directive('databaseSearch',function () {
     return{
         restrict:'ACE',
-        template:'<input type="text" ng-model="q" class="form-control" style="margin-bottom: 10px" ng-change="queue.push(1)" placeholder="[[placeHolder?placeHolder:\'Search by Ansar id\']]">',
+        template:'<input type="text" ng-model="q" class="form-control" style="margin-bottom: 10px" ng-change="queue.push(1)" placeholder="[[placeHolder?placeHolder:\'Search by Ansar ID\']]">',
         scope:{
             queue:'=',
             q:'=',
