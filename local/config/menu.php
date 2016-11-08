@@ -10,11 +10,11 @@ return [
                     "route" => "kpi_view",
                     "icon" => "fa-dashboard",
                 ],
-                "List Of Ansar Before Guard Withdraw" => [
+                "List of Ansar Before Guard Withdraw" => [
                     "route" => "ansar_before_withdraw_view",
                     "icon" => "fa-dashboard",
                 ],
-                "List Of Ansar Before Guard Reduce" => [
+                "List of Ansar Before Guard Reduce" => [
                     "route" => "ansar_before_reduce_view",
                     "icon" => "fa-dashboard",
                 ],
