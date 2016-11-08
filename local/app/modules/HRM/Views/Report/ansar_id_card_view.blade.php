@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','Print Id Card')
+@section('title','Print ID Card')
     @section('breadcrumb')
         {!! Breadcrumbs::render('print_card_id_view') !!}
         @endsection

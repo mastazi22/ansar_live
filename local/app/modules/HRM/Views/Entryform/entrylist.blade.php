@@ -309,7 +309,7 @@
                         <form ng-submit="searchId()" class="sidebar-form">
                             <div class="input-group">
                                 <input type="text" name="q" autocomplete="off" class="form-control"
-                                       ng-model="searchAnsarId" placeholder="Search by ansar id...">
+                                       ng-model="searchAnsarId" placeholder="Search by Ansar ID...">
                                 <span class="input-group-btn">
                                     <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i
                                                 class="fa fa-search"></i></button>
