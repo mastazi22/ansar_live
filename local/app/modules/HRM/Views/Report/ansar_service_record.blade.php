@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','Ansar Service Record')
+@section('title','View Ansar Service Record')
 @section('breadcrumb')
     {!! Breadcrumbs::render('view_ansar_service_record') !!}
 @endsection
@@ -138,7 +138,7 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-12" id="ansar_service_record">
-                            <h3 style="text-align: center">Ansar Service Record&nbsp;<a href="#" id="print-report"><span class="glyphicon glyphicon-print"></span></a></h3>
+                            <h3 style="text-align: center">View Ansar Service Record&nbsp;<a href="#" id="print-report"><span class="glyphicon glyphicon-print"></span></a></h3>
 
                             <div ng-if="!ansarDetail.apid||errorFound==1">
                                 <h4 style="text-align: center">No Ansar is available to show</h4>

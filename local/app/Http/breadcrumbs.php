@@ -322,7 +322,7 @@ Breadcrumbs::register('ansar_service_report_view', function($breadcrumbs) {
 });
 Breadcrumbs::register('view_ansar_service_record', function($breadcrumbs) {
     $breadcrumbs->parent('report');
-    $breadcrumbs->push('View Service Record', URL::route('view_ansar_service_record'));
+    $breadcrumbs->push('View Ansar Service Record', URL::route('view_ansar_service_record'));
 });
 Breadcrumbs::register('transfer_ansar_history', function($breadcrumbs) {
     $breadcrumbs->parent('report');
