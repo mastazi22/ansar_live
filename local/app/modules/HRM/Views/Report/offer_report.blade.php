@@ -23,44 +23,21 @@
             $scope.reportType = 'eng';
             $scope.errorFind = 0;
             $scope.allLoading = false;
-            if ($scope.isDc) {
-                $scope.unit.selectedDistrict = parseInt('{{Auth::user()->district_id}}')
-            }
-            $scope.loadDistrict = function () {
-                $scope.loadingUnit = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/DistrictName')}}'
-                }).then(function (response) {
-                    $scope.districts = response.data;
-                    $scope.loadingUnit = false;
-                })
-            }
-            $scope.loadThana = function (id) {
-                $scope.loadingThana = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/ThanaName')}}',
-                    params: {id: id}
-                }).then(function (response) {
-                    $scope.thanas = response.data;
-                    $scope.selectedThana = "";
-                    $scope.loadingThana = false;
-                })
-            }
             $scope.loadAnsar = function () {
                 $scope.allLoading = true;
                 var data = {};
                 if ($scope.selectedDate == 0) {
                     data = {
-                        unit: $scope.unit.selectedDistrict,
+                        unit: $scope.params.unit,
+                        division: $scope.params.range,
                         report_past: isNaN(parseInt($scope.unit.custom)) ? 0 : $scope.unit.custom,
                         type: $scope.unit.type
                     }
                 }
                 else {
                     data = {
-                        unit: $scope.unit.selectedDistrict,
+                        unit: $scope.params.unit,
+                        division: $scope.params.range,
                         report_past: $scope.selectedDate,
                         type: 0
                     }
@@ -100,12 +77,6 @@
                 return (moment(date).format('DD-MMM-Y'));
             }
             $scope.loadReportData("ansar_in_guard_report", "eng")
-            if (!$scope.isDc) {
-                $scope.loadDistrict()
-            }
-            else {
-                $scope.loadThana($scope.selectedDistrict)
-            }
 
         })
         $(function () {
@@ -146,22 +117,14 @@
                                              ng-model="reportType">&nbsp;<b>বাংলা</b>
                             </span>
                     </div><br>
+                    <filter-template
+                            show-item="['range','unit']"
+                            type="single"
+                            start-load="range"
+                            field-width="{range:'col-sm-4',unit:'col-sm-4'}"
+                            data = "params"
+                    ></filter-template>
                     <div class="row">
-                        <div class="col-sm-4" ng-if="!isDc">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    @lang('title.unit')&nbsp;&nbsp;
-                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                         ng-show="loadingUnit">
-                                </label>
-                                <select class="form-control" ng-disabled="loadingUnit"
-                                        ng-model="unit.selectedDistrict">
-                                    <option value="">--@lang('title.unit')--</option>
-                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label class="control-label">
@@ -233,7 +196,7 @@
                                                 <td>[[a.ansar_id]]</td>
                                                 <td>[[a.ansar_name_eng]]</td>
                                                 <td>[[a.code]]</td>
-                                                <td>[[a.sms_send_datetime]]</td>
+                                                <td>[[a.sms_send_datetime|dateformat:'DD-MMM-YYYY']]</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -257,7 +220,7 @@
                                                 <td>[[a.ansar_id]]</td>
                                                 <td>[[a.ansar_name_eng]]</td>
                                                 <td>[[a.code]]</td>
-                                                <td>[[a.sms_received_datetime]]</td>
+                                                <td>[[a.sms_received_datetime|dateformat:'DD-MMM-YYYY']]</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -281,7 +244,7 @@
                                                 <td>[[a.ansar_id]]</td>
                                                 <td>[[a.ansar_name_eng]]</td>
                                                 <td>[[a.code]]</td>
-                                                <td>[[a.reject_date]]</td>
+                                                <td>[[a.reject_date|dateformat:'DD-MMM-YYYY']]</td>
                                             </tr>
                                         </table>
                                     </div>

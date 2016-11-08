@@ -10,44 +10,12 @@
 @section('content')
     <script>
         GlobalApp.controller('ReportGuardSearchController', function ($scope, $http, $sce) {
-            $scope.isAdmin = parseInt('{{Auth::user()->type}}')
-            $scope.districts = [];
-            $scope.thanas = [];
-            $scope.selectedDistrict = "";
-            $scope.selectedThana = "";
             $scope.ansars = [];
-            $scope.loadingUnit = false;
-            $scope.loadingThana = false;
             $scope.loadingKpi = false;
             $scope.report = {};
             $scope.reportType = 'eng';
             $scope.errorFound=0;
             $scope.allLoading = false;
-            $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
-            $scope.loadDistrict = function () {
-                $scope.loadingUnit = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/DistrictName')}}'
-                }).then(function (response) {
-                    $scope.districts = response.data;
-                    $scope.loadingUnit = false;
-                    $scope.loadAnsarDetail();
-                })
-            }
-            $scope.loadThana = function (id) {
-                $scope.loadingThana = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/ThanaName')}}',
-                    params: {id: id}
-                }).then(function (response) {
-                    $scope.thanas = response.data;
-                    $scope.selectedThana = "";
-                    $scope.loadingThana = false;
-                    $scope.loadAnsarDetail();
-                })
-            }
             $scope.loadAnsarDetail = function () {
                 //console.log(id)
                 $scope.allLoading = true;
@@ -55,8 +23,9 @@
                     method: 'get',
                     url: '{{URL::route('service_record_unitwise_info')}}',
                     params: {
-                        unit:$scope.selectedDistrict,
-                        thana:$scope.selectedThana,
+                        unit:$scope.params.unit,
+                        division:$scope.params.range,
+                        thana:$scope.params.thana,
                     }
                 }).then(function (response) {
                     $scope.errorFound=0;
@@ -83,14 +52,6 @@
                 return (moment(date).format('DD-MMM-Y'));
             }
             $scope.loadReportData("service_record_unitwise", "eng")
-            if ($scope.isAdmin != 22) {
-                $scope.loadDistrict()
-            }
-            else {
-                if (!isNaN($scope.dcDistrict)) {
-                    $scope.loadThana($scope.dcDistrict)
-                }
-            }
         })
         $(function () {
             $('body').on('click', '#print-report', function (e) {
@@ -145,40 +106,14 @@
                                              ng-model="reportType">&nbsp;<b>বাংলা</b>
                             </span>
                     </div><br>
-                    <div class="row">
-                        <div class="col-sm-4" ng-hide="isAdmin==22">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    @lang('title.unit')&nbsp;&nbsp;
-                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                         ng-show="loadingUnit">
-                                </label>
-                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                        ng-model="selectedDistrict"
-                                        ng-change="loadThana(selectedDistrict)" >
-                                    <option value="">--Select a Unit--</option>
-                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    @lang('title.thana')&nbsp;&nbsp;
-                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                         ng-show="loadingThana">
-                                </label>
-                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                        ng-model="selectedThana"
-                                        ng-change="loadAnsarDetail(selectedDistrict,selectedThana)">
-                                    <option value="">--@lang('title.thana')--</option>
-                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                    <filter-template
+                            show-item="['range','unit','thana']"
+                            type="single"
+                            start-load="range"
+                            thana-change="loadAnsarDetail()"
+                            field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
+                            data = "params"
+                    ></filter-template>
                     <div class="row">
                         <div class="col-sm-12" id="print-service_record_unitwise">
                             <h3 style="text-align: center">[[report.header]]&nbsp;<a href="#" id="print-report"><span

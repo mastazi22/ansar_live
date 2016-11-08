@@ -405,11 +405,15 @@ class ReportController extends Controller
 
     public function ansarInfoForServiceRecordUnitWise()
     {
+        DB::enableQueryLog();
+//        return Input::all();
         $unit = Input::get('unit');
         $thana = Input::get('thana');
+        $division = Input::get('division');
         $rules = [
             'unit' => ['regex:/^[0-9]+$/'],
             'thana' => ['regex:/^[0-9]+$/'],
+            'division' => ['regex:/^[0-9]+$/'],
         ];
         $valid = Validator::make(Input::all(), $rules);
 
@@ -417,51 +421,25 @@ class ReportController extends Controller
             //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         }
-        if (!$unit && !$thana) {
-            $ansar_details = '';
-            return Response::json($ansar_details);
+        $ansar_details = DB::table('tbl_embodiment')
+            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+            ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+            ->where('tbl_embodiment.emboded_status', '=', 'Emboded');
+        if ($unit) {
+            $ansar_details->where('tbl_kpi_info.unit_id', '=', $unit);
         }
-        if ($unit && !$thana) {
-            $ansar_details = DB::table('tbl_embodiment')
-                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                ->where('tbl_kpi_info.unit_id', '=', $unit)
-                ->orderBy('tbl_embodiment.ansar_id', 'asc')
-                ->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
-                    'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')
-                ->get();
-            return Response::json($ansar_details);
-        } elseif (!$unit && $thana) {
-            $ansar_details = DB::table('tbl_embodiment')
-                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                ->where('tbl_kpi_info.thana_id', '=', $thana)
-                ->orderBy('tbl_embodiment.ansar_id', 'asc')
-                ->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
-                    'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')
-                ->get();
-            return Response::json($ansar_details);
-        } elseif ($unit && $thana) {
-            $ansar_details = DB::table('tbl_embodiment')
-                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
-                ->where('tbl_kpi_info.unit_id', '=', $unit)
-                ->where('tbl_kpi_info.thana_id', '=', $thana)
-                ->orderBy('tbl_embodiment.ansar_id', 'asc')
-                ->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
-                    'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')
-                ->get();
-            return Response::json($ansar_details);
+        if ($thana) {
+            $ansar_details->where('tbl_kpi_info.thana_id', '=', $thana);
         }
+        if ($division) {
+            $ansar_details->where('tbl_kpi_info.division_id', '=', $division);
+        }
+        $b = $ansar_details->orderBy('tbl_embodiment.ansar_id', 'asc')
+            ->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
+                'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')->get();
+        return $b;
     }
 
     public function getPrintIdList()
@@ -539,10 +517,12 @@ class ReportController extends Controller
     public function getOfferedAnsar()
     {
         $unit = Input::get('unit');
+        $division = Input::get('division');
         $past = Input::get('report_past');
         $type = Input::get('type');
         $rules = [
             'unit' => 'numeric',
+            'division' => 'numeric',
             'report_past' => 'numeric',
             'type' => 'numeric',
         ];
@@ -563,19 +543,51 @@ class ReportController extends Controller
                 $c_date = $c_date->subYears($past);
                 break;
         }
-        $offer_not_respond = DB::table('tbl_sms_offer_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')->where('tbl_sms_offer_info.sms_send_datetime', '>=', $c_date)->where('tbl_sms_offer_info.district_id', $unit)
-            ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_offer_info.sms_send_datetime')->unionAll(DB::table('tbl_sms_send_log')->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_send_log.ansar_id')
-                ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')->where('tbl_sms_send_log.action_date', '>=', $c_date)->where('tbl_sms_send_log.offered_district', $unit)->where('tbl_sms_send_log.reply_type', 'No Reply')
+        $offer_not_respond = DB::table('tbl_sms_offer_info')
+            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
+            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_offer_info.district_id')
+            ->where('tbl_sms_offer_info.sms_send_datetime', '>=', $c_date)
+            ->where('tbl_units.id', $unit)
+            ->where('tbl_units.division_id', $division)
+            ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_offer_info.sms_send_datetime')
+            ->unionAll(DB::table('tbl_sms_send_log')
+                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_send_log.ansar_id')
+                ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_send_log.offered_district')
+                ->where('tbl_sms_send_log.action_date', '>=', $c_date)
+                ->where('tbl_units.id', $unit)
+                ->where('tbl_units.division_id', $division)
+                ->where('tbl_sms_send_log.reply_type', 'No Reply')
                 ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.offered_date as sms_send_datetime'))->get();
 
-        $offer_received = DB::table('tbl_sms_receive_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_receive_info.ansar_id')
-            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')->where('tbl_sms_receive_info.sms_received_datetime', '>=', $c_date)->where('tbl_sms_receive_info.offered_district', $unit)
-            ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_receive_info.sms_received_datetime')->unionAll(DB::table('tbl_sms_send_log')->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_send_log.ansar_id')
-                ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')->where('tbl_sms_send_log.action_date', '>=', $c_date)->where('tbl_sms_send_log.offered_district', $unit)->where('tbl_sms_send_log.reply_type', 'Yes')
+        $offer_received = DB::table('tbl_sms_receive_info')
+            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_receive_info.ansar_id')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_receive_info.offered_district')
+            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+            ->where('tbl_sms_receive_info.sms_received_datetime', '>=', $c_date)
+            ->where('tbl_units.id', $unit)
+            ->where('tbl_units.division_id', $division)
+            ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_receive_info.sms_received_datetime')
+            ->unionAll(DB::table('tbl_sms_send_log')
+                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_send_log.ansar_id')
+                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_send_log.offered_district')
+                ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+                ->where('tbl_sms_send_log.action_date', '>=', $c_date)
+                ->where('tbl_units.id', $unit)
+                ->where('tbl_units.division_id', $division)
+                ->where('tbl_sms_send_log.reply_type', 'Yes')
                 ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.action_date as sms_received_datetime'))->get();
-        $offer_reject = DB::table('tbl_sms_send_log')->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_send_log.ansar_id')
-            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')->where('tbl_sms_send_log.action_date', '>=', $c_date)->where('tbl_sms_send_log.offered_district', $unit)->where('tbl_sms_send_log.reply_type', 'No')
+
+
+        $offer_reject = DB::table('tbl_sms_send_log')
+            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_send_log.ansar_id')
+            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_send_log.offered_district')
+            ->where('tbl_sms_send_log.action_date', '>=', $c_date)
+            ->where('tbl_units.id', $unit)
+            ->where('tbl_units.division_id', $division)
+            ->where('tbl_sms_send_log.reply_type', 'No')
             ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.action_date as reject_date')->get();
         return Response::json(['onr' => $offer_not_respond, 'or' => $offer_received, 'orj' => $offer_reject]);
     }
