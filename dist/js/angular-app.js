@@ -133,7 +133,7 @@ GlobalApp.directive('confirm', function () {
 })
 GlobalApp.directive('datePicker', function () {
     return {
-        restrict: 'A',
+        restrict: 'AC',
         link: function (scope, element, attrs) {
             //alert(scope.event)
             $(element).datePicker()

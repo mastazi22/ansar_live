@@ -18,7 +18,9 @@
                     $timeout(function () {
 
                     })
-                    if(attrs.datePickerDir)$(element).datePicker(attrs.value);
+                    if(attrs.datePickerDir)$(element).datePicker({
+                        defaultValue:attrs.value
+                    });
                 }
 
             }

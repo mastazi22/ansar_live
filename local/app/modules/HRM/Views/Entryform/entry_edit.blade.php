@@ -7,11 +7,28 @@
 
 
     <script>
-        $(document).ready(function () {
-            $('#data_of_birth').datePicker({
-                defaultValue:false
-            });
-            //$("#to_date").datePicker(true);
+//        $(document).ready(function () {
+//            $('#data_of_birth').datePicker({
+//                defaultValue:false
+//            });
+//            //$("#to_date").datePicker(true);
+//
+//        })
+        GlobalApp.directive('datePickerDir', function ($timeout) {
+            return {
+                restrict: "AC",
+                link: function (scope, element, attrs) {
+
+                    //alert('asaddad')
+                    $timeout(function () {
+
+                    })
+                    if(attrs.datePickerDir)$(element).datePicker({
+                        defaultValue:attrs.value
+                    });
+                }
+
+            }
 
         })
         GlobalApp.controller('fullEntryFormController', function ($scope, getNameService, getBloodService, getDiseaseSkillService, $sce, $http) {
