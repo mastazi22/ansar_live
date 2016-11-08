@@ -133,7 +133,7 @@
                     sex:'all'
                 }
             }).then(function (response) {
-                $scope.offerAcceptLastFiveDays = sum(response.data);
+                $scope.offerAcceptLastFiveDays = sum(response.data.total);
                 $scope.loadingProgressInfo = false;
             }, function (response) {
                 $scope.loadingProgressInfo = false;

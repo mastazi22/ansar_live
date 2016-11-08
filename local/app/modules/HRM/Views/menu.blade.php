@@ -19,7 +19,7 @@
             function removeMenu(m){
 
                 m.each(function () {
-                    console.log({parent: $.trim($(this).parents('li').eq($(this).parents('li').length-1).children('a').text()),children: m.text()})
+                    //console.log({parent: $.trim($(this).parents('li').eq($(this).parents('li').length-1).children('a').text()),children: m.text()})
                     //alert($(this).children('ul').length+" "+$(this).children('ul').children('li').length)
                     if($(this).children('ul').length>0) {
                         if ($(this).children('ul').children('li').length > 0) {

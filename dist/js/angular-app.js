@@ -70,15 +70,11 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
 
     //console.log(this)
 
-}).run(function ($rootScope) {
-    $rootScope.userType = {
-        admin:11,
-        dc:22,
-        rc:66,
-        checker:44,
-        dataEntry:55,
-        dg:33
-    }
+}).run(function ($rootScope,$http) {
+    $rootScope.user = ''
+    $http.get('/'+prefix+'user_data').then(function (response) {
+        $rootScope.user = response.data;
+    })
     $rootScope.loadingView = false;
 });
 GlobalApp.filter('dateformat', function () {
@@ -325,6 +321,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 thana:$scope.type=='all'?'all':'',
                 kpi:$scope.type=='all'?'all':'',
             }
+            $scope.finish = false;
             $scope.loading = {
                 range:false,
                 unit:false,
@@ -332,7 +329,22 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 kpi:false,
             }
             $scope.show = function (item) {
-                return $scope.showItem.indexOf(item)>-1;
+                return $scope.showItem.indexOf(item)>-1&&hasPermission(item);
+            }
+            function hasPermission(item){
+                if(!$rootScope.user) return false;
+                if($rootScope.user.usertype.type_name=='DC'&&(item=='range'||item=='unit')){
+                    return false;
+                }
+                else if($rootScope.user.usertype.type_name=='RC'&&item=='range'){
+                    return false;
+                }
+                else if($rootScope.user.usertype.type_name=='Checker'||$rootScope.user.usertype.type_name=='Dataentry'){
+                    return false;
+                }
+                else{
+                    return true;
+                }
             }
             $scope.loadRange = function () {
 
@@ -345,7 +357,6 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 $scope.rangeLoad({param:$scope.selected});
             }
             $scope.loadUnit = function (id) {
-                console.log($rootScope.userType)
                 if(!$scope.show('unit')) return;
                 $scope.units = $scope.thanas = $scope.kpis = []
                 $scope.loading.unit = true;
@@ -377,21 +388,36 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 })
                 $scope.kpiLoad({param:$scope.selected});
             }
-            switch($scope.startLoad){
-                case 'range':
-                    $scope.loadRange();
-                    break;
-                case 'unit':
-                    $scope.loadUnit();
-                    break;
-                case 'thana':
-                    $scope.loadThana();
-                    break;
-                case 'kpi':
-                    $scope.loadKpi();
-                    break;
+            $rootScope.$watch('user', function (n,o) {
+                if(!n) return;
+                if($rootScope.user.usertype.type_name=='DC'){
+                    $scope.selected.range = $rootScope.user.district.division_id
+                    $scope.selected.unit = $rootScope.user.district.id
+                    $scope.loadThana($rootScope.user.district.id)
+                }
+                else if($rootScope.user.usertype.type_name=='RC'){
+                    $scope.selected.range = $rootScope.user.division.id
+                    $scope.loadUnit($rootScope.user.division.id)
+                }
+                else if($rootScope.user.usertype.type_name=='Admin'||$rootScope.user.usertype.type_name=='DG'){
+                    switch($scope.startLoad){
+                        case 'range':
+                            $scope.loadRange();
+                            break;
+                        case 'unit':
+                            $scope.loadUnit();
+                            break;
+                        case 'thana':
+                            $scope.loadThana();
+                            break;
+                        case 'kpi':
+                            $scope.loadKpi();
+                            break;
 
-            }
+                    }
+                }
+                $scope.finish = true;
+            })
 
         },
         templateUrl:'/' + prefix + 'HRM/template_list/range_unit_thana_kpi_rank_gender_template',
@@ -400,7 +426,10 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             $rootScope.loadingView = false;
             scope.data = scope.selected;
             $timeout(function () {
-                scope.onLoad();
+                scope.$watch('finish', function (n, o) {
+                    if(n)  scope.onLoad({param:scope.selected});
+                })
+
             })
 
             $(element).on('change',"#range", function () {
@@ -422,6 +451,37 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             $(element).on('change',"#kpi", function () {
                 scope.kpiChange({param:scope.selected})
             })
+        }
+    }
+})
+GlobalApp.directive('tableSearch',function () {
+    return{
+        restrict:'ACE',
+        template:'<span class="text text-bold" style="color:black;font-size:1.1em">Total Ansars : [[results==undefined?0:results.length]]</span> <input type="text" class="pull-right"  name="" id="" ng-model="q" placeholder="Search Ansar in this table">',
+        scope:{
+            q:'=',
+            results:'='
+        }
+    }
+})
+GlobalApp.directive('databaseSearch',function () {
+    return{
+        restrict:'ACE',
+        template:'<input type="text" ng-model="q" class="form-control" style="margin-bottom: 10px" ng-change="queue.push(1)" placeholder="[[placeHolder?placeHolder:\'Search by Ansar id\']]">',
+        scope:{
+            queue:'=',
+            q:'=',
+            placeHolder:'@',
+            onChange:'&'
+        },
+        controller:function ($scope) {
+            $scope.$watch('queue',function (n, o) {
+                //alert(n)
+                if(n.length===1) {
+                    $scope.onChange();
+                }
+                
+            },true)
         }
     }
 })

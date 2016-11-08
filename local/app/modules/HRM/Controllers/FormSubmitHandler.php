@@ -431,10 +431,12 @@ class FormSubmitHandler extends Controller
         }
     }
 
-    public function DivisionName()
+    public function DivisionName(Request $request)
     {
-
-        $division = Division::where('id', '!=', 0)->get();
+        if($request->id){
+            $division = Division::where('id', $request->id)->get();
+        }
+        else $division = Division::where('id', '!=', 0)->get();
         return Response::json($division);
     }
 

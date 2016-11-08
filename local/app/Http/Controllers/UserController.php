@@ -460,6 +460,11 @@ class UserController extends Controller
         return View::make('User.user_activity_log',['logs'=>collect($data)->groupBy('date'),'user'=>$user]);
     }
 
+    public function getUserData(){
+        $user = Auth::user();
+        return User::with(['district','division','usertype'])->find($user->id);
+    }
+
 } 
 
 

@@ -8,7 +8,9 @@
 
     <script>
         $(document).ready(function () {
-            $('#data_of_birth').datePicker(false);
+            $('#data_of_birth').datePicker({
+                defaultValue:false
+            });
             //$("#to_date").datePicker(true);
 
         })

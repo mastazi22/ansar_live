@@ -15,6 +15,7 @@
         GlobalApp.controller('KpiViewController', function ($scope, $http, $sce, httpService) {
             $scope.total = 0;
             $scope.numOfPage = 0;
+            $scope.queue = [];
             $scope.params = ''
             $scope.allLoading = false;
             $scope.kpis = [];
@@ -34,58 +35,32 @@
                     })
                     $scope.loadingPage[i] = false;
                 }
-                if ($scope.numOfPage > 0)$scope.loadPage($scope.pages[0]);
-                else $scope.loadPage({pageNum: 0, offset: 0, limit: $scope.itemPerPage, view: 'view'});
             }
             $scope.loadPage = function (page, $event) {
                 if ($event != undefined)  $event.preventDefault();
-                $scope.currentPage = page.pageNum;
-                $scope.loadingPage[page.pageNum] = true;
+                $scope.currentPage = page==undefined?0:page.pageNum;
+                $scope.loadingPage[$scope.currentPage]=true;
                 $http({
                     url: '{{URL::route('kpi_view_details')}}',
                     method: 'get',
                     params: {
-                        offset: page.offset,
-                        limit: page.limit,
+                        offset: page==undefined?0:page.offset,
+                        limit: page==undefined?$scope.itemPerPage:page.limit,
                         division: $scope.params.range,
                         unit: $scope.params.unit,
                         thana: $scope.params.thana,
-                        view: 'view'
+                        q: $scope.q
                     }
                 }).then(function (response) {
                     $scope.kpis = response.data.kpis;
                     console.log($scope.kpis)
 //                    $compile($scope.ansars)
-                    $scope.loadingPage[page.pageNum] = false;
-                })
-            }
-            $scope.loadTotal = function () {
-                $scope.allLoading = true;
-                //alert($scope.selectedDivision)
-                $http({
-
-                    url: '{{URL::route('kpi_view_details')}}',
-                    method: 'get',
-                    params: {
-                        division: $scope.params.range,
-                        unit: $scope.params.unit,
-                        thana: $scope.params.thana,
-                        view: 'count'
-                    }
-                }).then(function (response) {
-                    $scope.errorFound = 0;
+                    $scope.queue.shift();
                     $scope.total = response.data.total;
                     $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
+                    if($scope.queue.length>1) $scope.loadPage();
                     $scope.loadPagination();
-                    $scope.allLoading = false;
-                    //alert($scope.total)
-                },function(response){
-                    $scope.errorFound = 1;
-                    $scope.total = 0;
-                    $scope.kpis = [];
-                    $scope.errorMessage = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
-                    $scope.pages = [];
-                    $scope.allLoading = false;
+                    $scope.loadingPage[$scope.currentPage] = false;
                 })
             }
             $scope.filterMiddlePage = function (value, index, array) {
@@ -117,62 +92,23 @@
                     <filter-template
                             show-item="['range','unit','thana']"
                             type="all"
-                            range-change="loadTotal()"
-                            unit-change="loadTotal()"
-                            thana-change="loadTotal()"
+                            range-change="loadPage()"
+                            unit-change="loadPage()"
+                            thana-change="loadPage()"
                             start-load="range"
                             field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
                             data = "params"
-                            on-load="loadTotal()"
+                            on-load="loadPage()"
                     >
 
                     </filter-template>
-                    {{--<div class="row">--}}
-                        {{--<div class="col-sm-4" ng-hide="isAdmin==66 || isAdmin==22">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<label class="control-label">@lang('title.range')&nbsp;--}}
-                                    {{--<img ng-show="loadingDivision" src="{{asset('dist/img/facebook.gif')}}"--}}
-                                         {{--width="16"></label>--}}
-                                {{--<select class="form-control" ng-model="selectedDivision"--}}
-                                        {{--ng-disabled="loadingDivision||loadingDistrict||loadingThana"--}}
-                                        {{--ng-change="loadDistrict(selectedDivision)">--}}
-                                    {{--<option value="all">All</option>--}}
-                                    {{--<option ng-repeat="di in divisions" value="[[di.id]]">--}}
-                                        {{--[[di.division_name_bng]]--}}
-                                    {{--</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                        {{--<div class="col-sm-4" ng-hide="isAdmin==22">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<label class="control-label">@lang('title.unit')&nbsp;--}}
-                                    {{--<img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"--}}
-                                         {{--width="16"></label>--}}
-                                {{--<select class="form-control" ng-model="selectedDistrict"--}}
-                                        {{--ng-disabled="loadingDistrict||loadingThana"--}}
-                                        {{--ng-change="loadThana(selectedDistrict)">--}}
-                                    {{--<option value="all">All</option>--}}
-                                    {{--<option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]--}}
-                                    {{--</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                        {{--<div class="col-sm-4">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<label class="control-label">@lang('title.thana')&nbsp;--}}
-                                    {{--<img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"--}}
-                                         {{--width="16">--}}
-                                {{--</label>--}}
-                                {{--<select class="form-control" ng-model="selectedThana"--}}
-                                        {{--ng-change="loadTotal()" ng-disabled="loadingDistrict||loadingThana">--}}
-                                    {{--<option value="all">All</option>--}}
-                                    {{--<option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]--}}
-                                    {{--</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
-                    <h4>Total KPI: [[total.toLocaleString()]]</h4>
+
+                    <div class="row">
+                        <div class="col-md-8"><h4>Total KPI: [[total.toLocaleString()]]</h4></div>
+                        <div class="col-md-4">
+                            <database-search q="q" queue="queue" on-change="loadPage()" place-holder="Search by KPI name"></database-search>
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr>

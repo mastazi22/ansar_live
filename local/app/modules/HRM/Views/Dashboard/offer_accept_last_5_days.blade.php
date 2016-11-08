@@ -38,6 +38,7 @@
             }
             $scope.total = 0
             $scope.numOfPage = 0
+            $scope.queue = [];
             $scope.selectedDistrict = "all";
             $scope.selectedThana = "all";
             $scope.gender = 'all'
@@ -65,21 +66,20 @@
                     })
                     $scope.loadingPage[i]=false;
                 }
-                if($scope.numOfPage>0)$scope.loadPage($scope.pages[0]);
-                else $scope.loadPage({pageNum:0,offset:0,limit:$scope.itemPerPage,view:'view'});
             }
             $scope.loadPage = function (page,$event) {
                 if($event!=undefined)  $event.preventDefault();
-                $scope.currentPage = page.pageNum;
-                $scope.loadingPage[page.pageNum]=true;
+                $scope.currentPage = page==undefined?0:page.pageNum;
+                $scope.loadingPage[$scope.currentPage]=true;
                 $scope.allLoading = true;
                 $http({
                     url: '{{URL::to('HRM/offer_accept_last_5_day_data')}}',
                     method: 'get',
                     params: {
-                        offset: page.offset,
-                        limit: page.limit,
-                        type: 'view',
+                        offset: page==undefined?0:page.offset,
+                        limit: page==undefined?$scope.itemPerPage:page.limit,
+                        q: $scope.q,
+                        type:'view',
                         unit:$scope.selectedDistrict,
                         thana:$scope.selectedThana,
                         division:$scope.selectedDivision,
@@ -89,37 +89,43 @@
                 }).then(function (response) {
                     console.log(response.data);
                     $scope.ansars = response.data;
-                    $scope.loadingPage[page.pageNum]=false;
+                    $scope.queue.shift()
+                    $scope.loadingPage[$scope.currentPage]=false;
                     $scope.allLoading = false;
-                })
-            }
-            $scope.loadTotal = function () {
-//                alert($scope.selectedDistrict)
-                $scope.allLoading = true;
-                $http({
-                    url: '{{URL::to('HRM/offer_accept_last_5_day_data')}}',
-                    method: 'get',
-                    params: {
-                        type: 'count',
-                        unit:$scope.selectedDistrict,
-                        thana:$scope.selectedThana,
-                        division:$scope.selectedDivision,
-                        rank:$scope.rank,
-                        sex:$scope.gender
-                    }
-                }).then(function (response) {
-                    $scope.total = sum(response.data);
+                    $scope.total = sum(response.data.total);
 //                    alert($scope.total)
+                    if($scope.queue.length>1) $scope.loadPage();
                     $scope.numOfPage = Math.ceil($scope.total/$scope.itemPerPage);
                     $scope.loadPagination();
-                }, function (response) {
-                    $scope.total = 0;
-                    $scope.ansars = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
-                    //alert($(".table").html())
-                    $scope.allLoading = false;
-                    $scope.pages = [];
                 })
             }
+            {{--$scope.loadTotal = function () {--}}
+{{--//                alert($scope.selectedDistrict)--}}
+                {{--$scope.allLoading = true;--}}
+                {{--$http({--}}
+                    {{--url: '{{URL::to('HRM/offer_accept_last_5_day_data')}}',--}}
+                    {{--method: 'get',--}}
+                    {{--params: {--}}
+                        {{--type: 'count',--}}
+                        {{--unit:$scope.selectedDistrict,--}}
+                        {{--thana:$scope.selectedThana,--}}
+                        {{--division:$scope.selectedDivision,--}}
+                        {{--rank:$scope.rank,--}}
+                        {{--sex:$scope.gender--}}
+                    {{--}--}}
+                {{--}).then(function (response) {--}}
+                    {{--$scope.total = sum(response.data);--}}
+{{--//                    alert($scope.total)--}}
+                    {{--$scope.numOfPage = Math.ceil($scope.total/$scope.itemPerPage);--}}
+                    {{--$scope.loadPagination();--}}
+                {{--}, function (response) {--}}
+                    {{--$scope.total = 0;--}}
+                    {{--$scope.ansars = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");--}}
+                    {{--//alert($(".table").html())--}}
+                    {{--$scope.allLoading = false;--}}
+                    {{--$scope.pages = [];--}}
+                {{--})--}}
+            {{--}--}}
             $scope.filterMiddlePage = function (value, index, array) {
                 var minPage = $scope.currentPage-3<0?0:($scope.currentPage>array.length-4?array.length-8:$scope.currentPage-3);
                 var maxPage = minPage+7;
@@ -139,7 +145,7 @@
                     $scope.districts = data;
                     $scope.thanas = [];
                     $scope.loadingDistrict = false;
-                    $scope.loadTotal();
+                    $scope.loadPage();
                 })
             }
             $scope.loadThana = function (d_id) {
@@ -149,7 +155,7 @@
                     $scope.thanas = data;
                     $scope.selectedThana = "all";
                     $scope.loadingThana = false;
-                    $scope.loadTotal()
+                    $scope.loadPage()
                 })
             }
             httpService.rank().then(function (ranks) {
@@ -164,7 +170,7 @@
             else if($scope.user_type==22){
                 $scope.loadThana(parseInt('{{Auth::user()->district_id}}'))
             }
-            $scope.loadTotal()
+            $scope.loadPage()
             function capitalizeLetter(s){
                 return s.charAt(0).toUpperCase()+ s.slice(1);
             }
@@ -223,7 +229,7 @@
                                     <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
                                          width="16">
                                 </label>
-                                <select class="form-control" ng-model="selectedThana" ng-change="loadTotal()">
+                                <select class="form-control" ng-model="selectedThana" ng-change="loadPage()">
                                     <option value="all">All</option>
                                     <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]</option>
                                 </select>
@@ -233,7 +239,7 @@
                             <div class="form-group">
                                 <label class="control-label">@lang('title.sex')
                                 </label>
-                                <select class="form-control" ng-model="gender" ng-change="loadTotal()">
+                                <select class="form-control" ng-model="gender" ng-change="loadPage()">
                                     <option value="all">All</option>
                                     <option ng-repeat="t in genders" value="[[t.value]]">[[t.text]]</option>
                                 </select>
@@ -243,14 +249,22 @@
                             <div class="form-group">
                                 <label class="control-label">@lang('title.rank')
                                 </label>
-                                <select class="form-control" ng-model="rank" ng-change="loadTotal()">
+                                <select class="form-control" ng-model="rank" ng-change="loadPage()">
                                     <option value="all">All</option>
                                     <option ng-repeat="t in ranks" value="[[t.id]]">[[t.name_eng]]</option>
                                 </select>
                             </div>
                         </div>
                     </div>
-                    <h4 class="text text-bold">Total Ansars :PC([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])&nbsp;APC([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])&nbsp;Ansar([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</h4>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4 class="text text-bold">Total Ansars :PC([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])&nbsp;APC([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])&nbsp;Ansar([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</h4>
+                        </div>
+                        <div class="col-md-4">
+                            <database-search q="q" queue="queue" on-change="loadPage()"></database-search>
+
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <template-list data="ansars" key="offerred_ansar_accept_last_5_days"></template-list>
                         <div class="table_pagination" ng-if="pages.length>1">

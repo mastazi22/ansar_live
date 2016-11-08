@@ -61,7 +61,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         route::get('getBloodName', ['as' => 'blood_name', 'uses' => 'FormSubmitHandler@getBloodName']);
         Route::post('entryVerify', ['as' => 'entryverify', 'uses' => 'EntryFormController@entryVerify']);
         Route::get('getnotverifiedansar', ['as'=>'getnotverifiedansar','uses'=>'FormSubmitHandler@getNotVerifiedAnsar']);
-        Route::get('getverifiedansar', 'FormSubmitHandler@getVerifiedAnsar');
+        Route::get('getverifiedansar', ['as'=>'getverifiedansar','uses'=>'FormSubmitHandler@getVerifiedAnsar']);
         Route::get('getDiseaseName', ['as' => 'get_disease_list', 'uses' => 'EntryFormController@getAllDisease']);
         Route::get('getallskill', ['as' => 'get_skill_list', 'uses' => 'EntryFormController@getAllSkill']);
         Route::get('/getalleducation', ['as'=>'getalleducation','uses'=>'EntryFormController@getAllEducation']);

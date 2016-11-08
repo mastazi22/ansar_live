@@ -130,15 +130,13 @@
             $scope.checkAll = function () {
                 if (!$scope.checkedAll)$scope.checked = Array.apply(null, Array($scope.ansars.length)).map(Boolean.prototype.valueOf, false);
                 else {
-                    $scope.ansars.forEach(function (value, index) {
-                        $scope.checked[index] = index;
+                    $scope.ansars.forEach(function (a, index) {
+                        if(a.block_list_status==1||a.black_list_status==1)$scope.checked[index] = false;
+                        else $scope.checked[index] = index
                     })
                 }
                 console.log($scope.checked)
             }
-        })
-        $(document).ready(function (e) {
-            $(".showdate").datePicker(true)
         })
     </script>
     <div ng-controller="ReportGuardSearchController">
@@ -152,7 +150,7 @@
                         <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label">From Date</label>
-                                <input type="text" class="form-control showdate" ng-model="fromDate"
+                                <input type="text" date-picker class="form-control showdate" ng-model="fromDate"
                                        placeholder="From Date">
                                 <p class="text text-danger" ng-if="error!=undefined&&error.from_date!=undefined">[[error.from_date[0] ]]</p>
                             </div>
@@ -164,12 +162,12 @@
                         <div class="col-sm-3">
                             <div class="form-group">
                                 <label class="control-label">To Date</label>
-                                <input type="text" ng-model="toDate" class="form-control showdate"
+                                <input type="text" date-picker ng-model="toDate" class="form-control showdate"
                                        placeholder="To Date">
                                 <p class="text text-danger" ng-if="error!=undefined&&error.to_date!=undefined">[[error.to_date[0] ]]</p>
                             </div>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             <div class="form-group">
                                 <label class="control-label">No. Of Rejected/Unresponded Offers</label>
                                 <input type="text" ng-model="noOfRejection" ng-change="noOfRejection = noOfRejection<1?1:noOfRejection" class="form-control"
@@ -188,8 +186,11 @@
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered">
+                            <caption>
+                                <table-search q="q" results="results" ></table-search>
+                            </caption>
                             <tr>
-                                <th><input type="checkbox" ng-model="checkedAll"
+                                <th><input ng-disabled="ansars==undefined||ansars.length<=0" type="checkbox" ng-model="checkedAll"
                                                                ng-change="checkAll()"></th>
                                 <th>Sl. No</th>
                                 <th>Ansar ID</th>
@@ -199,10 +200,10 @@
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
-                            <tr ng-if="ansars.length<=0" class="warning">
+                            <tr ng-if="ansars.length<=0||results==undefined||results.length<=0" class="warning">
                                 <th colspan="8">No information found</th>
                             </tr>
-                            <tr ng-if="ansars.length>0" ng-repeat="a in ansars">
+                            <tr ng-if="ansars.length>0" ng-repeat="a in ansars|filter:q as results">
                                 <td><input type="checkbox" ng-disabled="isBlocking[$index]||a.block_list_status==1||a.black_list_status==1"  ng-true-value="[[$index]]" ng-false-value="false"
                                            ng-model="checked[$index]"></td>
                                 <td>[[$index+1]]</td>
@@ -233,7 +234,7 @@
                     </div>
                 </div>
                 <div class="box-footer">
-                    <button class="btn btn-primary" ng-click="blockSelected()"><i class="fa fa-remove"></i>&nbsp;&nbsp;Block Selected</button>
+                    <button ng-disabled="ansars==undefined||ansars.length<=0" class="btn btn-primary" ng-click="blockSelected()"><i class="fa fa-remove"></i>&nbsp;&nbsp;Block Selected</button>
                 </div>
             </div>
         </section>
