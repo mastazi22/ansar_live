@@ -64,7 +64,7 @@ return [
                     "route" => "orginal_info",
                     "icon" => "fa-dashboard",
                 ],
-                "Print Id Card" => [
+                "Print ID Card" => [
                     "route" => "print_card_id_view",
                     "icon" => "fa-dashboard",
                 ],
