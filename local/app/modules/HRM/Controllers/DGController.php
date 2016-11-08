@@ -181,12 +181,12 @@ class DGController extends Controller
 
             $rest_entry->memorandum_id = $request->input('mem_id');;
 
-            $rest_entry->rest_date = Carbon::createFromFormat("d-M-Y", $request->input('dis_date'))->format("Y-m-d");
+            $rest_entry->rest_date = Carbon::parse($request->input('dis_date'))->format("Y-m-d");
             $rest_entry->active_date = Carbon::parse($request->input('dis_date'))->addDay(182);
 
             $joining_date = Carbon::parse($embodiment_infos->joining_date);
-            $disembodiment_date = Carbon::createFromFormat("d-M-Y", $request->input('dis_date'))->format("Y-m-d");
-            $service_days = $disembodiment_date->diffInDays($joining_date);
+            $disembodiment_date = Carbon::parse($request->input('dis_date'))->format("Y-m-d");
+            $service_days = Carbon::parse($request->input('dis_date'))->diffInDays($joining_date);
 
 
             $rest_entry->total_service_days = $service_days;
@@ -204,7 +204,7 @@ class DGController extends Controller
             $embodiment_log_update->reporting_date = $embodiment_infos->reporting_date;
             $embodiment_log_update->joining_date = $embodiment_infos->joining_date;
             $embodiment_log_update->transfered_date = $embodiment_infos->transfered_date;
-            $embodiment_log_update->release_date = Carbon::createFromFormat("d-M-Y", $request->input('dis_date'))->format("Y-m-d");
+            $embodiment_log_update->release_date = Carbon::parse($request->input('dis_date'))->format("Y-m-d");
             $embodiment_log_update->disembodiment_reason_id = $request->input('reason');
             $embodiment_log_update->move_to = "Rest";
             $embodiment_log_update->action_user_id = $user_type = Auth::user()->id;
@@ -216,8 +216,8 @@ class DGController extends Controller
             DB::commit();
             CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DISEMBODIMENT', 'from_state' => 'EMBODIED', 'to_state' => 'REST', 'action_by' => auth()->user()->id]);
             CustomQuery::addDGlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DISEMBODIMENT', 'from_state' => 'EMBODIED', 'to_state' => 'REST']);
-        } catch (Exception $e) {
-            return Response::json(['status' => false, 'message' => 'An Error occur while inserting. Please try again later']);
+        } catch (\Exception $e) {
+            return Response::json(['status' => false, 'message' => $e->getMessage()]);
         }
         return Response::json(['status' => true, 'message' => 'Dis-Embodiment process complete successfully']);
     }

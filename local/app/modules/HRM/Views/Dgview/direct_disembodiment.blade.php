@@ -7,7 +7,7 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#dis_date').datePicker();
+
         })
         GlobalApp.controller('DirectEmbodimentController', function ($scope,$http,$sce) {
             $scope.ansarId = "";
@@ -176,7 +176,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="dis_date" class="control-label">Disembodiment Date</label>
-                                <input type="text" id="dis_date" class="form-control" ng-model="dis_date">
+                                <input type="text" date-picker placeholder="Dis-Embodied Date" id="dis_date" class="form-control" ng-model="dis_date">
                             </div>
                             <div class="form-group">
                                 <label for="dis-reason" class="control-label">Disembodiment Reason&nbsp;

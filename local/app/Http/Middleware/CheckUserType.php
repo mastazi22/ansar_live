@@ -25,12 +25,19 @@ class CheckUserType
         'getnotverifiedansar'=>['division'=>'range','unit'=>'unit'],
         'getverifiedansar'=>['division'=>'range','unit'=>'unit'],
         'dashboard_total_ansar'=>['division_id'=>'range','unit_id'=>'unit'],
+        'progress_info'=>['division_id'=>'range','district_id'=>'unit'],
+        'graph_embodiment'=>['division_id'=>'range','district_id'=>'unit'],
         'recent_ansar'=>['division_id'=>'range','unit_id'=>'unit'],
+        'service_ended_info_details'=>['division'=>'range','unit'=>'unit'],
+        'ansar_reached_fifty_details'=>['division'=>'range','unit'=>'unit'],
+        'offer_accept_last_5_day_data'=>['division'=>'range','unit'=>'unit'],
     ];
     public function handle($request, Closure $next)
     {
         $user = Auth::user();
-        $routeName = $request->route()->getName();
+        $route = $request->route();
+        if(is_null($route)) return $next($request);
+        $routeName = $route->getName();
         $input = $request->input();
         foreach($this->urls as $url=>$params){
             if(!strcasecmp($url,$routeName)){
