@@ -35,19 +35,17 @@
                     })
                     $scope.loadingPage[i] = false;
                 }
-                if ($scope.numOfPage > 0)$scope.loadPage($scope.pages[0]);
-                else $scope.loadPage({pageNum: 0, offset: 0, limit: $scope.itemPerPage, view: 'view'});
             }
             $scope.loadPage = function (page, $event) {
                 if ($event != undefined)  $event.preventDefault();
-                $scope.currentPage = page.pageNum;
-                $scope.loadingPage[page.pageNum] = true;
+                $scope.currentPage = page==undefined?0:page.pageNum;
+                $scope.loadingPage[$scope.currentPage] = true;
                 $http({
                     url: '{{URL::route('kpi_view_details')}}',
                     method: 'get',
                     params: {
-                        offset: page.offset,
-                        limit: page.limit,
+                        offset: page==undefined?0:page.offset,
+                        limit: page==undefined?$scope.itemPerPage:page.limit,
                         division: $scope.params.range,
                         unit: $scope.params.unit,
                         thana: $scope.params.thana,
@@ -57,35 +55,11 @@
                     $scope.kpis = response.data.kpis;
                     console.log($scope.kpis)
 //                    $compile($scope.ansars)
-                    $scope.loadingPage[page.pageNum] = false;
-                })
-            }
-            $scope.loadTotal = function () {
-                $scope.allLoading = true;
-                //alert($scope.selectedDivision)
-                $http({
-
-                    url: '{{URL::route('kpi_view_details')}}',
-                    method: 'get',
-                    params: {
-                        division: $scope.params.range,
-                        unit: $scope.params.unit,
-                        thana: $scope.params.thana,
-                        view: 'count'
-                    }
-                }).then(function (response) {
+                    $scope.loadingPage[$scope.currentPage ] = false;
                     $scope.errorFound = 0;
                     $scope.total = response.data.total;
                     $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
                     $scope.loadPagination();
-                    $scope.allLoading = false;
-                    //alert($scope.total)
-                },function(response){
-                    $scope.errorFound = 1;
-                    $scope.total = 0;
-                    $scope.kpis = [];
-                    $scope.errorMessage = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
-                    $scope.pages = [];
                     $scope.allLoading = false;
                 })
             }
@@ -153,13 +127,13 @@
                     <filter-template
                             show-item="['range','unit','thana']"
                             type="all"
-                            range-change="loadTotal()"
-                            unit-change="loadTotal()"
-                            thana-change="loadTotal()"
+                            range-change="loadPage()"
+                            unit-change="loadPage()"
+                            thana-change="loadPage()"
                             start-load="range"
                             field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
                             data = "params"
-                            on-load="loadTotal()"
+                            on-load="loadPage()"
                     ></filter-template>
                     <h4>Total KPI: [[total.toLocaleString()]]</h4>
                     <div class="table-responsive">
