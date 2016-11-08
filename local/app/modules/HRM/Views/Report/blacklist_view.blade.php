@@ -3,7 +3,7 @@
 {{--Time: 3:16 PM--}}
 
 @extends('template.master')
-@section('title','Blacklisted Ansar Report')
+@section('title','Blacklist Info')
 @section('breadcrumb')
     {!! Breadcrumbs::render('blacklist_view') !!}
 @endsection

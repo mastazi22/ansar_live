@@ -47,4 +47,26 @@
             </select>
         </div>
     </div>
+    <div ng-class="fieldWidth.rank" ng-if="show('rank')">
+        <div class="form-group">
+            <label class="control-label">@lang('title.rank')
+            </label>
+            <select id="rank" class="form-control" ng-model="selected.rank" ng-disabled="loading.range||loading.unit||loading.thana||loading.kpi">
+                <option value="all" ng-if="type=='all'">All</option>
+                <option value="" ng-if="type=='single'||type==undefined">--Select Gender--</option>
+                <option ng-repeat="t in ranks" value="[[t.id]]">[[t.name_eng]]</option>
+            </select>
+        </div>
+    </div>
+    <div ng-class="fieldWidth.gender" ng-if="show('gender')">
+        <div class="form-group">
+            <label class="control-label">@lang('title.sex')
+            </label>
+            <select id="gender" class="form-control" ng-model="selected.gender" ng-disabled="loading.range||loading.unit||loading.thana||loading.kpi">
+                <option value="all" ng-if="type=='all'">All</option>
+                <option value="" ng-if="type=='single'||type==undefined">--Select Gender--</option>
+                <option ng-repeat="t in genders" value="[[t.value]]">[[t.text]]</option>
+            </select>
+        </div>
+    </div>
 </div>

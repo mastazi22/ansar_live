@@ -357,13 +357,13 @@ class ReportController extends Controller
 //            $unit = Auth::user()->district_id;
 //        } else {
         $unit = Input::get('unit');
+        $division = Input::get('division');
 //        }
         $ansar_rank = Input::get('ansar_rank');
         $ansar_sex = Input::get('ansar_sex');
         //$thana = Input::get('thana');
         $view = Input::get('view');
         $rules = [
-            'view' => 'regex:/^[a-z]+/',
             'limit' => 'numeric',
             'offset' => 'numeric',
             'unit' => 'required',
@@ -375,16 +375,8 @@ class ReportController extends Controller
         if ($valid->fails()) {
             //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
-        } else {
-            if (strcasecmp($view, 'view') == 0) {
-                return CustomQuery::threeYearsOverAnsarList($offset, $limit, $unit, $ansar_rank, $ansar_sex);
-
-
-            }
-            else {
-                return CustomQuery::threeYearsOverAnsarCount($unit, $ansar_rank, $ansar_sex);
-            }
         }
+        return CustomQuery::threeYearsOverAnsarList($offset, $limit,$division, $unit, $ansar_rank, $ansar_sex);
     }
 
     public function anserTransferHistory()

@@ -3,7 +3,7 @@
 {{--Time: 2:46 PM--}}
 
 @extends('template.master')
-@section('title','Three Years Over Service Report')
+@section('title','Three Years Over List')
 @section('breadcrumb')
     {!! Breadcrumbs::render('three_year_over_report_view') !!}
 @endsection
@@ -12,21 +12,13 @@
         GlobalApp.controller('ReportThreeYearsOverList', function ($scope, $http, $sce) {
             $scope.total = 0;
             $scope.numOfPage = 0;
-            $scope.selectedDistrict = "all";
-            $scope.selectedRank = "all";
-            $scope.selectedSex= "all";
-            $scope.districts = [];
             $scope.itemPerPage = parseInt("{{config('app.item_per_page')}}");
             $scope.currentPage = 0;
             $scope.ansars = $sce.trustAsHtml("");
             $scope.pages = [];
-            $scope.loadingDistrict = true;
-            $scope.loadingRank = false;
-            $scope.loadingSex = false;
             $scope.allLoading = false;
             $scope.loadingPage = [];
             $scope.reportType = 'eng'
-            $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
             $scope.loadPagination = function () {
                 $scope.pages = [];
                 for (var i = 0; i < $scope.numOfPage; i++) {
@@ -37,88 +29,32 @@
                     })
                     $scope.loadingPage[i] = false;
                 }
-                if ($scope.numOfPage > 0)$scope.loadPage($scope.pages[0]);
-                else $scope.loadPage({pageNum: 0, offset: 0, limit: $scope.itemPerPage, view: 'view'});
             }
             $scope.loadPage = function (page, $event) {
                 if ($event != undefined)  $event.preventDefault();
-                $scope.currentPage = page.pageNum;
-                $scope.loadingPage[page.pageNum] = true;
+                $scope.currentPage = page==undefined?0:page.pageNum;
+                $scope.loadingPage[$scope.currentPage] = true;
+                $scope.allLoading = true;
                 $http({
                     url: '{{URL::route('three_years_over_ansar_info')}}',
                     method: 'get',
                     params: {
-                        offset: page.offset,
-                        limit: page.limit,
-                        unit: $scope.selectedDistrict,
-                        ansar_rank: $scope.selectedRank,
-                        ansar_sex: $scope.selectedSex,
+                        offset: page==undefined?0:page.offset,
+                        limit: page==undefined?$scope.itemPerPage:page.limit,
+                        unit: $scope.params.unit,
+                        division: $scope.params.range,
+                        ansar_rank: $scope.params.rank,
+                        ansar_sex: $scope.params.gender,
                         view: 'view'
                     }
                 }).then(function (response) {
-                    $scope.ansars = $sce.trustAsHtml(response.data);
-                    $scope.loadingPage[page.pageNum] = false;
-                })
-            }
-            $scope.loadTotal = function () {
-                $scope.allLoading = true;
-                //alert('here');
-                //alert($scope.selectedDistrict+" "+$scope.selectedRank+" "+$scope.selectedSex)
-                $http({
-                    url: '{{URL::route('three_years_over_ansar_info')}}',
-                    method: 'get',
-                    params: {
-                        unit: $scope.selectedDistrict,
-                        ansar_rank: $scope.selectedRank,
-                        ansar_sex: $scope.selectedSex,
-                        view: 'count'
-                    }
-                }).then(function (response) {
-                    console.log(response.data.total)
-                    if($scope.selectedRank==1) {
-                        $scope.countByRank = {
-                            ansar: response.data.total[0] ? response.data.total[0] : 0,
-                            apc: 0,
-                            pc: 0
-                        }
-                    }
-                    else if($scope.selectedRank==2) {
-                        $scope.countByRank = {
-                            apc: response.data.total[0] ? response.data.total[0] : 0,
-                            ansar: 0,
-                            pc: 0
-                        }
-                    }
-                    else if($scope.selectedRank==3) {
-                        $scope.countByRank = {
-                            pc: response.data.total[0] ? response.data.total[0] : 0,
-                            ansar: 0,
-                            apc: 0
-                        }
-                    }
-                    else  {
-                        $scope.countByRank = {
-                            ansar: response.data.total[0] ? response.data.total[0] : 0,
-                            apc: response.data.total[1] ? response.data.total[1] : 0,
-                            pc: response.data.total[2] ? response.data.total[2] : 0
-                        }
-                    }
-
-                    $scope.total = response.data.total.reduce(function (a, b) {
-                        return a+b;
-                    },0);
+                    $scope.ansars = response.data;
+                    $scope.gCount = response.data.total;
+                    $scope.total = sum(response.data.total);
                     $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
                     $scope.loadPagination();
-                    //alert($scope.total);
-//                    $scope.selectedDistrict = [];
-//                    $scope.selectedRank = [];
-//                    $scope.selectedSex = '';
+                    $scope.loadingPage[$scope.currentPage] = false;
                     $scope.allLoading = false;
-                },function(response){
-                    $scope.total = 0;
-                    $scope.ansars = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
-                    $scope.allLoading = false;
-                    $scope.pages = [];
                 })
             }
             $scope.filterMiddlePage = function (value, index, array) {
@@ -128,22 +64,6 @@
                     return true;
                 }
             }
-
-            $http({
-                method: 'get',
-                url: '{{URL::to('HRM/DistrictName')}}'
-            }).then(function (response) {
-                $scope.districts = response.data;
-                $scope.loadingDistrict = false;
-                //$scope.loadTotal();
-
-            })
-
-            $scope.resetValues=function(){
-                $scope.selectedRank = "";
-                $scope.selectedSex = "";
-            }
-
             $scope.loadReportData = function (reportName,type) {
                 $scope.allLoading = true;
                 $http({
@@ -156,11 +76,14 @@
                     $scope.allLoading = false;
                 })
             }
-            $scope.dateConvert=function(date){
-                return (moment(date).format('DD-MMM-Y'));
-            }
             $scope.loadReportData("three_years_over_ansar_report","eng")
-            $scope.loadTotal();
+            function sum(t){
+                var s = 0;
+                for(var i in t){
+                    s += t[i]
+                }
+                return s;
+            }
 
         })
         $(function () {
@@ -211,57 +134,24 @@
                                              ng-model="reportType">&nbsp;<b>বাংলা</b>
                             </span>
                     </div><br>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label class="control-label">@lang('title.unit')&nbsp;
-                                    <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
-                                         width="16"></label>
-                                <select class="form-control" ng-model="selectedDistrict">
-                                    <option value="all">All</option>
-                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    Select Rank
-                                </label>
-                                <select name="ansar_rank" class="form-control" ng-model="selectedRank">
-                                    <option value="all">All</option>
-                                    <option value="1">Ansar</option>
-                                    <option value="2">APC</option>
-                                    <option value="3">PC</option>
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    Select Gender
-                                </label>
-                                <select name="ansar_sex" class="form-control" ng-model="selectedSex">
-                                    <option value="all">All</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Other">Other</option>
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-12 col-xs-12" style="margin-top: 25px">
-                            <a class="btn btn-primary pull-right" ng-click="loadTotal(selectedDistrict,selectedRank,selectedSex)">Load Result</a>
-                        </div>
-                    </div>
+                    <filter-template
+                            show-item="['range','unit','rank','gender']"
+                            type="all"
+                            range-change="loadPage()"
+                            unit-change="loadPage()"
+                            rank-change="loadPage()"
+                            gender-change="loadPage()"
+                            start-load="range"
+                            field-width="{range:'col-sm-3',unit:'col-sm-3',rank:'col-sm-3',gender:'col-sm-3'}"
+                            data="params"
+                            on-load="loadPage()"
+                    ></filter-template>
                     <div id="print-three_years_over_ansar_report">
                         <h3 style="text-align: center" id="report-header">[[report.ansar.ansar_title]]&nbsp;&nbsp;
                             <a href="#" title="print" id="print-report">
                                 <span class="glyphicon glyphicon-print"></span>
                             </a></h3>
-                        <h4>Total Ansar:PC([[countByRank.pc]]),APC([[countByRank.apc]]),Ansar([[countByRank.ansar]])</h4>
+                        <h4>Total Ansar:PC([[gCount.PC==unefined?0:gCount.PC]]),APC([[gCount.APC==unefined?0:gCount.APC]]),Ansar([[gCount.ANSAR==unefined?0:gCount.ANSAR]])</h4>
                         <div class="table-responsive">
                             <table class="table table-bordered">
                                 <tr>
@@ -275,7 +165,20 @@
                                     <th>[[report.ansar.joining_date]]</th>
                                     <th>[[report.ansar.service_ended_date]]</th>
                                 </tr>
-                                <tbody ng-bind-html="ansars"></tbody>
+                                <tr ng-repeat="a in ansars.ansars">
+                                    <td>[[ansars.index+$index]]</td>
+                                    <td>[[a.id]]</td>
+                                    <td>[[a.name]]</td>
+                                    <td>[[a.rank]]</td>
+                                    <td>[[a.unit]]</td>
+                                    <td>[[a.kpi]]</td>
+                                    <td>[[a.r_date|dateformat:'DD-MMM-YYYY']]</td>
+                                    <td>[[a.j_date|dateformat:'DD-MMM-YYYY']]</td>
+                                    <td>[[a.se_date|dateformat:'DD-MMM-YYYY']]</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="9" ng-if="ansars.ansars==undefined||ansars.ansars.length<=0" class="warning">No Ansar available</td>
+                                </tr>
                             </table>
                             <div class="table_pagination" ng-if="pages.length>1">
                                 <ul class="pagination">

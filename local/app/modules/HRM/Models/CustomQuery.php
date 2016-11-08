@@ -1088,7 +1088,7 @@ class CustomQuery
     }
 
 
-    public static function threeYearsOverAnsarList($offset, $limit, $unit, $ansar_rank, $ansar_sex)
+    public static function threeYearsOverAnsarList($offset, $limit,$division, $unit, $ansar_rank, $ansar_sex)
     {
         $ansarQuery = DB::table('tbl_embodiment')
             ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
@@ -1100,45 +1100,23 @@ class CustomQuery
         if ($unit != 'all') {
             $ansarQuery = $ansarQuery->where('tbl_kpi_info.unit_id', '=', $unit);
         }
+        if ($division != 'all') {
+            $ansarQuery = $ansarQuery->where('tbl_kpi_info.division_id', '=', $division);
+        }
         if ($ansar_rank != 'all') {
             $ansarQuery = $ansarQuery->where('tbl_designations.id', '=', $ansar_rank);
         }
         if ($ansar_sex != 'all') {
             $ansarQuery = $ansarQuery->where('tbl_ansar_parsonal_info.sex', '=', $ansar_sex);
         }
-//        }
+        $total = clone $ansarQuery;
         $ansars = $ansarQuery->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_designations.id as did',
             'tbl_embodiment.service_ended_date as se_date', 'tbl_kpi_info.kpi_name as kpi', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_units.unit_name_bng as unit', 'tbl_designations.name_bng as rank')->skip($offset)->limit($limit)->get();
-        return View::make('HRM::Report.selected_three_years_over_list_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
+        $total = $total->groupBy('tbl_designations.id')->orderBy('tbl_designations.id')->select(DB::raw('count(tbl_designations.id) as t'),'tbl_designations.code as code')->pluck('t','code');
+
+        return Response::json(['total'=>$total,'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
 
     }
-
-    public static function threeYearsOverAnsarCount($unit, $ansar_rank, $ansar_sex)
-    {
-        DB::enableQueryLog();
-
-        $ansarQuery = DB::table('tbl_embodiment')
-            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-            ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->where('tbl_embodiment.service_ended_date', '<', Carbon::now())
-            ->where('tbl_embodiment.emboded_status', '=', 'Emboded');
-        if ($unit != 'all') {
-            $ansarQuery = $ansarQuery->where('tbl_kpi_info.unit_id', '=', $unit);
-        }
-        if ($ansar_rank != 'all') {
-            $ansarQuery = $ansarQuery->where('tbl_designations.id', '=', $ansar_rank);
-        }
-        if ($ansar_sex != 'all') {
-            $ansarQuery = $ansarQuery->where('tbl_ansar_parsonal_info.sex', '=', $ansar_sex);
-        }
-//        }
-        $total = $ansarQuery->groupBy('tbl_designations.id')->orderBy('tbl_designations.id')->select(DB::raw('count(tbl_designations.id) as t'))->pluck('t');
-//        return DB::getQueryLog();
-        return Response::json(['total' => $total]);
-    }
-
 
     public static function disembodedAnsarListforReport($offset, $limit, $from_date, $to_date,$division, $unit, $thana)
     {
@@ -1227,30 +1205,6 @@ class CustomQuery
         return Response::json(['total' => $total->count('tbl_kpi_info.id'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'kpis' => $kpis]);
 
     }
-
-    public static function kpiInfoCount($division, $unit, $thana)
-    {
-        DB::enableQueryLog();
-        $kpiQuery = $kpiQuery = DB::table('tbl_kpi_info')
-            ->join('tbl_division', 'tbl_kpi_info.division_id', '=', 'tbl_division.id')
-            ->join('tbl_kpi_detail_info', 'tbl_kpi_info.id', '=', 'tbl_kpi_detail_info.kpi_id')
-            ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
-            ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
-            ->where('tbl_kpi_info.status_of_kpi', 1)->where('tbl_kpi_info.withdraw_status', 0)->whereNull('tbl_kpi_detail_info.kpi_withdraw_date');
-        if ($thana != 'all') {
-            $kpiQuery->where('tbl_kpi_info.thana_id', '=', $thana);
-        }
-        if ($division != 'all') {
-            $kpiQuery->where('tbl_kpi_info.division_id', '=', $division);
-        }
-        if ($unit != 'all') {
-            $kpiQuery->where('tbl_kpi_info.unit_id', '=', $unit);
-        }
-        $total = $kpiQuery->count('tbl_kpi_info.id');
-//        print_r(DB::getQueryLog());
-        return Response::json(['total' => $total]);
-    }
-
     public static function withdrawnKpiInfo($offset, $limit, $unit, $thana, $division)
     {
         $kpiQuery = DB::table('tbl_kpi_info')

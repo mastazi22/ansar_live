@@ -97,9 +97,9 @@
     }
   },
   "blocklisted_ansar_report": {
-    "header": "Blocklisted Ansar Report",
+    "header": "Blocklist Info",
     "ansar": {
-      "ansar_title": "Ansar Details",
+      "ansar_title": "Blocklist Info",
       "sl_no": "Sl. No.",
       "id": "Ansar ID",
       "name": "Name",
@@ -113,9 +113,9 @@
     }
   },
   "blacklisted_ansar_report": {
-    "header": "Blacklisted Ansar Report",
+    "header": "Blacklist Info",
     "ansar": {
-      "ansar_title": "Ansar Details",
+      "ansar_title": "Blacklist Info",
       "sl_no": "Sl. No.",
       "id": "Ansar ID",
       "name": "Name",

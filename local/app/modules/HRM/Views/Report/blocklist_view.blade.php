@@ -3,7 +3,7 @@
 {{--Time: 10:23 AM--}}
 
 @extends('template.master')
-@section('title','Blocklisted Ansar Report')
+@section('title','Blocklist Info')
 @section('breadcrumb')
     {!! Breadcrumbs::render('blocklist_view') !!}
 @endsection

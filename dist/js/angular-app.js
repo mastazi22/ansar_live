@@ -304,6 +304,8 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             unitChange:'&',//{func()}
             thanaChange:'&',//{func()}
             kpiChange:'&',//{func()}
+            rankChange:'&',//{func()}
+            genderChange:'&',//{func()}
             rangeLoad:'&',//{func()}
             unitLoad:'&',//{func()}
             thanaLoad:'&',//{func()}
@@ -320,7 +322,14 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 unit:$scope.type=='all'?'all':'',
                 thana:$scope.type=='all'?'all':'',
                 kpi:$scope.type=='all'?'all':'',
+                rank:$scope.type=='all'?'all':'',
+                gender:$scope.type=='all'?'all':'',
             }
+            $scope.genders = [
+                {value:'Male',text:'Male'},
+                {value:'Female',text:'Female'},
+                {value:'Other',text:'Other'},
+            ]
             $scope.finish = false;
             $scope.loading = {
                 range:false,
@@ -332,6 +341,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 return $scope.showItem.indexOf(item)>-1&&hasPermission(item);
             }
             function hasPermission(item){
+                if(item=='rank'||item=='gender') return true;
                 if(!$rootScope.user) return false;
                 if($rootScope.user.usertype.type_name=='DC'&&(item=='range'||item=='unit')){
                     return false;
@@ -388,6 +398,16 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 })
                 $scope.kpiLoad({param:$scope.selected});
             }
+            $scope.loadRank= function () {
+
+                //$scope.kpiChange({param:$scope.selected});
+                if(!$scope.show('rank')) return;
+                httpService.rank().then(function (data) {
+                    $scope.ranks = data;
+
+                })
+            }
+            if($scope.showItem.indexOf('rank')>-1) $scope.loadRank();
             $rootScope.$watch('user', function (n,o) {
                 if(!n) return;
                 if($rootScope.user.usertype.type_name=='DC'){
@@ -448,8 +468,14 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 scope.selected.kpi = scope.type=='all'?'all':''
                 scope.thanaChange({param:scope.selected})
             })
+            $(element).on('change',"#rank", function () {
+                scope.rankChange({param:scope.selected})
+            })
             $(element).on('change',"#kpi", function () {
                 scope.kpiChange({param:scope.selected})
+            })
+            $(element).on('change',"#gender", function () {
+                scope.genderChange({param:scope.selected})
             })
         }
     }
