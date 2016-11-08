@@ -100,17 +100,20 @@
                     {{--</div>--}}
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped">
+                            <caption>
+                                <table-search q="q" results="results" place-holder="Search Memorandum no."></table-search>
+                            </caption>
                             <tr>
-                                <td>#</td>
-                                <td>Memorandum no,</td>
-                                <td>Memorandum Date</td>
-                                <td>Unit</td>
-                                <td>Action</td>
+                                <th>#</th>
+                                <th>Memorandum no,</th>
+                                <th>Memorandum Date</th>
+                                <th>Unit</th>
+                                <th>Action</th>
                             </tr>
-                            <tr ng-repeat="d in datas">
+                            <tr ng-repeat="d in datas|filter: q as results">
                                 <td>[[$index+1]]</td>
                                 <td>[[d.memorandum_id]]</td>
-                                <td>[[d.mem_date?(d.mem_date|dateformat:'DD-MMM-YYYY'):'n/a']]</td>
+                                <td>[[d.mem_date?(d.mem_date):'n/a']]</td>
                                 <td>
                                     <select ng-if="!isDc" class="form-control" ng-model="unit.selectedUnit[$index]"
                                             ng-disabled="units.length==0">
