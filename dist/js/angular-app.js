@@ -314,6 +314,8 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             type:'@',//['all','single']
             startLoad:'@',//['range','unit','thana','kpi']
             fieldWidth:'=',
+            fieldName:'=',
+            type:'@',
             data:'='
         },
         controller: function ($scope,$rootScope,httpService) {

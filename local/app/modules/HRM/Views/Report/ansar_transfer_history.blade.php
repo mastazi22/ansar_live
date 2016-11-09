@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','Ansar Transfer Report')
+@section('title','Ansar Transfer History')
 @section('breadcrumb')
     {!! Breadcrumbs::render('transfer_ansar_history') !!}
 @endsection

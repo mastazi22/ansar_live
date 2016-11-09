@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','Ansar in Guard Report')
+@section('title','View Ansar in Guard Report')
 @section('breadcrumb')
     {!! Breadcrumbs::render('guard_report') !!}
 @endsection

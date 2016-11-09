@@ -31,6 +31,11 @@ class CheckUserType
         'service_ended_info_details'=>['division'=>'range','unit'=>'unit'],
         'ansar_reached_fifty_details'=>['division'=>'range','unit'=>'unit'],
         'offer_accept_last_5_day_data'=>['division'=>'range','unit'=>'unit'],
+        'kpi_view_details'=>['division'=>'range','unit'=>'unit'],
+        'load_ansar_before_withdraw'=>['division_id'=>'range','unit_id'=>'unit'],
+        'load_ansar_before_reduce'=>['division_id'=>'range','unit_id'=>'unit'],
+        'ansar_list_for_reduce'=>['range'=>'range','unit'=>'unit'],
+        'inactive_kpi_list'=>['division'=>'range','unit'=>'unit'],
     ];
     public function handle($request, Closure $next)
     {

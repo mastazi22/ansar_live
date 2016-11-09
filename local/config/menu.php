@@ -191,7 +191,7 @@ return [
                     "route" => "ansar_service_report_view",
                     "icon" => "fa-file-pdf-o",
                 ],
-                "View Previous Service Report" => [
+                "Embodied Ansar Report" => [
                     "route" => "embodiment_report_view",
                     "icon" => "fa-file-pdf-o",
                 ],

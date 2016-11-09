@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','View Ansar Service Record')
+@section('title','View Service Record')
 @section('breadcrumb')
     {!! Breadcrumbs::render('view_ansar_service_record') !!}
 @endsection
