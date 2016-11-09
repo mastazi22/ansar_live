@@ -3,7 +3,7 @@
 {{--Time: 11:40 AM--}}
 
 @extends('template.master')
-@section('title','Disembodied Ansar Report')
+@section('title','View Disembodied Report')
 @section('breadcrumb')
     {!! Breadcrumbs::render('disembodiment_report_view') !!}
 @endsection
