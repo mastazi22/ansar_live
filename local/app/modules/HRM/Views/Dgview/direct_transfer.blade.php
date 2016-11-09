@@ -6,9 +6,6 @@
 @endsection
 @section('content')
     <script>
-        $(document).ready(function () {
-            $('#j_date').datePicker();
-        })
         GlobalApp.controller('DirectTransferController', function ($scope, $http, $sce) {
             $scope.ansarId = "";
             $scope.j_date = "";
@@ -256,7 +253,7 @@
 
                             <div class="form-group">
                                 <label for="j_date" class="control-label">Joining Date</label>
-                                <input type="text" name="jo_date" id="j_date" class="form-control"
+                                <input type="text" name="jo_date" date-picker id="j_date" class="form-control"
                                        ng-model="j_date">
                             </div>
                             <button class="btn btn-primary" confirm-dialog

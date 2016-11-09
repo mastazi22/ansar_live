@@ -136,7 +136,9 @@ GlobalApp.directive('datePicker', function () {
         restrict: 'AC',
         link: function (scope, element, attrs) {
             //alert(scope.event)
-            $(element).datePicker()
+            $(element).datePicker({
+                defaultValue:false
+            })
 
         }
     }
