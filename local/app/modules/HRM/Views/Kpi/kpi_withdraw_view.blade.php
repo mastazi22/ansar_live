@@ -1,9 +1,9 @@
-{{--User: Shreya--}}
+{{--User: Arafat--}}
 {{--Date: 12/24/2015--}}
 {{--Time: 12:52 PM--}}
 
 @extends('template.master')
-@section('title','Withdraw Kpi')
+@section('title','Withdraw KPI')
 @section('breadcrumb')
     {!! Breadcrumbs::render('withdraw_kpi') !!}
 @endsection
