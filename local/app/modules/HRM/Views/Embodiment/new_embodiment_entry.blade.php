@@ -9,13 +9,6 @@
     @endsection
 @section('content')
     <script>
-        $(document).ready(function () {
-            $('#reporting_date').datePicker(false);
-            $("#joining_date").datePicker(false);
-            $('#r_date').datePicker(true);
-            $("#j_date").datePicker(true);
-        })
-        var myApp = angular.module('myApp', []);
         GlobalApp.controller('NewEmbodimentController', function ($scope, $http, $sce) {
             $scope.ansarId = "";
             $scope.errors = ''
@@ -88,9 +81,9 @@
         <section class="content" style="position: relative;">
             <div class="box box-solid">
                 <div class="box-body">
-                    {!! Form::open(array('route' => 'new-embodiment-entry', 'name' => 'newEmbodimentForm', 'novalidate','form-submit','errors')) !!}
+                    {!! Form::open(array('route' => 'new-embodiment-entry', 'name' => 'newEmbodimentForm', 'novalidate','form-submit','errors','loading','status')) !!}
                     <div class="row">
-                        <div class="col-sm-4">
+                        <div class="col-sm-5">
                             <div class="form-group required" ng-init="ansarId='{{Request::old('ansar_id')}}'">
                                 <label for="ansar_id" class="control-label">Ansar ID</label>
                                 <input type="text" name="ansar_id" id="ansar_id" class="form-control"
@@ -98,18 +91,12 @@
                                        ng-change="makeQueue(ansarId)">
                                     <p class="text-danger" ng-if="errors.ansar_id!=undefined">[[errors.ansar_id[0] ]]</p>
                             </div>
-                            <div class="form-group required" ng-init="memorandumId='{{Request::old('memorandum_id')}}'">
-                                <label class="control-label">Memorandum no. & Date&nbsp;&nbsp;&nbsp;<span
-                                            ng-show="isVerifying"><i
-                                                class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span><span
-                                            class="text-danger"
-                                            ng-if="isVerified&&!memorandumId">Memorandum ID is required.</span><span
-                                            class="text-danger"
-                                            ng-if="isVerified&&memorandumId">This id already taken.</span></label>
+                            <div class="form-group required">
+                                <label class="control-label">Memorandum no. & Date</label>
 
                                 <div class="row">
                                     <div class="col-md-7" style="padding-right: 0">
-                                        <input ng-blur="verifyMemorandumId()" ng-model="memorandumId"
+                                        <input ng-model="memorandumId"
                                                type="text" class="form-control" name="memorandum_id"
                                                placeholder="Enter Memorandum no." required>
                                     </div>
@@ -122,14 +109,14 @@
                                 </div>
                                 <p class="text-danger" ng-if="errors.memorandum_id!=undefined">[[errors.memorandum_id[0] ]]</p>
                             </div>
-                            <div class="form-group required" ng-init="reporting_date='{{Request::old('reporting_date')}}'">
+                            <div class="form-group required">
                                 <label for="reporting_date" class="control-label">Reporting Date</label>
-                                {!! Form::text('reporting_date', $value = Request::old('reporting_date'), $attributes = array('class' => 'form-control', 'id' => 'reporting_date', 'ng-model' => 'reporting_date', 'required')) !!}
+                                {!! Form::text('reporting_date', null, $attributes = array('class' => 'form-control', 'id' => 'reporting_date', 'ng-model' => 'reporting_date','date-picker', 'required')) !!}
                                 <p class="text-danger" ng-if="errors.reporting_date!=undefined">[[errors.reporting_date[0] ]]</p>
                             </div>
-                            <div class="form-group required" ng-init="joining_date='{{Request::old('joining_date')}}'">
+                            <div class="form-group required">
                                 <label for="joining_date" class="control-label">Joining Date</label>
-                                {!! Form::text('joining_date', $value = Request::old('joining_date'), $attributes = array('class' => 'form-control', 'id' => 'joining_date', 'ng-model' => 'joining_date','required')) !!}
+                                {!! Form::text('joining_date', null, $attributes = array('class' => 'form-control', 'id' => 'joining_date','date-picker', 'ng-model' => 'joining_date','required')) !!}
                                 <p class="text-danger" ng-if="errors.joining_date!=undefined">[[errors.joining_date[0] ]]</p>
                             </div>
                             <!---->
@@ -146,11 +133,11 @@
                             >
 
                             </filter-template>
-                            <button class="btn btn-primary">
-                                Embodied
+                            <button type="submit" class="btn btn-primary" ng-disabled="loading">
+                                <i class="fa fa-spinner fa-pulse" ng-show="loading"></i>Embodied
                             </button>
                         </div>
-                        <div class="col-sm-8">
+                        <div class="col-sm-7">
                             <div id="loading-box" ng-if="loadingAnsar">
                             </div>
                             <div ng-if="!ansarDetail.aoi.ansar_id">
@@ -234,9 +221,7 @@
                         </div>
                     </div>
                     {!! Form::close() !!}
-                    @if(Session::has('success_message'))
-                        <a target="_blank" href="{{URL::route('print_letter',['id'=>Session::get('memid'),'type'=>'EMBODIMENT','unit'=>Session::get('unit_id'),'view'=>'full'])}}" class="btn btn-primary" style="margin-top: 10px">Print Embodiment Letter</a>
-                    @endif
+                        <a ng-show="status" target="_blank" href="{{URL::to('print_letter')}}?id=[[memorandumId]]&unit=[[param.unit]]&view=full&type=EMBODIMENT" class="btn btn-primary" style="margin-top: 10px">Print Embodiment Letter</a>
                 </div>
             </div>
         </section>

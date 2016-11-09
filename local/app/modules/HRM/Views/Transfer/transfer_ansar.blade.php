@@ -322,32 +322,6 @@
                         </div>
                         <div class="modal-body">
                             <div class="register-box" style="margin: 0;width: auto">
-                                {{--<div class="row" ng-if="showKpiStatus">--}}
-                                    {{--<div class="col-md-8 col-md-offset-2">--}}
-                                        {{--<div class="table-responsive">--}}
-                                            {{--<table class="table">--}}
-                                                {{--<tr style="font-weight: bold;"--}}
-                                                    {{--ng-class="{'text-danger':totalKpiAnsar.pc.given<totalKpiAnsar.pc.current+tsPC,'text-success':totalKpiAnsar.pc.given>=totalKpiAnsar.pc.current+tsPC}">--}}
-                                                    {{--<td>Total PC given : [[totalKpiAnsar.pc.given]]</td>--}}
-                                                    {{--<td>Total PC embodied : [[totalKpiAnsar.pc.current]]</td>--}}
-                                                    {{--<td>Total PC Transferred : [[tsPC]]</td>--}}
-                                                {{--</tr>--}}
-                                                {{--<tr style="font-weight: bold;"--}}
-                                                    {{--ng-class="{'text-danger':totalKpiAnsar.apc.given<totalKpiAnsar.apc.current+tsAPC,'text-success':totalKpiAnsar.apc.given>=totalKpiAnsar.apc.current+tsAPC}">--}}
-                                                    {{--<td>Total APC given : [[totalKpiAnsar.apc.given]]</td>--}}
-                                                    {{--<td>Total APC embodied : [[totalKpiAnsar.apc.current]]</td>--}}
-                                                    {{--<td>Total APC Transferred : [[tsAPC]]</td>--}}
-                                                {{--</tr>--}}
-                                                {{--<tr style="font-weight: bold;"--}}
-                                                    {{--ng-class="{'text-danger':totalKpiAnsar.ansar.given<totalKpiAnsar.ansar.current+tsAnsar,'text-success':totalKpiAnsar.ansar.given>=totalKpiAnsar.ansar.current+tsAnsar}">--}}
-                                                    {{--<td>Total Ansar given : [[totalKpiAnsar.ansar.given]]</td>--}}
-                                                    {{--<td>Total Ansar embodied : [[totalKpiAnsar.ansar.current]]</td>--}}
-                                                    {{--<td>Total Ansar Transferred : [[tsAnsar]]</td>--}}
-                                                {{--</tr>--}}
-                                            {{--</table>--}}
-                                        {{--</div>--}}
-                                    {{--</div>--}}
-                                {{--</div>--}}
                                 <div class="register-box-body  margin-bottom" style="padding: 0;padding-bottom: 10px">
                                     <filter-template
                                             show-item="['range','unit','thana','kpi']"
@@ -356,54 +330,7 @@
                                             field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
                                             data = "trans"
                                     ></filter-template>
-                                    {{--<div class="row">--}}
-                                        {{--<div class="col-sm-4">--}}
-                                            {{--<div class="form-group">--}}
-                                                {{--<label class="control-label">Transferred District--}}
-                                                    {{--&nbsp;&nbsp;&nbsp;<i class="fa fa-spinner fa-pulse"--}}
-                                                                         {{--ng-show="loadingThana[1]"></i></label>--}}
-                                                {{--<select class="form-control"--}}
-                                                        {{--ng-disabled="loadingThana[1]||loadingKPI[1]"--}}
-                                                        {{--ng-model="selectedDistrict[1]"--}}
-                                                        {{--ng-change="loadThana()">--}}
-                                                    {{--<option value="">@lang('title.unit')</option>--}}
-                                                    {{--<option ng-repeat="d in allDistrict[1]" value="[[d.id]]">--}}
-                                                        {{--[[d.unit_name_bng]]--}}
-                                                    {{--</option>--}}
-                                                {{--</select>--}}
-                                            {{--</div>--}}
-                                        {{--</div>--}}
-                                        {{--<div class="col-sm-4">--}}
-                                            {{--<div class="form-group">--}}
-                                                {{--<label class="control-label">Transferred Thana--}}
-                                                    {{--&nbsp;&nbsp;&nbsp;<i class="fa fa-spinner fa-pulse"--}}
-                                                                         {{--ng-show="loadingKPI[1]"></i></label>--}}
-                                                {{--<select class="form-control"--}}
-                                                        {{--ng-disabled="loadingThana[1]||loadingKPI[1]"--}}
-                                                        {{--ng-model="selectedThana[1]"--}}
-                                                        {{--ng-change="loadKpi()">--}}
-                                                    {{--<option value="">@lang('title.unit')</option>--}}
-                                                    {{--<option ng-repeat="d in allThana[1]" value="[[d.id]]">--}}
-                                                        {{--[[d.thana_name_bng]]--}}
-                                                    {{--</option>--}}
-                                                {{--</select>--}}
-                                            {{--</div>--}}
-                                        {{--</div>--}}
-                                        {{--<div class="col-sm-4">--}}
-                                            {{--<div class="form-group">--}}
-                                                {{--<label class="control-label">Transferred KPI</label>--}}
-                                                {{--<select class="form-control"--}}
-                                                        {{--ng-disabled="loadingThana[1]||loadingKPI[1]" check-kpi--}}
-                                                        {{--ng-model="selectedKPI[1]">--}}
-                                                    {{--<option value="">@lang('title.kpi')</option>--}}
-                                                    {{--<option ng-repeat="d in allKPI[1]"--}}
-                                                            {{--ng-disabled="selectedKPI[0]==d.id" value="[[d.id]]">--}}
-                                                        {{--[[d.kpi_name]]--}}
-                                                    {{--</option>--}}
-                                                {{--</select>--}}
-                                            {{--</div>--}}
-                                        {{--</div>--}}
-                                    {{--</div>--}}
+
                                     <div class="row">
                                         <div class="col-sm-4">
                                             <div class="form-group">

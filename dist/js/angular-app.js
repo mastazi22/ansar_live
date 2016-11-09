@@ -522,23 +522,38 @@ GlobalApp.directive('formSubmit',function (notificationService,$timeout) {
     return{
         restrict:'ACE',
         scope:{
-            errors:'='
+            errors:'=',
+            loading:'=',
+            status:'=',
         },
         link:function (scope, element, attrs) {
             $(element).ajaxForm({
                 beforeSubmit:function () {
+                    scope.loading = true;
+                    scope.status = false;
                     scope.errors = '';
+                    $timeout(function(){
+                        scope.$apply();
+                    })
                 },
-                success:function (response) {
-                    console.log(response)
-                    var response = JSON.parse(response);
+                success:function (result) {
+                    scope.loading = false;
+                    var response = ''
+                    try {
+                         response = JSON.parse(result);
+                    }catch(err){
+                        response = result
+                    }
                     if(response.status===true){
                         notificationService.notify('success',response.message);
+                        scope.status = true;
                     }
                     else if(response.status===false){
+                        scope.status = false;
                         notificationService.notify('error',response.message);
                     }
                     else{
+                        scope.status = false;
                         scope.errors = response;
                         $timeout(function(){
                             scope.$apply();
@@ -547,6 +562,7 @@ GlobalApp.directive('formSubmit',function (notificationService,$timeout) {
                     }
                 },
                 error:function (response) {
+                    scope.loading = false;
                     notificationService.notify('error',"An unknown error occur. Error code: "+response.status);
                 }
             })

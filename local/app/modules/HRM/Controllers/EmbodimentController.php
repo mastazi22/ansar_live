@@ -196,7 +196,7 @@ class EmbodimentController extends Controller
         DB::beginTransaction();
         try {
             $sms_receive_info = SmsReceiveInfoModel::where('ansar_id', $ansar_id)->first();
-//            return $sms_receive_info->offered_district;
+//            return $sms_receive_info->offered_district!=$request->division_name_eng?"same":"differ";
             if(!$sms_receive_info) {
                 throw new \Exception('Invalid request for Ansar ID: '.$ansar_id);
             }
