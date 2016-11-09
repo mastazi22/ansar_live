@@ -465,7 +465,7 @@ class DraftController extends Controller
                                 }
                             }
                             CustomQuery::addActionlog(['ansar_id' => $ansarid, 'action_type' => 'ADD ENTRY', 'from_state' => '', 'to_state' => 'ENTRY', 'action_by' => auth()->user()->id]);
-                            Session::flash('success', $ansarid);
+                            Session::flash('success', "New Ansar added. ID: {$ansarid}");
                             return Response::json(['status' => 'saved', 'data' => 'value added successfully']);
                         }
                         throw new Exception();

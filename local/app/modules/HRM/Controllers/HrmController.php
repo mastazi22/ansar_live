@@ -76,7 +76,7 @@ class HrmController extends Controller
 
     public function graphEmbodiment(Request $request)
     {
-        DB::enableQueryLog();
+        //DB::enableQueryLog();
         $ea = DB::table('tbl_embodiment_log')
             ->join('tbl_ansar_parsonal_info','tbl_ansar_parsonal_info.ansar_id','=','tbl_embodiment_log.ansar_id')
         ->whereRaw('joining_date BETWEEN DATE_SUB(NOW(),INTERVAL 1 YEAR) AND NOW()')
