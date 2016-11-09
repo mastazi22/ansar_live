@@ -239,9 +239,10 @@ class DGController extends Controller
         DB::beginTransaction();
         try {
             $e_id = EmbodimentModel::where('ansar_id', $ansar_id)->first();
+            $c_kpi_id = $e_id->kpi_id;
             $p_j_date = $e_id->transfered_date;
             $e_id->kpi_id = $t_kpi_id;
-            $e_id->transfered_date = Carbon::createFromFormat("d-M-Y", $t_date)->format("Y-m-d");
+            $e_id->transfered_date = Carbon::parse($t_date)->format("Y-m-d");
             $e_id->save();
             $transfer = new TransferAnsar;
             $transfer->ansar_id = $ansar_id;
@@ -250,7 +251,7 @@ class DGController extends Controller
             $transfer->present_kpi_id = $c_kpi_id;
             $transfer->transfered_kpi_id = $t_kpi_id;
             $transfer->present_kpi_join_date = $p_j_date;
-            $transfer->transfered_kpi_join_date = Carbon::createFromFormat("d-M-Y", $t_date)->format("Y-m-d");
+            $transfer->transfered_kpi_join_date = Carbon::parse($t_date)->format("Y-m-d");
             $transfer->action_by = Auth::user()->id;
             $transfer->save();
             DB::commit();

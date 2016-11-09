@@ -115,6 +115,8 @@
             }
             $scope.transferAnsar = function () {
                 $scope.loadingSubmit = true;
+                console.log($scope.ansarDetail.kpi_id);
+//                return;
                 var jd = new Date($scope.j_date)
                 var jds = jd.getFullYear() + "-" + (jd.getMonth() + 1) + "-" + jd.getDate();
                 $http({

@@ -36,6 +36,7 @@ class CheckUserType
         'load_ansar_before_reduce'=>['division_id'=>'range','unit_id'=>'unit'],
         'ansar_list_for_reduce'=>['range'=>'range','unit'=>'unit'],
         'inactive_kpi_list'=>['division'=>'range','unit'=>'unit'],
+        'new-embodiment-entry'=>['division_name_eng'=>'unit'],
     ];
     public function handle($request, Closure $next)
     {

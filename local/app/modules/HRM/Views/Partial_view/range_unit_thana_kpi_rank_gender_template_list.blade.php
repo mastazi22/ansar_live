@@ -1,4 +1,4 @@
-<div ng-class="{row:type!=true}">
+<div ng-class="{row:!layoutVertical}">
     <div ng-class="fieldWidth.range" ng-if="show('range')">
         <div class="form-group">
             <label class="control-label">@lang('title.range')&nbsp;
@@ -9,6 +9,7 @@
                 <option value="" ng-if="type=='single'||type==undefined">--@lang('title.range')--</option>
                 <option ng-repeat="d in ranges" value="[[d.id]]">[[d.division_name_bng]]</option>
             </select>
+            <p class="text-danger" ng-if="errorKey.range!=undefined||errorMessage[errorKey.range]">[[errorMessage[errorKey.range] ]]</p>
         </div>
     </div>
     <div ng-class="fieldWidth.unit" ng-if="show('unit')">
@@ -21,6 +22,7 @@
                 <option value="" ng-if="type=='single'||type==undefined">--@lang('title.unit')--</option>
                 <option ng-repeat="d in units" value="[[d.id]]">[[d.unit_name_bng]]</option>
             </select>
+            <p class="text-danger" ng-if="errorKey.unit!=undefined||errorMessage[errorKey.unit]">[[errorMessage[errorKey.unit] ]]</p>
         </div>
     </div>
     <div ng-class="fieldWidth.thana" ng-if="show('thana')">
@@ -33,6 +35,7 @@
                 <option value="" ng-if="type=='single'||type==undefined">--@lang('title.thana')--</option>
                 <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]</option>
             </select>
+            <p class="text-danger" ng-if="errorKey.thana!=undefined||errorMessage[errorKey.thana]">[[errorMessage[errorKey.thana] ]]</p>
         </div>
     </div>
     <div ng-class="fieldWidth.kpi" ng-if="show('kpi')">
@@ -45,6 +48,7 @@
                 <option value="" ng-if="type=='single'||type==undefined">--@lang('title.kpi')--</option>
                 <option ng-repeat="t in kpis" value="[[t.id]]">[[t.kpi_name]]</option>
             </select>
+            <p class="text-danger" ng-if="errorKey.kpi!=undefined||errorMessage[errorKey.kpi]">[[errorMessage[errorKey.kpi] ]]</p>
         </div>
     </div>
     <div ng-class="fieldWidth.rank" ng-if="show('rank')">
@@ -56,6 +60,7 @@
                 <option value="" ng-if="type=='single'||type==undefined">--Select Gender--</option>
                 <option ng-repeat="t in ranks" value="[[t.id]]">[[t.name_eng]]</option>
             </select>
+            <p class="text-danger" ng-if="errorKey.rank!=undefined||errorMessage[errorKey.rank]">[[errorMessage[errorKey.rank] ]]</p>
         </div>
     </div>
     <div ng-class="fieldWidth.gender" ng-if="show('gender')">
@@ -67,6 +72,7 @@
                 <option value="" ng-if="type=='single'||type==undefined">--Select Gender--</option>
                 <option ng-repeat="t in genders" value="[[t.value]]">[[t.text]]</option>
             </select>
+            <p class="text-danger" ng-if="errorKey.gender!=undefined||errorMessage[errorKey.gender]">[[errorMessage[errorKey.gender] ]]</p>
         </div>
     </div>
 </div>

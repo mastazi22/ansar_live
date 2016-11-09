@@ -7,6 +7,7 @@ use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Nathanmac\Utilities\Parser\Facades\Parser;
 
 class SendSms extends Job implements SelfHandling, ShouldQueue
@@ -53,6 +54,7 @@ class SendSms extends Job implements SelfHandling, ShouldQueue
             $response = curl_exec($crl);
             curl_close($crl);
             $r = Parser::xml($response);
+            Log::info($r);
         }
     }
 }

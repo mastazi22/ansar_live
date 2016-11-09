@@ -151,137 +151,42 @@ class EmbodimentController extends Controller
 
     public function newEmbodimentEntry(Request $request)
     {
+//        return $request->all();
         $ansar_id = $request->input('ansar_id');
         $kpi_id = $request->input('kpi_id');
-
-        if (Auth::user()->type == 22) {
-            if (!is_null($ansar_id) && !is_null($kpi_id)) {
-                $ansar_rank = PersonalInfo::where('tbl_ansar_parsonal_info.ansar_id', $ansar_id)->select('designation_id')->first();
-                $rules = [
-                    'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
-                    'memorandum_id' => 'required|unique:hrm.tbl_memorandum_id',
-                    'division_name_eng' => 'required|numeric|regex:/^[0-9]+$/',
-                    'thana_name_eng' => 'required|numeric|regex:/^[0-9]+$/',
-                    'kpi_id' => 'required|numeric|regex:/^[0-9]+$/',
-                ];
-                $message = [
-                    'ansar_id.required' => 'Ansar ID is required',
-                    'ansar_id.is_eligible' => 'Ansar Cannot be Embodied',
-                    'memorandum_id.required' => 'Memorandum ID is required',
-                    'division_name_eng.required' => 'Division  is required',
-                    'thana_name_eng.required' => 'Thana is required',
-                    'kpi_id.required' => 'KPI is required',
-                    'ansar_id.numeric' => 'Ansar ID must be numeric',
-                    'ansar_id.regex' => 'Ansar ID must be numeric',
-                    'memorandum_id.unique' => 'Memorandum ID has already been taken',
-                    'division_name_eng.numeric' => 'Division format is invalid',
-                    'division_name_eng.regex' => 'Division format is invalid',
-                    'thana_name_eng.numeric' => 'Thana format is invalid',
-                    'thana_name_eng.regex' => 'Thana format is invalid',
-                    'kpi_id.numeric' => 'KPI format is invalid',
-                    'kpi_id.regex' => 'KPI format is invalid',
-                ];
-            } else {
-                $rules = [
-                    'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
-                    'memorandum_id' => 'required|unique:hrm.tbl_memorandum_id',
-                    'division_name_eng' => 'required|numeric|regex:/^[0-9]+$/',
-                    'thana_name_eng' => 'required|numeric|regex:/^[0-9]+$/',
-                    'kpi_id' => 'required|numeric|regex:/^[0-9]+$/',
-                ];
-                $message = [
-                    'ansar_id.required' => 'Ansar ID is required',
-                    'memorandum_id.required' => 'Memorandum ID is required',
-                    'division_name_eng.required' => 'Division  is required',
-                    'thana_name_eng.required' => 'Thana is required',
-                    'kpi_id.required' => 'KPI is required',
-                    'ansar_id.numeric' => 'Ansar ID must be numeric',
-                    'ansar_id.regex' => 'Ansar ID must be numeric',
-                    'memorandum_id.unique' => 'Memorandum ID has already been taken',
-                    'division_name_eng.numeric' => 'Division format is invalid',
-                    'division_name_eng.regex' => 'Division format is invalid',
-                    'thana_name_eng.numeric' => 'Thana format is invalid',
-                    'thana_name_eng.regex' => 'Thana format is invalid',
-                    'kpi_id.numeric' => 'KPI format is invalid',
-                    'kpi_id.regex' => 'KPI format is invalid',
-                ];
-            }
-        } else {
-            if (!is_null($ansar_id) && !is_null($kpi_id)) {
-                $rules = [
-                    'kpi_id' => 'required|numeric|regex:/^[0-9]+$/',
-                    'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
-                    'memorandum_id' => 'required|unique:hrm.tbl_memorandum_id',
-                    'reporting_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
-                    'joining_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
-                    'division_name_eng' => 'required|numeric|regex:/^[0-9]+$/',
-                    'thana_name_eng' => 'required|numeric|regex:/^[0-9]+$/',
-                ];
-                $message = [
-                    'ansar_id.required' => 'Ansar ID is required',
-                    'ansar_id.is_eligible' => 'This Ansar Cannot be Embodied. Because the total number of Ansars in this KPI already exceed. First Transfer or Disembodied Ansar from this selected KPI.',
-                    'memorandum_id.required' => 'Memorandum ID is required',
-                    'reporting_date.required' => 'Reporting Date is required',
-                    'joining_date.required' => 'Joining Date is required',
-                    'division_name_eng.required' => 'Division  is required',
-                    'thana_name_eng.required' => 'Thana is required',
-                    'kpi_id.required' => 'KPI is required',
-                    'ansar_id.numeric' => 'Ansar ID must be numeric',
-                    'ansar_id.regex' => 'Ansar ID must be numeric',
-                    'memorandum_id.unique' => 'Memorandum ID has already been taken',
-                    'reporting_date.regex' => 'Reporting Date format is invalid',
-                    'joining_date.regex' => 'Joining Date format is invalid',
-                    'division_name_eng.numeric' => 'Division format is invalid',
-                    'division_name_eng.regex' => 'Division format is invalid',
-                    'thana_name_eng.numeric' => 'Thana format is invalid',
-                    'thana_name_eng.regex' => 'Thana format is invalid',
-                    'kpi_id.numeric' => 'KPI format is invalid',
-                    'kpi_id.regex' => 'KPI format is invalid',
-                ];
-            } else {
-                $rules = [
-                    'kpi_id' => 'required|numeric|regex:/^[0-9]+$/',
-                    'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
-                    'memorandum_id' => 'required|unique:hrm.tbl_memorandum_id',
-                    'reporting_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
-                    'joining_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
-                    'division_name_eng' => 'required|numeric|regex:/^[0-9]+$/',
-                    'thana_name_eng' => 'required|numeric|regex:/^[0-9]+$/',
-                ];
-                $message = [
-                    'ansar_id.required' => 'Ansar ID is required',
-                    'memorandum_id.required' => 'Memorandum ID is required',
-                    'reporting_date.required' => 'Reporting Date is required',
-                    'joining_date.required' => 'Joining Date is required',
-                    'division_name_eng.required' => 'Division  is required',
-                    'thana_name_eng.required' => 'Thana is required',
-                    'kpi_id.required' => 'KPI is required',
-                    'ansar_id.numeric' => 'Ansar ID must be numeric',
-                    'ansar_id.regex' => 'Ansar ID must be numeric',
-                    'memorandum_id.unique' => 'Memorandum ID has already been taken',
-                    'reporting_date.regex' => 'Reporting Date format is invalid',
-                    'joining_date.regex' => 'Joining Date format is invalid',
-                    'division_name_eng.numeric' => 'Division format is invalid',
-                    'division_name_eng.regex' => 'Division format is invalid',
-                    'thana_name_eng.numeric' => 'Thana format is invalid',
-                    'thana_name_eng.regex' => 'Thana format is invalid',
-                    'kpi_id.numeric' => 'KPI format is invalid',
-                    'kpi_id.regex' => 'KPI format is invalid',
-                ];
-            }
-        }
+        $rules = [
+            'kpi_id' => 'required|numeric|regex:/^[0-9]+$/',
+            'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
+            'memorandum_id' => 'required|unique:hrm.tbl_memorandum_id',
+            'reporting_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+            'joining_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+            'division_name_eng' => 'required|numeric|regex:/^[0-9]+$/',
+            'thana_name_eng' => 'required|numeric|regex:/^[0-9]+$/',
+        ];
+        $message = [
+            'ansar_id.required' => 'Ansar ID is required',
+            'ansar_id.is_eligible' => 'This Ansar Cannot be Embodied. Because the total number of Ansars in this KPI already exceed. First Transfer or Disembodied Ansar from this selected KPI.',
+            'memorandum_id.required' => 'Memorandum ID is required',
+            'reporting_date.required' => 'Reporting Date is required',
+            'joining_date.required' => 'Joining Date is required',
+            'division_name_eng.required' => 'Division  is required',
+            'thana_name_eng.required' => 'Thana is required',
+            'kpi_id.required' => 'KPI is required',
+            'ansar_id.numeric' => 'Ansar ID must be numeric',
+            'ansar_id.regex' => 'Ansar ID must be numeric',
+            'memorandum_id.unique' => 'Memorandum ID has already been taken',
+            'reporting_date.regex' => 'Reporting Date format is invalid',
+            'joining_date.regex' => 'Joining Date format is invalid',
+            'division_name_eng.numeric' => 'Division format is invalid',
+            'division_name_eng.regex' => 'Division format is invalid',
+            'thana_name_eng.numeric' => 'Thana format is invalid',
+            'thana_name_eng.regex' => 'Thana format is invalid',
+            'kpi_id.numeric' => 'KPI format is invalid',
+            'kpi_id.regex' => 'KPI format is invalid',
+        ];
         $valid = Validator::make($request->all(), $rules, $message);
         if ($valid->fails()) {
-            return Redirect::back()->withInput(Input::all())->withErrors($valid);
-        }
-        if (Auth::user()->type == 22) {
-            $modified_joining_date = Carbon::today()->format('Y-m-d');
-            $modified_reporting_date = Carbon::today()->format('Y-m-d');
-        } else {
-            $joining_date = $request->input('joining_date');
-            $reporting_date = $request->input('reporting_date');
-            $modified_joining_date = Carbon::parse($joining_date)->format('Y-m-d');
-            $modified_reporting_date = Carbon::parse($reporting_date)->format('Y-m-d');
+            return $valid->messages()->toJson();
         }
         $memorandum_id = $request->input('memorandum_id');
         $global_value = GlobalParameterFacades::getValue("embodiment_period");
@@ -290,61 +195,45 @@ class EmbodimentController extends Controller
 
         DB::beginTransaction();
         try {
-            $sms_offer_info = OfferSMS::where('ansar_id', $ansar_id)->first();
             $sms_receive_info = SmsReceiveInfoModel::where('ansar_id', $ansar_id)->first();
-
-            $embodiment_entry = new EmbodimentModel();
-            $embodiment_entry->ansar_id = $ansar_id;
-            if (!is_null($sms_offer_info)) {
-                $embodiment_entry->received_sms_id = $sms_offer_info->id;
-            } else {
-                $embodiment_entry->received_sms_id = $sms_receive_info->id;
+//            return $sms_receive_info->offered_district;
+            if(!$sms_receive_info) {
+                throw new \Exception('Invalid request for Ansar ID: '.$ansar_id);
             }
+            if($sms_receive_info->offered_district!=$request->division_name_eng){
+                throw new \Exception('Ansar ID: '.$ansar_id.' not offered for this district');
+            }
+            $kpi = KpiGeneralModel::where('unit_id',$request->division_name_eng)->where('thana_id',$request->thana_name_eng)->first();
+            if(!$kpi||$kpi->id!=$kpi_id){
+                throw new \Exception('Invalid request for Ansar ID: '.$ansar_id);
+            }
+            if (strcasecmp($global_unit, "Year") == 0) {
+                $service_ending_period = $global_value;
+                $service_ended_date = Carbon::parse($request->input('joining_date'))->addYear($service_ending_period)->subDay(1);
+            } elseif (strcasecmp($global_unit, "Month") == 0) {
+                $service_ending_period = $global_value;
+                $service_ended_date = Carbon::parse($request->input('joining_date'))->addMonth($service_ending_period)->subDay(1);
+            } elseif (strcasecmp($global_unit, "Day") == 0) {
+                $service_ending_period = $global_value;
+                $service_ended_date = Carbon::parse($request->input('joining_date'))->addDay($service_ending_period)->subDay(1);
+            }
+            $kpi->embodiment->save(new EmbodimentModel([
+                'ansar_id'=>$ansar_id,
+                'received_sms_id'=>$sms_receive_info->id,
+                'emboded_status'=>'Emboded',
+                'action_user_id'=>Auth::user()->id,
+                'service_ended_date'=>$service_ended_date,
+                'memorandum_id'=>$memorandum_id,
+                'reporting_date'=>Carbon::parse($request->input('reporting_date'))->format('Y-m-d'),
+                'transfered_date'=>Carbon::parse($request->input('reporting_date'))->format('Y-m-d'),
+                'joining_date'=>Carbon::parse($request->input('joining_date'))->format('Y-m-d'),
+            ]));
             $memorandum_entry = new MemorandumModel();
             $memorandum_entry->memorandum_id = $memorandum_id;
             $memorandum_entry->mem_date = Carbon::parse($request->mem_date);
             $memorandum_entry->save();
-            $embodiment_entry->memorandum_id = $memorandum_id;
 
-            $embodiment_entry->kpi_id = $kpi_id;
-            $embodiment_entry->reporting_date = $modified_reporting_date;
-            $embodiment_entry->joining_date = $modified_joining_date;
-            $embodiment_entry->emboded_status = "Emboded";
-            $embodiment_entry->transfered_date = $modified_joining_date;
-
-            if (strcasecmp($global_unit, "Year") == 0) {
-                $service_ending_period = $global_value;
-                $embodiment_entry->service_ended_date = Carbon::parse($joining_date)->addYear($service_ending_period)->subDay(1);
-            } elseif (strcasecmp($global_unit, "Month") == 0) {
-                $service_ending_period = $global_value;
-                $embodiment_entry->service_ended_date = Carbon::parse($joining_date)->addMonth($service_ending_period)->subDay(1);
-            } elseif (strcasecmp($global_unit, "Day") == 0) {
-                $service_ending_period = $global_value;
-                $embodiment_entry->service_ended_date = Carbon::parse($joining_date)->addDay($service_ending_period)->subDay(1);
-            }
-
-            $embodiment_entry->action_user_id = Auth::user()->id;
-            $embodiment_entry->save();
-
-            $mobile_no = DB::table('tbl_ansar_parsonal_info')->where('ansar_id', $ansar_id)->select('tbl_ansar_parsonal_info.mobile_no_self')->first();
-            if (!is_null($sms_offer_info)) {
-
-                $sms_log_save = new OfferSmsLog();
-                $sms_log_save->ansar_id = $ansar_id;
-                $sms_log_save->sms_offer_id = $sms_offer_info->id;
-                $sms_log_save->mobile_no = $mobile_no->mobile_no_self;
-
-                //$sms_log_save->offer_status=;
-                $sms_log_save->reply_type = "No Reply";
-                $sms_log_save->offered_district = $sms_offer_info->district_id;
-                $sms_log_save->offered_date = $sms_offer_info->sms_send_datetime;
-                $sms_log_save->action_date = Carbon::now();
-                $sms_log_save->action_user_id = Auth::user()->id;
-                $sms_log_save->save();
-
-                $sms_offer_info->delete();
-
-            } elseif (!is_null($sms_receive_info)) {
+            $mobile_no = PersonalInfo::where('ansar_id', $ansar_id)->select('tbl_ansar_parsonal_info.mobile_no_self')->first();
                 $sms_log_save = new OfferSmsLog();
                 $sms_log_save->ansar_id = $ansar_id;
                 $sms_log_save->sms_offer_id = $sms_receive_info->id;
@@ -358,18 +247,19 @@ class EmbodimentController extends Controller
                 $sms_log_save->save();
 
                 $sms_receive_info->delete();
-            }
-            AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 0, 'embodied_status' => 1, 'pannel_status' => 0, 'freezing_status' => 0]);
 
-            DB::commit();
+            AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 0, 'embodied_status' => 1, 'pannel_status' => 0, 'freezing_status' => 0]);
+            
             CustomQuery::addActionlog(['ansar_id' => $ansar_id, 'action_type' => 'EMBODIED', 'from_state' => 'OFFER', 'to_state' => 'EMBODIED', 'action_by' => auth()->user()->id]);
             $this->dispatch(new SendSms($ansar_id));
+            DB::commit();
 
         } catch (\Exception $e) {
             DB::rollback();
-            return $e->getMessage();
+            return Response::json(['status'=>false,'message'=>$e->getMessage()]);
         }
-        return Redirect::route('go_to_new_embodiment_page')->with(['success_message' => 'Ansar is Embodied Successfully!', 'memid' => $memorandum_id, 'unit_id' => $request->get('division_name_eng')]);
+        return Response::json(['status'=>true,'message'=>'Ansar is Embodied Successfully!']);
+
     }
 
     public function transferProcessView()

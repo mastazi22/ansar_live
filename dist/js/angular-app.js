@@ -315,8 +315,10 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             startLoad:'@',//['range','unit','thana','kpi']
             fieldWidth:'=',
             fieldName:'=',
-            type:'@',
-            data:'='
+            layoutVertical:'@',
+            data:'=',
+            errorKey:'=',
+            errorMessage:'=',
         },
         controller: function ($scope,$rootScope,httpService) {
             $scope.selected = {
@@ -511,6 +513,41 @@ GlobalApp.directive('databaseSearch',function () {
                 }
                 
             },true)
+        }
+    }
+})
+GlobalApp.directive('formSubmit',function (notificationService,$timeout) {
+    return{
+        restrict:'ACE',
+        scope:{
+            errors:'='
+        },
+        link:function (scope, element, attrs) {
+            $(element).ajaxForm({
+                beforeSubmit:function () {
+                    scope.errors = '';
+                },
+                success:function (response) {
+                    console.log(response)
+                    var response = JSON.parse(response);
+                    if(response.status===true){
+                        notificationService.notify('success',response.message);
+                    }
+                    else if(response.status===false){
+                        notificationService.notify('error',response.message);
+                    }
+                    else{
+                        scope.errors = response;
+                        $timeout(function(){
+                            scope.$apply();
+                        })
+                        console.log(scope.errors)
+                    }
+                },
+                error:function (response) {
+                    notificationService.notify('error',"An unknown error occur. Error code: "+response.status);
+                }
+            })
         }
     }
 })

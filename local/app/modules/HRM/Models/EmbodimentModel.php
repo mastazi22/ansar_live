@@ -8,6 +8,7 @@ class EmbodimentModel extends Model
 {
     protected $connection = 'hrm';
     protected $table='tbl_embodiment';
+    protected $guarded = [];
     function kpi(){
         return $this->belongsTo(KpiGeneralModel::class,'kpi_id');
     }
