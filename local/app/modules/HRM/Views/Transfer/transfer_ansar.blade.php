@@ -266,7 +266,7 @@
                                 <th>Name</th>
                                 <th>Division</th>
                                 <th>District</th>
-                                <th>Kpi Name</th>
+                                <th>KPI Name</th>
                                 <th>Joining Date</th>
                                 <th>
                                     <div class="styled-checkbox">
@@ -445,7 +445,7 @@
                                                 <th>Name</th>
                                                 <th>Division</th>
                                                 <th>District</th>
-                                                <th>Kpi Name</th>
+                                                <th>KPI Name</th>
                                                 <th>Joining Date</th>
                                             </tr>
                                             <tr class="warning" ng-if="selectedAnsar.length<=0">
