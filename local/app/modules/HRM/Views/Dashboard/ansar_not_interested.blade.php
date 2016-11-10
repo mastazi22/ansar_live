@@ -14,6 +14,7 @@
             $scope.total = 0;
             $scope.numOfPage = 0;
             $scope.selectedDistrict = "all";
+            $scope.queue = [];
             $scope.selectedThana = "all"
             $scope.districts = [];
             $scope.thanas = [];
@@ -35,52 +36,44 @@
                     })
                     $scope.loadingPage[i] = false;
                 }
-                if ($scope.numOfPage > 0)$scope.loadPage($scope.pages[0]);
-                else $scope.loadPage({pageNum: 0, offset: 0, limit: $scope.itemPerPage, view: 'view'});
             }
             $scope.loadPage = function (page, $event) {
                 if ($event != undefined)  $event.preventDefault();
-                $scope.currentPage = page.pageNum;
-                $scope.loadingPage[page.pageNum] = true;
+                $scope.allLoading = true;
+                $scope.currentPage = page == undefined ? 0 : page.pageNum;
+                $scope.loadingPage[$scope.currentPage] = true;
                 $scope.allLoading = true;
                 $http({
                     url: '{{URL::route('not_interested_info_details')}}',
                     method: 'get',
                     params: {
-                        offset: page.offset,
-                        limit: page.limit,
-                        unit: $scope.selectedDistrict,
-                        thana: $scope.selectedThana,
-                        view: 'view'
+                        offset: page == undefined ? 0 : page.offset,
+                        limit: page == undefined ? $scope.itemPerPage : page.limit,
+                        unit: $scope.param.unit,
+                        division: $scope.param.range,
+                        thana: $scope.param.thana,
+                        q: $scope.q
                     }
                 }).then(function (response) {
-                    $scope.ansars = $sce.trustAsHtml(response.data);
-                    $scope.loadingPage[page.pageNum] = false;
+                    $scope.ansars = response.data;
+                    $scope.queue.shift();
+                    $scope.loadingPage[$scope.currentPage] = false;
                     $scope.allLoading = false;
-                })
-            }
-            $scope.loadTotal = function () {
-                $scope.allLoading = true;
-                $http({
-                    url: '{{URL::route('not_interested_info_details')}}',
-                    method: 'get',
-                    params: {
-                        unit: $scope.selectedDistrict,
-                        thana: $scope.selectedThana,
-                        view: 'count'
-                    }
-                }).then(function (response) {
-                    $scope.total = response.data.total;
+                    $scope.total = sum(response.data.total);
+                    $scope.gCount = response.data.total
+                    if ($scope.queue.length > 1) $scope.loadPage();
                     $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
                     $scope.loadPagination();
-                    //alert($scope.total)
-                }, function (response) {
-                    $scope.total = 0;
-                    $scope.ansars = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
-                    $scope.allLoading = false;
-                    $scope.pages = [];
                 })
             }
+            function sum(t) {
+                var s = 0;
+                for (var i in t) {
+                    s += t[i]
+                }
+                return s;
+            }
+
             $scope.filterMiddlePage = function (value, index, array) {
                 var minPage = $scope.currentPage - 3 < 0 ? 0 : ($scope.currentPage > array.length - 4 ? array.length - 8 : $scope.currentPage - 3);
                 var maxPage = minPage + 7;
@@ -88,28 +81,6 @@
                     return true;
                 }
             }
-            $http({
-                method: 'get',
-                url: '{{URL::to('HRM/DistrictName')}}'
-            }).then(function (response) {
-                $scope.districts = response.data;
-                $scope.loadingDistrict = false;
-            })
-            $scope.loadThana = function (d_id) {
-                $scope.loadingThana = true;
-                $scope.allLoading = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/ThanaName')}}',
-                    params: {id: d_id}
-                }).then(function (response) {
-                    $scope.thanas = response.data;
-                    $scope.selectedThana = "all";
-                    $scope.loadingThana = false;
-                    $scope.loadTotal()
-                })
-            }
-            $scope.loadTotal()
         })
     </script>
     <div ng-controller="AnsarNotInterestedListController">
@@ -121,35 +92,29 @@
                     </span>
                 </div>
                 <div class="box-body">
+                    <filter-template
+                            show-item="['range','unit','thana']"
+                            type="all"
+                            range-change="loadPage()"
+                            unit-change="loadPage()"
+                            thana-change="loadPage()"
+                            on-load="loadPage()"
+                            data="param"
+                            start-load="range"
+                            field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
+                    >
+
+                    </filter-template>
                     <div class="row">
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label">@lang('title.unit')&nbsp;
-                                    <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"
-                                         width="16"></label>
-                                <select class="form-control" ng-model="selectedDistrict"
-                                        ng-change="loadThana(selectedDistrict)">
-                                    <option value="all">All</option>
-                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
-                                    </option>
-                                </select>
-                            </div>
+                        <div class="col-md-8">
+                            <h4 class="text text-bold">Total Ansars
+                                :PC([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])&nbsp;APC([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])&nbsp;Ansar([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</h4>
                         </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label">@lang('title.thana')&nbsp;
-                                    <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"
-                                         width="16">
-                                </label>
-                                <select class="form-control" ng-model="selectedThana" ng-change="loadTotal()">
-                                    <option value="all">All</option>
-                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
-                                    </option>
-                                </select>
-                            </div>
+                        <div class="col-md-4">
+                            <database-search q="q" queue="queue" on-change="loadPage()"></database-search>
+
                         </div>
                     </div>
-                    <h4>Total Ansars: [[total.toLocaleString()]]</h4>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr>
@@ -160,10 +125,19 @@
                                 <th>Unit</th>
                                 <th>Thana</th>
                                 <th>Date of Birth</th>
-                                <th>Sex</th>
+                                <th>Gender</th>
                             </tr>
-                            <tbody ng-bind-html="ansars">
-                            <tr>
+                            <tr ng-repeat="a in ansars.ansars">
+                                <td>[[ansars.index+$index]]</td>
+                                <td>[[a.id]]</td>
+                                <td>[[a.name]]</td>
+                                <td>[[a.rank]]</td>
+                                <td>[[a.unit]]</td>
+                                <td>[[a.thana]]</td>
+                                <td>[[a.birth_date|dateformat:'DD-MMM-YYYY']]</td>
+                                <td>[[a.sex]]</td>
+                            </tr>
+                            <tr ng-if="ansars.ansars.length<=0||ansars.ansars==undefined">
                                 <td class="warning" colspan="8">No Ansar Found</td>
                             </tr>
                             </tbody>

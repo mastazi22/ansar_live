@@ -429,7 +429,7 @@ class HrmController extends Controller
         $offset = Input::get('offset');
         $unit = Input::get('unit');
         $thana = Input::get('thana');
-        $view = Input::get('view');
+        $q = Input::get('q');
         $division = Input::get('division');
         $rules = [
             'view' => 'regex:/[a-z]+/',
@@ -445,11 +445,7 @@ class HrmController extends Controller
             //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         }
-        if (strcasecmp($view, 'view') == 0) {
-            return CustomQuery::ansarListForNotInterested($offset, $limit, $unit, $thana, $division);
-        } else {
-            return CustomQuery::getansarForNotInterestedCount($unit, $thana, $division);
-        }
+        return CustomQuery::ansarListForNotInterested($offset, $limit, $unit, $thana, $division,$q);
     }
 
     public function getTotalAnsar(Request $request)
