@@ -105,7 +105,7 @@
                             </caption>
                             <tr>
                                 <th>#</th>
-                                <th>Memorandum no,</th>
+                                <th>Memorandum no.</th>
                                 <th>Memorandum Date</th>
                                 <th>Unit</th>
                                 <th>Action</th>

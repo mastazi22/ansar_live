@@ -10,8 +10,8 @@
             $scope.reportType = 'eng';
             $scope.ansarId = ""
             $scope.errors = ''
-            $scope.id = moment().format("D-MMM-YYYY");
-            $scope.ed = moment().add(10,'years').format("D-MMM-YYYY");
+            $scope.id = moment().format("DD-MMM-YYYY");
+            $scope.ed = moment().add(10,'years').sub(1,'days').format("DD-MMM-YYYY");
             $scope.isLoading = false;
             $scope.idCard = $sce.trustAsHtml("");
             $scope.generateIdCard = function () {
