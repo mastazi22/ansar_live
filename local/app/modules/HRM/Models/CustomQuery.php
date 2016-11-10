@@ -879,7 +879,7 @@ class CustomQuery
             ->join('tbl_division', 'tbl_division.id', '=', 'tbl_units.division_id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
             ->where('tbl_sms_send_log.reply_type', 'No Reply')
-            ->havingRaw('count(tbl_sms_send_log.ansar_id)=1');
+            ->havingRaw('count(tbl_sms_send_log.ansar_id)>=10');
         if ($division != 'all') {
             $ansarQuery->where('tbl_division.id', $division);
         }
