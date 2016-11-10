@@ -1505,7 +1505,7 @@ class CustomQuery
         }
         if ($q) {
             $ansarQuery1->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
-            $ansarQuery2->where('tbl_ansar_parsonal_info.sex', 'LIKE', '%' . $q . '%');
+            $ansarQuery2->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
         }
         if ($type == 'view') {
             $t1 = clone $ansarQuery1;
