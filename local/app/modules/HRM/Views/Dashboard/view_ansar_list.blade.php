@@ -65,11 +65,12 @@
                     $scope.loadingPage[$scope.currentPage]=false;
                     $scope.allLoading = false;
                     $scope.total = sum(response.data.total);
+                    console.log($scope.total)
                     $scope.gCount = response.data.total
 //                    sum($scope.total)
                     if($scope.queue.length>1) $scope.loadPage();
                     $scope.numOfPage = Math.ceil($scope.total/$scope.itemPerPage);
-                    $scope.loadPagination();
+//                    $scope.loadPagination();
                 })
             }
             $scope.search = function () {
