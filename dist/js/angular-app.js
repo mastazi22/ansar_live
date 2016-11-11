@@ -321,6 +321,11 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             data:'=',
             errorKey:'=',
             errorMessage:'=',
+            customField:'=',
+            customLabel:'@',
+            customData:'=',
+            customModel:'=',
+            customChange:'&'
         },
         controller: function ($scope,$rootScope,httpService) {
             $scope.selected = {
@@ -330,6 +335,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 kpi:$scope.type=='all'?'all':'',
                 rank:$scope.type=='all'?'all':'',
                 gender:$scope.type=='all'?'all':'',
+                custom:$scope.customModel
             }
             $scope.genders = [
                 {value:'Male',text:'Male'},
@@ -482,6 +488,14 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             })
             $(element).on('change',"#gender", function () {
                 scope.genderChange({param:scope.selected})
+            })
+            $(element).on('change',"#custom", function () {
+                scope.customModel = scope.selected.custom;
+                $timeout(function () {
+                    scope.$apply();
+                    scope.customChange({param:scope.selected})
+                })
+
             })
         }
     }

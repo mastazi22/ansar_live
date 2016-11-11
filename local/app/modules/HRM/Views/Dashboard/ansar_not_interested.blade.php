@@ -57,11 +57,12 @@
                 }).then(function (response) {
                     $scope.ansars = response.data;
                     $scope.queue.shift();
+                    if ($scope.queue.length > 1) $scope.loadPage();
                     $scope.loadingPage[$scope.currentPage] = false;
                     $scope.allLoading = false;
                     $scope.total = sum(response.data.total);
                     $scope.gCount = response.data.total
-                    if ($scope.queue.length > 1) $scope.loadPage();
+
                     $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
                     $scope.loadPagination();
                 })
@@ -69,7 +70,7 @@
             function sum(t) {
                 var s = 0;
                 for (var i in t) {
-                    s += t[i]
+                    s += parseInt(t[i])
                 }
                 return s;
             }

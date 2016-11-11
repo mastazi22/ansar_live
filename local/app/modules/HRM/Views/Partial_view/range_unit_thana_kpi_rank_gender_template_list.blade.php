@@ -75,4 +75,14 @@
             <p class="text-danger" ng-if="errorKey.gender!=undefined||errorMessage[errorKey.gender]">[[errorMessage[errorKey.gender] ]]</p>
         </div>
     </div>
+    <div ng-class="fieldWidth.custom" ng-if="customField==true">
+        <div class="form-group">
+            <label class="control-label">[[customLabel]]
+            </label>
+            <select id="custom" class="form-control" ng-model="selected.custom" ng-disabled="loading.range||loading.unit||loading.thana||loading.kpi">
+                <option ng-repeat="(key,value) in customData" value="[[value]]">[[key]]</option>
+            </select>
+            <p class="text-danger" ng-if="errorKey.custom!=undefined||errorMessage[errorKey.custom]">[[errorMessage[errorKey.custom] ]]</p>
+        </div>
+    </div>
 </div>

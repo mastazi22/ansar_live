@@ -91,44 +91,6 @@
                         return true;
                 }
             }
-//End pagination
-            {{--$scope.loadDivision = function () {--}}
-                {{--httpService.range().then(function (result) {--}}
-                    {{--$scope.divisions = result;--}}
-                {{--})--}}
-            {{--}--}}
-            {{--$scope.loadUnit = function (id) {--}}
-                {{--$scope.loadingDistrict = true;--}}
-                {{--httpService.unit(id).then(function (data) {--}}
-                    {{--$scope.districts = data;--}}
-                    {{--$scope.thanas = [];--}}
-                    {{--$scope.loadingDistrict = false;--}}
-                    {{--$scope.loadPage();--}}
-                {{--})--}}
-            {{--}--}}
-            {{--$scope.loadThana = function (d_id) {--}}
-                {{--$scope.loadingThana = true;--}}
-                {{--$scope.allLoading = true;--}}
-                {{--httpService.thana(d_id).then(function (data) {--}}
-                    {{--$scope.thanas = data;--}}
-                    {{--$scope.selectedThana = "all";--}}
-                    {{--$scope.loadingThana = false;--}}
-                    {{--$scope.loadPage()--}}
-                {{--})--}}
-            {{--}--}}
-            {{--httpService.rank().then(function (ranks) {--}}
-                {{--$scope.ranks = ranks;--}}
-            {{--})--}}
-            {{--if($scope.user_type==11||$scope.user_type==33){--}}
-                {{--$scope.loadDivision();--}}
-            {{--}--}}
-            {{--else if($scope.user_type==66){--}}
-                {{--$scope.loadUnit(parseInt('{{Auth::user()->division_id}}'))--}}
-            {{--}--}}
-            {{--else if($scope.user_type==22){--}}
-                {{--$scope.loadThana(parseInt('{{Auth::user()->district_id}}'))--}}
-            {{--}--}}
-            {{--$scope.loadPage()--}}
             function capitalizeLetter(s){
                 return s.charAt(0).toUpperCase()+ s.slice(1);
             }
@@ -141,8 +103,8 @@
                 for(var i in t){
                     $scope.gCount[i] = 0;
                     for(var j =0 ;j<t[i].length;j++){
-                        s += t[i][j].total;
-                        $scope.gCount[i] += t[i][j].total;
+                        s += parseInt(t[i][j].total);
+                        $scope.gCount[i] += parseInt(t[i][j].total);
                     }
                 }
                 return s;

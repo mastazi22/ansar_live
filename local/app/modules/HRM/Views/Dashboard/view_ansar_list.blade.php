@@ -61,6 +61,7 @@
                 }).then(function (response) {
                     console.log(response.data);
                     $scope.queue.shift();
+                    if($scope.queue.length>1) $scope.loadPage();
                     $scope.ansars = response.data;
                     $scope.loadingPage[$scope.currentPage]=false;
                     $scope.allLoading = false;
@@ -68,9 +69,8 @@
                     console.log($scope.total)
                     $scope.gCount = response.data.total
 //                    sum($scope.total)
-                    if($scope.queue.length>1) $scope.loadPage();
                     $scope.numOfPage = Math.ceil($scope.total/$scope.itemPerPage);
-//                    $scope.loadPagination();
+                    $scope.loadPagination();
                 })
             }
             $scope.search = function () {
