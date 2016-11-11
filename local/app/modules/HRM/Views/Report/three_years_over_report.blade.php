@@ -80,7 +80,7 @@
             function sum(t){
                 var s = 0;
                 for(var i in t){
-                    s += t[i]
+                    s += parseInt(t[i])
                 }
                 return s;
             }
@@ -151,7 +151,7 @@
                             <a href="#" title="print" id="print-report">
                                 <span class="glyphicon glyphicon-print"></span>
                             </a></h3>
-                        <h4>Total Ansar:PC([[gCount.PC==unefined?0:gCount.PC]]),APC([[gCount.APC==unefined?0:gCount.APC]]),Ansar([[gCount.ANSAR==unefined?0:gCount.ANSAR]])</h4>
+                        <h4 class="text text-bold">Total Ansar: PC([[gCount.PC==unefined?0:gCount.PC]]), APC([[gCount.APC==unefined?0:gCount.APC]]), Ansar([[gCount.ANSAR==unefined?0:gCount.ANSAR]])</h4>
                         <div class="table-responsive">
                             <table class="table table-bordered">
                                 <tr>

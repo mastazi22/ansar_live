@@ -94,9 +94,6 @@
             function capitalizeLetter(s){
                 return s.charAt(0).toUpperCase()+ s.slice(1);
             }
-            $scope.formatDate = function (date) {
-                return moment(date).format("Do MM,YYYY");
-            }
             function sum(t){
                 $scope.gCount = [];
                 var s = 0;
@@ -136,62 +133,7 @@
                     >
 
                     </filter-template>
-                    {{--<div class="row">--}}
-                        {{--<div class="col-md-3 col-sm-4 col-xs-12" ng-show="user_type==11||user_type==33">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<label class="control-label">@lang('title.range')&nbsp;--}}
-                                    {{--<img ng-show="loadingDivision" src="{{asset('dist/img/facebook.gif')}}"--}}
-                                         {{--width="16"></label>--}}
-                                {{--<select class="form-control" ng-model="selectedDivision" ng-change="loadUnit(selectedDivision)">--}}
-                                    {{--<option value="all">All</option>--}}
-                                    {{--<option ng-repeat="d in divisions" value="[[d.id]]">[[d.division_name_bng]]</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                        {{--<div class="col-md-3 col-sm-4 col-xs-12" ng-show="user_type==11||user_type==66||user_type==33">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<label class="control-label">@lang('title.unit')&nbsp;--}}
-                                    {{--<img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}"--}}
-                                         {{--width="16"></label>--}}
-                                {{--<select class="form-control" ng-model="selectedDistrict" ng-change="loadThana(selectedDistrict)">--}}
-                                    {{--<option value="all">All</option>--}}
-                                    {{--<option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                        {{--<div class="col-md-2 col-sm-4 col-xs-12">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<label class="control-label">@lang('title.thana')&nbsp;--}}
-                                    {{--<img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}"--}}
-                                         {{--width="16">--}}
-                                {{--</label>--}}
-                                {{--<select class="form-control" ng-model="selectedThana" ng-change="loadPage()">--}}
-                                    {{--<option value="all">All</option>--}}
-                                    {{--<option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                        {{--<div class="col-md-2 col-sm-4 col-xs-12">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<label class="control-label">@lang('title.sex')--}}
-                                {{--</label>--}}
-                                {{--<select class="form-control" ng-model="gender" ng-change="loadPage()">--}}
-                                    {{--<option value="all">All</option>--}}
-                                    {{--<option ng-repeat="t in genders" value="[[t.value]]">[[t.text]]</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                        {{--<div class="col-md-2 col-sm-4 col-xs-12">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<label class="control-label">@lang('title.rank')--}}
-                                {{--</label>--}}
-                                {{--<select class="form-control" ng-model="rank" ng-change="loadPage()">--}}
-                                    {{--<option value="all">All</option>--}}
-                                    {{--<option ng-repeat="t in ranks" value="[[t.id]]">[[t.name_eng]]</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
+
                     <div class="row">
                         <div class="col-md-8">
                             <h4 class="text text-bold">Total Ansars :PC([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])&nbsp;APC([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])&nbsp;Ansar([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</h4>
