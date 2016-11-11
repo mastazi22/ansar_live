@@ -9,19 +9,11 @@
 @endsection
 @section('content')
     <div>
-        {!! Form::model($unit_info,array('route' => 'unit_update', 'class' => 'form-horizontal','name' => 'unitForm',)) !!}
+        {!! Form::model($unit_info,array('route' => ['HRM.unit.update',$unit_info->id],'method'=>'patch', 'class' => 'form-horizontal','name' => 'unitForm',)) !!}
                 <!-- Content Header (Page header) -->
 
         <!-- Main content -->
         <section class="content">
-            @if($errors->has('id'))
-                <div style="padding: 10px 20px 0 20px;">
-                    <div class="alert alert-danger">
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                        Invalid Request
-                    </div>
-                </div>
-            @endif
             <div class="row">
                 <!-- left column -->
                 <div class="col-lg-6 col-centered">

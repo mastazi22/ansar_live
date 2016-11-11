@@ -12,6 +12,7 @@ namespace App\Helper;
 use App\modules\HRM\Models\EmbodimentModel;
 use App\modules\HRM\Models\KpiDetailsModel;
 use App\modules\HRM\Models\PersonalInfo;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Validator;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -27,6 +28,7 @@ class CustomValidation extends Validator
         'array_length_min' => ':attribute length is underflow',
         'array_length_same' => ':attribute length does not match with :other',
         'date_validity' => ':attribute date is not valid',
+        'offer_date_validate' => ':attribute date is not valid',
     ];
 
     public function __construct(TranslatorInterface $translator, array $data, array $rules, array $messages = [], array $customAttributes = [])
@@ -145,5 +147,16 @@ class CustomValidation extends Validator
             return true;
         }
         return false;
+    }
+    public function validateOfferDateValidate($attribute, $value, $parameters)
+    {
+        try {
+            if (Carbon::parse($value)->gte(Carbon::now()->subHours(48)->setTime(0, 0, 0)) && !Carbon::parse($value)->gt(Carbon::now())) {
+                return true;
+            }
+            return false;
+        }catch(\Exception $e){
+            return false;
+        }
     }
 }

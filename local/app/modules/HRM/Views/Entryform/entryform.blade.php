@@ -32,6 +32,10 @@
         GlobalApp.controller('fullEntryFormController', function ($scope, getNameService, getBloodService, getDiseaseSkillService, $sce,$http) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}')
             $scope.SelectedDistrict = ""
+            $scope.training = [];
+            $scope.$watch('training', function (n,o) {
+                console.log(n)
+            },true)
             $scope.eduRows = [];
             $scope.eduEngRows = [];
             $scope.trainingRows = [];
@@ -941,7 +945,7 @@
 
                                                     <tr ng-repeat="row in trainingEngRows">
                                                         <td ng-repeat="r in row">
-                                                            <select ng-if="r.type=='dropdown'"  ng-model="t.p.training[$index]" name="[[r.name]]">
+                                                            <select ng-if="r.type=='dropdown'"  ng-model="training[$parent.$parent.$index]" name="[[r.name]]">
                                                                 <option value="">--Select a rank--</option>
                                                                 <option ng-repeat="r in rank" value="[[r.name_eng]]">
                                                                     [[r.code]]
@@ -988,7 +992,7 @@
 
                                                     <tr ng-repeat="row in trainingRows">
                                                         <td ng-repeat="r in row">
-                                                            <select ng-if="r.type=='dropdown'" ng-model="t.p.training[$index]" name="[[r.name]]">
+                                                            <select ng-if="r.type=='dropdown'" ng-model="training[$parent.$parent.$index]" name="[[r.name]]">
                                                                 <option value="">--পদবী নির্বাচন করুন--</option>
                                                                 <option ng-repeat="r in rank" value="[[r.name_bng]]">
                                                                     [[r.name_bng]]

@@ -88,86 +88,45 @@
                 })
             }
         })
-        GlobalApp.directive('notify', function () {
-            return {
-                restrict: 'E',
-                link: function (scope, element, attr) {
-                    scope.$watch('submitResult', function (n, o) {
-                        if (Object.keys(n).length > 0) {
-                            if (n.status) {
-                                $('body').notifyDialog({type: 'success', message: n.data}).showDialog()
-                            }
-                            else {
-                                $('body').notifyDialog({type: 'error', message: n.data}).showDialog()
-                            }
-                        }
-                    })
-                }
-
-            }
-        })
-        GlobalApp.directive('confirmDialog', function () {
-            return{
-                restrict:'A',
-                link: function (scope,elem,attr) {
-
-                    $(elem).confirmDialog({
-                        message: 'Are you sure want to send offer this ansar',
-                        ok_callback: function (element) {
-//                            alert(scope.ansarDetail.asi.block_list_status)
-                            if(scope.ansarDetail.asi.block_list_status==1){
-                                $('body').notifyDialog({type: 'error', message: 'You can`t send offer to this ansar. Because he is blocked.'}).showDialog()
-                                return;
-                            }
-                            if(scope.ansarDetail.asi.pannel_status==1||scope.ansarDetail.asi.rest_status==1){
-                                var s;
-                                if(scope.ansarDetail.asi.pannel_status==1) s = 'panel'
-                                if(scope.ansarDetail.asi.rest_status==1)  s = 'rest'
-                                scope.sendOffer(s);
-                            }
-                            else{
-                                $('body').notifyDialog({type: 'error', message: 'You can`t send offer to this ansar. Because he is not in pannel or rest.'}).showDialog()
-                                //return;
-                            }
-
-
-                        },
-                        cancel_callback: function (element) {
-                        }
-                    })
-                }
-            }
-
-        })
     </script>
     <div ng-controller="DirectOfferController">
         <section class="content">
-            <notify></notify>
             <div class="box box-solid">
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4">
-                            <div class="form-group">
-                                <label for="ansar_id" class="control-label">Ansar ID to send Offer</label>
-                                <input type="text" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="makeQueue(ansarId)">
+                            <form action="{{URL::to('HRM/direct_offer')}}" method="post" form-submit errors="errors" loading="loadingSubmit" confirm-box="true" message="Are you sure want to offer this Ansar">
+                                <div class="form-group">
+                                    <label for="ansar_id" class="control-label">Ansar ID to send Offer</label>
+                                    <input type="text" name="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="makeQueue(ansarId)">
+                                    <p class="text text-danger" ng-if="errors.ansar_id!=undefined">
+                                        [[errors.ansar_id[0] ]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="district" class="control-label">Select District to send Offer&nbsp;
+                                        <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}" width="16"></label>
+                                    <select class="form-control" name="unit_id" ng-model="selectedDistrict" ng-disabled="loadingDistrict">
+                                        <option value="">--@lang('title.unit')--</option>
+                                        <option ng-repeat="d in districts" ng-disabled="ansarDetail.apid.unit_id==d.id" value="[[d.id]]">[[d.unit_name_bng]]</option>
+                                    </select>
+                                    <p class="text text-danger" ng-if="errors.unit_id!=undefined">
+                                        [[errors.unit_id[0] ]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="date" class="control-label">Offer Date</label>
+                                    <input type="text" name="offer_date" date-picker class="form-control" placeholder="Offer Date" ng-model="date">
+                                    <p class="text text-danger" ng-if="errors.offer_date!=undefined">
+                                        [[errors.offer_date[0] ]]
+                                    </p>
+                                </div>
+                                <button class="btn btn-primary" ng-disabled="loadingSubmit" type="submit">
+                                    <i ng-show="loadingSubmit" class="fa fa-spinner fa-pulse"></i>
+                                    Send Offer</button>
+
+                            </form>
                             </div>
-                            <div class="form-group">
-                                <label for="district" class="control-label">Select District to send Offer&nbsp;
-                                    <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}" width="16"></label>
-                                <select class="form-control" ng-model="selectedDistrict" ng-disabled="loadingDistrict">
-                                    <option value="">--@lang('title.unit')--</option>
-                                    <option ng-repeat="d in districts" ng-disabled="ansarDetail.apid.unit_id==d.id" value="[[d.id]]">[[d.unit_name_bng]]</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="date" class="control-label">Offer Date</label>
-                                <input type="text" id="date" class="form-control" placeholder="Enter Ansar ID" ng-model="date">
-                            </div>
-                            <button class="btn btn-primary" ng-disabled="!ansarId||!selectedDistrict" confirm-dialog>
-                                <img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16">
-                                Send Offer</button>
-                            <p class="text text-danger" ng-if="error">Server error occur. Please contact with system administrator</p>
-                        </div>
                         <div class="col-sm-8" style="min-height: 400px;border-left: 1px solid #CCCCCC">
                             <div id="loading-box" ng-if="loadingAnsar">
                             </div>

@@ -132,19 +132,12 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         //END SESSION
         //GENERAL SETTING
 
-        Route::get('/unit_form', ['as' => 'unit_form', 'uses' => 'GeneralSettingsController@unitIndex']);
         Route::get('/thana_form', ['as' => 'thana_form', 'uses' => 'GeneralSettingsController@thanaIndex']);
-        Route::get('/unit_view', ['as' => 'unit_view', 'uses' => 'GeneralSettingsController@unitView']);
-        Route::get('/unit_view_details', 'GeneralSettingsController@unitViewDetails');
         Route::get('/thana_view', ['as' => 'thana_view', 'uses' => 'GeneralSettingsController@thanaView']);
         Route::get('/thana_view_details', 'GeneralSettingsController@thanaViewDetails');
-        Route::post('/unit_entry', ['as' => 'unit_entry', 'uses' => 'GeneralSettingsController@unitEntry']);
         Route::post('/thana_entry', ['as'=>'thana_entry','uses'=>'GeneralSettingsController@thanaEntry']);
-        Route::get('/unit_edit/{id}', ['as' => 'unit_edit', 'uses' => 'GeneralSettingsController@unitEdit'])->where('id','[0-9]+');
-        Route::get('/unit_delete/{id}', ['as' => 'unit_delete', 'uses' => 'GeneralSettingsController@unitDelete']);
         Route::get('/thana_edit/{id}', ['as' => 'thana_edit', 'uses' => 'GeneralSettingsController@thanaEdit'])->where('id','[0-9]+');
         Route::get('/thana_delete/{id}', ['as' => 'thana_delete', 'uses' => 'GeneralSettingsController@thanaDelete']);
-        Route::post('/unit_update', ['as'=>'unit_update','uses'=>'GeneralSettingsController@updateUnit']);
         Route::post('/thana_update', ['as'=>'thana_update','uses'=>'GeneralSettingsController@updateThana']);
 
         Route::get('/disease_view', ['as' => 'disease_view', 'uses' => 'GeneralSettingsController@diseaseView']);
@@ -159,6 +152,9 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('skill_entry', ['as' => 'skill_entry', 'uses' => 'GeneralSettingsController@skillEntry']);
         Route::get('/skill_edit/{id}', ['as' => 'skill_edit', 'uses' => 'GeneralSettingsController@skillEdit']);
         Route::post('/skill_update', ['as' => 'skill_update', 'uses' => 'GeneralSettingsController@updateSkill']);
+        Route::get('unit/all-units',['as'=>'all-units','uses'=>'UnitController@allUnit']);
+        Route::resource('unit','UnitController');
+        Route::resource('range','DivisionController');
 
         //END GENERAL SETTING
         //REPORT

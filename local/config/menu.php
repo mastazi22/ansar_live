@@ -328,12 +328,16 @@ return [
                     "route" => "session_view",
                     "icon" => "fa-cog",
                 ],
-                "Thana Setting" => [
-                    "route" => "thana_view",
+                "Range Setting" => [
+                    "route" => "HRM.range.index",
                     "icon" => "fa-cog",
                 ],
                 "Unit Setting" => [
-                    "route" => "unit_view",
+                    "route" => "HRM.unit.index",
+                    "icon" => "fa-cog",
+                ],
+                "Thana Setting" => [
+                    "route" => "thana_view",
                     "icon" => "fa-cog",
                 ],
                 "Disease Information" => [

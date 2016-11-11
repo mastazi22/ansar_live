@@ -11,7 +11,7 @@
             $scope.ansarId = ""
             $scope.errors = ''
             $scope.id = moment().format("DD-MMM-YYYY");
-            $scope.ed = moment().add(10,'years').sub(1,'days').format("DD-MMM-YYYY");
+            $scope.ed = moment().add(10,'years').subtract(1,'days').format("DD-MMM-YYYY");
             $scope.isLoading = false;
             $scope.idCard = $sce.trustAsHtml("");
             $scope.generateIdCard = function () {

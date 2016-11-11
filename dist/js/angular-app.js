@@ -525,47 +525,70 @@ GlobalApp.directive('formSubmit',function (notificationService,$timeout) {
             errors:'=',
             loading:'=',
             status:'=',
+            confirmBox:'@',
+            message:'@'
         },
         link:function (scope, element, attrs) {
-            $(element).ajaxForm({
-                beforeSubmit:function () {
-                    scope.loading = true;
-                    scope.status = false;
-                    scope.errors = '';
-                    $timeout(function(){
-                        scope.$apply();
-                    })
-                },
-                success:function (result) {
-                    scope.loading = false;
-                    var response = ''
-                    try {
-                         response = JSON.parse(result);
-                    }catch(err){
-                        response = result
+            if(scope.confirmBox){
+                $(element).confirmDialog({
+                    message: scope.message,
+                    ok_button_text: 'Confirm',
+                    cancel_button_text: 'Cancel',
+                    event: 'submit',
+                    ok_callback: function (element) {
+                        submitForm()
+                    },
+                    cancel_callback: function (element) {
                     }
-                    if(response.status===true){
-                        notificationService.notify('success',response.message);
-                        scope.status = true;
-                    }
-                    else if(response.status===false){
+                })
+            }
+            else{
+                submitForm();
+            }
+            function submitForm(){
+                $(element).ajaxSubmit({
+                    beforeSubmit:function () {
+                        scope.loading = true;
                         scope.status = false;
-                        notificationService.notify('error',response.message);
-                    }
-                    else{
-                        scope.status = false;
-                        scope.errors = response;
+                        scope.errors = '';
                         $timeout(function(){
                             scope.$apply();
                         })
-                        console.log(scope.errors)
+                    },
+                    success:function (result) {
+                        scope.loading = false;
+                        var response = ''
+                        try {
+                            response = JSON.parse(result);
+                        }catch(err){
+                            response = result
+                        }
+                        if(response.status===true){
+                            notificationService.notify('success',response.message);
+                            scope.status = true;
+                        }
+                        else if(response.status===false){
+                            scope.status = false;
+                            notificationService.notify('error',response.message);
+                        }
+                        else{
+                            scope.status = false;
+                            scope.errors = response;
+                            console.log(scope.errors)
+                        }
+                        $timeout(function(){
+                            scope.$apply();
+                        })
+                    },
+                    error:function (response) {
+                        scope.loading = false;
+                        notificationService.notify('error',"An unknown error occur. Error code: "+response.status);
+                        $timeout(function(){
+                            scope.$apply();
+                        })
                     }
-                },
-                error:function (response) {
-                    scope.loading = false;
-                    notificationService.notify('error',"An unknown error occur. Error code: "+response.status);
-                }
-            })
+                })
+            }
         }
     }
 })

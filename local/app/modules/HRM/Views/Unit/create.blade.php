@@ -18,7 +18,7 @@
 
         <!-- Main content -->
         <section class="content">
-            {!! Form::open(array('url' => 'HRM/unit_entry','name' => 'unitForm', 'class' => 'form-horizontal')) !!}
+            {!! Form::model(Request::old(),array('url' => 'HRM/unit_entry','name' => 'unitForm', 'class' => 'form-horizontal')) !!}
             <div class="row">
                 <!-- left column -->
                 <div class="col-lg-6 col-centered">
@@ -33,13 +33,7 @@
                                 <div class="form-group required">
                                     {!! Form::label('division_id', 'Division:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                     <div class="col-sm-8 @if($errors->has('division_id')) has-error @endif">
-                                        <select class="form-control" id="division_id"
-                                                name="division_id" ng-model="division_id">
-                                            <option value="">--Select Division--</option>
-                                            @foreach($divisions as $division)
-                                                <option value="{{$division->id}}" {{Request::old('division_id')==$division->id ? "selected":""}}>{{$division->division_name_eng}}</option>
-                                            @endforeach
-                                        </select>
+                                        {!! Form::select('division_id',$range,null,['class'=>'form-control']) !!}
                                         @if($errors->has('division_id'))
                                             <p class="text-danger">{{$errors->first('division_id')}}</p>
                                         @endif
@@ -48,7 +42,7 @@
                                 <div class="form-group required">
                                     {!! Form::label('unit_name_eng', 'Unit Name:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                     <div class="col-sm-8 @if($errors->has('unit_name_eng')) has-error @endif">
-                                        {!! Form::text('unit_name_eng', $value = Request::old('unit_name_eng'), $attributes = array('class' => 'form-control', 'id' => 'unit_name_eng', 'placeholder' => 'Enter Unit Name in English')) !!}
+                                        {!! Form::text('unit_name_eng',null, $attributes = array('class' => 'form-control', 'id' => 'unit_name_eng', 'placeholder' => 'Enter Unit Name in English')) !!}
                                         @if($errors->has('unit_name_eng'))
                                             <p class="text-danger">{{$errors->first('unit_name_eng')}}</p>
                                         @endif
@@ -57,7 +51,7 @@
                                 <div class="form-group required">
                                     {!! Form::label('unit_name_bng', 'জেলার নাম:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                     <div class="col-sm-8 @if($errors->has('unit_name_bng')) has-error @endif">
-                                        {!! Form::text('unit_name_bng', $value = Request::old('unit_name_bng'), $attributes = array('class' => 'form-control', 'id' => 'unit_name_bng', 'placeholder' => 'জেলার নাম লিখুন বাংলায়')) !!}
+                                        {!! Form::text('unit_name_bng', null, $attributes = array('class' => 'form-control', 'id' => 'unit_name_bng', 'placeholder' => 'জেলার নাম লিখুন বাংলায়')) !!}
                                         @if($errors->has('unit_name_bng'))
                                             <p class="text-danger">{{$errors->first('unit_name_bng')}}</p>
                                         @endif
@@ -66,7 +60,7 @@
                                 <div class="form-group required">
                                     {!! Form::label('unit_code', 'Unit Code:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                     <div class="col-sm-8 @if($errors->has('unit_code')) has-error @endif">
-                                        {!! Form::text('unit_code', $value = Request::old('unit_code'), $attributes = array('class' => 'form-control', 'id' => 'unit_code', 'placeholder' => 'Enter Unit Code in English')) !!}
+                                        {!! Form::text('unit_code', null, $attributes = array('class' => 'form-control', 'id' => 'unit_code', 'placeholder' => 'Enter Unit Code in English')) !!}
                                         @if($errors->has('unit_code'))
                                             <p class="text-danger">{{$errors->first('unit_code')}}</p>
                                         @endif

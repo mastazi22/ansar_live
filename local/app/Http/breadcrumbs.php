@@ -423,19 +423,33 @@ Breadcrumbs::register('session_information_entry', function($breadcrumbs) {
     $breadcrumbs->push('Entry of Session Information', URL::route('create_session'));
 });
 
+//range setting
+Breadcrumbs::register('range.index', function($breadcrumbs) {
+    $breadcrumbs->parent('gs');
+    $breadcrumbs->push('Range Setting', URL::route('HRM.range.index'));
+});
+Breadcrumbs::register('range.create', function($breadcrumbs) {
+    $breadcrumbs->parent('range.index');
+    $breadcrumbs->push('Create Range', URL::route('HRM.range.create'));
+});
+Breadcrumbs::register('range.edit', function($breadcrumbs,$id) {
+    $breadcrumbs->parent('range.index');
+    $breadcrumbs->push('Edit Range', URL::route('HRM.range.edit',['range'=>$id]));
+});
+
 Breadcrumbs::register('unit_information_list', function($breadcrumbs) {
     $breadcrumbs->parent('gs');
-    $breadcrumbs->push('Unit Information', URL::route('unit_view'));
+    $breadcrumbs->push('Unit Information', URL::route('HRM.unit.index'));
 });
 
 Breadcrumbs::register('unit_information_edit', function($breadcrumbs,$id) {
     $breadcrumbs->parent('unit_information_list');
-    $breadcrumbs->push('Edit Unit Information', URL::route('unit_edit',['id'=>$id]));
+    $breadcrumbs->push('Edit Unit Information', URL::route('HRM.unit.edit',['unit'=>$id]));
 });
 
 Breadcrumbs::register('unit_information_entry', function($breadcrumbs) {
     $breadcrumbs->parent('unit_information_list');
-    $breadcrumbs->push('Entry of Unit Information', URL::route('unit_form'));
+    $breadcrumbs->push('Entry of Unit Information', URL::route('HRM.unit.create'));
 });
 
 Breadcrumbs::register('thana_information_list', function($breadcrumbs) {

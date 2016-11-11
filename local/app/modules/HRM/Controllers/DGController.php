@@ -1505,14 +1505,11 @@ class DGController extends Controller
         $rules = [
             'ansar_id'=>'required|regex:/^[0-9]+$/',
             'unit_id'=>'required|regex:/^[0-9]+$/',
-            'offer_date'=>'required',
+            'offer_date'=>'required|offer_date_validate',
         ];
         $valid = Validator::make($request->all(),$rules);
         if($valid->fails()){
             return $valid->messages()->toJson();
-        }
-        if(Carbon::parse($request->offer_date)->gt(Carbon::now())){
-
         }
         DB::beginTransaction();
         try{
@@ -1545,7 +1542,8 @@ class DGController extends Controller
             DB::commit();
         }catch(\Exception $e){
             DB::rollback();
-            return response(collect(['status'=>false,'data'=>$e->getMessage()])->toJson(),400,['Content-Type'=>'application/json']);
+            return Response::json(['status'=>false,'message'=>$e->getMessage()]);
         }
+        return Response::json(['status'=>false,'message'=>"Offer send successfully"]);
     }
 }
