@@ -191,10 +191,10 @@ return [
                     "route" => "ansar_service_report_view",
                     "icon" => "fa-file-pdf-o",
                 ],
-                "Embodied Ansar Report" => [
-                    "route" => "embodiment_report_view",
-                    "icon" => "fa-file-pdf-o",
-                ],
+//                "Embodied Ansar Report" => [
+//                    "route" => "embodiment_report_view",
+//                    "icon" => "fa-file-pdf-o",
+//                ],
                 "View Disembodied Report" => [
                     "route" => "disembodiment_report_view",
                     "icon" => "fa-file-pdf-o",
@@ -211,10 +211,10 @@ return [
                     "route" => "three_year_over_report_view",
                     "icon" => "fa-file-pdf-o",
                 ],
-                "Ansar Service Record Unit Wise" => [
-                    "route" => "service_record_unitwise_view",
-                    "icon" => "fa-file-pdf-o",
-                ],
+//                "Ansar Service Record Unit Wise" => [
+//                    "route" => "service_record_unitwise_view",
+//                    "icon" => "fa-file-pdf-o",
+//                ],
                 "Print Transfer Letter" => [
                     "route" => "transfer_letter_view",
                     "icon" => "fa-envelope",
