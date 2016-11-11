@@ -97,7 +97,7 @@
             function sum(t){
                 var s = 0;
                 for(var i in t){
-                    s += t[i]
+                    s += parseInt(t[i])
                 }
                 return s;
             }
