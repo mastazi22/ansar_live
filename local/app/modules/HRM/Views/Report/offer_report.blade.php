@@ -13,6 +13,13 @@
                 custom: "",
                 type:"1"
             };
+            $scope.customData = {
+                "Past 2 days":2,
+                "Past 3 days":3,
+                "Past 5 days":5,
+                "Past 7 days":7,
+                "Custom":0,
+            }
             $scope.ansars = [];
             $scope.onr = [];
             $scope.or = [];
@@ -121,24 +128,15 @@
                             show-item="['range','unit']"
                             type="single"
                             start-load="range"
-                            field-width="{range:'col-sm-4',unit:'col-sm-4'}"
+                            field-width="{range:'col-sm-4',unit:'col-sm-4',custom:'col-sm-4'}"
                             data = "params"
+                            custom-field="true"
+                            custom-model="selectedDate"
+                            custom-label="Select an Option"
+                            custom-data="customData"
                     ></filter-template>
                     <div class="row">
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    Select an Option&nbsp;&nbsp;
-                                </label>
-                                <select class="form-control" ng-disabled="loadingUnit"
-                                        ng-model="selectedDate">
-                                    <option value="2">Past 2 days</option>
-                                    <option value="3">Past 3 days</option>
-                                    <option value="5">Past 5 days</option>
-                                    <option value="7">Past 7 days</option>
-                                    <option value="0">Custom</option>
-                                </select>
-                            </div>
+                        <div class="col-sm-4 col-sm-offset-8">
                             <div class="form-group row" ng-if="selectedDate==0">
                                 <div class="col-xs-7">
                                     <input type="text" class="form-control" ng-model="unit.custom"
@@ -153,11 +151,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-4">
-                            <label class="control-label">&nbsp;</label>
+                        <div class="col-sm-4 col-sm-offset-8">
 
                             <div class="form-control" style="padding: 0;border:none;">
-                                <button class="btn btn-primary" ng-click="loadAnsar()"><i
+                                <button class="btn btn-primary pull-right" ng-click="loadAnsar()"><i
                                             class="fa fa-download"></i>&nbsp;View Offer Report
                                 </button>
                             </div>

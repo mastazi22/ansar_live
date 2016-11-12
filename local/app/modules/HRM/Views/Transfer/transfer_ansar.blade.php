@@ -69,11 +69,6 @@
                     $scope.loadingAnsar = false;
                 })
             }
-            $scope.$watch(function (scope) {
-                return scope.modalOpen;
-            }, function (n, o) {
-                if ($scope.allDistrict[0] == null || $scope.allDistrict[1] == null) $scope.loadDistrict();
-            })
             $scope.changeSelectAnsar = function (i) {
                 var index = $scope.selectedAnsar.indexOf($scope.ansars[i]);
                 if ($scope.selectAnsar[i]) {
@@ -327,6 +322,7 @@
                                             show-item="['range','unit','thana','kpi']"
                                             type="single"
                                             start-load="range"
+                                            kpi-disabled="params.kpi"
                                             field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
                                             data = "trans"
                                     ></filter-template>

@@ -4,10 +4,10 @@
             <label class="control-label">@lang('title.range')&nbsp;
                 <img ng-show="loading.range" src="{{asset('dist/img/facebook.gif')}}" width="16">
             </label>
-            <select id="range" name="[[fieldName.range]]" class="form-control" ng-model="selected.range" ng-disabled="loading.range||loading.unit||loading.thana||loading.kpi" ng-change="loadUnit(selected.range)">
+            <select id="range" ng-disabled="rangeFieldDisabled" name="[[fieldName.range]]" class="form-control" ng-model="selected.range" ng-disabled="loading.range||loading.unit||loading.thana||loading.kpi" ng-change="loadUnit(selected.range)">
                 <option value="all" ng-if="type=='all'">All</option>
                 <option value="" ng-if="type=='single'||type==undefined">--@lang('title.range')--</option>
-                <option ng-repeat="d in ranges" value="[[d.id]]">[[d.division_name_bng]]</option>
+                <option ng-repeat="d in ranges" value="[[d.id]]" ng-disabled="rangeDisabled==d.id">[[d.division_name_bng]]</option>
             </select>
             <p class="text-danger" ng-if="errorKey.range!=undefined||errorMessage[errorKey.range]">[[errorMessage[errorKey.range] ]]</p>
         </div>
@@ -17,10 +17,10 @@
             <label class="control-label">@lang('title.unit')&nbsp;
                 <img ng-show="loading.unit" src="{{asset('dist/img/facebook.gif')}}" width="16">
             </label>
-            <select id="unit" name="[[fieldName.unit]]" class="form-control" ng-model="selected.unit" ng-disabled="loading.range||loading.unit||loading.thana||loading.kpi" ng-change="loadThana(selected.unit)">
+            <select id="unit" ng-disabled="unitFieldDisabled" name="[[fieldName.unit]]" class="form-control" ng-model="selected.unit" ng-disabled="loading.range||loading.unit||loading.thana||loading.kpi" ng-change="loadThana(selected.unit)">
                 <option value="all" ng-if="type=='all'">All</option>
                 <option value="" ng-if="type=='single'||type==undefined">--@lang('title.unit')--</option>
-                <option ng-repeat="d in units" value="[[d.id]]">[[d.unit_name_bng]]</option>
+                <option ng-repeat="d in units" value="[[d.id]]" ng-disabled="unitDisabled==d.id">[[d.unit_name_bng]]</option>
             </select>
             <p class="text-danger" ng-if="errorKey.unit!=undefined||errorMessage[errorKey.unit]">[[errorMessage[errorKey.unit] ]]</p>
         </div>
@@ -30,10 +30,10 @@
             <label class="control-label">@lang('title.thana')&nbsp;
                 <img ng-show="loading.thana" src="{{asset('dist/img/facebook.gif')}}" width="16">
             </label>
-            <select id="thana" name="[[fieldName.thana]]" class="form-control" ng-model="selected.thana" ng-disabled="loading.range||loading.unit||loading.thana||loading.kpi" ng-change="loadKPI(selected.thana)">
+            <select id="thana" ng-disabled="thanaFieldDisabled" name="[[fieldName.thana]]" class="form-control" ng-model="selected.thana" ng-disabled="loading.range||loading.unit||loading.thana||loading.kpi" ng-change="loadKPI(selected.thana)">
                 <option value="all" ng-if="type=='all'">All</option>
                 <option value="" ng-if="type=='single'||type==undefined">--@lang('title.thana')--</option>
-                <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]</option>
+                <option ng-repeat="t in thanas" value="[[t.id]]" ng-disabled="thanaDisabled==t.id">[[t.thana_name_bng]]</option>
             </select>
             <p class="text-danger" ng-if="errorKey.thana!=undefined||errorMessage[errorKey.thana]">[[errorMessage[errorKey.thana] ]]</p>
         </div>
@@ -43,10 +43,10 @@
             <label class="control-label">@lang('title.kpi')&nbsp;
                 <img ng-show="loading.kpi" src="{{asset('dist/img/facebook.gif')}}" width="16">
             </label>
-            <select id="kpi" name="[[fieldName.kpi]]" class="form-control" ng-model="selected.kpi" ng-disabled="loading.range||loading.unit||loading.thana||loading.kpi">
+            <select id="kpi" ng-disabled="kpiFieldDisabled" name="[[fieldName.kpi]]" class="form-control" ng-model="selected.kpi" ng-disabled="loading.range||loading.unit||loading.thana||loading.kpi">
                 <option value="all" ng-if="type=='all'">All</option>
                 <option value="" ng-if="type=='single'||type==undefined">--@lang('title.kpi')--</option>
-                <option ng-repeat="t in kpis" value="[[t.id]]">[[t.kpi_name]]</option>
+                <option ng-repeat="t in kpis" value="[[t.id]]" ng-disabled="kpiDisabled==t.id">[[t.kpi_name]]</option>
             </select>
             <p class="text-danger" ng-if="errorKey.kpi!=undefined||errorMessage[errorKey.kpi]">[[errorMessage[errorKey.kpi] ]]</p>
         </div>

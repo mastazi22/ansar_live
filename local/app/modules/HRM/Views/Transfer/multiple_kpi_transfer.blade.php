@@ -9,7 +9,6 @@
     <script>
         GlobalApp.controller('TransferController', function ($scope, $http) {
             $scope.ansar_id = '';
-            $scope.selectedUnit = ''
             $scope.transfering = false;
             $scope.printLetter = false;
             $scope.memId = '';
@@ -31,7 +30,7 @@
                 $http({
                     method: 'post',
                     url: '{{URL::route('search_kpi_by_ansar')}}',
-                    data: {ansar_id: $scope.ansar_id,unit:$scope.selectedUnit}
+                    data: {ansar_id: $scope.ansar_id,unit:$scope.param.unit}
                 }).then(function (response) {
                     console.log(response.data)
                     $scope.search = false;
@@ -41,13 +40,11 @@
                 })
             }
             $scope.addToCart = function () {
-                //alert(JSON.stringify($scope.formData.kpi));
+                console.log($scope.formData);
                 var d = {
                     id: $scope.data.data.ansar_id,
                     name: $scope.data.data.ansar_name_eng,
-                    tkn: $scope.kpis.find(function (v) {
-                        return v.id == $scope.formData.kpi;
-                    }),
+                    tkn: $scope.kpiName,
                     ckn: $scope.data.data.kpi_name,
                     tkjd: $scope.formData.joining_date
                 }
@@ -135,7 +132,7 @@
                         message: response.data.message
                     }).showDialog();
                     $scope.tm = response.data.memId
-                    $scope.uid = angular.copy($scope.selectedUnit);
+                    $scope.uid = angular.copy($scope.param.unit);
                     $scope.transfering = false;
                     $scope.printLetter = true;
                     reset();
@@ -163,11 +160,6 @@
                 $scope.memId = ''
             }
 
-            @if(Auth::user()->type==22)
-            $scope.selectedUnit = '{{Auth::user()->district_id}}'
-            $scope.loadThana('{{Auth::user()->district_id}}')
-            @endif
-
 
         })
     </script>
@@ -183,29 +175,20 @@
                     </span>
                 </div>
                 <div class="box-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            @if(Auth::user()->type==11||Auth::user()->type==33||Auth::user()->type==66)
-                                <div class="form-group">
-                                    <lable class="control-label" style="font-weight: bold;margin-bottom: 5px;display: block">@lang('title.unit')</lable>
-                                    <select name="unit"
-                                            ng-model="selectedUnit" ng-change="loadThana(selectedUnit)"
-                                            class="form-control">
-                                        <option value="">--@lang('title.unit')--</option>
-                                        <option ng-repeat="unit in units" value="[[unit.id]]">[[unit.unit_name_eng]]
-                                        </option>
-                                    </select>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
+                    <filter-template
+                            show-item="['range','unit']"
+                            type="single"
+                            start-load="range"
+                            field-width="{range:'col-sm-4',unit:'col-sm-4'}"
+                            data = "param"
+                    ></filter-template>
                     <div class="row">
                         <div class="col-md-5">
                             <div class="form-group">
                                 <h4> Enter ansar id to transfer</h4>
                                 <div class="input-group">
                                     <input type="text" name="ansar_id" ng-keypress="searchAnsar($event)"
-                                           ng-disabled="!selectedUnit"
+                                           ng-disabled="!param.unit"
                                            ng-model="ansar_id" placeholder="Ansar id" class="form-control">
                                     <span class="input-group-btn">
                                         <button class="btn btn-secondary" ng-click="searchAnsar($event)">
@@ -243,29 +226,40 @@
                         </div>
                         <div class="col-md-7">
                             <h4>Transfer Option</h4>
-
-                            <div class="form-group">
-                                <lable class="control-label"
-                                       style="font-weight: bold;margin-bottom: 5px;display: block">Select Thana
-                                </lable>
-                                <select name="thana" ng-disabled="data==undefined||!data.status||!selectedUnit"
-                                        ng-model="formData.thana" ng-change="loadGuard(formData.thana)"
-                                        class="form-control">
-                                    <option value="">--@lang('title.thana')--</option>
-                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_eng]]</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <lable class="control-label" style="font-weight: bold;margin-bottom: 5px;display: block">@lang('title.kpi')</lable>
-                                <select name="kpi" ng-disabled="data==undefined||!data.status||!selectedUnit"
-                                        ng-model="formData.kpi"
-                                        class="form-control">
-                                    <option value="">--@lang('title.kpi')--</option>
-                                    <option ng-repeat="k in kpis" ng-value="k.id" ng-disabled="data.data.kpi_id==k.id">
-                                        [[k.kpi_name]]
-                                    </option>
-                                </select>
-                            </div>
+                            <filter-template
+                                    show-item="['thana','kpi']"
+                                    type="single"
+                                    start-load="range"
+                                    layout-vertical="1"
+                                    load-watch="param.unit"
+                                    watch-change="thana"
+                                    get-kpi-name="kpiName"
+                                    thana-field-disabled="data==undefined||!data.status||!param.unit"
+                                    kpi-field-disabled="data==undefined||!data.status||!param.unit"
+                                    data = "formData"
+                            ></filter-template>
+                            {{--<div class="form-group">--}}
+                                {{--<lable class="control-label"--}}
+                                       {{--style="font-weight: bold;margin-bottom: 5px;display: block">Select Thana--}}
+                                {{--</lable>--}}
+                                {{--<select name="thana" ng-disabled="data==undefined||!data.status||!param.unit"--}}
+                                        {{--ng-model="formData.thana" ng-change="loadGuard(formData.thana)"--}}
+                                        {{--class="form-control">--}}
+                                    {{--<option value="">--@lang('title.thana')--</option>--}}
+                                    {{--<option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_eng]]</option>--}}
+                                {{--</select>--}}
+                            {{--</div>--}}
+                            {{--<div class="form-group">--}}
+                                {{--<lable class="control-label" style="font-weight: bold;margin-bottom: 5px;display: block">@lang('title.kpi')</lable>--}}
+                                {{--<select name="kpi" ng-disabled="data==undefined||!data.status||!param.unit"--}}
+                                        {{--ng-model="formData.kpi"--}}
+                                        {{--class="form-control">--}}
+                                    {{--<option value="">--@lang('title.kpi')--</option>--}}
+                                    {{--<option ng-repeat="k in kpis" ng-value="k.id" ng-disabled="data.data.kpi_id==k.id">--}}
+                                        {{--[[k.kpi_name]]--}}
+                                    {{--</option>--}}
+                                {{--</select>--}}
+                            {{--</div>--}}
                             <div class="form-group">
                                 <lable class="control-label"
                                        style="font-weight: bold;margin-bottom: 5px;display: block">Joining Date
@@ -276,7 +270,7 @@
                             </div>
                             <div class="form-group">
                                 <button class="btn btn-primary" ng-click="addToCart()"
-                                        ng-disabled="data==undefined||!data.status||!formData.kpi||!formData.thana||!selectedUnit||!formData.joining_date">
+                                        ng-disabled="data==undefined||!data.status||!formData.kpi||!formData.thana||!param.unit||!formData.joining_date">
                                     <i class="fa fa-plus"></i>&nbsp;Add to transfer list
                                 </button>
                             </div>
@@ -300,7 +294,7 @@
                                         <td>[[t.id]]</td>
                                         <td>[[t.name]]</td>
                                         <td>[[t.ckn]]</td>
-                                        <td>[[t.tkn.kpi_name]]</td>
+                                        <td>[[t.tkn]]</td>
                                         <td>[[t.tkjd]]</td>
                                         <td>
                                             <button class="btn btn-danger btn-xs" ng-click="remove($index)">

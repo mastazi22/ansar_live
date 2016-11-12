@@ -312,12 +312,23 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             unitLoad:'&',//{func()}
             thanaLoad:'&',//{func()}
             kpiLoad:'&',//{func()}
+            kpiDisabled:'=',
+            rangeDisabled:'=',
+            thanaDisabled:'=',
+            unitDisabled:'=',
+            kpiFieldDisabled:'=',
+            unitFieldDisabled:'=',
+            rangeFieldDisabled:'=',
+            thanaFieldDisabled:'=',
+            loadWatch:'=',
+            watchChange:'@',
             onLoad:"&",
             type:'@',//['all','single']
             startLoad:'@',//['range','unit','thana','kpi']
             fieldWidth:'=',
             fieldName:'=',
             layoutVertical:'@',
+            getKpiName:'=',
             data:'=',
             errorKey:'=',
             errorMessage:'=',
@@ -450,6 +461,13 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 }
                 $scope.finish = true;
             })
+            $scope.$watch('loadWatch', function (n, o) {
+                if(n!=undefined){
+                    if($scope.watchChange=='thana'){
+                        $scope.loadThana(n)
+                    }
+                }
+            })
 
         },
         templateUrl:'/' + prefix + 'HRM/template_list/range_unit_thana_kpi_rank_gender_template',
@@ -484,7 +502,12 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 scope.rankChange({param:scope.selected})
             })
             $(element).on('change',"#kpi", function () {
-                scope.kpiChange({param:scope.selected})
+                scope.getKpiName = $.trim($(this).children('option:selected').text())
+                $timeout(function () {
+                    scope.$apply();
+                    scope.kpiChange({param:scope.selected})
+                })
+
             })
             $(element).on('change',"#gender", function () {
                 scope.genderChange({param:scope.selected})

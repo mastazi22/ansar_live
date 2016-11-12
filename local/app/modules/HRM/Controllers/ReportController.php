@@ -535,6 +535,7 @@ class ReportController extends Controller
                 $c_date = $c_date->subYears($past);
                 break;
         }
+//        DB::enableQueryLog();
         $offer_not_respond = DB::table('tbl_sms_offer_info')
             ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
             ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
@@ -581,7 +582,9 @@ class ReportController extends Controller
             ->where('tbl_units.division_id', $division)
             ->where('tbl_sms_send_log.reply_type', 'No')
             ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.action_date as reject_date')->get();
-        return Response::json(['onr' => $offer_not_respond, 'or' => $offer_received, 'orj' => $offer_reject]);
+        $r =  Response::json(['onr' => $offer_not_respond, 'or' => $offer_received, 'orj' => $offer_reject]);
+//        return DB::getQueryLog();
+        return $r;
     }
 
     public function rejectedOfferListView()
