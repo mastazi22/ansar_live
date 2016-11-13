@@ -47,6 +47,11 @@
         //$(this.element).attr('placeholder','YYYY-MM-DD')
         $(this.element).attr('data-target','#'+_self.option.element)
         $(this.element).attr('id',_self.option.ppp)
+        if(_self.option.defaultValue){
+            //alert('asdadadads')
+            if(moment(_self.option.defaultValue).isValid())$(this.element).val(moment(_self.option.defaultValue).format(_self.option.dateFormat)).trigger('input')
+            else $(this.element).val('')
+        }
         _self.addEventListener();
         _self.initCalender()
     }
@@ -58,11 +63,6 @@
         _self.option.todayMonth = date.getMonth();
         _self.option.todayYear = date.getFullYear();
         var d = date.getFullYear()+"-"+(date.getMonth()+1<10?"0"+(date.getMonth()+1):date.getMonth()+1)+"-"+date.getDate();
-        if(_self.option.defaultValue){
-            //alert('asdadadads')
-            if(moment(_self.option.defaultValue).isValid())$(this.element).val(moment(_self.option.defaultValue).format(_self.option.dateFormat)).trigger('input')
-            else $(this.element).val('')
-        }
         var d = _self.getCurrentDate();
         _self.option.currentDay = d.getDate();
         _self.option.currentMonth = d.getMonth();

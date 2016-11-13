@@ -105,40 +105,40 @@
                     $scope.exist = false;
                 })
             }
-            $scope.makeEmbodied = function () {
-                $scope.loadingSubmit = true;
-                var jd = new Date($scope.j_date)
-                var rd = new Date($scope.r_date);
-                var jds = jd.getFullYear()+"-"+(jd.getMonth()+1)+"-"+jd.getDate();
-                var rds = rd.getFullYear()+"-"+(rd.getMonth()+1)+"-"+rd.getDate();
-                $http({
-                    url:'{{URL::to('HRM/direct_embodiment_submit')}}',
-                    method:'post',
-                    data:{
-                        ansar_id:$scope.ansarId,
-                        kpi_id:$scope.selectedKpi,
-                        reporting_date:rds,
-                        mem_id:$scope.memorandumId,
-                        joining_date:jds
-                    }
-                }).then(function (response) {
-                    console.log(response)
-                    $scope.submitResult = response.data;
-                    $scope.loadingSubmit = false;
-                    if($scope.submitResult.status){
-                        $scope.ansarId = "";
-                        $scope.r_date = "";
-                        $scope.j_date = "";
-                        $scope.selectedUnit = "";
-                        $scope.selectedThana = "";
-                        $scope.selectedKpi = "";
-                        $scope.ansarDetail = {}
-                    }
-                },function (response) {
-                    console.log(response);
-                    $scope.loadingSubmit = false;
-                })
-            }
+            {{--$scope.makeEmbodied = function () {--}}
+                {{--$scope.loadingSubmit = true;--}}
+                {{--var jd = new Date($scope.j_date)--}}
+                {{--var rd = new Date($scope.r_date);--}}
+                {{--var jds = jd.getFullYear()+"-"+(jd.getMonth()+1)+"-"+jd.getDate();--}}
+                {{--var rds = rd.getFullYear()+"-"+(rd.getMonth()+1)+"-"+rd.getDate();--}}
+                {{--$http({--}}
+                    {{--url:'{{URL::to('HRM/direct_embodiment_submit')}}',--}}
+                    {{--method:'post',--}}
+                    {{--data:{--}}
+                        {{--ansar_id:$scope.ansarId,--}}
+                        {{--kpi_id:$scope.selectedKpi,--}}
+                        {{--reporting_date:rds,--}}
+                        {{--mem_id:$scope.memorandumId,--}}
+                        {{--joining_date:jds--}}
+                    {{--}--}}
+                {{--}).then(function (response) {--}}
+                    {{--console.log(response)--}}
+                    {{--$scope.submitResult = response.data;--}}
+                    {{--$scope.loadingSubmit = false;--}}
+                    {{--if($scope.submitResult.status){--}}
+                        {{--$scope.ansarId = "";--}}
+                        {{--$scope.r_date = "";--}}
+                        {{--$scope.j_date = "";--}}
+                        {{--$scope.selectedUnit = "";--}}
+                        {{--$scope.selectedThana = "";--}}
+                        {{--$scope.selectedKpi = "";--}}
+                        {{--$scope.ansarDetail = {}--}}
+                    {{--}--}}
+                {{--},function (response) {--}}
+                    {{--console.log(response);--}}
+                    {{--$scope.loadingSubmit = false;--}}
+                {{--})--}}
+            {{--}--}}
             $scope.makeQueue = function (id) {
                 $scope.ansar_ids.push(id);
                 $scope.totalLength +=  1;
@@ -152,51 +152,6 @@
                 }
             })
         })
-        GlobalApp.directive('notify', function () {
-            return {
-                restrict: 'E',
-                link: function (scope, element, attr) {
-                    scope.$watch('submitResult', function (n, o) {
-                        if (Object.keys(n).length > 0) {
-                            if (n.status) {
-                                $('body').notifyDialog({type: 'success', message: n.message}).showDialog()
-                            }
-                            else {
-                                $('body').notifyDialog({type: 'error', message: n.message}).showDialog()
-                            }
-                        }
-                    })
-                }
-
-            }
-        })
-        GlobalApp.directive('confirmDialog', function () {
-            return{
-                restrict:'A',
-                link: function (scope,elem,attr) {
-                    $(elem).confirmDialog({
-                        message: 'Are you sure want to embodied this ansar',
-                        ok_button_text:'Embodied',
-                        cancel_button_text:'No,Thanks',
-                        ok_callback: function (element) {
-                            if(scope.ansarDetail.asi.offer_sms_status==0){
-                                $('body').notifyDialog({type: 'error', message: 'You can`t Embodied this ansar. Because he is not offered.'}).showDialog()
-                                return;
-                            }
-                            else if(scope.ansarDetail.asi.block_list_status==1){
-                                $('body').notifyDialog({type: 'error', message: 'You can`t Embodied this ansar. Because he is embodied but blocked.'}).showDialog()
-                                return;
-                            }
-                            scope.makeEmbodied();
-                        },
-                        cancel_callback: function (element) {
-
-                        }
-                    })
-                }
-            }
-
-        })
     </script>
     <div ng-controller="DirectEmbodimentController">
         <section class="content">
@@ -205,49 +160,43 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4">
+                            <form action="{{URL::to('HRM/direct_embodiment_submit')}}" method="post" form-submit loading="loadingSubmit" errors="errors">
                             <div class="form-group">
                                 <label for="ansar_id" class="control-label">Ansar ID</label>
                                 <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="makeQueue(ansarId)">
+                                <p class="text text-danger" ng-if="errors.ansar_id!=undefined&&errors.ansar_id[0]">[[errors.ansar_id[0] ]]</p>
                             </div>
                             <div class="form-group">
                                 <label for="mem_id" class="control-label">Memorandum ID&nbsp;<i class="fa fa-spinner fa-pulse" ng-show="isVerifying"></i>
                                     <span class="text-danger" ng-if="isVerified">This id already taken</span>
                                 </label>
-                                <input type="text" name="mem_id" id="mem_id" class="form-control" placeholder="Enter Memorandum ID" ng-model="memorandumId" ng-blur="verifyMemorandumId()">
+                                <input type="text" name="mem_id" id="mem_id" class="form-control" placeholder="Enter Memorandum ID" ng-model="memorandumId">
+                                <p class="text text-danger" ng-if="errors.mem_id!=undefined&&errors.mem_id[0]">[[errors.mem_id[0] ]]</p>
                             </div>
                             <div class="form-group">
                                 <label for="r_date" class="control-label">Reporting Date</label>
-                                <input type="text" id="r_date" class="form-control" ng-model="r_date">
+                                <input type="text" name="reporting_date" id="r_date" class="form-control" ng-model="r_date">
+                                <p class="text text-danger" ng-if="errors.reporting_date!=undefined&&errors.reporting_date[0]">[[errors.reporting_date[0] ]]</p>
                             </div>
                             <div class="form-group">
                                 <label for="j_date" class="control-label">Joining Date</label>
-                                <input type="text" name="jo_date" id="j_date" class="form-control" ng-model="j_date">
+                                <input type="text" name="joining_date" id="j_date" class="form-control" ng-model="j_date">
+                                <p class="text text-danger" ng-if="errors.joining_date!=undefined&&errors.joining_date[0]">[[errors.joining_date[0] ]]</p>
                             </div>
-                            <div class="form-group">
-                                <label for="e_unit" class="control-label">@lang('title.unit')&nbsp;
-                                    <img ng-show="loadingUnit" src="{{asset('dist/img/facebook.gif')}}" width="16"></label>
-                                <select ng-disabled="loadingUnit" id="e_unit" class="form-control" ng-model="selectedUnit" ng-change="loadThana(selectedUnit)">
-                                    <option value="">--@lang('title.unit')--</option>
-                                    <option ng-repeat="u in units" value="[[u.id]]">[[u.unit_name_bng]]</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="e_thana" class="control-label">@lang('title.thana')&nbsp;
-                                    <img ng-show="loadingThana" src="{{asset('dist/img/facebook.gif')}}" width="16"></label>
-                                <select ng-disabled="loadingThana" id="e_thana" class="form-control" ng-model="selectedThana" ng-change="loadKpi(selectedThana)">
-                                    <option value="">--@lang('title.thana')--</option>
-                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="e_kpi" class="control-label">@lang('title.kpi')&nbsp;
-                                    <img ng-show="loadingKpi" src="{{asset('dist/img/facebook.gif')}}" width="16"></label>
-                                <select ng-disabled="loadingKpi" id="e_kpi" class="form-control" ng-model="selectedKpi">
-                                    <option value="">--@lang('title.kpi')--</option>
-                                    <option ng-repeat="k in kpis" value="[[k.id]]">[[k.kpi_name]]</option>
-                                </select>
-                            </div>
-                            <button class="btn btn-primary" ng-disabled="!j_date||!r_date||!ansarId||!selectedUnit||!selectedThana||!selectedKpi||isVerified||isVerifying" confirm-dialog><img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16" style="margin-top: -2px">Embodied Ansar</button>
+                                <filter-template
+                                        show-item="['unit','thana','kpi']"
+                                        type="single"
+                                        data="param"
+                                        start-load="unit"
+                                        layout-vertical="1"
+                                        field-name="{unit:'unit',thana:'thana',kpi:'kpi_id'}"
+                                        error-key="{unit:'unit',thana:'thana',kpi:'kpi_id'}"
+                                        error-message="{unit:errors.unit[0],thana:errors.thana[0],kpi_id:errors.kpi_id[0]}"
+                                >
+
+                                </filter-template>
+                            <button class="btn btn-primary" ng-disabled="loadingSubmit"><i class="fa fa-spinner fa-pulse" ng-show="loadingSubmit" ></i>Embodied Ansar</button>
+                            </form>
                         </div>
                         <div class="col-sm-8"
                              style="min-height: 400px;border-left: 1px solid #CCCCCC">

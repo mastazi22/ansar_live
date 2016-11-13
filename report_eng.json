@@ -140,7 +140,7 @@
       "kpi_name": "KPI Name",
       "reporting_date": "Reporting Date",
       "joining_date": "Embodiment Date",
-      "service_ended_date": "Service Ending date"
+      "service_ended_date": "Dis Embodiment Date"
     }
   },
   "service_record_unitwise": {

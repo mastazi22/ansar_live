@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Helper;
+use Carbon\Carbon;
+
 class GlobalParameter
 {
     const RETIREMENT_AGE = 'retirement_age';
@@ -47,6 +49,33 @@ class GlobalParameter
                 return $this->globalParameter->where('param_name','allocated_leave')->first()->param_unit;
 
         }
+    }
+    public function getServiceEndedDate($joining_date){
+        $unit = $this->getUnit($this::EMBODIMENT_PERIOD);
+        $value = $this->getValue($this::EMBODIMENT_PERIOD);
+        if (strcasecmp($unit, "Year") == 0) {
+            $service_ending_period = $value;
+            $service_ended_date = Carbon::parse($joining_date)->addYear($service_ending_period)->subDay(1);
+        } elseif (strcasecmp($unit, "Month") == 0) {
+            $service_ending_period = $value;
+            $service_ended_date = Carbon::parse($joining_date)->addMonth($service_ending_period)->subDay(1);
+        } elseif (strcasecmp($unit, "Day") == 0) {
+            $service_ending_period = $value;
+            $service_ended_date = Carbon::parse($joining_date)->addDay($service_ending_period)->subDay(1);
+        }
+        return $service_ended_date;
+    }
+    public function getActiveDate($rest_date){
+        $unit = $this->getUnit($this::REST_PERIOD);
+        $value = $this->getValue($this::REST_PERIOD);
+        if (strcasecmp($unit, "Year") == 0) {
+            $active_date = Carbon::parse($rest_date)->addYear($value);
+        } elseif (strcasecmp($unit, "Month") == 0) {;
+            $active_date = Carbon::parse($rest_date)->addMonth($value);
+        } elseif (strcasecmp($unit, "Day") == 0) {
+            $active_date = Carbon::parse($rest_date)->addDay($value);
+        }
+        return $active_date;
     }
 
 }

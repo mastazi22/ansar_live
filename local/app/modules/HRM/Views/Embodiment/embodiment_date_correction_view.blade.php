@@ -3,9 +3,9 @@
 {{--Time: 11:02 AM--}}
 
 @extends('template.master')
-@section('title','Disembodiment Date Correction')
+@section('title','Embodiment Date Correction')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('disembodiment_date_correction') !!}
+    {!! Breadcrumbs::render('embodiment_date_correction') !!}
 @endsection
 @section('content')
 
@@ -21,7 +21,7 @@
                 $scope.loadingAnsar = true;
                 $http({
                     method:'get',
-                    url:'{{URL::route('load_ansar_for_disembodiment_date_correction')}}',
+                    url:'{{URL::route('load_ansar_for_embodiment_date_correction')}}',
                     params:{ansar_id:id}
                 }).then(function (response) {
                     $scope.ansarDetail = response.data
@@ -56,29 +56,36 @@
                 </div>
             </div>
         @endif
-
+        @if(Session::has('error_message'))
+            <div style="padding: 10px 20px 0 20px;">
+                <div class="alert alert-danger">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <span class="fa fa-remove"></span> {{Session::get('error_message')}}
+                </div>
+            </div>
+        @endif
         <section class="content" style="position: relative;" >
             <notify></notify>
             <div class="box box-solid">
-                {!! Form::open(array('route' => 'new-disembodiment-date-entry', 'id' => 'new-disembodiment-date-entry')) !!}
+                {!! Form::open(array('route' => 'new-embodiment-date-entry', 'id' => 'new-embodiment-date-entry')) !!}
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group required" ng-init="ansarId='{{Request::old('ansar_id')}}'">
-                                <label for="ansar_id" class="control-label">Ansar ID (Resting Ansar)</label>
+                                <label for="ansar_id" class="control-label">Ansar ID (Embodied Ansar)</label>
                                 <input type="text" name="ansar_id" value="{{Request::old('ansar_id')}}" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="makeQueue(ansarId)">
                                 @if($errors->has('ansar_id'))
                                     <p class="text-danger">{{$errors->first('ansar_id')}}</p>
                                 @endif
                             </div>
-                            <div class="form-group required" ng-init="new_disembodiment_date='{{Request::old('new_disembodiment_date')}}'">
-                                <label for="new_disembodiment_date" class="control-label">New Disembodiment Date</label>
-                                <input type="text" date-picker name="new_disembodiment_date" value="{{Request::old('new_disembodiment_date')}}" id="new_disembodiment_date" class="form-control" ng-model="new_disembodiment_date">
-                                @if($errors->has('new_disembodiment_date'))
-                                    <p class="text-danger">{{$errors->first('new_disembodiment_date')}}</p>
+                            <div class="form-group required" ng-init="new_embodiment_date='{{Request::old('new_embodiment_date')}}'">
+                                <label for="new_embodiment_date" class="control-label">New Embodiment Date</label>
+                                <input type="text" date-picker name="new_embodiment_date" value="{{Request::old('new_embodiment_date')}}" id="new_embodiment_date" class="form-control" ng-model="new_embodiment_date">
+                                @if($errors->has('new_embodiment_date'))
+                                    <p class="text-danger">{{$errors->first('new_embodiment_date')}}</p>
                                 @endif
                             </div>
-                            <button id="confirm-new-disembodiment-date" class="btn btn-primary"><img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16" style="margin-top: -2px">Correct Date</button>
+                            <button id="confirm-new-embodiment-date" class="btn btn-primary"><img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16" style="margin-top: -2px">Correct Date</button>
                         </div>
                         <div class="col-sm-6 col-sm-offset-2" style="min-height: 400px;border-left: 1px solid #CCCCCC">
                             <div id="loading-box" ng-if="loadingAnsar">
@@ -126,9 +133,21 @@
                                     </p>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label">Dis-Embodiment Date</label>
+                                    <label class="control-label">KPI Name</label>
                                     <p>
-                                        [[ansarDetail.r_date]]
+                                        [[ansarDetail.kpi_name]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Embodiment Date</label>
+                                    <p>
+                                        [[ansarDetail.joining_date]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Dis Embodiment Date</label>
+                                    <p>
+                                        [[ansarDetail.service_ended_date]]
                                     </p>
                                 </div>
                             </div>

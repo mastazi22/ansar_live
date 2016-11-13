@@ -10,11 +10,15 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#disembodiment_date').datePicker(true);
+            $('#disembodiment_date').datePicker({
+                defaultValue:moment()
+            });
         })
-        GlobalApp.controller('NewDisembodimentController', function ($scope, $http) {
+        GlobalApp.controller('NewDisembodimentController', function ($scope, $http,notificationService) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}');
             $scope.districts = [];
+            $scope.formData = [];
+            $scope.submitData = [];
             $scope.thanas = [];
             $scope.selectedDistrict = "";
             $scope.selectedThana = "";
@@ -29,8 +33,21 @@
             $scope.isVerified = false;
             $scope.isVerifying = false;
             $scope.allLoading = false;
-            $scope.disembodiment_date = moment().format("D-MMM-YYYY");
-            ;
+            $scope.disembodiment_date = moment().format("DD-MMM-YYYY");
+            $scope.loadAnsar = function () {
+                $scope.allLoading = true;
+                $http({
+                    url: '{{URL::route('load_ansar')}}',
+                    method: 'get',
+                    params: $scope.param
+                }).then(function (response) {
+                    $scope.allLoading = false;
+                    if(response.data.status===false){
+                        notificationService.notify('error',response.data.message);
+                    }
+                    $scope.ansars = response.data;
+                })
+            }
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
             $scope.loadDistrict = function () {
                 $scope.loadingUnit = true;
@@ -91,7 +108,44 @@
                     console.log($scope.dcDistrict)
                 }
             }
-
+            $scope.showFormData = function () {
+                $scope.allLoading = true;
+                $scope.submitData = [];
+                for(var i=0;i<$scope.formData.length;i++){
+                    if($scope.formData[i]==undefined){
+                        continue;
+                    }
+                    if($scope.formData[i].disReason==undefined||!$scope.formData[i].disReason||$scope.formData[i].ansarId==undefined||!$scope.formData[i].ansarId){
+                        continue;
+                    }
+                    $scope.submitData.push($scope.formData[i])
+                }
+                $http({
+                    url:'{{URL::to('HRM/disembodiment-entry')}}',
+                    method:'post',
+                    data:angular.toJson({
+                        ansars:$scope.submitData,
+                        memorandum_id:$scope.memorandumId,
+                        mem_date:$scope.memDate,
+                        disembodiment_comment:$scope.disembodiment_comment,
+                        disembodiment_date:$scope.disembodiment_date,
+                    })
+                }).then(function (response) {
+                    if(response.data.status){
+                        notificationService.notify('success',response.data.message);
+                        $scope.loadAnsar();
+                        $scope.ch =[]
+                        $scope.formData = [];
+                    }
+                    else{
+                        notificationService.notify('error',response.data.message);
+                    }
+                    $scope.allLoading = false;
+                }, function (response) {
+                    $scope.allLoading = false;
+                    notificationService.notify('error','An unknown error occur. Error code : '+response.status);
+                })
+            }
         })
         GlobalApp.directive('openHideModal', function () {
             return {
@@ -132,77 +186,26 @@
         @endif
         <section class="content">
             <div class="box box-solid">
-                <div class="overlay" style="display: none;">
+                <div class="overlay" ng-if="allLoading">
                     <span class="fa">
                         <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
                     </span>
                 </div>
                 <div class="box-body">
-                    <div class="row">
-                        <div class="col-sm-3" ng-show="isAdmin==11">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    @lang('title.unit')&nbsp;&nbsp;
-                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                         ng-show="loadingUnit">
-                                </label>
-                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                        ng-model="selectedDistrict"
-                                        ng-change="loadThana(selectedDistrict)">
-                                    <option value="">--@lang('title.unit')--</option>
-                                    <option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    @lang('title.thana')&nbsp;&nbsp;
-                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                         ng-show="loadingThana">
-                                </label>
-                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                        ng-model="selectedThana"
-                                        ng-change="loadGuard(selectedThana)" name="thana_id">
-                                    <option value="">--@lang('title.thana')--</option>
-                                    <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="form-group">
-                                <label class="control-label">
-                                    @lang('title.kpi')&nbsp;&nbsp;
-                                    <img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"
-                                         ng-show="loadingKpi">
-                                </label>
-                                <select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"
-                                        ng-model="selectedKPI" name="kpi_id">
-                                    <option value="">--@lang('title.kpi')--</option>
-                                    {{--<option value=0>All</option>--}}
-                                    <option ng-repeat="d in guards" value="[[d.id]]">[[d.kpi_name]]
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3" style="float: right; margin-top: 25px">
+                    <filter-template
+                            show-item="['range','unit','thana','kpi']"
+                            type="single"
+                            data="param"
+                            start-load="range"
+                            kpi-change="loadAnsar()"
+                            field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
+                    >
 
-                            <div class="form-group">
-                                <label class="control-label">
-                                </label>
-                                <button id="load-ansar-for-disembodiment"
-                                        class="pull-right btn btn-primary"><span
-                                            class="glyphicon glyphicon-save"></span>&nbsp;Load
-                                    Ansar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    </filter-template>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr>
+                                <th>#</th>
                                 <th>Ansar ID</th>
                                 <th>Ansar Name</th>
                                 <th>Ansar Unit</th>
@@ -212,216 +215,92 @@
                                 <th>Reason of Disembodiment</th>
                                 <th>Select From Here</th>
                             </tr>
-                            <tbody id="ansar-all" class="status">
-                            <tr colspan="10" class="warning" id="not-find-info">
+                            <tr ng-repeat="a in ansars.ansar_infos">
+                                <td>[[$index+1]]</td>
+                                <td>[[a.ansar_id]]</td>
+                                <td>[[a.ansar_name_bng]]</td>
+                                <td>[[a.unit_name_bng]]</td>
+                                <td>[[a.thana_name_bng]]</td>
+                                <td>[[a.name_bng]]</td>
+                                <td>[[a.kpi_name]]</td>
+                                <td>
+                                    <select name="dis-reason" ng-model="formData[$index].disReason" ng-change="!formData[$index].disReason?formData[$index].ansarId=ch[$index]=false:''" class="form-control dis-reason">
+                                        <option value="">--Select Reason--</option>
+                                        <option ng-repeat="r in ansars.reasons" value="[[r.id]]">[[r.reason_in_bng]]
+                                        </option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <div class="styled-checkbox">
+                                        <input  type="checkbox"  id="a_[[a.ansar_id]]" ng-change="formData[$index].ansarId=ch[$index]" ng-disabled="!formData[$index].disReason" ng-model="ch[$index]" class="ansar-check" ng-true-value="[[a.ansar_id]]">
+                                        <label for="a_[[a.ansar_id]]"></label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr colspan="10" class="warning" ng-if="ansars.ansar_infos==undefined||ansars.ansar_infos.length<=0">
                                 <td colspan="10">No Ansar Found to show</td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <button class="pull-right btn btn-primary" id="disembodiment-confirmation" open-hide-modal disabled>
-                        <i class="fa fa-send"></i>&nbsp;&nbsp;Disembodied
-                    </button>
-                </div>
-            </div>
+                <div class="box-footer">
+                    <h5 class="text text-bold">Dis Embodiment Options</h5>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">Memorandum no. & Date</label>
 
-            <div id="disembodiment-option" class="modal fade" role="dialog">
-                <div class="modal-dialog" style="width: 70%;">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal"
-                                    ng-click="modalOpen = false">&times;</button>
-                            <h3 class="modal-title">Disembodiment</h3>
-                        </div>
-                        <div class="modal-body">
-                            {!! Form::open(array('route' => 'disembodiment-entry', 'name' => 'newDisembodimentForm', 'id'=>'disembodiment-form', 'novalidate')) !!}
-                            <div class="register-box" style="width: auto;margin: 0">
-                                <div class="register-box-body  margin-bottom">
-                                    <div class="row">
-                                        <div class="col-sm-4">
-                                            <div class="form-group">
-                                                <label class="control-label">Memorandum no.&nbsp;&nbsp;&nbsp;<span
-                                                            ng-show="isVerifying"><i
-                                                                class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span><span
-                                                            class="text-danger"
-                                                            ng-if="isVerified&&!memorandumId">Memorandum ID is required.</span><span
-                                                            class="text-danger"
-                                                            ng-if="isVerified&&memorandumId">This id already taken.</span></label>
-
-                                                <div class="row">
-                                                    <div class="col-md-6" style="padding-right: 0">
-                                                        <input ng-blur="verifyMemorandumId()"
-                                                               ng-model="memorandumId"
-                                                               type="text" class="form-control"
-                                                               name="memorandum_id"
-                                                               placeholder="Enter memorandum id"
-                                                               required>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <input date-picker ng-model="memDate"
-                                                               type="text" class="form-control" name="mem_date"
-                                                               placeholder="Memorandum Date" required>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <div class="form-group">
-                                                <label class="control-label">Date&nbsp;&nbsp;&nbsp;<span
-                                                            class="text-danger"
-                                                            ng-if="newDisembodimentForm.disembodiment_date.$touched && newDisembodimentForm.disembodiment_date.$error.required">Date is required.</span>
-                                                </label>
-
-                                                {!! Form::text('disembodiment_date', $value = null, $attributes = array('class' => 'form-control', 'id' => 'disembodiment_date',  'ng-model'=> 'disembodiment_date', 'disabled')) !!}
-                                                <input type="hidden" name="dis_date" value="[[disembodiment_date]]">
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <div class="form-group">
-                                                <label class="control-label">Comment
-                                                    &nbsp;&nbsp;&nbsp;<span class="text-danger"
-                                                                            ng-if="newDisembodimentForm.disembodiment_comment.$touched && newDisembodimentForm.disembodiment_comment.$error.required">Comment is required.</span></label>
-
-                                                {!! Form::text('disembodiment_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'disembodiment_comment', 'ng-model'=> 'disembodiment_comment', 'placeholder'=> 'Write Comment')) !!}
-
-                                            </div>
-                                        </div>
+                                <div class="row">
+                                    <div class="col-md-6" style="padding-right: 0">
+                                        <input
+                                                ng-model="memorandumId"
+                                                type="text" class="form-control"
+                                                name="memorandum_id"
+                                                placeholder="Enter memorandum id"
+                                                required>
                                     </div>
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered" id="pc-table">
-                                            <tr>
-                                                <th>Ansar ID</th>
-                                                <th>Ansar Name</th>
-                                                <th>Ansar Unit</th>
-                                                <th>Ansar Thana</th>
-                                                <th>Designation</th>
-                                                <th>KPI Name</th>
-                                                <th>Disembodiment Reason</th>
-                                            </tr>
-
-                                            <tbody id="ansar-all-modal">
-                                            </tbody>
-                                        </table>
+                                    <div class="col-md-6">
+                                        <input date-picker ng-model="memDate"
+                                               type="text" class="form-control" name="mem_date"
+                                               placeholder="Memorandum Date" required>
                                     </div>
-                                    <button class="btn btn-primary pull-right" id="disembodiment-entry-confirm"
-                                            ng-disabled="!memorandumId||isVerified||isVerifying">
-                                        <i class="fa fa-check"></i>&nbsp;Confirm
-                                    </button>
-
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">Date&nbsp;&nbsp;&nbsp;<span
+                                            class="text-danger"
+                                            ng-if="newDisembodimentForm.disembodiment_date.$touched && newDisembodimentForm.disembodiment_date.$error.required">Date is required.</span>
+                                </label>
 
+                                {!! Form::text('disembodiment_date', $value = null, $attributes = array('class' => 'form-control', 'id' => 'disembodiment_date',  'ng-model'=> 'disembodiment_date', 'disabled')) !!}
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="control-label">Comment
+                                    &nbsp;&nbsp;&nbsp;<span class="text-danger"
+                                                            ng-if="newDisembodimentForm.disembodiment_comment.$touched && newDisembodimentForm.disembodiment_comment.$error.required">Comment is required.</span></label>
+
+                                {!! Form::text('disembodiment_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'disembodiment_comment', 'ng-model'=> 'disembodiment_comment', 'placeholder'=> 'Write Comment')) !!}
+
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-        </section>
-        {!! Form::close() !!}
-    </div>
-    <script>
-        var selectedAnsars = [];
-        var ansar_ids = [];
-        $('#load-ansar-for-disembodiment').click(function () {
-            $(".overlay").css('display', 'block');
-            var selectedKpi = $('select[name=kpi_id]').val();
-            var selectedThana = $('select[name=thana_id]').val();
-            $.ajax({
-                url: '{{URL::route('load_ansar')}}',
-                type: 'get',
-                data: {kpi_id: selectedKpi, thana_id: selectedThana},
-                success: function (data) {
-                    //$('#ansar-all').html(data);
-                    $(".overlay").css('display', 'none');
-                    if (data.result == undefined) {
-                        $('#disembodiment-confirmation').prop('disabled', false);
-                        $("#ansar-all").html(data);
-                        //h = data;
-                    }
-                    else {
-                        $('#disembodiment-confirmation').prop('disabled', true);
-//                        alert($("#status-all").html())
-                        $("#ansar-all").html('<tr colspan="11" class="warning" id="not-find-info"> <td colspan="11">No Ansar Found to show</td> </tr>');
-                    }
-                }
-            })
-        });
-        $('#disembodiment-confirmation').click(function (e) {
-            //e.preventDefault();
-            var innerHtml = "";
-            selectedAnsars.forEach(function (a, b, c) {
-                var d = a.clone();
-                var text = $(a.children('td')[6]).children('select').children('option:selected').html();
-                var value = $(a.children('td')[6]).children('select').val();
-                //alert(text+value)
-                d.children('td')[0].innerHTML += "<input type='hidden' name='selected-ansar_id[]' value='" + $.trim($(d.children('td')[0]).text()) + "'>";
-                ansar_ids.push($.trim($(d.children('td')[0]).text()));
-                d.children('td')[6].innerHTML = text + "<input type='hidden' name='reason[]' value='" + value + "'>";
-                d.children('td')[7].remove();
-                innerHtml += '<tr>' + d.html() + '</tr>';
-            })
-            $('#ansar-all-modal').html(innerHtml)
-        });
-        $(document).on('change', 'select[name="dis-reason"]', function () {
-            if (!$(this).val()) {
-                $(this).parents('tr').find('.ansar-check').prop('disabled', true)
-            }
-            else {
-                $(this).parents('tr').find('.ansar-check').prop('disabled', false)
-            }
-        })
-        $(document).on('change', '.ansar-check', function () {
-            selectedAnsars = [];
-            $('.ansar-check:checked').each(function () {
-                selectedAnsars.push($(this).parents('tr'))
-            })
-//            if (this.checked) {
-//                //alert($(this).parents('tr').splice(7, 1).html())
-//                selectedAnsars.push($(this).parents('tr'))
-//            } else {
-////                alert("Hello");
-//                selectedAnsars.splice(selectedAnsars.indexOf($(this).parents('tr')), 1)
-//            }
-//            alert(selectedAnsars.length)
-        })
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="pull-right btn btn-primary" ng-disabled="allLoading" id="disembodiment-confirmation" ng-click="showFormData()">
+                        <i class="fa fa-send"></i>&nbsp;&nbsp;Disembodied
+                    </button>
+                </div>
+            </div>
 
-        $('#disembodiment-entry-confirm').click(function (e) {
-            $("#all-loading").css('display', 'block');
-            e.preventDefault();
-            $("#disembodiment-form").ajaxSubmit({
-                success: function (a, b, c, d) {
-                    console.log(a)
-                    selectedAnsars.forEach(function (a, b, c) {
-                        a.remove()
-                    })
-                    if (a.status) {
-                        $("#all-loading").css('display', 'none');
-                        $.noty({
-                            type: 'success',
-                            text: a.message,
-                            timeout:5000
-                        })
-                    }
-                },
-                error: function (a, b, c, d) {
-                    $("#all-loading").css('display', 'none');
-                    //document.write(a.responseText)
-                    $.noty({
-                        type: 'error',
-                        text: "Server Error. Please Try again!",
-                        timeout:5000
-                    })
-                },
-                beforeSubmit: function (arr) {
-                    // arr.push({type:'text', value: selectedValue, name: 'come_from_where'})
-                    console.log(arr)
-                }
-            })
-            $(".close").trigger('click');
-        });
-    </script>
+        </section>
+    </div>
+
 @endsection

@@ -2,6 +2,7 @@
 
 namespace App\modules\HRM\Controllers;
 
+use App\Helper\Facades\GlobalParameterFacades;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\modules\HRM\Models\AnsarStatusInfo;
@@ -11,6 +12,7 @@ use App\modules\HRM\Models\BlockListModel;
 use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\EmbodimentLogModel;
 use App\modules\HRM\Models\EmbodimentModel;
+use App\modules\HRM\Models\KpiGeneralModel;
 use App\modules\HRM\Models\MemorandumModel;
 use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\OfferSmsLog;
@@ -129,22 +131,47 @@ class DGController extends Controller
 
     function directEmbodimentSubmit(Request $request)
     {
-        $srm = SmsReceiveInfoModel::where('ansar_id', $request->input('ansar_id'))->first();
-        if (!$srm) {
-            return Response::json(['status' => false, 'message' => 'This ansar hasn`t accepted offer yet. Please wait until he/she accept offer ']);
+        $rules = [
+            'kpi_id' => 'required|numeric|regex:/^[0-9]+$/',
+            'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
+            'mem_id' => 'required',
+            'reporting_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+            'joining_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/','joining_date_validate:reporting_date'],
+            'unit' => 'required|numeric|regex:/^[0-9]+$/',
+            'thana' => 'required|numeric|regex:/^[0-9]+$/',
+        ];
+        $valid = Validator::make($request->all(),$rules);
+        if($valid->fails()){
+            return $valid->messages()->toJson();
         }
         DB::beginTransaction();
         try {
-            $embodiment_entry = new EmbodimentModel;
-            $embodiment_entry->ansar_id = $request->input('ansar_id');
-            $embodiment_entry->kpi_id = $request->input('kpi_id');
-            $embodiment_entry->memorandum_id = $request->input('mem_id');
-            $embodiment_entry->reporting_date = Carbon::createFromFormat("d-M-Y", $request->input('reporting_date'))->format("Y-m-d");
-            $embodiment_entry->joining_date = Carbon::createFromFormat("d-M-Y", $request->input('joining_date'))->format("Y-m-d");
-            $embodiment_entry->transfered_date = Carbon::createFromFormat("d-M-Y", $request->input('joining_date'))->format("Y-m-d");
-            $embodiment_entry->emboded_status = "Emboded";
-            $embodiment_entry->service_ended_date = Carbon::parse($request->input('joining_date'))->addHours(6)->addYears(3);
-            $embodiment_entry->save();
+            $srm = SmsReceiveInfoModel::where('ansar_id', $request->input('ansar_id'))->first();
+            if (!$srm) {
+                throw new \Exception('This ansar hasn`t accepted offer yet. Please wait until he/she accept offer ');
+            }
+            if($srm->offered_district!=$request->unit){
+                throw new \Exception('Ansar ID: '.$request->ansar_id.' not offered for this district');
+            }
+            $kpi = KpiGeneralModel::where('unit_id',$request->unit)->where('thana_id',$request->thana)->first();
+            if(!$kpi||$kpi->id!=$request->kpi_id){
+                throw new \Exception('Invalid request for Ansar ID: '.$request->ansar_id);
+            }
+            $kpi->embodiment->save(new EmbodimentModel([
+                'ansar_id'=>$request->input('ansar_id'),
+                'received_sms_id'=>$srm->id,
+                'emboded_status'=>'Emboded',
+                'action_user_id'=>Auth::user()->id,
+                'service_ended_date'=>GlobalParameterFacades::getServiceEndedDate($request->input('joining_date')),
+                'memorandum_id'=>$request->input('mem_id'),
+                'reporting_date'=>Carbon::parse($request->input('reporting_date'))->format('Y-m-d'),
+                'transfered_date'=>Carbon::parse($request->input('joining_date'))->format('Y-m-d'),
+                'joining_date'=>Carbon::parse($request->input('joining_date'))->format('Y-m-d'),
+            ]));
+            $memorandum_entry = new MemorandumModel();
+            $memorandum_entry->memorandum_id = $request->input('mem_id');
+            $memorandum_entry->mem_date = Carbon::parse($request->mem_date);
+            $memorandum_entry->save();
             AnsarStatusInfo::where('ansar_id', $request->input('ansar_id'))->update(['embodied_status' => 1, 'offer_sms_status' => 0]);
             $sml = new OfferSmsLog;
             $sml->ansar_id = $srm->ansar_id;
@@ -157,8 +184,9 @@ class DGController extends Controller
             DB::commit();
             CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'EMBODIED', 'from_state' => 'OFFER', 'to_state' => 'EMBODIED', 'action_by' => auth()->user()->id]);
             CustomQuery::addDGlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'EMBODIED', 'from_state' => 'OFFER', 'to_state' => 'EMBODIED']);
-        } catch (Exception $e) {
-            return Response::json(['status' => false, 'message' => 'An Error occur while inserting. Please try again later']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return Response::json(['status' => false, 'message' => $e->getMessage()]);
         }
         return Response::json(['status' => true, 'message' => 'Embodiment process complete successfully']);
     }

@@ -60,6 +60,10 @@ class EmbodimentController extends Controller
         $kpi_names = KpiGeneralModel::all();
         return view('HRM::Embodiment.new_embodiment_entry')->with(['user_type' => $user_type, 'user_thanas' => $user_thanas, 'kpi_names' => $kpi_names, 'user_unit' => $user_unit]);
     }
+    public function embodimentDateCorrectionView()
+    {
+        return view('HRM::Embodiment.embodiment_date_correction_view');
+    }
 
     public function loadAnsarForEmbodiment(Request $request)
     {
@@ -159,7 +163,7 @@ class EmbodimentController extends Controller
             'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
             'memorandum_id' => 'required|unique:hrm.tbl_memorandum_id',
             'reporting_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
-            'joining_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+            'joining_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/','joining_date_validate:reporting_date'],
             'division_name_eng' => 'required|numeric|regex:/^[0-9]+$/',
             'thana_name_eng' => 'required|numeric|regex:/^[0-9]+$/',
         ];
@@ -225,7 +229,7 @@ class EmbodimentController extends Controller
                 'service_ended_date'=>$service_ended_date,
                 'memorandum_id'=>$memorandum_id,
                 'reporting_date'=>Carbon::parse($request->input('reporting_date'))->format('Y-m-d'),
-                'transfered_date'=>Carbon::parse($request->input('reporting_date'))->format('Y-m-d'),
+                'transfered_date'=>Carbon::parse($request->input('joining_date'))->format('Y-m-d'),
                 'joining_date'=>Carbon::parse($request->input('joining_date'))->format('Y-m-d'),
             ]));
             $memorandum_entry = new MemorandumModel();
@@ -348,30 +352,20 @@ class EmbodimentController extends Controller
         return view('HRM::Embodiment.new_disembodiment_rough');
     }
 
-    public function loadAnsarForDisembodiment()
+    public function loadAnsarForDisembodiment(Request $request)
     {
+        $rules = [
+          'range'=>'required|regex:/^[0-9]+$/',
+          'unit'=>'required|regex:/^[0-9]+$/',
+          'thana'=>'required|regex:/^[0-9]+$/',
+          'kpi'=>'required|regex:/^[0-9]+$/',
+        ];
+        $valid = Validator::make($request->all(),$rules);
+        if($valid->fails()){
+            return Response::json(['status'=>false,'message'=>'Invalid request']);
+        }
         $reasons = DB::table('tbl_disembodiment_reason')->select('tbl_disembodiment_reason.id', 'tbl_disembodiment_reason.reason_in_bng')->get();
-        $kpi_id = Input::get('kpi_id');
-        $thana_id = Input::get('thana_id');
         $status = "Emboded";
-
-//        if ($kpi_id == 0) {
-//            $ansar_infos = DB::table('tbl_kpi_info')
-//                ->join('tbl_embodiment', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
-//                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-//                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
-//                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-//                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-//                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-//                ->where('tbl_kpi_info.thana_id', '=', $thana_id)->where('tbl_embodiment.emboded_status', '=', $status)
-//                ->where('tbl_ansar_status_info.block_list_status', '=', 0)
-//                ->where('tbl_ansar_status_info.black_list_status', '=', 0)
-//                ->distinct()
-//                ->select('tbl_kpi_info.kpi_name', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_designations.name_eng')
-//                ->get();
-//            if(count($ansar_infos)<=0) return Response::json(array('result' => true));
-//            return view('embodiment.selected_view_disembodiment')->with(['ansar_infos' => $ansar_infos, 'type' => 0, 'reasons' => $reasons]);
-//        } else {
         $ansar_infos = DB::table('tbl_kpi_info')
             ->join('tbl_embodiment', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
             ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
@@ -379,16 +373,18 @@ class EmbodimentController extends Controller
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
             ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-            ->where('tbl_kpi_info.thana_id', '=', $thana_id)
+            ->where('tbl_kpi_info.thana_id', '=', $request->thana)
+            ->where('tbl_kpi_info.unit_id', '=', $request->unit)
+            ->where('tbl_kpi_info.division_id', '=', $request->range)
             ->where('tbl_embodiment.emboded_status', '=', $status)
-            ->where('tbl_embodiment.kpi_id', '=', $kpi_id)
+            ->where('tbl_embodiment.kpi_id', '=', $request->kpi)
             ->where('tbl_ansar_status_info.block_list_status', '=', 0)
             ->where('tbl_ansar_status_info.black_list_status', '=', 0)
             ->distinct()
             ->select('tbl_kpi_info.kpi_name', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_units.unit_name_bng', 'tbl_thana.thana_name_bng', 'tbl_designations.name_bng')
             ->get();
         if (count($ansar_infos) <= 0) return Response::json(array('result' => true));
-        return view('HRM::Embodiment.selected_view_disembodiment')->with(['ansar_infos' => $ansar_infos, 'type' => 1, 'reasons' => $reasons]);
+        return Response::json(['ansar_infos' => $ansar_infos, 'type' => 1, 'reasons' => $reasons]);
 //        }
     }
 
@@ -398,82 +394,62 @@ class EmbodimentController extends Controller
         $user = [];
         try {
             if ($request->ajax()) {
-                $disembodiment_reason = Input::get('reason');
-                $selected_ansars = $request->input('selected-ansar_id');
+                $selected_ansars = $request->input('ansars');
                 $memorandum_id = $request->input('memorandum_id');
                 $disembodiment_date = $request->input('disembodiment_date');
                 $modified_disembodiment_date = Carbon::parse($disembodiment_date)->format('Y-m-d');
                 $disembodiment_comment = $request->input('disembodiment_comment');
-                $global_value = GlobalParameterFacades::getValue("rest_period");
-                $global_unit = GlobalParameterFacades::getUnit("rest_period");
-                //return $disembodiment_reason."<br>".$selected_ansars."<br>".$memorandum_id."<br>".$disembodiment_date."<br>".$disembodiment_comment;
-
-                if (!is_null($disembodiment_reason)) {
+                if(count($selected_ansars)>0){
                     $memorandum_entry = new MemorandumModel();
                     $memorandum_entry->memorandum_id = $memorandum_id;
                     $memorandum_entry->mem_date = Carbon::parse($request->mem_date);
                     $memorandum_entry->save();
-                    for ($i = 0; $i < count($disembodiment_reason); $i++) {
-                        $embodiment_infos = EmbodimentModel::where('ansar_id', $selected_ansars[$i])->first();
-
-                        $rest_entry = new RestInfoModel();
-                        $rest_entry->ansar_id = $selected_ansars[$i];
-                        $rest_entry->old_embodiment_id = $embodiment_infos->id;
-                        $rest_entry->memorandum_id = $memorandum_id;
-                        $rest_entry->rest_date = $modified_disembodiment_date;
-
-                        if (strcasecmp($global_unit, "Year") == 0) {
-                            $rest_period = $global_value;
-                            $rest_entry->active_date = Carbon::parse($modified_disembodiment_date)->addYear($rest_period);
-                        } elseif (strcasecmp($global_unit, "Month") == 0) {
-                            $rest_period = $global_value;
-                            $rest_entry->active_date = Carbon::parse($modified_disembodiment_date)->addMonth($rest_period);
-                        } elseif (strcasecmp($global_unit, "Day") == 0) {
-                            $rest_period = $global_value;
-                            $rest_entry->active_date = Carbon::parse($modified_disembodiment_date)->addDay($rest_period);
-                        }
-
-//                    $rest_entry->active_date = Carbon::parse($disembodiment_date)->addDay(182)->addHour(6);
-                        $joining_date = Carbon::parse($embodiment_infos->joining_date);
-
-                        $disembodiment_date_converted = Carbon::parse($modified_disembodiment_date)->addDay(1);
-                        $service_days = $disembodiment_date_converted->diffInDays($joining_date);
-                        $rest_entry->total_service_days = $service_days;
-                        $rest_entry->disembodiment_reason_id = $disembodiment_reason[$i];
-                        $rest_entry->rest_form = "Regular";
-                        $rest_entry->action_user_id = Auth::user()->id;
-                        $rest_entry->comment = $disembodiment_comment;
-                        $rest_entry->save();
-
-                        $embodiment_log_update = new EmbodimentLogModel();
-                        $embodiment_log_update->old_embodiment_id = $embodiment_infos->id;
-                        $embodiment_log_update->old_memorandum_id = $embodiment_infos->memorandum_id;
-                        $embodiment_log_update->ansar_id = $selected_ansars[$i];
-                        $embodiment_log_update->kpi_id = $embodiment_infos->kpi_id;
-                        $embodiment_log_update->reporting_date = $embodiment_infos->reporting_date;
-                        $embodiment_log_update->joining_date = $embodiment_infos->joining_date;
-                        $embodiment_log_update->transfered_date = $embodiment_infos->transfered_date;
-                        $embodiment_log_update->release_date = $modified_disembodiment_date;
-                        $embodiment_log_update->disembodiment_reason_id = $disembodiment_reason[$i];
-                        $embodiment_log_update->move_to = "Rest";
-                        $embodiment_log_update->service_extension_status = $embodiment_infos->service_extension_status;
-                        $embodiment_log_update->comment = $disembodiment_comment;
-                        $embodiment_log_update->action_user_id = Auth::user()->id;
-                        $embodiment_log_update->save();
-
-                        AnsarStatusInfo::where('ansar_id', $selected_ansars[$i])->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 1, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 0]);
-
-                        $embodiment_infos->delete();
-                        array_push($user, ['ansar_id' => $selected_ansars[$i], 'action_type' => 'DISEMBODIMENT', 'from_state' => 'EMBODIED', 'to_state' => 'REST', 'action_by' => auth()->user()->id]);
-                    }
                 }
+                foreach($selected_ansars as $ansar){
+                    $ansar = (object)$ansar;
+                    $embodiment_infos = EmbodimentModel::where('ansar_id', $ansar->ansarId)->first();
+                    if(!$embodiment_infos) throw new \Exception("Invalid Request");
+                    $rest_entry = new RestInfoModel();
+                    $rest_entry->ansar_id = $ansar->ansarId;
+                    $rest_entry->old_embodiment_id = $embodiment_infos->id;
+                    $rest_entry->memorandum_id = $memorandum_id;
+                    $rest_entry->rest_date = $modified_disembodiment_date;
+                    $rest_entry->active_date = GlobalParameterFacades::getActiveDate($request->$disembodiment_date);
+                    $rest_entry->total_service_days = Carbon::parse($request->$disembodiment_date)->addDays(1)->diffInDays(Carbon::parse($embodiment_infos->joining_date));
+                    $rest_entry->disembodiment_reason_id = $ansar->disReason;
+                    $rest_entry->rest_form = "Regular";
+                    $rest_entry->action_user_id = Auth::user()->id;
+                    $rest_entry->comment = $disembodiment_comment;
+                    $rest_entry->save();
+                    $embodiment_log_update = new EmbodimentLogModel();
+                    $embodiment_log_update->old_embodiment_id = $embodiment_infos->id;
+                    $embodiment_log_update->old_memorandum_id = $embodiment_infos->memorandum_id;
+                    $embodiment_log_update->ansar_id = $ansar->ansarId;
+                    $embodiment_log_update->kpi_id = $embodiment_infos->kpi_id;
+                    $embodiment_log_update->reporting_date = $embodiment_infos->reporting_date;
+                    $embodiment_log_update->joining_date = $embodiment_infos->joining_date;
+                    $embodiment_log_update->transfered_date = $embodiment_infos->transfered_date;
+                    $embodiment_log_update->release_date = $modified_disembodiment_date;
+                    $embodiment_log_update->disembodiment_reason_id = $ansar->disReason;
+                    $embodiment_log_update->move_to = "Rest";
+                    $embodiment_log_update->service_extension_status = $embodiment_infos->service_extension_status;
+                    $embodiment_log_update->comment = $disembodiment_comment;
+                    $embodiment_log_update->action_user_id = Auth::user()->id;
+                    $embodiment_log_update->save();
+                    $embodiment_infos->delete();
+                    AnsarStatusInfo::where('ansar_id', $ansar->ansarId)->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 1, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 0]);
+
+                    array_push($user, ['ansar_id' => $ansar->ansarId, 'action_type' => 'DISEMBODIMENT', 'from_state' => 'EMBODIED', 'to_state' => 'REST', 'action_by' => auth()->user()->id]);
+
+                }
+                CustomQuery::addActionlog($user, true);
+                DB::commit();
             }
-            DB::commit();
-            CustomQuery::addActionlog($user, true);
+
         } catch
         (\Exception $e) {
             DB::rollback();
-            return Response::json(['status' => false, 'message' => "Ansar/s not disemboded"]);
+            return Response::json(['status' => false, 'message' => $e->getMessage()]);
         }
 
         return Response::json(['status' => true, 'message' => "Ansar/s disemboded successfully"]);
@@ -582,6 +558,34 @@ class EmbodimentController extends Controller
             ->first();
         return Response::json($ansar_details);
     }
+    public function loadAnsarEmbodimentDateCorrection(Request $request)
+    {
+        $rules = [
+            'ansar_id'=>'required|regex:/^[0-9]+$/',
+            'range'=>'regex:/^[0-9]+$/',
+            'unit'=>'regex:/^[0-9]+$/',
+        ];
+        $valid = Validator::make($request->all(),$rules);
+        if($valid->fails()) return Response::json([]);
+        $ansar_id = Input::get('ansar_id');
+        $ansar_details = DB::table('tbl_embodiment')
+            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+            ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+            ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
+            ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
+            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+            ->where('tbl_embodiment.ansar_id', '=', $request->ansar_id);
+        if($request->range){
+            $ansar_details->where('tbl_kpi_info.division_id',$request->range);
+        }
+        if($request->unit){
+            $ansar_details->where('tbl_kpi_info.unit_id',$request->unit);
+        }
+        $ansar_details = $ansar_details
+            ->select('tbl_embodiment.ansar_id as id','tbl_kpi_info.kpi_name', 'tbl_ansar_parsonal_info.ansar_name_eng as name', 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.data_of_birth as dob','tbl_embodiment.joining_date','tbl_embodiment.service_ended_date', 'tbl_designations.name_eng as rank', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana')
+            ->first();
+        return Response::json($ansar_details);
+    }
 
     public function newDisembodimentDateEntry(Request $request)
     {
@@ -630,11 +634,50 @@ class EmbodimentController extends Controller
             $embodiment_log_update->save();
 
             DB::commit();
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (\Exception $e) {
+            return Redirect::back()->with('error_message',$e->getMessage());
         }
 
         return Redirect::route('disembodiment_date_correction_view')->with('success_message', 'Dis-Embodiment Date is corrected Successfully!');
+    }
+    public function newEmbodimentDateEntry(Request $request)
+    {
+        $rules = [
+            'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
+            'new_embodiment_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+        ];
+        $message = [
+            'ansar_id.required' => 'Ansar ID is required',
+            'new_Embodiment_date.required' => 'New Disembodiment Date is required',
+            'ansar_id.numeric' => 'Ansar ID must be numeric',
+            'ansar_id.regex' => 'Ansar ID must be numeric',
+            'new_disembodiment_date.regex' => 'New Disembodiment Date format is invalid',
+        ];
+        $valid = Validator::make(Input::all(), $rules, $message);
+        if ($valid->fails()) {
+            return Redirect::back()->withInput(Input::all())->withErrors($valid);
+        }
+        $ansar_id = $request->input('ansar_id');
+        $new_embodiment_date = Carbon::parse($request->input('new_embodiment_date'));
+
+        DB::beginTransaction();
+        try {
+            $embodied_ansar = EmbodimentModel::where('ansar_id',$ansar_id)->first();
+            if($embodied_ansar){
+                $embodied_ansar->update([
+                    'joining_date'=>$new_embodiment_date,
+                    'service_ended_date'=>GlobalParameterFacades::getServiceEndedDate($request->input('new_embodiment_date'))
+                ]);
+            }
+            else{
+                throw new \Exception('This Ansar does not embodied anywhere');
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            return Redirect::back()->with('error_message',$e->getMessage());
+        }
+
+        return Redirect::route('embodiment_date_correction_view')->with('success_message', 'Embodiment Date is corrected Successfully!');
     }
 
     public function embodimentMemorandumIdCorrectionView()

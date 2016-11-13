@@ -164,13 +164,13 @@
                         <div class="nav-tabs-custom">
                             <ul class="nav nav-tabs">
                                 <li class="active">
-                                    <a data-toggle="tab" href="#offer_not_respond">Offer Not Respond</a>
+                                    <a data-toggle="tab" href="#offer_not_respond">Offer Not Responded</a>
                                 </li>
                                 <li>
                                     <a data-toggle="tab" href="#offer_send">Offer Accepted</a>
                                 </li>
                                 <li>
-                                    <a data-toggle="tab" href="#offer_reject">Offer Reject</a>
+                                    <a data-toggle="tab" href="#offer_reject">Offer Rejected</a>
                                 </li>
                             </ul>
                             <div class="tab-content">

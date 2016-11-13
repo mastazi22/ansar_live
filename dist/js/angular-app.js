@@ -566,22 +566,25 @@ GlobalApp.directive('formSubmit',function (notificationService,$timeout) {
             message:'@'
         },
         link:function (scope, element, attrs) {
-            if(scope.confirmBox){
-                $(element).confirmDialog({
-                    message: scope.message,
-                    ok_button_text: 'Confirm',
-                    cancel_button_text: 'Cancel',
-                    event: 'submit',
-                    ok_callback: function (element) {
-                        submitForm()
-                    },
-                    cancel_callback: function (element) {
-                    }
-                })
-            }
-            else{
-                submitForm();
-            }
+            $(element).on('submit', function (e) {
+                e.preventDefault();
+                if(scope.confirmBox){
+                    $(element).confirmDialog({
+                        message: scope.message,
+                        ok_button_text: 'Confirm',
+                        cancel_button_text: 'Cancel',
+                        event: 'submit',
+                        ok_callback: function (element) {
+                            submitForm()
+                        },
+                        cancel_callback: function (element) {
+                        }
+                    })
+                }
+                else{
+                    submitForm();
+                }
+            })
             function submitForm(){
                 $(element).ajaxSubmit({
                     beforeSubmit:function () {

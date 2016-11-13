@@ -199,6 +199,10 @@ Breadcrumbs::register('disembodiment_date_correction', function($breadcrumbs) {
     $breadcrumbs->parent('embodiment');
     $breadcrumbs->push('Disembodiment Date Correction', URL::to('disembodiment_date_correction_view'));
 });
+Breadcrumbs::register('embodiment_date_correction', function($breadcrumbs) {
+    $breadcrumbs->parent('embodiment');
+    $breadcrumbs->push('Embodiment Date Correction', URL::to('embodiment_date_correction_view'));
+});
 Breadcrumbs::register('embodiment_memorandum_id_correction_view', function($breadcrumbs) {
     $breadcrumbs->parent('embodiment');
     $breadcrumbs->push('Embodiment Memorandum ID Correction', URL::to('embodiment_memorandum_id_correction_view'));

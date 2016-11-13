@@ -29,6 +29,7 @@ class CustomValidation extends Validator
         'array_length_same' => ':attribute length does not match with :other',
         'date_validity' => ':attribute date is not valid',
         'offer_date_validate' => ':attribute date is not valid',
+        'joining_date_validate' => 'joining date must be within 1 month after reporting date',
     ];
 
     public function __construct(TranslatorInterface $translator, array $data, array $rules, array $messages = [], array $customAttributes = [])
@@ -152,6 +153,20 @@ class CustomValidation extends Validator
     {
         try {
             if (Carbon::parse($value)->gte(Carbon::now()->subHours(48)->setTime(0, 0, 0)) && !Carbon::parse($value)->gt(Carbon::now())) {
+                return true;
+            }
+            return false;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
+    public function validateJoiningDateValidate($attribute, $value, $parameters)
+    {
+        $reporting_date = array_get($this->getData(),$parameters[0]);
+        try {
+            $diff = Carbon::parse($reporting_date)->diffInMonths(Carbon::parse($value),false);
+            Log::info("Different in month :".$diff);
+            if ($diff>=0&&$diff<=1&&Carbon::parse($value)->gte(Carbon::parse($reporting_date))) {
                 return true;
             }
             return false;

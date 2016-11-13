@@ -286,8 +286,11 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/bank_recipt', ['as' => 'bank_recipt', 'uses' => 'EmbodimentController@bankRecipt']);
 
         Route::get('/disembodiment_date_correction_view', ['as' => 'disembodiment_date_correction_view', 'uses' => 'EmbodimentController@disembodimentDateCorrectionView']);
+        Route::get('/embodiment_date_correction_view', ['as' => 'embodiment_date_correction_view', 'uses' => 'EmbodimentController@embodimentDateCorrectionView']);
         Route::get('/load_ansar_for_disembodiment_date_correction', ['as'=>'load_ansar_for_disembodiment_date_correction','uses'=>'EmbodimentController@loadAnsarForDisembodimentDateCorrection']);
+        Route::get('/load_ansar_for_embodiment_date_correction', ['as'=>'load_ansar_for_embodiment_date_correction','uses'=>'EmbodimentController@loadAnsarEmbodimentDateCorrection']);
         Route::post('/new-disembodiment-date-entry', ['as'=>'new-disembodiment-date-entry','uses'=>'EmbodimentController@newDisembodimentDateEntry']);
+        Route::post('/new-embodiment-date-entry', ['as'=>'new-embodiment-date-entry','uses'=>'EmbodimentController@newEmbodimentDateEntry']);
         Route::get('/kpi_detail',['as'=>'kpi_detail','uses'=>'EmbodimentController@getKpiDetail']);
         Route::get('/embodiment_memorandum_id_correction_view', ['as' => 'embodiment_memorandum_id_correction_view', 'uses' => 'EmbodimentController@embodimentMemorandumIdCorrectionView']);
         Route::get('/load_ansar_for_embodiment_memorandum_id_correction', ['as'=>'load_ansar_for_embodiment_memorandum_id_correction','uses'=>'EmbodimentController@loadAnsarForEmbodimentMemorandumIdCorrection']);

@@ -103,6 +103,10 @@ return [
                             "route" => "disembodiment_date_correction_view",
                             "icon" => "fa-dashboard",
                         ],
+                        "Embodiment Date Correction" => [
+                            "route" => "embodiment_date_correction_view",
+                            "icon" => "fa-dashboard",
+                        ],
                         "Embodiment Mem. ID Correction" => [
                             "route" => "embodiment_memorandum_id_correction_view",
                             "icon" => "fa-dashboard",
@@ -175,22 +179,23 @@ return [
             "route" => "#",
             "icon" => "fa-list-alt",
             "children" => [
-                "View Ansar In Guard" => [
-                    "route" => "guard_report",
-                    "icon" => "fa-file-pdf-o",
-                ],
-                "Ansar Transfer History" => [
-                    "route" => "transfer_ansar_history",
-                    "icon" => "fa-file-pdf-o",
-                ],
                 "View Service Record" => [
                     "route" => "view_ansar_service_record",
                     "icon" => "fa-file-pdf-o",
                 ],
-                "View Ansar Service Report" => [
+                "View Previous Service Record" => [
                     "route" => "ansar_service_report_view",
                     "icon" => "fa-file-pdf-o",
                 ],
+                "View Ansar In Guard" => [
+                    "route" => "guard_report",
+                    "icon" => "fa-file-pdf-o",
+                ],
+                "View Ansar Transfer History" => [
+                    "route" => "transfer_ansar_history",
+                    "icon" => "fa-file-pdf-o",
+                ],
+
 //                "Embodied Ansar Report" => [
 //                    "route" => "embodiment_report_view",
 //                    "icon" => "fa-file-pdf-o",
@@ -245,7 +250,7 @@ return [
                     "route" => "direct_panel_view",
                     "icon" => "fa-users",
                 ],
-                "Direct Cancel Panel" => [
+                "Cancel Direct Panel" => [
                     "route" => "direct_panel_cancel_view",
                     "icon" => "fa-users",
                 ],

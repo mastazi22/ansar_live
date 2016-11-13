@@ -35,6 +35,8 @@ class CheckUserType
         'load_ansar_before_withdraw'=>['division_id'=>'range','unit_id'=>'unit'],
         'load_ansar_before_reduce'=>['division_id'=>'range','unit_id'=>'unit'],
         'ansar_list_for_reduce'=>['range'=>'range','unit'=>'unit'],
+        'load_ansar'=>['range'=>'range','unit'=>'unit'],
+        'load_ansar_for_embodiment_date_correction'=>['range'=>'range','unit'=>'unit'],
         'inactive_kpi_list'=>['division'=>'range','unit'=>'unit'],
         'new-embodiment-entry'=>['division_name_eng'=>'unit'],
     ];
