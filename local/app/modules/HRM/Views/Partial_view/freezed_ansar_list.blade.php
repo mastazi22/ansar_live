@@ -1,7 +1,7 @@
 <table class="table table-bordered">
     <tr>
         <th>SL. No</th>
-        <th>Ansar id</th>
+        <th>Ansar ID</th>
         <th>Rank</th>
         <th>Name</th>
         <th>Birth Date</th>

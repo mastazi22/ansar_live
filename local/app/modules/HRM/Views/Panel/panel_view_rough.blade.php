@@ -314,7 +314,7 @@
                                         <div class="row" ng-if="panelFormData.type==2">
                                             <div class="col-sm-6 col-centered">
                                                 <div class="form-group">
-                                                    <input type="text" class="form-control" placeholder="Ansar Id" ng-model="panelFormData.ansar_id">
+                                                    <input type="text" class="form-control" placeholder="Ansar ID" ng-model="panelFormData.ansar_id">
                                                     <p ng-if="ansarLoaderror.ansar_id!=undefined" class="text text-danger">[[ansarLoaderror.ansar_id[0] ]]</p>
                                                 </div>
                                             </div>

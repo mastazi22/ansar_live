@@ -13,6 +13,7 @@
         GlobalApp.controller('advancedEntrySearch', function ($scope, $http, httpService) {
             $scope.searchOption = {
                 division_id: {compare: '=', value: ''},
+                ansar_id: {compare: '=', value: ''},
                 unit_id: {compare: '=', value: ''},
                 thana_id: {compare: '=', value: ''},
                 ansar_name: {compare: 'LIKE', value: ''},

@@ -185,11 +185,11 @@
                     <div class="row">
                         <div class="col-md-5">
                             <div class="form-group">
-                                <h4> Enter ansar id to transfer</h4>
+                                <h4> Enter Ansar ID to transfer</h4>
                                 <div class="input-group">
                                     <input type="text" name="ansar_id" ng-keypress="searchAnsar($event)"
                                            ng-disabled="!param.unit"
-                                           ng-model="ansar_id" placeholder="Ansar id" class="form-control">
+                                           ng-model="ansar_id" placeholder="Ansar ID" class="form-control">
                                     <span class="input-group-btn">
                                         <button class="btn btn-secondary" ng-click="searchAnsar($event)">
                                             <i class="fa fa-search" ng-if="!search"></i>

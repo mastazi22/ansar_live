@@ -203,7 +203,7 @@
                                         <table class="table table-bordered">
                                             <tr>
                                                 <th>SL. No</th>
-                                                <th>Ansar Id</th>
+                                                <th>Ansar ID</th>
                                                 <th>Name</th>
                                                 <th>Rank</th>
                                                 <th>Offer Accepted Date</th>
@@ -227,7 +227,7 @@
                                         <table class="table table-bordered">
                                             <tr>
                                                 <th>SL. No</th>
-                                                <th>Ansar Id</th>
+                                                <th>Ansar ID</th>
                                                 <th>Name</th>
                                                 <th>Rank</th>
                                                 <th>Reject Date</th>
