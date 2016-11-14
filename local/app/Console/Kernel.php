@@ -3,7 +3,6 @@
 namespace App\Console;
 
 use App\modules\HRM\Models\AnsarStatusInfo;
-use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\EmbodimentModel;
 use App\modules\HRM\Models\FreezingInfoModel;
 use App\modules\HRM\Models\KpiDetailsModel;
@@ -13,7 +12,6 @@ use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\OfferSmsLog;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
-use App\modules\HRM\Models\PersonalInfo;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -71,7 +69,7 @@ class Kernel extends ConsoleKernel
                     $r = Parser::xml($response);
                     Log::info(json_encode($r));
                     $offer->sms_try += 1;
-                    if (isset($r['PARAMETER'])&&strcasecmp($r['PARAMETER'], 'OK') == 0) {
+                    if (isset($r['PARAMETER']) && strcasecmp($r['PARAMETER'], 'OK') == 0) {
                         $offer->sms_status = 'Send';
                         $offer->save();
                     } else {
@@ -80,7 +78,7 @@ class Kernel extends ConsoleKernel
                     }
                     DB::commit();
                 } catch (\Exception $e) {
-                    Log::info('OFFER SEND ERROR: '.$e->getMessage());
+                    Log::info('OFFER SEND ERROR: ' . $e->getMessage());
                     DB::rollback();
                 }
             }
@@ -149,26 +147,24 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $withdraw_kpi_ids = KpiDetailsModel::where('kpi_withdraw_date', '<=', Carbon::now())->whereNotNull('kpi_withdraw_date')->get();
             foreach ($withdraw_kpi_ids as $withdraw_kpi_id) {
-                if (!is_null($withdraw_kpi_id->kpi_withdraw_date)) {
-                    $kpi_info = KpiGeneralModel::find($withdraw_kpi_id->kpi_id);
-                    $kpi_info->status_of_kpi = 0;
-                    $kpi_info->withdraw_status = 1;
-                    $kpi_info->save();
-                    $withdraw_kpi_id->kpi_withdraw_date = NULL;
-                    $withdraw_kpi_id->save();
-                    $embodiment_infos = EmbodimentModel::where('kpi_id', $withdraw_kpi_id->kpi_id)->get();
-                    foreach ($embodiment_infos as $embodiment_info) {
-                        $freeze_info_update = new FreezingInfoModel();
-                        $freeze_info_update->ansar_id = $embodiment_info->ansar_id;
-                        $freeze_info_update->freez_reason = "Guard Withdraw";
-                        $freeze_info_update->freez_date = Carbon::now();
-                        $freeze_info_update->kpi_id = $withdraw_kpi_id->kpi_id;
-                        $freeze_info_update->ansar_embodiment_id = $embodiment_info->id;
-                        $freeze_info_update->save();
-                        $embodiment_info->emboded_status = "Freeze";
-                        $embodiment_info->save();
-                        AnsarStatusInfo::where('ansar_id', $embodiment_info->ansar_id)->update(['embodied_status' => 0, 'freezing_status' => 1]);
-                    }
+                $kpi_info = KpiGeneralModel::find($withdraw_kpi_id->kpi_id);
+                $kpi_info->status_of_kpi = 0;
+                $kpi_info->withdraw_status = 1;
+                $kpi_info->save();
+                $withdraw_kpi_id->kpi_withdraw_date = NULL;
+                $withdraw_kpi_id->save();
+                $embodiment_infos = EmbodimentModel::where('kpi_id', $withdraw_kpi_id->kpi_id)->get();
+                foreach ($embodiment_infos as $embodiment_info) {
+                    $freeze_info_update = new FreezingInfoModel();
+                    $freeze_info_update->ansar_id = $embodiment_info->ansar_id;
+                    $freeze_info_update->freez_reason = "Guard Withdraw";
+                    $freeze_info_update->freez_date = Carbon::now();
+                    $freeze_info_update->kpi_id = $withdraw_kpi_id->kpi_id;
+                    $freeze_info_update->ansar_embodiment_id = $embodiment_info->id;
+                    $freeze_info_update->save();
+                    $embodiment_info->emboded_status = "Freeze";
+                    $embodiment_info->save();
+                    AnsarStatusInfo::where('ansar_id', $embodiment_info->ansar_id)->update(['embodied_status' => 0, 'freezing_status' => 1]);
                 }
             }
         })->dailyAt("00:00")->name('withdraw_kpi')->withoutOverlapping();
