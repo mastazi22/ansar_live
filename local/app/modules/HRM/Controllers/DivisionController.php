@@ -21,7 +21,7 @@ class DivisionController extends Controller
     public function index()
     {
         //
-        return View::make('HRM::Division.index',['data'=>Division::all()]);
+        return View::make('HRM::Division.index',['data'=>Division::orderBy('sort_by','asc')->get()]);
     }
 
     /**

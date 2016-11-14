@@ -434,9 +434,9 @@ class FormSubmitHandler extends Controller
     public function DivisionName(Request $request)
     {
         if($request->id){
-            $division = Division::where('id', $request->id)->get();
+            $division = Division::where('id', $request->id)->orderBy('sort_by','asc')->get();
         }
-        else $division = Division::where('id', '!=', 0)->get();
+        else $division = Division::where('id', '!=', 0)->orderBy('sort_by','asc')->get();
         return Response::json($division);
     }
 
