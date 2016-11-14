@@ -152,7 +152,7 @@
                                                     <td rowspan="5"  style="vertical-align: middle;width: 130px;height: 150px;background: #ffffff">
                                                         <img  style="width: 120px;height: 150px" src="{{URL::to('image').'?file='}}[[ansarDetail.apid.profile_pic]]" alt="">
                                                     </td>
-                                                    <th style="background: #ffffff">Id</th>
+                                                    <th style="background: #ffffff">ID</th>
                                                     <td style="background: #ffffff">[[ansarDetail.apid.ansar_id]]</td>
                                                 </tr>
                                                 <tr>
