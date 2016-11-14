@@ -68,7 +68,8 @@
     </div>
     <div class="card-footer">
         <div class="card-footer-sing">
-            <div>sfsfs</div>
+            <div><img src="{{file_exists(storage_path($ad->sign_pic))?storage_path($ad->sign_pic) : (public_path('dist/img/nimage.png'))}}"
+                      style="width: 80px;height:10px"></div>
             <div>{{$rd['bs']}}</div>
         </div>
         <div class="card-footer-barcode">
@@ -76,7 +77,8 @@
                  style="max-width: 100%">
         </div>
         <div class="card-footer-sing">
-            <div>gfghfh</div>
+            <div><img src="{{file_exists(storage_path('data/authority/Signature.jpg'))?storage_path('data/authority/Signature.jpg') : (public_path('dist/img/nimage.png'))}}"
+                      style="width: 80px;height:10px"></div>
             <div>{{$rd['is']}}</div>
         </div>
     </div>

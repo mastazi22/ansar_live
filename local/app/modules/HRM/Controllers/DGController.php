@@ -79,7 +79,8 @@ class DGController extends Controller
         $ansarPanelInfo = DB::table('tbl_panel_info')->where('ansar_id', $ansar_id);
         if (!$ansarPanelInfo->exists()) {
             $ansarPanelInfo = DB::table('tbl_panel_info_log')->where('ansar_id', $ansar_id)->orderBy('id', 'desc')->select('panel_date', 'panel_id_old as memorandum_id')->first();
-        } else {
+        }
+        else {
             $ansarPanelInfo = $ansarPanelInfo->select('panel_date', 'memorandum_id')->first();
         }
         $ansarOfferInfo = DB::table('tbl_sms_offer_info')
@@ -88,7 +89,8 @@ class DGController extends Controller
 
         if ($ansarOfferInfo->exists()) {
             $ansarOfferInfo = $ansarOfferInfo->select('tbl_sms_offer_info.created_at as offerDate', 'tbl_units.unit_name_bng as offerUnit')->first();
-        } else {
+        }
+        else {
             $ansarOfferInfo = DB::table('tbl_sms_receive_info')
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_receive_info.offered_district')
                 ->where('tbl_sms_receive_info.ansar_id', '=', $ansar_id);
@@ -114,7 +116,8 @@ class DGController extends Controller
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
                 ->where('tbl_embodiment_log.ansar_id', $ansar_id)->orderBy('tbl_embodiment_log.id', 'desc')
                 ->select('tbl_embodiment_log.joining_date', 'tbl_embodiment_log.old_memorandum_id as memorandum_id', 'tbl_kpi_info.kpi_name', 'tbl_units.unit_name_bng')->first();
-        } else {
+        }
+        else {
             $ansarEmbodimentInfo = $ansarEmbodimentInfo
                 ->select('tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id as memorandum_id', 'tbl_kpi_info.kpi_name', 'tbl_units.unit_name_bng')
                 ->first();
@@ -257,8 +260,9 @@ class DGController extends Controller
     }
 
 
-    function directTransferSubmit()
+    function directTransferSubmit(Request $request)
     {
+//        return $request->all();
         $t_date = Input::get('transfer_date');
         $t_kpi_id = Input::get('t_kpi_id');
         $c_kpi_id = Input::get('c_kpi_id');

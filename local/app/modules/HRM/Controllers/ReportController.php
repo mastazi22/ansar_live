@@ -153,7 +153,7 @@ class ReportController extends Controller
             ->join('tbl_division', 'tbl_division.id', '=', 'tbl_ansar_parsonal_info.division_id')
             ->join('tbl_blood_group', 'tbl_blood_group.id', '=', 'tbl_ansar_parsonal_info.blood_group_id')
             ->where('tbl_ansar_parsonal_info.ansar_id', '=', $id)
-            ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_' . $type . ' as name', 'tbl_designations.name_' . $type . ' as rank', 'tbl_blood_group.blood_group_name_' . $type . ' as blood_group', 'tbl_units.unit_name_' . $type . ' as unit_name', 'tbl_units.unit_code', 'tbl_division.division_code', 'tbl_ansar_parsonal_info.profile_pic')->first();
+            ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_' . $type . ' as name', 'tbl_designations.name_' . $type . ' as rank', 'tbl_blood_group.blood_group_name_' . $type . ' as blood_group', 'tbl_units.unit_name_' . $type . ' as unit_name', 'tbl_units.unit_code', 'tbl_division.division_code', 'tbl_ansar_parsonal_info.profile_pic','tbl_ansar_parsonal_info.sign_pic')->first();
         if ($ansar) {
             $ansarIdHistory = AnsarIdCard::where('ansar_id', $id)->get();
             $id_card = new AnsarIdCard;

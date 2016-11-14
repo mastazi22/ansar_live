@@ -123,10 +123,10 @@
                         ansar_id: $scope.ansarId,
                         t_kpi_id: $scope.selectedKpi,
                         c_kpi_id: $scope.ansarDetail.kpi_id,
-                        transfer_date: jds
+                        transfer_date: $scope.j_date
                     }
                 }).then(function (response) {
-                    console.log(response)
+                    console.log(response.data)
                     $scope.submitResult = response.data;
                     $scope.loadingSubmit = false;
                     $scope.ansarId = "";
