@@ -947,7 +947,7 @@
                                                         <td ng-repeat="r in row">
                                                             <select ng-if="r.type=='dropdown'"  ng-model="training[$parent.$parent.$index]" name="[[r.name]]">
                                                                 <option value="">--Select a rank--</option>
-                                                                <option ng-repeat="r in rank" value="[[r.name_eng]]">
+                                                                <option ng-repeat="r in rank" value="[[r.id]]">
                                                                     [[r.code]]
                                                                 </option>
                                                             </select>
@@ -994,7 +994,7 @@
                                                         <td ng-repeat="r in row">
                                                             <select ng-if="r.type=='dropdown'" ng-model="training[$parent.$parent.$index]" name="[[r.name]]">
                                                                 <option value="">--পদবী নির্বাচন করুন--</option>
-                                                                <option ng-repeat="r in rank" value="[[r.name_bng]]">
+                                                                <option ng-repeat="r in rank" value="[[r.id]]">
                                                                     [[r.name_bng]]
                                                                 </option>
                                                             </select>
