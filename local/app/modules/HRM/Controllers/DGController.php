@@ -78,7 +78,7 @@ class DGController extends Controller
             ->select('*')->first();
         $ansarPanelInfo = DB::table('tbl_panel_info')->where('ansar_id', $ansar_id);
         if (!$ansarPanelInfo->exists()) {
-            $ansarPanelInfo = DB::table('tbl_panel_info_log')->where('ansar_id', $ansar_id)->orderBy('id', 'desc')->select('panel_date', 'panel_id_old as memorandum_id')->first();
+            $ansarPanelInfo = DB::table('tbl_panel_info_log')->where('ansar_id', $ansar_id)->orderBy('id', 'desc')->select('panel_date', 'old_memorandum_id as memorandum_id')->first();
         }
         else {
             $ansarPanelInfo = $ansarPanelInfo->select('panel_date', 'memorandum_id')->first();
