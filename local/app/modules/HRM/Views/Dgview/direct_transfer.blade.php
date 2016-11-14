@@ -210,10 +210,10 @@
                                        ng-change="makeQueue(ansarId)">
                             </div>
                             <div class="form-group">
-                                <label for="mem_id" class="control-label">Memorandum ID&nbsp;<i class="fa fa-spinner fa-pulse" ng-show="isVerifying"></i>
+                                <label for="mem_id" class="control-label">Memorandum no.&nbsp;<i class="fa fa-spinner fa-pulse" ng-show="isVerifying"></i>
                                     <span class="text-danger" ng-if="isVerified">This id already taken</span>
                                 </label>
-                                <input type="text" name="mem_id" id="mem_id" class="form-control" placeholder="Enter Memorandum ID" ng-model="memorandumId" ng-blur="verifyMemorandumId()">
+                                <input type="text" name="mem_id" id="mem_id" class="form-control" placeholder="Enter Memorandum no." ng-model="memorandumId" ng-blur="verifyMemorandumId()">
                             </div>
                             <div class="form-group">
                                 <label for="e_unit" class="control-label">Transferred Unit&nbsp;

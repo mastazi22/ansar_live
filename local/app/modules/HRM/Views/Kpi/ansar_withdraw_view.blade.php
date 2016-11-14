@@ -172,7 +172,7 @@
                                                             ng-show="isVerifying"><i
                                                                 class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span><span
                                                             class="text-danger"
-                                                            ng-if="isVerified&&!memorandumId">Memorandum ID is required.</span><span
+                                                            ng-if="isVerified&&!memorandumId">Memorandum no. is required.</span><span
                                                             class="text-danger"
                                                             ng-if="isVerified&&memorandumId">This id already taken.</span></label>
                                                 <input ng-blur="verifyMemorandumId()" ng-model="memorandumId"

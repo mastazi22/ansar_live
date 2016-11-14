@@ -257,7 +257,7 @@
                                                 ng-model="memorandumId"
                                                 type="text" class="form-control"
                                                 name="memorandum_id"
-                                                placeholder="Enter memorandum id"
+                                                placeholder="Enter Memorandum no."
                                                 required>
                                     </div>
                                     <div class="col-md-6">

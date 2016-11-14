@@ -314,7 +314,7 @@
                             <div class="form-group">
                                 <label for="">Memorandum No. & Date</label>
                                 <div class="row">
-                                    <div class="col-md-7" style="padding-right: 0"><input type="text" name="mem_id" ng-model="memId" placeholder="Enter memorandum no"
+                                    <div class="col-md-7" style="padding-right: 0"><input type="text" name="mem_id" ng-model="memId" placeholder="Enter Memorandum no."
                                                                  class="form-control">
 
                                         <p ng-if="error!=undefined&&error.memId!=undefined" class="text text-danger">

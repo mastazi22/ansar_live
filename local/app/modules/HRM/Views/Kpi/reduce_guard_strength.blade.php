@@ -378,9 +378,9 @@
                                                         ng-show="isVerifying"><i
                                                             class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span><span
                                                         class="text-danger"
-                                                        ng-if="isVerified&&!memorandumId">Memorandum ID is required.</span><span
+                                                        ng-if="isVerified&&!memorandumId">Memorandum no. is required.</span><span
                                                         class="text-danger"
-                                                        ng-if="isVerified&&memorandumId">This id already taken.</span></label>
+                                                        ng-if="isVerified&&memorandumId">This is already taken.</span></label>
                                             <input ng-blur="verifyMemorandumId(freezeData.memorandumId)"
                                                    ng-model="freezeData.memorandumId"
                                                    type="text" class="form-control" name="memorandum_id"
@@ -495,9 +495,9 @@
                                                         ng-show="isVerifying"><i
                                                             class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span><span
                                                         class="text-danger"
-                                                        ng-if="isVerified&&!transData.memorandum_id">Memorandum ID is required.</span><span
+                                                        ng-if="isVerified&&!transData.memorandum_id">Memorandum no. is required.</span><span
                                                         class="text-danger"
-                                                        ng-if="isVerified&&transData.memorandum_id">This id already taken.</span></label>
+                                                        ng-if="isVerified&&transData.memorandum_id">This is already taken.</span></label>
                                             <input ng-blur="verifyMemorandumId(transData.memorandum_id)"
                                                    ng-model="transData.memorandum_id"
                                                    type="text" class="form-control" name="memorandum_id"
@@ -601,9 +601,9 @@
                                                         ng-show="isVerifying"><i
                                                             class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span><span
                                                         class="text-danger"
-                                                        ng-if="isVerified&&!transData.memorandum_id">Memorandum ID is required.</span><span
+                                                        ng-if="isVerified&&!transData.memorandum_id">Memorandum no. is required.</span><span
                                                         class="text-danger"
-                                                        ng-if="isVerified&&transData.memorandum_id">This id already taken.</span></label>
+                                                        ng-if="isVerified&&transData.memorandum_id">This is already taken.</span></label>
                                             <input ng-blur="verifyMemorandumId(transData.memorandum_id)"
                                                    ng-model="transData.memorandum_id"
                                                    type="text" class="form-control" name="memorandum_id"
@@ -687,9 +687,9 @@
                                                         ng-show="isVerifying"><i
                                                             class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span><span
                                                         class="text-danger"
-                                                        ng-if="isVerified&&!memorandumId">Memorandum ID is required.</span><span
+                                                        ng-if="isVerified&&!memorandumId">Memorandum no. is required.</span><span
                                                         class="text-danger"
-                                                        ng-if="isVerified&&memorandumId">This id already taken.</span></label>
+                                                        ng-if="isVerified&&memorandumId">This is already taken.</span></label>
                                             <input ng-blur="verifyMemorandumId(freezeData.memorandumId)"
                                                    ng-model="freezeData.memorandumId"
                                                    type="text" class="form-control" name="memorandum_id"

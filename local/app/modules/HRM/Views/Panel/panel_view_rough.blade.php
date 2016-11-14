@@ -355,7 +355,7 @@
                                                         <label class="control-label">Memorandum no.&nbsp;&nbsp;&nbsp;<span
                                                                     ng-show="isVerifying">
                                                         <i class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span>
-                                                            <span class="text-danger" ng-if="isVerified&&!memorandumId">Memorandum ID is required.</span>
+                                                            <span class="text-danger" ng-if="isVerified&&!memorandumId">Memorandum no. is required.</span>
                                                             <span class="text-danger" ng-if="isVerified&&memorandumId">This id already taken.</span>
                                                         </label>
                                                         <input ng-blur="verifyMemorandumId()" ng-model="submitEntryPanelData.memorandumId" type="text" class="form-control" name="memorandum_id" placeholder="Enter Memorandum no." required>

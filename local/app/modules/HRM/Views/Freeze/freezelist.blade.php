@@ -824,7 +824,7 @@
                                 <input ng-blur="checkMemorandum(transferData.memorandum_transfer,1)" type="text" class="form-control"
                                        id="memorandum_id"
                                        ng-model="transferData.memorandum_transfer" name="memorandum_id"
-                                       placeholder="Enter Memorandum ID">
+                                       placeholder="Enter Memorandum no.">
                             </div>
 
                         </div>
@@ -915,7 +915,7 @@
                                     <input ng-blur="checkMemorandum(transferData.memorandum_transfer,1)" type="text" class="form-control"
                                            id="memorandum_id"
                                            ng-model="transferData.memorandum_transfer" name="memorandum_id"
-                                           placeholder="Enter Memorandum ID">
+                                           placeholder="Enter Memorandum no.">
                                 </div>
                             </div>
                         </div>

@@ -167,10 +167,10 @@
                                 <p class="text text-danger" ng-if="errors.ansar_id!=undefined&&errors.ansar_id[0]">[[errors.ansar_id[0] ]]</p>
                             </div>
                             <div class="form-group">
-                                <label for="mem_id" class="control-label">Memorandum ID&nbsp;<i class="fa fa-spinner fa-pulse" ng-show="isVerifying"></i>
+                                <label for="mem_id" class="control-label">Memorandum no.&nbsp;<i class="fa fa-spinner fa-pulse" ng-show="isVerifying"></i>
                                     <span class="text-danger" ng-if="isVerified">This id already taken</span>
                                 </label>
-                                <input type="text" name="mem_id" id="mem_id" class="form-control" placeholder="Enter Memorandum ID" ng-model="memorandumId">
+                                <input type="text" name="mem_id" id="mem_id" class="form-control" placeholder="Enter Memorandum no." ng-model="memorandumId">
                                 <p class="text text-danger" ng-if="errors.mem_id!=undefined&&errors.mem_id[0]">[[errors.mem_id[0] ]]</p>
                             </div>
                             <div class="form-group">
