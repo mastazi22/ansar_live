@@ -114,7 +114,7 @@
                                     <label class="control-label">Date of Birth</label>
 
                                     <p>
-                                        [[ansarDetail.ansar_details.data_of_birth]]
+                                        [[ansarDetail.ansar_details.data_of_birth|dateformat:'DD-MMM-YYYY']]
                                     </p>
                                 </div>
                                 <div class="form-group">

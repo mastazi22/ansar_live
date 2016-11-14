@@ -526,7 +526,13 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
 GlobalApp.directive('tableSearch',function () {
     return{
         restrict:'ACE',
-        template:'<span class="text text-bold" style="color:black;font-size:1.1em">Total : [[results==undefined?0:results.length]]</span> <input type="text" class="pull-right"  name="" id="" ng-model="q" placeholder="[[placeHolder?placeHolder:\'Search Ansar in this table\']]">',
+        template:'<div class="row">' +
+            '<div class="col-sm-8">' +
+        '<h5 class="text text-bold" style="color:black;font-size:1.1em">Total : [[results==undefined?0:results.length]]</h5>' +
+        '</div> <div class="col-sm-4">' +
+        '<input type="text" class="form-control" ng-model="q" placeholder="[[placeHolder?placeHolder:\'Search Ansar in this table\']]">' +
+        '</div>'+
+        '</div>',
         scope:{
             q:'=',
             results:'=',

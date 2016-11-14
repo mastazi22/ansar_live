@@ -286,61 +286,12 @@
 
                     </filter-template>
                     <div class="row">
-                        {{--<div class="col-sm-4" ng-show="isAdmin==11">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<label class="control-label">--}}
-                                    {{--@lang('title.unit')&nbsp;&nbsp;--}}
-                                    {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
-                                         {{--ng-show="loadingUnit">--}}
-                                {{--</label>--}}
-                                {{--<select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
-                                        {{--ng-model="selected.unit"--}}
-                                        {{--ng-change="loadThana(selected.unit)">--}}
-                                    {{--<option value="">--@lang('title.unit')--</option>--}}
-                                    {{--<option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]--}}
-                                    {{--</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                        {{--<div class="col-sm-4">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<label class="control-label">--}}
-                                    {{--@lang('title.thana')&nbsp;&nbsp;--}}
-                                    {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
-                                         {{--ng-show="loadingThana">--}}
-                                {{--</label>--}}
-                                {{--<select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
-                                        {{--ng-model="selected.thana"--}}
-                                        {{--ng-change="loadGuard(selected.thana)">--}}
-                                    {{--<option value="">--@lang('title.thana')--</option>--}}
-                                    {{--<option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]--}}
-                                    {{--</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                        {{--<div class="col-sm-4">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<label class="control-label">--}}
-                                    {{--@lang('title.kpi')&nbsp;&nbsp;--}}
-                                    {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
-                                         {{--ng-show="loadingKpi">--}}
-                                {{--</label>--}}
-                                {{--<select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
-                                        {{--ng-model="selected.kpi" ng-change="loadAnsar()"--}}
-                                        {{--id="kpi_name_list_for_reduce" name="kpi_name_list_for_reduce">--}}
-                                    {{--<option value="">--@lang('title.kpi')--</option>--}}
-                                    {{--<option ng-repeat="d in guards" value="[[d.id]]">[[d.kpi_name]]--}}
-                                    {{--</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
+
                         <div class="col-md-12">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="pc-table">
                                     <caption>
-                                        <span class="text text-bold" style="font-size: 1.3em;color: #000000">Total Ansar : [[results.length]]</span>
-                                        <input type="text" ng-model="q" placeholder="search in this table"
-                                               class="pull-right">
+                                        <table-search q="q" results="results"></table-search>
 
                                     </caption>
                                     <tr>
@@ -356,7 +307,7 @@
                                         <th>KPI Thana</th>
                                         <th>Reporting Date</th>
                                         <th>Embodiment Date</th>
-                                        <th>Select From Here</th>
+                                        <th style="width:80px">Action</th>
                                     </tr>
                                     <tr ng-repeat="a in ansars|filter:q as results">
                                         <th>
@@ -373,18 +324,14 @@
                                         <td>[[a.reporting_date|dateformat:'DD-MMM-YYYY']]</td>
                                         <td>[[a.joining_date|dateformat:'DD-MMM-YYYY']]</td>
                                         <td>
-                                            <div class="col-xs-1">
                                                 <a class="btn btn-primary btn-xs" title="Freeze"
                                                    ng-click="openSingleFreezeModal($index)">
                                                     <i class="fa fa-cube"></i>
                                                 </a>
-                                            </div>
-                                            <div class="col-xs-1">
                                                 <a class="btn btn-primary btn-xs"
                                                    ng-click="openSingleTransModal($index)" title="Transfer">
                                                     <i class="fa fa-envelope-o"></i>
                                                 </a>
-                                            </div>
                                         </td>
                                     </tr>
                                     <tr ng-if="ansars==undefined||ansars.length<=0||results.length<=0"

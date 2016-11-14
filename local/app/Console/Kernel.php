@@ -146,33 +146,31 @@ class Kernel extends ConsoleKernel
                 }
             }
         })->everyThirtyMinutes()->name("revert_offer")->withoutOverlapping();
-//        $schedule->call(function () {
-//            $withdraw_kpi_ids = KpiDetailsModel::where('kpi_withdraw_date', '<=', Carbon::now())->get();
-//            foreach ($withdraw_kpi_ids as $withdraw_kpi_id) {
-//                if (!is_null($withdraw_kpi_id->kpi_withdraw_date)) {
-//                    $kpi_info = KpiGeneralModel::find($withdraw_kpi_id->kpi_id);
-//                    $kpi_info->withdraw_status = 1;
-//                    $kpi_info->save();
-//                    $withdraw_kpi_id->kpi_withdraw_date = NULL;
-//                    $withdraw_kpi_id->save();
-//                    $embodiment_info_exist = EmbodimentModel::where('kpi_id', $withdraw_kpi_id->kpi_id)->first();
-//                    if (is_null($embodiment_info_exist->kpi_id)) {
-//                        $embodiment_infos = EmbodimentModel::where('kpi_id', $withdraw_kpi_id->kpi_id)->get();
-//                        foreach ($embodiment_infos as $embodiment_info) {
-//                            $freeze_info_update = new FreezingInfoModel();
-//                            $freeze_info_update->ansar_id = $embodiment_info->ansar_id;
-//                            $freeze_info_update->freez_reason = "Guard Withdraw";
-//                            $freeze_info_update->freez_date = Carbon::now();
-//                            $freeze_info_update->kpi_id = $withdraw_kpi_id->kpi_id;
-//                            $freeze_info_update->ansar_embodiment_id = $embodiment_info->id;
-//                            $freeze_info_update->save();
-//                            $embodiment_info->emboded_status = "Freeze";
-//                            $embodiment_info->save();
-//                            AnsarStatusInfo::where('ansar_id', $embodiment_info->ansar_id)->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 1]);
-//                        }
-//                    }
-//                }
-//            }
-//        })->dailyAt("00:00")->withoutOverlapping();
+        $schedule->call(function () {
+            $withdraw_kpi_ids = KpiDetailsModel::where('kpi_withdraw_date', '<=', Carbon::now())->whereNotNull('kpi_withdraw_date')->get();
+            foreach ($withdraw_kpi_ids as $withdraw_kpi_id) {
+                if (!is_null($withdraw_kpi_id->kpi_withdraw_date)) {
+                    $kpi_info = KpiGeneralModel::find($withdraw_kpi_id->kpi_id);
+                    $kpi_info->status_of_kpi = 0;
+                    $kpi_info->withdraw_status = 1;
+                    $kpi_info->save();
+                    $withdraw_kpi_id->kpi_withdraw_date = NULL;
+                    $withdraw_kpi_id->save();
+                    $embodiment_infos = EmbodimentModel::where('kpi_id', $withdraw_kpi_id->kpi_id)->get();
+                    foreach ($embodiment_infos as $embodiment_info) {
+                        $freeze_info_update = new FreezingInfoModel();
+                        $freeze_info_update->ansar_id = $embodiment_info->ansar_id;
+                        $freeze_info_update->freez_reason = "Guard Withdraw";
+                        $freeze_info_update->freez_date = Carbon::now();
+                        $freeze_info_update->kpi_id = $withdraw_kpi_id->kpi_id;
+                        $freeze_info_update->ansar_embodiment_id = $embodiment_info->id;
+                        $freeze_info_update->save();
+                        $embodiment_info->emboded_status = "Freeze";
+                        $embodiment_info->save();
+                        AnsarStatusInfo::where('ansar_id', $embodiment_info->ansar_id)->update(['embodied_status' => 0, 'freezing_status' => 1]);
+                    }
+                }
+            }
+        })->dailyAt("00:00")->name('withdraw_kpi')->withoutOverlapping();
     }
 }

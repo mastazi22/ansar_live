@@ -65,6 +65,9 @@
                     </filter-template>
                     <div class="table-responsive">
                         <table class="table table-bordered">
+                            <caption>
+                                <h4 class="text text-bold">Total Ansars : [[ansars.length]]</h4>
+                            </caption>
                             <tr>
                                 <th>Sl No.</th>
                                 <th>Ansar ID</th>

@@ -4210,3 +4210,14 @@ table.text-center th {
     white-space: normal!important;
   }
 }
+
+.search-box{
+  display: block;
+  padding: 5px 15px;
+  box-shadow: 1px 1px 6px 0px #cccccc;
+  border: none;
+  margin-right: 5px;
+}
+.search-box:focus{
+  box-shadow: 1px 1px 6px 0px rgba(0, 204, 203, 0.34);
+}

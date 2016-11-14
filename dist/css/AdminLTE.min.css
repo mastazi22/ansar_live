@@ -4703,3 +4703,10 @@ ul.module-menu > li > a:hover {
     border-bottom: 1px solid #808000;
     font-weight: bold;
 }
+.search-box{
+    display: block;
+    padding: 5px 15px;
+    box-shadow: 1px 1px 6px 0px #cccccc;
+    border: none;
+    margin-right: 5px;
+}

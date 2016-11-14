@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
 
 class BlockBlackController extends Controller
 {
@@ -35,92 +36,100 @@ class BlockBlackController extends Controller
         return view('HRM::Blackblock_view.blocklist_entry');
     }
 
-    public function loadAnsarDetailforBlock()
+    public function loadAnsarDetailforBlock(Request $request)
     {
-        $ansar_id = Input::get('ansar_id');
-        $status = "";
-        $ansar_details = "";
+        $rule = [
+          'ansar_id'=>'required|regex:/^[0-9]+$/'
+        ];
+        $vaild = Validator::make($request->all(),$rule);
+        if($vaild->fails()){
 
-        $ansar_check = DB::table('tbl_ansar_parsonal_info')
-            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
-            ->select('tbl_ansar_status_info.free_status', 'tbl_ansar_status_info.pannel_status', 'tbl_ansar_status_info.offer_sms_status',
-                'tbl_ansar_status_info.embodied_status', 'tbl_ansar_status_info.rest_status', 'tbl_ansar_status_info.block_list_status', 'tbl_ansar_status_info.black_list_status', 'tbl_ansar_parsonal_info.verified')
-            ->first();
-
-        if ($ansar_check->verified == 0 || $ansar_check->verified == 1) {
-            $ansar_details = DB::table('tbl_ansar_parsonal_info')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
-                ->select('tbl_ansar_parsonal_info.id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex',
-                    'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
-                ->first();
-
-            $status = "Entry";
-        } else {
-            if ($ansar_check->free_status == 1 && $ansar_check->block_list_status == 0 && $ansar_check->black_list_status == 0) {
-                $ansar_details = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
-                    ->select('tbl_ansar_parsonal_info.id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex',
-                        'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
-                    ->first();
-
-                $status = "Free";
-
-            } elseif ($ansar_check->pannel_status == 1 && $ansar_check->block_list_status == 0 && $ansar_check->black_list_status == 0) {
-                $ansar_details = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
-                    ->select('tbl_panel_info.id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex',
-                        'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
-                    ->first();
-
-                $status = "Paneled";
-
-            } elseif ($ansar_check->offer_sms_status == 1 && $ansar_check->block_list_status == 0 && $ansar_check->black_list_status == 0) {
-                $ansar_details = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_sms_offer_info', 'tbl_sms_offer_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
-                    ->select('tbl_sms_offer_info.id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex',
-                        'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
-                    ->first();
-
-                $status = "Offer";
-
-            } elseif ($ansar_check->embodied_status == 1 && $ansar_check->block_list_status == 0 && $ansar_check->black_list_status == 0) {
-                $ansar_details = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
-                    ->select('tbl_embodiment.id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex',
-                        'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
-                    ->first();
-
-                $status = "Embodied";
-
-            } elseif ($ansar_check->rest_status == 1 && $ansar_check->block_list_status == 0 && $ansar_check->black_list_status == 0) {
-                $ansar_details = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_rest_info', 'tbl_rest_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                    ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
-                    ->select('tbl_rest_info.id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex',
-                        'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
-                    ->first();
-
-                $status = "Rest";
-            }
         }
+        $ansar_id = Input::get('ansar_id');
 
-        return Response::json(array('ansar_details' => $ansar_details, 'status' => $status));
+        $status = AnsarStatusInfo::where('ansar_id',$ansar_id)->first()->getStatus();
+        $ansar_details = DB::table('tbl_ansar_parsonal_info')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+            ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
+            ->select('tbl_ansar_parsonal_info.id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex',
+                'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
+            ->first();
+//        if ($ansar_check->verified == 0 || $ansar_check->verified == 1) {
+//            $ansar_details = DB::table('tbl_ansar_parsonal_info')
+//                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+//                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+//                ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
+//                ->select('tbl_ansar_parsonal_info.id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex',
+//                    'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
+//                ->first();
+//
+//            $status = "Entry";
+//        }
+//        else {
+//            if ($ansar_check->free_status == 1 && $ansar_check->block_list_status == 0 && $ansar_check->black_list_status == 0) {
+//                $ansar_details = DB::table('tbl_ansar_parsonal_info')
+//                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+//                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+//                    ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
+//                    ->select('tbl_ansar_parsonal_info.id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex',
+//                        'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
+//                    ->first();
+//
+//                $status = "Free";
+//
+//            }
+//            elseif ($ansar_check->pannel_status == 1 && $ansar_check->block_list_status == 0 && $ansar_check->black_list_status == 0) {
+//                $ansar_details = DB::table('tbl_ansar_parsonal_info')
+//                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+//                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+//                    ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+//                    ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
+//                    ->select('tbl_panel_info.id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex',
+//                        'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
+//                    ->first();
+//
+//                $status = "Paneled";
+//
+//            } elseif ($ansar_check->offer_sms_status == 1 && $ansar_check->block_list_status == 0 && $ansar_check->black_list_status == 0) {
+//                $ansar_details = DB::table('tbl_ansar_parsonal_info')
+//                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+//                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+//                    ->join('tbl_sms_offer_info', 'tbl_sms_offer_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+//                    ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
+//                    ->select('tbl_sms_offer_info.id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex',
+//                        'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
+//                    ->first();
+//
+//                $status = "Offer";
+//
+//            } elseif ($ansar_check->embodied_status == 1 && $ansar_check->block_list_status == 0 && $ansar_check->black_list_status == 0) {
+//                $ansar_details = DB::table('tbl_ansar_parsonal_info')
+//                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+//                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+//                    ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+//                    ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
+//                    ->select('tbl_embodiment.id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex',
+//                        'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
+//                    ->first();
+//
+//                $status = "Embodied";
+//
+//            } elseif ($ansar_check->rest_status == 1 && $ansar_check->block_list_status == 0 && $ansar_check->black_list_status == 0) {
+//                $ansar_details = DB::table('tbl_ansar_parsonal_info')
+//                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+//                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+//                    ->join('tbl_rest_info', 'tbl_rest_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+//                    ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
+//                    ->select('tbl_rest_info.id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex',
+//                        'tbl_units.unit_name_eng', 'tbl_designations.name_eng')
+//                    ->first();
+//
+//                $status = "Rest";
+//            }
+//        }
+
+        return Response::json(array('ansar_details' => $ansar_details, 'status' => $status[0]));
     }
 
     public function blockListEntry(Request $request)
