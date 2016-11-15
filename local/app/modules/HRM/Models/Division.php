@@ -9,6 +9,7 @@ class Division extends Model
     protected $connection = 'hrm';
     protected $table = 'tbl_division';
     protected $guarded = [];
+    public $timestamps = false;
     function kpi(){
         return $this->hasMany('App\models\KpiGeneralModel','division_id','division_id');
     }
