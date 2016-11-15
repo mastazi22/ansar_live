@@ -33,6 +33,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
 use Mockery\CountValidator\Exception;
 
 class DGController extends Controller
@@ -150,20 +151,21 @@ class DGController extends Controller
         }
         DB::beginTransaction();
         try {
-            $srm = SmsReceiveInfoModel::where('ansar_id', $request->input('ansar_id'))->first();
-            if (!$srm) {
-                throw new \Exception('This ansar hasn`t accepted offer yet. Please wait until he/she accept offer ');
+            $ansar = AnsarStatusInfo::where('ansar_id',$request->ansar_id)->first();
+            if (!$ansar) {
+                throw new \Exception('This ansar not found in database ');
             }
-            if($srm->offered_district!=$request->unit){
-                throw new \Exception('Ansar ID: '.$request->ansar_id.' not offered for this district');
+            $status = $ansar->getAnsarForDirectEmbodiment();
+            if($status===false){
+                throw new \Exception('Ansar ID: '.$request->ansar_id.' can`t be embodied. Because he/she not in panel,offer or rest');
             }
-            $kpi = KpiGeneralModel::where('unit_id',$request->unit)->where('thana_id',$request->thana)->first();
-            if(!$kpi||$kpi->id!=$request->kpi_id){
+            $kpi = KpiGeneralModel::where('unit_id',$request->unit)->where('thana_id',$request->thana)->where('id',$request->kpi_id)->first();
+            if(!$kpi){
                 throw new \Exception('Invalid request for Ansar ID: '.$request->ansar_id);
             }
-            $kpi->embodiment->save(new EmbodimentModel([
+            $kpi->embodiment()->save(new EmbodimentModel([
                 'ansar_id'=>$request->input('ansar_id'),
-                'received_sms_id'=>$srm->id,
+                'received_sms_id'=>0,
                 'emboded_status'=>'Emboded',
                 'action_user_id'=>Auth::user()->id,
                 'service_ended_date'=>GlobalParameterFacades::getServiceEndedDate($request->input('joining_date')),
@@ -176,18 +178,10 @@ class DGController extends Controller
             $memorandum_entry->memorandum_id = $request->input('mem_id');
             $memorandum_entry->mem_date = Carbon::parse($request->mem_date);
             $memorandum_entry->save();
-            AnsarStatusInfo::where('ansar_id', $request->input('ansar_id'))->update(['embodied_status' => 1, 'offer_sms_status' => 0]);
-            $sml = new OfferSmsLog;
-            $sml->ansar_id = $srm->ansar_id;
-            $sml->offered_district = $srm->offered_district;
-            $sml->action_user_id = $srm->action_user_id;
-            $sml->offered_date = $srm->sms_send_datetime;
-            $sml->reply_type = 'Yes';
-            $sml->save();
-            $srm->delete();
+
+            CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'EMBODIED', 'from_state' => $status, 'to_state' => 'EMBODIED', 'action_by' => auth()->user()->id]);
+            CustomQuery::addDGlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'EMBODIED', 'from_state' => $status, 'to_state' => 'EMBODIED']);
             DB::commit();
-            CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'EMBODIED', 'from_state' => 'OFFER', 'to_state' => 'EMBODIED', 'action_by' => auth()->user()->id]);
-            CustomQuery::addDGlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'EMBODIED', 'from_state' => 'OFFER', 'to_state' => 'EMBODIED']);
         } catch (\Exception $e) {
             DB::rollBack();
             return Response::json(['status' => false, 'message' => $e->getMessage()]);
@@ -1405,6 +1399,15 @@ class DGController extends Controller
 
     public function directPanelEntry(Request $request)
     {
+        $rules = [
+          'ansar_id'=>'required|regex:/^[0-9]+$/',
+          'memorandum_id'=>'required',
+          'direct_panel_date'=>'required',
+        ];
+        $valid = Validator::make($request->all(),$rules);
+        if($valid->fails()){
+            return Redirect::back()->withErrors($valid)->withInput($request->all());
+        }
         $ansar_id = $request->input('ansar_id');
         $ansar_status = $request->input('ansar_status');
         $memorandum_id = $request->input('memorandum_id');
@@ -1417,36 +1420,28 @@ class DGController extends Controller
             $memorandum_id_save = new MemorandumModel();
             $memorandum_id_save->memorandum_id = $memorandum_id;
             $memorandum_id_save->save();
+            $ansar = AnsarStatusInfo::where('ansar_id',$request->ansar_id)->first();
+            if(!$ansar) throw new \Exception('No Ansar available with this ID '.$request->ansar_id);
 
-            switch ($ansar_status) {
-                case "Free":
-                    $panel_entry = new PanelModel();
-                    $panel_entry->ansar_id = $ansar_id;
-                    $panel_entry->panel_date = $modified_direct_panel_date;
-                    $panel_entry->memorandum_id = $memorandum_id;
-                    $panel_entry->come_from = "Direct";
-                    $panel_entry->action_user_id = Auth::user()->id;
-                    $panel_entry->save();
-
-                    $ansar_status_update = AnsarStatusInfo::where('ansar_id', $ansar_id)->first();
-                    $ansar_status_update->free_status = 0;
-                    $ansar_status_update->pannel_status = 1;
-                    $ansar_status_update->save();
-
-//                    Event::fire(new ActionUserEvent(['ansar_id'=>$ansar_id,'action_type'=>'PANEL','from_state'=>'FREE','to_state'=>'PANELED','action_by'=>auth()->user()->id]));
-//                    Event::fire(new DGActionEvent(['ansar_id'=>$ansar_id,'action_type'=>'PANEL','from_state'=>'FREE','to_state'=>'PANELED','action_by'=>auth()->user()->id]));
-                    //CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'PANEL', 'from_state' => 'FREE', 'to_state' => 'PANELED', 'action_by' => auth()->user()->id]);
+            switch ($ansar->getStatus()[0]) {
+                case "free":
+                    PanelModel::create([
+                       'ansar_id'=>$ansar_id,
+                       'panel_date'=>$modified_direct_panel_date,
+                       'memorandum_id'=>$memorandum_id,
+                       'come_from'=>"Free",
+                       'action_user_id'=>Auth::user()->id,
+                    ]);
+                    $ansar->update([
+                        'free_status'=>0,
+                        'pannel_status'=>1,
+                    ]);
+                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'PANEL', 'from_state' => 'FREE', 'to_state' => 'PANELED', 'action_by' => auth()->user()->id]);
                     CustomQuery::addDGlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'PANELED', 'from_state' => 'FREE', 'to_state' => 'PANELED']);
                     break;
 
-                case "Offered":
-                    $panel_entry = new PanelModel();
-                    $panel_entry->ansar_id = $ansar_id;
-                    $panel_entry->panel_date = $modified_direct_panel_date;
-                    $panel_entry->memorandum_id = $memorandum_id;
-                    $panel_entry->come_from = "Direct";
-                    $panel_entry->action_user_id = Auth::user()->id;
-                    $panel_entry->save();
+                case "offer":
+
 
                     $sms_offer_info = OfferSMS::where('ansar_id', $ansar_id)->first();
                     $sms_receive_info = SmsReceiveInfoModel::where('ansar_id', $ansar_id)->first();
@@ -1469,7 +1464,8 @@ class DGController extends Controller
 
                         $sms_offer_info->delete();
 
-                    } elseif (!is_null($sms_receive_info)) {
+                    }
+                    elseif (!is_null($sms_receive_info)) {
                         $sms_log_save = new OfferSmsLog();
                         $sms_log_save->ansar_id = $ansar_id;
                         $sms_log_save->sms_offer_id = $sms_receive_info->id;
@@ -1484,52 +1480,32 @@ class DGController extends Controller
 
                         $sms_receive_info->delete();
                     }
-//                    Event::fire(new ActionUserEvent(['ansar_id'=>$ansar_id,'action_type'=>'PANEL','from_state'=>'OFFER','to_state'=>'PANELED','action_by'=>auth()->user()->id]));
-//                    Event::fire(new DGActionEvent(['ansar_id'=>$ansar_id,'action_type'=>'PANEL','from_state'=>'OPFFER','to_state'=>'PANELED','action_by'=>auth()->user()->id]));
-                    //CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'PANEL', 'from_state' => 'OFFER', 'to_state' => 'PANELED', 'action_by' => auth()->user()->id]);
                     CustomQuery::addDGlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'PANEL', 'from_state' => 'OFFER', 'to_state' => 'PANELED']);
 
-                    break;
-//                case "Offered SMS":
-//                    break;
-                case "Rest":
+                case "rest":
                     $rest_info = RestInfoModel::where('ansar_id', $ansar_id)->first();
-
-                    $rest_log_save = new RestInfoLogModel();
-                    $rest_log_save->old_rest_id = $rest_info->id;
-                    $rest_log_save->old_embodiment_id = $rest_info->old_embodiment_id;
-                    $rest_log_save->old_memorandum_id = $rest_info->memorandum_id;
-                    $rest_log_save->ansar_id = $ansar_id;
-                    $rest_log_save->rest_date = $rest_info->rest_date;
-                    $rest_log_save->total_service_days = $rest_info->total_service_days;
-                    $rest_log_save->rest_type = $rest_info->rest_form;
-                    $rest_log_save->disembodiment_reason_id = $rest_info->disembodiment_reason_id;
-                    $rest_log_save->direct_status = 1;
-                    $rest_log_save->comment = $direct_panel_comment;
-                    $rest_log_save->move_to = "Panel";
-                    $rest_log_save->move_date = $direct_panel_date;
-                    $rest_log_save->action_user_id = Auth::user()->id;
-                    $rest_log_save->save();
-
-                    $panel_entry = new PanelModel();
-                    $panel_entry->ansar_id = $ansar_id;
-                    $panel_entry->panel_date = $modified_direct_panel_date;
-                    $panel_entry->memorandum_id = $memorandum_id;
-                    $panel_entry->come_from = "Direct";
-                    $panel_entry->action_user_id = Auth::user()->id;
-                    $panel_entry->save();
-
-//                    Event::fire(new ActionUserEvent(['ansar_id'=>$ansar_id,'action_type'=>'PANEL','from_state'=>'REST','to_state'=>'PANELED','action_by'=>auth()->user()->id]));
-//                    Event::fire(new DGActionEvent(['ansar_id'=>$ansar_id,'action_type'=>'PANEL','from_state'=>'REST','to_state'=>'PANELED','action_by'=>auth()->user()->id]));
-                    // CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'PANEL', 'from_state' => 'REST', 'to_state' => 'PANELED', 'action_by' => auth()->user()->id]);
+                    $rest_info->saveLog("Panel",$direct_panel_date);
+                    PanelModel::create([
+                        'ansar_id'=>$ansar_id,
+                        'panel_date'=>$modified_direct_panel_date,
+                        'memorandum_id'=>$memorandum_id,
+                        'come_from'=>"Free",
+                        'action_user_id'=>Auth::user()->id,
+                    ]);
+                    $ansar->update([
+                        'rest_status'=>0,
+                        'pannel_status'=>1,
+                    ]);
+                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'PANEL', 'from_state' => 'REST', 'to_state' => 'PANELED', 'action_by' => auth()->user()->id]);
                     CustomQuery::addDGlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'PANEL', 'from_state' => 'REST', 'to_state' => 'PANELED']);
-
-                    ///Start from here
+                    break;
+                default:
+                    throw new \Exception('This Ansar can`t be paneled. Because he is not in Free,Offer or Rest status');
                     break;
             }
             DB::commit();
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (\Exception $e) {
+            return Redirect::back()->with('error_message', $e->getMessage());
         }
 
         return Redirect::route('direct_panel_view')->with('success_message', 'Ansar Added in the Panel successfully');
@@ -1547,8 +1523,9 @@ class DGController extends Controller
         DB::beginTransaction();
         try{
             $a = PersonalInfo::where('ansar_id',$request->ansar_id)->first();
+            if(!$a) throw new \Exception('Invalid Ansar ID');
             $status = $a->status->getStatus();
-            if((!in_array('panel',$status)&&!in_array('rest',$status))||in_array('block',$status)) throw new \Exception("This ansar not eligible for offer");
+            if((!in_array('panel',$status)&&!in_array('rest',$status))||in_array('block',$status)||in_array('black',$status)) throw new \Exception("This ansar not eligible for offer");
             if(!$a&&!preg_match('/^(\+88)?0[0-9]{10}/',$a->mobile_no_self)) throw new Exception("Invalid mobile number");
             $a->offer_sms_info()->save(new OfferSMS([
                 'sms_send_datetime'=>Carbon::parse($request->offer_date)->format('Y-m-d'),
@@ -1557,26 +1534,24 @@ class DGController extends Controller
                 'action_user_id' => auth()->user()->id,
                 'come_from'=>$status[0]
             ]));
-            $a->status->update(['pannel_status'=>0,'offer_sms_status'=>1]);
-            $pa = $a->panel;
-            if($pa){
-                $pl = new PanelInfoLogModel;
-                $pl->panel_id_old = $pa->id;
-                $pl->ansar_id = $pa->ansar_id;
-                $pl->merit_list = $pa->ansar_merit_list;
-                $pl->panel_date = $pa->panel_date;
-                $pl->old_memorandum_id = !$pa->memorandum_id ? "N\A" : $pa->memorandum_id;
-                $pl->movement_date = Carbon::today();
-                $pl->come_from = $pa->come_from;
-                $pl->move_to = 'Offer';
-                $pl->save();
-                $pa->delete();
+            switch($status[0]){
+                case 'panel':
+                    $a->panel->saveLog('Offer',Carbon::today());
+                    $a->status->update(['pannel_status'=>0,'offer_sms_status'=>1]);
+                    $a->panel->delete();
+                    break;
+                case 'rest':
+                    $a->status->update(['rest_status'=>0,'offer_sms_status'=>1]);
+                    break;
+                default:
+                    throw new \Exception('Invalid Ansar ID');
+                    break;
             }
             DB::commit();
         }catch(\Exception $e){
             DB::rollback();
             return Response::json(['status'=>false,'message'=>$e->getMessage()]);
         }
-        return Response::json(['status'=>false,'message'=>"Offer send successfully"]);
+        return Response::json(['status'=>true,'message'=>"Offer send successfully"]);
     }
 }

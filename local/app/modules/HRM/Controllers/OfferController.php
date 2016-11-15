@@ -228,19 +228,26 @@ class OfferController extends Controller
                 $ansar = PersonalInfo::where('ansar_id',$ansar_ids[$i])->first();
                 $offered_ansar = $ansar->offer_sms_info;
                 if (!$offered_ansar) $received_ansar = $ansar->receiveSMS;
-                $offer_log = new OfferSmsLog;
-                $panel_log = $ansar->panelLog()->first();
-                $ansar->panel()->save(new PanelModel([
-                    'memorandum_id'=>$panel_log->old_memorandum_id,
-                    'panel_date'=>Carbon::now(),
-                    'come_from'=>'OfferCancel',
-                    'ansar_merit_list'=>1,
-                    'action_user_id'=>auth()->user()->id,
-                ]));
-                $ansar->status()->update([
-                    'offer_sms_status'=>0,
-                    'pannel_status'=>1,
-                ]);
+                if($offered_ansar&&$offered_ansar->come_from=='rest'){
+                    $ansar->status()->update([
+                        'offer_sms_status'=>0,
+                        'rest_status'=>1,
+                    ]);
+                }
+                else{
+                    $panel_log = $ansar->panelLog()->first();
+                    $ansar->panel()->save(new PanelModel([
+                        'memorandum_id'=>$panel_log->old_memorandum_id,
+                        'panel_date'=>Carbon::now(),
+                        'come_from'=>'OfferCancel',
+                        'ansar_merit_list'=>1,
+                        'action_user_id'=>auth()->user()->id,
+                    ]));
+                    $ansar->status()->update([
+                        'offer_sms_status'=>0,
+                        'pannel_status'=>1,
+                    ]);
+                }
                 $ansar->offerCancel()->save(new OfferCancel([
                     'offer_cancel_date'=>Carbon::now()
                 ]));

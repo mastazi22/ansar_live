@@ -27,5 +27,14 @@ class OfferSMS extends Model
     public function panel(){
         return $this->hasOne(PanelModel::class,'ansar_id','ansar_id');
     }
-
+    public function saveLog($reply = 'Yes'){
+        $this->log()->save(new OfferSmsLog([
+            'offered_district'=>$this->district_id,
+            'sms_offer_id'=>$this->id,
+            'action_user_id'=>$this->action_user_id,
+            'offered_date'=>$this->sms_send_datetime,
+            'action_date' => Carbon::now(),
+            'reply_type'=>$reply
+        ]));
+    }
 }

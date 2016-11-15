@@ -108,5 +108,8 @@ class PersonalInfo extends Model
     function offerLog(){
         return $this->hasMany(OfferSmsLog::class,'ansar_id','ansar_id');
     }
+    function rest(){
+        return $this->hasOne(RestInfoModel::class,'ansar_id','ansar_id');
+    }
 
 }

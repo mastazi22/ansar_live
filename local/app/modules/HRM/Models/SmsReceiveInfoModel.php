@@ -8,4 +8,18 @@ class SmsReceiveInfoModel extends Model
 {
     protected $connection = 'hrm';
     protected $table="tbl_sms_receive_info";
+    protected $guarded = [];
+
+    public function log(){
+        return $this->hasMany(OfferSmsLog::class,'ansar_id','ansar_id');
+    }
+    public function saveLog(){
+        $this->log()->save(new OfferSmsLog([
+            'offered_district'=>$this->offered_district,
+            'sms_offer_id'=>$this->id,
+            'action_user_id'=>$this->action_user_id,
+            'offered_date'=>$this->sms_send_datetime,
+            'reply_type'=>'Yes'
+        ]));
+    }
 }

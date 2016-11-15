@@ -11,7 +11,7 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#direct_panel_date').datePicker(true);
+            $('#direct_panel_date').datePicker();
         })
         GlobalApp.controller('DGPanelController', function ($scope, $http, $sce) {
             $scope.ansarId = "";
@@ -45,20 +45,6 @@
                     if(!$scope.ansarId)$scope.ansarDetail={}
                 }
             })
-            $scope.verifyMemorandumId = function () {
-                var data = {
-                    memorandum_id: $scope.memorandumId
-                }
-                $scope.isVerified = false;
-                $scope.isVerifying = true;
-                $http.post('{{URL::to('verify_memorandum_id')}}', data).then(function (response) {
-//                    alert(response.data.status)
-                    $scope.isVerified = response.data.status;
-                    $scope.isVerifying = false;
-                }, function (response) {
-
-                })
-            }
         })
     </script>
 
@@ -71,42 +57,45 @@
                 </div>
             </div>
         @endif
+            @if(Session::has('error_message'))
+                <div style="padding: 10px 20px 0 20px;">
+                    <div class="alert alert-danger">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <span class="fa fa-remove"></span> {{Session::get('error_message')}}
+                    </div>
+                </div>
+            @endif
         <section class="content" style="position: relative;">
-            <notify></notify>
             <div class="box box-solid">
                <div class="box-body">
-                   {!! Form::open(array('route' => 'direct_panel_entry', 'id' => 'direct_panel_entry')) !!}
+
                    <div class="row">
                        <div class="col-sm-4">
+                           {!! Form::model(Request::old(),array('route' => 'direct_panel_entry', 'id' => 'direct_panel_entry')) !!}
                            <div class="form-group">
-                               <label for="ansar_id" class="control-label">Ansar ID to add to Panel</label>
-                               <input type="text" name="ansar_id" id="ansar_id" class="form-control"
-                                      placeholder="Enter Ansar ID" ng-model="ansarId"
-                                      ng-change="makeQueue(ansarId)">
+                               {!! Form::label('ansar_id','Ansar ID to add to Panel') !!}
+                               {!! Form::text('ansar_id',null,['class'=>'form-control','placeholder'=>'Enter Ansar ID','ng-model'=>'ansarId','ng-init'=>"ansarId=".Request::old('ansar_id'),'ng-change'=>'makeQueue(ansarId)']) !!}
+                               {!! $errors->first('ansar_id','<p class="text text-danger">:message</p>') !!}
                            </div>
                            <div class="form-group">
-                               <label for="memorandum_id" class="control-label">Memorandum ID<span
-                                           ng-show="isVerifying"><i class="fa fa-spinner fa-pulse"></i>Verifying</span><span
-                                           class="text-danger" ng-if="isVerified"> This id already taken</span></label>
-                               <input ng-blur="verifyMemorandumId()" ng-model="memorandumId" type="text"
-                                      class="form-control" name="memorandum_id"
-                                      placeholder="Enter Memorandum ID">
+                               {!! Form::label('memorandum_id','Memorandum no.') !!}
+                               {!! Form::text('memorandum_id',null,['class'=>'form-control','placeholder'=>'Enter Memorandum no.']) !!}
+                               {!! $errors->first('memorandum_id','<p class="text text-danger">:message</p>') !!}
                            </div>
                            <div class="form-group">
-                               <label for="direct_panel_date" class="control-label">Panel Date</label>
-                               <input type="text" name="direct_panel_date" id="direct_panel_date"
-                                      class="form-control" ng-model="direct_panel_date">
+                               {!! Form::label('direct_panel_date','Panel Date') !!}
+                               {!! Form::text('direct_panel_date',null,['class'=>'form-control','id'=>'direct_panel_date','placeholder'=>'Enter Panel Date']) !!}
+                               {!! $errors->first('direct_panel_date','<p class="text text-danger">:message</p>') !!}
                            </div>
                            <div class="form-group">
-                               <label for="direct_panel_comment" class="control-label">Comment for adding to
-                                   Panel</label>
-                               {!! Form::textarea('direct_panel_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'direct_panel_comment', 'size' => '30x4', 'placeholder' => "Write Comment", 'ng-model' => 'direct_panel_comment')) !!}
+                               {!! Form::label('direct_panel_comment','Comment for adding to Panel') !!}
+                               {!! Form::textarea('direct_panel_comment', null, $attributes = array('class' => 'form-control', 'id' => 'direct_panel_comment', 'size' => '30x4', 'placeholder' => "Write Comment", 'ng-model' => 'direct_panel_comment')) !!}
                            </div>
-                           <button id="add-panel-for-dg" class="btn btn-primary"
-                                   ng-disabled="!direct_panel_date||!ansarId||!direct_panel_comment"><img
-                                       ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}"
+                           <button id="add-panel-for-dg" class="btn btn-primary">
+                               <img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}"
                                        width="16" style="margin-top: -2px">Add to Panel
                            </button>
+                           {!! Form::close() !!}
                        </div>
                        <div class="col-sm-6 col-sm-offset-2"
                             style="min-height: 400px;border-left: 1px solid #CCCCCC">
@@ -162,60 +151,10 @@
                            </div>
                        </div>
                    </div>
-                   {!! Form::close() !!}
+
                </div>
             </div>
         </section>
     </div>
-    <script>
-
-        $("#add-panel-for-dg").confirmDialog({
-            message: 'Are you sure to add this Ansar in the Panel',
-            ok_button_text: 'Confirm',
-            cancel_button_text: 'Cancel',
-            ok_callback: function (element) {
-                var status = angular.element(document.getElementsByClassName('status-check').item(0)).scope().ansarDetail.status;
-                //alert(status)
-                if (status === "Free" || status === "Offered" || status === "Rest") {
-                    $("#direct_panel_entry").submit();
-
-                } else if ( status==="Paneled" ){
-                    // element.hideConfirmDialog();
-                    $('body').notifyDialog(
-                            {
-                                type: 'error',
-                                message: 'This Ansar cannot be added in Panel because he/she is already in the Panel'
-                            }
-                    ).showDialog()
-                }else if ( status==="Embodded" ){
-                    // element.hideConfirmDialog();
-                    $('body').notifyDialog(
-                            {
-                                type: 'error',
-                                message: 'This Ansar cannot be added in Panel because he/she is Embodied'
-                            }
-                    ).showDialog()
-                }else if ( status==="Freeze" ){
-                    // element.hideConfirmDialog();
-                    $('body').notifyDialog(
-                            {
-                                type: 'error',
-                                message: 'This Ansar cannot be added in Panel because he/she is freeze'
-                            }
-                    ).showDialog()
-                }else if ( status==="Entry" ){
-                    // element.hideConfirmDialog();
-                    $('body').notifyDialog(
-                            {
-                                type: 'error',
-                                message: 'This Ansar cannot be added in Panel because he/she is just Registered'
-                            }
-                    ).showDialog()
-                }
-            },
-            cancel_callback: function (element) {
-            }
-        })
-    </script>
 
 @endsection

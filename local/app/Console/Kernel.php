@@ -119,24 +119,29 @@ class Kernel extends ConsoleKernel
                 Log::info("CALLED START: OFFER NO REPLY" . $ansar->ansar_id);
                 DB::beginTransaction();
                 try {
-                    $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
-                    $ansar->log()->save(new OfferSmsLog([
-                        'offered_date' => $ansar->sms_send_datetime,
-                        'offered_district' => $ansar->district_id,
-                        'action_date' => Carbon::now(),
-                        'reply_type' => 'No Reply',
-                    ]));
-                    $ansar->status()->update([
-                        'offer_sms_status' => 0,
-                        'pannel_status' => 1,
-                    ]);
-                    $ansar->panel()->save(new PanelModel([
-                        'memorandum_id' => isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
-                        'panel_date' => Carbon::now(),
-                        'come_from' => 'Offer',
-                        'ansar_merit_list' => 1,
-                    ]));
-                    $ansar->delete();
+                    switch($ansar->come_from){
+                        case 'panel':
+                            $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
+                            $ansar->saveLog('No Reply');
+                            $ansar->status()->update([
+                                'offer_sms_status' => 0,
+                                'pannel_status' => 1,
+                            ]);
+                            $ansar->panel()->save(new PanelModel([
+                                'memorandum_id' => isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
+                                'panel_date' => Carbon::now(),
+                                'come_from' => 'Offer',
+                                'ansar_merit_list' => 1,
+                            ]));
+                            $ansar->delete();
+                            break;
+                        case 'rest':
+                            $ansar->saveLog('No Reply');
+                            $ansar->status()->update([
+                                'rest_status' => 1,
+                                'offer_sms_status' => 0,
+                            ]);
+                    }
                     DB::commit();
                 } catch (\Exception $e) {
                     DB::rollback();
