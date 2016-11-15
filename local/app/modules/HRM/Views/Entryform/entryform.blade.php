@@ -340,7 +340,7 @@
 
                         <div id="entryform">
                             <form id="pppp" class="form-horizontal" enctype="multipart/form-data" id="myForm"
-                                  method="post" action="{{URL::to('HRM\handleregistration')}}">
+                                  method="post" action="{{URL::to('HRM/handleregistration')}}">
                                 {!! csrf_field() !!}
                                 <fieldset>
 
