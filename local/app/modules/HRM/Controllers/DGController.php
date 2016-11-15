@@ -122,12 +122,13 @@ class DGController extends Controller
                 ->select('tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id as memorandum_id', 'tbl_kpi_info.kpi_name', 'tbl_units.unit_name_bng')
                 ->first();
         }
-        $ansarDisEmbodimentInfo = DB::table('tbl_embodiment_log')
-            ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
-            ->where('tbl_embodiment_log.ansar_id', $ansar_id)->orderBy('tbl_embodiment_log.id', 'desc')
-            ->select('tbl_embodiment_log.release_date as disembodiedDate', 'tbl_disembodiment_reason.reason_in_bng as disembodiedReason')->first();
+//        $ansarDisEmbodimentInfo = DB::table('tbl_embodiment_log')
+//            ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
+//            ->where('tbl_embodiment_log.ansar_id', $ansar_id)->orderBy('tbl_embodiment_log.id', 'desc')
+//            ->select('tbl_embodiment_log.release_date as disembodiedDate', 'tbl_disembodiment_reason.reason_in_bng as disembodiedReason')->first();
+//
         return json_encode(['apid' => $ansarPersonalDetail, 'api' => $ansarPanelInfo, 'aod' => $ansarOfferInfo, 'aoci' => $offer_cancel, 'asi' => $ansarStatusInfo,
-            'aei' => $ansarEmbodimentInfo, 'adei' => $ansarDisEmbodimentInfo]);
+            'aei' => $ansarEmbodimentInfo, 'adei' => '']);
 
 
     }
