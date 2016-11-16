@@ -75,46 +75,6 @@ class EmbodimentController extends Controller
         $ansar_id = Input::get('ansar_id');
         $ansar_from_sms_offer = DB::table('tbl_sms_offer_info')->where('ansar_id', $ansar_id)->select('tbl_sms_offer_info.ansar_id')->first();
         $ansar_from_sms_receive = DB::table('tbl_sms_receive_info')->where('ansar_id', $ansar_id)->select('tbl_sms_receive_info.ansar_id')->first();
-
-        if (!is_null($ansar_from_sms_offer)) {
-
-            $ansarPersonalDetail = DB::table('tbl_ansar_parsonal_info')
-                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
-                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
-                ->where('tbl_ansar_status_info.block_list_status', '=', 0)
-                ->where('tbl_ansar_status_info.black_list_status', '=', 0)
-                ->select('tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_ansar_parsonal_info.profile_pic', 'tbl_designations.id',
-                    'tbl_units.unit_name_bng', 'tbl_units.id as unit_id', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_designations.name_bng', 'tbl_ansar_parsonal_info.mobile_no_self')->first();
-
-            $ansarStatusInfo = DB::table('tbl_ansar_status_info')
-                ->where('block_list_status', '=', 0)
-                ->where('black_list_status', '=', 0)
-                ->where('ansar_id', $ansar_id)
-                ->select('*')
-                ->first();
-
-            $ansarPanelInfo = DB::table('tbl_panel_info_log')
-                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_panel_info_log.ansar_id')
-                ->where('tbl_panel_info_log.ansar_id', Input::get('ansar_id'))
-                ->where('tbl_ansar_status_info.block_list_status', '=', 0)
-                ->where('tbl_ansar_status_info.black_list_status', '=', 0)
-                ->orderBy('tbl_panel_info_log.id', 'desc')
-                ->select('tbl_panel_info_log.panel_date', 'tbl_panel_info_log.old_memorandum_id as memorandum_id')->first();
-
-            $ansar_details = DB::table('tbl_sms_offer_info')
-                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
-                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_offer_info.district_id')
-                ->where('tbl_sms_offer_info.ansar_id', '=', $ansar_id)
-                ->where('tbl_ansar_status_info.block_list_status', '=', 0)
-                ->where('tbl_ansar_status_info.black_list_status', '=', 0)
-                ->select('tbl_sms_offer_info.ansar_id', 'tbl_sms_offer_info.sms_send_datetime as offerDate', 'tbl_units.unit_name_bng as offerUnit')
-                ->first();
-
-            return Response::json(['apd' => $ansarPersonalDetail, 'asi' => $ansarStatusInfo, 'api' => $ansarPanelInfo, 'aoi' => $ansar_details]);
-        } else {
-//        if(!is_null($ansar_from_sms_receive)){
             $ansarPersonalDetail = DB::table('tbl_ansar_parsonal_info')
                 ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
@@ -149,7 +109,7 @@ class EmbodimentController extends Controller
                 ->select('tbl_sms_receive_info.ansar_id', 'tbl_sms_receive_info.sms_send_datetime as offerDate', 'tbl_units.unit_name_bng as offered_district')
                 ->first();
             return Response::json(['apd' => $ansarPersonalDetail, 'asi' => $ansarStatusInfo, 'api' => $ansarPanelInfo, 'aoi' => $ansar_details]);
-        }
+
 //        }
     }
 

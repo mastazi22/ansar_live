@@ -123,13 +123,13 @@ class DGController extends Controller
                 ->select('tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id as memorandum_id', 'tbl_kpi_info.kpi_name', 'tbl_units.unit_name_bng')
                 ->first();
         }
-//        $ansarDisEmbodimentInfo = DB::table('tbl_embodiment_log')
-//            ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
-//            ->where('tbl_embodiment_log.ansar_id', $ansar_id)->orderBy('tbl_embodiment_log.id', 'desc')
-//            ->select('tbl_embodiment_log.release_date as disembodiedDate', 'tbl_disembodiment_reason.reason_in_bng as disembodiedReason')->first();
-//
+        $ansarDisEmbodimentInfo = DB::table('tbl_rest_info')
+            ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_rest_info.disembodiment_reason_id')
+            ->where('tbl_rest_info.ansar_id', $ansar_id)
+            ->select('tbl_rest_info.rest_date as disembodiedDate', 'tbl_disembodiment_reason.reason_in_bng as disembodiedReason')->first();
+
         return json_encode(['apid' => $ansarPersonalDetail, 'api' => $ansarPanelInfo, 'aod' => $ansarOfferInfo, 'aoci' => $offer_cancel, 'asi' => $ansarStatusInfo,
-            'aei' => $ansarEmbodimentInfo, 'adei' => '']);
+            'aei' => $ansarEmbodimentInfo, 'adei' => $ansarDisEmbodimentInfo]);
 
 
     }
@@ -1353,48 +1353,12 @@ class DGController extends Controller
             ->where('tbl_ansar_status_info.block_list_status', '=', 0)
             ->where('tbl_ansar_status_info.block_list_status', '=', 0)
             ->distinct()
-            ->select('tbl_ansar_status_info.free_status', 'tbl_ansar_status_info.pannel_status', 'tbl_ansar_status_info.offer_sms_status', 'tbl_ansar_status_info.offered_status',
-                'tbl_ansar_status_info.embodied_status', 'tbl_ansar_status_info.freezing_status', 'tbl_ansar_status_info.rest_status',
-                'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.verified', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng')
+            ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.verified', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng')
             ->first();
-
-        if ($ansar_details->verified == 0) {
-            $status = "Entry";
-
-        } elseif ($ansar_details->verified == 1) {
-            $status = "Entry";
-
-        } else {
-
-            if ($ansar_details->free_status == 1) {
-                $status = "Free";
-
-            } elseif ($ansar_details->pannel_status == 1) {
-                $status = "Paneled";
-
-            } elseif ($ansar_details->offer_sms_status == 1) {
-                $status = "Offered";
-
-            } /*elseif ($ansar_details->offered_status == 1) {
-                $status = "Offered";
-
-            } */elseif ($ansar_details->embodied_status == 1) {
-                $status = "Embodied";
-
-            } elseif ($ansar_details->freezing_status) {
-                $status = "Freeze";
-
-//        } elseif ($ansar_details->block_list_status == 1) {
-//            $status = "BlockListed";
-//
-//        } elseif ($ansar_details->black_list_status == 1) {
-//            $status = "Blaclisted";
-
-            } elseif ($ansar_details->rest_status == 1) {
-                $status = "Rest";
-            }
+        if($ansar_details) {
+            return Response::json(array('ansar_details' => $ansar_details, 'status' => strtoupper(AnsarStatusInfo::where('ansar_id',$ansar_id)->first()->getStatus()[0])));
         }
-        return Response::json(array('ansar_details' => $ansar_details, 'status' => $status));
+        return Response::json([]);
     }
 
     public function directPanelEntry(Request $request)
