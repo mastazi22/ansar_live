@@ -221,7 +221,7 @@
                         </div>
                     </div>
                     {!! Form::close() !!}
-                        <a ng-show="status" target="_blank" href="{{URL::to('print_letter')}}?id=[[memorandumId]]&unit=[[param.unit]]&view=full&type=EMBODIMENT" class="btn btn-primary" style="margin-top: 10px">Print Embodiment Letter</a>
+                        <a ng-show="status" target="_blank" href="{{URL::to('HRM/print_letter')}}?id=[[memorandumId]]&unit=[[param.unit]]&view=full&type=EMBODIMENT" class="btn btn-primary" style="margin-top: 10px">Print Embodiment Letter</a>
                 </div>
             </div>
         </section>
