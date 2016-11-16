@@ -25,7 +25,7 @@ class PanelModel extends Model
     function panelLog(){
         return $this->hasMany(PanelInfoLogModel::class,'panel_id_old');
     }
-    function saveLog($move_to="Offer",$date=null){
+    function saveLog($move_to="Offer",$date=null,$comment=''){
         $this->panelLog()->save(new PanelInfoLogModel([
             'ansar_id'=>$this->ansar_id,
             'merit_list'=>$this->ansar_merit_list,
@@ -33,6 +33,7 @@ class PanelModel extends Model
             'old_memorandum_id'=>!$this->memorandum_id ? "N\A" : $this->memorandum_id,
             'movement_date'=>!$date?Carbon::now():$date,
             'come_from'=>$this->come_from,
+            'comment'=>$comment,
             'move_to'=>$move_to,
         ]));
     }

@@ -143,23 +143,16 @@ class PanelController extends Controller
         $date = Carbon::yesterday()->format('d-M-Y');
         $rules = [
             'memorandumId'=>'required',
+            'ansar_id'=>'required|is_array|array_type:int',
+            'merit'=>'required|is_array|array_type:int|array_length_same:ansar_id',
             'panel_date'=>["required","after:{$date}","date_format:d-M-Y","regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/"],
         ];
-        $selected_ansars = $request->input('ansar_id');
-        $ansar_merit = $request->input('merit');
-        if(is_array($selected_ansars)&&is_array($ansar_merit)&&count($selected_ansars)==count($ansar_merit)){
-            for($i = 0;$i<count($selected_ansars);$i++){
-                $rules['ansar_id.'.$i] = 'required|numeric|regex:/^[0-9]+$/';
-                $rules['merit.'.$i] = 'required|numeric|regex:/^[0-9]+$/';
-            }
-        }
-        else{
-            return response("Invalid request(400)",400);
-        }
         $valid = Validator::make($request->all(),$rules);
         if($valid->fails()){
             return response($valid->messages()->toJson(),400,['Content-Type'=>'application/json']);
         }
+        $selected_ansars = $request->input('ansar_id');
+        $ansar_merit = $request->input('merit');
         DB::beginTransaction();
         $user = [];
         try {

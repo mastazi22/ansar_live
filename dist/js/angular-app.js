@@ -331,6 +331,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             getKpiName:'=',
             data:'=',
             errorKey:'=',
+            reset:'=',
             errorMessage:'=',
             customField:'=',
             customLabel:'@',
@@ -461,6 +462,29 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 }
                 $scope.finish = true;
             })
+            $scope.$watch('reset.range',function (n, o) {
+                if(n) {
+                    $scope.ranges = [];
+                }
+            })
+            $scope.$watch('reset.unit',function (n, o) {
+                if(n) {
+                    $scope.units = [];
+                    $scope.selected.unit = $scope.type=='all'?'all':'';
+                }
+            })
+            $scope.$watch('reset.thana',function (n, o) {
+                if(n) {
+                    $scope.thanas = [];
+                    $scope.selected.thana = $scope.type=='all'?'all':'';
+                }
+            })
+            $scope.$watch('reset.kpi',function (n, o) {
+                if(n) {
+                    $scope.kpis = [];
+                    $scope.selected.kpi = $scope.type=='all'?'all':'';
+                }
+            })
             $scope.$watch('loadWatch', function (n, o) {
                 if(n!=undefined){
                     if($scope.watchChange=='thana'){
@@ -569,7 +593,8 @@ GlobalApp.directive('formSubmit',function (notificationService,$timeout) {
             loading:'=',
             status:'=',
             confirmBox:'@',
-            message:'@'
+            message:'@',
+            onReset:'&'
         },
         link:function (scope, element, attrs) {
             $(element).on('submit', function (e) {
@@ -603,6 +628,7 @@ GlobalApp.directive('formSubmit',function (notificationService,$timeout) {
                     },
                     success:function (result) {
                         scope.loading = false;
+                        // console.log(result)
                         var response = ''
                         try {
                             response = JSON.parse(result);
@@ -612,6 +638,8 @@ GlobalApp.directive('formSubmit',function (notificationService,$timeout) {
                         if(response.status===true){
                             notificationService.notify('success',response.message);
                             scope.status = true;
+                            $(element).resetForm();
+                            scope.onReset();
                         }
                         else if(response.status===false){
                             scope.status = false;

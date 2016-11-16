@@ -13,7 +13,7 @@ class RestInfoModel extends Model
     public function log(){
         return $this->hasMany(RestInfoLogModel::class,'ansar_id','ansar_id');
     }
-    public function saveLog($move_to = "Embodiment",$date = null){
+    public function saveLog($move_to = "Embodiment",$date = null,$comment=''){
         $this->log()->save(new RestInfoLogModel([
             'old_rest_id'=>$this->id,
             'old_embodiment_id'=>$this->old_embodiment_id,
@@ -22,7 +22,7 @@ class RestInfoModel extends Model
             'total_service_days'=>$this->total_service_days,
             'rest_type'=>$this->rest_form,
             'disembodiment_reason_id'=>$this->disembodiment_reason_id,
-            'comment'=>$this->comment,
+            'comment'=>!$comment?$this->comment:$comment,
             'move_to'=>$move_to,
             'move_date'=>!$date?Carbon::now():$date,
             'action_user_id'=>$this->action_user_id,

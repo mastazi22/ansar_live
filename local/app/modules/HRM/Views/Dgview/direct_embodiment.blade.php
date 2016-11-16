@@ -14,16 +14,8 @@
             $scope.ansarId = "";
             $scope.r_date = "";
             $scope.j_date = "";
-            $scope.selectedUnit = "";
-            $scope.selectedThana = "";
-            $scope.selectedKpi = "";
             $scope.ansarDetail = {}
-            $scope.units = []
-            $scope.thanas = []
-            $scope.kpis = []
-            $scope.loadingUnit = true;
-            $scope.loadingThana = false;
-            $scope.loadingKpi = false;
+            $scope.reset = {thana:false,kpi:false}
             $scope.loadingAnsar = false;
             $scope.loadingSubmit = false;
             $scope.submitResult = {};
@@ -33,25 +25,6 @@
             $scope.isVerified = false;
             $scope.isVerifying = false;
             $scope.exist = false;
-            $http({
-                method:'get',
-                url:'{{URL::to('HRM/DistrictName')}}'
-            }).then(function (response) {
-                $scope.units = response.data
-                $scope.loadingUnit = false;
-            })
-            $scope.loadThana = function (d_id) {
-                $scope.loadingThana = true;
-                $http({
-                    method:'get',
-                    url:'{{URL::to('HRM/ThanaName')}}',
-                    params:{id:d_id,type:'PANEL'}
-                }).then(function (response) {
-                    $scope.thanas = response.data;
-                    $scope.selectedThana = "";
-                    $scope.loadingThana = false;
-                })
-            }
             $scope.loadAnsarDetail = function (id) {
                 $scope.loadingAnsar = true;
                 $http({
@@ -62,43 +35,6 @@
                     $scope.ansarDetail = response.data
                     $scope.loadingAnsar = false;
                     $scope.totalLength--;
-                })
-            }
-            $scope.loadKpi = function (t_id) {
-                $scope.loadingKpi = true;
-                $http({
-                    method:'get',
-                    url:'{{URL::to('HRM/KPIName')}}',
-                    params:{id:t_id}
-                }).then(function (response) {
-                    $scope.kpis = response.data
-                    $scope.selectedKpi = "";
-                    $scope.loadingKpi = false;
-                })
-            }
-            $scope.verifyMemorandumId = function () {
-                var data = {
-                    memorandum_id: $scope.memorandumId
-                }
-                $scope.isVerified = false;
-                $scope.isVerifying = true;
-                $http.post('{{URL::to('verify_memorandum_id')}}', data).then(function (response) {
-//                    alert(response.data.status)
-                    $scope.isVerified = response.data.status;
-                    $scope.isVerifying = false;
-                }, function (response) {
-
-                })
-            }
-            $scope.checkFile = function(url){
-                $http({
-                    url:'{{URL::to('HRM/check_file')}}',
-                    params:{path:url},
-                    method:'get'
-                }).then(function (response) {
-                    $scope.exist = response.data.status;
-                }, function () {
-                    $scope.exist = false;
                 })
             }
 
@@ -114,6 +50,11 @@
                     if(!$scope.ansarId)$scope.ansarDetail={}
                 }
             })
+            $scope.reset = function () {
+                $scope.reset = {};
+                $scope.reset = {thana:true,kpi:true}
+                $scope.ansarDetail = '';
+            }
         })
     </script>
     <div ng-controller="DirectEmbodimentController">
@@ -123,7 +64,7 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4">
-                            <form action="{{URL::to('HRM/direct_embodiment_submit')}}" method="post" form-submit loading="loadingSubmit" errors="errors">
+                            <form action="{{URL::to('HRM/direct_embodiment_submit')}}" method="post" form-submit loading="loadingSubmit" on-reset="reset()" errors="errors">
                             <div class="form-group">
                                 <label for="ansar_id" class="control-label">Ansar ID</label>
                                 <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="makeQueue(ansarId)">
@@ -152,6 +93,7 @@
                                         data="param"
                                         start-load="unit"
                                         layout-vertical="1"
+                                        reset="reset"
                                         field-name="{unit:'unit',thana:'thana',kpi:'kpi_id'}"
                                         error-key="{unit:'unit',thana:'thana',kpi:'kpi_id'}"
                                         error-message="{unit:errors.unit[0],thana:errors.thana[0],kpi_id:errors.kpi_id[0]}"

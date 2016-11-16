@@ -309,8 +309,5 @@
                 </div>
             </div>
         </section>
-        <div ng-bind-html="error">
-
-        </div>
     </div>
 @stop

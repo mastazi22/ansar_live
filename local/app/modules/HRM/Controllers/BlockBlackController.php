@@ -654,18 +654,7 @@ class BlockBlackController extends Controller
                     $blacklist_entry->save();
 
                     $panel_info = PanelModel::where('ansar_id', $ansar_id)->first();
-                    $panel_log_save = new PanelInfoLogModel();
-                    $panel_log_save->panel_id_old = $from_id;
-                    $panel_log_save->ansar_id = $ansar_id;
-                    $panel_log_save->merit_list = $panel_info->ansar_merit_list;
-                    $panel_log_save->panel_date = $panel_info->panel_date;
-                    $panel_log_save->movement_date = Carbon::today();
-                    $panel_log_save->come_from = $panel_info->come_from;
-                    $panel_log_save->move_to = "Blacklist";
-                    $panel_log_save->comment = $black_comment;
-                    $panel_log_save->action_user_id = Auth::user()->id;
-                    $panel_log_save->save();
-
+                    $panel_info->saveLog('Blacklist',$modified_black_date,$black_comment);
                     $panel_info->delete();
                     AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 1, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 0]);
 //                    Event::fire(new ActionUserEvent(['ansar_id'=>$ansar_id,'action_type'=>'BLACKED','from_state'=>'PANEL','to_state'=>'BLACKED','action_by'=>auth()->user()->id]));
@@ -689,34 +678,11 @@ class BlockBlackController extends Controller
 
                     if (!is_null($sms_offer_info)) {
 
-                        $sms_log_save = new OfferSmsLog();
-                        $sms_log_save->ansar_id = $ansar_id;
-                        $sms_log_save->sms_offer_id = $sms_offer_info->id;
-                        $sms_log_save->mobile_no = $mobile_no->mobile_no_self;
-
-                        //$sms_log_save->offer_status=;
-                        $sms_log_save->reply_type = "No Reply";
-                        $sms_log_save->action_date = Carbon::now();
-                        $sms_log_save->offered_district = $sms_offer_info->district_id;
-                        $sms_log_save->offered_date = $sms_offer_info->sms_send_datetime;
-                        $sms_log_save->action_user_id = Auth::user()->id;
-                        $sms_log_save->save();
-
+                        $sms_offer_info->saveLog('No Reply');
                         $sms_offer_info->delete();
 
                     } elseif (!is_null($sms_receive_info)) {
-                        $sms_log_save = new OfferSmsLog();
-                        $sms_log_save->ansar_id = $ansar_id;
-                        $sms_log_save->sms_offer_id = $sms_receive_info->id;
-                        $sms_log_save->mobile_no = $mobile_no->mobile_no_self;
-                        //$sms_log_save->offer_status=;
-                        $sms_log_save->reply_type = "Yes";
-                        $sms_log_save->action_date = $sms_receive_info->sms_received_datetime;
-                        $sms_log_save->offered_district = $sms_receive_info->offered_district;
-                        $sms_log_save->offered_date = $sms_receive_info->sms_received_datetime;
-                        $sms_log_save->action_user_id = Auth::user()->id;
-                        $sms_log_save->save();
-
+                        $sms_receive_info->saveLog();
                         $sms_receive_info->delete();
                     }
 
@@ -737,21 +703,7 @@ class BlockBlackController extends Controller
                     $blacklist_entry->save();
 
                     $embodiment_info = EmbodimentModel::where('ansar_id', $ansar_id)->first();
-                    $embodiment_log_save = new EmbodimentLogModel();
-                    $embodiment_log_save->old_embodiment_id = $embodiment_info->id;
-                    $embodiment_log_save->old_memorandum_id = $embodiment_info->memorandum_id;
-                    $embodiment_log_save->ansar_id = $ansar_id;
-                    $embodiment_log_save->kpi_id = $embodiment_info->kpi_id;
-                    $embodiment_log_save->reporting_date = $embodiment_info->reporting_date;
-                    $embodiment_log_save->joining_date = $embodiment_info->joining_date;
-                    $embodiment_log_save->transfered_date = $embodiment_info->transfered_date;
-                    $embodiment_log_save->release_date = $modified_black_date;
-                    $embodiment_log_save->move_to = "Blacklist";
-                    $embodiment_log_save->service_extension_status = $embodiment_info->service_extension_status;
-                    $embodiment_log_save->comment = $black_comment;
-                    $embodiment_log_save->action_user_id = Auth::user()->id;
-                    $embodiment_log_save->save();
-
+                    $embodiment_info->saveLog('Blacklist',$modified_black_date,$black_comment);
                     $embodiment_info->delete();
                     AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 1, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 0]);
 //                    Event::fire(new ActionUserEvent(['ansar_id'=>$ansar_id,'action_type'=>'BLACKED','from_state'=>'EMBODIED','to_state'=>'BLACKED','action_by'=>auth()->user()->id]));
@@ -770,21 +722,7 @@ class BlockBlackController extends Controller
                     $blacklist_entry->save();
 
                     $rest_info = RestInfoModel::where('ansar_id', $ansar_id)->first();
-                    $rest_log_save = new RestInfoLogModel();
-                    $rest_log_save->old_rest_id = $rest_info->id;
-                    $rest_log_save->old_embodiment_id = $rest_info->old_embodiment_id;
-                    $rest_log_save->old_memorandum_id = $rest_info->memorandum_id;
-                    $rest_log_save->ansar_id = $ansar_id;
-                    $rest_log_save->rest_date = $rest_info->rest_date;
-                    $rest_log_save->total_service_days = $rest_info->total_service_days;
-                    $rest_log_save->rest_type = $rest_info->rest_form;
-                    $rest_log_save->disembodiment_reason_id = $rest_info->disembodiment_reason_id;
-                    $rest_log_save->comment = $black_comment;
-                    $rest_log_save->move_to = "Blacklist";
-                    $rest_log_save->move_date = $modified_black_date;
-                    $rest_log_save->action_user_id = Auth::user()->id;
-                    $rest_log_save->save();
-
+                    $rest_info->saveLog('Blacklist',$modified_black_date);
                     $rest_info->delete();
 
                     AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 1, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 0]);
@@ -804,22 +742,11 @@ class BlockBlackController extends Controller
                     $blacklist_entry->save();
 
                     $freeze_info = FreezingInfoModel::where('ansar_id', $ansar_id)->first();
-                    $freeze_log_save = new FreezingInfoLog();
-                    $freeze_log_save->old_freez_id = $freeze_info->id;
-                    $freeze_log_save->ansar_id = $ansar_id;
-                    $freeze_log_save->ansar_embodiment_id = $freeze_info->ansar_embodiment_id;
-                    $freeze_log_save->freez_reason = $freeze_info->freez_reason;
-                    $freeze_log_save->freez_date = $freeze_info->freez_date;
-                    $freeze_log_save->comment_on_freez = $freeze_info->comment_on_freez;
-                    $freeze_log_save->move_frm_freez_date = $modified_black_date;
-                    $freeze_log_save->move_to = "Blacklist";
-                    $freeze_log_save->comment_on_move = $black_comment;
-                    $freeze_log_save->direct_status = 0;
-                    $freeze_log_save->action_user_id = Auth::user()->id;
-                    $freeze_log_save->save();
-
+                    $freeze_info->saveLog('Blacklist',$modified_black_date,$black_comment);
                     $freeze_info->delete();
-
+                    $embodiment_info = EmbodimentModel::where('ansar_id', $ansar_id)->first();
+                    $embodiment_info->saveLog('Blacklist',$modified_black_date,$black_comment);
+                    $embodiment_info->delete();
                     AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 1, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 0]);
 //                    Event::fire(new ActionUserEvent(['ansar_id'=>$ansar_id,'action_type'=>'BLACKED','from_state'=>'FREEZE','to_state'=>'BLACKED','action_by'=>auth()->user()->id]));
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLACKED', 'from_state' => 'FREEZE', 'to_state' => 'BLACKED', 'action_by' => auth()->user()->id]);
@@ -846,18 +773,7 @@ class BlockBlackController extends Controller
                     } elseif ($block_info->block_list_from == "Panel") {
 
                         $panel_info = PanelModel::where('ansar_id', $ansar_id)->first();
-                        $panel_log_save = new PanelInfoLogModel();
-                        $panel_log_save->panel_id_old = $from_id;
-                        $panel_log_save->ansar_id = $ansar_id;
-                        $panel_log_save->merit_list = $panel_info->ansar_merit_list;
-                        $panel_log_save->panel_date = $panel_info->panel_date;
-                        $panel_log_save->movement_date = Carbon::today();
-                        $panel_log_save->come_from = "Blocklist";
-                        $panel_log_save->move_to = "Blacklist";
-                        $panel_log_save->comment = $black_comment;
-                        $panel_log_save->action_user_id = Auth::user()->id;
-                        $panel_log_save->save();
-
+                        $panel_info->saveLog('Blacklist',$modified_black_date);
                         $panel_info->delete();
                         AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 1, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 0]);
 
@@ -986,8 +902,9 @@ class BlockBlackController extends Controller
 
             }
             DB::commit();
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return Redirect::back()->with('error_message', $e->getMessage());
         }
         return Redirect::route('blacklist_entry_view')->with('success_message', 'Ansar Blacklisted Successfully');
     }

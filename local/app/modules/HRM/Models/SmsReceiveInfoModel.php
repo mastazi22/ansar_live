@@ -19,6 +19,7 @@ class SmsReceiveInfoModel extends Model
             'sms_offer_id'=>$this->id,
             'action_user_id'=>$this->action_user_id,
             'offered_date'=>$this->sms_send_datetime,
+            'action_date'=>$this->sms_received_datetime,
             'reply_type'=>'Yes'
         ]));
     }

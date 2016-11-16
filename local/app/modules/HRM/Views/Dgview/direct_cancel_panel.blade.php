@@ -57,26 +57,36 @@
                 </div>
             </div>
         @endif
+            @if(Session::has('error_message'))
+                <div style="padding: 10px 20px 0 20px;">
+                    <div class="alert alert-danger">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <span class="glyphicon glyphicon-remove"></span> {{Session::get('error_message')}}
+                    </div>
+                </div>
+            @endif
         <section class="content" style="position: relative;" >
-            <notify></notify>
             <div class="box box-solid">
-                {!! Form::open(array('url' => 'HRM/cancel_panel_entry_for_dg', 'id' => 'cancel_panel_entry_for_dg')) !!}
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4">
+                            {!! Form::open(array('url' => 'HRM/cancel_panel_entry_for_dg', 'id' => 'cancel_panel_entry_for_dg')) !!}
                             <div class="form-group">
                                 <label for="ansar_id" class="control-label">Ansar ID (Comes from Panel)</label>
                                 <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="makeQueue(ansarId)">
+                                {!! $errors->first('ansar_id','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <div class="form-group">
                                 <label for="cancel_panel_date" class="control-label">Cancel Panel Date</label>
                                 <input type="text" name="cancel_panel_date" id="cancel_panel_date" class="form-control" ng-model="cancel_panel_date">
+                                {!! $errors->first('cancel_panel_date','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <div class="form-group">
                                 <label for="cancel_panel_comment" class="control-label">Comment for Canceling Panel</label>
                                 {!! Form::textarea('cancel_panel_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'cancel_panel_comment', 'size' => '30x4', 'placeholder' => "Write Comment", 'ng-model' => 'cancel_panel_comment')) !!}
                             </div>
-                            <button id="cancel-panel-for-dg" class="btn btn-primary" ng-disabled="!ansarDetail.ansar_name_eng||!cancel_panel_date||!ansarId||!cancel_panel_comment"><img ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}" width="16" style="margin-top: -2px">Cancel Panel</button>
+                            <button id="cancel-panel-for-dg" class="btn btn-primary" >Cancel Panel</button>
+                            {!! Form::close() !!}
                         </div>
                         <div class="col-sm-6 col-sm-offset-2" style="min-height: 400px;border-left: 1px solid #CCCCCC">
                             <div id="loading-box" ng-if="loadingAnsar">
@@ -131,7 +141,6 @@
                         </div>
                     </div>
                 </div>
-                {!! Form::close() !!}
             </div>
         </section>
     </div>

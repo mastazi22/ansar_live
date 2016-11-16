@@ -104,16 +104,39 @@ class CustomValidation extends Validator
 
     public function validateArrayType($attribute, $value, $parameters)
     {
-        $type = $parameters[0];
+        $key_length = count($parameters);
+        Log::info($parameters);
         if(!is_array($value)) return false;
-        switch ($type) {
-            case 'int':
-                foreach ($value as $v) {
-                    if (!preg_match('/^[0-9]+$/',$v)) return false;
-                }
-                break;
+        if($key_length==1) {
+            $type = $parameters[0];
+            switch ($type) {
+                case 'int':
+                    foreach ($value as $v) {
+                        if (!preg_match('/^[0-9]+$/', $v)) return false;
+                    }
+                    break;
+            }
         }
-
+        else if($key_length>1){
+            $map = [];
+            if($key_length%2==1){
+                return false;
+            }
+            for($i = 0;$i<$key_length;$i+=2){
+                array_push($map,['key'=>$parameters[$i],'type'=>$parameters[$i+1]]);
+            }
+            Log::info($map);
+            foreach($map as $m){
+                switch ($m['type']) {
+                    case 'int':
+                        foreach ($value as $v) {
+                            if (!preg_match('/^[0-9]+$/', $v[$m['key']])) return false;
+                        }
+                        break;
+                }
+            }
+        }
+        else return false;
         return true;
     }
 
@@ -139,7 +162,7 @@ class CustomValidation extends Validator
         $length = count($value);
         $same = array_get($this->getData(), $parameters[0]);
         $same = $same?count($same):intval($parameters[0]);
-        Log::info(count($parameters));
+        Log::info($same);
         return $length == $same;
     }
     public function validateDateValidity($attribute, $value, $parameters)
