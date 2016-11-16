@@ -181,7 +181,7 @@ class EmbodimentController extends Controller
                 $service_ending_period = $global_value;
                 $service_ended_date = Carbon::parse($request->input('joining_date'))->addDay($service_ending_period)->subDay(1);
             }
-            $kpi->embodiment->save(new EmbodimentModel([
+            $kpi->embodiment()->save(new EmbodimentModel([
                 'ansar_id'=>$ansar_id,
                 'received_sms_id'=>$sms_receive_info->id,
                 'emboded_status'=>'Emboded',
