@@ -167,7 +167,7 @@ class EmbodimentController extends Controller
             if($sms_receive_info->offered_district!=$request->division_name_eng){
                 throw new \Exception('Ansar ID: '.$ansar_id.' not offered for this district');
             }
-            $kpi = KpiGeneralModel::where('unit_id',$request->division_name_eng)->where('thana_id',$request->thana_name_eng)->where('ansar_id',$kpi_id)->first();
+            $kpi = KpiGeneralModel::where('unit_id',$request->division_name_eng)->where('thana_id',$request->thana_name_eng)->where('id',$kpi_id)->first();
             if(!$kpi){
                 throw new \Exception('Invalid request for Ansar ID: '.$ansar_id);
             }
