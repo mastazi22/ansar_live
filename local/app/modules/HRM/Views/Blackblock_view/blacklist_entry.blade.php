@@ -11,7 +11,7 @@
 
     <script>
         $(document).ready(function () {
-            $('#black_date').datePicker(true);
+            $('#black_date').datePicker();
         })
         GlobalApp.controller('BlackController', function ($scope, $http, $sce) {
             $scope.ansarId = "";
@@ -50,27 +50,34 @@
                 </div>
             </div>
         @endif
+        @if(Session::has('error_message'))
+            <div style="padding: 10px 20px 0 20px;">
+                <div class="alert alert-danger">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <span class="fa fa-remove"></span> {{Session::get('error_message')}}
+                </div>
+            </div>
+        @endif
         {!! Form::open(array('route' => 'blacklist_entry', 'id' =>'black_entry')) !!}
         <section class="content" style="position: relative;">
-            <notify></notify>
             <div class="box box-solid">
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label for="ansar_id" class="control-label">Ansar ID</label>
-                                <input type="text" name="ansar_id" id="ansar_id" class="form-control"
-                                       placeholder="Enter Ansar ID" ng-model="ansarId"
-                                       ng-change="loadAnsarDetail(ansarId)">
+                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="loadAnsarDetail(ansarId)">
+                                {!! $errors->first('ansar_id','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <div class="form-group">
                                 <label for="black_date" class="control-label">Blacking Date</label>
-                                <input type="text" name="black_date" id="black_date" class="form-control"
-                                       ng-model="black_date">
+                                <input type="text" name="black_date" id="black_date" class="form-control" ng-model="black_date">
+                                {!! $errors->first('black_date','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <div class="form-group">
                                 <label for="black_comment" class="control-label">Reason</label>
                                 {!! Form::textarea('black_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'black_comment', 'size' => '30x4', 'placeholder' => "Write Reason", 'ng-model' => 'black_comment')) !!}
+                                {!! $errors->first('black_comment','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <button id="black-ansar" class="btn btn-primary"
                                     ng-disabled="!black_date||!ansarId||!black_comment"><img

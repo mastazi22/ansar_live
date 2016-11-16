@@ -6,6 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class AnsarStatusInfo extends Model
 {
+    const FREE_STATUS = 'free';
+    const PANEL_STATUS = 'panel';
+    const OFFER_STATUS = 'offer';
+    const EMBODIMENT_STATUS = 'embodied';
+    const REST_STATUS = 'rest';
+    const FREEZE_STATUS = 'freeze';
+    const BLOCK_STATUS = 'block';
+    const BLACK_STATUS = 'black';
+    const NOT_VERIFIED_STATUS = 'unverified';
+    const RETIREMENT_STATUS = 'disembodied';
+    const EARLY_RETIREMENT_STATUS = 'early_retierment_status';
     protected $connection = 'hrm';
     protected $table="tbl_ansar_status_info";
     protected $guarded = [];
@@ -28,37 +39,37 @@ class AnsarStatusInfo extends Model
         $status = [];
         switch(1){
             case $this->block_list_status:
-                array_push($status,'block');
+                array_push($status,self::BLOCK_STATUS);
                 break;
             case $this->black_list_status:
-                array_push($status,'black');
+                array_push($status,self::BLACK_STATUS);
                 break;
             case $this->free_status:
-                array_push($status,'free');
+                array_push($status,self::FREE_STATUS);
                 break;
             case $this->pannel_status:
-                array_push($status,'panel');
+                array_push($status,self::PANEL_STATUS);
                 break;
             case $this->embodied_status:
-                array_push($status,'embodied');
+                array_push($status,self::EMBODIMENT_STATUS);
                 break;
             case $this->offer_sms_status:
-                array_push($status,'offer');
+                array_push($status,self::OFFER_STATUS);
                 break;
             case $this->freezing_status:
-                array_push($status,'freeze');
+                array_push($status,self::FREEZE_STATUS);
                 break;
             case $this->rest_status:
-                array_push($status,'rest');
+                array_push($status,self::REST_STATUS);
                 break;
             case $this->retierment_status:
-                array_push($status,'disembodied');
+                array_push($status,self::RETIREMENT_STATUS);
                 break;
             case $this->early_retierment_status:
-                array_push($status,'early_retierment_status');
+                array_push($status,self::EARLY_RETIREMENT_STATUS);
                 break;
             default:
-                array_push($status,'unverified');
+                array_push($status,self::NOT_VERIFIED_STATUS);
                 break;
 
         }

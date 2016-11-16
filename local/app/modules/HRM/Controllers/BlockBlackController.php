@@ -134,6 +134,12 @@ class BlockBlackController extends Controller
 
     public function blockListEntry(Request $request)
     {
+        $rules = [
+            'ansar_id'=>'required|regex:/^[0-9]+$/',
+            'block_date'=>'required',
+            'block_comment'=>'required',
+        ];
+        $this->validate($request,$rules);
         $ansar_status = $request->input('ansar_status');
         $ansar_id = $request->input('ansar_id');
         $block_date = $request->input('block_date');
@@ -143,9 +149,10 @@ class BlockBlackController extends Controller
 //        return $request->all();
         DB::beginTransaction();
         try {
-            switch ($ansar_status) {
+            $ansar = AnsarStatusInfo::where('ansar_id',$ansar_id)->first();
+            switch ($ansar->getStatus()[0]) {
 
-                case "Entry":
+                case AnsarStatusInfo::NOT_VERIFIED_STATUS:
                     $blocklist_entry = new BlockListModel();
                     $blocklist_entry->ansar_id = $ansar_id;
                     $blocklist_entry->block_list_from = "Entry";
@@ -158,7 +165,7 @@ class BlockBlackController extends Controller
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'ENTRY', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                     break;
 
-                case "Free":
+                case AnsarStatusInfo::FREE_STATUS:
                     $blocklist_entry = new BlockListModel();
                     $blocklist_entry->ansar_id = $ansar_id;
                     $blocklist_entry->block_list_from = "Free";
@@ -171,7 +178,7 @@ class BlockBlackController extends Controller
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'FREE', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                     break;
 
-                case "Paneled":
+                case AnsarStatusInfo::PANEL_STATUS:
                     $blocklist_entry = new BlockListModel();
                     $blocklist_entry->ansar_id = $ansar_id;
                     $blocklist_entry->block_list_from = "Panel";
@@ -184,7 +191,7 @@ class BlockBlackController extends Controller
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'PANEL', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                     break;
 
-                case "Offer":
+                case AnsarStatusInfo::OFFER_STATUS:
                     $blocklist_entry = new BlockListModel();
                     $blocklist_entry->ansar_id = $ansar_id;
                     $blocklist_entry->block_list_from = "Offer";
@@ -197,7 +204,7 @@ class BlockBlackController extends Controller
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'OFFER', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                     break;
 
-                case "Embodied":
+                case AnsarStatusInfo::EMBODIMENT_STATUS:
                     $blocklist_entry = new BlockListModel();
                     $blocklist_entry->ansar_id = $ansar_id;
                     $blocklist_entry->block_list_from = "Embodiment";
@@ -210,7 +217,7 @@ class BlockBlackController extends Controller
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'EMBODIED', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                     break;
 
-                case "Rest":
+                case AnsarStatusInfo::REST_STATUS:
                     $blocklist_entry = new BlockListModel();
                     $blocklist_entry->ansar_id = $ansar_id;
                     $blocklist_entry->block_list_from = "Rest";
@@ -223,15 +230,17 @@ class BlockBlackController extends Controller
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'REST', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                     break;
                 default:
-                    if ($request->ajax()) {
-                        return Response::json(['status' => false,'message'=>'Invalid Request']);
-                    }
+                    throw new \Exception('This Ansar can`t be blocked.Because he is BLACKED');
+                    break;
 
             }
             AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['block_list_status' => 1]);
             DB::commit();
         } catch (\Exception $e) {
-            return Response::json(['status' => false,'message'=>$e->getMessage()]);
+            if($request->ajax()) {
+                return Response::json(['status' => false, 'message' => $e->getMessage()]);
+            }
+            return Redirect::back()->with('error_message', $e->getMessage());
         }
         if ($request->ajax()) {
             return Response::json(['status' => true,'message'=>'Ansar id '.$ansar_id." successfully blocked"]);
@@ -600,6 +609,12 @@ class BlockBlackController extends Controller
 
     public function blackListEntry(Request $request)
     {
+        $rules = [
+            'ansar_id'=>'required|regex:/^[0-9]+$/',
+            'black_date'=>'required',
+            'black_comment'=>'required',
+        ];
+        $this->validate($request,$rules);
         $ansar_status = $request->input('ansar_status');
         $ansar_id = $request->input('ansar_id');
         $black_date = $request->input('black_date');
