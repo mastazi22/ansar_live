@@ -111,9 +111,9 @@
                     $scope.loading.loading_add_to_panel = false;
                     $scope.result = response.data;
                     $scope.submitEntryPanelData = {};
-                    $("#confirm-panel-modal").modal('hide');
                     $scope.alerts = [];
                     if($scope.result.status){
+                        $("#confirm-panel-modal").modal('hide');
                         initializeArray();
 //                        alert('asassasas')
                         notificationService.notify('success',$scope.result.message)
@@ -145,10 +145,6 @@
                 link: function (scope, elem, attr) {
                     $(elem).on('click', function () {
                         console.log(scope.formData);
-//                        //alert("hh")
-//                        scope.memorandumId = "";
-//                        scope.panel_date = "";
-//                        scope.$digest()
                         $("#confirm-panel-modal").modal("toggle")
                     })
                 }
@@ -365,7 +361,7 @@
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
                                                         <label class="control-label">Panel Date</label>
-                                                        {!! Form::text('panel_date', $value = null, $attributes = array('class' => 'form-control', 'id' => 'panel_date', 'ng_model' => 'submitEntryPanelData.panel_date', 'required')) !!}
+                                                        {!! Form::text('panel_date', $value = null, $attributes = array('class' => 'form-control','date-picker', 'id' => 'panel_date', 'ng_model' => 'submitEntryPanelData.panel_date','placeholder'=>'Panel Date', 'required')) !!}
                                                         <p ng-if="add_to_panel_error.panel_date!=undefined" class="text text-danger">[[add_to_panel_error.panel_date[0] ]]</p>
                                                     </div>
                                                 </div>
@@ -423,7 +419,4 @@
         </section>
         <!-- /.content -->
     </div><!-- /.content-wrapper -->
-    <script>
-        $('#panel_date').datePicker(true);
-    </script>
 @endsection

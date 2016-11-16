@@ -149,10 +149,9 @@ class PanelController extends Controller
         ];
         $valid = Validator::make($request->all(),$rules);
         if($valid->fails()){
-            return response($valid->messages()->toJson(),400,['Content-Type'=>'application/json']);
+            return Response::json(['status'=>false,'message'=>'Invalid request']);
         }
         $selected_ansars = $request->input('ansar_id');
-        $ansar_merit = $request->input('merit');
         DB::beginTransaction();
         $user = [];
         try {
