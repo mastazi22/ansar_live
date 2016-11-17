@@ -110,6 +110,7 @@
                     method: 'post'
                 }).then(function (response) {
                     //alert(JSON.stringify(response.data));
+                    console.log(response.data); return;
                     $scope.verifying[parseInt(i)] = false;
                     if (response.data.status) {
                         notificationService.notify('success', response.data.message)

@@ -789,6 +789,7 @@ class KpiController extends Controller
             'id'=>'same:verified_id|regex:/^[0-9]+$/'
         ]);
         if ($valid->fails()) {
+            return $valid->messages()->toJson();
             return Response::json(['status'=>false,'message'=>'Invalid Request']);
         }
         else {
