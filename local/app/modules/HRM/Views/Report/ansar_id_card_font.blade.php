@@ -34,7 +34,7 @@
         <div class="card-header-right-part">
             <h4 style="@if($type=='bng') font-size: 1em @elseif($type=='eng') font-size:1em; @endif">{{$rd['title']}}</h4>
             <h5 style="font-size: 13px">{{$rd['id_no']}}
-                : {{strcasecmp($type,'bng')==0?LanguageConverter::engToBng($ad->division_code.$ad->unit_code.$ad->ansar_id):$ad->division_code.$ad->unit_code.$ad->ansar_id}}</h5>
+                : {{strcasecmp($type,'bng')==0?LanguageConverter::engToBng(GlobalParameter::generateSmartCard($ad->unit_code,$ad->ansar_id)):GlobalParameter::generateSmartCard($ad->unit_code,$ad->ansar_id)}}</h5>
         </div>
     </div>
     <div class="card-body">
