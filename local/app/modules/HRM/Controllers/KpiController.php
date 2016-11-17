@@ -785,6 +785,7 @@ class KpiController extends Controller
     {
         $a = $request->all();
         $a['id']=(int)$id;
+        return $a;
         $valid = Validator::make($a,[
             'id'=>'same:verified_id|regex:/^[0-9]+$/'
         ]);
