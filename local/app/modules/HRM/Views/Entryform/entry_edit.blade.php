@@ -38,6 +38,7 @@
             $scope.eduEngRows = [];
             $scope.trainingRows = [];
             $scope.trainingEngRows = [];
+            $scope.training = []
             $scope.nomineeRows = [];
             $scope.nomineeEngRows = [];
             $scope.profile_pic = " ";
@@ -1193,7 +1194,7 @@
                                                     <tr ng-repeat="row in trainingRows">
 
                                                         <td ng-repeat="r in row">
-                                                            <select ng-if="r.type=='dropdown'" name="[[r.name]]">
+                                                            <select ng-if="r.type=='dropdown'" name="[[r.name]]" ng-model="training[$parent.$parent.$index]">
                                                                 <option value="">--পদবী নির্বাচন করুন--</option>
                                                                 <option ng-repeat="ra in rank" value="[[ra.name_bng]]"
                                                                         ng-selected="ra.name_bng==r.value">
@@ -1243,7 +1244,7 @@
 
                                                     <tr ng-repeat="row in trainingEngRows">
                                                         <td ng-repeat="r in row">
-                                                            <select ng-if="r.type=='dropdown'" name="[[r.name]]">
+                                                            <select ng-if="r.type=='dropdown'" name="[[r.name]]"  ng-model="training[$parent.$parent.$index]">
                                                                 <option value="">--Select a rank--</option>
                                                                 <option ng-repeat="ra in rank" value="[[ra.name_bng]]"
                                                                         ng-selected="ra.name_eng==r.value">

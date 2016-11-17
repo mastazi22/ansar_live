@@ -234,7 +234,7 @@
                                     </tr>
                                     @foreach ($ansarAllDetails->training as $singletraining)
                                         <tr>
-                                            <td>{{ $singletraining->training_designation}}</td>
+                                            <td>{{ $singletraining->rank->name_bng }}</td>
                                             <td>{{$singletraining->training_institute_name}}</td>
                                             <td>[[changeToLocal('{{ $singletraining->training_start_date}}')]]
                                             <td>[[changeToLocal('{{ $singletraining->training_end_date }}')]]</td>

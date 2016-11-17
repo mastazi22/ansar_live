@@ -193,6 +193,7 @@ class DGController extends Controller
      */
     function directDisEmbodimentSubmit(Request $request)
     {
+        //return $request->all();
         DB::beginTransaction();
         try {
             $rest_entry = new RestInfoModel();
@@ -235,9 +236,9 @@ class DGController extends Controller
             AnsarStatusInfo::where('ansar_id', $request->input('ansar_id'))->update(['embodied_status' => 0, 'rest_status' => 1]);
 
             EmbodimentModel::where('ansar_id', $request->input('ansar_id'))->delete();
-            DB::commit();
             CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DISEMBODIMENT', 'from_state' => 'EMBODIED', 'to_state' => 'REST', 'action_by' => auth()->user()->id]);
             CustomQuery::addDGlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DISEMBODIMENT', 'from_state' => 'EMBODIED', 'to_state' => 'REST']);
+            DB::commit();
         } catch (\Exception $e) {
             return Response::json(['status' => false, 'message' => $e->getMessage()]);
         }

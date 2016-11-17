@@ -7,9 +7,9 @@
 @section('content')
     <script>
         $(document).ready(function () {
-
+            $("#dis_date").datePicker();
         })
-        GlobalApp.controller('DirectEmbodimentController', function ($scope,$http,$sce) {
+        GlobalApp.controller('DirectEmbodimentController', function ($scope,$http,$sce,notificationService) {
             $scope.ansarId = "";
             $scope.dis_date = "";
             $scope.selectedReason = "";
@@ -75,25 +75,28 @@
             })
             $scope.makeDisEmbodied = function () {
                 $scope.loadingSubmit = true;
-                var rd = new Date($scope.dis_date);
-                var rds = rd.getFullYear()+"-"+(rd.getMonth()+1)+"-"+rd.getDate();
                 $http({
                     url:'{{URL::to('HRM/direct_disembodiment_submit')}}',
                     method:'post',
                     data:{
                         ansar_id:$scope.ansarId,
-                        dis_date:rds,
+                        dis_date:$scope.dis_date,
                         comment:$scope.comment,
                         reason:$scope.selectedReason
                     }
                 }).then(function (response) {
                     console.log(response)
                     $scope.submitResult = response.data;
+                    if(response.data.status){
+                        notificationService.notify('success',response.data.message);
+                    }
+                    else{
+                        notificationService.notify('error',response.data.message);
+                    }
                     $scope.loadingSubmit = false;
                 },function (response) {
                     console.log(response);
-                    $scope.error = $sce.trustAsHtml(response.data);
-                    $scope.loadingSubmit = false;
+                    notificationService.notify('error',"An unknown error occur. Error code : "+response.status);
                 })
             }
             $scope.verifyMemorandumId = function () {
@@ -112,25 +115,7 @@
                 })
             }
         })
-        GlobalApp.directive('notify', function () {
-            return {
-                restrict: 'E',
-                link: function (scope, element, attr) {
-                    scope.$watch('submitResult', function (n, o) {
-                        if (Object.keys(n).length > 0) {
-                            if (n.status) {
-                                $('body').notifyDialog({type: 'success', message: n.message}).showDialog()
-                            }
-                            else {
-                                $('body').notifyDialog({type: 'error', message: n.message}).showDialog()
-                            }
-                        }
-                    })
-                }
-
-            }
-        })
-        GlobalApp.directive('confirmDialog', function () {
+        GlobalApp.directive('confirmDialog', function (notificationService) {
             return{
                 restrict:'A',
                 link: function (scope,elem,attr) {
@@ -141,10 +126,11 @@
                         ok_callback: function (element) {
                             if(scope.ansarDetail.asi.embodied_status==0){
                                 $('body').notifyDialog({type: 'error', message: 'You can`t Dis-Embodied this ansar. Because he is not embodied.'}).showDialog()
+                                notificationService.notify('error','You can`t Dis-Embodied this ansar. Because he is not embodied.');
                                 return;
                             }
                             else if(scope.ansarDetail.asi.block_list_status==1){
-                                $('body').notifyDialog({type: 'error', message: 'You can`t Dis-Embodied to this ansar. Because he is embodied but blocked.'}).showDialog()
+                                notificationService.notify('error','You can`t Dis-Embodied this ansar. Because he is blocked.');
                                 return;
                             }
                             scope.makeDisEmbodied();
@@ -176,7 +162,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="dis_date" class="control-label">Disembodiment Date</label>
-                                <input type="text" date-picker placeholder="Dis-Embodied Date" id="dis_date" class="form-control" ng-model="dis_date">
+                                <input type="text" placeholder="Dis-Embodied Date" id="dis_date" class="form-control" ng-model="dis_date">
                             </div>
                             <div class="form-group">
                                 <label for="dis-reason" class="control-label">Disembodiment Reason&nbsp;
