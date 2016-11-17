@@ -784,7 +784,7 @@ class KpiController extends Controller
     public function activeKpi($id,Request $request)
     {
         $a = $request->all();
-        $a['id']=(int)$id;
+        $a['id']=intval($id);
         return $a;
         $valid = Validator::make($a,[
             'id'=>'same:verified_id|regex:/^[0-9]+$/'
