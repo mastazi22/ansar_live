@@ -785,6 +785,8 @@ class KpiController extends Controller
     {
         $a = $request->all();
         $a['id']=intval($id);
+        if(isset($a['verified_id'])) $a['verified_id'] = intval($a['verified_id']);
+        else return Response::json(['status'=>false,'message'=>'Invalid Request']);
         return $a;
         $valid = Validator::make($a,[
             'id'=>'same:verified_id|regex:/^[0-9]+$/'
