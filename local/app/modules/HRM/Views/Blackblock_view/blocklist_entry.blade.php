@@ -45,7 +45,14 @@
                 </div>
             </div>
         @endif
-
+        @if(Session::has('error_message'))
+            <div style="padding: 10px 20px 0 20px;">
+                <div class="alert alert-danger">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <span class="glyphicon glyphicon-remove"></span> {{Session::get('error_message')}}
+                </div>
+            </div>
+        @endif
         <section class="content" style="position: relative;">
             <notify></notify>
             <div class="box box-solid">
@@ -55,24 +62,20 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label for="ansar_id" class="control-label">Ansar ID</label>
-                                <input type="text" name="ansar_id" id="ansar_id" class="form-control"
-                                       placeholder="Enter Ansar ID" ng-model="ansarId"
-                                       ng-change="loadAnsarDetail(ansarId)">
+                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="loadAnsarDetail(ansarId)">
+                                {!! $errors->first('ansar_id','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <div class="form-group">
                                 <label for="block_date" class="control-label">Blocking Date</label>
-                                <input type="text" name="block_date" id="block_date" class="form-control"
-                                       ng-model="block_date">
+                                <input type="text" name="block_date" id="block_date" class="form-control" ng-model="block_date">
+                                {!! $errors->first('block_date','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <div class="form-group">
                                 <label for="block_comment" class="control-label">Reason</label>
                                 {!! Form::textarea('block_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'block_comment', 'size' => '30x4', 'placeholder' => "Write Reason", 'ng-model' => 'block_comment')) !!}
+                                {!! $errors->first('block_comment','<p class="text text-danger">:message</p>') !!}
                             </div>
-                            <button id="block-ansar" class="btn btn-primary"
-                                    ng-disabled="!block_date||!ansarId||!block_comment"><img
-                                        ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}"
-                                        width="16" style="margin-top: -2px">Block Ansar
-                            </button>
+                            <button id="block-ansar" type="submit" class="btn btn-primary">Block Ansar</button>
                         </div>
                         <div class="col-sm-6 col-sm-offset-2"
                              style="min-height: 400px;border-left: 1px solid #CCCCCC">
