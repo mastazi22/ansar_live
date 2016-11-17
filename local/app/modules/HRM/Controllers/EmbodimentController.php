@@ -39,16 +39,21 @@ class EmbodimentController extends Controller
 {
     public function kpiName(Request $request)
     {
+        $query = [];
         if (Input::exists('division')) {
-            $kpi = KpiGeneralModel::where('division_id', '=', Input::get('division'))->where('status_of_kpi', 1)->where('withdraw_status', 0)->get();
-        } else if (Input::exists('unit')) {
-            $kpi = KpiGeneralModel::where('unit_id', '=', Input::get('unit'))->where('status_of_kpi', 1)->where('withdraw_status', 0)->get();
-        } else if (Input::exists('id')) {
-            $id = $request->input('id');
-            $kpi = KpiGeneralModel::where('thana_id', '=', $id)->where('status_of_kpi', 1)->where('withdraw_status', 0)->get();
-        } else
-            $kpi = KpiGeneralModel::where('status_of_kpi', 1)->where('withdraw_status', 0)->get();
-
+            array_push($query,['division_id','=',$request->division]);
+            }
+        else if (Input::exists('unit')) {
+            array_push($query,['unit_id','=',$request->unit]);
+        }
+        else if (Input::exists('id')) {
+            array_push($query,['thana_id','=',$request->id]);
+        }
+        else if($request->type!='all'){
+            array_push($query,['status_of_kpi','=',1]);
+            array_push($query,['withdraw_status','=',0]);
+        }
+        $kpi = KpiGeneralModel::where($query)->get();
         return Response::json($kpi);
     }
 

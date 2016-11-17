@@ -344,7 +344,7 @@
                                 <div class="col-md-6 col-sm-6 col-xs-12">
                                     <div class="form-group" ng-class="{'has-error':error!=undefined&&error.date!=undefined}">
                                         <label for="">Withdraw Date</label>
-                                        <input type="text" id="date-picker" ng-model="formData.date" ng-value="kpis[kpiIndex].date|dateformat:'DD-MMM-YYYY'" class="form-control" placeholder="Withdraw Date">
+                                        <input type="text" date-picker ng-model="formData.date" ng-value="kpis[kpiIndex].date|dateformat:'DD-MMM-YYYY'" class="form-control" placeholder="Withdraw Date">
                                         <p ng-if="error!=undefined&&error.date!=undefined" class="text text-danger">[[error.date]]</p>
                                     </div>
                                     <div class="form-group" ng-class="{'has-error':error!=undefined&&error.date!=undefined}">

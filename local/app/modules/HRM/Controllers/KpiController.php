@@ -608,11 +608,12 @@ class KpiController extends Controller
         $kpi_id = $request->get('id');
         $withdraw_date = $request->get('date');
         $a = $request->all();
-        $a['validate_id']=(int)$id;
+        $a['validate_id']=intval($id);
+        if(isset($a['id'])) $a['id']=intval($a['id']);
+        else return Response::json(['status'=>false,'message'=>"Invalid Request"]);
 //        return $a;
         $rules = [
             'id'=>'numeric|required|same:validate_id',
-            'mem_id' => 'unique:tbl_memorandum_id,memorandum_id',
             'date' => ['required', 'regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
         ];
         $message = [
@@ -717,7 +718,6 @@ class KpiController extends Controller
         $rules = array(
             'id' => 'required|numeric|min:0|integer|same:kpi_id',
             'date' => ['required', 'regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
-            'mem_id' => 'unique:tbl_memorandum_id,memorandum_id',
         );
         $messages = array(
             'withdraw-date.required' => 'Withdraw Date is required.',
@@ -732,9 +732,20 @@ class KpiController extends Controller
             try {
                 $kpi_details = KpiDetailsModel::where('kpi_id',$id)->first();
 //                return $kpi_details;
-                $modified_activation_date = Carbon::parse($withdraw_date)->format('Y-m-d');
-                $kpi_details->kpi_withdraw_date = $modified_activation_date;
-                $kpi_details->kpi_withdraw_date_update_mem_id = $request->mem_id;
+                $modified_activation_date = Carbon::parse($withdraw_date);
+                if($modified_activation_date->lte(Carbon::today()))
+                {
+                    $kpi_details->kpi_withdraw_date = null;
+                    $kpi_details->kpi_withdraw_date_update_mem_id = $request->mem_id;
+                    $kpi_details->kpiInfo->update([
+                        'status_of_kpi'=>0,
+                        'withdraw_status'=>1
+                    ]);
+                }
+                else {
+                    $kpi_details->kpi_withdraw_date = $modified_activation_date;
+                    $kpi_details->kpi_withdraw_date_update_mem_id = $request->mem_id;
+                }
 
                 $kpi_details->save();
                 DB::commit();

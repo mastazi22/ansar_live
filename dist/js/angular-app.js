@@ -214,11 +214,11 @@ GlobalApp.factory('httpService', function ($http) {
             })
 
         },
-        kpi: function (id) {
+        kpi: function (id,type) {
             return $http({
                 url:'/'+prefix+"HRM/KPIName",
                 method:'get',
-                params:{id:id}
+                params:{id:id,type:type}
             }).then(function (response) {
                 return response.data;
             })
@@ -337,7 +337,8 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             customLabel:'@',
             customData:'=',
             customModel:'=',
-            customChange:'&'
+            customChange:'&',
+            kpiType:'@'
         },
         controller: function ($scope,$rootScope,httpService) {
             $scope.selected = {
@@ -415,7 +416,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 //$scope.kpiChange({param:$scope.selected});
                 if(!$scope.show('kpi')) return;
                 $scope.loading.kpi = true;
-                httpService.kpi(id).then(function (data) {
+                httpService.kpi(id,$scope.kpiType).then(function (data) {
                     $scope.kpis = data;
                     $scope.loading.kpi = false;
 

@@ -64,6 +64,7 @@
                             kpi-change="loadAnsar()"
                             start-load="range"
                             on-load="loadAnsar()"
+                            kpi-type="all"
                             field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
                             data = "params"
                     >

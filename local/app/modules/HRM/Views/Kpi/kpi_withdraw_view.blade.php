@@ -103,6 +103,7 @@
             $scope.changeLocation = function () {
 //                alert('ssdsadad')
                 $location.path('/')
+                $scope.loadPage();
                 $timeout(function () {
                     $scope.$apply();
                 })

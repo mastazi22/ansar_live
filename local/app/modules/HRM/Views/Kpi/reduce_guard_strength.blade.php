@@ -58,64 +58,6 @@
 
                 })
             }
-            {{--$scope.loadDistrict = function () {--}}
-                {{--$scope.loadingUnit = true;--}}
-                {{--$http({--}}
-                    {{--method: 'get',--}}
-                    {{--url: '{{URL::to('HRM/DistrictName')}}'--}}
-                {{--}).then(function (response) {--}}
-                    {{--$scope.districts = response.data;--}}
-                    {{--$scope.ddistricts = response.data;--}}
-                    {{--$scope.loadingUnit = false;--}}
-                    {{--if (!$scope.trans.open) {--}}
-                        {{--$scope.thanas = [];--}}
-                    {{--}--}}
-                    {{--else {--}}
-                        {{--$scope.tthanas = [];--}}
-                    {{--}--}}
-                    {{--$scope.selected.thana = "";--}}
-                {{--})--}}
-            {{--}--}}
-            {{--$scope.loadThana = function (id) {--}}
-                {{--$scope.loadingThana = true;--}}
-                {{--$http({--}}
-                    {{--method: 'get',--}}
-                    {{--url: '{{URL::to('HRM/ThanaName')}}',--}}
-                    {{--params: {id: id}--}}
-                {{--}).then(function (response) {--}}
-                    {{--if (!$scope.trans.open) {--}}
-                        {{--$scope.thanas = response.data;--}}
-                        {{--$scope.selected.thana = "";--}}
-                        {{--$scope.guards = [];--}}
-                        {{--$scope.selected.kpi = "";--}}
-                    {{--}--}}
-                    {{--else {--}}
-                        {{--$scope.tthanas = response.data;--}}
-                        {{--$scope.trans.thana = "";--}}
-                        {{--$scope.gguards = [];--}}
-                        {{--$scope.trans.kpi = "";--}}
-                    {{--}--}}
-                    {{--$scope.loadingThana = false;--}}
-                {{--})--}}
-            {{--}--}}
-            {{--$scope.loadGuard = function (id) {--}}
-                {{--$scope.loadingKpi = true;--}}
-                {{--$http({--}}
-                    {{--method: 'get',--}}
-                    {{--url: '{{URL::route('kpi_name')}}',--}}
-                    {{--params: {id: id}--}}
-                {{--}).then(function (response) {--}}
-                    {{--if (!$scope.trans.open) {--}}
-                        {{--$scope.guards = response.data;--}}
-                        {{--$scope.selected.kpi = "";--}}
-                    {{--}--}}
-                    {{--else {--}}
-                        {{--$scope.gguards = response.data;--}}
-                        {{--$scope.trans.kpi = "";--}}
-                    {{--}--}}
-                    {{--$scope.loadingKpi = false;--}}
-                {{--})--}}
-            {{--}--}}
             $scope.loadAnsar = function (id) {
                 $scope.allLoading = true;
                 $http({
