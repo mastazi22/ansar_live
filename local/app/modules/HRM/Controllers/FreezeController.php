@@ -61,18 +61,25 @@ class FreezeController extends Controller
 
     public function freezeEntry(Request $request)
     {
+        $rules = [
+            'ansar_id'=>'required|regex:/^[0-9]+$/|unique:tbl_freezing_info,ansar_id',
+            'freeze_date'=>'required',
+            'memorandum_id'=>'required',
+        ];
+        $this->validate($request,$rules);
         $ansar_id = $request->input('ansar_id');
         $freeze_date = $request->input('freeze_date');
         $freeze_comment = $request->input('freeze_comment');
         $memorandum_id = $request->input('memorandum_id');
-        $modifed_freeze_date = Carbon::parse($freeze_date)->format('Y-m-d');
+        $modifed_freeze_date = Carbon::parse($freeze_date);
         DB::beginTransaction();
         try {
             $memorandum_info = new MemorandumModel();
             $memorandum_info->memorandum_id = $memorandum_id;
 
             $embodiment_info = EmbodimentModel::where('ansar_id', $ansar_id)->first();
-
+            if(!$embodiment_info&&$embodiment_info->emboded_status == "freeze") throw new \Exception("Invalid Ansar for freeze");
+            if(Carbon::parse($embodiment_info->joining_date)->gt($modifed_freeze_date)) throw new \Exception("Freeze date must be greater then joining date");
             $freeze_info = new FreezingInfoModel();
             $freeze_info->ansar_id = $ansar_id;
             $freeze_info->freez_reason = "Disciplinary Actions";
@@ -91,10 +98,10 @@ class FreezeController extends Controller
             CustomQuery::addActionlog(['ansar_id' => $ansar_id, 'action_type' => 'FREEZE', 'from_state' => 'EMBODIED', 'to_state' => 'FREEZE', 'action_by' => auth()->user()->id]);
 
             DB::commit();
-        } catch (Exception $e) {
-            return Redirect::to('dofreeze')->with('error_message', 'Problem in inserting');
+        } catch (\Exception $e) {
+            return Redirect::back()->with('error_message', $e->getMessage());
         }
-        return Redirect::action('FreezeController@freezeView')->with('success_message', 'Ansar Freezed for Disciplinary Action Successfully!');
+        return Redirect::back()->with('success_message', 'Ansar Freezed for Disciplinary Action Successfully!');
 
     }
 

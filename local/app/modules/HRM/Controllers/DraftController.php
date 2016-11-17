@@ -165,7 +165,7 @@ class DraftController extends Controller
                     'mother_name_bng' => 'required',
                     'data_of_birth' => 'required',
                     'marital_status' => 'required',
-                    'national_id_no' => 'required|min:17|regex:/^[0-9]+$/',
+                    'national_id_no' => 'required|regex:/^[0-9]{10,17}$/',
                     'division_name_eng' => 'required',
                     'unit_name_eng' => 'required',
                     'thana_name_eng' => 'required',
@@ -475,6 +475,9 @@ class DraftController extends Controller
                     }
                 }
             }
+        }
+        else{
+            abort(401);
         }
     }
 }

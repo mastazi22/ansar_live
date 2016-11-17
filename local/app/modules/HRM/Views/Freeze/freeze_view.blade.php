@@ -16,7 +16,7 @@
             $scope.ansarId = "";
             $scope.ansarDetail = {};
             $scope.ansar_ids = [];
-            $scope.totalLength =  0;
+            $scope.totalLength = 0;
             $scope.loadingAnsar = false;
 
             $scope.loadAnsarDetail = function (id) {
@@ -31,21 +31,21 @@
                     console.log($scope.ansarDetail)
                     $scope.loadingAnsar = false;
                     $scope.totalLength--;
-                },function(response){
+                }, function (response) {
                     $scope.error = true
                     $scope.loadingAnsar = false;
                 })
             }
             $scope.makeQueue = function (id) {
                 $scope.ansar_ids.push(id);
-                $scope.totalLength +=  1;
+                $scope.totalLength += 1;
             }
-            $scope.$watch('totalLength', function (n,o) {
-                if(!$scope.loadingAnsar&&n>0){
+            $scope.$watch('totalLength', function (n, o) {
+                if (!$scope.loadingAnsar && n > 0) {
                     $scope.loadAnsarDetail($scope.ansar_ids.shift())
                 }
-                else{
-                    if(!$scope.ansarId)$scope.ansarDetail={}
+                else {
+                    if (!$scope.ansarId)$scope.ansarDetail = {}
                 }
             })
             $scope.verifyMemorandumId = function () {
@@ -62,8 +62,8 @@
 
                 })
             }
-            $scope.verifyDate = function (i,j) {
-                if(moment(i).isValid()||moment(j).isValid()) {
+            $scope.verifyDate = function (i, j) {
+                if (moment(i).isValid() || moment(j).isValid()) {
                     $cd = moment(i).format('DD-MMM-YYYY');
                     return moment(j).isSameOrBefore($cd)
                 }
@@ -84,9 +84,15 @@
                 </div>
             </div>
         @endif
-
+        @if(Session::has('error_message'))
+            <div style="padding: 10px 20px 0 20px;">
+                <div class="alert alert-danger">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <span class="fa fa-remove"></span> {{Session::get('error_message')}}
+                </div>
+            </div>
+        @endif
         <section class="content" style="position: relative;">
-            <notify></notify>
             <div class="box box-solid">
                 {!! Form::open(array('route' => 'freeze_entry', 'id' => 'freeze_entry')) !!}
                 <div class="box-body">
@@ -95,32 +101,26 @@
                             <div class="form-group">
                                 <label for="ansar_id" class="control-label">Ansar ID to Freeze</label>
                                 <input type="text" name="ansar_id" id="ansar_id" class="form-control"
-                                       placeholder="Enter Ansar ID" ng-model="ansarId"
-                                       ng-change="makeQueue(ansarId)">
+                                       placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="makeQueue(ansarId)">
+                                {!! $errors->first('ansar_id','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <div class="form-group">
-                                <label for="memorandum_id" class="control-label">Memorandum no.<span
-                                            ng-show="isVerifying"><i class="fa fa-spinner fa-pulse"></i>Verifying</span><span
-                                            class="text-danger" ng-if="isVerified"> This id already taken</span></label>
-                                <input ng-blur="verifyMemorandumId()" ng-model="memorandumId" type="text"
-                                       class="form-control" name="memorandum_id"
+                                <label for="memorandum_id" class="control-label">Memorandum no.</label>
+                                <input ng-model="memorandumId" type="text" class="form-control" name="memorandum_id"
                                        placeholder="Enter Memorandum no.">
+                                {!! $errors->first('memorandum_id','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <div class="form-group">
                                 <label for="freeze_date" class="control-label">Freeze Date</label>
-                                <input type="text" name="freeze_date" id="freeze_date"
-                                       class="form-control" ng-model="freeze_date">
-                                <span ng-if="verifyDate(ansarDetail.j_date,freeze_date)" class="text-danger">Freeze date must be bigger then joining date</span>
+                                <input type="text" name="freeze_date" id="freeze_date" class="form-control"
+                                       ng-model="freeze_date">
+                                {!! $errors->first('freeze_date','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <div class="form-group">
                                 <label for="freeze_comment" class="control-label">Comment for Freezing the Ansar</label>
                                 {!! Form::textarea('freeze_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'freeze_comment', 'size' => '30x4', 'placeholder' => "Write any Comment", 'ng-model' => 'freeze_comment')) !!}
                             </div>
-                            <button id="confirm-freeze" class="btn btn-primary"
-                                    ng-disabled="!freeze_date||!ansarId||!freeze_comment||verifyDate(ansarDetail.j_date,freeze_date)"><img
-                                        ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}"
-                                        width="16" style="margin-top: -2px">Freeze
-                            </button>
+                            <button id="confirm-freeze" type="submit" class="btn btn-primary">Freeze</button>
                         </div>
                         <div class="col-sm-6 col-sm-offset-2" style="min-height: 400px;border-left: 1px solid #CCCCCC">
                             <div id="loading-box" ng-if="loadingAnsar"></div>

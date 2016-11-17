@@ -143,7 +143,7 @@ class FormSubmitHandler extends Controller
                     'mother_name_bng' => 'required',
                     'data_of_birth' => 'required',
                     'marital_status' => 'required',
-                    'national_id_no' => 'required|numeric|regex:/[0-9]{17}/',
+                    'national_id_no' => 'required|numeric|regex:/^[0-9]{10,17}$/',
                     'division_name_eng' => 'required',
                     'unit_name_eng' => 'required',
                     'thana_name_eng' => 'required',
@@ -378,38 +378,38 @@ class FormSubmitHandler extends Controller
 //                profile picture
                         if ($request->file('profile_pic')) {
                             $profileextension = $request->file('profile_pic')->getClientOriginalExtension();
-                            $path = storage_path('/data/photo');
+                            $path = storage_path('data/photo');
                             if (!File::exists($path)) File::makeDirectory($path, 0777, true);
                             if (File::exists($path . '/' . $ansarid . '.' . $profileextension)) {
                                 File::delete($path . '/' . $ansarid . '.' . $profileextension);
                             }
                             Image::make($request->file('profile_pic'))->resize(240, 260)->save($path . '/' . $ansarid . '.' . $profileextension);
-                            $personalinfo->profile_pic = '/data/photo/' . $ansarid . '.' . $profileextension;
-                        } else $personalinfo->profile_pic = '/data/photo/' . $ansarid . '.jpg';
+                            $personalinfo->profile_pic = 'data/photo/' . $ansarid . '.' . $profileextension;
+                        } else $personalinfo->profile_pic = 'data/photo/' . $ansarid . '.jpg';
 ////                Sign picture
                         if ($request->file('sign_pic')) {
 
                             $signextension = $request->file('sign_pic')->getClientOriginalExtension();
-                            $path = storage_path('/data/signature');
+                            $path = storage_path('data/signature');
                             //Log::info(File::exists($path. '/' . $ansarid . '.' . $signextension)?"true":"false");
                             if (!File::exists($path)) File::makeDirectory($path, 0777, true);
                             if (File::exists($path . '/' . $ansarid . '.' . $signextension)) {
                                 File::delete($path . '/' . $ansarid . '.' . $signextension);
                             }
                             Image::make($request->file('sign_pic'))->resize(220, 90)->save($path . '/' . $ansarid . '.' . $signextension);
-                            $personalinfo->sign_pic = '/data/signature/' . $ansarid . '.' . $signextension;
-                        } else $personalinfo->sign_pic = '/data/signature/' . $ansarid . '.jpg';
+                            $personalinfo->sign_pic = 'data/signature/' . $ansarid . '.' . $signextension;
+                        } else $personalinfo->sign_pic = 'data/signature/' . $ansarid . '.jpg';
 ////                Thumb image
                         if ($request->file('thumb_pic')) {
                             $thumbextension = $request->file('thumb_pic')->getClientOriginalExtension();
-                            $path = storage_path('/data/fingerprint');
+                            $path = storage_path('data/fingerprint');
                             if (!File::exists($path)) File::makeDirectory($path, 0777, true);
                             if (File::exists($path . '/' . $ansarid . '.' . $thumbextension)) {
                                 File::delete($path . '/' . $ansarid . '.' . $thumbextension);
                             }
                             Image::make($request->file('thumb_pic'))->resize(220, 90)->save($path . '/' . $ansarid . '.' . $thumbextension);
-                            $personalinfo->thumb_pic = '/data/fingerprint/' . $ansarid . '.' . $thumbextension;
-                        } else $personalinfo->thumb_pic = '/data/fingerprint/' . $ansarid . '.jpg';
+                            $personalinfo->thumb_pic = 'data/fingerprint/' . $ansarid . '.' . $thumbextension;
+                        } else $personalinfo->thumb_pic = 'data/fingerprint/' . $ansarid . '.jpg';
 
                         $successpersonal = $personalinfo->save();
                         $status = new AnsarStatusInfo();
@@ -428,6 +428,9 @@ class FormSubmitHandler extends Controller
                     }
                 }
             }
+        }
+        else {
+            abort(401);
         }
     }
 
@@ -553,7 +556,7 @@ class FormSubmitHandler extends Controller
                 'mother_name_bng' => 'required',
                 'data_of_birth' => 'required',
                 'marital_status' => 'required',
-                'national_id_no' => 'required|min:17|numeric|regex:/^[0-9]{17}$/',
+                'national_id_no' => 'required|numeric|regex:/^[0-9]{10,17}$/',
                 'division_name_eng' => 'required',
                 'unit_name_eng' => 'required',
                 'thana_name_eng' => 'required',
@@ -565,7 +568,7 @@ class FormSubmitHandler extends Controller
 
             $messages = [
                 'required' => 'This field is required',
-                'national_id_no.regex' => 'National id no must be numeric and 17 digit.For 13 digit add birth year before id no'
+                'national_id_no.regex' => 'National id no must be numeric and between 10 to 17 digits'
             ];
             $validator = Validator:: make($request->all(), $rules, $messages);
 
@@ -789,38 +792,38 @@ class FormSubmitHandler extends Controller
                     //profile picture
                     if ($request->file('profile_pic')) {
                         $profileextension = $request->file('profile_pic')->getClientOriginalExtension();
-                        $path = storage_path('/data/photo');
+                        $path = storage_path('data/photo');
                         if (!File::exists($path)) File::makeDirectory($path, 0777, true);
                         if (File::exists($path . '/' . $ansarId . '.' . $profileextension)) {
                             File::delete($path . '/' . $ansarId . '.' . $profileextension);
                         }
                         Image::make($request->file('profile_pic'))->resize(240, 260)->save($path . '/' . $ansarId . '.' . $profileextension);
-                        $personalinfo->profile_pic = '/data/photo/' . $ansarId . '.' . $profileextension;
-                    } else $personalinfo->profile_pic = '/data/photo/' . $ansarId . '.jpg';
+                        $personalinfo->profile_pic = 'data/photo/' . $ansarId . '.' . $profileextension;
+                    } else $personalinfo->profile_pic = 'data/photo/' . $ansarId . '.jpg';
 ////                Sign picture
                     if ($request->file('sign_pic')) {
 
                         $signextension = $request->file('sign_pic')->getClientOriginalExtension();
-                        $path = storage_path('/data/signature');
+                        $path = storage_path('data/signature');
                         //Log::info(File::exists($path. '/' . $ansarid . '.' . $signextension)?"true":"false");
                         if (!File::exists($path)) File::makeDirectory($path, 0777, true);
                         if (File::exists($path . '/' . $ansarId . '.' . $signextension)) {
                             File::delete($path . '/' . $ansarId . '.' . $signextension);
                         }
                         Image::make($request->file('sign_pic'))->resize(220, 90)->save($path . '/' . $ansarId . '.' . $signextension);
-                        $personalinfo->sign_pic = '/data/signature/' . $ansarId . '.' . $signextension;
-                    } else $personalinfo->sign_pic = '/data/signature/' . $ansarId . '.jpg';
+                        $personalinfo->sign_pic = 'data/signature/' . $ansarId . '.' . $signextension;
+                    } else $personalinfo->sign_pic = 'data/signature/' . $ansarId . '.jpg';
 ////                Thumb image
                     if ($request->file('thumb_pic')) {
                         $thumbextension = $request->file('thumb_pic')->getClientOriginalExtension();
-                        $path = storage_path('/data/fingerprint');
+                        $path = storage_path('data/fingerprint');
                         if (!File::exists($path)) File::makeDirectory($path, 0777, true);
                         if (File::exists($path . '/' . $ansarId . '.' . $thumbextension)) {
                             File::delete($path . '/' . $ansarId . '.' . $thumbextension);
                         }
                         Image::make($request->file('thumb_pic'))->resize(220, 90)->save($path . '/' . $ansarId . '.' . $thumbextension);
-                        $personalinfo->thumb_pic = '/data/fingerprint/' . $ansarId . '.' . $thumbextension;
-                    } else $personalinfo->thumb_pic = '/data/fingerprint/' . $ansarId . '.jpg';
+                        $personalinfo->thumb_pic = 'data/fingerprint/' . $ansarId . '.' . $thumbextension;
+                    } else $personalinfo->thumb_pic = 'data/fingerprint/' . $ansarId . '.jpg';
 
                     $successpersonal = $personalinfo->save();
                     if ($successpersonal) {
@@ -836,6 +839,9 @@ class FormSubmitHandler extends Controller
                 }
             }
 
+        }
+        else {
+            abort(401);
         }
     }
 

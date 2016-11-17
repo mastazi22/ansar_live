@@ -247,7 +247,7 @@
             }
 
         });
-        GlobalApp.directive('formSubmit', function ($sce) {
+        GlobalApp.directive('formSubmit', function ($sce,notificationService) {
             return {
                 restrict: 'A',
                 link: function (scope, element, attribute) {
