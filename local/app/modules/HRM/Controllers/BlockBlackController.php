@@ -34,11 +34,11 @@ class BlockBlackController extends Controller
     public function loadAnsarDetailforBlock(Request $request)
     {
         $rule = [
-            'ansar_id' => 'required|regex:/^[0-9]+$/'
+            'ansar_id' => 'required|regex:/^[0-9]+$/|exists:hrm.tbl_ansar_parsonal_info,ansar_id'
         ];
         $vaild = Validator::make($request->all(), $rule);
         if ($vaild->fails()) {
-
+            return Response::json([]);
         }
         $ansar_id = Input::get('ansar_id');
 
@@ -232,6 +232,7 @@ class BlockBlackController extends Controller
             AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['block_list_status' => 1]);
             DB::commit();
         } catch (\Exception $e) {
+            DB::rollBack();
             if ($request->ajax()) {
                 return Response::json(['status' => false, 'message' => $e->getMessage()]);
             }
@@ -701,9 +702,8 @@ class BlockBlackController extends Controller
                         'comment_for_unblock' => $black_comment
                     ]);
                     if (!isset($ansar_status->getStatus()[1])) {
-                        if ($blocklist_entry->block_list_from == "Not Verified") {
-                            AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 1, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 0]);
-                        }
+                        AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 1, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 0]);
+
                     } else {
 
                         switch ($ansar_status->getStatus()[1]) {
