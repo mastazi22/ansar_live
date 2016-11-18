@@ -79,10 +79,8 @@ class GlobalParameter
     }
 
     public function generateSmartCard($uid,$aid){
-        $ul = strlen($uid.'');
-        $al = strlen($aid.'');
-        $unit_code = str_pad($uid.'',3-$ul,'0',STR_PAD_LEFT);
-        $ansar_id = str_pad($aid.'',6-$al,'0',STR_PAD_LEFT);
+        $unit_code = str_pad($uid.'',3,'0',STR_PAD_LEFT);
+        $ansar_id = str_pad($aid.'',6,'0',STR_PAD_LEFT);
         return $unit_code.$ansar_id;
     }
 

@@ -6,15 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class AnsarStatusInfo extends Model
 {
-    const FREE_STATUS = 'free';
-    const PANEL_STATUS = 'panel';
-    const OFFER_STATUS = 'offer';
-    const EMBODIMENT_STATUS = 'embodied';
+    const FREE_STATUS = 'Free';
+    const PANEL_STATUS = 'Panel';
+    const OFFER_STATUS = 'Offer';
+    const EMBODIMENT_STATUS = 'Embodied';
     const REST_STATUS = 'rest';
     const FREEZE_STATUS = 'freeze';
-    const BLOCK_STATUS = 'block';
-    const BLACK_STATUS = 'black';
-    const NOT_VERIFIED_STATUS = 'unverified';
+    const BLOCK_STATUS = 'Block';
+    const BLACK_STATUS = 'Black';
+    const NOT_VERIFIED_STATUS = 'Not Verified';
     const RETIREMENT_STATUS = 'disembodied';
     const EARLY_RETIREMENT_STATUS = 'early_retierment_status';
     protected $connection = 'hrm';
@@ -37,42 +37,19 @@ class AnsarStatusInfo extends Model
     }
     function getStatus(){
         $status = [];
-        switch(1){
-            case $this->block_list_status:
-                array_push($status,self::BLOCK_STATUS);
-                break;
-            case $this->black_list_status:
-                array_push($status,self::BLACK_STATUS);
-                break;
-            case $this->free_status:
-                array_push($status,self::FREE_STATUS);
-                break;
-            case $this->pannel_status:
-                array_push($status,self::PANEL_STATUS);
-                break;
-            case $this->embodied_status:
-                array_push($status,self::EMBODIMENT_STATUS);
-                break;
-            case $this->offer_sms_status:
-                array_push($status,self::OFFER_STATUS);
-                break;
-            case $this->freezing_status:
-                array_push($status,self::FREEZE_STATUS);
-                break;
-            case $this->rest_status:
-                array_push($status,self::REST_STATUS);
-                break;
-            case $this->retierment_status:
-                array_push($status,self::RETIREMENT_STATUS);
-                break;
-            case $this->early_retierment_status:
-                array_push($status,self::EARLY_RETIREMENT_STATUS);
-                break;
-            default:
-                array_push($status,self::NOT_VERIFIED_STATUS);
-                break;
+            if($this->block_list_status) array_push($status,self::BLOCK_STATUS);
+            if($this->black_list_status) array_push($status,self::BLACK_STATUS);
+            if($this->free_status) array_push($status,self::FREE_STATUS);
+            if($this->pannel_status) array_push($status,self::PANEL_STATUS);
+            if($this->embodied_status) array_push($status,self::EMBODIMENT_STATUS);
+            if($this->offer_sms_status) array_push($status,self::OFFER_STATUS);
+            if($this->freezing_status) array_push($status,self::FREEZE_STATUS);
+            if($this->rest_status) array_push($status,self::REST_STATUS);
+            if($this->retierment_status) array_push($status,self::RETIREMENT_STATUS);
+            if($this->early_retierment_status) array_push($status,self::EARLY_RETIREMENT_STATUS);
+            if(!$this->block_list_status&&!$this->black_list_status&&!$this->free_status&&!$this->pannel_status&&!$this->embodied_status&&!$this->offer_sms_status&&!$this->freezing_status&&!$this->rest_status&&!$this->retierment_status&&!$this->early_retierment_status) array_push($status,self::NOT_VERIFIED_STATUS);
 
-        }
+
         return $status;
     }
     public function getAnsarForDirectEmbodiment(){

@@ -982,7 +982,7 @@ class CustomQuery
         return Response::json(['total' => $total]);
     }
 
-    public static function getBlocklistedAnsar($offset, $limit, $division, $unit, $thana)
+    public static function getBlocklistedAnsar($offset, $limit, $division, $unit, $thana,$q)
     {
         $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
             ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
@@ -1000,13 +1000,16 @@ class CustomQuery
         if ($thana && $thana != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.thana_id', '=', $thana);
         }
+        if ($q) {
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', $q);
+        }
         $total = clone $ansarQuery;
         $ansars = $ansarQuery->select('tbl_blocklist_info.*', 'tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_ansar_parsonal_info.sex',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();
         return Response::json(['total' => $total->count(), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
     }
 
-    public static function getBlacklistedAnsar($offset, $limit, $division, $unit, $thana)
+    public static function getBlacklistedAnsar($offset, $limit, $division, $unit, $thana,$q)
     {
         $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
             ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
@@ -1023,6 +1026,9 @@ class CustomQuery
         }
         if ($thana && $thana != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.thana_id', '=', $thana);
+        }
+        if ($q) {
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id',$q);
         }
         $total = clone $ansarQuery;
         $ansars = $ansarQuery->distinct()->select('tbl_blacklist_info.*', 'tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_ansar_parsonal_info.sex',

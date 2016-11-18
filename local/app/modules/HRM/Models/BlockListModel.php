@@ -8,4 +8,5 @@ class BlockListModel extends Model
 {
     protected $connection = 'hrm';
     protected $table="tbl_blocklist_info";
+    protected $guarded = [];
 }

@@ -38,7 +38,7 @@
         </div>
     </div>
     <div class="card-body">
-        <img src="data:image/png;base64,{{DNS2D::getBarcodePNG($ad->division_code.$ad->unit_code.$ad->ansar_id,'QRCODE')}}"
+        <img src="data:image/png;base64,{{DNS2D::getBarcodePNG(GlobalParameter::generateSmartCard($ad->unit_code,$ad->ansar_id),'QRCODE')}}"
              style="width: 50px;height: 50px;position: absolute;z-index: 3000;left: 58%;top: 44%">
 
         <div class="card-body-left">
@@ -73,7 +73,7 @@
             <div>{{$rd['bs']}}</div>
         </div>
         <div class="card-footer-barcode">
-            <img src="data:image/png;base64,{{DNS1D::getBarcodePNG($ad->division_code.$ad->unit_code.$ad->ansar_id,'C128')}}"
+            <img src="data:image/png;base64,{{DNS1D::getBarcodePNG(GlobalParameter::generateSmartCard($ad->unit_code,$ad->ansar_id),'C128')}}"
                  style="max-width: 100%">
         </div>
         <div class="card-footer-sing">

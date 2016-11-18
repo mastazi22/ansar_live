@@ -12,6 +12,7 @@
         GlobalApp.controller('BlackListReportController', function ($scope, $http,$sce) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}');
             $scope.total = 0;
+            $scope.queue = [];
             $scope.reportType = 'eng'
             $scope.numOfPage = 0;
             $scope.selectedDistrict = "all";
@@ -51,16 +52,18 @@
                         limit: page==undefined?$scope.itemPerPage:page.limit,
                         unit:$scope.param.unit,
                         thana:$scope.param.thana,
-                        division:$scope.param.range
+                        division:$scope.param.range,
+                        q:$scope.q,
                     }
                 }).then(function (response) {
+
+                     $scope.queue.shift();
+                    if($scope.queue.length>1) $scope.loadPage();
                     $scope.ansars = response.data;
-                    // $scope.queue.shift();
                     $scope.allLoading = false;
                     $scope.loadingPage[$scope.currentPage] = false;
                     $scope.total = response.data.total;
                     $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
-                    //if($scope.queue.length>1) $scope.loadPage();
                     $scope.loadPagination();
                 })
             }
@@ -164,6 +167,11 @@
                             </a></h3>
                         <div class="table-responsive">
                             <table class="table table-bordered">
+                                <caption>
+                                    <div class="col-sm-4 col-sm-offset-8">
+                                        <database-search q="q" queue="queue" on-change="loadPage()"></database-search>
+                                    </div>
+                                </caption>
                                 <tr>
                                     <th>[[report.ansar.sl_no]]</th>
                                     <th>[[report.ansar.id]]</th>

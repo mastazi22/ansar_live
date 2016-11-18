@@ -227,7 +227,7 @@ class ReportController extends Controller
         return view('HRM::Report.blocklist_view');
     }
 
-    public function blockListedAnsarInfoDetails()
+    public function blockListedAnsarInfoDetails(Request $request)
     {
         $limit = Input::get('limit');
         $offset = Input::get('offset');
@@ -249,7 +249,7 @@ class ReportController extends Controller
             //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         }
-        return CustomQuery::getBlocklistedAnsar($offset, $limit,$division, $unit, $thana);
+        return CustomQuery::getBlocklistedAnsar($offset, $limit,$division, $unit, $thana,$request->q);
     }
 
     public function blackListView()
@@ -257,7 +257,7 @@ class ReportController extends Controller
         return view('HRM::Report.blacklist_view');
     }
 
-    public function blackListedAnsarInfoDetails()
+    public function blackListedAnsarInfoDetails(Request $request)
     {
         $limit = Input::get('limit');
         $offset = Input::get('offset');
@@ -277,7 +277,7 @@ class ReportController extends Controller
             //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         }
-        return CustomQuery::getBlacklistedAnsar($offset, $limit,$division, $unit, $thana);
+        return CustomQuery::getBlacklistedAnsar($offset, $limit,$division, $unit, $thana,$request->q);
     }
 
     public function getAnserTransferHistory()
