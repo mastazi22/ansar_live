@@ -58,7 +58,7 @@
             <select id="rank" class="form-control" ng-model="selected.rank" ng-disabled="loading.range||loading.unit||loading.thana||loading.kpi">
                 <option value="all" ng-if="type=='all'">All</option>
                 <option value="" ng-if="type=='single'||type==undefined">--Select Gender--</option>
-                <option ng-repeat="t in ranks" value="[[t.id]]">[[t.name_eng]]</option>
+                <option ng-repeat="t in ranks" value="[[t.id]]">[[t.code=='ANSAR'?'Ansar':t.code]]</option>
             </select>
             <p class="text-danger" ng-if="errorKey.rank!=undefined||errorMessage[errorKey.rank]">[[errorMessage[errorKey.rank] ]]</p>
         </div>

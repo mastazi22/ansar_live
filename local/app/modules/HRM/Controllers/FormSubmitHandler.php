@@ -953,12 +953,19 @@ class FormSubmitHandler extends Controller
             ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.father_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_division.division_name_eng', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng');
 
         foreach ($request->except('page') as $key => $value) {
-            $value = json_decode($value);
+            $value = (object)($value);
 //            return $value;
-            if ($key == 'education') {
+            if($key=='smart_card_no'){
+                if($value->value){
+                    $id = substr($value->value,strlen($value->value)-6);
+                    $ansarAdvancedSearch->where('ansar_id',intval($id));
+                }
+            }
+            else if ($key == 'education') {
                 if($value->value) $ansarAdvancedSearch->join('tbl_ansar_education_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_ansar_education_info.ansar_id')
                     ->where('tbl_ansar_education_info.education_id', $value->compare, $value->value);
-            } else if ($key == 'disease_id') {
+            }
+            else if ($key == 'disease_id') {
                 if($value->value && strcasecmp($value->value,'type'))$ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->value);
             }
             else if($key=='ansar_name'){

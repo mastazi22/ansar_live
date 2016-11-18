@@ -13,7 +13,7 @@
         GlobalApp.controller('advancedEntrySearch', function ($scope, $http, httpService) {
             $scope.searchOption = {
                 division_id: {compare: '=', value: ''},
-                ansar_id: {compare: '=', value: ''},
+                smart_card_no: {compare: '=', value: ''},
                 unit_id: {compare: '=', value: ''},
                 thana_id: {compare: '=', value: ''},
                 ansar_name: {compare: 'LIKE', value: ''},
@@ -49,8 +49,8 @@
                 $scope.allLoading = true;
                 $http({
                     url: "{{URL::to('HRM/advancedentrysearchsubmit')}}",
-                    method: 'get',
-                    params: $scope.searchOption
+                    method: 'post',
+                    data: angular.toJson($scope.searchOption)
                 }).then(function (response) {
                     console.log(response.data)
                     $scope.allLoading = false;
@@ -75,8 +75,8 @@
                 $event.preventDefault();
                 $http({
                     url: p.url,
-                    method: 'get',
-                    params: $scope.searchOption
+                    method: 'post',
+                    data: angular.toJson($scope.searchOption)
                 }).then(function (response) {
                     $scope.AllLoading = false;
                     $scope.loading = false;
@@ -100,6 +100,7 @@
             $scope.resetForm = function () {
 
                 $scope.searchOption = {
+                    smart_card_no: {compare: '=', value: ''},
                     division_id: {compare: '=', value: ''},
                     unit_id: {compare: '=', value: ''},
                     thana_id: {compare: '=', value: ''},
@@ -220,6 +221,16 @@
                                     <th style="width:40%;">Search Value</th>
                                 </tr>
                                 </thead>
+                                <tr>
+                                    <td>Smart Card No.</td>
+                                    <td><select name="division_type" class="ansaradvancedselect"
+                                                ng-model="searchOption.smart_card_no.compare">
+                                            <option value="=">EQUAL</option>
+                                        </select></td>
+                                    <td>
+                                        <input type="text" style="width: 100%;" name="smart_card_no" ng-model="searchOption.smart_card_no.value">
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td>Division</td>
                                     <td>
@@ -459,7 +470,7 @@
                             </tr>
 
                             <tr ng-repeat="ansar in alldata">
-                                <td>[[pages[currentPage].pageNum*itemPerPage+1+$index ]]</td>
+                                <td>[[pages[currentPage]==undefined?$index+1:pages[currentPage].pageNum*itemPerPage+1+$index ]]</td>
                                 <td><a href="{{ URL::to('HRM/entryreport/') }}/[[ansar.ansar_id]]">[[ansar.ansar_id]]</a>
                                 </td>
                                 <td>[[ansar.name_eng]]</td>

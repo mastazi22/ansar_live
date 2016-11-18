@@ -79,7 +79,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 
         //ENTRY SEARCH
         Route::get('entryadvancedsearch', ['as' => 'entry_advanced_search', 'uses' => 'EntryFormController@entryAdvancedSearch']);
-        Route::get('advancedentrysearchsubmit', 'FormSubmitHandler@advancedEntrySearchSubmit');
+        Route::post('advancedentrysearchsubmit', 'FormSubmitHandler@advancedEntrySearchSubmit');
         //END ENTRY SEARCH
 
         //ORGINAL INFO
