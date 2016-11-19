@@ -79,7 +79,8 @@ class LetterController extends Controller
         $user = DB::table('tbl_user')
             ->join('tbl_user_details', 'tbl_user_details.user_id', '=', 'tbl_user.id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_user.district_id')
-            ->where('tbl_user.district_id', $unit)->select('tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.mobile_no', 'tbl_user_details.email', 'tbl_units.unit_name_bng as unit')->first();
+            ->join('tbl_division', 'tbl_units.division_id', '=', 'tbl_division.id')
+            ->where('tbl_user.district_id', $unit)->select('tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.mobile_no', 'tbl_user_details.email', 'tbl_units.unit_name_bng as unit','tbl_division.division_name_eng as division')->first();
         $result = DB::table('tbl_transfer_ansar')
             ->join('tbl_kpi_info as pk', 'tbl_transfer_ansar.present_kpi_id', '=', 'pk.id')
             ->join('tbl_kpi_info as tk', 'tbl_transfer_ansar.transfered_kpi_id', '=', 'tk.id')
@@ -102,7 +103,8 @@ class LetterController extends Controller
         $user = DB::table('tbl_user')
             ->join('tbl_user_details', 'tbl_user_details.user_id', '=', 'tbl_user.id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_user.district_id')
-            ->where('tbl_user.district_id', $unit)->select('tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.mobile_no', 'tbl_user_details.email', 'tbl_units.unit_name_bng as unit')->first();
+            ->join('tbl_division', 'tbl_units.division_id', '=', 'tbl_division.id')
+            ->where('tbl_user.district_id', $unit)->select('tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.mobile_no', 'tbl_user_details.email', 'tbl_units.unit_name_bng as unit','tbl_division.division_name_eng as division')->first();
         $result = DB::table('tbl_embodiment')
             ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
             ->join('tbl_ansar_parsonal_info', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
@@ -128,7 +130,8 @@ class LetterController extends Controller
         $user = DB::table('tbl_user')
             ->join('tbl_user_details', 'tbl_user_details.user_id', '=', 'tbl_user.id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_user.district_id')
-            ->where('tbl_user.district_id', $unit)->select('tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.mobile_no', 'tbl_user_details.email', 'tbl_units.unit_name_bng as unit')->first();
+            ->join('tbl_division', 'tbl_units.division_id', '=', 'tbl_division.id')
+            ->where('tbl_user.district_id', $unit)->select('tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.mobile_no', 'tbl_user_details.email', 'tbl_units.unit_name_bng as unit','tbl_division.division_name_eng as division')->first();
         $result = DB::table('tbl_embodiment_log')
             ->join('tbl_rest_info', 'tbl_rest_info.ansar_id', '=', 'tbl_embodiment_log.ansar_id')
             ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment_log.kpi_id')

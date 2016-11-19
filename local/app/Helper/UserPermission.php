@@ -53,7 +53,9 @@ class UserPermission
     public function isMenuExists($value)
     {
         if (is_null($this->currentUserPermission)) {
+            if(Auth::user()->type==11||Auth::user()->type==33)
             return true;
+            else return false;
         }
         $p = json_decode($this->currentUserPermission);
         if (is_array($value)) {

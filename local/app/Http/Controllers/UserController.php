@@ -278,7 +278,7 @@ class UserController extends Controller
         $user = User::find($id);
         $all = Input::get('permit_all');
         if (is_null($all)) {
-            $permission = json_encode(Input::get('permission'));
+            $permission = count(Input::get('permission'))==0?null:json_encode(Input::get('permission'));
             $user->userPermission->permission_type = 0;
             $user->userPermission->permission_list = $permission;
             $user->userPermission->save();

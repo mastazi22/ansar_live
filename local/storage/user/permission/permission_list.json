@@ -14,7 +14,8 @@
       {"value":"ansar_reached_fifty_years","name":" Ansar List Reached Fifty Years List"},
       {"value":"ansar_reached_fifty_details","name":"Ansar List Reached Fifty Years Details"},
       {"value":"show_recent_ansar_list","name":"View Recent Ansar List"},
-      {"value":"dashboard_total_ansar","name":"Show Total Ansar Count"}
+      {"value":"dashboard_total_ansar","name":"Show Total Ansar Count"},
+      {"value":"progress_info","name":"Progress Info"}
 
     ]
   },

@@ -551,10 +551,10 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
 GlobalApp.directive('tableSearch',function () {
     return{
         restrict:'ACE',
-        template:'<div class="row">' +
-            '<div class="col-sm-8">' +
+        template:'<div class="row" style="margin: 0">' +
+            '<div class="col-sm-8" style="padding-left: 0">' +
         '<h5 class="text text-bold" style="color:black;font-size:1.1em">Total : [[results==undefined?0:results.length]]</h5>' +
-        '</div> <div class="col-sm-4">' +
+        '</div> <div class="col-sm-4" style="padding-right: 0">' +
         '<input type="text" class="form-control" ng-model="q" placeholder="[[placeHolder?placeHolder:\'Search Ansar in this table\']]">' +
         '</div>'+
         '</div>',
