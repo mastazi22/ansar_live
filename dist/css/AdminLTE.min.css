@@ -4710,3 +4710,9 @@ ul.module-menu > li > a:hover {
     border: none;
     margin-right: 5px;
 }
+.page-button{
+    cursor: pointer;
+}
+.page-button[disabled="disabled"]{
+    cursor: no-drop;
+}
