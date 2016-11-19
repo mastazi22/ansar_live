@@ -77,20 +77,20 @@
                     </span>
                 </div>
                <div class="box-body">
-                   <div class="row">
-                       <div class="col-sm-3 col-xs-6">
-                           <div class="form-group">
-                               <input type="radio" ng-model="printType" value="smartCardNo">
-                               <span class="text text-bold" style="vertical-align: top">Print by Smart card no.</span>
-                           </div>
-                       </div>
-                       <div class="col-sm-3 col-xs-6">
-                           <div class="form-group">
-                               <input type="radio" ng-model="printType" value="memorandumNo">
-                               <span class="text text-bold" style="vertical-align: top">Print by Memorandum no.</span>
-                           </div>
-                       </div>
-                   </div>
+                   {{--<div class="row">--}}
+                       {{--<div class="col-sm-3 col-xs-6">--}}
+                           {{--<div class="form-group">--}}
+                               {{--<input type="radio" ng-model="printType" value="smartCardNo">--}}
+                               {{--<span class="text text-bold" style="vertical-align: top">Print by Smart card no.</span>--}}
+                           {{--</div>--}}
+                       {{--</div>--}}
+                       {{--<div class="col-sm-3 col-xs-6">--}}
+                           {{--<div class="form-group">--}}
+                               {{--<input type="radio" ng-model="printType" value="memorandumNo">--}}
+                               {{--<span class="text text-bold" style="vertical-align: top">Print by Memorandum no.</span>--}}
+                           {{--</div>--}}
+                       {{--</div>--}}
+                   {{--</div>--}}
                    {{--<div class="row">--}}
                        {{--<div class="col-md-4 col-sm-12 col-xs-12">--}}
                            {{--<div class="form-group">--}}
