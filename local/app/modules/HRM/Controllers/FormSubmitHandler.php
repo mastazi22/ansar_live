@@ -957,7 +957,8 @@ class FormSubmitHandler extends Controller
 //            return $value;
             if($key=='smart_card_no'){
                 if($value->value){
-                    $id = substr($value->value,strlen($value->value)-6);
+                    $l = strlen($value->value)-6;
+                    $id = substr($value->value,$l<0?0:$l);
                     $ansarAdvancedSearch->where('ansar_id',intval($id));
                 }
             }
