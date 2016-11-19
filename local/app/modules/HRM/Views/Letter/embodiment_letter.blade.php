@@ -15,6 +15,7 @@
         })
         GlobalApp.controller('EmbodimentLetterController', function ($scope,$http,$sce) {
             $scope.letterPrintView = $sce.trustAsHtml("&nbsp;")
+            $scope.printType = "memorandumNo"
             $scope.unit = {
                 selectedUnit: []
             };
@@ -76,6 +77,20 @@
                     </span>
                 </div>
                <div class="box-body">
+                   <div class="row">
+                       <div class="col-sm-3 col-xs-6">
+                           <div class="form-group">
+                               <input type="radio" ng-model="printType" value="smartCardNo">
+                               <span class="text text-bold" style="vertical-align: top">Print by Smart card no.</span>
+                           </div>
+                       </div>
+                       <div class="col-sm-3 col-xs-6">
+                           <div class="form-group">
+                               <input type="radio" ng-model="printType" value="memorandumNo">
+                               <span class="text text-bold" style="vertical-align: top">Print by Memorandum no.</span>
+                           </div>
+                       </div>
+                   </div>
                    {{--<div class="row">--}}
                        {{--<div class="col-md-4 col-sm-12 col-xs-12">--}}
                            {{--<div class="form-group">--}}
@@ -98,45 +113,67 @@
                            {{--</button>--}}
                        {{--</div>--}}
                    {{--</div>--}}
-                   <div class="table-responsive">
-                       <table class="table table-bordered table-striped">
-                           <caption>
-                               <table-search q="q" results="results" place-holder="Search Memorandum no."></table-search>
-                           </caption>
-                           <tr>
-                               <th>#</th>
-                               <th>Memorandum no.</th>
-                               <th>Memorandum Date</th>
-                               <th>Unit</th>
-                               <th>Action</th>
-                           </tr>
-                           <tr ng-repeat="d in datas|filter: q as results">
-                               <td>[[$index+1]]</td>
-                               <td>[[d.memorandum_id]]</td>
-                               <td>[[d.mem_date?(d.mem_date):'n/a']]</td>
-                               <td>
-                                   <select ng-if="!isDc" class="form-control" ng-model="unit.selectedUnit[$index]"
-                                           ng-disabled="units.length==0">
-                                       <option value="">--@lang('title.unit')--</option>
-                                       <option ng-repeat="u in units" value="[[u.id]]">[[u.unit_name_bng]]</option>
-                                   </select>
+                   <div ng-if="printType=='smartCardNo'">
+                       <div class="row">
+                           <div class="col-sm-3">
+                               <div class="form-group">
+                                   <label for="">Smart Card no.</label>
+                                   <input type="text" ng-model="smartCardNo" placeholder="Enter Smart Card no." class="form-control">
+                               </div>
+                               <div class="form-group">
+                                   <filter-template
+                                           show-item="['unit']"
+                                           type="single"
+                                           data="param"
+                                           start-load="unit"
+                                           layout-vertical="1"
+                                   >
+                                   </filter-template>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+                   <div ng-if="printType=='memorandumNo'">
+                       <div class="table-responsive">
+                           <table class="table table-bordered table-striped">
+                               <caption>
+                                   <table-search q="q" results="results" place-holder="Search Memorandum no."></table-search>
+                               </caption>
+                               <tr>
+                                   <th>#</th>
+                                   <th>Memorandum no.</th>
+                                   <th>Memorandum Date</th>
+                                   <th>Unit</th>
+                                   <th>Action</th>
+                               </tr>
+                               <tr ng-repeat="d in datas|filter: q as results">
+                                   <td>[[$index+1]]</td>
+                                   <td>[[d.memorandum_id]]</td>
+                                   <td>[[d.mem_date?(d.mem_date):'n/a']]</td>
+                                   <td>
+                                       <select ng-if="!isDc" class="form-control" ng-model="unit.selectedUnit[$index]"
+                                               ng-disabled="units.length==0">
+                                           <option value="">--@lang('title.unit')--</option>
+                                           <option ng-repeat="u in units" value="[[u.id]]">[[u.unit_name_bng]]</option>
+                                       </select>
 
-                                   <div ng-if="isDc">
-                                       {{auth()->user()->district?auth()->user()->district->unit_name_eng:''}}
-                                   </div>
-                               </td>
-                               <td>
-                                   <button class="btn btn-primary" ng-click="generateLetter($index)"
-                                           ng-disabled="isGenerating">
-                                       <i ng-show="isGenerating " class="fa fa-spinner fa-spin"></i><span
-                                               ng-class="{'blink-animation':isGenerating}">Generate Embodied Letter</span>
-                                   </button>
-                               </td>
-                           </tr>
-                           <tr ng-if="datas==undefined||datas.length<=0||results.length<=0">
-                               <td class="warning" colspan="5">No Memorandum no. available</td>
-                           </tr>
-                       </table>
+                                       <div ng-if="isDc">
+                                           {{auth()->user()->district?auth()->user()->district->unit_name_eng:''}}
+                                       </div>
+                                   </td>
+                                   <td>
+                                       <button class="btn btn-primary" ng-click="generateLetter($index)"
+                                               ng-disabled="isGenerating">
+                                           <i ng-show="isGenerating " class="fa fa-spinner fa-spin"></i><span
+                                                   ng-class="{'blink-animation':isGenerating}">Generate Embodied Letter</span>
+                                       </button>
+                                   </td>
+                               </tr>
+                               <tr ng-if="datas==undefined||datas.length<=0||results.length<=0">
+                                   <td class="warning" colspan="5">No Memorandum no. available</td>
+                               </tr>
+                           </table>
+                       </div>
                    </div>
                    <div ng-bind-html="letterPrintView"></div>
                </div>

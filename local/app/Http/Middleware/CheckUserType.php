@@ -38,6 +38,7 @@ class CheckUserType
         'load_ansar'=>['range'=>'range','unit'=>'unit'],
         'load_ansar_for_embodiment_date_correction'=>['range'=>'range','unit'=>'unit'],
         'inactive_kpi_list'=>['division'=>'range','unit'=>'unit'],
+        'print_letter'=>['unit'=>'unit'],
         'new-embodiment-entry'=>['division_name_eng'=>'unit'],
     ];
     public function handle($request, Closure $next)
@@ -53,6 +54,15 @@ class CheckUserType
                     if($type=='unit'){
                         if($user->type==22){
                             $input[$key] = $user->district->id;
+                        }
+                        else if($user->type==66){
+                            $units = District::where('division_id',$user->division_id)->pluck('id');
+                            if(!in_array($input[$key],$units)){
+                                if($request->ajax()){
+                                    return response("Unauthorized",401);
+                                }
+                                else abort(401);
+                            }
                         }
                     }
                     else if($type=='range'){
