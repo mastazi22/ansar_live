@@ -529,9 +529,6 @@ class CustomQuery
         if ($unit != 'all') {
             $ansarQuery->where('ou.id', $unit);
         }
-        if ($thana != 'all') {
-            $ansarQuery->where('ot.id', $thana);
-        }
         if ($time == self::RECENT) {
             $recentTime = Carbon::now();
             $backTime = Carbon::now()->subDays(7);

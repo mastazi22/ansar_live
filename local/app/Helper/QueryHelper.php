@@ -61,7 +61,6 @@ class QueryHelper
                     ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
                     ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
                     ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    ->join('tbl_thana as ot', 'ou.id', '=', 'ot.unit_id')
                     //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
                     ->where('tbl_ansar_status_info.offer_sms_status', 1)
                     ->where('tbl_ansar_status_info.block_list_status', 0);
