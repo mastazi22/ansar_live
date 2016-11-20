@@ -393,9 +393,9 @@
                 return value !== false;
 
             }
-            $scope.modal = function (index) {
+            $scope.modal = function (data) {
                 $scope.printLetter = false;
-                $scope.getSingleRow = $scope.allFreezeAnsar[index];
+                $scope.getSingleRow = data;
             }
         })
         $(document).ready(function (e) {
@@ -424,10 +424,6 @@
                     display: "block"
                 })
                 //alert(cl+"  "+pl)
-            })
-            $("body").on('click', '#reEmbodied', function (e) {
-//                $scope.printLetter = false;
-                $("#re-embodied-model").modal()
             })
             $("body").on('click', '.test-dropdown-below', function (e) {
                 e.stopPropagation();
@@ -545,7 +541,7 @@
                                                     </li>
                                                     <li>
                                                         <button class="btn btn-primary" id="reEmbodied"
-                                                                ng-click="modal($index)">Re-Embodied
+                                                                modal-show data="freezeAnsar" callback="modal(data)" target="#re-embodied-model">Re-Embodied
                                                         </button>
                                                     </li>
                                                 </ul>
@@ -553,13 +549,12 @@
 
                                             </div>
                                             <button class="btn btn-danger btn-xs verification" title="Disembodied"
-                                                    data-toggle="modal" data-target="#myModal"
-                                                    ng-click="modal($index)">
+                                                    modal-show data="freezeAnsar" callback="modal(data)" target="#myModal">
                                                 <span class="fa fa-retweet"></span>
                                                 <!--<i class="fa fa-spinner fa-pulse"></i>-->
                                             </button>
                                             <a class="btn btn-danger btn-xs verification" title="Add to Blacklist"
-                                               data-toggle="modal" data-target="#black-modal" ng-click="modal($index)">
+                                               modal-show data="freezeAnsar" callback="modal(data)" target="#black-modal" >
                                                 <span class="fa fa-remove"></span>
                                                 <!--<i class="fa fa-spinner fa-pulse"></i>-->
                                             </a>

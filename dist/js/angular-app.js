@@ -162,6 +162,27 @@ GlobalApp.directive('modal', function () {
         }
     }
 })
+GlobalApp.directive('modalShow', function ($timeout) {
+    return {
+        restrict: 'A',
+        scope: {
+            data: '=',
+            callback: '&',
+            target:'@'
+        },
+        link: function (scope, element, attrs) {
+            //alert(scope.event)
+            $(element).on('click', function () {
+                scope.callback({data:scope.data});
+                $timeout(function () {
+                    scope.$apply();
+                    $(scope.target).modal('show')
+                })
+            })
+
+        }
+    }
+})
 GlobalApp.factory('httpService', function ($http) {
 
     return {
