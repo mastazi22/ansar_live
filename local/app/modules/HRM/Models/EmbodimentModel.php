@@ -22,7 +22,7 @@ class EmbodimentModel extends Model
         return $this->hasOne(PersonalInfo::class, 'ansar_id', 'ansar_id');
     }
 
-    function saveLog($move_to = '', $date = null, $comment = '')
+    function saveLog($move_to = '', $date = null, $comment = '',$reason=0)
     {
         $this->log()->save(new EmbodimentLogModel([
             'old_embodiment_id' => $this->id,
@@ -35,6 +35,7 @@ class EmbodimentModel extends Model
             'release_date' => !$date ? Carbon::now() : $date,
             'move_to' => $move_to,
             'comment' => $comment,
+            'disembodiment_reason_id' => $reason,
             'action_user_id' => Auth::user()->id,
         ]));
     }

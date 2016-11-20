@@ -599,7 +599,7 @@
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title">Ansar
-                                Id:[[getSingleRow.ansar_id]],Name:[[getSingleRow.ansar_name_bng]]</h4>
+                                ID:[[getSingleRow.ansar_id]],Name:[[getSingleRow.ansar_name_bng]]</h4>
                         </div>
 
                         <div class="modal-body row">
@@ -671,7 +671,7 @@
                             <button type="button" class="close" data-dismiss="modal"
                                     onclick="event.preventDefault()">&times;</button>
                             <h4 class="modal-title">Ansar
-                                Id:[[getSingleRow.ansar_id]],Name:[[getSingleRow.ansar_name_bng]]</h4>
+                                ID:[[getSingleRow.ansar_id]],Name:[[getSingleRow.ansar_name_bng]]</h4>
                         </div>
                         <div class="modal-body row">
 

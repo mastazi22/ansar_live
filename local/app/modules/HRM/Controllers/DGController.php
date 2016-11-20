@@ -193,51 +193,37 @@ class DGController extends Controller
      */
     function directDisEmbodimentSubmit(Request $request)
     {
-        //return $request->all();
+        $rules = [
+            'ansar_id'=>'required|regex:/^[0-9]+$/|exists:tbl_embodiment,ansar_id',
+            'mem_id'=>'required',
+            'dis_date'=>'required',
+            'reason'=>'required',
+        ];
+        $valid = Validator::make($request->all(),$rules);
+        if($valid->fails()){
+            return $valid->messages()->toJson();
+        }
         DB::beginTransaction();
         try {
-            $rest_entry = new RestInfoModel();
-            $rest_entry->ansar_id = $request->input('ansar_id');
             $embodiment_infos = EmbodimentModel::where('ansar_id', $request->input('ansar_id'))->first();
-
-            $rest_entry->old_embodiment_id = $embodiment_infos->id;
-
-            $rest_entry->memorandum_id = $request->input('mem_id');;
-
-            $rest_entry->rest_date = Carbon::parse($request->input('dis_date'))->format("Y-m-d");
-            $rest_entry->active_date = Carbon::parse($request->input('dis_date'))->addDay(182);
-
             $joining_date = Carbon::parse($embodiment_infos->joining_date);
-            $disembodiment_date = Carbon::parse($request->input('dis_date'))->format("Y-m-d");
             $service_days = Carbon::parse($request->input('dis_date'))->diffInDays($joining_date);
-
-
-            $rest_entry->total_service_days = $service_days;
-            $rest_entry->disembodiment_reason_id = $request->input('reason');
-            $rest_entry->rest_form = "Regular";
-            $rest_entry->action_user_id = $user_type = Auth::user()->id;
-            $rest_entry->comment = $request->input('comment');
-            $rest_entry->save();
-
-            $embodiment_log_update = new EmbodimentLogModel();
-            $embodiment_log_update->old_embodiment_id = $embodiment_infos->id;
-            $embodiment_log_update->old_memorandum_id = $embodiment_infos->memorandum_id;
-            $embodiment_log_update->ansar_id = $request->input('ansar_id');
-            $embodiment_log_update->kpi_id = $embodiment_infos->kpi_id;
-            $embodiment_log_update->reporting_date = $embodiment_infos->reporting_date;
-            $embodiment_log_update->joining_date = $embodiment_infos->joining_date;
-            $embodiment_log_update->transfered_date = $embodiment_infos->transfered_date;
-            $embodiment_log_update->release_date = Carbon::parse($request->input('dis_date'))->format("Y-m-d");
-            $embodiment_log_update->disembodiment_reason_id = $request->input('reason');
-            $embodiment_log_update->move_to = "Rest";
-            $embodiment_log_update->action_user_id = $user_type = Auth::user()->id;
-            $embodiment_log_update->save();
-
+            RestInfoModel::create([
+               'ansar_id'=>$request->ansar_id,
+               'old_embodiment_id'=>$embodiment_infos->id,
+               'memorandum_id'=>$request->mem_id,
+               'rest_date'=>Carbon::parse($request->input('dis_date'))->format("Y-m-d"),
+               'active_date'=>GlobalParameterFacades::getActiveDate($request->input('dis_date')),
+               'total_service_days'=>$service_days,
+               'disembodiment_reason_id'=>$request->reason,
+               'rest_form'=>'Regular',
+               'action_user_id'=>Auth::user()->id,
+               'comment'=>$request->input('comment'),
+            ]);
+            $embodiment_infos->saveLog('Rest',Carbon::parse($request->input('dis_date'))->format("Y-m-d"),$request->input('comment'),$request->reason);
             AnsarStatusInfo::where('ansar_id', $request->input('ansar_id'))->update(['embodied_status' => 0, 'rest_status' => 1]);
-
-            EmbodimentModel::where('ansar_id', $request->input('ansar_id'))->delete();
+            $embodiment_infos->delete();
             CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DISEMBODIMENT', 'from_state' => 'EMBODIED', 'to_state' => 'REST', 'action_by' => auth()->user()->id]);
-            CustomQuery::addDGlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DISEMBODIMENT', 'from_state' => 'EMBODIED', 'to_state' => 'REST']);
             DB::commit();
         } catch (\Exception $e) {
             return Response::json(['status' => false, 'message' => $e->getMessage()]);
@@ -1287,7 +1273,7 @@ class DGController extends Controller
     public function cancelPanelEntry(Request $request)
     {
         $rules = [
-            'ansar_id'=>'required|regex:/^[0-9]+$/',
+            'ansar_id'=>'required|regex:/^[0-9]+$/|exists:tbl_panel_info,ansar_id',
             'cancel_panel_date'=>'required',
         ];
         $valid = Validator::make($request->all(),$rules);
