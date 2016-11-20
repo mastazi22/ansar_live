@@ -44,33 +44,37 @@
                 </div>
             </div>
         @endif
+        @if(Session::has('error_message'))
+            <div style="padding: 10px 20px 0 20px;">
+                <div class="alert alert-danger">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <span class="fa fa-remove"></span> {{Session::get('error_message')}}
+                </div>
+            </div>
+        @endif
         <section class="content" style="position: relative;">
             <notify></notify>
             <div class="box box-solid">
-                {!! Form::open(array('route' => 'unblacklist_entry', 'id' => 'unblack_entry')) !!}
+                {!! Form::model(Request::old(),array('route' => 'unblacklist_entry', 'id' => 'unblack_entry')) !!}
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label for="ansar_id" class="control-label">Ansar ID (Comes from Blacklist)</label>
-                                <input type="text" name="ansar_id" id="ansar_id" class="form-control"
-                                       placeholder="Enter Ansar ID" ng-model="ansarId"
-                                       ng-change="loadAnsarDetail(ansarId)">
+                                {!! Form::label('ansar_id','Ansar ID (Comes from Blacklist)') !!}
+                                {!! Form::text('ansar_id',null,['class'=>'form-control','placeholder'=>'Enter Ansar ID','ng-model'=>'ansarId','ng-init'=>'ansarId='.Request::old('ansar_id'),'ng-change'=>'loadAnsarDetail(ansarId)']) !!}
+                                {!! $errors->first('ansar_id','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <div class="form-group">
-                                <label for="unblack_date" class="control-label">Unblacking Date</label>
-                                <input type="text" name="unblack_date" id="unblack_date" class="form-control"
-                                       ng-model="unblack_date">
+                                {!! Form::label('unblack_date','Unblacking Date') !!}
+                                {!! Form::text('unblack_date',null,['class'=>'form-control','placeholder'=>'Unblack Date','id'=>'unblack_date','ng-model'=>'unblack_date']) !!}
+                                {!! $errors->first('unblack_date','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <div class="form-group">
-                                <label for="unblack_comment" class="control-label">Reason</label>
-                                {!! Form::textarea('unblack_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'unblack_comment', 'size' => '30x4', 'placeholder' => "Write Reason", 'ng-model' => 'unblack_comment')) !!}
+                                {!! Form::label('unblack_comment','Reason') !!}
+                                {!! Form::textarea('unblack_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'unblack_comment', 'size' => '30x4', 'placeholder' => "Write Reason")) !!}
+                                {!! $errors->first('unblack_comment','<p class="text text-danger">:message</p>') !!}
                             </div>
-                            <button id="unblack_ansar" class="btn btn-primary"
-                                    ng-disabled="!unblack_date||!unblack_comment||!ansarId"><img
-                                        ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}"
-                                        width="16" style="margin-top: -2px">Remove Ansar from Blacklist
-                            </button>
+                            <button id="unblack_ansar" type="submit" class="btn btn-primary">Remove Ansar from Blacklist</button>
                         </div>
                         <div class="col-sm-6 col-sm-offset-2"
                              style="min-height: 400px;border-left: 1px solid #CCCCCC">
@@ -112,11 +116,11 @@
                                     <label class="control-label">Date of Birth</label>
 
                                     <p>
-                                        [[ansarDetail.data_of_birth]]
+                                        [[ansarDetail.data_of_birth|dateformat:'DD-MMM-YYYY']]
                                     </p>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label">Blacked for where</label>
+                                    <label class="control-label">Status Before Blacked</label>
 
                                     <p>
                                         [[ansarDetail.black_list_from]]
@@ -126,7 +130,7 @@
                                     <label class="control-label">Date of being Blacked</label>
 
                                     <p>
-                                        [[ansarDetail.black_listed_date]]
+                                        [[ansarDetail.black_listed_date|dateformat:'DD-MMM-YYYY']]
                                     </p>
                                 </div>
                                 <div class="form-group">
