@@ -1368,7 +1368,7 @@ class DGController extends Controller
     public function directPanelEntry(Request $request)
     {
         $rules = [
-            'ansar_id' => 'required|regex:/^[0-9]+$/',
+            'ansar_id' => 'required|regex:/^[0-9]+$/|unique:tbl_panel_info,ansar_id',
             'memorandum_id' => 'required',
             'direct_panel_date' => 'required',
         ];
@@ -1391,7 +1391,7 @@ class DGController extends Controller
             if (!$ansar) throw new \Exception('No Ansar available with this ID ' . $request->ansar_id);
 
             switch ($ansar->getStatus()[0]) {
-                case "free":
+                case AnsarStatusInfo::FREE_STATUS:
                     PanelModel::create([
                         'ansar_id' => $ansar_id,
                         'panel_date' => $modified_direct_panel_date,
@@ -1407,7 +1407,7 @@ class DGController extends Controller
                     CustomQuery::addDGlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'PANELED', 'from_state' => 'FREE', 'to_state' => 'PANELED']);
                     break;
 
-                case "rest":
+                case AnsarStatusInfo::REST_STATUS:
                     $rest_info = RestInfoModel::where('ansar_id', $ansar_id)->first();
                     $rest_info->saveLog("Panel", $direct_panel_date,$direct_panel_comment);
                     PanelModel::create([
