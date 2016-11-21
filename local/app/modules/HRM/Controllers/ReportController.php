@@ -280,7 +280,7 @@ class ReportController extends Controller
         return CustomQuery::getBlacklistedAnsar($offset, $limit,$division, $unit, $thana,$request->q);
     }
 
-    public function getAnserTransferHistory()
+    public function getAnserTransferHistory(Request $request)
     {
         DB::enableQueryLog();
         $ansar_id = Input::get('ansar_id');
@@ -299,6 +299,16 @@ class ReportController extends Controller
                 ->where('tbl_transfer_ansar.ansar_id', $ansar_id)
                 ->select('tbl_transfer_ansar.present_kpi_join_date as joiningDate', 'tbl_transfer_ansar.transfered_kpi_join_date as transferDate',
                     'pk.kpi_name as FromkpiName', 'tk.kpi_name as TokpiName', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana');
+            if($request->unit){
+                $transfer_history->where(function($query) use($request){
+                    $query->where('pk.unit_id',$request->unit)->orWhere('tk.unit_id',$request->unit);
+                });
+            }
+            if($request->range){
+                $transfer_history->where(function($query) use($request){
+                    $query->where('pk.division_id',$request->range)->orWhere('tk.division_id',$request->range);
+                });
+            }
             $b =  $transfer_history->get();
 //            return DB::getQueryLog();
             return $b;

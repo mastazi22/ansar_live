@@ -37,6 +37,7 @@ class CheckUserType
         'ansar_list_for_reduce'=>['range'=>'range','unit'=>'unit'],
         'load_ansar'=>['range'=>'range','unit'=>'unit'],
         'load_ansar_for_embodiment_date_correction'=>['range'=>'range','unit'=>'unit'],
+//        'get_transfer_ansar_history'=>['range'=>'range','unit'=>'unit'],
         'inactive_kpi_list'=>['division'=>'range','unit'=>'unit'],
         'print_letter'=>['unit'=>'unit'],
         'new-embodiment-entry'=>['division_name_eng'=>'unit'],
