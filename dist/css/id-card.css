@@ -2,11 +2,9 @@
     padding: 0;
     margin: 0;
 }
+
 #ansar-id-card-front, #ansar-id-card-back {
-    width: 340px;
-    padding: 4px;
-    border: 1px solid #ababab;
-    border-radius: 15px;
+    width: 100%;
     z-index: -2;
     position: relative;
 }
@@ -45,7 +43,6 @@
 }
 
 .card-body {
-    padding: 2px;
     position: relative;
 }
 
@@ -59,7 +56,6 @@
     width: 30%;
     float: left;
     box-sizing: border-box;
-    padding: 0 2px 2px 2px;
 }
 
 .card-body-left ul, .card-body-middle ul {
@@ -84,7 +80,6 @@
 
 .card-footer {
     /*margin-top: 5px;*/
-    padding-left: 2px;
 }
 
 .card-footer-sing {
@@ -164,4 +159,7 @@
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     font-style: italic;
+}
+@page {
+    size: 3.37in
 }

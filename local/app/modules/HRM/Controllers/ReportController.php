@@ -165,6 +165,7 @@ class ReportController extends Controller
             if (!$id_card->saveOrFail()) {
                 return View::make('HRM::Report.no_ansar_found')->with('id', $id);
             }
+            return View::make('HRM::Report.ansar_id_card_font', ['rd' => $report_data, 'ad' => $ansar, 'id' => Carbon::createFromFormat('d-M-Y', $issue_date)->format("d/m/Y"), 'ed' => Carbon::createFromFormat('d-M-Y', $expire_date)->format("d/m/Y"), 'type' => $type]);
             $path = public_path("{$id}.jpg");
             SnappyImage::loadView('HRM::Report.ansar_id_card_font', ['rd' => $report_data, 'ad' => $ansar, 'id' => Carbon::createFromFormat('d-M-Y', $issue_date)->format("d/m/Y"), 'ed' => Carbon::createFromFormat('d-M-Y', $expire_date)->format("d/m/Y"), 'type' => $type])->setOption('quality', 100)
                 ->setOption('crop-x', 0)->setOption('crop-y', 0)->setOption('crop-h', 292)->setOption('crop-w', 340)->setOption('encoding', 'utf-8')->save($path);

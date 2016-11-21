@@ -2,8 +2,6 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="{{asset('dist/css/id-card.css')}}">
-    <link href="{{asset('dist/css/AdminLTE.min.css')}}" rel="stylesheet" type="text/css"/>
-    <link href="{{asset('bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css"/>
     <style>
         @font-face {
             font-family: banglFont;
@@ -62,13 +60,13 @@
             </ul>
         </div>
         <div class="card-body-right">
-            <img src="{{file_exists(storage_path($ad->profile_pic))?storage_path($ad->profile_pic) : (public_path('dist/img/nimage.png'))}}"
+            <img src="{{URL::to('/image').'?file='.$ad->profile_pic}}"
                   style="width: 80px">
         </div>
     </div>
     <div class="card-footer">
         <div class="card-footer-sing">
-            <div><img src="{{file_exists(storage_path($ad->sign_pic))?storage_path($ad->sign_pic) : (public_path('dist/img/nimage.png'))}}"
+            <div><img src="{{URL::to('/image').'?file='.$ad->sign_pic}}"
                       style="width: 80px;height:10px"></div>
             <div>{{$rd['bs']}}</div>
         </div>
@@ -76,8 +74,8 @@
             <img src="data:image/png;base64,{{DNS1D::getBarcodePNG(GlobalParameter::generateSmartCard($ad->unit_code,$ad->ansar_id),'C128')}}"
                  style="max-width: 100%">
         </div>
-        <div class="card-footer-sing">
-            <div><img src="{{file_exists(storage_path('data/authority/Signature.jpg'))?storage_path('data/authority/Signature.jpg') : (public_path('dist/img/nimage.png'))}}"
+        <div class="card-footer-sing" style="float: right">
+            <div><img src="{{URL::to('/image').'?file=data/authority/Signature.jpg'}}"
                       style="width: 80px;height:10px"></div>
             <div>{{$rd['is']}}</div>
         </div>
