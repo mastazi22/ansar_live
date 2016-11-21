@@ -299,8 +299,9 @@ class ReportController extends Controller
                 ->where('tbl_transfer_ansar.ansar_id', $ansar_id)
                 ->select('tbl_transfer_ansar.present_kpi_join_date as joiningDate', 'tbl_transfer_ansar.transfered_kpi_join_date as transferDate',
                     'pk.kpi_name as FromkpiName', 'tk.kpi_name as TokpiName', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana');
-            //return DB::getQueryLog();
-            return $transfer_history->get();
+            $b =  $transfer_history->get();
+//            return DB::getQueryLog();
+            return $b;
         }
     }
 

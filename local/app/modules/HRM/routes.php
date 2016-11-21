@@ -229,6 +229,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('/unblocklist_entry', ['as'=>'unblocklist_entry','uses'=>'BlockBlackController@unblockListEntry']);
         //TRANSFER
         Route::get('/transfer_process', ['as' => 'transfer_process', 'uses' => 'EmbodimentController@transferProcessView']);
+        Route::get('/single_embodied_ansar_detail/{id}', ['as' => 'single_embodied_ansar_detail', 'uses' => 'EmbodimentController@getSingleEmbodiedAnsarInfo']);
         Route::get('/multiple_kpi_transfer_process', ['as' => 'multiple_kpi_transfer_process', 'uses' => 'EmbodimentController@multipleKpiTransferView']);
         Route::post('/search_kpi_by_ansar', ['as' => 'search_kpi_by_ansar', 'uses' => 'EmbodimentController@getEmbodiedAnsarInfo']);
         Route::post('/confirm_transfer', ['as' => 'confirm_transfer', 'uses' => 'EmbodimentController@confirmTransfer']);

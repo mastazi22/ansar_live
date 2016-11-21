@@ -58,7 +58,7 @@
     <div class="login-box-body" style="background: rgba(255, 255, 255, 0.32);">
         <p class="login-box-msg" style="color: #000;font-weight: bold">Sign in to start your session</p>
         @if(Session::has('error'))
-            <p class="text-danger" style="text-align: center;text-transform: uppercase">{{Session::get('error')}}</p>
+            <p class="text text-bold text-danger" style="text-align: center;text-transform: uppercase;color:lightyellow">{{Session::get('error')}}</p>
         @endif
         <form action="{{action('UserController@handleLogin')}}" method="post">
             {{csrf_field()}}
@@ -78,7 +78,7 @@
                 <!-- /.col -->
             </div>
         </form>
-        <a href="{{URL::route('forget_password_request')}}" style="color: #ffffff">I forgot my password</a><br>
+        <a href="{{URL::route('forget_password_request')}}" style="color: #ffffff;text-transform: uppercase" >I forgot my password</a><br>
 
     </div>
     <div class="box box-solid" ng-controller="loginController"

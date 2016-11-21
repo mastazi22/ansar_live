@@ -96,6 +96,9 @@
                     // console.log($scope.searchedUser);
                 })
             }
+            $scope.comarator = function (v1, v2) {
+                if(isNaN(v1)) return -1
+            }
             $scope.loadPage(0, null);
         })
         GlobalApp.directive('confirmDialog', function () {
@@ -174,7 +177,7 @@
                             <tr ng-if="isSearching&&searchedUser.length==0">
                                 <td colspan="7">No user found</td>
                             </tr>
-                            <tr ng-if="isSearching&&searchedUser.length!=0" ng-repeat="user in searchedUser">
+                            <tr ng-if="isSearching&&searchedUser.length!=0" ng-repeat="user in searchedUser" ng-class="{'looged-in-user':user.logged_in}">
                                 <td>[[$index+1]]</td>
                                 <td>[[user.user_name]]</td>
                                 <td>
@@ -220,7 +223,7 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr ng-show="!isSearching" ng-repeat="user in users">
+                            <tr ng-show="!isSearching" ng-repeat="user in users" ng-class="{'logged-in-user':user.logged_in}">
                                 <td>[[$index+1]]</td>
                                 <td>[[user.user_name]]</td>
                                 <td>

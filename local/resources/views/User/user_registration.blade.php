@@ -50,8 +50,8 @@
     </script>
     <div ng-controller="userController">
         <section class="content">
-            <div class="register-page" style="background-color: transparent">
-                <div class="register-box" style="margin: 4% auto 5% auto;width:50%">
+            <div class="register-page" style="background-color: transparent;background: none;">
+                <div class="register-box" style="margin: 4% auto 5% auto;width:50%;">
 
                     <div class="register-box-body box-info" style="position: relative">
 

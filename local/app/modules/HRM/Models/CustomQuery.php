@@ -114,9 +114,10 @@ class CustomQuery
     public static function getUserInformation($limit, $offset)
     {
         $users = DB::connection('hrm')->table('tbl_user')
+            ->leftJoin('tbl_logged_in_user', 'tbl_logged_in_user.user_id', '=', 'tbl_user.id')
             ->join('tbl_user_details', 'tbl_user_details.user_id', '=', 'tbl_user.id')
             ->join('tbl_user_log', 'tbl_user_log.user_id', '=', 'tbl_user.id')->skip($offset)->take($limit)
-            ->select('tbl_user.id', 'tbl_user.user_name', 'tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.email', 'tbl_user_log.last_login', 'tbl_user_log.user_status', 'tbl_user.status')
+            ->select('tbl_user.id', 'tbl_user.user_name', 'tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.email', 'tbl_user_log.last_login', 'tbl_user_log.user_status', 'tbl_user.status','tbl_logged_in_user.id as logged_in')->orderBy('logged_in','desc')
             ->get();
         return $users;
     }
@@ -683,7 +684,7 @@ class CustomQuery
             $ansarQuery->where('tbl_designations.id', $rank);
         }
         if ($division && $division != 'all') {
-            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
+            $ansarQuery->where('tbl_kpi_info.division_id', $division);
         }
         if ($unit != 'all') {
             $ansarQuery->where('tbl_kpi_info.unit_id', $unit);
@@ -747,14 +748,14 @@ class CustomQuery
             $ansarQuery->where('tbl_designations.id', $rank);
         }
         if ($division && $division != 'all') {
-            $ansarQuery->where('tbl_kpi_info.division_id', '!=', $division);
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', '!=', $division);
         }
         if ($unit != 'all') {
-            $ansarQuery->where('ku.id', '!=', $unit);
+//            $ansarQuery->where('ku.id', '!=', $unit);
             $ansarQuery->where('pu.id', '=', $unit);
         }
         if ($thana != 'all') {
-            $ansarQuery->where('kt.id', '!=', $thana);
+//            $ansarQuery->where('kt.id', '!=', $thana);
             $ansarQuery->where('pt.id', '=', $thana);
         }
         if ($time == self::RECENT) {

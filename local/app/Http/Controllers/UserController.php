@@ -11,6 +11,7 @@ use App\models\UserPermission;
 use App\models\UserProfile;
 use App\models\UserType;
 use App\modules\HRM\Models\ForgetPasswordRequest;
+use App\modules\HRM\Models\LoggedInUser;
 use App\modules\HRM\Models\PersonalInfo;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -33,7 +34,7 @@ use Mockery\CountValidator\Exception;
 class UserController extends Controller
 {
 
-    function handleLogin()
+    function handleLogin(Request $request)
     {
         $credential = array('user_name' => Input::get('user_name'), 'password' => Input::get('password'));
         Log::info("Previous URL Handle: ".Session::get('redirect_url'));
@@ -43,6 +44,13 @@ class UserController extends Controller
                 Auth::logout();
                 return Redirect::action('UserController@login')->with('error', 'Your blocked. Please contact with administrator');
             }
+            if($user->logged){
+                Auth::logout();
+                return Redirect::action('UserController@login')->with('error', 'You can`t login at this moment. Someone login with your account');
+            }
+            $user->logged()->save(new LoggedInUser([
+                'ip'=>$request->ip()
+            ]));
             $log = $user->userLog;
             if($log) {
                 $user->userLog->last_login = Carbon::now();
@@ -69,6 +77,7 @@ class UserController extends Controller
 
     function logout()
     {
+        Auth::user()->logged->delete();
         Auth::logout();
         return Redirect::action('UserController@login');
 

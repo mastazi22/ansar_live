@@ -4716,3 +4716,7 @@ ul.module-menu > li > a:hover {
 .page-button[disabled="disabled"]{
     cursor: no-drop;
 }
+.logged-in-user>td{
+    background: #00a157 !important;
+    color: #ffffff !important;
+}

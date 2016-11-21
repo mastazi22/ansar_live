@@ -4228,3 +4228,7 @@ table.text-center th {
 .page-button[disabled="disabled"]{
   cursor: pointer;
 }
+.logged-in-user>td{
+  background: #00a157;
+  color: #ffffff;
+}

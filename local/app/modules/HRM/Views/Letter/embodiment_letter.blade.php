@@ -16,8 +16,10 @@
         GlobalApp.controller('EmbodimentLetterController', function ($scope,$http,$sce) {
             $scope.letterPrintView = $sce.trustAsHtml("&nbsp;")
             $scope.printType = "memorandumNo"
+
             $scope.unit = {
-                selectedUnit: []
+                selectedUnit: [],
+                param:''
             };
             $scope.units = [];
             $scope.loadingLetter=false;
@@ -48,15 +50,24 @@
                     console.log($scope.datas)
                 })
             }
-            $scope.generateLetter = function (i) {
+            $scope.generateLetter = function (id,i) {
                 $scope.allLoading = true;
+                console.log($scope.param);
+                var unit = ''
+                if($scope.printType=='smartCardNo'){
+                    unit = $scope.unit.param.unit;
+                }
+                else{
+                    unit=$scope.unit.selectedUnit[i] == undefined ? $scope.unit.selectedUnit : $scope.unit.selectedUnit[i]
+                }
                 $http({
                     method:'get',
                     url:'{{URL::route('print_letter')}}',
                     params:{
-                        id:$scope.datas[i].memorandum_id,
+                        id:id,
+                        option:$scope.printType,
                         type:'EMBODIMENT',
-                        unit:$scope.unit.selectedUnit[i] == undefined ? $scope.unit.selectedUnit : $scope.unit.selectedUnit[i]
+                        unit:unit
                     }
                 }).then(function (response) {
                     $scope.letterPrintView = $sce.trustAsHtml(response.data);
@@ -77,20 +88,20 @@
                     </span>
                 </div>
                <div class="box-body">
-                   {{--<div class="row">--}}
-                       {{--<div class="col-sm-3 col-xs-6">--}}
-                           {{--<div class="form-group">--}}
-                               {{--<input type="radio" ng-model="printType" value="smartCardNo">--}}
-                               {{--<span class="text text-bold" style="vertical-align: top">Print by Smart card no.</span>--}}
-                           {{--</div>--}}
-                       {{--</div>--}}
-                       {{--<div class="col-sm-3 col-xs-6">--}}
-                           {{--<div class="form-group">--}}
-                               {{--<input type="radio" ng-model="printType" value="memorandumNo">--}}
-                               {{--<span class="text text-bold" style="vertical-align: top">Print by Memorandum no.</span>--}}
-                           {{--</div>--}}
-                       {{--</div>--}}
-                   {{--</div>--}}
+                   <div class="row">
+                       <div class="col-sm-3 col-xs-6">
+                           <div class="form-group">
+                               <input type="radio" ng-model="printType" value="smartCardNo">
+                               <span class="text text-bold" style="vertical-align: top">Print by Smart card no.</span>
+                           </div>
+                       </div>
+                       <div class="col-sm-3 col-xs-6">
+                           <div class="form-group">
+                               <input type="radio" ng-model="printType" value="memorandumNo">
+                               <span class="text text-bold" style="vertical-align: top">Print by Memorandum no.</span>
+                           </div>
+                       </div>
+                   </div>
                    {{--<div class="row">--}}
                        {{--<div class="col-md-4 col-sm-12 col-xs-12">--}}
                            {{--<div class="form-group">--}}
@@ -124,11 +135,14 @@
                                    <filter-template
                                            show-item="['unit']"
                                            type="single"
-                                           data="param"
+                                           data="unit.param"
                                            start-load="unit"
                                            layout-vertical="1"
                                    >
                                    </filter-template>
+                               </div>
+                               <div class="form-group">
+                                   <button class="btn btn-primary" ng-click="generateLetter(smartCardNo)">Generate Letter</button>
                                </div>
                            </div>
                        </div>
@@ -162,7 +176,7 @@
                                        </div>
                                    </td>
                                    <td>
-                                       <button class="btn btn-primary" ng-click="generateLetter($index)"
+                                       <button class="btn btn-primary" ng-click="generateLetter(d.memorandum_id,$index)"
                                                ng-disabled="isGenerating">
                                            <i ng-show="isGenerating " class="fa fa-spinner fa-spin"></i><span
                                                    ng-class="{'blink-animation':isGenerating}">Generate Embodied Letter</span>

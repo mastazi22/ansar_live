@@ -241,13 +241,24 @@ class DGController extends Controller
     function directTransferSubmit(Request $request)
     {
 //        return $request->all();
-        $t_date = Input::get('transfer_date');
-        $t_kpi_id = Input::get('t_kpi_id');
-        $c_kpi_id = Input::get('c_kpi_id');
-        $ansar_id = Input::get('ansar_id');
-        $mem_id = Input::get('mem_id');
+        $rules = [
+            'ansar_id'=>'required|regex:/^[0-9]+$/|exists:tbl_embodiment,ansar_id',
+            'unit'=>'required|regex:/^[0-9]+$/',
+            'thana'=>'required|regex:/^[0-9]+$/|exists:tbl_thana,id,unit_id,'.$request->unit,
+            't_kpi_id'=>'required|regex:/^[0-9]+$/|exists:tbl_kpi_info,id,thana_id,'.$request->thana,
+            'transfer_date'=>'required',
+            'mem_id'=>'required',
+        ];
+        $valid = Validator::make($request->all(),$rules);
+        if($valid->fails()) return $valid->messages()->toJson();
         DB::beginTransaction();
         try {
+            $status = AnsarStatusInfo::where('ansar_id',$request->ansar_id)->first();
+            if(!$status||$status.getStatus()[0]==AnsarStatusInfo::BLOCK_STATUS) throw new \Exception('This Ansar is Blocked');
+            $t_date = Input::get('transfer_date');
+            $t_kpi_id = Input::get('t_kpi_id');
+            $ansar_id = Input::get('ansar_id');
+            $mem_id = Input::get('mem_id');
             $e_id = EmbodimentModel::where('ansar_id', $ansar_id)->first();
             $c_kpi_id = $e_id->kpi_id;
             $p_j_date = $e_id->transfered_date;
@@ -266,11 +277,11 @@ class DGController extends Controller
             $transfer->save();
             DB::commit();
             CustomQuery::addDGlog(['ansar_id' => $ansar_id, 'action_type' => 'TRANSFER', 'from_state' => $c_kpi_id, 'to_state' => $t_kpi_id]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
-            return Response::json(['status' => false, 'data' => 'An error occur while transfer. Please try again later']);
+            return Response::json(['status' => false, 'message' => $e->getMessage()]);
         }
-        return Response::json(['status' => true, 'data' => 'Transfer process complete successfully']);
+        return Response::json(['status' => true, 'message' => 'Transfer process complete successfully']);
     }
 
     public function blockListEntryView()

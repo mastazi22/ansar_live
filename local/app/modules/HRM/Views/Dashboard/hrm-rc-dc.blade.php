@@ -241,7 +241,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/all_ansar" class="btn-link"
                        style="color: #FFFFFF !important;">
-                        <span class="info-box-text">@lang('title.ta')</span>
+                        <span class="info-box-text">@lang('title.tad')</span>
                     <span class="info-box-number">[[allAnsar.totalAnsar]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
                     </span>
@@ -269,7 +269,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/paneled_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">@lang('title.tp')</span>
+                        <span class="info-box-text">@lang('title.tpd')</span>
                     <span class="info-box-number">
                         [[allAnsar.totalPanel]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
@@ -349,7 +349,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/offerred_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">@lang('title.to')</span>
+                        <span class="info-box-text">@lang('title.tod')</span>
                     <span class="info-box-number">[[allAnsar.totalOffered]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
                     </span>
@@ -373,7 +373,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/rest_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">@lang('title.tr')</span>
+                        <span class="info-box-text">@lang('title.trd')</span>
                     <span class="info-box-number">
                         [[allAnsar.totalRest]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
@@ -399,7 +399,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/freezed_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                    <span class="info-box-text">@lang('title.tfr')</span>
+                    <span class="info-box-text">@lang('title.tfrd')</span>
                     <span class="info-box-number">[[allAnsar.totalFreeze]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
                     </span>
@@ -423,7 +423,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/blacked_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                    <span class="info-box-text">@lang('title.tba')</span>
+                    <span class="info-box-text">@lang('title.tbad')</span>
                     <span class="info-box-number">
                        [[allAnsar.totalBlackList]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
@@ -447,7 +447,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/blocked_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                    <span class="info-box-text">@lang('title.tb')</span>
+                    <span class="info-box-text">@lang('title.tbd')</span>
                     <span class="info-box-number">[[allAnsar.totalBlockList]]
 
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">

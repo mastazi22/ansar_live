@@ -809,4 +809,20 @@ class EmbodimentController extends Controller
         }
         return Response::json(['status' => 1, 'message' => 'Ansar transfer complate', 'memId' => $m_id]);
     }
+
+    public function getSingleEmbodiedAnsarInfo($id){
+
+        $ansar =  DB::table('tbl_ansar_parsonal_info')
+            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+            ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+            ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
+            ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
+            ->where('tbl_embodiment.ansar_id',$id)
+            ->where('tbl_ansar_status_info.block_list_status',0)
+            ->select('tbl_kpi_info.id as kpi_id','tbl_ansar_parsonal_info.ansar_name_eng','tbl_ansar_parsonal_info.sex' ,'tbl_designations.name_eng','tbl_kpi_info.kpi_name', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_embodiment.joining_date as join_date');
+        return Response::json($ansar->first());
+
+    }
 }

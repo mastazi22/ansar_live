@@ -5,6 +5,7 @@ namespace App\models;
 use App\modules\HRM\Models\ActionUserLog;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
+use App\modules\HRM\Models\LoggedInUser;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -91,5 +92,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function actionLog(){
         return $this->hasMany(ActionUserLog::class,'action_by');
+    }
+    public function logged(){
+        return $this->hasOne(LoggedInUser::class,'user_id');
     }
 }
