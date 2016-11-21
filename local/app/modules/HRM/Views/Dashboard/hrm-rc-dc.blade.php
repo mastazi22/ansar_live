@@ -269,7 +269,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/paneled_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">@lang('title.tpd')</span>
+                        <span class="info-box-text">@lang('title.tp')</span>
                     <span class="info-box-number">
                         [[allAnsar.totalPanel]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
