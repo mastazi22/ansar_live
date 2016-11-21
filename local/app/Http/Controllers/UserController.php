@@ -44,10 +44,10 @@ class UserController extends Controller
                 Auth::logout();
                 return Redirect::action('UserController@login')->with('error', 'Your blocked. Please contact with administrator');
             }
-            if($user->logged){
-                Auth::logout();
-                return Redirect::action('UserController@login')->with('error', 'You can`t login at this moment. Someone login with your account');
-            }
+//            if($user->logged){
+//                Auth::logout();
+//                return Redirect::action('UserController@login')->with('error', 'You can`t login at this moment. Someone login with your account');
+//            }
             $user->logged()->save(new LoggedInUser([
                 'ip'=>$request->ip()
             ]));
