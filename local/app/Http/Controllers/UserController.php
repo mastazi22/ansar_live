@@ -48,9 +48,9 @@ class UserController extends Controller
 //                Auth::logout();
 //                return Redirect::action('UserController@login')->with('error', 'You can`t login at this moment. Someone login with your account');
 //            }
-            $user->logged()->save(new LoggedInUser([
-                'ip'=>$request->ip()
-            ]));
+//            $user->logged()->save(new LoggedInUser([
+//                'ip'=>$request->ip()
+//            ]));
             $log = $user->userLog;
             if($log) {
                 $user->userLog->last_login = Carbon::now();
@@ -77,7 +77,7 @@ class UserController extends Controller
 
     function logout()
     {
-        Auth::user()->logged->delete();
+//        Auth::user()->logged->delete();
         Auth::logout();
         return Redirect::action('UserController@login');
 

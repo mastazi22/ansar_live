@@ -117,13 +117,13 @@ class FreezeController extends Controller
             'thana' => ['regex:/^(all)$|^[0-9]+$/'],
             'unit' => ['regex:/^(all)$|^[0-9]+$/'],
             'range' => ['regex:/^(all)$|^[0-9]+$/'],
-            'filter'=>'required|regex:/^[0-9]+$/'
+            'kpi' => ['regex:/^(all)$|^[0-9]+$/'],
         ];
         $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {
             return response($valid->messages()->toJson(), 422,['Content-Type'=>'application/json']);
         }
-        return response()->json(CustomQuery::getFreezeList($request->range,$request->unit,$request->thana,$request->filter));
+        return response()->json(CustomQuery::getFreezeList($request->range,$request->unit,$request->thana,$request->kpi));
     }
 
     public function freezeRembodied(Request $request)

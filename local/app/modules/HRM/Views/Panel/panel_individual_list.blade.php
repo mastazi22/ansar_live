@@ -66,11 +66,11 @@
                                 class="glyphicon glyphicon-print"></span></a></h3>
                 <div class="row">
                     <div class="col-sm-3 col-centered">
-                        <form ng-submit="searchId()" class="sidebar-form">
+                        <form  class="sidebar-form">
                             <div class="input-group">
-                                <input type="text" name="q" autocomplete="off" class="form-control" ng-model="searchAnsarId" placeholder="Search by ansar id...">
+                                <input type="text" name="q" value="{{$q or ''}}" autocomplete="off" class="form-control"  placeholder="Search by ansar id...">
                                 <span class="input-group-btn">
-                                    <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
+                                    <button type="submit" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
                                  </span>
                             </div>
                         </form>
@@ -100,7 +100,7 @@
                                 <td>{{$ansar->ansar_name_bng}}</td>
                                 <td>{{$ansar->unit_name_bng}}</td>
                                 <td>{{$ansar->thana_name_bng}}</td>
-                                <td>{{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$ansar->created_at)->format("d-M-Y  h:i:s A")}}</td>
+                                <td>{{\Carbon\Carbon::parse($ansar->panel_date)->format("d-M-Y")}}</td>
                                 <td>{{$ansar->memorandum_id}}</td>
                             </tr>
                         @empty

@@ -300,7 +300,7 @@ class CustomQuery
     }
 
 
-    public static function getFreezeList($division, $unit, $thana, $filter)
+    public static function getFreezeList($division, $unit, $thana, $kpi)
     {
         $freeze = DB::table('tbl_freezing_info')
             ->join('tbl_ansar_parsonal_info', 'tbl_freezing_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
@@ -309,13 +309,6 @@ class CustomQuery
             ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
             ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
             ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id');
-        if ($filter == "1") {
-            $freeze->where('tbl_freezing_info.freez_reason', '=', 'Guard Withdraw');
-        } else if ($filter == "2") {
-            $freeze->where('tbl_freezing_info.freez_reason', '=', 'Guard Reduce');
-        } else if ($filter == "3") {
-            $freeze->where('tbl_freezing_info.freez_reason', '=', 'Disciplinary Actions');
-        }
         if ($division && $division != 'all') {
             $freeze->where('tbl_kpi_info.division_id', $division);
         }
@@ -324,6 +317,9 @@ class CustomQuery
         }
         if ($thana && $thana != 'all') {
             $freeze->where('tbl_kpi_info.thana_id', $thana);
+        }
+        if ($kpi && $kpi != 'all') {
+            $freeze->where('tbl_kpi_info.id', $kpi);
         }
         $data = $freeze->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.reporting_date',
             'tbl_units.unit_name_bng', 'tbl_designations.name_bng', 'tbl_freezing_info.*', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status')->get();

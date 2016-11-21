@@ -122,7 +122,6 @@
             }
             $scope.getFreezeList = function () {
                 var data = $scope.params;
-                data['filter'] = $scope.filter_name;
                 $scope.allLoading = true;
                 $http({
                     url: "{{URL::route('getfreezelist')}}",
@@ -461,25 +460,27 @@
                     </div>
                     <div class="box-body">
                         <div class="box-body" id="change-body">
-                            <div class="form-group">
-                                <h5 class="pull-left" style="padding-right:5px; ;"><b>Filter by: </b></h5>
-                                <select ng-model="filter_name" name="filter_name" class="form-control"
-                                        style="width:75%;" ng-change="getFreezeList()">
-                                    <option value="">--Select freeze reason--</option>
-                                    <option value="0">All</option>
-                                    <option value="1">Guard Withdraw</option>
-                                    <option value="2">Guard Reduce</option>
-                                    <option value="3">Disciplinary Actions</option>
-                                </select>
-                            </div>
+                            {{--<div class="form-group">--}}
+                                {{--<h5 class="pull-left" style="padding-right:5px; ;"><b>Filter by: </b></h5>--}}
+                                {{--<select ng-model="filter_name" name="filter_name" class="form-control"--}}
+                                        {{--style="width:75%;" ng-change="getFreezeList()">--}}
+                                    {{--<option value="">--Select freeze reason--</option>--}}
+                                    {{--<option value="0">All</option>--}}
+                                    {{--<option value="1">Guard Withdraw</option>--}}
+                                    {{--<option value="2">Guard Reduce</option>--}}
+                                    {{--<option value="3">Disciplinary Actions</option>--}}
+                                {{--</select>--}}
+                            {{--</div>--}}
                             <filter-template
-                                    show-item="['range','unit','thana']"
+                                    show-item="['range','unit','thana','kpi']"
                                     type="all"
                                     range-change="getFreezeList()"
                                     unit-change="getFreezeList()"
                                     thana-change="getFreezeList()"
+                                    kpi-change="getFreezeList()"
+                                    on-load="getFreezeList()"
                                     start-load="range"
-                                    field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
+                                    field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
                                     data="params"
                             ></filter-template>
                             <div class="loading-data"><i class="fa fa-4x fa-refresh fa-spin loading-icon"></i>
