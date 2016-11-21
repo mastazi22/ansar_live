@@ -363,9 +363,6 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/kpi_list_for_withdraw_cancel', ['as'=>'kpi_list_for_withdraw_cancel','uses'=>'KpiController@kpiListForWithdrawCancel']);
         Route::post('/kpi-withdraw-cancel-update/{id}', ['as'=>'kpi-withdraw-cancel-update','uses'=>'KpiController@kpiWithdrawCancelUpdate'])->where('id','^[0-9]+$');
 //End KPI
-        Route::get('testt',function(){
-           return \App\modules\HRM\Models\CustomQuery::ansarAcceptOfferLastFiveDays('all','all','all','all','all','count');
-        });
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
     Route::get('/all_notification', function () {
