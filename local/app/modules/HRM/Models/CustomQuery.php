@@ -491,10 +491,10 @@ class CustomQuery
         if ($rank != 'all') {
             $ansarQuery->where('tbl_designations.id', $rank);
         }
-        if ($division && $division != 'all') {
+        if ($division && $division != 'all'&&(Auth::user()->type==11||Auth::user()->type==33)) {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
         }
-        if ($unit != 'all') {
+        if ($unit != 'all'&&(Auth::user()->type==11||Auth::user()->type==33)) {
             $ansarQuery->where('tbl_units.id', $unit);
         }
         if ($thana != 'all') {

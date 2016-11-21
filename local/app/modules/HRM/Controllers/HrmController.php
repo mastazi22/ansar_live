@@ -8,6 +8,7 @@ use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\GlobalParameter;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
@@ -145,7 +146,7 @@ class HrmController extends Controller
             $allStatus['recentAnsar']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             $allStatus['recentNotVerified']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             $allStatus['recentFree']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
-            $allStatus['recentPanel']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
+            if((Auth::user()->type==11||Auth::user()->type==33))$allStatus['recentPanel']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             $allStatus['recentOffered']->where('tbl_units.division_id', $request->division_id);
             $allStatus['recentEmbodied']->where('tbl_kpi_info.division_id', $request->division_id);
             $allStatus['recentEmbodiedOwn']->where('tbl_kpi_info.division_id', $request->division_id);
@@ -159,7 +160,7 @@ class HrmController extends Controller
             $allStatus['recentAnsar']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             $allStatus['recentNotVerified']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             $allStatus['recentFree']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
-            $allStatus['recentPanel']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
+            if((Auth::user()->type==11||Auth::user()->type==33))$allStatus['recentPanel']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             $allStatus['recentOffered']->where('tbl_units.id', $request->unit_id);
             $allStatus['recentEmbodied']->where('tbl_kpi_info.unit_id', $request->unit_id);
             $allStatus['recentEmbodiedOwn']->where('tbl_kpi_info.unit_id', $request->unit_id);
@@ -471,7 +472,7 @@ class HrmController extends Controller
             $allStatus['totalAnsar']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             $allStatus['totalNotVerified']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             $allStatus['totalFree']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
-            $allStatus['totalPanel']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
+            if((Auth::user()->type==11||Auth::user()->type==33))$allStatus['totalPanel']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             $allStatus['totalOffered']->where('tbl_units.division_id', $request->division_id);
             $allStatus['totalEmbodied']->where('tbl_kpi_info.division_id', $request->division_id);
             $allStatus['totalEmbodiedOwn']->where('tbl_kpi_info.division_id', $request->division_id);
@@ -485,7 +486,7 @@ class HrmController extends Controller
             $allStatus['totalAnsar']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             $allStatus['totalNotVerified']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             $allStatus['totalFree']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
-            $allStatus['totalPanel']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
+            if((Auth::user()->type==11||Auth::user()->type==33))$allStatus['totalPanel']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             $allStatus['totalOffered']->where('tbl_units.id', $request->unit_id);
             $allStatus['totalEmbodied']->where('tbl_kpi_info.unit_id', $request->unit_id);
             $allStatus['totalEmbodiedOwn']->where('tbl_kpi_info.unit_id', $request->unit_id);
