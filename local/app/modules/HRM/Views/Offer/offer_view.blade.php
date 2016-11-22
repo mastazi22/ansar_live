@@ -83,17 +83,17 @@
                 }).then(function (response) {
                     console.log(response.data);
                     //alert(JSON.stringify(response.data));
-                    if (response.data.length > 0) {
-                        $scope.selectedAnsar = response.data;
-                        $scope.noAnsar = false;
-                        $scope.sendOffer();
-                    }
-                    else {
-                        $scope.noAnsar = true;
-                        $scope.showLoadScreen = true;
-                        alert("No ansar Available")
-                        $scope.buttonText = "Send Offer"
-                    }
+//                    if (response.data.length > 0) {
+//                        $scope.selectedAnsar = response.data;
+//                        $scope.noAnsar = false;
+//                        $scope.sendOffer();
+//                    }
+//                    else {
+//                        $scope.noAnsar = true;
+//                        $scope.showLoadScreen = true;
+//                        alert("No ansar Available")
+//                        $scope.buttonText = "Send Offer"
+//                    }
 
                 }, function (response) {
                     //alert('Error!! ' + response.status)

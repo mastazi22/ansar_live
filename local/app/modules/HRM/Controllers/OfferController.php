@@ -91,7 +91,7 @@ class OfferController extends Controller
             ['male' => $request->get('apc_male'), 'female' => $request->get('apc_female')],
             ['male' => $request->get('ansar_male'), 'female' => $request->get('ansar_female')],
             $request->get('district'),
-            $request->get('exclude_district')));
+            $request->get('exclude_district'),Auth::user()));
     }
 
     function sendOfferSMS(Request $request)
