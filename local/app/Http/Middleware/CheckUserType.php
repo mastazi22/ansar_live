@@ -58,7 +58,7 @@ class CheckUserType
                         }
                         else if($user->type==66){
                             $units = District::where('division_id',$user->division_id)->pluck('id');
-                            if(!in_array($input[$key],$units)){
+                            if(isset($input[$key])&&$input[$key]!='all'&&$input[$key]&&!in_array($input[$key],$units->toArray())){
                                 if($request->ajax()){
                                     return response("Unauthorized",401);
                                 }
