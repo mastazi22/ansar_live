@@ -32,9 +32,15 @@ class CustomQuery
             ->join('tbl_units as pu', 'tbl_ansar_parsonal_info.unit_id', '=', 'pu.id');
         if (Auth::user()->type == 22) {
             if (in_array($exclude_district, Config::get('app.offer'))) {
-                $query = $query->where('pu.id', '!=', $exclude_district);
-            } else {
-                $query = $query->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id')
+                $d = Config::get('app.exclude_district');
+                if(isset($d[$exclude_district])){
+                    $query->whereNotIn('pu.id',$d[$exclude_district]);
+                }
+                else $query->where('pu.id', '!=', $exclude_district);
+            }
+
+            else {
+                $query->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id')
                     ->where('pu.id', '!=', $exclude_district)->where('du.id', '=', $exclude_district);
             }
         } else if (Auth::user()->type == 11 || Auth::user()->type == 33 || Auth::user()->type == 66) {
@@ -42,7 +48,7 @@ class CustomQuery
                 $query = $query->whereIn('pu.id', $unit_id);
             }
         }
-        $query = $query->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50');
+        $query->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50');
         $pc_male = clone $query;
         $pc_female = clone $query;
         $apc_male = clone $query;
@@ -54,6 +60,7 @@ class CustomQuery
             ->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_division.division_name_eng', 'pu.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng')
             ->take($pc['male']);
+//        return DB::getQueryLog();
         $pc_female->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')
             ->orderBy('tbl_panel_info.id')
@@ -81,6 +88,7 @@ class CustomQuery
             ->take($apc['female']);
 
         $b = $pc_male->unionAll($pc_female)->unionAll($apc_male)->unionAll($apc_female)->unionAll($ansar_male)->unionAll($ansar_female)->get();
+        return DB::getQueryLog();
         return $b;
     }
 
