@@ -88,7 +88,7 @@ class CustomQuery
             ->take($apc['female']);
 
         $b = $pc_male->unionAll($pc_female)->unionAll($apc_male)->unionAll($apc_female)->unionAll($ansar_male)->unionAll($ansar_female)->get();
-        return DB::getQueryLog();
+//        return DB::getQueryLog();
         return $b;
     }
 
