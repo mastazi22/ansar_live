@@ -2,6 +2,7 @@
 
 namespace App\modules\HRM\Controllers;
 
+use App\Helper\Helper;
 use App\Http\Controllers\Controller;
 use App\modules\HRM\Models\ActionUserLog;
 use App\modules\HRM\Models\AnsarStatusInfo;
@@ -107,6 +108,8 @@ class OfferController extends Controller
         $type = Input::get('type');
         DB::beginTransaction();
         try {
+            $quota = Helper::getOfferQuota();
+            if($quota!==false&&$quota<count($ansar_ids)) throw new \Exception("Your offer quota limit exit");
             for ($i = 0; $i < count($ansar_ids); $i++) {
                 $mos = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
                 if (!$mos && !preg_match('/^(\+88)?0[0-9]{10}/', $mos->mobile_no_self)) throw new Exception("Invalid mobile number");
@@ -180,7 +183,7 @@ class OfferController extends Controller
         //return $request->get('quota_id');
         $rules = [
             'quota_id' => 'required|is_array|array_type:int',
-            'quota_value' => 'required|is_array|array_type:int|array_length_same:quota_id'
+            'quota_value' => 'required|is_array|array_length_same:quota_id'
         ];
         $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {

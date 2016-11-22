@@ -952,7 +952,7 @@
                                             </div>
                                             <div class="col-sm-5">
                                                 <input class="form-control  " id="hight_inch" name="hight_inch"
-                                                       ng-model="hight_inch" type="text" placeholder=" INCH"
+                                                       ng-model="hight_inch" type="text" placeholder=" INCH" ng-change="hight_inch=hight_inch>=12?11:hight_inch"
                                                        ng-value="draft.hight_inch ">
 
                                             </div>

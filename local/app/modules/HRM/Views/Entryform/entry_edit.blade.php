@@ -968,9 +968,7 @@
                                                           ng-show="formSubmitResult.error.hight_feet[0]">[[ formSubmitResult.error.hight_feet[0] ]]</span>
                                                 </div>
                                                 <div class="col-sm-5">
-                                                    <input class="form-control  " id="hight_inch" name="hight_inch"
-                                                           type="text" placeholder=" INCHES"
-                                                           value="{{ $ansarAllDetails->hight_inch}}">
+                                                    <input class="form-control" ng-init="hight_inch={{ $ansarAllDetails->hight_inch}}" ng-model="hight_inch" ng-change="hight_inch=hight_inch>=12?11:hight_inch" id="hight_inch" name="hight_inch" type="text" placeholder=" INCHES" value="{{ $ansarAllDetails->hight_inch}}">
 
                                                 </div>
                                             </div>

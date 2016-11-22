@@ -740,7 +740,7 @@
                                                     <span style="color:red" ng-show="formSubmitResult.error.hight_feet[0]">[[ formSubmitResult.error.hight_feet[0] ]]</span>
                                                 </div>
                                                 <div class="col-sm-5">
-                                                    <input class="form-control  " id="hight_inch" name="hight_inch" ng-model="hight_inch" type="text" placeholder=" INCHES" value="{{Request::old('hight_inch')}}">
+                                                    <input class="form-control  " id="hight_inch" name="hight_inch" ng-model="hight_inch" ng-change="hight_inch=hight_inch>=12?11:hight_inch" type="text" placeholder=" INCHES" value="{{Request::old('hight_inch')}}">
                                                 </div>
                                             </div>
                                             <div class="form-horizontal col-md-12 " ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.ansar_name_eng[0]}">
