@@ -233,16 +233,19 @@
     <!-- =========================================================== -->
     <div class="row">
         <!-- /.col -->
-        <div class="col-md-4 col-sm-6 col-xs-12">
-            <div class="info-box bg-aqua">
-                <span class="info-box-icon"><img src="{{asset('dist/img/ansars.png')}}">
-                </span>
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <!-- /.info-box -->
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="line-bar-top"></div>
+            <div class="info-box bg-aqua"><span class="info-box-icon"><img src="{{asset('dist/img/free.png')}}"></span>
 
                 <div class="info-box-content">
-                    <a href="{{URL::to('HRM/show_ansar_list')}}/all_ansar" class="btn-link"
-                       style="color: #FFFFFF !important;">
-                        <span class="info-box-text">@lang('title.tad')</span>
-                    <span class="info-box-number">[[allAnsar.totalAnsar]]
+                    <a href="{{URL::to('HRM/show_ansar_list')}}/free_ansar"
+                       class="btn-link" style="color: #FFFFFF !important;">
+                        <span class="info-box-text">@if(Auth::user()->type==22) @lang('title.tfd') @else @lang('title.tfrr') @endif</span>
+                    <span class="info-box-number" style="font-weight: normal">
+                        [[allAnsar.totalFree]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
                     </span>
                     </a>
@@ -250,18 +253,15 @@
                     <div class="progress">
                         <div class="progress-bar" style="width: 70%"></div>
                     </div>
-                    <a href="{{URL::to('HRM/show_recent_ansar_list')}}/all_ansar" style="color:#FFFFFF"
-                       class="btn-link">
-                    <span class="progress-description">
-                        Recent-[[recentAnsar.recentAnsar]]
-                    </span>
-                    </a>
+                    <a href="{{URL::to('HRM/show_recent_ansar_list')}}/free_ansar"
+                       style="color:#FFFFFF" class="btn-link">
+                        <span class="progress-description">Recent-[[recentAnsar.recentFree]]</span></a>
                 </div>
                 <!-- /.info-box-content -->
             </div>
             <!-- /.info-box -->
         </div>
-        <div class="col-md-4 col-sm-6 col-xs-12">
+        <div class="col-md-3 line-bar-middle col-sm-6 col-xs-12">
             <div class="info-box bg-aqua">
                 <span class="info-box-icon"><img src="{{asset('dist/img/queue.png')}}">
                 </span>
@@ -269,7 +269,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/paneled_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">@lang('title.tpd')</span>
+                        <span class="info-box-text">@if(Auth::user()->type==22) @lang('title.tpd') @else @lang('title.tpr') @endif</span>
                     <span class="info-box-number">
                         [[allAnsar.totalPanel]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
@@ -289,7 +289,7 @@
             </div>
             <!-- /.info-box -->
         </div>
-        <div class="col-md-4 col-sm-6 col-xs-12">
+        <div class="col-md-3 line-bar-middle col-sm-6 col-xs-12">
             <div class="info-box bg-aqua">
                 <span class="info-box-icon"><img src="{{asset('dist/img/embodiment2.png')}}">
                 </span>
@@ -297,7 +297,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/own_embodied_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">@lang('title.teo')</span>
+                        <span class="info-box-text">@if(Auth::user()->type==22) @lang('title.teo') @else @lang('title.teor') @endif</span>
                     <span class="info-box-number">[[allAnsar.totalEmbodiedOwn]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
                     </span>
@@ -315,15 +315,42 @@
             <!-- /.info-box -->
         </div>
 
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box bg-aqua">
+                <span class="info-box-icon"><img src="{{asset('dist/img/ansars.png')}}">
+                </span>
 
-        <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="info-box-content">
+                    <a href="{{URL::to('HRM/show_ansar_list')}}/all_ansar" class="btn-link"
+                       style="color: #FFFFFF !important;">
+                        <span class="info-box-text">@if(Auth::user()->type==22) @lang('title.tad') @else @lang('title.tar') @endif</span>
+                    <span class="info-box-number">[[allAnsar.totalAnsar]]
+                        <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
+                    </span>
+                    </a>
+
+                    <div class="progress">
+                        <div class="progress-bar" style="width: 70%"></div>
+                    </div>
+                    <a href="{{URL::to('HRM/show_recent_ansar_list')}}/all_ansar" style="color:#FFFFFF"
+                       class="btn-link">
+                    <span class="progress-description">
+                        Recent-[[recentAnsar.recentAnsar]]
+                    </span>
+                    </a>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+        <div class="col-md-3 line-bar-middle col-sm-6 col-xs-12">
             <div class="info-box bg-aqua"><span class="info-box-icon"><img src="{{asset('dist/img/embodiment2.png')}}"></span>
 
                 <div class="info-box-content">
                     <a
                             href="{{URL::to('HRM/show_ansar_list')}}/embodied_ansar_in_different_district"
                             class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">@lang('title.ted')</span>
+                        <span class="info-box-text">@if(Auth::user()->type==22) @lang('title.ted') @else @lang('title.tedr') @endif</span>
                     <span class="info-box-number">[[allAnsar.totalEmbodiedDiff]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
                     </span>
@@ -341,7 +368,7 @@
             </div>
             <!-- /.info-box -->
         </div>
-        <div class="col-md-4 col-sm-6 col-xs-12">
+        <div class="col-md-3 line-bar-middle col-sm-6 col-xs-12">
             <div class="info-box bg-aqua">
                 <span class="info-box-icon"><i class="fa fa-envelope"></i>
                 </span>
@@ -349,7 +376,7 @@
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/offerred_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">@lang('title.tod')</span>
+                        <span class="info-box-text">@if(Auth::user()->type==22) @lang('title.tod') @else @lang('title.tor') @endif</span>
                     <span class="info-box-number">[[allAnsar.totalOffered]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
                     </span>
@@ -367,13 +394,13 @@
             </div>
             <!-- /.info-box -->
         </div>
-        <div class="col-md-4 col-sm-6 col-xs-12">
+        <div class="col-md-3 line-bar-middle col-sm-6 col-xs-12">
             <div class="info-box bg-aqua"><span class="info-box-icon"><i class="fa fa-bed"></i></span>
 
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/rest_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                        <span class="info-box-text">@lang('title.trd')</span>
+                        <span class="info-box-text">@if(Auth::user()->type==22) @lang('title.trd') @else @lang('title.trr') @endif</span>
                     <span class="info-box-number">
                         [[allAnsar.totalRest]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
@@ -392,14 +419,18 @@
             <!-- /.info-box -->
         </div>
 
-        <div class="col-md-4 col-sm-6 col-xs-12">
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <!-- /.info-box -->
+        </div>
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="line-bar-bottom"></div>
             <div class="info-box bg-aqua"><span class="info-box-icon"><img
                             src="{{asset('dist/img/freeze.png')}}"></span>
 
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/freezed_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                    <span class="info-box-text">@lang('title.tfrd')</span>
+                    <span class="info-box-text">@if(Auth::user()->type==22) @lang('title.tfrd') @else @lang('title.tfrrr') @endif</span>
                     <span class="info-box-number">[[allAnsar.totalFreeze]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
                     </span>
@@ -416,14 +447,14 @@
             </div>
             <!-- /.info-box -->
         </div>
-        <div class="col-md-4 col-sm-6 col-xs-12">
+        <div class="col-md-3 line-bar-middle col-sm-6 col-xs-12">
             <div class="info-box bg-aqua"><span class="info-box-icon"><img
                             src="{{asset('dist/img/blacklist.png')}}"></span>
 
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/blacked_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                    <span class="info-box-text">@lang('title.tbad')</span>
+                    <span class="info-box-text">@if(Auth::user()->type==22) @lang('title.tbad') @else @lang('title.tbar') @endif</span>
                     <span class="info-box-number">
                        [[allAnsar.totalBlackList]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
@@ -440,14 +471,14 @@
             </div>
             <!-- /.info-box -->
         </div>
-        <div class="col-md-4 col-sm-6 col-xs-12">
+        <div class="col-md-3 line-bar-middle col-sm-6 col-xs-12">
             <div class="info-box bg-aqua"><span class="info-box-icon"><img
                             src="{{asset('dist/img/blocklist.png')}}"></span>
 
                 <div class="info-box-content">
                     <a href="{{URL::to('HRM/show_ansar_list')}}/blocked_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
-                    <span class="info-box-text">@lang('title.tbd')</span>
+                    <span class="info-box-text">@if(Auth::user()->type==22) @lang('title.tbd') @else @lang('title.tbr') @endif</span>
                     <span class="info-box-number">[[allAnsar.totalBlockList]]
 
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
