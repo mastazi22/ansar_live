@@ -6,7 +6,7 @@
 @section('content')
     <script>
 
-        GlobalApp.controller('OfferController', function ($scope, $http, $interval) {
+        GlobalApp.controller('OfferController', function ($scope, $http, $interval,notificationService) {
             $scope.kpiPCMale = 0;
             $scope.kpiPCFemale = 0;
             $scope.kpiAPCMale = 0;
@@ -134,6 +134,7 @@
                             $scope.alerts = [];
                             $scope.alerts.push(response.data);
                             $scope.buttonText = "Send Offer"
+                            notificationService.notify(response.data.type,response.data.message)
                             $scope.getOfferCount();
                         },
                         function (response) {
@@ -141,7 +142,7 @@
                             //alert(JSON.stringify(response));
                             console.log(response.data);
                             $scope.alerts = [];
-                            $scope.alerts.push(response.data);
+                            notificationService.notify(response.data.status,response.data.message)
                             $scope.showLoadScreen = false;$scope.showLoadScreen = false;
                             $scope.buttonText = "Send Offer"
                         }
