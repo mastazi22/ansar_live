@@ -266,7 +266,7 @@ class UserController extends Controller
 
     function editUserPermission($id)
     {
-        $read_permission_file = file_get_contents(storage_path("user/permission/permission_list.json"));
+        $read_permission_file = file_get_contents(storage_path("user/permission/test_list.json"));
         $routes = json_decode($read_permission_file);
         $user = User::find($id);
         if ($user->userPermission->permission_type == 0) {
@@ -278,6 +278,7 @@ class UserController extends Controller
         } else {
             $permission = 'all';
         }
+//        return Response::json($routes);
         return View::make('User.user_permission_view')->with(array('routes' => json_encode($routes), 'id' => $id, 'access' => json_encode($permission)));
     }
 

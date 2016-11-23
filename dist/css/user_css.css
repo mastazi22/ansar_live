@@ -839,3 +839,58 @@
     display: block;
     margin: 0 auto;
 }
+.sub-permission{
+    list-style: none;
+    padding:0;
+}
+.sub-permission .title{
+    font-size: 1.1em;
+    position: relative;
+    padding-bottom: 10px;
+    display: block;
+}
+/*.sub-permission .title:after{*/
+    /*content: '';*/
+    /*position: absolute;*/
+    /*width:5px;*/
+    /*left: 5px;*/
+    /*height: 10px;*/
+    /*bottom: 0;*/
+    /*border-left: 1px solid #ababab;*/
+/*}*/
+.sub-permission >li>ul{
+    list-style: none;
+    padding-left: 10px;
+}
+.sub-permission >li>ul>li{
+    position: relative;
+    margin-left:10px;
+}
+.sub-permission >li>ul>li:before{
+    content: '';
+    position: absolute;
+    width:15px;
+    left: -15px;
+    height: 50%;
+    border-bottom: 1px solid #ababab;
+    border-left: 1px solid #ababab;
+}
+.sub-permission >li>ul>li:first-child:before{
+    content: '';
+    position: absolute;
+    width:15px;
+    left: -15px;
+    top:-10px;
+    height: 100%;
+    border-bottom: 1px solid #ababab;
+    border-left: 1px solid #ababab;
+}
+.sub-permission >li>ul>li:not(:last-child):after{
+    content: '';
+    position: absolute;
+    width:15px;
+    left: -15px;
+    top:50%;
+    height: 50%;
+    border-left: 1px solid #ababab;
+}
