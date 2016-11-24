@@ -86,12 +86,21 @@ class OfferController extends Controller
         if ($valid->fails()) {
             return response(collect(['type' => 'error', 'message' => 'Invalid request'])->toJson(), 400, ['Content-Type' => 'application/json']);
         }
-        return Response::json(CustomQuery::getAnsarInfo(
-            ['male' => $request->get('pc_male'), 'female' => $request->get('pc_female')],
-            ['male' => $request->get('apc_male'), 'female' => $request->get('apc_female')],
-            ['male' => $request->get('ansar_male'), 'female' => $request->get('ansar_female')],
-            $request->get('district'),
-            $request->get('exclude_district'),Auth::user()));
+        DB::beginTransaction();
+        try {
+            $data = CustomQuery::getAnsarInfo(
+                ['male' => $request->get('pc_male'), 'female' => $request->get('pc_female')],
+                ['male' => $request->get('apc_male'), 'female' => $request->get('apc_female')],
+                ['male' => $request->get('ansar_male'), 'female' => $request->get('ansar_female')],
+                $request->get('district'),
+                $request->get('exclude_district'), Auth::user());
+            PanelModel::whereIn('ansar_id',$data)->update(['locked'=>1]);
+            DB::commit();
+        }catch(\Exception $e){
+            DB::rollBack();
+            return response(collect(['type' => 'error', 'message' => $e->getMessage()])->toJson(), 400, ['Content-Type' => 'application/json']);
+        }
+        return Response::json($data);
     }
 
     function sendOfferSMS(Request $request)

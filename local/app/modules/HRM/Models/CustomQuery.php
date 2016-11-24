@@ -29,7 +29,8 @@ class CustomQuery
             ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
             ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
-            ->join('tbl_units as pu', 'tbl_ansar_parsonal_info.unit_id', '=', 'pu.id');
+            ->join('tbl_units as pu', 'tbl_ansar_parsonal_info.unit_id', '=', 'pu.id')
+            ->where('tbl_panel_info.locked', 0);
         if ($user->type == 22) {
             if (in_array($exclude_district, Config::get('app.offer'))) {
                 $d = Config::get('app.exclude_district');
@@ -86,7 +87,7 @@ class CustomQuery
             ->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')->take($apc['female']);
 
-        $b = $pc_male->unionAll($pc_female)->unionAll($apc_male)->unionAll($apc_female)->unionAll($ansar_male)->unionAll($ansar_female)->get();
+        $b = $pc_male->unionAll($pc_female)->unionAll($apc_male)->unionAll($apc_female)->unionAll($ansar_male)->unionAll($ansar_female)->pluck('ansar_id');
 //        return DB::getQueryLog();
         return $b;
     }
