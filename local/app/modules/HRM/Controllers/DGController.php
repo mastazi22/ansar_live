@@ -254,7 +254,7 @@ class DGController extends Controller
         DB::beginTransaction();
         try {
             $status = AnsarStatusInfo::where('ansar_id',$request->ansar_id)->first();
-            if(!$status||$status.getStatus()[0]==AnsarStatusInfo::BLOCK_STATUS) throw new \Exception('This Ansar is Blocked');
+            if(!$status||$status->getStatus()[0]==AnsarStatusInfo::BLOCK_STATUS) throw new \Exception('This Ansar is Blocked');
             $t_date = Input::get('transfer_date');
             $t_kpi_id = Input::get('t_kpi_id');
             $ansar_id = Input::get('ansar_id');
