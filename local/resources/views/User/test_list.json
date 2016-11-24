@@ -1,0 +1,498 @@
+[
+  {
+    "root": "Dashboard",
+    "children": [
+      {
+        "value": "graph_embodiment",
+        "name": "Show Embodiment Graph"
+      },
+      {
+        "value": "graph_disembodiment",
+        "name": "Show Disembodiment Graph"
+      },
+      {
+        "value": "recent_ansar",
+        "name": "Show Recent Ansar Count"
+      },
+      {
+        "value": "show_ansar_list",
+        "name": "Show Ansar List"
+      },
+      {
+        "value": "get_ansar_list",
+        "name": "Get Ansar List"
+      },
+      {
+        "value": "service_ended_in_three_years",
+        "name": "Service Ended in Three Years List"
+      },
+      {
+        "value": "service_ended_info_details",
+        "name": "Service Ended info Details"
+      },
+      {
+        "value": "ansar_not_interested",
+        "name": "Not Interested Ansar List"
+      },
+      {
+        "value": "not_interested_info_details",
+        "name": "Not Interested Ansar Details"
+      },
+      {
+        "value": "ansar_reached_fifty_years",
+        "name": " Ansar List Reached Fifty Years List"
+      },
+      {
+        "value": "ansar_reached_fifty_details",
+        "name": "Ansar List Reached Fifty Years Details"
+      },
+      {
+        "value": "show_recent_ansar_list",
+        "name": "View Recent Ansar List"
+      },
+      {
+        "value": "dashboard_total_ansar",
+        "name": "Show Total Ansar Count"
+      },
+      {
+        "value": "progress_info",
+        "name": "Progress Info"
+      }
+    ]
+  },
+  {
+    "root": "KPI Branch",
+    "children": [
+      {
+        "text": "Active KPI Information",
+        "actions": [
+          {
+            "value": "kpi_view",
+            "name": "View KPI"
+          },
+          {
+            "value": "go_to_kpi_page",
+            "name": "Create KPI"
+          },
+          {
+            "value": "Kpi_edit",
+            "name": "Edit KPI"
+          },
+          {
+            "value": "kpi-update",
+            "name": "Update KPI"
+          }
+        ]
+      },
+      {
+        "value": "ansar_before_withdraw_view",
+        "name": "List of Ansar Before Guard Withdraw"
+      },
+      {
+        "value": "ansar_before_reduce_view",
+        "name": "List of Ansar Before Guard Reduce"
+      },
+      {
+        "text": "Reduce Ansar In Guard Strength",
+        "actions": [
+          {
+            "value": "reduce_guard_strength",
+            "name": "View Ansar List"
+          },
+          {
+            "value": "ansar-reduce-update",
+            "name": "Freeze Ansar"
+          }
+        ]
+      },
+      {
+        "text": "KPI Withdraw Cancel",
+        "actions": [
+          {
+            "value": "kpi_withdraw_cancel_view",
+            "name": "KPI Withdraw Cancel"
+          },
+          {
+            "value": "active_kpi",
+            "name": "Active KPI"
+          },
+          {
+            "value": "kpi-withdraw-cancel-update",
+            "name": "Cancel Withdraw"
+          },
+          {
+            "value": "withdraw-date-update",
+            "name": "Withdraw Date Update"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "root": "Personal Info",
+    "children": [
+      {
+        "text": "Entry",
+        "actions": [
+          {
+            "value": "anser_list,getnotverifiedansar,getverifiedansar",
+            "name": "Entry List"
+          },
+          {
+            "value": "ansar_registration,handleregistration",
+            "name": "Create New Ansar"
+          },
+          {
+            "value": "editentry,submiteditentry",
+            "name": "Edit Ansar"
+          },
+          {
+            "value": "entryverify",
+            "name": "Entry Verify(Not Verified)"
+          },
+          {
+            "value": "editVerifiedEntry",
+            "name": "Entry Verify(Verified)"
+          }
+        ]
+      },
+      {
+        "value": "chunk_verify,entryChunkVerify",
+        "name": "Verify Entry(Chunk)"
+      },
+      {
+        "value": "entry_draft,getdraftlist",
+        "name": "List of Ansar Before Guard Reduce"
+      },
+      {
+        "text": "Draft Entry",
+        "actions": [
+          {
+            "value": "entry_draft,getdraftlist",
+            "name": "Draft List"
+          },
+          {
+            "value": "draftEdit,editdraft",
+            "name": "Edit Draft"
+          },
+          {
+            "value": "draftDelete",
+            "name": "Delete Draft"
+          }
+        ]
+      },
+      {
+        "value": "entry_advanced_search,search_result",
+        "name": "Advanced Search"
+      },
+      {
+        "value": "orginal_info,idsearch",
+        "name": "Orginal Info"
+      },
+      {
+        "value": "print_card_id_view,print_card_id",
+        "name": "Print ID Card"
+      }
+    ]
+  },
+  {
+    "root": "Service",
+    "children": [
+      {
+        "value": "view_panel_list,select_status,save-panel-entry",
+        "name": "Panel"
+      },
+      {
+        "value": "make_offer,send_offer",
+        "name": "Offer"
+      },
+      {
+        "text": "Embodiment",
+        "actions": [
+          {
+            "value": "go_to_new_embodiment_page,new-embodiment-entry",
+            "name": "Embodiment Entry"
+          },
+          {
+            "value": "go_to_new_disembodiment_page,disembodiment-entry",
+            "name": "Dis-Embodiment"
+          },
+          {
+            "value": "service_extension_view,service_extension_entry",
+            "name": "Service Extension"
+          },
+          {
+            "value": "embodiment_date_correction_view,new-embodiment-date-entry",
+            "name": "Embodiment Date Correction"
+          },
+          {
+            "value": "embodiment_memorandum_id_correction_view,new_embodiment_memorandum_id_update",
+            "name": "Embodiment Memorandum ID Correction"
+          }
+        ]
+      },
+      {
+        "text": "Freeze",
+        "actions": [
+          {
+            "value": "freeze_view,load_ansar_for_freeze,freeze_entry",
+            "name": "Freeze for Disciplinary Action"
+          },
+          {
+            "value": "ansar-withdraw-view,ansar_list_for_withdraw,ansar-withdraw-update",
+            "name": "Freeze For Withdraw Ansar"
+          },
+          {
+            "text": "Freezed Ansar List",
+            "actions": [
+              {
+                "value": "freeze_list,getfreezelist",
+                "name": "Freezed Ansar List"
+              },
+              {
+                "value": "freezeRembodied",
+                "name": "Continue Service"
+              },
+              {
+                "value": "freezeblack",
+                "name": "Black"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "text": "Black Listing",
+        "actions": [
+          {
+            "value": "blacklist_entry_view,blacklist_entry",
+            "name": "Add Ansar In Black List"
+          },
+          {
+            "value": "unblacklist_entry_view,unblacklist_entry",
+            "name": "Remove Ansar from Blacklist"
+          }
+        ]
+      },
+      {
+        "text": "Block Listing",
+        "actions": [
+          {
+            "value": "blocklist_entry_view,blocklist_entry",
+            "name": "Add Ansar In Block List"
+          },
+          {
+            "value": "multiple_kpi_transfer_process,unblocklist_entry",
+            "name": "Remove Ansar from Blocklist"
+          }
+        ]
+      },
+      {
+        "value": "transfer_process,get_embodied_ansar,complete_transfer_process",
+        "name": "Ansar Transfer(Single Ansar)"
+      },
+      {
+        "value": "transfer_process,search_kpi_by_ansar,confirm_transfer",
+        "name": "Ansar Transfer(Multiple Ansar)"
+      }
+    ]
+  },
+  {
+    "root": "Report",
+    "children": [
+      {
+        "value": "view_ansar_service_record",
+        "name": "View Service Record"
+      },
+      {
+        "value": "ansar_service_report_view",
+        "name": "View Previous Service Report"
+      },
+      {
+        "value": "guard_report",
+        "name": "View Ansar In Guard"
+      },
+      {
+        "value": "transfer_ansar_history",
+        "name": "View Ansar Transfer History"
+      },
+      {
+        "value": "disembodiment_report_view",
+        "name": "View Disembodied Report"
+      },
+      {
+        "value": "blocklist_view",
+        "name": "Blocklist Information"
+      },
+      {
+        "value": "blacklist_view",
+        "name": "Blacklist Information"
+      },
+      {
+        "value": "three_year_over_report_view",
+        "name": "3 Years Over List"
+      },
+      {
+        "value": "transfer_letter_view",
+        "name": "Print Transfer Letter"
+      },
+      {
+        "value": "embodiment_letter_view",
+        "name": "Print Embodiment Letter"
+      },
+      {
+        "value": "disembodiment_letter_view",
+        "name": "Print Dis-embodiment Letter"
+      },
+      {
+        "value": "offer_report",
+        "name": "Offer Report"
+      }
+    ]
+  },
+  {
+    "root": "General Settings",
+    "children": [
+      {
+        "text": "Session Information",
+        "actions": [
+          {
+            "value": "session_view",
+            "name": "View Session"
+          },
+          {
+            "value": "create_session",
+            "name": "New Session"
+          },
+          {
+            "value": "edit_session,session-update",
+            "name": "Edit Session"
+          }
+        ]
+      },
+      {
+        "text": "Range Setting",
+        "actions": [
+          {
+            "value": "range.index",
+            "name": "View Range"
+          },
+          {
+            "value": "range.create,range.store",
+            "name": "New Range"
+          },
+          {
+            "value": "range.edit,range.update",
+            "name": "Edit Range"
+          }
+        ]
+      },
+      {
+        "text": "Unit Setting",
+        "actions": [
+          {
+            "value": "unit.index",
+            "name": "View Unit"
+          },
+          {
+            "value": "unit.create,unit.store",
+            "name": "New Unit"
+          },
+          {
+            "value": "unit.edit,unit.update",
+            "name": "Edit Unit"
+          }
+        ]
+      },
+      {
+        "text": "Thana Setting",
+        "actions": [
+          {
+            "value": "thana_view,thana_details",
+            "name": "View Thana"
+          },
+          {
+            "value": "thana_form,thana_entry",
+            "name": "New Thana"
+          },
+          {
+            "value": "thana_edit,thana_update",
+            "name": "Edit Thana"
+          }
+        ]
+      },
+      {
+        "text": "Disease Setting",
+        "actions": [
+          {
+            "value": "disease_view",
+            "name": "View Disease"
+          },
+          {
+            "value": "add_disease_view,disease_entry",
+            "name": "New Disease"
+          },
+          {
+            "value": "disease_edit,disease_update",
+            "name": "Edit Disease"
+          }
+        ]
+      },
+      {
+        "text": "Skill Setting",
+        "actions": [
+          {
+            "value": "skill_view",
+            "name": "View Skill"
+          },
+          {
+            "value": "add_skill_view,skill_entry",
+            "name": "New Skill"
+          },
+          {
+            "value": "skill_edit,skill_update",
+            "name": "Edit Skill"
+          }
+        ]
+      }
+
+    ]
+  },
+  {
+    "root": "Common Permission",
+    "children": [
+      {
+        "value": "division_name",
+        "name": "Load Division Name"
+      },
+      {
+        "value": "district_name",
+        "name": "Load Unit/District Name"
+      },
+      {
+        "value": "thana_name",
+        "name": "Load Thana Name"
+      },
+      {
+        "value": "kpi_name",
+        "name": "Load KPI"
+      },
+      {
+        "value": "get_skill_list",
+        "name": "Load Skill"
+      },
+      {
+        "value": "get_disease_list",
+        "name": "Load Disease"
+      },
+      {
+        "value": "ansar_rank",
+        "name": "Load Rank"
+      },
+      {
+        "value": "blood_name",
+        "name": "Load Blood Group"
+      }
+    ]
+  }
+]
