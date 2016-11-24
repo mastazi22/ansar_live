@@ -1284,7 +1284,7 @@ class DGController extends Controller
     public function cancelPanelEntry(Request $request)
     {
         $rules = [
-            'ansar_id'=>'required|regex:/^[0-9]+$/|exists:tbl_panel_info,ansar_id',
+            'ansar_id'=>'required|regex:/^[0-9]+$/|exists:hrm.tbl_panel_info',
             'cancel_panel_date'=>'required',
         ];
         $valid = Validator::make($request->all(),$rules);
@@ -1299,8 +1299,9 @@ class DGController extends Controller
         DB::beginTransaction();
         try {
             $ansar = AnsarStatusInfo::where('ansar_id', $ansar_id)->first();
+//            return $ansar->getStatus();
             if (!$ansar) throw new \Exception("This Ansar is not exists");
-            if (in_array('block', $ansar->getStatus()) || in_array('black', $ansar->getStatus()) || !in_array('panel', $ansar->getStatus())) throw new \Exception("This Ansar is not available in panel");
+            if (in_array(AnsarStatusInfo::BLOCK_STATUS, $ansar->getStatus()) || in_array(AnsarStatusInfo::BLACK_STATUS, $ansar->getStatus()) || !in_array(AnsarStatusInfo::PANEL_STATUS, $ansar->getStatus())) throw new \Exception("This Ansar is not available in panel");
             $panel_info = $ansar->panel;
             if (!$panel_info) throw new \Exception("This Ansar is not in panel");
             if ($panel_info->come_from == 'Rest') {
