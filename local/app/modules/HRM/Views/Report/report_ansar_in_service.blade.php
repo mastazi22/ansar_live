@@ -169,9 +169,7 @@
                                     <td style="background: #ffffff" ng-if="!ansar">--</td>
                                     <td style="background: #ffffff" ng-if="ansar">[[ansar.ansar_name_bng]]</td>
                                     <td style="background: #ffffff" rowspan="4" align="center" valign="middle">
-                                        <img ng-if="pi" src="{{asset('')}}[[ansar.profile_pic]]" class="img-thumbnail"
-                                             style="width:120px;height: auto">
-                                        <img ng-if="!pi" src="{{asset('')}}dist/img/nimage.png" class="img-thumbnail"
+                                        <img src="{{URL::to('image').'?file='}}[[ansar.profile_pic]]" class="img-thumbnail"
                                              style="width:120px;height: auto">
                                     </td>
                                 </tr>

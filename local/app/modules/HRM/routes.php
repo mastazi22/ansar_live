@@ -52,14 +52,16 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/entryreport/{ansarid}/{type?}', ['as' => 'entry_report', 'uses' => 'EntryFormController@entryReport'])->where('ansarid','[0-9]+');
         Route::get('entryform', ['as' => 'ansar_registration', 'uses' => 'EntryFormController@entryform']);
         Route::get('ansar_rank', ['as' => 'ansar_rank', 'uses' => 'FormSubmitHandler@getAnsarRank']);
-        Route::post('handleregistration', 'FormSubmitHandler@handleregistration');
+        Route::post('handleregistration', ['as'=>'handleregistration','uses'=>'FormSubmitHandler@handleregistration']);
         Route::post('submiteditentry', ['as'=>'submiteditentry','uses'=>'FormSubmitHandler@submitEditEntry']);
         Route::get('editEntry/{ansarid}', ['as' => 'editentry', 'uses' => 'FormSubmitHandler@editEntry'])->where('ansarid','^[0-9]+$');
+        Route::get('editVerifiedEntry/{ansarid}', ['as' => 'editVerifiedEntry', 'uses' => 'FormSubmitHandler@editEntry'])->where('ansarid','^[0-9]+$');
         Route::post('entrysearch', 'FormSubmitHandler@EntrySearch');
         Route::get('chunkverify', ['as' => 'chunk_verify', 'uses' => 'FormSubmitHandler@chunkVerify']);
         Route::post('reject', ['as'=>'reject','uses'=>'EntryFormController@Reject']);
         route::get('getBloodName', ['as' => 'blood_name', 'uses' => 'FormSubmitHandler@getBloodName']);
         Route::post('entryVerify', ['as' => 'entryverify', 'uses' => 'EntryFormController@entryVerify']);
+        Route::post('entryChunkVerify', ['as' => 'entryChunkVerify', 'uses' => 'EntryFormController@entryChunkVerify']);
         Route::get('getnotverifiedansar', ['as'=>'getnotverifiedansar','uses'=>'FormSubmitHandler@getNotVerifiedAnsar']);
         Route::get('getverifiedansar', ['as'=>'getverifiedansar','uses'=>'FormSubmitHandler@getVerifiedAnsar']);
         Route::get('getDiseaseName', ['as' => 'get_disease_list', 'uses' => 'EntryFormController@getAllDisease']);
@@ -79,13 +81,13 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 
         //ENTRY SEARCH
         Route::get('entryadvancedsearch', ['as' => 'entry_advanced_search', 'uses' => 'EntryFormController@entryAdvancedSearch']);
-        Route::post('advancedentrysearchsubmit', 'FormSubmitHandler@advancedEntrySearchSubmit');
+        Route::post('advancedentrysearchsubmit', ['as'=>'search_result','uses'=>'FormSubmitHandler@advancedEntrySearchSubmit']);
         //END ENTRY SEARCH
 
         //ORGINAL INFO
 
         route::get('originalinfo', ['as' => 'orginal_info', 'uses' => 'EntryFormController@ansarOriginalInfo']);
-        route::post('idsearch', 'FormSubmitHandler@idSearch');
+        route::post('idsearch', ['as'=>'idsearch','uses'=>'FormSubmitHandler@idSearch']);
 
         //END ORGINAL INFO
 
@@ -110,7 +112,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('/kpi_list', ['as'=>'kpi_list','uses'=>'OfferController@getKpi']);
         Route::get('/get_offered_ansar_info', ['as'=>'get_offered_ansar_info','uses'=>'OfferController@getOfferedAnsar']);
         Route::post('/cancel_offer_handle', ['as' => 'cancel_offer_handle', 'uses' => 'OfferController@handleCancelOffer']);
-        Route::post('/send_offer', 'OfferController@sendOfferSMS');
+        Route::post('/send_offer', ['as'=>'send_offer','uses'=>'OfferController@sendOfferSMS']);
         Route::get('/get_offer_count', ['as'=>'get_offer_count','uses'=>'OfferController@getQuotaCount']);
         Route::get('/offer_quota', ['as' => 'offer_quota', 'uses' => 'OfferController@offerQuota']);
         Route::get('/get_offer_quota', ['as'=>'get_offer_quota','uses'=>'OfferController@getOfferQuota']);
@@ -134,7 +136,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 
         Route::get('/thana_form', ['as' => 'thana_form', 'uses' => 'GeneralSettingsController@thanaIndex']);
         Route::get('/thana_view', ['as' => 'thana_view', 'uses' => 'GeneralSettingsController@thanaView']);
-        Route::get('/thana_view_details', 'GeneralSettingsController@thanaViewDetails');
+        Route::get('/thana_view_details', ['as'=>'thana_details','uses'=>'GeneralSettingsController@thanaViewDetails']);
         Route::post('/thana_entry', ['as'=>'thana_entry','uses'=>'GeneralSettingsController@thanaEntry']);
         Route::get('/thana_edit/{id}', ['as' => 'thana_edit', 'uses' => 'GeneralSettingsController@thanaEdit'])->where('id','[0-9]+');
         Route::get('/thana_delete/{id}', ['as' => 'thana_delete', 'uses' => 'GeneralSettingsController@thanaDelete']);

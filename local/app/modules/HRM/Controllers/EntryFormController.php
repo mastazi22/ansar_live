@@ -57,48 +57,6 @@ class EntryFormController extends Controller
     {
 
         $usertype = Auth::user()->type;
-        if ($request->exists('chunk_verification')) {
-            $ids = $request->input('not_verified');
-            $rules =[
-                'chunk_verification'=>'required|regex:/^[a-z]+_[a-z]+/',
-                'not_verified'=>'required'
-            ];
-            for($i=0;$i<count($ids);$i++){
-                $rules["not_verified.{$i}"] = "required|numeric|regex:/^[0-9]+$/";
-            }
-            $valid = Validator::make($request->all(),$rules);
-            if($valid->fails()){
-                return response("Invalid request(400)",400);
-            }
-            $messages = [];
-            DB::beginTransaction();
-            try {
-                for ($i = 0; $i < count($ids); $i++) {
-                    $ansar = PersonalInfo::where('ansar_id', $ids[$i])->first();
-                    if(!preg_match('/^(\+88)?[0-9]{11}$/',$ansar->mobile_no_self)){
-                        //return 'error';
-                        array_push($messages,['status'=>false,'message'=>'Ansar id '.$ansar->ansar_id.' does not contain valid mobile no']);
-                    }
-                    else{
-                        $ansar->verified = 2;
-                        $ansar->status->free_status = 1;
-                        $success = $ansar->save();
-                        $status = $ansar->status->save();
-                        CustomQuery::addActionlog(['ansar_id' => $ids[$i], 'action_type' => 'VERIFIED', 'from_state' => 'ENTRY', 'to_state' => 'VERIFIED', 'action_by' => auth()->user()->id]);
-                        if (!$success&&!$status) throw new \Exception("An Error Occur While Verifying. Please try again later");
-                        array_push($messages,['status'=>true,'message'=>$ansar->ansar_id.' verified successfully']);
-                        DB::commit();
-                    }
-
-
-                }
-            } catch (\Exception $e) {
-                DB::rollback();
-                return $e->getMessage();
-                return Response::json(['status' => false, 'messege' => $e->getMessage()]);
-            }
-            return Response::json(['status' => true, 'messege' => $messages]);
-        }
         $rules = ['verified_id'=>'required|numeric|regex:/^[0-9]+$/'];
         $valid = Validator::make($request->all(),$rules);
         if($valid->fails()){
@@ -127,6 +85,50 @@ class EntryFormController extends Controller
             } else
                 return 0;
         }
+    }
+    public function entryChunkVerify(Request $request)
+    {
+        $user = Auth::user();
+        $ids = $request->input('not_verified');
+        $rules =[
+            'not_verified'=>'required|is_array|array_type:int'
+        ];
+        $valid = Validator::make($request->all(),$rules);
+        if($valid->fails()){
+            return Response::json(['status'=>false,'message'=>'Invalid Request']);
+        }
+        $messages = [];
+        DB::beginTransaction();
+        try {
+            for ($i = 0; $i < count($ids); $i++) {
+                $ansar = PersonalInfo::where('ansar_id', $ids[$i])->first();
+                if(!preg_match('/^(\+88)?[0-9]{11}$/',$ansar->mobile_no_self)){
+                    //return 'error';
+                    array_push($messages,['status'=>false,'message'=>'Ansar id '.$ansar->ansar_id.' does not contain valid mobile no']);
+                }
+                else{
+                    if($user->type==55){
+                        $ansar->verified = 1;
+                        $ansar->save();
+                    }
+                    else {
+                        $ansar->verified = 2;
+                        $ansar->status->free_status = 1;
+                        $ansar->save();
+                        $ansar->status->save();
+                    }
+                    CustomQuery::addActionlog(['ansar_id' => $ids[$i], 'action_type' => 'VERIFIED', 'from_state' => 'ENTRY', 'to_state' => 'VERIFIED', 'action_by' => auth()->user()->id]);
+                    array_push($messages,['status'=>true,'message'=>$ansar->ansar_id.' verified successfully']);
+                    DB::commit();
+                }
+
+
+            }
+        } catch (\Exception $e) {
+            DB::rollback();
+            return Response::json(['status' => false, 'messege' => $e->getMessage()]);
+        }
+        return Response::json(['status' => true, 'messege' => $messages]);
     }
 
     public function Reject(Request $request)

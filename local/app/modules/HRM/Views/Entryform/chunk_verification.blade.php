@@ -152,7 +152,7 @@
 
                     </filter-template>
                     <div class="table-responsive">
-                        <form id="not-verified-form" method="post" action="{{URL::to('HRM/entryVerify')}}">
+                        <form id="not-verified-form" method="post" action="{{URL::to('HRM/entryChunkVerify')}}">
                             <input type="hidden" name="chunk_verification" value="chunk_verification">
                             <table class="table table-bordered">
                                 <caption>
