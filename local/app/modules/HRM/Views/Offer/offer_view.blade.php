@@ -107,20 +107,21 @@
                 })
             }
             $scope.sendOffer = function () {
-
-                $scope.offerAnsarId = [];
+                $scope.showLoadingAnsar = true;
                 $scope.buttonText = "Sending Offer..."
-                $scope.selectedAnsar.forEach(function (v) {
-                    $scope.offerAnsarId.push(v.ansar_id);
-                })
-                if($scope.offerAnsarId.length<=0){
-                    alert("No ansar available");
-                    return;
-                }
                 $http({
                     url: '{{URL::to('HRM/send_offer')}}',
                     data: angular.toJson({
-                        "offered_ansar": $scope.offerAnsarId,
+                        pc_male: $scope.kpiPCMale,
+                        pc_female: $scope.kpiPCFemale,
+                        apc_male: $scope.kpiAPCMale,
+                        apc_female: $scope.kpiAPCFemale,
+                        ansar_male: $scope.kpiAnsarMale,
+                        ansar_female: $scope.kpiAnsarFemale,
+                        district: $scope.selectedDistrict.filter(function (v) {
+                            return v != undefined;
+                        }),
+                        exclude_district: (parseInt(userType) == 11 ? null : $scope.districtId),
                         district_id: $scope.isAdmin ? $scope.data.offeredDistrict : $scope.districtId,
                         type: 'panel',
                         offer_limit: $scope.offerQuota
@@ -317,7 +318,7 @@
 
                             </div>
                         </div>
-                        <button class="btn btn-primary pull-right" ng-click="loadAnsar()" ng-disabled="(isAdmin&&!data.offeredDistrict)">
+                        <button class="btn btn-primary pull-right" ng-click="sendOffer()" ng-disabled="(isAdmin&&!data.offeredDistrict)">
                             <i ng-show="showLoadScreen" class="fa fa-send"></i><i ng-hide="showLoadScreen" class="fa fa-spinner fa-pulse"></i>
                             [[buttonText]]
                         </button>

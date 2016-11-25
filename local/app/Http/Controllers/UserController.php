@@ -279,7 +279,7 @@ class UserController extends Controller
             $permission = 'all';
         }
 //        return Res;
-        return View::make('User.user_permission_view')->with(array('routes' => json_encode($routes), 'id' => $id, 'access' => json_encode($permission)));
+        return View::make('User.user_permission_view')->with(array('routes' => collect($routes), 'id' => $id, 'access' => json_encode($permission)));
     }
 
     function updatePermission($id)

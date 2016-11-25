@@ -16,8 +16,7 @@ use Illuminate\Support\Facades\DB;
 
 class Helper
 {
-    public static function getOfferQuota(){
-        $user = Auth::user();
+    public static function getOfferQuota($user){
         if($user->type==22){
             $offered = OfferSMS::where('district_id', $user->district_id)->count('ansar_id');
             $embodied_ansar_total = DB::table('tbl_embodiment')

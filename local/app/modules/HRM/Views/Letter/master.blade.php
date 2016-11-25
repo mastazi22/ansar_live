@@ -2,13 +2,15 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="{{asset('dist/css/user_css.css')}}">
+    <link rel="stylesheet" href="{{asset('dist/css/letter.css')}}">
     <link href="{{asset('bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css"/>
     <link href="{{asset('dist/css/AdminLTE.min.css')}}" rel="stylesheet" type="text/css"/>
 </head>
 <body>
+<div class="print-hide">
+    @include('HRM::Letter.'.$view)
+</div>
 
-@include('HRM::Letter.'.$view)
 <script src="{{asset('plugins/jQuery/jQuery-2.1.4.min.js')}}" type="text/javascript"></script>
 <script>
 

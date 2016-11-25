@@ -1,6 +1,6 @@
 <div class="letter-footer">
     <div class="footer-top">
-        <ul class="pull-right" style="margin-top: 90px">
+        <ul class="pull-right" style="margin-top: 20px">
             <li>{{$user?$user->first_name.' '.$user->last_name:'n\a'}}</li>
             <li>জেলা কমাণ্ডান্ট</li>
             <li>মোবাইলঃ<span style="border-bottom: 1px dashed #000000;    top: -5px;display: inline-block;position: relative;">{{$user?$user->mobile_no:'n\a'}}</span></li>
@@ -47,11 +47,11 @@
         </ul>
     </div>
     <div class="footer-bottom">
-        <ul class="pull-right">
+        <ul class="pull-right" style="width: 32%;">
             {{--<li>তারিখঃ{{date('d/m/Y',strtotime($mem->created_at))}}</li>--}}
             <li>জেলা কমাণ্ডান্ট</li>
             <li>মোবাইলঃ<span style="border-bottom: 1px dashed #000000;    top: -5px;display: inline-block;position: relative;">{{$user?$user->mobile_no:'n\a'}}</span></li>
-            <li>ই-মেইলঃ{{$user?$user->email:'n\a'}}</li>
+            <li>ই-মেইলঃ&nbsp;{{$user?$user->email:'n\a'}}</li>
         </ul>
     </div>
 </div>

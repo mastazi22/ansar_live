@@ -1,0 +1,94 @@
+.letter {
+    width: 850px;
+    margin: 10px auto;
+    background: #f8ffe0;
+}
+
+.letter-header, .letter-body, .letter-footer {
+    width: 100%;
+    padding: 5px;
+    font-size: 1em;
+}
+
+.letter-header .header-top, .letter-body .body-top, .letter-footer .footer-top, .letter-footer .footer-bottom {
+    padding: 10px 5px;
+}
+
+.letter-footer .footer-top::after, .letter-footer .footer-bottom::after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.header-top h4, .body-top h4 {
+    margin-bottom: 0;
+    text-align: center;
+    line-height: 20px;
+    font-size: 1em;
+}
+
+.body-top h4, .letter-content-middle h4 {
+    font-size: 1.1em;
+    font-weight: bold;
+    text-decoration: underline;
+    text-align: center;
+}
+
+.letter-header .header-bottom {
+    padding: 5px;
+    font-size: 1em;
+}
+
+.letter-header .header-bottom::after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.letter-body .letter-content-top, .letter-body .letter-content-last, .letter-body .letter-content-middle {
+    padding: 0 5px;
+    text-align: justify;
+    font-size: 1em;
+}
+
+.letter-footer .footer-top ul, .letter-footer .footer-bottom ul, .letter-content-middle ul {
+    padding: 0;
+    margin: 0;
+    display: block;
+    list-style: none;
+    width: 30%;
+}
+
+.letter-footer .footer-top ul li, .letter-footer .footer-bottom ul li, .letter-content-middle ul li {
+    padding: 3px;
+    text-align: left;
+    font-size: 1em;
+}
+
+.letter-footer .footer-bottom ul.pull-left {
+    width: 40%;
+}
+
+.letter-content-middle table {
+    font-size: .9em;
+}
+
+.letter-content-middle table tr th, .letter-content-middle table tr td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+@media print {
+    .letter{
+        width: 100% !important;
+    }
+    .print-hide{
+        display: none !important;
+    }
+    @page {
+        size: a4;
+        margin: 0cm;
+    }
+
+
+}

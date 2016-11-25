@@ -75,12 +75,8 @@
             "name": "Create KPI"
           },
           {
-            "value": "Kpi_edit",
+            "value": "Kpi_edit,kpi-update",
             "name": "Edit KPI"
-          },
-          {
-            "value": "kpi-update",
-            "name": "Update KPI"
           }
         ]
       },
@@ -496,3 +492,4 @@
     ]
   }
 ]
+

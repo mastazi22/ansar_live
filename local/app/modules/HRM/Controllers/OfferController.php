@@ -4,6 +4,7 @@ namespace App\modules\HRM\Controllers;
 
 use App\Helper\Helper;
 use App\Http\Controllers\Controller;
+use App\Jobs\OfferQueue;
 use App\modules\HRM\Models\ActionUserLog;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\CustomQuery;
@@ -106,45 +107,39 @@ class OfferController extends Controller
     function sendOfferSMS(Request $request)
     {
         $rules = [];
-        $rules['offered_ansar'] = 'required|array|array_type:int';
+        $rules['pc_male'] = 'required|numeric|regex:/^[0-9]+$/|min:0';
+        $rules['pc_female'] = 'required|numeric|regex:/^[0-9]+$/|min:0';
+        $rules['apc_male'] = 'required|numeric|regex:/^[0-9]+$/|min:0';
+        $rules['apc_female'] = 'required|numeric|regex:/^[0-9]+$/|min:0';
+        $rules['ansar_male'] = 'required|numeric|regex:/^[0-9]+$/|min:0';
+        $rules['ansar_female'] = 'required|numeric|regex:/^[0-9]+$/|min:0';
+        $rules['district_id'] = 'required|numeric|regex:/^[0-9]+$/';
+        if (Auth::user()->type == 11) {
+            $rules['district'] = 'required';
+        } else if (Auth::user()->type == 22) {
+            $rules['exclude_district'] = 'required|numeric|regex:/^[0-9]+$/';
+        }
         $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {
             return response(collect(['type' => 'error', 'message' => 'Invalid request'])->toJson(), 400, ['Content-Type' => 'application/json']);
         }
-        $ansar_ids = Input::get('offered_ansar');
-        $district_id = Input::get('district_id');
-        $offer_limit = Input::get('offer_limit');
-        $type = Input::get('type');
+        $district_id = $request->get('district_id');
         DB::beginTransaction();
         try {
-            $quota = Helper::getOfferQuota();
-            if($quota!==false&&$quota<count($ansar_ids)) throw new \Exception("Your offer quota limit exit");
-            for ($i = 0; $i < count($ansar_ids); $i++) {
-                $mos = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
-                if (!$mos && !preg_match('/^(\+88)?0[0-9]{10}/', $mos->mobile_no_self)) throw new Exception("Invalid mobile number");
-                $offer = new OfferSMS([
-                    'sms_send_datetime' => Carbon::now(),
-                    'sms_end_datetime' => Carbon::now()->addHours(48),
-                    'district_id' => $district_id,
-                    'come_from' => $type,
-                    'action_user_id' => auth()->user()->id
-                ]);
-                $mos->offer_sms_info()->save($offer);
-                //if (!$s) throw new Exception("An Error Occur While Send Offer. Please Try Again Later");
-                $this->removeFromPanel($mos);
-                auth()->user()->actionLog()->save(new ActionUserLog([
-                    'ansar_id' => $ansar_ids[$i],
-                    'action_type' => 'SEND OFFER',
-                    'from_state' => 'PANEL',
-                    'to_state' => 'OFFER'
-                ]));
-                //array_push($user, ['ansar_id' => $ansar_ids[$i], 'action_type' => 'SEND OFFER', 'from_state' => 'PANEL', 'to_state' => 'OFFER']);
-
-            }
+            $data = CustomQuery::getAnsarInfo(
+                ['male' => $request->get('pc_male'), 'female' => $request->get('pc_female')],
+                ['male' => $request->get('apc_male'), 'female' => $request->get('apc_female')],
+                ['male' => $request->get('ansar_male'), 'female' => $request->get('ansar_female')],
+                $request->get('district'),
+                $request->get('exclude_district'), Auth::user());
+            PanelModel::whereIn('ansar_id',$data)->update(['locked'=>1]);
+            $quota = Helper::getOfferQuota(Auth::user());
+            if($quota!==false&&$quota<count($data)) throw new \Exception("Your offer quota limit exit");
+            $this->dispatch(new OfferQueue($data,$district_id,Auth::user()));
             DB::commit();
         }
         catch (\Exception $e) {
-            DB::rollback();
+            DB::rollBack();
             return response(collect(['status' => 'error', 'message' => $e->getMessage()])->toJson(), 400, ['Content-Type' => 'application/json']);
         }
         return Response::json(['type' => 'success', 'message' => "Offer Send Successfully"]);
