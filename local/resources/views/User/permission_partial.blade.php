@@ -18,7 +18,7 @@
                     </a>&nbsp;{{$p->text}}
                 </span>
                     <ul>
-                        @include('user.permission_partial',['data'=>$p->actions])
+                        @include('User.permission_partial',['data'=>$p->actions])
                     </ul>
                 </li>
             </ul>

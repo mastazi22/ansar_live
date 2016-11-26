@@ -39,19 +39,21 @@
             <li>&nbsp;</li>
             <li>সদয় অবগতির জন্য
                 <br>&nbsp;</li>
-            <li>&nbsp;<br>&nbsp;</li>
             <li>&nbsp;</li>
             <li>&nbsp;</li>
             <li>অবগতি ও কার্যক্রমের জন্য।</li>
+            <li>&nbsp;</li>
+            <li>&nbsp;</li>
+            <li>জেলা কমাণ্ডান্ট</li>
+            <li>মোবাইলঃ<span style="border-bottom: 1px dashed #000000;    top: -5px;display: inline-block;position: relative;">{{$user?$user->mobile_no:'n\a'}}</span></li>
+            <li>ই-মেইলঃ&nbsp;{{$user?$user->email:'n\a'}}</li>
 
         </ul>
     </div>
     <div class="footer-bottom">
         <ul class="pull-right" style="width: 32%;">
             {{--<li>তারিখঃ{{date('d/m/Y',strtotime($mem->created_at))}}</li>--}}
-            <li>জেলা কমাণ্ডান্ট</li>
-            <li>মোবাইলঃ<span style="border-bottom: 1px dashed #000000;    top: -5px;display: inline-block;position: relative;">{{$user?$user->mobile_no:'n\a'}}</span></li>
-            <li>ই-মেইলঃ&nbsp;{{$user?$user->email:'n\a'}}</li>
+
         </ul>
     </div>
 </div>

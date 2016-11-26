@@ -69,7 +69,7 @@
                                         </div>
                                         <div class="box-body p_continer" style="background-color: #FFFFFF;">
                                             <ul class="permission-list">
-                                                @include('user.permission_partial',['data'=>$routes[$i]->children])
+                                                @include('User.permission_partial',['data'=>$routes[$i]->children])
                                             </ul>
                                         </div>
                                     </div>
