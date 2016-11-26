@@ -19,6 +19,7 @@ class QueryHelper
     const PANEL = 4;
     const FREE = 5;
     const OFFER = 6;
+    const OFFER_RECEIVED = 13;
     const REST = 7;
     const FREEZE = 8;
     const BLOCK = 9;
@@ -61,7 +62,17 @@ class QueryHelper
                     ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
                     ->join('tbl_sms_offer_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
                     ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_offer_info.district_id')
-                    //->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '!=', 'tbl_sms_offer_info.ansar_id')
+                    ->where('tbl_ansar_status_info.offer_sms_status', 1)
+                    ->where('tbl_ansar_status_info.block_list_status', 0);
+                break;
+            case self::OFFER_RECEIVED:
+                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
+                    ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                    ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
+                    ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                    ->join('tbl_sms_receive_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_receive_info.ansar_id')
+                    ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_receive_info.offered_district')
                     ->where('tbl_ansar_status_info.offer_sms_status', 1)
                     ->where('tbl_ansar_status_info.block_list_status', 0);
                 break;

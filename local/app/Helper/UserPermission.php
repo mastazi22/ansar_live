@@ -11,10 +11,12 @@ namespace App\Helper;
 
 use App\models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 
 class UserPermission
 {
-    private $permissionFile = 'permission_list.json';
+    private $permissionFile = 'test_list.json';
     private $permissionList;
     private $currentUserPermission;
     private $search;
@@ -22,7 +24,7 @@ class UserPermission
     public function __construct()
     {
         $permissions = file_get_contents(storage_path("user/permission/{$this->permissionFile}"));
-        $this->permissionList = collect(json_decode($permissions));
+        $this->permissionList = Config::get('permission.permission_list');
         $this->currentUserPermission = Auth::user()->userPermission->permission_list;
         $this->search = '';
     }
@@ -34,20 +36,24 @@ class UserPermission
 
     public function isPermissionExists($name)
     {
-        $this->search = $name;
-//        return $this->search;
-        foreach ($this->permissionList->all() as $item) {
-            $search = collect($item->routes);
-            $isFound = false;
-            foreach($search->all() as $route){
-                $isFound = $route->value==$this->search;
-                if($isFound) break;
-            }
-            //echo "IS FOUND: ".($isFound==true?"found":"not").'<br>';
-            if (!$isFound) continue;
-            return true;
+        $status = false;
+        foreach($this->permissionList as $search){
+            $status = preg_match('/('.$name.')/',$search);
+            if($status) break;
         }
-        return false;
+        return $status;
+    }
+    public function isUserMenuExists($name,$p)
+    {
+//        return false;
+        Log::info("Found:".$name);
+        $status = false;
+        foreach($p as $search){
+            $status = preg_match('/('.$name.')/',$search);
+            if($status) break;
+        }
+
+        return $status;
     }
 
     public function isMenuExists($value)
@@ -61,7 +67,7 @@ class UserPermission
         if (is_array($value)) {
             return $this->checkMenu($value,$p);
         }
-        else return in_array($value,$p);
+        else return $this->isUserMenuExists($value,$p);
     }
 
     public function getTotal()
@@ -75,7 +81,7 @@ class UserPermission
             if($a['route']=="#"){
                 return $this->checkMenu($a['children'],$p);
             }
-            else if(in_array($a['route'],$p)){
+            else if($this->isUserMenuExists($a['route'],$p)){
                 return true;
             }
         }

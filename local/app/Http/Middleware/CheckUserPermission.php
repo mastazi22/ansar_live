@@ -18,6 +18,7 @@ class CheckUserPermission
     {
         $user = auth()->user();
         if($request->route()->getPrefix()=='SD'&&!($user->type==11||$user->type==22)) return response()->view('errors.401');
+//        return UserPermissionFacades::isPermissionExists($request->route()->getName())?"YES":"NO";
         if(UserPermissionFacades::isPermissionExists($request->route()->getName())) {
             if ($user->userPermission->permission_type == 0) {
                 if (is_null($user->userPermission->permission_list)) {
@@ -25,7 +26,8 @@ class CheckUserPermission
                     if (!$request->ajax()) return abort(401);
                 } else {
                     $permission = json_decode($user->userPermission->permission_list);
-                    if (!is_null($request->route()->getName()) && !in_array($request->route()->getName(), $permission)) {
+//                    return UserPermissionFacades::isUserMenuExists($request->route()->getName(), $permission)?"YES":"NO";
+                    if (!is_null($request->route()->getName()) && !UserPermissionFacades::isUserMenuExists($request->route()->getName(), $permission)) {
                         if ($request->ajax()) return response("Unauthorized(401)", 401);
                         if (!$request->ajax()) return response()->view('errors.401');
                     }

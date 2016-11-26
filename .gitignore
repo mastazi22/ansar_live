@@ -1,9 +1,18 @@
 # Created by .ignore support plugin (hsz.mobi)
 /local/vendor/
 /.idea/
-/local/storage/
+/local/storage/app
+/local/storage/data
+/local/storage/DemandSheet
+/local/storage/drafts
+/local/storage/framework
+/local/storage/logs
+/local/storage/user/img
+/local/tests
 /local/config/database.php
 /local/config/snappy.php
 .env
 bootstrap/cache/
 local/app/modules/HRM/Views/Panel/panel_view_rough.blade.php___jb_bak___
+app/Jobs/OfferQueue.php
+database/migrations/2016_11_22_214412_create_jobs_table.php

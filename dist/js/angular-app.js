@@ -77,6 +77,12 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
     })
     $rootScope.loadingView = false;
 });
+GlobalApp.filter('num', function() {
+    return function(input) {
+        var d =  parseInt(input);
+        return isNaN(d)?'':d;
+    };
+});
 GlobalApp.filter('dateformat', function () {
     return function (input, format) {
         return moment(input).format(format);

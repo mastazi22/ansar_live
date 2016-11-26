@@ -3,7 +3,7 @@
         @if(isset($p->name))
             <label class="control-label">
                 <div class="styled-checkbox">
-                    {!! Form::checkBox(implode('_',explode(' ',$p->name)),$p->value,null,['id'=>implode('_',explode(' ',$p->name))]) !!}
+                    {!! Form::checkBox('permission[]',$p->value,is_array($access)?in_array($p->value,$access):($user->type==11||$user->type==33?true:false),['id'=>implode('_',explode(' ',$p->name))]) !!}
                     {{--{!! Form::label(,'') !!}--}}
                     <label for="{{implode('_',explode(' ',$p->name))}}"></label>
                 </div>

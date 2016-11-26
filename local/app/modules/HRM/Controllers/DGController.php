@@ -1451,7 +1451,7 @@ class DGController extends Controller
             $a = PersonalInfo::where('ansar_id', $request->ansar_id)->first();
             if (!$a) throw new \Exception('Invalid Ansar ID');
             $status = $a->status->getStatus();
-            if ((!in_array('panel', $status) && !in_array('rest', $status)) || in_array('block', $status) || in_array('black', $status)) throw new \Exception("This ansar not eligible for offer");
+            if ((!in_array(AnsarStatusInfo::PANEL_STATUS, $status) && !in_array(AnsarStatusInfo::REST_STATUS, $status)) || in_array(AnsarStatusInfo::BLOCK_STATUS, $status) || in_array(AnsarStatusInfo::BLACK_STATUS, $status)) throw new \Exception("This ansar not eligible for offer");
             if (!$a && !preg_match('/^(\+88)?0[0-9]{10}/', $a->mobile_no_self)) throw new Exception("Invalid mobile number");
             $a->offer_sms_info()->save(new OfferSMS([
                 'sms_send_datetime' => Carbon::parse($request->offer_date)->format('Y-m-d'),
@@ -1461,12 +1461,12 @@ class DGController extends Controller
                 'come_from' => $status[0]
             ]));
             switch ($status[0]) {
-                case 'panel':
+                case AnsarStatusInfo::PANEL_STATUS:
                     $a->panel->saveLog('Offer', Carbon::today());
                     $a->status->update(['pannel_status' => 0, 'offer_sms_status' => 1]);
                     $a->panel->delete();
                     break;
-                case 'rest':
+                case AnsarStatusInfo::REST_STATUS:
                     $a->status->update(['rest_status' => 0, 'offer_sms_status' => 1]);
                     break;
                 default:

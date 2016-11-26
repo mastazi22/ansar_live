@@ -377,7 +377,7 @@
                     <a href="{{URL::to('HRM/show_ansar_list')}}/offerred_ansar"
                        class="btn-link" style="color: #FFFFFF !important;">
                         <span class="info-box-text">@if(Auth::user()->type==22) @lang('title.tod') @else @lang('title.tor') @endif</span>
-                    <span class="info-box-number">[[allAnsar.totalOffered]]
+                    <span class="info-box-number">[[(allAnsar.totalOffered|num)+(allAnsar.totalOfferedReceived|num)]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
                     </span>
                     </a>
@@ -388,7 +388,7 @@
                     <a href="{{URL::to('HRM/show_recent_ansar_list')}}/offerred_ansar" style="color:#FFFFFF"
                        class="btn-link">
                     <span class="progress-description" style="color:#FFFFFF">
-                        Recent-[[recentAnsar.recentOffered]]</span></a>
+                        Recent-[[(recentAnsar.recentOffered|num)+(recentAnsar.recentOfferedReceived|num)]]</span></a>
                 </div>
                 <!-- /.info-box-content -->
             </div>

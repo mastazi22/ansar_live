@@ -276,7 +276,7 @@
                        class="btn-link" style="color: #FFFFFF !important;">
                         <span class="info-box-text">@lang('title.to')</span>
                     <span class="info-box-number" style="font-weight: normal">
-                       [[allAnsar.totalOffered]]
+                       [[(allAnsar.totalOffered|num)+(allAnsar.totalOfferedReceived|num)]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
                     </span>
                     </a>
@@ -287,7 +287,7 @@
                     <a href="{{URL::to('HRM/show_recent_ansar_list')}}/offerred_ansar" style="color:#FFFFFF"
                        class="btn-link">
                     <span class="progress-description" style="color:#FFFFFF">
-                       Recent-[[recentAnsar.recentOffered]]
+                       Recent-[[(recentAnsar.recentOffered|num)+(recentAnsar.recentOfferedReceived|num)]]
                     </span>
                     </a>
                 </div>

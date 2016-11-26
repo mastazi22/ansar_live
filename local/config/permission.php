@@ -43,7 +43,7 @@ return [
         "print_card_id_view,print_card_id",
         "view_panel_list,select_status,save-panel-entry",
         "make_offer,send_offer",
-        "go_to_new_embodiment_page,new-embodiment-entry",
+        "go_to_new_embodiment_page,check-ansar,new-embodiment-entry",
         "go_to_new_disembodiment_page,disembodiment-entry",
         "service_extension_view,service_extension_entry",
         "embodiment_date_correction_view,new-embodiment-date-entry",

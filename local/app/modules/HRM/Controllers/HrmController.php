@@ -133,6 +133,7 @@ class HrmController extends Controller
             'recentFree' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('free_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime)),
             'recentPanel' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')->where('pannel_status', 1)->where('block_list_status', 0)->whereBetween('tbl_panel_info.panel_date', array($backTime, $recentTime)),
             'recentOffered' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_sms_offer_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->join('tbl_units', 'tbl_sms_offer_info.district_id', '=', 'tbl_units.id')->where('tbl_ansar_status_info.offer_sms_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime)),
+            'recentOfferedReceived' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_sms_receive_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_receive_info.ansar_id')->join('tbl_units', 'tbl_sms_receive_info.offered_district', '=', 'tbl_units.id')->where('tbl_ansar_status_info.offer_sms_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime)),
             //'offerReceived' => DB::table('tbl_sms_receive_info')->join('tbl_sms_offer_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('tbl_sms_receive_info.sms_status', 'ACCEPTED')->whereIn('tbl_sms_offer_info.district_id', $unit)->count(),
             'recentEmbodied' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('embodied_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime)),
             'recentEmbodiedOwn' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime)),
@@ -148,6 +149,7 @@ class HrmController extends Controller
             $allStatus['recentFree']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             /*if((Auth::user()->type==11||Auth::user()->type==33))*/$allStatus['recentPanel']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             $allStatus['recentOffered']->where('tbl_units.division_id', $request->division_id);
+            $allStatus['recentOfferedReceived']->where('tbl_units.division_id', $request->division_id);
             $allStatus['recentEmbodied']->where('tbl_kpi_info.division_id', $request->division_id);
             $allStatus['recentEmbodiedOwn']->where('tbl_kpi_info.division_id', $request->division_id);
             $allStatus['recentEmbodiedDiff']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
@@ -162,6 +164,7 @@ class HrmController extends Controller
             $allStatus['recentFree']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             /*if((Auth::user()->type==11||Auth::user()->type==33))*/$allStatus['recentPanel']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             $allStatus['recentOffered']->where('tbl_units.id', $request->unit_id);
+            $allStatus['recentOfferedReceived']->where('tbl_units.id', $request->unit_id);
             $allStatus['recentEmbodied']->where('tbl_kpi_info.unit_id', $request->unit_id);
             $allStatus['recentEmbodiedOwn']->where('tbl_kpi_info.unit_id', $request->unit_id);
             $allStatus['recentEmbodiedDiff']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
@@ -459,6 +462,7 @@ class HrmController extends Controller
             'totalFree' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('free_status', 1)->where('block_list_status', 0),
             'totalPanel' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')->where('pannel_status', 1)->where('block_list_status', 0),
             'totalOffered' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_sms_offer_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->join('tbl_units', 'tbl_sms_offer_info.district_id', '=', 'tbl_units.id')->where('tbl_ansar_status_info.offer_sms_status', 1)->where('block_list_status', 0),
+            'totalOfferedReceived' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_sms_receive_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_sms_receive_info.ansar_id')->join('tbl_units', 'tbl_sms_receive_info.offered_district', '=', 'tbl_units.id')->where('tbl_ansar_status_info.offer_sms_status', 1)->where('block_list_status', 0),
             //'offerReceived' => DB::table('tbl_sms_receive_info')->join('tbl_sms_offer_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->where('tbl_sms_receive_info.sms_status', 'ACCEPTED')->whereIn('tbl_sms_offer_info.district_id', $unit)->count(),
             'totalEmbodied' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('embodied_status', 1)->where('block_list_status', 0),
             'totalEmbodiedOwn' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->join('tbl_embodiment', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->where('block_list_status', 0)->where('embodied_status', 1),
@@ -474,6 +478,7 @@ class HrmController extends Controller
             $allStatus['totalFree']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             /*if((Auth::user()->type==11||Auth::user()->type==33))*/$allStatus['totalPanel']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             $allStatus['totalOffered']->where('tbl_units.division_id', $request->division_id);
+            $allStatus['totalOfferedReceived']->where('tbl_units.division_id', $request->division_id);
             $allStatus['totalEmbodied']->where('tbl_kpi_info.division_id', $request->division_id);
             $allStatus['totalEmbodiedOwn']->where('tbl_kpi_info.division_id', $request->division_id);
             $allStatus['totalEmbodiedDiff']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
@@ -488,6 +493,7 @@ class HrmController extends Controller
             $allStatus['totalFree']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             /*if((Auth::user()->type==11||Auth::user()->type==33))*/$allStatus['totalPanel']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             $allStatus['totalOffered']->where('tbl_units.id', $request->unit_id);
+            $allStatus['totalOfferedReceived']->where('tbl_units.id', $request->unit_id);
             $allStatus['totalEmbodied']->where('tbl_kpi_info.unit_id', $request->unit_id);
             $allStatus['totalEmbodiedOwn']->where('tbl_kpi_info.unit_id', $request->unit_id);
             $allStatus['totalEmbodiedDiff']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
