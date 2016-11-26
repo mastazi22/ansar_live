@@ -71,7 +71,7 @@
             "name": "View KPI"
           },
           {
-            "value": "go_to_kpi_page",
+            "value": "go_to_kpi_page,save-kpi",
             "name": "Create KPI"
           },
           {
