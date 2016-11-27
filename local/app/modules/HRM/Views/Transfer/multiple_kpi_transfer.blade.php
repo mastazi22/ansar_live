@@ -66,12 +66,7 @@
                 $scope.data.data = {}
                 $scope.data.status = false;
                 $scope.ansar_id = '';
-                $scope.formData = {
-                    unit: '',
-                    thana: '',
-                    kpi: '',
-                    joining_date: ''
-                }
+                $scope.formData.joining_date = ''
                 reset()
             }
             $scope.transferAnsar = function () {
@@ -107,11 +102,7 @@
                 $scope.submitData.splice(i, 1);
                 $scope.tAnsars.splice(i, 1);
             }
-            $scope.$watch('formData', function (n,o) {
-                alert(JSON.stringify($scope.formData))
-            },true)
             function reset() {
-
                 $scope.ansar_id = '';
                 $scope.data = '';
                 $scope.memId = ''
@@ -120,6 +111,8 @@
 
             }
             function reset1() {
+                $scope.reset = ''
+                $scope.reset1 = ''
                 $scope.submitData = [];
                 $scope.tAnsars = [];
                 $scope.ansar_id = '';
