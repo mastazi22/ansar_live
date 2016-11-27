@@ -198,6 +198,8 @@ GlobalApp.factory('httpService', function ($http) {
                 url: '/' + prefix + 'HRM/DivisionName'
             }).then(function (response) {
                 return response.data
+            }, function (response) {
+                return response
             })
 
         },
@@ -218,6 +220,8 @@ GlobalApp.factory('httpService', function ($http) {
             }
             return http.then(function (response) {
                 return response.data
+            }, function (response) {
+                return response
             })
 
         },
@@ -238,6 +242,8 @@ GlobalApp.factory('httpService', function ($http) {
             }
             return http.then(function (response) {
                 return response.data
+            }, function (response) {
+                return response
             })
 
         },
@@ -248,6 +254,8 @@ GlobalApp.factory('httpService', function ($http) {
                 params:{id:id,type:type}
             }).then(function (response) {
                 return response.data;
+            }, function (response) {
+                return response
             })
         },
         rank: function () {
@@ -256,6 +264,8 @@ GlobalApp.factory('httpService', function ($http) {
                 method: 'get'
             }).then(function (response) {
                 return response.data;
+            }, function (response) {
+                return response
             })
         },
         disease: function () {
@@ -413,8 +423,13 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 if(!$scope.show('range')) return;
                 $scope.loading.range = true;
                 httpService.range().then(function (data) {
-                    $scope.ranges = data;
                     $scope.loading.range = false;
+                    if(data.status!=undefined){
+                        $scope.errorKey = {range:'range'};
+                        $scope.errorMessage = {range:data.statusText};
+                        return;
+                    }
+                    $scope.ranges = data;
                 })
                 $scope.rangeLoad({param:$scope.selected});
             }
@@ -423,6 +438,11 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 $scope.units = $scope.thanas = $scope.kpis = []
                 $scope.loading.unit = true;
                 httpService.unit(id).then(function (data) {
+                    if(data.status!=undefined){
+                        $scope.errorKey = {unit:'unit'};
+                        $scope.errorMessage = {unit:data.statusText};
+                        return;
+                    }
                     $scope.units = data;
                     $scope.loading.unit = false;
                 })
@@ -433,8 +453,14 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 $scope.thanas = $scope.kpis = []
                 $scope.loading.thana = true;
                 httpService.thana(id).then(function (data) {
-                    $scope.thanas = data;
+                   // alert(data)
                     $scope.loading.thana = false;
+                    if(data.status!=undefined){
+                        $scope.errorKey = {thana:'thana'};
+                        $scope.errorMessage = {thana:data.statusText};
+                        return;
+                    }
+                    $scope.thanas = data;
                 })
                 $scope.thanaLoad({param:$scope.selected});
             }
@@ -443,9 +469,16 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 //$scope.kpiChange({param:$scope.selected});
                 if(!$scope.show('kpi')) return;
                 $scope.loading.kpi = true;
+
                 httpService.kpi(id,$scope.kpiType).then(function (data) {
-                    $scope.kpis = data;
                     $scope.loading.kpi = false;
+                    if(data.status!=undefined){
+                        $scope.errorKey = {kpi:'kpi'};
+                        $scope.errorMessage = {kpi:data.statusText};
+                        return;
+                    }
+                    $scope.kpis = data;
+
 
                 })
                 $scope.kpiLoad({param:$scope.selected});
@@ -455,6 +488,11 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 //$scope.kpiChange({param:$scope.selected});
                 if(!$scope.show('rank')) return;
                 httpService.rank().then(function (data) {
+                    if(data.status!=undefined){
+                        $scope.errorKey = {rank:'rank'};
+                        $scope.errorMessage = {rank:data.statusText};
+                        return;
+                    }
                     $scope.ranks = data;
 
                 })

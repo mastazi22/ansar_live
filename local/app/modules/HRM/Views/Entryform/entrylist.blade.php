@@ -392,11 +392,9 @@
                                            title="Edit"
                                            href="{{ URL::to('HRM/editEntry/')}}/[[ansar.ansar_id]]"><span
                                                     class="glyphicon glyphicon-edit"></span></a>
-                                        <a ng-if="userType == 44 && ansar.verified == 2"
-                                           href="{{ URL::to('HRM/editEntry/')}}/[[ansar.ansar_id]]"
-                                           class="btn btn-primary btn-xs @if(!auth()->user()->hasEditVerifiedAnsarPermission()) disabled @endif"
-                                           title="edit"><span
-                                                    class="glyphicon glyphicon-edit"></span></a>
+                                        <a ng-if="userType == 44 && ansar.verified == 2" href="{{ URL::to('HRM/editVerifiedEntry/')}}/[[ansar.ansar_id]]" class="btn btn-primary btn-xs" title="edit">
+                                            <span class="glyphicon glyphicon-edit"></span>
+                                        </a>
                                         {{--checker edit end--}}
                                         {{--checker verify--}}
                                         <a style="margin-left: 2px" ng-if="userType == 44 && ansar.verified == 1"
@@ -423,10 +421,10 @@
                                            class="btn btn-primary btn-xs" title="Edit"
                                            href="{{ URL::to('HRM/editEntry/')}}/[[ansar.ansar_id]]"><span
                                                     class="glyphicon glyphicon-edit"></span></a>
-                                        <a ng-if="(userType == 11 || userType == 22 || userType == 33 || userType == 66) && (ansar.verified == 2)"
-                                           class="btn btn-primary btn-xs  @if(!auth()->user()->hasEditVerifiedAnsarPermission()) disabled @endif"
-                                           href="{{ URL::to('HRM/editEntry/')}}/[[ansar.ansar_id]]" title="Edit"><span
-                                                    class="glyphicon glyphicon-edit"></span></a>
+                                        <a ng-if="(userType == 11 || userType == 22 || userType == 33 || userType == 66) && (ansar.verified == 2)" class="btn btn-primary btn-xs"
+                                           href="{{ URL::to('HRM/editVerifiedEntry/')}}/[[ansar.ansar_id]]" title="Edit">
+                                            <span class="glyphicon glyphicon-edit"></span>
+                                        </a>
 
                                         {{--admin,dc,rc,dg edit end--}}
                                         {{--admin,dc,rc,dg verify--}}
