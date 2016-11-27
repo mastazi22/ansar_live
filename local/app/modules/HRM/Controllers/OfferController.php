@@ -42,18 +42,7 @@ class OfferController extends Controller
 
     function getQuotaCount()
     {
-        $id = Auth::user()->district_id;
-
-        if ($id) {
-            $offered = OfferSMS::where('district_id', $id)->count('ansar_id');
-            $totalEmbodiedAnsar = DB::table('tbl_embodiment')->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')->where('tbl_kpi_info.unit_id', $id)->count('tbl_embodiment.ansar_id');
-            $quota = OfferQuota::where('unit_id', $id)->select('quota')->first();
-//            return Response::json(['e'=>$totalEmbodiedAnsar,'q'=>$quota,'o'=>$offered]);
-            $total = ceil(($totalEmbodiedAnsar * $quota->quota) / 100) - $offered;
-            return Response::json(['total_offer' => $total]);
-        } else {
-            return Response::json(['total_offer' => 'unlimited']);
-        }
+        return Response::json(['total_offer' => Helper::getOfferQuota(Auth::user())]);
     }
 
     function calculateQuota($id)
@@ -132,9 +121,9 @@ class OfferController extends Controller
                 ['male' => $request->get('ansar_male'), 'female' => $request->get('ansar_female')],
                 $request->get('district'),
                 $request->get('exclude_district'), Auth::user());
-            PanelModel::whereIn('ansar_id',$data)->update(['locked'=>1]);
             $quota = Helper::getOfferQuota(Auth::user());
             if($quota!==false&&$quota<count($data)) throw new \Exception("Your offer quota limit exit");
+            PanelModel::whereIn('ansar_id',$data)->update(['locked'=>1]);
             $this->dispatch(new OfferQueue($data,$district_id,Auth::user()));
             DB::commit();
         }

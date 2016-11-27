@@ -216,7 +216,7 @@
                                 <div class="row">
                                     <div class="col-md-4" ng-if="isAdmin">
                                         <h4>@lang('title.unit')</h4>
-                                        <ul class="offer-district">
+                                        <ul class="offer-district" style="padding-left:0;">
                                             <li ng-repeat="unit in allDistrict">
                                                 <input ng-change="addDistrict()" type="checkbox" class="check-boxx"
                                                        ng-model="selectedDistrict[$index]" ng-true-value="[[unit.id]]"

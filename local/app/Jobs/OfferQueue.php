@@ -56,6 +56,7 @@ class OfferQueue extends Job implements ShouldQueue
             for ($i = 0; $i < count($ansar_ids); $i++) {
 //                Log::info("processed :".$ansar_ids[$i]);
                 if(!DB::connection()->getDatabaseName()){
+                    Log::info("SERVER RECONNECTING....");
                     DB::reconnect('hrm');
                 }
                 $mos = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
