@@ -217,8 +217,8 @@
                                         <div class="col-xs-1">
                                             <a class="btn btn-success btn-xs"
                                                href="{{URL::to('/action_log')}}/[[user.id]]"
-                                               title="edit permission"><span
-                                                        class="fa fa-history"></span></a>
+                                               title="User Action Log"><span
+                                                        class="fa fa-file"></span></a>
                                         </div>
                                     </div>
                                 </td>
@@ -264,8 +264,8 @@
                                         <div class="col-xs-1">
                                             <a class="btn btn-success btn-xs"
                                                href="{{URL::to('/action_log')}}/[[user.id]]"
-                                               title="edit permission"><span
-                                                        class="fa fa-history"></span></a>
+                                               title="User Action Log">
+                                                <i class="fa fa-file"></i></a>
                                         </div>
                                     </div>
                                 </td>

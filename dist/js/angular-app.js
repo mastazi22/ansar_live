@@ -79,7 +79,7 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
 });
 GlobalApp.filter('num', function() {
     return function(input) {
-        var d =  parseInt(input);
+        var d =  parseInt(input.replace(',',''));
         return isNaN(d)?'':d;
     };
 });

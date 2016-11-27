@@ -131,7 +131,7 @@
                             <img
                                     src="{{action('UserController@getImage',['file'=>auth()->user()->userProfile->profile_image])}}"
                                     class="user-image" alt="User Image"/>
-                            <span class="hidden-xs">{{Auth::user()->userProfile->first_name.' '.Auth::user()->userProfile->last_name}}</span>
+                            <span class="hidden-xs">{{Auth::user()->userProfile->getFullName()}}</span>
                         </a>
                         <ul class="dropdown-menu">
                             <!-- User image -->
