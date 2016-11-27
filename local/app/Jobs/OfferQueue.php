@@ -51,13 +51,13 @@ class OfferQueue extends Job implements ShouldQueue
         $district_id = $this->district_id;
         $ansar_ids = $this->data;
         $user = $this->user;
-        if(!DB::connection()->getDatabaseName()){
-            DB::reconnect('hrm');
-        }
         DB::beginTransaction();
         try {
             for ($i = 0; $i < count($ansar_ids); $i++) {
 //                Log::info("processed :".$ansar_ids[$i]);
+                if(!DB::connection()->getDatabaseName()){
+                    DB::reconnect('hrm');
+                }
                 $mos = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
                 if (!$mos && !preg_match('/^(\+88)?0[0-9]{10}/', $mos->mobile_no_self)) throw new \Exception("Invalid mobile number :".$mos->mobile_no_self);
                 $offer = new OfferSMS([
