@@ -13,6 +13,7 @@
                 $(this).children('img').toggleClass('rotate-img-up rotate-img-down')
                 $($(this).parents('div')[0]).siblings('.p_continer').slideToggle(300)
             })
+            checkLength();
             $("input[type='checkbox']:not(#all)").on('change', function () {
                 checkLength();
             })

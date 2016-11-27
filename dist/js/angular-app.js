@@ -492,8 +492,8 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             })
             $scope.$watch('reset.range',function (n, o) {
                 if(n) {
-                    $scope.ranges = [];
-                    $scope.selected.unit = $scope.type=='all'?'all':'';
+                    //$scope.ranges = [];
+                    $scope.selected.range = $scope.type=='all'?'all':'';
                 }
             })
             $scope.$watch('reset.unit',function (n, o) {

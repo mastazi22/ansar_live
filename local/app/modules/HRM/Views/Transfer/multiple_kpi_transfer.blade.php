@@ -41,13 +41,13 @@
             }
             $scope.addToCart = function () {
                 console.log($scope.formData);
-                var d = {
+                var d = angular.copy({
                     id: $scope.data.data.ansar_id,
                     name: $scope.data.data.ansar_name_eng,
                     tkn: $scope.kpiName,
                     ckn: $scope.data.data.kpi_name,
                     tkjd: $scope.formData.joining_date
-                }
+                })
                 var s = $scope.tAnsars.find(function (v) {
                     return v.id == d.id;
                 })
@@ -55,12 +55,12 @@
                     alert("This ansar already in transfer list");
                     return;
                 }
-                var b = {
+                var b = angular.copy({
                     ansarId: $scope.data.data.ansar_id,
                     currentKpi: $scope.data.data.kpi_id,
                     transferKpi: $scope.formData.kpi,
                     tKpiJoinDate: $scope.formData.joining_date
-                }
+                })
                 $scope.submitData.push(b);
                 $scope.tAnsars.push(d)
                 $scope.data.data = {}
@@ -72,6 +72,7 @@
                     kpi: '',
                     joining_date: ''
                 }
+                reset()
             }
             @if(Auth::user()->type==11||Auth::user()->type==33||Auth::user()->type==66)
             $scope.loadDistrict = function () {
@@ -143,7 +144,7 @@
                             type: 'error',
                             message: response.data.message
                         }).showDialog();
-                        reset();
+                        reset1();
                     }
                     $scope.transfering = false;
                 })
@@ -153,11 +154,20 @@
                 $scope.tAnsars.splice(i, 1);
             }
             function reset() {
+                $scope.ansar_id = '';
+                $scope.data = '';
+                $scope.memId = ''
+                $scope.reset = {range:true,unit:true}
+                $scope.reset1 = {thana:true,kpi:true}
+            }
+            function reset1() {
                 $scope.submitData = [];
                 $scope.tAnsars = [];
                 $scope.ansar_id = '';
                 $scope.data = '';
                 $scope.memId = ''
+                $scope.reset = {range:true,unit:true}
+                $scope.reset1 = {thana:true,kpi:true}
             }
 
 
@@ -179,6 +189,7 @@
                             show-item="['range','unit']"
                             type="single"
                             start-load="range"
+                            reset="reset"
                             field-width="{range:'col-sm-4',unit:'col-sm-4'}"
                             data = "param"
                     ></filter-template>
@@ -232,6 +243,7 @@
                                     start-load="range"
                                     layout-vertical="1"
                                     load-watch="param.unit"
+                                    reset="reset1"
                                     watch-change="thana"
                                     get-kpi-name="kpiName"
                                     thana-field-disabled="data==undefined||!data.status||!param.unit"
