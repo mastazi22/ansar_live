@@ -139,17 +139,19 @@
             }
 //        $scope.getFreezeList();
 
-            $scope.reEmbodied = function (ansarids) {
+            $scope.reEmbodied = function (ansarids,date) {
                 console.log(ansarids)
                 $scope.submitting = true;
                 $http({
                     url: "{{URL::to('HRM/freezeRembodied')}}",
                     method: 'post',
-                    data: angular.toJson({ansarId: ansarids})
+                    data: angular.toJson({ansarId: ansarids,unfreeze_date:date})
                 }).then(function (response) {
                     console.log(response.data);
                     $scope.submitting = false;
                     if (response.data[0].status) {
+                        $("#continueModal").modal('hide');
+                        $scope.unfreeze_date = ''
                         notificationService.notify('success', response.data[0].message);
                         $scope.getFreezeList();
                     }
@@ -160,13 +162,13 @@
                     notificationService.notify('error', "An unexpected error occur. Error code :" + response.status);
                 })
             }
-            $scope.reEmbodiedChecked = function (ansarids, indexes) {
+            $scope.reEmbodiedChecked = function (ansarids, indexes,date) {
                 console.log(ansarids)
                 $scope.submitting = true;
                 $http({
                     url: "{{URL::to('HRM/freezeRembodied')}}",
                     method: 'post',
-                    data: angular.toJson({ansarId: ansarids})
+                    data: angular.toJson({ansarId: ansarids,unfreeze_date:date})
                 }).then(function (response) {
                     console.log(response.data);
                     $scope.submitting = false;
@@ -185,7 +187,10 @@
                         }
 
                     })
-                    if (t) $("#continue-modal").modal('hide');
+                    if (t) {
+                        $scope.unfreeze_date = '';
+                        $("#continue-modal").modal('hide');
+                    }
 
                 }, function (response) {
                     notificationService.notify('error', "An unexpected error occur. Error code :" + response.status);
@@ -229,7 +234,7 @@
                         indexes.push(value)
                     }
                 })
-                $scope.reEmbodiedChecked(ansarIds, indexes)
+                $scope.reEmbodiedChecked(ansarIds, indexes,$scope.unfreeze_date)
             }
             $scope.transChecked = function () {
                 var ansarIds = [];
@@ -460,17 +465,6 @@
                     </div>
                     <div class="box-body">
                         <div class="box-body" id="change-body">
-                            {{--<div class="form-group">--}}
-                                {{--<h5 class="pull-left" style="padding-right:5px; ;"><b>Filter by: </b></h5>--}}
-                                {{--<select ng-model="filter_name" name="filter_name" class="form-control"--}}
-                                        {{--style="width:75%;" ng-change="getFreezeList()">--}}
-                                    {{--<option value="">--Select freeze reason--</option>--}}
-                                    {{--<option value="0">All</option>--}}
-                                    {{--<option value="1">Guard Withdraw</option>--}}
-                                    {{--<option value="2">Guard Reduce</option>--}}
-                                    {{--<option value="3">Disciplinary Actions</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
                             <filter-template
                                     show-item="['range','unit','thana','kpi']"
                                     type="all"
@@ -533,10 +527,7 @@
                                             <div class="test-dropdown-below">
                                                 <ul>
                                                     <li>
-                                                        <button class="btn btn-primary" confirm
-                                                                callback="reEmbodied(ansarid)" event="click"
-                                                                message="Are you sure want to Re-Embodied this ansar"
-                                                                data="{ansarid:[freezeAnsar.ansar_id]}">
+                                                        <button class="btn btn-primary" modal-show data="freezeAnsar" callback="modal(data)" target="#continueModal">
                                                             Continue Service
                                                         </button>
                                                     </li>
@@ -651,6 +642,37 @@
                                     <i class="fa fa-spinner fa-pulse" ng-if="submitting"></i>Submit
                                 </button>
                             </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <div id="continueModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-sm">
+
+                <!-- Modal content-->
+                <div class="box-body modal-content">
+                    <form class="form" role="form" method="post" ng-submit="reEmbodied([getSingleRow.ansar_id],unfreeze_date)">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Ansar
+                                ID:[[getSingleRow.ansar_id]],<br>Name:[[getSingleRow.ansar_name_bng]]</h4>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="form-group">
+                                <label class="control-label" for="unfreeze_date">
+                                    *Unfreeze Date:
+                                </label>
+                                <input type="text" date-picker placeholder="Unfreeze date" class="form-control" id="unfreeze_date" ng-model="unfreeze_date" name="unfreeze_date">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" type="submit" ng-disabled="submitting">
+                                <i ng-show="submitting" class="fa fa-spinner fa-pulse"></i>&nbsp;Continue Service
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -1044,7 +1066,12 @@
                                     </div>
                                 </div>
                             </div>
-
+                            <div class="form-group">
+                                <label class="control-label" for="unfreeze_date">
+                                    *Unfreeze Date:
+                                </label>
+                                <input type="text" date-picker placeholder="Unfreeze date" class="form-control" id="unfreeze_date" ng-model="unfreeze_date" name="unfreeze_date">
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-default pull-right" ng-disabled="submitting">

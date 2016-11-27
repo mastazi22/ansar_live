@@ -137,13 +137,16 @@ class FreezeController extends Controller
                 DB::beginTransaction();
                 try {
                     $frezeInfo = FreezingInfoModel::where('ansar_id', $ansarid)->first();
+                    if (!$frezeInfo) throw new \Exception("{$ansarid} is invalid");
                     $updateEmbodiment = $frezeInfo->embodiment;
 //                    return $updateEmbodiment;
-                    if (!$frezeInfo || !$updateEmbodiment) throw new \Exception("{$ansarid} is invalid");
+                    if (!$updateEmbodiment) throw new \Exception("{$ansarid} is invalid");
                     $kpi = $updateEmbodiment->kpi;
                     if (!$kpi) throw new \Exception("This ansar kpi not found");
                     if (!$kpi || $kpi->status_of_kpi == 0 || $kpi->withdraw_status == 1) throw new \Exception("This ansar id:{$ansarid} kpi already withdraw");
-                    $date = Carbon::now();
+                    $date = !$request->unfreeze_date?Carbon::now():Carbon::parse($request->unfreeze_date);
+//                    return Response::json(['status' => true, 'message' => $date->gt(Carbon::now())]);
+                    if($date->lt(Carbon::parse($frezeInfo->freez_date))||$date->gt(Carbon::now())) throw new \Exception('Unfreeze date can`t be smaller then freeze date or greater then current date');
                     $date_differ = $date->diffInDays(Carbon::parse($frezeInfo->freez_date), true);
                     FreezingInfoLog::create([
                         'old_freez_id' => $frezeInfo->id,
