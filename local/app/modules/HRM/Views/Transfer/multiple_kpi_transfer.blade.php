@@ -74,52 +74,6 @@
                 }
                 reset()
             }
-            @if(Auth::user()->type==11||Auth::user()->type==33||Auth::user()->type==66)
-            $scope.loadDistrict = function () {
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/DistrictName')}}'
-                }).then(function (response) {
-                    $scope.units = response.data;
-                    $scope.thanas = [];
-                    $scope.kpis = [];
-                    $scope.formData.kpi = "";
-                    $scope.formData.thana = "";
-                    $scope.loadingDistrict = false;
-                })
-            }
-            $scope.loadDistrict();
-            @endif
-            $scope.loadThana = function (id) {
-                $scope.ansar_id = '';
-                $scope.data = ''
-                $scope.kpis = [];
-                $scope.formData.kpi = "";
-                $scope.formData.joining_date = "";
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/ThanaName')}}',
-                    params: {id: id}
-                }).then(function (response) {
-                    $scope.thanas = response.data;
-
-                    $scope.formData.thana = "";
-
-                    $scope.loadingThana = true;
-                })
-            }
-            $scope.loadGuard = function (id) {
-                $http({
-                    method: 'get',
-                    url: '{{URL::route('kpi_name')}}',
-                    params: {id: id}
-                }).then(function (response) {
-                    $scope.loadingThana = false;
-                    $scope.kpis = response.data;
-                    $scope.formData.kpi = "";
-                    //$scope.loadingKpi=true;
-                })
-            }
             $scope.transferAnsar = function () {
                 $scope.error = undefined;
                 $scope.transfering = true;
@@ -153,12 +107,17 @@
                 $scope.submitData.splice(i, 1);
                 $scope.tAnsars.splice(i, 1);
             }
+            $scope.$watch('formData', function (n,o) {
+                alert(JSON.stringify($scope.formData))
+            },true)
             function reset() {
+
                 $scope.ansar_id = '';
                 $scope.data = '';
                 $scope.memId = ''
                 $scope.reset = {range:true,unit:true}
                 $scope.reset1 = {thana:true,kpi:true}
+
             }
             function reset1() {
                 $scope.submitData = [];
