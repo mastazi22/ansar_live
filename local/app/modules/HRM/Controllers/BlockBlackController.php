@@ -333,7 +333,7 @@ class BlockBlackController extends Controller
             ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->where('tbl_blocklist_info.ansar_id', '=', $ansar_id)
             ->where('tbl_blocklist_info.date_for_unblock', '=', null)
-            ->where('tbl_ansar_status_info.block_list_status', '=', 1)->orderBy('id','desc')
+            ->where('tbl_ansar_status_info.block_list_status', '=', 1)->orderBy('tbl_blocklist_info.id','desc')
             ->select('tbl_blocklist_info.block_list_from', 'tbl_blocklist_info.date_for_block', 'tbl_blocklist_info.comment_for_block', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex',
                 'tbl_units.unit_name_eng', 'tbl_designations.name_eng')->first();
 
