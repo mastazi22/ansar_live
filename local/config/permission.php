@@ -31,6 +31,7 @@ return [
         "ansar_registration,handleregistration",
         "editentry,submiteditentry",
         "entryverify",
+        "entry_report",
         "editVerifiedEntry",
         "chunk_verify,
         entryChunkVerify",

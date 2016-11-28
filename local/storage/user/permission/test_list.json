@@ -149,6 +149,10 @@
           {
             "value": "editVerifiedEntry",
             "name": "Entry Verify(Verified)"
+          },
+          {
+            "value": "entry_report",
+            "name": "Ansar Info"
           }
         ]
       },
