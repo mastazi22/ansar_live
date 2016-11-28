@@ -87,6 +87,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         //ORGINAL INFO
 
         route::get('originalinfo', ['as' => 'orginal_info', 'uses' => 'EntryFormController@ansarOriginalInfo']);
+        route::any('entryInfo', ['as' => 'entry_info', 'uses' => 'EntryFormController@entryInfo']);
         route::post('idsearch', ['as'=>'idsearch','uses'=>'FormSubmitHandler@idSearch']);
 
         //END ORGINAL INFO

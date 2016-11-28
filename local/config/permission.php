@@ -59,7 +59,7 @@ return [
         "blocklist_entry_view,blocklist_entry",
         "multiple_kpi_transfer_process,unblocklist_entry",
         "transfer_process,get_embodied_ansar,complete_transfer_process",
-        "transfer_process,search_kpi_by_ansar,confirm_transfer",
+        "multiple_kpi_transfer_process,search_kpi_by_ansar,confirm_transfer",
         "view_ansar_service_record",
         "ansar_service_report_view",
         "guard_report",

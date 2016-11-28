@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
@@ -41,12 +42,18 @@ class EntryFormController extends Controller
         return View::make('HRM::Entryform.entrylist')->with(['notVerified' => $notVerified, 'Verified' => $Verified]);
     }
 
-    public function entryform()
+    public function entryInfo(Request $request)
     {
+//        return $request->ansar_id;
+        if($request->ansar_id){
+            $ansar = PersonalInfo::where('ansar_id',$request->ansar_id)->first();
+            if(!$ansar) return Redirect::back()->with('entryInfo','<p class="text text-danger">No Ansar found with this id</p>');
+            $data = View::make('HRM::EntryForm.entry_info',['ansarAllDetails'=>$ansar,'label'=>(object)Config::get('report.label'),'type'=>'eng','title'=>(object)Config::get('report.title')]);
+            return Redirect::back()->with('entryInfo',$data->render());
 
-        return View::make('HRM::Entryform.entryform');
+        }
+        return View::make('HRM::Entryform.entryinfo');
     }
-
     public function ansarDetails($ansarid)
     {
         $alldetails = PersonalInfo::where('ansar_id', $ansarid)->first();

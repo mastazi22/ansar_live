@@ -4,7 +4,7 @@
 }
 
 #ansar-id-card-front, #ansar-id-card-back {
-    width: 100%;
+    width: 500px;
     z-index: -2;
     position: relative;
 }
@@ -16,9 +16,9 @@
     float: left;
     width: 10%;
 }
-.img-responsive{
-    max-width: 100%;
-    height: auto;
+.card-header-left-part>img{
+    width: 30px;
+    height: 30px;
 }
 .card-header-right-part {
     float: left;
@@ -160,6 +160,18 @@
     border-bottom-right-radius: 5px;
     font-style: italic;
 }
-@page {
-    size: 3.37in
+@media print {
+    /*@page {*/
+        /*size: 3.5in 2.3in*/
+    /*}*/
+    #ansar-id-card-front{
+        width:100%;
+        padding:5px;
+    }
+    .card-header-right-part h4,.card-header-right-part h5{
+        font-size: 14px !important;
+    }
+    .card-body *{
+        font-size: 13px !important;
+    }
 }

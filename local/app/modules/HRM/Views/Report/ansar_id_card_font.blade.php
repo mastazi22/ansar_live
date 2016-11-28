@@ -80,7 +80,7 @@
             <div>{{$rd['is']}}</div>
         </div>
     </div>
-    <h5 style="text-align: center;margin-top: 0;margin-bottom: 5px;font-size: 12px">{{$rd['footer_title']}}</h5>
+    <h5 style="text-align: center;margin-top: 0;margin-bottom: 5px;font-size: 12px;background: limegreen">{{$rd['footer_title']}}</h5>
 </div>
 <div>
 
