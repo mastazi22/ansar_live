@@ -73,8 +73,7 @@ class DGController extends Controller
             ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
             ->select('tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_ansar_parsonal_info.profile_pic', 'tbl_ansar_parsonal_info.ansar_id',
                 'tbl_units.unit_name_bng', 'tbl_units.id as unit_id', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_designations.name_bng', 'tbl_ansar_parsonal_info.mobile_no_self')->first();
-        $ansarStatusInfo = DB::table('tbl_ansar_status_info')->where('ansar_id', $ansar_id)
-            ->select('*')->first();
+        $ansarStatusInfo = AnsarStatusInfo::where('ansar_id', $ansar_id)->first();
         $ansarPanelInfo = DB::table('tbl_panel_info')->where('ansar_id', $ansar_id);
         if (!$ansarPanelInfo->exists()) {
             $ansarPanelInfo = DB::table('tbl_panel_info_log')->where('ansar_id', $ansar_id)->orderBy('id', 'desc')->select('panel_date', 'old_memorandum_id as memorandum_id')->first();
@@ -118,11 +117,14 @@ class DGController extends Controller
                 ->select('tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id as memorandum_id', 'tbl_kpi_info.kpi_name', 'tbl_units.unit_name_bng')
                 ->first();
         }
-        $ansarDisEmbodimentInfo = DB::table('tbl_rest_info')
-            ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_rest_info.disembodiment_reason_id')
-            ->where('tbl_rest_info.ansar_id', $ansar_id)
-            ->select('tbl_rest_info.rest_date as disembodiedDate', 'tbl_disembodiment_reason.reason_in_bng as disembodiedReason')->first();
+        $ansarDisEmbodimentInfo = '';
+        if ($ansarStatusInfo->getStatus()[0] != AnsarStatusInfo::EMBODIMENT_STATUS) {
+            $ansarDisEmbodimentInfo = DB::table('tbl_embodiment_log')
+                ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
+                ->where('tbl_embodiment_log.ansar_id', $ansar_id)->orderBy('tbl_embodiment_log.id', 'desc')
+                ->select('tbl_embodiment_log.release_date as disembodiedDate', 'tbl_disembodiment_reason.reason_in_bng as disembodiedReason')->first();
 
+        }
         return json_encode(['apid' => $ansarPersonalDetail, 'api' => $ansarPanelInfo, 'aod' => $ansarOfferInfo, 'aoci' => $offer_cancel, 'asi' => $ansarStatusInfo,
             'aei' => $ansarEmbodimentInfo, 'adei' => $ansarDisEmbodimentInfo]);
 
@@ -194,13 +196,13 @@ class DGController extends Controller
     function directDisEmbodimentSubmit(Request $request)
     {
         $rules = [
-            'ansar_id'=>'required|regex:/^[0-9]+$/|exists:tbl_embodiment,ansar_id',
-            'mem_id'=>'required',
-            'dis_date'=>'required',
-            'reason'=>'required',
+            'ansar_id' => 'required|regex:/^[0-9]+$/|exists:tbl_embodiment,ansar_id',
+            'mem_id' => 'required',
+            'dis_date' => 'required',
+            'reason' => 'required',
         ];
-        $valid = Validator::make($request->all(),$rules);
-        if($valid->fails()){
+        $valid = Validator::make($request->all(), $rules);
+        if ($valid->fails()) {
             return $valid->messages()->toJson();
         }
         DB::beginTransaction();
@@ -209,18 +211,18 @@ class DGController extends Controller
             $joining_date = Carbon::parse($embodiment_infos->joining_date);
             $service_days = Carbon::parse($request->input('dis_date'))->diffInDays($joining_date);
             RestInfoModel::create([
-               'ansar_id'=>$request->ansar_id,
-               'old_embodiment_id'=>$embodiment_infos->id,
-               'memorandum_id'=>$request->mem_id,
-               'rest_date'=>Carbon::parse($request->input('dis_date'))->format("Y-m-d"),
-               'active_date'=>GlobalParameterFacades::getActiveDate($request->input('dis_date')),
-               'total_service_days'=>$service_days,
-               'disembodiment_reason_id'=>$request->reason,
-               'rest_form'=>'Regular',
-               'action_user_id'=>Auth::user()->id,
-               'comment'=>$request->input('comment'),
+                'ansar_id' => $request->ansar_id,
+                'old_embodiment_id' => $embodiment_infos->id,
+                'memorandum_id' => $request->mem_id,
+                'rest_date' => Carbon::parse($request->input('dis_date'))->format("Y-m-d"),
+                'active_date' => GlobalParameterFacades::getActiveDate($request->input('dis_date')),
+                'total_service_days' => $service_days,
+                'disembodiment_reason_id' => $request->reason,
+                'rest_form' => 'Regular',
+                'action_user_id' => Auth::user()->id,
+                'comment' => $request->input('comment'),
             ]);
-            $embodiment_infos->saveLog('Rest',Carbon::parse($request->input('dis_date'))->format("Y-m-d"),$request->input('comment'),$request->reason);
+            $embodiment_infos->saveLog('Rest', Carbon::parse($request->input('dis_date'))->format("Y-m-d"), $request->input('comment'), $request->reason);
             AnsarStatusInfo::where('ansar_id', $request->input('ansar_id'))->update(['embodied_status' => 0, 'rest_status' => 1]);
             $embodiment_infos->delete();
             CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DISEMBODIMENT', 'from_state' => 'EMBODIED', 'to_state' => 'REST', 'action_by' => auth()->user()->id]);
@@ -242,19 +244,19 @@ class DGController extends Controller
     {
 //        return $request->all();
         $rules = [
-            'ansar_id'=>'required|regex:/^[0-9]+$/|exists:tbl_embodiment,ansar_id',
-            'unit'=>'required|regex:/^[0-9]+$/',
-            'thana'=>'required|regex:/^[0-9]+$/|exists:tbl_thana,id,unit_id,'.$request->unit,
-            't_kpi_id'=>'required|regex:/^[0-9]+$/|exists:tbl_kpi_info,id,thana_id,'.$request->thana,
-            'transfer_date'=>'required',
-            'mem_id'=>'required',
+            'ansar_id' => 'required|regex:/^[0-9]+$/|exists:tbl_embodiment,ansar_id',
+            'unit' => 'required|regex:/^[0-9]+$/',
+            'thana' => 'required|regex:/^[0-9]+$/|exists:tbl_thana,id,unit_id,' . $request->unit,
+            't_kpi_id' => 'required|regex:/^[0-9]+$/|exists:tbl_kpi_info,id,thana_id,' . $request->thana,
+            'transfer_date' => 'required',
+            'mem_id' => 'required',
         ];
-        $valid = Validator::make($request->all(),$rules);
-        if($valid->fails()) return $valid->messages()->toJson();
+        $valid = Validator::make($request->all(), $rules);
+        if ($valid->fails()) return $valid->messages()->toJson();
         DB::beginTransaction();
         try {
-            $status = AnsarStatusInfo::where('ansar_id',$request->ansar_id)->first();
-            if(!$status||$status->getStatus()[0]==AnsarStatusInfo::BLOCK_STATUS) throw new \Exception('This Ansar is Blocked');
+            $status = AnsarStatusInfo::where('ansar_id', $request->ansar_id)->first();
+            if (!$status || $status->getStatus()[0] == AnsarStatusInfo::BLOCK_STATUS) throw new \Exception('This Ansar is Blocked');
             $t_date = Input::get('transfer_date');
             $t_kpi_id = Input::get('t_kpi_id');
             $ansar_id = Input::get('ansar_id');
@@ -1284,11 +1286,11 @@ class DGController extends Controller
     public function cancelPanelEntry(Request $request)
     {
         $rules = [
-            'ansar_id'=>'required|regex:/^[0-9]+$/|exists:hrm.tbl_panel_info',
-            'cancel_panel_date'=>'required',
+            'ansar_id' => 'required|regex:/^[0-9]+$/|exists:hrm.tbl_panel_info',
+            'cancel_panel_date' => 'required',
         ];
-        $valid = Validator::make($request->all(),$rules);
-        if($valid->fails()){
+        $valid = Validator::make($request->all(), $rules);
+        if ($valid->fails()) {
             return Redirect::back()->withErrors($valid)->withInput($request->except(['_token']));
         }
         $ansar_id = $request->input('ansar_id');
@@ -1315,16 +1317,15 @@ class DGController extends Controller
                 ]);
                 $panel_info->saveLog("Rest", Carbon::now(), $cancel_panel_comment);
                 $ansar->update([
-                    'rest_status'=>1,
-                    'pannel_status'=>0
+                    'rest_status' => 1,
+                    'pannel_status' => 0
                 ]);
                 CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'CANCEL PANEL', 'from_state' => 'PANEL', 'to_state' => 'REST', 'action_by' => auth()->user()->id]);
-            }
-            else{
+            } else {
                 $panel_info->saveLog("Free", Carbon::now(), $cancel_panel_comment);
                 $ansar->update([
-                    'free_status'=>1,
-                    'pannel_status'=>0
+                    'free_status' => 1,
+                    'pannel_status' => 0
                 ]);
                 CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'CANCEL PANEL', 'from_state' => 'PANEL', 'to_state' => 'FREE', 'action_by' => auth()->user()->id]);
             }
@@ -1407,7 +1408,7 @@ class DGController extends Controller
 
                 case AnsarStatusInfo::REST_STATUS:
                     $rest_info = RestInfoModel::where('ansar_id', $ansar_id)->first();
-                    $rest_info->saveLog("Panel", $direct_panel_date,$direct_panel_comment);
+                    $rest_info->saveLog("Panel", $direct_panel_date, $direct_panel_comment);
                     PanelModel::create([
                         'ansar_id' => $ansar_id,
                         'panel_date' => $modified_direct_panel_date,
