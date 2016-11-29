@@ -62,7 +62,7 @@
                 {{--})--}}
             {{--}--}}
             $scope.dateConvert=function(date){
-                return (moment(date).locale('bn').format('DD-MMM-YYYY'));
+                return (moment(date).locale('bn').format('DD-MMMM-YYYY'));
             }
         })
         $(function () {
