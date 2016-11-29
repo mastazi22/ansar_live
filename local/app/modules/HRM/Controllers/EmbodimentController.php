@@ -319,11 +319,13 @@ class EmbodimentController extends Controller
 
     public function loadAnsarForDisembodiment(Request $request)
     {
+        //return $request->all();
+//        DB::enableQueryLog();
         $rules = [
-          'range'=>'required|regex:/^[0-9]+$/',
-          'unit'=>'required|regex:/^[0-9]+$/',
-          'thana'=>'required|regex:/^[0-9]+$/',
-          'kpi'=>'required|regex:/^[0-9]+$/',
+          'range'=>'required_without:q|regex:/^[0-9]+$/',
+          'unit'=>'required_without:q|regex:/^[0-9]+$/',
+          'thana'=>'required_without:q|regex:/^[0-9]+$/',
+          'kpi'=>'required_without:q|regex:/^[0-9]+$/',
         ];
         $valid = Validator::make($request->all(),$rules);
         if($valid->fails()){
@@ -338,16 +340,28 @@ class EmbodimentController extends Controller
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
             ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
-            ->where('tbl_kpi_info.thana_id', '=', $request->thana)
-            ->where('tbl_kpi_info.unit_id', '=', $request->unit)
-            ->where('tbl_kpi_info.division_id', '=', $request->range)
             ->where('tbl_embodiment.emboded_status', '=', $status)
-            ->where('tbl_embodiment.kpi_id', '=', $request->kpi)
             ->where('tbl_ansar_status_info.block_list_status', '=', 0)
-            ->where('tbl_ansar_status_info.black_list_status', '=', 0)
-            ->distinct()
+            ->where('tbl_ansar_status_info.black_list_status', '=', 0);
+        if($request->q){
+            $ansar_infos->where('tbl_ansar_parsonal_info.ansar_id',$request->q);
+        }
+        if($request->unit){
+            $ansar_infos->where('tbl_kpi_info.unit_id', '=', $request->unit);
+        }
+        if($request->range){
+            $ansar_infos->where('tbl_kpi_info.division_id', '=', $request->range);
+        }
+        if($request->thana){
+            $ansar_infos->where('tbl_kpi_info.thana_id', '=', $request->thana);
+        }
+        if($request->kpi){
+            $ansar_infos->where('tbl_embodiment.kpi_id', '=', $request->kpi);
+        }
+        $ansar_infos = $ansar_infos->distinct()
             ->select('tbl_kpi_info.kpi_name', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_units.unit_name_bng', 'tbl_thana.thana_name_bng', 'tbl_designations.name_bng')
             ->get();
+//        return DB::getQueryLog();
         if (count($ansar_infos) <= 0) return Response::json(array('result' => true));
         return Response::json(['ansar_infos' => $ansar_infos, 'type' => 1, 'reasons' => $reasons]);
 //        }

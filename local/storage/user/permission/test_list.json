@@ -149,12 +149,12 @@
           {
             "value": "editVerifiedEntry",
             "name": "Entry Verify(Verified)"
-          },
-          {
-            "value": "entry_report",
-            "name": "Ansar Info"
           }
         ]
+      },
+      {
+        "value": "entry_report,entry_info",
+        "name": "View Ansar Info"
       },
       {
         "value": "chunk_verify,entryChunkVerify",

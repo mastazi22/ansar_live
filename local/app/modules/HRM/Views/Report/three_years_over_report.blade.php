@@ -161,9 +161,7 @@
                                     <th>[[report.ansar.name]]</th>
                                     <th>[[report.ansar.district]]</th>
                                     <th>[[report.ansar.kpi_name]]</th>
-                                    <th>[[report.ansar.reporting_date]]</th>
                                     <th>[[report.ansar.joining_date]]</th>
-                                    <th>[[report.ansar.service_ended_date]]</th>
                                 </tr>
                                 <tr ng-repeat="a in ansars.ansars">
                                     <td>[[ansars.index+$index]]</td>
@@ -172,12 +170,10 @@
                                     <td>[[a.rank]]</td>
                                     <td>[[a.unit]]</td>
                                     <td>[[a.kpi]]</td>
-                                    <td>[[a.r_date|dateformat:'DD-MMM-YYYY']]</td>
                                     <td>[[a.j_date|dateformat:'DD-MMM-YYYY']]</td>
-                                    <td>[[a.se_date|dateformat:'DD-MMM-YYYY']]</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="9" ng-if="ansars.ansars==undefined||ansars.ansars.length<=0" class="warning">No Ansar available</td>
+                                    <td colspan="7" ng-if="ansars.ansars==undefined||ansars.ansars.length<=0" class="warning">No Ansar available</td>
                                 </tr>
                             </table>
                             <div class="table_pagination" ng-if="pages.length>1">

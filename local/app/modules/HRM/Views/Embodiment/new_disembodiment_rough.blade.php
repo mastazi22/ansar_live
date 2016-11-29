@@ -16,6 +16,7 @@
         })
         GlobalApp.controller('NewDisembodimentController', function ($scope, $http,notificationService) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}');
+            $scope.queue = [];
             $scope.districts = [];
             $scope.formData = [];
             $scope.submitData = [];
@@ -41,48 +42,14 @@
                     method: 'get',
                     params: $scope.param
                 }).then(function (response) {
+                    console.log(response.data)
+                    $scope.queue.shift();
+                    if($scope.queue.length>1) $scope.loadAnsar();
                     $scope.allLoading = false;
                     if(response.data.status===false){
                         notificationService.notify('error',response.data.message);
                     }
                     $scope.ansars = response.data;
-                })
-            }
-            $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
-            $scope.loadDistrict = function () {
-                $scope.loadingUnit = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/DistrictName')}}'
-                }).then(function (response) {
-                    $scope.districts = response.data;
-                    $scope.loadingUnit = false;
-                    $scope.thanas = [];
-                    $scope.selectedThana = "";
-                })
-            }
-            $scope.loadThana = function (id) {
-                $scope.loadingThana = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/ThanaName')}}',
-                    params: {id: id}
-                }).then(function (response) {
-                    $scope.thanas = response.data;
-                    $scope.selectedThana = "";
-                    $scope.loadingThana = false;
-                })
-            }
-            $scope.loadGuard = function (id) {
-                $scope.loadingKpi = true;
-                $http({
-                    method: 'get',
-                    url: '{{URL::route('kpi_name')}}',
-                    params: {id: id}
-                }).then(function (response) {
-                    $scope.guards = response.data;
-                    $scope.selectedKpi = "";
-                    $scope.loadingKpi = false;
                 })
             }
             $scope.verifyMemorandumId = function () {
@@ -98,15 +65,6 @@
                 }, function (response) {
 
                 })
-            }
-            if ($scope.isAdmin == 11) {
-                $scope.loadDistrict()
-            }
-            else {
-                if (!isNaN($scope.dcDistrict)) {
-                    $scope.loadThana($scope.dcDistrict)
-                    console.log($scope.dcDistrict)
-                }
             }
             $scope.showFormData = function () {
                 $scope.allLoading = true;
@@ -202,8 +160,17 @@
                     >
 
                     </filter-template>
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <h4>Total Ansars&nbsp;[[ansars.ansar_infos.length]]</h4>
+                        </div>
+                        <div class="col-sm-4">
+                            <database-search q="param.q" queue="queue" on-change="loadAnsar()"></database-search>
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered">
+
                             <tr>
                                 <th>#</th>
                                 <th>Ansar ID</th>

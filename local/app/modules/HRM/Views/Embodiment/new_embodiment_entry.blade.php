@@ -115,7 +115,7 @@
                                 <p class="text-danger" ng-if="errors.reporting_date!=undefined">[[errors.reporting_date[0] ]]</p>
                             </div>
                             <div class="form-group required">
-                                <label for="joining_date" class="control-label">Joining Date</label>
+                                <label for="joining_date" class="control-label">Embodiment Date</label>
                                 {!! Form::text('joining_date', null, $attributes = array('class' => 'form-control', 'id' => 'joining_date','date-picker', 'ng-model' => 'joining_date','required')) !!}
                                 <p class="text-danger" ng-if="errors.joining_date!=undefined">[[errors.joining_date[0] ]]</p>
                             </div>
