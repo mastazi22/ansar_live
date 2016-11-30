@@ -124,7 +124,7 @@ class CustomQuery
         $users = DB::connection('hrm')->table('tbl_user')
             ->leftJoin('tbl_logged_in_user', 'tbl_logged_in_user.user_id', '=', 'tbl_user.id')
             ->join('tbl_user_details', 'tbl_user_details.user_id', '=', 'tbl_user.id')
-            ->join('tbl_user_log', 'tbl_user_log.user_id', '=', 'tbl_user.id')->skip($offset)->take($limit)
+            ->join('tbl_user_log', 'tbl_user_log.user_id', '=', 'tbl_user.id')->orderBy('tbl_user.user_name')->skip($offset)->take($limit)
             ->select('tbl_user.id', 'tbl_user.user_name', 'tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.email', 'tbl_user_log.last_login', 'tbl_user_log.user_status', 'tbl_user.status','tbl_logged_in_user.id as logged_in')->orderBy('logged_in','desc')
             ->get();
         return $users;
