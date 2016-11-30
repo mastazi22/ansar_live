@@ -614,7 +614,7 @@ class KpiController extends Controller
 //        return $a;
         $rules = [
             'id'=>'numeric|required|same:validate_id',
-            'date' => ['required', 'regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+            'date' => ['required', 'regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/'],
         ];
         $message = [
             'id.required' => 'KPI is required',
