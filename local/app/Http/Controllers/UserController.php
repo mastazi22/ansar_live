@@ -119,7 +119,7 @@ class UserController extends Controller
         if(Input::get('user_type')==22) {
             $rules = array(
                 'user_name' => 'required|unique:hrm.tbl_user',
-                'password' => 'required|min:5|max:12',
+                'password' => 'required|min:6',
                 'r_password' => 'required|same:password',
                 'user_type' => 'required',
                 'district_name' => 'required'
@@ -128,7 +128,7 @@ class UserController extends Controller
         else if(Input::get('user_type')==66) {
             $rules = array(
                 'user_name' => 'required|unique:hrm.tbl_user',
-                'password' => 'required|min:5|max:12',
+                'password' => 'required|min:6',
                 'r_password' => 'required|same:password',
                 'user_type' => 'required',
                 'division_name' => 'required'
@@ -137,7 +137,7 @@ class UserController extends Controller
         else {
             $rules = array(
                 'user_name' => 'required|unique:hrm.tbl_user',
-                'password' => 'required|min:5|max:12',
+                'password' => 'required|min:6',
                 'r_password' => 'required|same:password',
                 'user_type' => 'required'
             );
