@@ -27,7 +27,7 @@
             <div class="row " id="entry-report">
                 <div class="box box-solid" style="width:70%;margin:0 auto;">
                     <div class="box-body">
-                        @include('HRM::EntryForm.entry_info',compact('ansarAllDetails','label'))
+                        @include('HRM::Entryform.entry_info',compact('ansarAllDetails','label'))
                     </div>
                 </div>
             </div>

@@ -48,7 +48,7 @@ class EntryFormController extends Controller
         if($request->ansar_id){
             $ansar = PersonalInfo::where('ansar_id',$request->ansar_id)->first();
             if(!$ansar) return Redirect::back()->with('entryInfo','<p class="text text-danger">No Ansar found with this id</p>');
-            $data = View::make('HRM::EntryForm.entry_info',['ansarAllDetails'=>$ansar,'label'=>(object)Config::get('report.label'),'type'=>'eng','title'=>(object)Config::get('report.title')]);
+            $data = View::make('HRM::Entryform.entry_info',['ansarAllDetails'=>$ansar,'label'=>(object)Config::get('report.label'),'type'=>'eng','title'=>(object)Config::get('report.title')]);
             return Redirect::back()->with('entryInfo',$data->render());
 
         }
