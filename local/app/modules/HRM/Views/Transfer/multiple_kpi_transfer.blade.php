@@ -77,12 +77,14 @@
                     url: '{{URL::route('confirm_transfer')}}',
                     data: angular.toJson({ansars: $scope.submitData, memId: $scope.memId,mem_date:$scope.memDate})
                 }).then(function (response) {
+                    console.log(response.data)
                     $('body').notifyDialog({
                         type: 'success',
                         message: response.data.message
                     }).showDialog();
                     $scope.tm = response.data.memId
                     $scope.uid = angular.copy($scope.param.unit);
+                    alert($scope.uid)
                     $scope.transfering = false;
                     $scope.printLetter = true;
                     reset();
@@ -106,7 +108,7 @@
                 $scope.ansar_id = '';
                 $scope.data = '';
                 $scope.memId = ''
-                $scope.reset = {range:true,unit:true}
+//                $scope.reset = {range:true,unit:true}
                 $scope.reset1 = {thana:true,kpi:true}
 
             }
@@ -228,7 +230,7 @@
                                 <lable class="control-label"
                                        style="font-weight: bold;margin-bottom: 5px;display: block">Joining Date
                                 </lable>
-                                <input type="text" id="datepicker" ng-disabled="data==undefined||!data.status"
+                                <input type="text" date-picker ng-disabled="data==undefined||!data.status"
                                        ng-model="formData.joining_date" placeholder="Joining Date"
                                        class="form-control" name="joining_date">
                             </div>

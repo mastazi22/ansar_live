@@ -768,6 +768,7 @@ class EmbodimentController extends Controller
 
     public function confirmTransfer(Request $request)
     {
+//        return $request->all();
         $valid = Validator::make($request->all(), [
             'memId' => 'required|unique:tbl_memorandum_id,memorandum_id'
         ]);
@@ -792,7 +793,7 @@ class EmbodimentController extends Controller
                     //print_r($ansar->ansarId); die;
                     if ($e_ansar) {
                         $e_ansar->kpi_id = $ansar->transferKpi;
-                        $e_ansar->transfered_date = Carbon::createFromFormat("d-M-Y", $ansar->tKpiJoinDate)->format("Y-m-d");
+                        $e_ansar->transfered_date = Carbon::parse($ansar->tKpiJoinDate)->format("Y-m-d");
                         $e_ansar->save();
                         $transfer = new TransferAnsar;
                         //print_r($ansar->id);die;
@@ -801,22 +802,21 @@ class EmbodimentController extends Controller
                         $transfer->transfer_memorandum_id = $m_id;
                         $transfer->present_kpi_id = $ansar->currentKpi;
                         $transfer->transfered_kpi_id = $ansar->transferKpi;
-                        $transfer->present_kpi_join_date = $ansar->tKpiJoinDate;
+                        $transfer->present_kpi_join_date = Carbon::parse($ansar->tKpiJoinDate)->format("Y-m-d");
                         $transfer->transfered_kpi_join_date = Carbon::createFromFormat("d-M-Y", $ansar->tKpiJoinDate)->format("Y-m-d");
                         $transfer->action_by = Auth::user()->id;
                         $transfer->save();
-                        DB::commit();
                         //$status['success']['count']++;
                         //array_push($status['success']['data'], $ansar['ansar_id']);
                         CustomQuery::addActionlog(['ansar_id' => $ansar->ansarId, 'action_type' => 'TRANSFER', 'from_state' => $ansar->currentKpi, 'to_state' => $ansar->transferKpi, 'action_by' => auth()->user()->id]);
-
+                        DB::commit();
                     }
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     DB::rollback();
                     return response(collect(['message' => "An error occur while transfer. Please try again later"])->toJson(), 400, ['Content-Type' => 'application/json']);
                 }
 
-
+                DB::commit();
             }
         }catch(\Exception $e){
             return response(collect(['message' => "An error occur while transfer. Please try again later"])->toJson(), 400, ['Content-Type' => 'application/json']);

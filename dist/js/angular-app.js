@@ -509,7 +509,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                     $scope.selected.range = $rootScope.user.division.id
                     $scope.loadUnit($rootScope.user.division.id)
                 }
-                else if($rootScope.user.usertype.type_name=='Admin'||$rootScope.user.usertype.type_name=='DG'){
+                else if($rootScope.user.usertype.type_name=='Super Admin'||$rootScope.user.usertype.type_name=='Admin'||$rootScope.user.usertype.type_name=='DG'){
                     switch($scope.startLoad){
                         case 'range':
                             $scope.loadRange();

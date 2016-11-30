@@ -90,8 +90,8 @@ class LetterController extends Controller
             ->where('tbl_transfer_ansar.transfer_memorandum_id', $id)
             ->select('tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'pk.kpi_name as p_kpi_name', 'tk.kpi_name as t_kpi_name')->get();
         if ($mem && $result) {
-            if ($v == "full") return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'ta' => $result, 'view' => 'print_transfer_letter']);
-            else return View::make('HRM::Letter.print_transfer_letter')->with(['mem' => $mem, 'user' => $user, 'ta' => $result]);
+            return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'ta' => $result, 'view' => 'print_transfer_letter']);
+//            else return View::make('HRM::Letter.print_transfer_letter')->with(['mem' => $mem, 'user' => $user, 'ta' => $result]);
         } else {
             return View::make('HRM::Letter.no_mem_found')->with(['id' => $id]);
         }
@@ -128,8 +128,8 @@ class LetterController extends Controller
         $result = $result->get();
         $mem = $mem->first();
         if ($mem && $result) {
-            if ($v == "full") return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'result' => $result, 'view' => 'print_embodiment_letter']);
-            else return View::make('HRM::Letter.print_embodiment_letter')->with(['result' => $result, 'user' => $user, 'mem' => $mem]);
+            return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'result' => $result, 'view' => 'print_embodiment_letter']);
+//            else return View::make('HRM::Letter.print_embodiment_letter')->with(['result' => $result, 'user' => $user, 'mem' => $mem]);
         } else {
             return View::make('HRM::Letter.no_mem_found')->with('id', $id);
         }
@@ -158,8 +158,8 @@ class LetterController extends Controller
 //        return $result;
        // return DB::getQueryLog();
         if ($mem && $result) {
-            if ($v == "full") return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'result' => $result, 'view' => 'print_disembodiment_letter']);
-            else return View::make('HRM::Letter.print_disembodiment_letter')->with(['result' => $result, 'user' => $user, 'mem' => $mem]);
+            return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'result' => $result, 'view' => 'print_disembodiment_letter']);
+//            else return View::make('HRM::Letter.print_disembodiment_letter')->with(['result' => $result, 'user' => $user, 'mem' => $mem]);
         } else {
             return View::make('HRM::Letter.no_mem_found')->with('id', $id);
         }

@@ -287,16 +287,10 @@ class UserController extends Controller
 //        return Input::get('permission');
         $user = User::find($id);
         $all = Input::get('permit_all');
-        if (is_null($all)) {
-            $permission = count(Input::get('permission'))==0?null:json_encode(Input::get('permission'));
-            $user->userPermission->permission_type = 0;
-            $user->userPermission->permission_list = $permission;
-            $user->userPermission->save();
-        } else {
-            $user->userPermission->permission_type = 1;
-            $user->userPermission->permission_list = null;
-            $user->userPermission->save();
-        }
+        $permission = count(Input::get('permission'))==0?null:json_encode(Input::get('permission'));
+        $user->userPermission->permission_type = 0;
+        $user->userPermission->permission_list = $permission;
+        $user->userPermission->save();
         return Redirect::action('UserController@userManagement')->with('success_message', $user->user_name . " permission has been updated successfully");
     }
 
