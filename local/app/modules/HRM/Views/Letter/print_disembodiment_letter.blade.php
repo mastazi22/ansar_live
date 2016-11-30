@@ -32,7 +32,7 @@
                     <th>ক্রমিক নং</th>
                     <th>আইডি নং</th>
                     <th>পদবী</th>
-                    <th>নাম ও পিতার নাম</th>
+                    <th style="width: 150px !important;">নাম ও পিতার নাম</th>
                     <th>ঠিকানা:<br>গ্রাম , পোস্ট, উপজেলা ও জেলা</th>
                     <th>সংস্থার নাম </th>
                     <th>অঙ্গিভুতির তারিখ </th>
@@ -44,7 +44,7 @@
                         <td>{{LanguageConverter::engToBng($i++)}}</td>
                         <td>{{LanguageConverter::engToBng($r->ansar_id)}}</td>
                         <td>{{$r->rank}}</td>
-                        <td>{{$r->name}}<br>{{$r->father_name}}</td>
+                        <td style="width: 150px !important;">{{$r->name}}<br>{{$r->father_name}}</td>
                         <td>{{$r->village_name}},&nbsp;{{$r->pon}},&nbsp;{{$r->thana}},&nbsp;{{$r->unit}}</td>
                         <td>{{$r->kpi_name}}</td>
                         <td>{{LanguageConverter::engToBng(date('d/m/Y',strtotime($r->joining_date)))}}</td>
