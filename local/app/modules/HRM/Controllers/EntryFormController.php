@@ -46,9 +46,11 @@ class EntryFormController extends Controller
     {
 //        return $request->ansar_id;
         if($request->ansar_id){
-            $ansar = PersonalInfo::where('ansar_id',$request->ansar_id)->first();
-            if(!$ansar) return Redirect::back()->with('entryInfo','<p class="text text-danger">No Ansar found with this id</p>');
-            $data = View::make('HRM::Entryform.entry_info',['ansarAllDetails'=>$ansar,'label'=>(object)Config::get('report.label'),'type'=>'eng','title'=>(object)Config::get('report.title')]);
+            $ansar = PersonalInfo::where('ansar_id',$request->ansar_id);
+            if($request->unit) $ansar->where('unit_id',$request->unit);
+            if($request->range) $ansar->where('division_id',$request->range);
+            if(!$ansar->exists()) return Redirect::back()->with('entryInfo','<p class="text text-danger">No Ansar found with this id</p>');
+            $data = View::make('HRM::Entryform.entry_info',['ansarAllDetails'=>$ansar->first(),'label'=>(object)Config::get('report.label'),'type'=>'eng','title'=>(object)Config::get('report.title')]);
             return Redirect::back()->with('entryInfo',$data->render());
 
         }
@@ -160,10 +162,13 @@ class EntryFormController extends Controller
         }
     }
 
-    public function entryReport($ansarid,$type='eng')
+    public function entryReport($ansarid,$type='eng',Request $request)
     {
-        $ansardetails = PersonalInfo::where('ansar_id', $ansarid)->first();
-        return View::make('HRM::Entryform.reportEntryForm')->with(['ansarAllDetails'=>$ansardetails,'type'=>$type,'title'=>(object)Config::get('report.title'),'label'=>(object)Config::get('report.label')]);
+        $ansardetails = PersonalInfo::where('ansar_id',$request->ansar_id);
+        if($request->unit) $ansardetails->where('unit_id',$request->unit);
+        if($request->range) $ansardetails->where('division_id',$request->range);
+        if(!$ansardetails->exists()) abort(404);
+        return View::make('HRM::Entryform.reportEntryForm')->with(['ansarAllDetails'=>$ansardetails->first(),'type'=>$type,'title'=>(object)Config::get('report.title'),'label'=>(object)Config::get('report.label')]);
     }
 
     public function getfreezelist()

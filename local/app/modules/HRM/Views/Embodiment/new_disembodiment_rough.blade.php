@@ -78,6 +78,7 @@
                     }
                     $scope.submitData.push($scope.formData[i])
                 }
+                $scope.printLetter = false;
                 $http({
                     url:'{{URL::to('HRM/disembodiment-entry')}}',
                     method:'post',
@@ -94,6 +95,7 @@
                         $scope.loadAnsar();
                         $scope.ch =[]
                         $scope.formData = [];
+                        $scope.printLetter = true;
                     }
                     else{
                         notificationService.notify('error',response.data.message);
@@ -261,6 +263,7 @@
 
             <div class="row">
                 <div class="col-md-12">
+                    <a ng-if="printLetter" target="_blank" href="{{URL::to('HRM/print_letter')}}?id=[[memorandumId]]&unit=[[param.unit]]&view=full&type=DISEMBODIMENT" class="btn btn-primary pull-left">Print Embodiment Letter</a>
                     <button class="pull-right btn btn-primary" ng-disabled="allLoading" id="disembodiment-confirmation" ng-click="showFormData()">
                         <i class="fa fa-send"></i>&nbsp;&nbsp;Disembodied
                     </button>

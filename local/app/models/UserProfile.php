@@ -15,7 +15,13 @@ class UserProfile extends Model
     function getFullName(){
         $name = $this->first_name.' '.$this->last_name;
         if(trim($name)){
+            if($this->user->type==22){
+                return $name."(DCA {$this->user->district->unit_name_eng})";
+            }
             return $name;
+        }
+        if($this->user->type==22){
+            return $this->user->user_name."(DCA {$this->user->district->unit_name_eng})";
         }
         return $this->user->user_name;
     }

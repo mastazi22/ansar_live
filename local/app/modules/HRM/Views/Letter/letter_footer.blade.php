@@ -2,7 +2,7 @@
     <div class="footer-top">
         <ul class="pull-right" style="margin-top: 20px">
             <li>{{$user?$user->first_name.' '.$user->last_name:'n\a'}}</li>
-            <li>জেলা কমাণ্ডান্ট</li>
+            <li>জেলা কমান্ড্যান্টের</li>
             <li>মোবাইলঃ<span style="border-bottom: 1px dashed #000000;    top: -5px;display: inline-block;position: relative;">{{$user?$user->mobile_no:'n\a'}}</span></li>
             <li>ই-মেইলঃ{{$user?$user->email:'n\a'}}</li>
         </ul>
@@ -44,7 +44,7 @@
             <li>অবগতি ও কার্যক্রমের জন্য।</li>
             <li>&nbsp;</li>
             <li>&nbsp;</li>
-            <li>জেলা কমাণ্ডান্ট</li>
+            <li>জেলা কমান্ড্যান্টের</li>
             <li>মোবাইলঃ<span style="border-bottom: 1px dashed #000000;    top: -5px;display: inline-block;position: relative;">{{$user?$user->mobile_no:'n\a'}}</span></li>
             <li>ই-মেইলঃ&nbsp;{{$user?$user->email:'n\a'}}</li>
 

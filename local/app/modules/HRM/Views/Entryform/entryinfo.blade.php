@@ -61,7 +61,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-7 col-sm-12 col-xs-12 col-centered">
+                        <div class="col-md-8 col-sm-12 col-xs-12 col-centered">
                             @if(Session::has('entryInfo'))
                                 {!! Session::get('entryInfo') !!}
                             @endif

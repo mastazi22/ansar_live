@@ -40,6 +40,8 @@ class CheckUserType
 //        'get_transfer_ansar_history'=>['range'=>'range','unit'=>'unit'],
         'inactive_kpi_list'=>['division'=>'range','unit'=>'unit'],
         'print_letter'=>['unit'=>'unit'],
+        'entry_info'=>['unit'=>'unit','range'=>'range'],
+        'entry_report'=>['unit'=>'unit','range'=>'range'],
         'new-embodiment-entry'=>['division_name_eng'=>'unit'],
     ];
     public function handle($request, Closure $next)
