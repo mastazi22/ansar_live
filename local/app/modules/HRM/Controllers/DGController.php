@@ -152,6 +152,30 @@ class DGController extends Controller
             ->first();
         return Response::json(array('ansar_details' => $ansar_details, 'status' => $status[0]));
     }
+    function loadAnsarForDirectDisEmbodiment(Request $request){
+        $rule = [
+            'ansar_id' => 'required|regex:/^[0-9]+$/|exists:hrm.tbl_embodiment,ansar_id'
+        ];
+        $vaild = Validator::make($request->all(), $rule);
+        if ($vaild->fails()) {
+            return Response::json([]);
+        }
+        $ansar_id = Input::get('ansar_id');
+
+        $status = AnsarStatusInfo::where('ansar_id', $ansar_id)->first()->getStatus();
+        $ansar_details = DB::table('tbl_ansar_parsonal_info')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+            ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
+            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+            ->leftJoin('tbl_embodiment_log', 'tbl_embodiment_log.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->leftJoin('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
+            ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)->orderBy('tbl_embodiment_log.id','desc')
+            ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex',
+                'tbl_units.unit_name_eng', 'tbl_designations.name_eng','tbl_embodiment_log.release_date','tbl_disembodiment_reason.reason_in_bng','tbl_embodiment.joining_date','tbl_kpi_info.kpi_name')
+            ->first();
+        return Response::json(array('ansar_details' => $ansar_details, 'status' => $status[0]));
+    }
     function directEmbodimentSubmit(Request $request)
     {
 //        return $request->all();
