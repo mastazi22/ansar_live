@@ -161,6 +161,13 @@
                                         [[ansarDetail.ansar_details.release_date?(ansarDetail.ansar_details.release_date|dateformat:'DD-MMM-YYYY'):'--']]
                                     </p>
                                 </div>
+                                <div class="form-group">
+                                    <label class="control-label">Disembodied Reason</label>
+
+                                    <p>
+                                        [[ansarDetail.ansar_details.reason_in_bng?ansarDetail.ansar_details.reason_in_bng:'--']]
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>

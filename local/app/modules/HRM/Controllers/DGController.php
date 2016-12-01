@@ -145,9 +145,10 @@ class DGController extends Controller
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
             ->leftJoin('tbl_embodiment_log', 'tbl_embodiment_log.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->leftJoin('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
             ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)->orderBy('tbl_embodiment_log.id','desc')
-            ->select('tbl_ansar_parsonal_info.id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex',
-                'tbl_units.unit_name_eng', 'tbl_designations.name_eng','tbl_embodiment_log.release_date')
+            ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex',
+                'tbl_units.unit_name_eng', 'tbl_designations.name_eng','tbl_embodiment_log.release_date','tbl_disembodiment_reason.reason_in_bng')
             ->first();
         return Response::json(array('ansar_details' => $ansar_details, 'status' => $status[0]));
     }
