@@ -571,7 +571,7 @@ class EmbodimentController extends Controller
         $rules = [
             'ansarExist' => 'numeric|min:0|max:1',
             'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
-            'new_disembodiment_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+            'new_disembodiment_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/'],
         ];
         $message = [
             'ansar_id.required' => 'Ansar ID is required',
@@ -595,20 +595,20 @@ class EmbodimentController extends Controller
 
             $rest_info_update = RestInfoModel::where('ansar_id', $ansar_id)->first();
             $rest_info_update->rest_date = $modified_new_disembodiment_date;
-
-            if (strcasecmp($global_unit, "Year") == 0) {
-                $rest_period = $global_value;
-                $rest_info_update->active_date = Carbon::parse($modified_new_disembodiment_date)->addYear($rest_period)->addHour(6);
-            } elseif (strcasecmp($global_unit, "Month") == 0) {
-                $rest_period = $global_value;
-                $rest_info_update->active_date = Carbon::parse($modified_new_disembodiment_date)->addMonth($rest_period)->addHour(6);
-            } elseif (strcasecmp($global_unit, "Day") == 0) {
-                $rest_period = $global_value;
-                $rest_info_update->active_date = Carbon::parse($modified_new_disembodiment_date)->addDay($rest_period)->addHour(6);
-            }
+            $rest_info_update->active_date = GlobalParameterFacades::getActiveDate($modified_new_disembodiment_date);
+//            if (strcasecmp($global_unit, "Year") == 0) {
+//                $rest_period = $global_value;
+//                $rest_info_update->active_date = Carbon::parse($modified_new_disembodiment_date)->addYear($rest_period)->addHour(6);
+//            } elseif (strcasecmp($global_unit, "Month") == 0) {
+//                $rest_period = $global_value;
+//                $rest_info_update->active_date = Carbon::parse($modified_new_disembodiment_date)->addMonth($rest_period)->addHour(6);
+//            } elseif (strcasecmp($global_unit, "Day") == 0) {
+//                $rest_period = $global_value;
+//                $rest_info_update->active_date = Carbon::parse($modified_new_disembodiment_date)->addDay($rest_period)->addHour(6);
+//            }
             $rest_info_update->save();
 
-            $embodiment_log_update = EmbodimentLogModel::where('ansar_id', $ansar_id)->where('created_at', $rest_info_update->created_at)->first();
+            $embodiment_log_update = EmbodimentLogModel::where('ansar_id', $ansar_id)->orderBy('id','desc')->first();
             $embodiment_log_update->release_date = $modified_new_disembodiment_date;
             $embodiment_log_update->save();
 
