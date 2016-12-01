@@ -130,7 +130,27 @@ class DGController extends Controller
 
 
     }
+    function loadAnsarForDirectEmbodiment(Request $request){
+        $rule = [
+            'ansar_id' => 'required|regex:/^[0-9]+$/|exists:hrm.tbl_ansar_parsonal_info,ansar_id'
+        ];
+        $vaild = Validator::make($request->all(), $rule);
+        if ($vaild->fails()) {
+            return Response::json([]);
+        }
+        $ansar_id = Input::get('ansar_id');
 
+        $status = AnsarStatusInfo::where('ansar_id', $ansar_id)->first()->getStatus();
+        $ansar_details = DB::table('tbl_ansar_parsonal_info')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+            ->leftJoin('tbl_embodiment_log', 'tbl_embodiment_log.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)->orderBy('tbl_embodiment_log.id','desc')
+            ->select('tbl_ansar_parsonal_info.id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.sex',
+                'tbl_units.unit_name_eng', 'tbl_designations.name_eng','tbl_embodiment_log.release_date')
+            ->first();
+        return Response::json(array('ansar_details' => $ansar_details, 'status' => $status[0]));
+    }
     function directEmbodimentSubmit(Request $request)
     {
 //        return $request->all();

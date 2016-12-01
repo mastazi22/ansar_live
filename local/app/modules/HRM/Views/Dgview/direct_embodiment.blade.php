@@ -29,7 +29,7 @@
                 $scope.loadingAnsar = true;
                 $http({
                     method:'get',
-                    url:'{{URL::to('HRM/blocklist_ansar_details')}}',
+                    url:'{{URL::route('direct_embodiment_ansar_details')}}',
                     params:{ansar_id:id}
                 }).then(function (response) {
                     $scope.ansarDetail = response.data
@@ -126,14 +126,14 @@
                                     </p>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label">Unit</label>
+                                    <label class="control-label">Home District</label>
 
                                     <p>
                                         [[ansarDetail.ansar_details.unit_name_eng]]
                                     </p>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label">Sex</label>
+                                    <label class="control-label">Gender</label>
 
                                     <p>
                                         [[ansarDetail.ansar_details.sex]]
@@ -146,11 +146,19 @@
                                         [[ansarDetail.ansar_details.data_of_birth|dateformat:'DD-MMM-YYYY']]
                                     </p>
                                 </div>
+
                                 <div class="form-group">
                                     <label class="control-label">Current Status</label>
 
                                     <p>
                                         [[ansarDetail.status]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Last Disembodied Date</label>
+
+                                    <p>
+                                        [[ansarDetail.ansar_details.release_date?(ansarDetail.ansar_details.release_date|dateformat:'DD-MMM-YYYY'):'--']]
                                     </p>
                                 </div>
                             </div>

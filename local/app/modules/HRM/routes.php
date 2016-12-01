@@ -206,6 +206,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 
         Route::get('/direct_offer', ['as' => 'direct_offer', 'uses' => 'DGController@directOfferView']);
         Route::get('/direct_transfer', ['as' => 'direct_transfer', 'uses' => 'DGController@directTransferView']);
+        Route::get('/direct_embodiment_ansar_details', ['as' => 'direct_embodiment_ansar_details', 'uses' => 'DGController@loadAnsarForDirectEmbodiment']);
         Route::get('/direct_embodiment', ['as' => 'direct_embodiment', 'uses' => 'DGController@directEmbodimentView']);
         Route::get('/direct_offer_ansar_detail', ['as'=>'ansar_detail_info','uses'=>'DGController@loadAnsarDetail']);
         Route::post('/direct_embodiment_submit', ['as' => 'direct_embodiment_submit', 'uses' => 'DGController@directEmbodimentSubmit']);
