@@ -78,9 +78,7 @@ class EmbodimentController extends Controller
             return response('No Ansar Found', 400);
         }
         $ansar_id = Input::get('ansar_id');
-        $ansar_from_sms_offer = DB::table('tbl_sms_offer_info')->where('ansar_id', $ansar_id)->select('tbl_sms_offer_info.ansar_id')->first();
-        $ansar_from_sms_receive = DB::table('tbl_sms_receive_info')->where('ansar_id', $ansar_id)->select('tbl_sms_receive_info.ansar_id')->first();
-            $ansarPersonalDetail = DB::table('tbl_ansar_parsonal_info')
+       $ansarPersonalDetail = DB::table('tbl_ansar_parsonal_info')
                 ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
                 ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
@@ -110,9 +108,12 @@ class EmbodimentController extends Controller
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_receive_info.offered_district')
                 ->where('tbl_sms_receive_info.ansar_id', '=', $ansar_id)
                 ->where('tbl_ansar_status_info.block_list_status', '=', 0)
-                ->where('tbl_ansar_status_info.black_list_status', '=', 0)
-                ->select('tbl_sms_receive_info.ansar_id', 'tbl_sms_receive_info.sms_send_datetime as offerDate', 'tbl_units.unit_name_bng as offered_district')
-                ->first();
+                ->where('tbl_ansar_status_info.black_list_status', '=', 0);
+        if($request->unit){
+            $ansar_details->where('tbl_units.id',$request->unit);
+        }
+        $ansar_details = $ansar_details->select('tbl_sms_receive_info.ansar_id', 'tbl_sms_receive_info.sms_send_datetime as offerDate', 'tbl_units.unit_name_bng as offered_district')
+            ->first();
             return Response::json(['apd' => $ansarPersonalDetail, 'asi' => $ansarStatusInfo, 'api' => $ansarPanelInfo, 'aoi' => $ansar_details]);
 
 //        }

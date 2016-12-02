@@ -12,6 +12,7 @@ use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\OfferSmsLog;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
+use App\modules\HRM\Models\RestInfoModel;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -173,5 +174,27 @@ class Kernel extends ConsoleKernel
 //                }
 //            }
 //        })->dailyAt("00:00")->name('withdraw_kpi')->withoutOverlapping();
+//        $schedule->call(function () {
+//            $rest_ansars = RestInfoModel::whereDate('active_date','=>',Carbon::today()->toDateString())->get();
+//            foreach($rest_ansars as $ansar){
+//                DB::beginTransaction();
+//                try{
+//                    $panel_log = PanelInfoLogModel::where('ansar_id',$ansar->ansar_id)->orderBy('id','desc')->first();
+//                    PanelModel::create([
+//                        'ansar_id'=>$ansar->ansar_id,
+//                        'come_from'=>'Rest',
+//                        'panel_date'=>Carbon::today(),
+//                        'memorandum_id'=>isset($panel_log->old_memorandum_id)?$panel_log->old_memorandum_id:'N\A',
+//                        'ansar_merit_list'=>isset($panel_log->merit_list)?$panel_log->merit_list:'N\A',
+//                        'action_user_id'=>'0',
+//                    ]);
+//                    $ansar->saveLog('Panel');
+//                    $ansar->delete();
+//                    DB::commit();
+//                }catch(\Exception $e){
+//                    DB::rollBack();
+//                }
+//            }
+//        })->dailyAt("00:00")->name('rest_to_panel')->withoutOverlapping();
     }
 }

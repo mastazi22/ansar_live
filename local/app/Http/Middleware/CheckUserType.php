@@ -39,7 +39,11 @@ class CheckUserType
         'load_ansar_for_embodiment_date_correction'=>['range'=>'range','unit'=>'unit'],
 //        'get_transfer_ansar_history'=>['range'=>'range','unit'=>'unit'],
         'inactive_kpi_list'=>['division'=>'range','unit'=>'unit'],
+        'three_years_over_ansar_info'=>['division'=>'range','unit'=>'unit'],
+        'disemboded_ansar_info'=>['division_id'=>'range','unit_id'=>'unit'],
+        'get_offered_ansar'=>['division'=>'range','unit'=>'unit'],
         'print_letter'=>['unit'=>'unit'],
+        'check-ansar'=>['unit'=>'unit'],
         'entry_info'=>['unit'=>'unit','range'=>'range'],
         'entry_report'=>['unit'=>'unit','range'=>'range'],
         'new-embodiment-entry'=>['division_name_eng'=>'unit'],
@@ -80,87 +84,6 @@ class CheckUserType
             }
         }
         $request->replace($input);
-//        return $request->all();
-//        if ($request->ajax()) {
-//            $name = $request->route()->getName();
-//            if (strcasecmp($name, 'district_name') == 0) {
-//                switch ($user->type) {
-//                    case 22:
-//                        return Response::json([District::find($user->district_id)]);
-//                    case 66:
-//                        $request->replace(['id' => $user->division_id]);
-//                        break;
-//                }
-//            } else if (strcasecmp($name, 'division_name') == 0) {
-//                switch ($user->type) {
-//                    case 22:
-//                        return Response::json([]);
-//                    case 66:
-//                        return Response::json([Division::find($user->division_id)]);
-//                }
-//            }
-//            else {
-//                if ($request->exists('unit')) {
-//                    if (strcasecmp($request->input('unit'), 'all') == 0) {
-//                        $data = $request->input();
-//                        switch ($user->type) {
-//                            case 22:
-//                                $data['unit'] = $user->district_id;
-//                                $request->replace($data);
-//                                break;
-//                            case 66:
-//                                $data['division'] = $user->division_id;
-//                                $request->replace($data);
-//                                break;
-//                        }
-//                    }
-//                }
-//                else{
-//                    switch ($user->type) {
-//                        case 22:
-//                            if ($request->input()) {
-//                                $input = $request->input();
-//                                array_push($input, ['district_id' => $user->district_id]);
-//                                $request->replace($input);
-//                            } else {
-//                                $request->replace(['district_id' => $user->district_id]);
-//                            }
-//                            break;
-//                        case 66:
-//                            if ($request->input()) {
-//                                $input = $request->input();
-//                                array_push($input, ['division_id' => $user->division_id]);
-//                                $request->replace($input);
-//                            } else {
-//                                $request->replace(['division_id' => $user->division_id]);
-//                            }
-//                            break;
-//                    }
-//                }
-//            }
-//        }
-//        else {
-//            switch ($user->type) {
-//                case 22:
-//                    if ($request->input()) {
-//                        $input = $request->input();
-//                        array_push($input, ['district_id' => $user->district_id]);
-//                        $request->replace($input);
-//                    } else {
-//                        $request->replace(['district_id' => $user->district_id]);
-//                    }
-//                    break;
-//                case 66:
-//                    if ($request->input()) {
-//                        $input = $request->input();
-//                        array_push($input, ['division_id' => $user->division_id]);
-//                        $request->replace($input);
-//                    } else {
-//                        $request->replace(['division_id' => $user->division_id]);
-//                    }
-//                    break;
-//            }
-//        }
         return $next($request);
     }
 }
