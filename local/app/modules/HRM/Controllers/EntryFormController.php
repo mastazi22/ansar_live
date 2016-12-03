@@ -41,7 +41,11 @@ class EntryFormController extends Controller
         }
         return View::make('HRM::Entryform.entrylist')->with(['notVerified' => $notVerified, 'Verified' => $Verified]);
     }
+    public function entryform()
+    {
 
+        return View::make('HRM::Entryform.entryform');
+    }
     public function entryInfo(Request $request)
     {
 //        return $request->ansar_id;
