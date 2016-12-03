@@ -46,7 +46,7 @@
                     $scope.users = response.data;
                     $scope.blockStatus = [];
                     $scope.users.forEach(function (v) {
-                        $scope.blockStatus.push(v.status)
+                        $scope.blockStatus.push(parseInt(v.status)==1?true:false);
                     })
                     $scope.allLoading = false;
                 })
@@ -196,7 +196,7 @@
                                                href="{{URL::to('/edit_user')}}/[[user.id]]" title="edit"><span
                                                         class="glyphicon glyphicon-edit"></span></a>
                                         </div>
-                                        <div class="col-xs-1" ng-init="blockStatus[$index]=user.status">
+                                        <div class="col-xs-1">
                                             <a class="btn btn-danger btn-xs" ng-show="blockStatus[$index]"
                                                confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"block"}'
                                                class="block-user" title="block">
@@ -243,7 +243,7 @@
                                                         class="glyphicon glyphicon-edit"></span></a>
                                         </div>
 
-                                        <div class="col-xs-1" ng-init="blockStatus[$index]=user.status">
+                                        <div class="col-xs-1">
                                             <a class="btn btn-danger btn-xs" ng-show="blockStatus[$index]"
                                                confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"block"}'
                                                class="block-user" title="block">
