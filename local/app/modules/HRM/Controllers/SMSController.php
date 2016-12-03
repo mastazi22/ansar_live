@@ -184,6 +184,7 @@ class SMSController extends Controller
     {
         $as = AnsarStatusInfo::where('ansar_id', $ansar_ids)->first();
         $as->rest->saveLog("Offer");
+        $as->rest->delete();
     }
 
     function getAnsarStatus($id)

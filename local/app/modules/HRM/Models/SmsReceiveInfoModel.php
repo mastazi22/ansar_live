@@ -17,10 +17,16 @@ class SmsReceiveInfoModel extends Model
         $this->log()->save(new OfferSmsLog([
             'offered_district'=>$this->offered_district,
             'sms_offer_id'=>$this->id,
-            'action_user_id'=>$this->action_user_id,
+            'action_user_id'=>0,
             'offered_date'=>$this->sms_send_datetime,
             'action_date'=>$this->sms_received_datetime,
             'reply_type'=>'Yes'
         ]));
+    }
+    public function status(){
+        return $this->belongsTo(AnsarStatusInfo::class,'ansar_id','ansar_id');
+    }
+    public function panel(){
+        return $this->hasOne(PanelModel::class,'ansar_id','ansar_id');
     }
 }

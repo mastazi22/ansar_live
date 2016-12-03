@@ -28,4 +28,7 @@ class RestInfoModel extends Model
             'action_user_id'=>$this->action_user_id,
         ]));
     }
+    public function status(){
+        return $this->belongsTo(AnsarStatusInfo::class,'ansar_id','ansar_id');
+    }
 }

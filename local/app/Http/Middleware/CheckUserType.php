@@ -44,6 +44,7 @@ class CheckUserType
         'get_offered_ansar'=>['division'=>'range','unit'=>'unit'],
         'print_letter'=>['unit'=>'unit'],
         'check-ansar'=>['unit'=>'unit'],
+        'send_offer'=>['exclude_district'=>'unit','district_id'=>'unit'],
         'entry_info'=>['unit'=>'unit','range'=>'range'],
         'entry_report'=>['unit'=>'unit','range'=>'range'],
         'new-embodiment-entry'=>['division_name_eng'=>'unit'],
