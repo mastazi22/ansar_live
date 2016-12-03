@@ -202,7 +202,7 @@
                                                class="block-user" title="block">
                                                 <span class="fa fa-ban"></span>
                                             </a>
-                                            <a ng-show="!blockStatus[$index]||user.status  " class="btn btn-success btn-xs"
+                                            <a ng-show="!blockStatus[$index]||user.status" class="btn btn-success btn-xs"
                                                confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"unblock"}'
                                                class="block-user" title="unblock">
                                                 <span class="fa fa-unlock"></span>
@@ -244,12 +244,12 @@
                                         </div>
 
                                         <div class="col-xs-1">
-                                            <a class="btn btn-danger btn-xs" ng-show="blockStatus[$index]"
+                                            <a class="btn btn-danger btn-xs" ng-show="blockStatus[$index]||!user.status"
                                                confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"block"}'
                                                class="block-user" title="block">
                                                 <span class="fa fa-ban"></span>
                                             </a>
-                                            <a ng-show="!blockStatus[$index]" class="btn btn-success btn-xs"
+                                            <a ng-show="!blockStatus[$index]||user.status" class="btn btn-success btn-xs"
                                                confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"unblock"}'
                                                class="block-user" title="unblock">
                                                 <span class="fa fa-unlock"></span>
