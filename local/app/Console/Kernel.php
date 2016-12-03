@@ -39,6 +39,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        Log::info("called");
         $schedule->call(function () {
             Log::info("called");
             //return;
