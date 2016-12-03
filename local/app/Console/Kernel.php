@@ -175,7 +175,7 @@ class Kernel extends ConsoleKernel
 //            }
 //        })->dailyAt("00:00")->name('withdraw_kpi')->withoutOverlapping();
 //        $schedule->call(function () {
-//            $rest_ansars = RestInfoModel::whereDate('active_date','=>',Carbon::today()->toDateString())->get();
+//            $rest_ansars = RestInfoModel::whereDate('active_date','<=',Carbon::today()->toDateString())->whereIn('disembodiment_reason_id',[1,2,8])->get();
 //            foreach($rest_ansars as $ansar){
 //                DB::beginTransaction();
 //                try{
@@ -195,6 +195,6 @@ class Kernel extends ConsoleKernel
 //                    DB::rollBack();
 //                }
 //            }
-//        })->dailyAt("00:00")->name('rest_to_panel')->withoutOverlapping();
+//        })->dailyAt("00:01")->name('rest_to_panel')->withoutOverlapping();
     }
 }

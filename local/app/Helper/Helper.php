@@ -24,6 +24,7 @@ class Helper
                 ->where('tbl_kpi_info.unit_id',$user->district_id)
                 ->where('tbl_embodiment.emboded_status','Emboded')->count();
             $quota = OfferQuota::where('unit_id',$user->district_id)->first();
+            if(isset($quota->quota))
             $offer_limit = (($quota->quota*$embodied_ansar_total)/100)-$offered;
             return $offer_limit<0?0:$offer_limit;
         }
