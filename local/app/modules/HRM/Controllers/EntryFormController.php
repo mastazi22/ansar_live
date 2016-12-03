@@ -166,9 +166,9 @@ class EntryFormController extends Controller
         }
     }
 
-    public function entryReport($ansarid,$type='eng',Request $request)
+    public function entryReport(Request $request,$ansarid,$type='eng')
     {
-        $ansardetails = PersonalInfo::where('ansar_id',$request->ansar_id);
+        $ansardetails = PersonalInfo::where('ansar_id',$ansarid);
         if($request->unit) $ansardetails->where('unit_id',$request->unit);
         if($request->range) $ansardetails->where('division_id',$request->range);
         if(!$ansardetails->exists()) abort(404);
