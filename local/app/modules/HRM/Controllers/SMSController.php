@@ -193,6 +193,10 @@ class SMSController extends Controller
             return "No Ansar Found With This ID: " . $id;
         }
         switch (1) {
+            case $ansar->block_list_status:
+                return "Your Status Is BLOCK";
+            case $ansar->black_list_status:
+                return "Your Status Is BLACKED";
             case $ansar->free_status:
                 return "Your Status Is FREE";
             case $ansar->pannel_status:
@@ -205,10 +209,6 @@ class SMSController extends Controller
                 return "Your Status Is FREEZE";
             case $ansar->early_retierment_status:
                 return "Your Status Is EARLY RETIERMENT";
-            case $ansar->block_list_status:
-                return "Your Status Is BLOCK";
-            case $ansar->black_list_status:
-                return "Your Status Is BLACKED";
             case $ansar->rest_status:
                 return "Your Status Is REST";
             case $ansar->retierment_status:
