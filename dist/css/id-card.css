@@ -2,7 +2,24 @@
     padding: 0;
     margin: 0;
 }
-
+@font-face {
+    font-family: banglFont;
+    src: url('../fonts/Siyamrupali.ttf');
+    font-stretch:condensed;
+}
+@font-face {
+    font-family: engFont;
+    src: url('../fonts/LiberationSerif-Regular.ttf');
+}
+.bangla-class{
+    font-family: banglFont;
+}
+.bangla-class ul>li{
+    font-size: .96em;
+}
+.bangla-class .card-footer-sing>div{
+    font-size: 9px;
+}
 #ansar-id-card-front, #ansar-id-card-back {
     width: 500px;
     z-index: -2;
