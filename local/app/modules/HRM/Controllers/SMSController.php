@@ -45,22 +45,15 @@ class SMSController extends Controller
                 }
             }
             return "Invalid SMS Format";
-        }
-        else{
+        } else {
             if (count($body_part) > 1) {
                 switch ($body_part[0]) {
                     case 'S':
                     case 's':
-                        if (count($body_part) > 2) {
-                            return $this->getAnsarStatus((int)$body_part[2]);
-                        }
-                        return "Invalid SMS Format";
+                        return $this->getAnsarStatus((int)$body_part[1]);
                     case 'E':
                     case 'e':
-                        if (count($body_part) > 2) {
-                            return $this->getAnsarDetail((int)$body_part[2]);
-                        }
-                        return "Invalid SMS Format";
+                        return $this->getAnsarDetail((int)$body_part[1]);
                     default:
                         return "Invalid SMS Format";
                 }
