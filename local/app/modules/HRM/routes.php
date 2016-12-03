@@ -358,7 +358,19 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/withdrawn_kpi_list', ['as' => 'withdrawn_kpi_list', 'uses' => 'KpiController@withdrawnKpiList']);
         Route::get('/withdraw-date-edit/{id}', ['as' => 'withdraw-date-edit', 'uses' => 'KpiController@kpiWithdrawDateEdit'])->where('id','^[0-9]+$');
         Route::post('/withdraw-date-update/{id}', ['as' => 'withdraw-date-update', 'uses' => 'KpiController@kpiWithdrawDateUpdate'])->where('id','^[0-9]+$');
-
+        Route::get('test',function(){
+            $ansars = \Illuminate\Support\Facades\DB::table('tbl_sms_receive_info')
+            ->join('tbl_units','tbl_sms_receive_info.offered_district','=','tbl_units.id')
+            ->select('tbl_sms_receive_info.ansar_id as ansar_id','tbl_units.unit_name_bng')->get();
+//           $ansars = \App\modules\HRM\Models\ReceiveSMSModel::select('ansar_id','offered_district')->get();
+            $data = collect($ansars)->groupBy('unit_name_bng');
+            $p = [];
+            foreach($data as $k=>$v){
+                $d = collect($v)->pluck('ansar_id');
+                array_push($p,[$k=>$d]);
+            }
+            return $p;
+        });
         Route::get('/inactive_kpi_view', ['as' => 'inactive_kpi_view', 'uses' => 'KpiController@inactiveKpiView']);
         Route::get('/inactive_kpi_list', ['as' => 'inactive_kpi_list', 'uses' => 'KpiController@inactiveKpiList']);
         Route::post('/active_kpi/{id}', ['as' => 'active_kpi', 'uses' => 'KpiController@activeKpi'])->where('id','[0-9]+');

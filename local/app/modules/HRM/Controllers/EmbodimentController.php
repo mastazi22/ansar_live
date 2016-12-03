@@ -570,8 +570,7 @@ class EmbodimentController extends Controller
     public function newDisembodimentDateEntry(Request $request)
     {
         $rules = [
-            'ansarExist' => 'numeric|min:0|max:1',
-            'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
+            'ansar_id' => 'required|numeric|regex:/^[0-9]+$/|exists:tbl_rest_info,ansar_id',
             'new_disembodiment_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/'],
         ];
         $message = [

@@ -26,14 +26,6 @@ return [
                 "Withdraw KPI" => [
                     "route" => "kpi-withdraw-view", "icon" => "fa-dashboard",
                 ],
-//                "KPI Withdraw Date Update" => [
-//                    "route" => "withdrawn_kpi_view",
-//                    "icon" => "fa-dashboard",
-//                ],
-//                "Inactive KPI List" => [
-//                    "route" => "inactive_kpi_view",
-//                    "icon" => "fa-dashboard",
-//                ],
                 "KPI Withdraw Cancel" => [
                     "route" => "kpi_withdraw_cancel_view",
                     "icon" => "fa-dashboard",
@@ -123,7 +115,7 @@ return [
                     "route" => "#",
                     "icon" => "fa-dashboard",
                     "children" => [
-                        "Freeze For Dicplinary Action" => [
+                        "Freeze For Disciplinary Action" => [
                             "route" => "freeze_view",
                             "icon" => "fa-dashboard",
                         ],
