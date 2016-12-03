@@ -6,6 +6,7 @@
     font-family: banglFont;
     src: url('../fonts/Siyamrupali.ttf');
     font-stretch:condensed;
+    font-size: 12px;
 }
 @font-face {
     font-family: engFont;
@@ -15,7 +16,7 @@
     font-family: banglFont;
 }
 .bangla-class ul>li{
-    font-size: .96em;
+    font-size: 12px;
 }
 .bangla-class .card-footer-sing>div{
     font-size: 9px;
@@ -178,17 +179,26 @@
     font-style: italic;
 }
 @media print {
-    /*@page {*/
-        /*size: 3.5in 2.3in*/
-    /*}*/
+    @page {
+        margin: .05in .05in .05in .05in;
+    }
     #ansar-id-card-front{
         width:100%;
-        padding:5px;
     }
     .card-header-right-part h4,.card-header-right-part h5{
         font-size: 14px !important;
     }
+    .bangla-class .card-header-right-part h4,.card-header-right-part h5{
+        font-size: 12px !important;
+        margin-bottom: 0px !important;
+    }
     .card-body *{
         font-size: 13px !important;
+    }
+    .bangla-class .card-body *{
+        font-size: 10px !important;
+    }
+    .bangla-class ul>li{
+        font-size: 12px !important;
     }
 }
