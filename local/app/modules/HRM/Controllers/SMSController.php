@@ -48,7 +48,7 @@ class SMSController extends Controller
         }
         else{
             if (count($body_part) > 1) {
-                switch ($body_part[1]) {
+                switch ($body_part[0]) {
                     case 'S':
                     case 's':
                         if (count($body_part) > 2) {
