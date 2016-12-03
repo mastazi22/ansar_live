@@ -13,7 +13,7 @@ use App\modules\HRM\Models\OfferSmsLog;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\RestInfoModel;
-use App\modules\HRM\models\SmsReceiveInfoModel;
+use App\modules\HRM\Models\SmsReceiveInfoModel;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;

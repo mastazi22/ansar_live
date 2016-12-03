@@ -1,6 +1,6 @@
 <?php
 
-namespace App\modules\HRM\models;
+namespace App\modules\HRM\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
