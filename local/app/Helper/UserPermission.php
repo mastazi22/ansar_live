@@ -61,7 +61,7 @@ class UserPermission
     public function isUserMenuExists($name,$p)
     {
 //        return false;
-        Log::info("Found:".$name);
+//        Log::info("Found:".$name);
         $status = false;
         foreach($p as $search){
             $status = preg_match('/('.$name.')/',$search);
