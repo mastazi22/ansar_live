@@ -20,6 +20,7 @@
 
         GlobalApp.controller('UserController', function ($scope, $http) {
             var totalCount = parseInt('{{config('app.item_per_page')}}');
+            $scope.limit = totalCount;
             $scope.total = '{{$total_user}}';
             $scope.totalPages = Math.ceil(parseInt($scope.total) / totalCount);
             $scope.pages = [];
@@ -178,7 +179,7 @@
                                 <td colspan="7">No user found</td>
                             </tr>
                             <tr ng-if="isSearching&&searchedUser.length!=0" ng-repeat="user in searchedUser" ng-class="{'looged-in-user':user.logged_in}">
-                                <td>[[$index+1]]</td>
+                                <td>[[(limit*currentPage)+$index+1]]</td>
                                 <td>[[user.user_name]]</td>
                                 <td>
                                     [[user.first_name+" "+user.last_name]]
@@ -224,7 +225,7 @@
                                 </td>
                             </tr>
                             <tr ng-show="!isSearching" ng-repeat="user in users" ng-class="{'logged-in-user':user.logged_in}">
-                                <td>[[$index+1]]</td>
+                                <td>[[(limit*currentPage)+$index+1]]</td>
                                 <td>[[user.user_name]]</td>
                                 <td>
                                     [[user.first_name+" "+user.last_name]]

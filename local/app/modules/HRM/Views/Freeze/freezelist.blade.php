@@ -57,7 +57,7 @@
                     value: 'disembodied',
                     text: 'Disembodied'
                 },
-                    @if(UserPermission::isPermissionExists('freezeblack'))
+                    @if(UserPermission::userPermissionExists('freezeblack'))
                 {
                     value: 'black',
                     text: 'Black'
@@ -552,7 +552,7 @@
                                                 <span class="fa fa-retweet"></span>
                                                 <!--<i class="fa fa-spinner fa-pulse"></i>-->
                                             </button>
-                                            @if(UserPermission::isPermissionExists('freezeblack'))
+                                            @if(UserPermission::userPermissionExists('freezeblack'))
                                                 <a class="btn btn-danger btn-xs verification" title="Add to Blacklist"
                                                    modal-show data="freezeAnsar" callback="modal(data)"
                                                    target="#black-modal">
@@ -767,7 +767,7 @@
                                     <label class="control-label" for="black_date">
                                         *Black Date:
                                     </label>
-                                    <input type="text" class="form-control" id="black_date"
+                                    <input type="text" class="form-control" date-picker
                                            ng-model="blackData.black_date"
                                            name="black_date">
                                 </div>
@@ -1103,7 +1103,7 @@
                                 <label class="control-label" for="unfreeze_date">
                                     *Unfreeze Date:
                                 </label>
-                                <input type="text" date-picker placeholder="Unfreeze date" class="form-control"
+                                <input type="text" date-picker placeholder="Unfreeze date" class="form-control" placeholder="Black Date"
                                        id="unfreeze_date" ng-model="unfreeze_date" name="unfreeze_date">
                             </div>
                         </div>
@@ -1120,7 +1120,7 @@
 
     </div>
     <script>
-        $("input[name='black_date']").datePicker({
+        $("#black_date").datePicker({
             defaultValue: false
         })
     </script>

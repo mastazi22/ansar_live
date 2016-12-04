@@ -43,6 +43,21 @@ class UserPermission
         }
         return $status;
     }
+    public function userPermissionExists($name)
+    {
+        if (is_null($this->currentUserPermission)) {
+            if(Auth::user()->type==11||Auth::user()->type==33)
+                return true;
+            else return false;
+        }
+        $status = false;
+        $p = $this->currentUserPermission;
+        foreach(json_decode($p) as $search){
+            $status = preg_match('/('.$name.')/',$search);
+            if($status) break;
+        }
+        return $status;
+    }
     public function isUserMenuExists($name,$p)
     {
 //        return false;
