@@ -199,6 +199,7 @@ return [
         \App\Providers\NotificationProvider::class,
         \App\Providers\UserPermissionProvider::class,
         \App\Providers\CustomValidatorProvider::class,
+        Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
     ],
 
     /*
@@ -257,6 +258,7 @@ return [
         'Breadcrumbs' => DaveJamesMiller\Breadcrumbs\Facade::class,
         'Notification'=>\App\Helper\Facades\ForgetPasswordFacedes::class,
         'UserPermission'=>\App\Helper\Facades\UserPermissionFacades::class,
+        'Sentry' => Sentry\SentryLaravel\SentryFacade::class,
     ],
 
 ];
