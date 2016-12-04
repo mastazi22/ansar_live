@@ -226,14 +226,14 @@
                         },
                         {
                             text: "Training start date",
-                            value: moment('{{$training->training_start_date_eng}}').format("D-MMM-YYYY"),
+                            value: moment('{{$training->training_start_date}}').format("D-MMM-YYYY"),
                             name: 'training_start[]',
                             type: '',
                             class_name: 'date-picker-dir'
                         },
                         {
                             text: "Training end date",
-                            value: moment('{{$training->training_end_date_eng}}').format("D-MMM-YYYY"),
+                            value: moment('{{$training->training_end_date}}').format("D-MMM-YYYY"),
                             name: 'training_end[]',
                             type: '',
                             class_name: 'date-picker-dir'
@@ -1194,8 +1194,8 @@
                                                         <td ng-repeat="r in row">
                                                             <select ng-if="r.type=='dropdown'" name="[[r.name]]" ng-model="training[$parent.$parent.$index]">
                                                                 <option value="">--পদবী নির্বাচন করুন--</option>
-                                                                <option ng-repeat="ra in rank" value="[[ra.name_bng]]"
-                                                                        ng-selected="ra.name_bng==r.value">
+                                                                <option ng-repeat="ra in rank" value="[[ra.id]]"
+                                                                        ng-selected="ra.id==r.value">
                                                                     [[ra.name_bng]]
                                                                 </option>
                                                             </select>
@@ -1244,9 +1244,9 @@
                                                         <td ng-repeat="r in row">
                                                             <select ng-if="r.type=='dropdown'" name="[[r.name]]"  ng-model="training[$parent.$parent.$index]">
                                                                 <option value="">--Select a rank--</option>
-                                                                <option ng-repeat="ra in rank" value="[[ra.name_bng]]"
-                                                                        ng-selected="ra.name_eng==r.value">
-                                                                    [[ra.name_eng]]
+                                                                <option ng-repeat="ra in rank" value="[[ra.id]]"
+                                                                        ng-selected="ra.id==r.value">
+                                                                    [[ra.code]]
                                                                 </option>
                                                             </select>
                                                             <input ng-if="r.type!='dropdown'" style="line-height: 18px;"
