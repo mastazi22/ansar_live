@@ -14,7 +14,8 @@
         "barryvdh/laravel-snappy": "^0.3.0",
         "maatwebsite/excel": "~2.0.0",
         "nathanmac/Parser": "3.*",
-        "laravelcollective/html": "5.2.*"
+        "laravelcollective/html": "5.2.*",
+        "sentry/sentry-laravel": "^0.4.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

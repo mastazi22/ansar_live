@@ -263,7 +263,7 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <a ng-if="printLetter" target="_blank" href="{{URL::to('HRM/print_letter')}}?id=[[memorandumId]]&unit=[[param.unit]]&view=full&type=DISEMBODIMENT" class="btn btn-primary pull-left">Print Embodiment Letter</a>
+                    <a ng-if="printLetter" target="_blank" href="{{URL::to('HRM/print_letter')}}?id=[[memorandumId]]&unit=[[param.unit]]&view=full&type=DISEMBODIMENT" class="btn btn-primary pull-left">Print Dis-Embodiment Letter</a>
                     <button class="pull-right btn btn-primary" ng-disabled="allLoading" id="disembodiment-confirmation" ng-click="showFormData()">
                         <i class="fa fa-send"></i>&nbsp;&nbsp;Disembodied
                     </button>
