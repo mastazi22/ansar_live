@@ -95,8 +95,6 @@ class KpiController extends Controller
             'no_of_ansar' => 'required',
             'no_of_apc' => 'required',
             'no_of_pc' => 'required',
-            'activation_date' => 'required|date_format:d-M-Y',
-            'withdraw_date' => 'date_format:d-M-Y',
         ];
         $modified_activation_date = Carbon::parse($activation_date)->format('Y-m-d');
         if (strcasecmp($withdraw_date, '') != 0) {
@@ -115,7 +113,7 @@ class KpiController extends Controller
             $kpi_general->thana_id = $thana_id;
             $kpi_general->kpi_address = $kpi_address;
             $kpi_general->kpi_contact_no = $kpi_contact_no;
-            $kpi_general->status_of_kpi = 0;
+            $kpi_general->status_of_kpi = 1;
             $kpi_general->save();
 
             $kpi_details = new KpiDetailsModel();
@@ -132,12 +130,12 @@ class KpiController extends Controller
             $kpi_details->no_of_apc = $no_of_apc;
             $kpi_details->no_of_pc = $no_of_pc;
             $kpi_details->save();
-            DB::commit();
             CustomQuery::addActionlog(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]);
+            DB::commit();
         } catch
-        (Exception $e) {
+        (\Exception $e) {
             DB::rollback();
-            return $e->getMessage();
+            return Redirect::route('kpi_view')->with('success_message', $e->getMessage());
         }
         return Redirect::route('kpi_view')->with('success_message', 'New KPI is Entered Successfully!');
     }

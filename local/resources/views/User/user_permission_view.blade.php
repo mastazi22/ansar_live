@@ -77,57 +77,7 @@
                                 @endfor
                             </div>
                             @endfor
-                            {{--<div class=" col-lg-4">--}}
-                            {{--<div style="margin-top: 5px" ng-repeat="route in routes" ng-if="$index%3==0">--}}
-                            {{--<div class="legend">--}}
-                            {{--[[route.root]]--}}
-                            {{--<button class="btn btn-default btn-xs pull-right toggle-view">--}}
-                            {{--<img src="{{asset('dist/img/down_icon.png')}}" class="rotate-img-up"--}}
-                            {{--style="width: 18px;height: 20px;">--}}
-                            {{--</button>--}}
-                            {{--</div>--}}
-                            {{--<div class="box-body p_continer" style="background-color: #FFFFFF;">--}}
-                            {{--<ul class="permission-list">--}}
-                            {{--<li ng-repeat="p in route.children" ng-include="'field_renderer.html'">--}}
-                            {{--</li>--}}
-                            {{--</ul>--}}
-                            {{--</div>--}}
-                            {{--</div>--}}
-                            {{--</div>--}}
-                            {{--<div class=" col-lg-4">--}}
-                            {{--<div style="margin-top: 5px" ng-repeat="route in routes" ng-if="$index%3==1">--}}
-                            {{--<div class="legend">--}}
-                            {{--[[route.root]]--}}
-                            {{--<button class="btn btn-default btn-xs pull-right toggle-view">--}}
-                            {{--<img src="{{asset('dist/img/down_icon.png')}}" class="rotate-img-up"--}}
-                            {{--style="width: 18px;height: 20px;">--}}
-                            {{--</button>--}}
-                            {{--</div>--}}
-                            {{--<div class="box-body p_continer" style="background-color: #FFFFFF;">--}}
-                            {{--<ul class="permission-list">--}}
-                            {{--<li ng-repeat="p in route.children" ng-include="'field_renderer.html'">--}}
-                            {{--</li>--}}
-                            {{--</ul>--}}
-                            {{--</div>--}}
-                            {{--</div>--}}
-                            {{--</div>--}}
-                            {{--<div class=" col-lg-4">--}}
-                            {{--<div style="margin-top: 5px" ng-repeat="route in routes" ng-if="$index%3==2">--}}
-                            {{--<div class="legend">--}}
-                            {{--[[route.root]]--}}
-                            {{--<button class="btn btn-default btn-xs pull-right toggle-view">--}}
-                            {{--<img src="{{asset('dist/img/down_icon.png')}}" class="rotate-img-up"--}}
-                            {{--style="width: 18px;height: 20px;">--}}
-                            {{--</button>--}}
-                            {{--</div>--}}
-                            {{--<div class="box-body p_continer" style="background-color: #FFFFFF;">--}}
-                            {{--<ul class="permission-list">--}}
-                            {{--<li ng-repeat="p in route.children" ng-include="'field_renderer.html'">--}}
-                            {{--</li>--}}
-                            {{--</ul>--}}
-                            {{--</div>--}}
-                            {{--</div>--}}
-                            {{--</div>--}}
+
                         </div>
                     </div>
                 </div>
