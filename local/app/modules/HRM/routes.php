@@ -374,7 +374,7 @@ WHERE `offered_district` = 38 AND tbl_blocklist_info.comment_for_block = "NO KPI
             foreach($ansars as $ansar){
                 DB::beginTransaction();
                 try{
-                    \App\modules\HRM\Models\EmbodimentModel::where('ansar_id',$ansar->ansar_id)->update(['kpi_id'=>6392]);
+                    \App\modules\HRM\Models\EmbodimentModel::where('ansar_id',$ansar->ansar_id)->update(['kpi_id'=>6394]);
                     \App\modules\HRM\Models\BlockListModel::where('ansar_id',$ansar->ansar_id)->delete();
                     AnsarStatusInfo::where('ansar_id',$ansar->ansar_id)->update(['block_list_status'=>0]);
                     DB::commit();
