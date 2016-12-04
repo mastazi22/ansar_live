@@ -225,10 +225,11 @@ class Kernel extends ConsoleKernel
                     $ansar->saveLog('Panel');
                     $ansar->delete();
                     DB::commit();
+                    Log::info("REST to PANEl :".$ansar->ansar_id);
                 }catch(\Exception $e){
                     DB::rollBack();
                 }
             }
-        })->twiceDaily(0,12)->name('rest_to_panel')->withoutOverlapping();
+        })->dailyAt("13:30")->name('rest_to_panel')->withoutOverlapping();
     }
 }
