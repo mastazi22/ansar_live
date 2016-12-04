@@ -127,12 +127,17 @@ class EmbodimentController extends Controller
         $rules = [
             'kpi_id' => 'required|numeric|regex:/^[0-9]+$/',
             'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
-            'memorandum_id' => 'required|unique:hrm.tbl_memorandum_id',
-            'reporting_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
-            'joining_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/','joining_date_validate:reporting_date'],
+            'reporting_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/'],
+            'joining_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/','joining_date_validate:reporting_date'],
             'division_name_eng' => 'required|numeric|regex:/^[0-9]+$/',
             'thana_name_eng' => 'required|numeric|regex:/^[0-9]+$/',
         ];
+        if(auth()->user()->type==11||auth()->user()->type==77){
+            $rules['memorandum_id'] = 'required';
+        }
+        else{
+            $rules['memorandum_id'] = 'required|unique:hrm.tbl_memorandum_id';
+        }
         $message = [
             'ansar_id.required' => 'Ansar ID is required',
             'ansar_id.is_eligible' => 'This Ansar Cannot be Embodied. Because the total number of Ansars in this KPI already exceed. First Transfer or Disembodied Ansar from this selected KPI.',
@@ -370,6 +375,19 @@ class EmbodimentController extends Controller
 
     public function disembodimentEntry(Request $request)
     {
+        $rules = [
+            'disembodiment_date'=>'required'
+        ];
+        if(auth()->user()->type==11||auth()->user()->type==77){
+            $rules['memorandum_id'] = 'required';
+        }
+        else{
+            $rules['memorandum_id'] = 'required|unique:hrm.tbl_memorandum_id';
+        }
+        $valid = Validator::make($request->all(),$rules);
+        if($valid->fails()){
+            return Response::json(['status' => false, 'message' => "Invalid Request"]);
+        }
         DB::beginTransaction();
         $user = [];
         try {
