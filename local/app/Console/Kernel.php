@@ -235,6 +235,6 @@ class Kernel extends ConsoleKernel
                     Log::info("REST to PANEl FAILED:".$ansar->ansar_id);
                 }
             }
-        })->dailyAt("13:40")->name('rest_to_panel')->withoutOverlapping();
+        })->twiceDaily(0,12)->name('rest_to_panel')->withoutOverlapping();
     }
 }
