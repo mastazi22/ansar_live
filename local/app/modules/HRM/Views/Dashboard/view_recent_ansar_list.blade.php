@@ -113,7 +113,7 @@
                     <div class="row">
                         <div class="col-md-8">
                             <h4 class="text text-bold">
-                                <a href="#" ng-click="changeRank('all')" style="color:black">Total Ansars([[total]])</a>&nbsp;PC(<a
+                                <a href="#" ng-click="changeRank('all')" style="color:black">Total Ansars([[total]])</a>:&nbsp;PC(<a
                                         href="#" ng-click="changeRank(3)">[[gCount.PC!=undefined?gCount.PC.toLocaleString():0]]</a>)&nbsp;APC(<a
                                         href="#" ng-click="changeRank(2)">[[gCount.APC!=undefined?gCount.APC.toLocaleString():0]]</a>)&nbsp;Ansar(<a
                                         href="#" ng-click="changeRank(1)">[[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]]</a>)
