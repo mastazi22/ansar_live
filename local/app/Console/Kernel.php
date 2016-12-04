@@ -222,14 +222,19 @@ class Kernel extends ConsoleKernel
                         'ansar_merit_list'=>isset($panel_log->merit_list)?$panel_log->merit_list:'N\A',
                         'action_user_id'=>'0',
                     ]);
+                    $ansar->status->update([
+                        'pannel_status'=>1,
+                        'rest_status'=>0,
+                    ]);
                     $ansar->saveLog('Panel');
                     $ansar->delete();
                     DB::commit();
                     Log::info("REST to PANEl :".$ansar->ansar_id);
                 }catch(\Exception $e){
                     DB::rollBack();
+                    Log::info("REST to PANEl FAILED:".$ansar->ansar_id);
                 }
             }
-        })->dailyAt("13:30")->name('rest_to_panel')->withoutOverlapping();
+        })->dailyAt("13:40")->name('rest_to_panel')->withoutOverlapping();
     }
 }
