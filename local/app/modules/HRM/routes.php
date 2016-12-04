@@ -370,7 +370,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
             $ansars = DB::select(DB::raw('SELECT DISTINCT tbl_sms_send_log.ansar_id as ansar_id FROM `tbl_sms_send_log`
 INNER JOIN tbl_blocklist_info ON tbl_blocklist_info.ansar_id = tbl_sms_send_log.ansar_id
 INNER JOIN tbl_embodiment ON tbl_embodiment.ansar_id = tbl_sms_send_log.ansar_id
-WHERE `offered_district` = 38 AND tbl_blocklist_info.comment_for_block = "NO KPI"'));
+WHERE `offered_district` = 48 AND tbl_blocklist_info.comment_for_block = "NO KPI"'));
             foreach($ansars as $ansar){
                 DB::beginTransaction();
                 try{
