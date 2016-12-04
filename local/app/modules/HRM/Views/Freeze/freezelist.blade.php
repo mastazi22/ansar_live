@@ -57,12 +57,14 @@
                     value: 'disembodied',
                     text: 'Disembodied'
                 },
+                    @if(UserPermission::isPermissionExists('freezeblack'))
                 {
                     value: 'black',
                     text: 'Black'
                 },
+                @endif
 
-            ]
+        ]
             var userType = parseInt('{{auth()->user()->type}}')
             $scope.loadKpi = function () {
                 $scope.loadingKpi = true;
@@ -139,13 +141,13 @@
             }
 //        $scope.getFreezeList();
 
-            $scope.reEmbodied = function (ansarids,date) {
+            $scope.reEmbodied = function (ansarids, date) {
                 console.log(ansarids)
                 $scope.submitting = true;
                 $http({
                     url: "{{URL::to('HRM/freezeRembodied')}}",
                     method: 'post',
-                    data: angular.toJson({ansarId: ansarids,unfreeze_date:date})
+                    data: angular.toJson({ansarId: ansarids, unfreeze_date: date})
                 }).then(function (response) {
                     console.log(response.data);
                     $scope.submitting = false;
@@ -162,13 +164,13 @@
                     notificationService.notify('error', "An unexpected error occur. Error code :" + response.status);
                 })
             }
-            $scope.reEmbodiedChecked = function (ansarids, indexes,date) {
+            $scope.reEmbodiedChecked = function (ansarids, indexes, date) {
                 console.log(ansarids)
                 $scope.submitting = true;
                 $http({
                     url: "{{URL::to('HRM/freezeRembodied')}}",
                     method: 'post',
-                    data: angular.toJson({ansarId: ansarids,unfreeze_date:date})
+                    data: angular.toJson({ansarId: ansarids, unfreeze_date: date})
                 }).then(function (response) {
                     console.log(response.data);
                     $scope.submitting = false;
@@ -210,8 +212,8 @@
                     $scope.submitting = false;
                     if (response.data.status) {
                         notificationService.notify('success', response.data.message);
-                       // $("#re-embodied-model,#re-embodied-model-mul").modal('hide')
-                        $scope.printData = "id="+$scope.transferData.memorandum_transfer+"&unit="+$scope.child.selectedUnit+"&view=full&type=TRANSFER"
+                        // $("#re-embodied-model,#re-embodied-model-mul").modal('hide')
+                        $scope.printData = "id=" + $scope.transferData.memorandum_transfer + "&unit=" + $scope.child.selectedUnit + "&view=full&type=TRANSFER"
                         $scope.printLetter = true;
                         $scope.transferData = {};
                         $scope.getFreezeList();
@@ -234,7 +236,7 @@
                         indexes.push(value)
                     }
                 })
-                $scope.reEmbodiedChecked(ansarIds, indexes,$scope.unfreeze_date)
+                $scope.reEmbodiedChecked(ansarIds, indexes, $scope.unfreeze_date)
             }
             $scope.transChecked = function () {
                 var ansarIds = [];
@@ -483,7 +485,8 @@
                                 <table class="table  table-bordered table-striped" id="ansar-table">
                                     <caption>
                                         <span class="text text-bold" style="color:#000000;font-size: 1.1em">Total : [[results==undefined?0:results.length]]</span>
-                                        <input type="text" class="pull-right" ng-model="q" placeholder="Search in this table">
+                                        <input type="text" class="pull-right" ng-model="q"
+                                               placeholder="Search in this table">
                                     </caption>
                                     <tr>
                                         <th class="text-center"><input type="checkbox" ng-model="checkedAll"
@@ -501,9 +504,10 @@
                                         <th class="text-center" style="width:160px;">কার্যক্রম/Action</th>
 
                                     </tr>
-                                    <tr ng-show="allFreezeAnsar.length>0" ng-repeat="freezeAnsar in allFreezeAnsar|filter:q as results">
+                                    <tr ng-show="allFreezeAnsar.length>0"
+                                        ng-repeat="freezeAnsar in allFreezeAnsar|filter:q as results">
                                         <td>
-                                            <input type="checkbox"  ng-true-value="[[$index]]" ng-false-value="false"
+                                            <input type="checkbox" ng-true-value="[[$index]]" ng-false-value="false"
                                                    ng-model="checked[$index]">
                                         </td>
                                         <td>[[$index+1]]</td>
@@ -527,13 +531,15 @@
                                             <div class="test-dropdown-below">
                                                 <ul>
                                                     <li>
-                                                        <button class="btn btn-primary" modal-show data="freezeAnsar" callback="modal(data)" target="#continueModal">
+                                                        <button class="btn btn-primary" modal-show data="freezeAnsar"
+                                                                callback="modal(data)" target="#continueModal">
                                                             Continue Service
                                                         </button>
                                                     </li>
                                                     <li>
                                                         <button class="btn btn-primary" id="reEmbodied"
-                                                                modal-show data="freezeAnsar" callback="modal(data)" target="#re-embodied-model">Re-Embodied
+                                                                modal-show data="freezeAnsar" callback="modal(data)"
+                                                                target="#re-embodied-model">Re-Embodied
                                                         </button>
                                                     </li>
                                                 </ul>
@@ -541,15 +547,19 @@
 
                                             </div>
                                             <button class="btn btn-danger btn-xs verification" title="Disembodied"
-                                                    modal-show data="freezeAnsar" callback="modal(data)" target="#myModal">
+                                                    modal-show data="freezeAnsar" callback="modal(data)"
+                                                    target="#myModal">
                                                 <span class="fa fa-retweet"></span>
                                                 <!--<i class="fa fa-spinner fa-pulse"></i>-->
                                             </button>
-                                            <a class="btn btn-danger btn-xs verification" title="Add to Blacklist"
-                                               modal-show data="freezeAnsar" callback="modal(data)" target="#black-modal" >
-                                                <span class="fa fa-remove"></span>
-                                                <!--<i class="fa fa-spinner fa-pulse"></i>-->
-                                            </a>
+                                            @if(UserPermission::isPermissionExists('freezeblack'))
+                                                <a class="btn btn-danger btn-xs verification" title="Add to Blacklist"
+                                                   modal-show data="freezeAnsar" callback="modal(data)"
+                                                   target="#black-modal">
+                                                    <span class="fa fa-remove"></span>
+                                                    <!--<i class="fa fa-spinner fa-pulse"></i>-->
+                                                </a>
+                                            @endif
                                         </td>
                                     </tr>
                                     <tr ng-show="allFreezeAnsar.length==0">
@@ -653,7 +663,8 @@
 
                 <!-- Modal content-->
                 <div class="box-body modal-content">
-                    <form class="form" role="form" method="post" ng-submit="reEmbodied([getSingleRow.ansar_id],unfreeze_date)">
+                    <form class="form" role="form" method="post"
+                          ng-submit="reEmbodied([getSingleRow.ansar_id],unfreeze_date)">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title">Ansar
@@ -666,7 +677,8 @@
                                 <label class="control-label" for="unfreeze_date">
                                     *Unfreeze Date:
                                 </label>
-                                <input type="text" date-picker placeholder="Unfreeze date" class="form-control" id="unfreeze_date" ng-model="unfreeze_date" name="unfreeze_date">
+                                <input type="text" date-picker placeholder="Unfreeze date" class="form-control"
+                                       id="unfreeze_date" ng-model="unfreeze_date" name="unfreeze_date">
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -684,7 +696,9 @@
 
                 <!-- Modal content-->
                 <div class="box-body modal-content">
-                    <form class="form" role="form" method="post" confirm callback="blackAnsar(ansarids)" data="{ansarids:[getSingleRow.ansar_id]}" event="submit" message="Are you sure want to Black this ansar">
+                    <form class="form" role="form" method="post" confirm callback="blackAnsar(ansarids)"
+                          data="{ansarids:[getSingleRow.ansar_id]}" event="submit"
+                          message="Are you sure want to Black this ansar">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"
                                     onclick="event.preventDefault()">&times;</button>
@@ -711,7 +725,8 @@
                                        name="black_comment">
                             </div>
                             <div class="form-group col-md-offset-1 col-md-4">
-                                <button type="submit" class="btn btn-default" ng-disabled=" !blackData.black_date||submitting">
+                                <button type="submit" class="btn btn-default"
+                                        ng-disabled=" !blackData.black_date||submitting">
                                     <i class="fa fa-pulse fa-spinner" ng-if="submitting"></i>Submit
                                 </button>
                             </div>
@@ -726,9 +741,11 @@
 
                 <!-- Modal content-->
                 <div class="box-body modal-content">
-                    <form class="form" role="form" method="post" confirm callback="blackChecked()" event="submit" message="Are you sure want to Black those ansars">
+                    <form class="form" role="form" method="post" confirm callback="blackChecked()" event="submit"
+                          message="Are you sure want to Black those ansars">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" onclick="event.preventDefault()">&times;</button>
+                            <button type="button" class="close" data-dismiss="modal"
+                                    onclick="event.preventDefault()">&times;</button>
                             <h4 class="modal-title">Black List</h4>
                         </div>
                         <div class="modal-body">
@@ -764,7 +781,8 @@
                                            name="black_comment">
                                 </div>
                                 <div class="form-group col-md-offset-1 col-md-4">
-                                    <button type="submit" class="btn btn-default" ng-disabled=" !blackData.black_date||submitting">
+                                    <button type="submit" class="btn btn-default"
+                                            ng-disabled=" !blackData.black_date||submitting">
                                         <i class="fa fa-pulse fa-spinner" ng-if="submitting"></i>&nbsp;Submit
                                     </button>
                                 </div>
@@ -775,14 +793,15 @@
 
             </div>
         </div>
-        <div id="re-embodied-model" class="modal fade" role="dialog" >
+        <div id="re-embodied-model" class="modal fade" role="dialog">
             <div class="modal-dialog">
 
                 <!-- Modal content-->
                 <div class="box-body modal-content">
                     <form class="form" role="form" method="post" ng-submit="transferAnsar([getSingleRow.ansar_id])">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal"  onclick="event.preventDefault()">&times;</button>
+                            <button type="button" class="close" data-dismiss="modal"
+                                    onclick="event.preventDefault()">&times;</button>
                             <h4 class="modal-title" style="text-align:center">
                                 <label class="control-label" for="disembodiment_reason_id">
                                     Ansar ID: [[getSingleRow.ansar_id]]
@@ -830,7 +849,8 @@
                                 <label class="control-label" for="rest_date">
                                     যোগদানের তারিখ:
                                 </label>
-                                <input type="text" class="form-control" id="joining_date" ng-model="transferData.joining_date"
+                                <input type="text" class="form-control" id="joining_date"
+                                       ng-model="transferData.joining_date"
                                        name="joining_date">
                             </div>
                             <div class="form-group required col-md-offset-1 col-md-10">
@@ -839,7 +859,8 @@
                                                 class="fa fa-pulse fa-spinner"></i> Verifying</span>
                                 </label><span style="color:red"
                                               ng-if="verifyTransfer"> This ID has already been taken</span>
-                                <input ng-blur="checkMemorandum(transferData.memorandum_transfer,1)" type="text" class="form-control"
+                                <input ng-blur="checkMemorandum(transferData.memorandum_transfer,1)" type="text"
+                                       class="form-control"
                                        id="memorandum_id"
                                        ng-model="transferData.memorandum_transfer" name="memorandum_id"
                                        placeholder="Enter Memorandum no.">
@@ -847,24 +868,29 @@
 
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary pull-left" ng-disabled="!transferData.memorandum_transfer||!transferData.joining_date||!transferData.selectedKpi||verifyTransfer||verifying||submitting"  ng-if="!printLetter">
+                            <button type="submit" class="btn btn-primary pull-left"
+                                    ng-disabled="!transferData.memorandum_transfer||!transferData.joining_date||!transferData.selectedKpi||verifyTransfer||verifying||submitting"
+                                    ng-if="!printLetter">
                                 <i class="fa fa-pulse fa-spinner" ng-if="submitting"></i>&nbsp;Submit
                             </button>
-                            <a target="_blank" href="{{URL::to('HRM/print_letter')}}?[[printData]]" class="btn btn-primary pull-right" ng-if="printLetter"><i class="fa fa-print"></i>&nbsp;&nbsp;Print Letter</a>
+                            <a target="_blank" href="{{URL::to('HRM/print_letter')}}?[[printData]]"
+                               class="btn btn-primary pull-right" ng-if="printLetter"><i class="fa fa-print"></i>&nbsp;&nbsp;Print
+                                Letter</a>
                         </div>
                     </form>
                 </div>
 
             </div>
         </div>
-        <div id="re-embodied-model-mul" class="modal fade" role="dialog" >
+        <div id="re-embodied-model-mul" class="modal fade" role="dialog">
             <div class="modal-dialog">
 
                 <!-- Modal content-->
                 <div class="box-body modal-content">
                     <form class="form" role="form" method="post" ng-submit="transChecked()">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" onclick="event.preventDefault()">&times;</button>
+                            <button type="button" class="close" data-dismiss="modal"
+                                    onclick="event.preventDefault()">&times;</button>
                             <h4 class="modal-title">
                                 Transfer
                             </h4>
@@ -912,7 +938,8 @@
                                     <select ng-disabled="loadingKpi||loadingThana" ng-model="transferData.selectedKpi"
                                             name="transfered_kpi" class="form-control">
                                         <option value="">---@lang('title.kpi')---</option>
-                                        <option ng-repeat="k in kpis" value="[[k.id]]" ng-disabled="k.id==getSingleRow.id">
+                                        <option ng-repeat="k in kpis" value="[[k.id]]"
+                                                ng-disabled="k.id==getSingleRow.id">
                                             [[k.kpi_name]]
                                         </option>
                                     </select>
@@ -921,7 +948,8 @@
                                     <label class="control-label" for="rest_date">
                                         যোগদানের তারিখ:
                                     </label>
-                                    <input type="text" class="form-control" id="joining_date" ng-model="transferData.joining_date"
+                                    <input type="text" class="form-control" id="joining_date"
+                                           ng-model="transferData.joining_date"
                                            name="joining_date">
                                 </div>
                                 <div class="form-group required col-md-offset-1 col-md-10">
@@ -930,7 +958,8 @@
                                                     class="fa fa-pulse fa-spinner"></i> Verifying</span>
                                     </label><span style="color:red"
                                                   ng-if="verifyTransfer"> This ID has already been taken</span>
-                                    <input ng-blur="checkMemorandum(transferData.memorandum_transfer,1)" type="text" class="form-control"
+                                    <input ng-blur="checkMemorandum(transferData.memorandum_transfer,1)" type="text"
+                                           class="form-control"
                                            id="memorandum_id"
                                            ng-model="transferData.memorandum_transfer" name="memorandum_id"
                                            placeholder="Enter Memorandum no.">
@@ -938,10 +967,14 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-default pull-left" ng-disabled="!transferData.memorandum_transfer||!transferData.joining_date||!transferData.selectedKpi||verifyTransfer||verifying||submitting" ng-if="!printLetter">
+                            <button type="submit" class="btn btn-default pull-left"
+                                    ng-disabled="!transferData.memorandum_transfer||!transferData.joining_date||!transferData.selectedKpi||verifyTransfer||verifying||submitting"
+                                    ng-if="!printLetter">
                                 <i class="fa fa-pulse fa-spinner" ng-if="submitting"></i>&nbsp;Submit
                             </button>
-                            <a target="_blank" href="{{URL::to('HRM/print_letter')}}?[[printData]]" class="btn btn-primary pull-right" ng-if="printLetter"><i class="fa fa-print"></i>&nbsp;&nbsp;Print Letter</a>
+                            <a target="_blank" href="{{URL::to('HRM/print_letter')}}?[[printData]]"
+                               class="btn btn-primary pull-right" ng-if="printLetter"><i class="fa fa-print"></i>&nbsp;&nbsp;Print
+                                Letter</a>
 
                         </div>
                     </form>
@@ -1070,7 +1103,8 @@
                                 <label class="control-label" for="unfreeze_date">
                                     *Unfreeze Date:
                                 </label>
-                                <input type="text" date-picker placeholder="Unfreeze date" class="form-control" id="unfreeze_date" ng-model="unfreeze_date" name="unfreeze_date">
+                                <input type="text" date-picker placeholder="Unfreeze date" class="form-control"
+                                       id="unfreeze_date" ng-model="unfreeze_date" name="unfreeze_date">
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -1087,7 +1121,7 @@
     </div>
     <script>
         $("input[name='black_date']").datePicker({
-            defaultValue:false
+            defaultValue: false
         })
     </script>
 @stop
