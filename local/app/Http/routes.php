@@ -37,40 +37,23 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/view_profile/{id}', 'UserController@viewProfile');
     Route::post('/update_profile', 'UserController@updateProfile');
     Route::get('/action_log/{id?}', 'UserController@viewActionLog');
-    Route::get('/user_registration', ['as' => 'create_user', 'uses' => 'UserController@userRegistration']);
     Route::post('/change_user_name', ['as' => 'edit_user_name', 'uses' => 'UserController@changeUserName']);
     Route::post('/change_user_password', ['as' => 'edit_user_password', 'uses' => 'UserController@changeUserPassword']);
-    Route::get('/all_user', ['as' => 'all_user', 'uses' => 'UserController@getAllUser']);
-    Route::post('handle_registration', 'UserController@handleRegister');
-    Route::post('update_permission/{id}', 'UserController@updatePermission');
-    Route::get('/user_management', ['as' => 'view_user_list', 'uses' => 'UserController@userManagement']);
-    Route::get('/edit_user/{id}', ['as' => 'edit_user', 'uses' => 'UserController@editUser']);
-    Route::post('/block_user', ['as' => 'block_user', 'uses' => 'UserController@blockUser']);
-    Route::post('/unblock_user', ['as' => 'unblock_user', 'uses' => 'UserController@unBlockUser']);
-    Route::get('/edit_user_permission/{id}', ['as' => 'edit_user_permission', 'uses' => 'UserController@editUserPermission']);
-    Route::get('/user_search', ['as' => 'user_search', 'uses' => 'UserController@userSearch']);
     Route::post('change_user_image', 'UserController@changeUserImage');
     Route::post('/verify_memorandum_id', 'UserController@verifyMemorandumId');
-    Route::get('sms_test',function(){
-        $user = env('SSL_USER_ID');
-        $pass = env('SSL_PASSWORD');
-        $sid = env('SSL_SID');
-        $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
-        $phone = '8801913074991';
-        $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode("testsmsm") . "&sid=$sid";
-        $crl = curl_init();
-        curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($crl, CURLOPT_SSL_VERIFYHOST, 2);
-        curl_setopt($crl, CURLOPT_URL, $url);
-        curl_setopt($crl, CURLOPT_HEADER, 0);
-        curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($crl, CURLOPT_POST, 1);
-        curl_setopt($crl, CURLOPT_POSTFIELDS, $param);
-        $response = curl_exec($crl);
-        curl_close($crl);
-        $r = Parser::xml($response);
-        return $r;
-    });
-    Route::get('user_data','UserController@getUserData');
+
+
+   Route::group(['middleware'=>'admin'],function(){
+       Route::get('user_data','UserController@getUserData');
+       Route::get('/user_search', ['as' => 'user_search', 'uses' => 'UserController@userSearch']);
+       Route::get('/all_user', ['as' => 'all_user', 'uses' => 'UserController@getAllUser']);
+       Route::post('update_permission/{id}', 'UserController@updatePermission');
+       Route::get('/user_management', ['as' => 'view_user_list', 'uses' => 'UserController@userManagement']);
+       Route::get('/edit_user/{id}', ['as' => 'edit_user', 'uses' => 'UserController@editUser']);
+       Route::post('/block_user', ['as' => 'block_user', 'uses' => 'UserController@blockUser']);
+       Route::post('/unblock_user', ['as' => 'unblock_user', 'uses' => 'UserController@unBlockUser']);
+       Route::get('/edit_user_permission/{id}', ['as' => 'edit_user_permission', 'uses' => 'UserController@editUserPermission']);
+   });
+
     //end user route
 });
