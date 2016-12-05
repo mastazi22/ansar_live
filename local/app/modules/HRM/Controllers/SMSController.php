@@ -78,6 +78,7 @@ class SMSController extends Controller
         $ansar = PersonalInfo::where('mobile_no_self', $phone)->first();
         $action_date = Carbon::now();
         if ($ansar) {
+            Log::info("SMS RECEIVE : ANSAR FOUND" );
             switch ($type) {
                 case 'YES':
                     DB::beginTransaction();
