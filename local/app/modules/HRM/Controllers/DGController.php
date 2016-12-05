@@ -1423,7 +1423,7 @@ class DGController extends Controller
             ->where('tbl_ansar_status_info.block_list_status', '=', 0)
             ->where('tbl_ansar_status_info.black_list_status', '=', 0)
             ->distinct()->orderBy('tbl_embodiment_log.id','desc')
-            ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.verified', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng','tbl_embodiment_log.release_date',
+            ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.verified', 'tbl_designations.code', 'tbl_units.unit_name_eng','tbl_embodiment_log.release_date',
                 'tbl_disembodiment_reason.reason_in_bng')
             ->first();
         if ($ansar_details) {

@@ -83,6 +83,10 @@
                     $scope.submitResult  = response.data
                 })
             }
+            $scope.ppp = function(){
+//                alert(moment().format("DD-MMM-YYYY"))
+                $("input[name='offer_date']").val(moment().format("DD-MMM-YYYY"));
+            }
         })
     </script>
     <div ng-controller="DirectOfferController">
@@ -91,7 +95,7 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-4">
-                            <form action="{{URL::to('HRM/direct_offer')}}" method="post" form-submit errors="errors" loading="loadingSubmit" confirm-box="true" message="Are you sure want to offer this Ansar">
+                            <form action="{{URL::to('HRM/direct_offer')}}" method="post" form-submit reset-except="offer_date" on-reset="ppp()" errors="errors" loading="loadingSubmit" confirm-box="true" message="Are you sure want to offer this Ansar">
                                 <div class="form-group">
                                     <label for="ansar_id" class="control-label">Ansar ID to send Offer</label>
                                     <input type="text" name="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="makeQueue(ansarId)">
@@ -146,14 +150,14 @@
                                     </p>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label">Unit</label>
+                                    <label class="control-label">Home District</label>
 
                                     <p>
                                         [[ansarDetail.ansar_details.unit_name_eng]]
                                     </p>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label">Sex</label>
+                                    <label class="control-label">Gender</label>
 
                                     <p>
                                         [[ansarDetail.ansar_details.sex]]

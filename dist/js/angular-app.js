@@ -662,7 +662,8 @@ GlobalApp.directive('formSubmit',function (notificationService,$timeout) {
             status:'=',
             confirmBox:'@',
             message:'@',
-            onReset:'&'
+            onReset:'&',
+            resetExcept:'@'
         },
         link:function (scope, element, attrs) {
             $(element).on('submit', function (e) {
@@ -685,6 +686,7 @@ GlobalApp.directive('formSubmit',function (notificationService,$timeout) {
                 }
             })
             function submitForm(){
+
                 $(element).ajaxSubmit({
                     beforeSubmit:function () {
                         scope.loading = true;
