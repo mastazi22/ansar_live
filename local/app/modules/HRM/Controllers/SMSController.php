@@ -11,6 +11,7 @@ use App\modules\HRM\Models\OfferSmsLog;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\PersonalInfo;
+use App\modules\HRM\Models\SMSLog;
 use App\modules\HRM\Models\SmsReceiveInfoModel;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -31,6 +32,7 @@ class SMSController extends Controller
         $sender_no = Input::get('sender');
         $body_part = explode(' ', $body);
         Log::info("SMS BODY" . $body);
+        SMSLog::create(Input::all());
         if (strcasecmp($body_part[0], 'ans') == 0) {
             Log::info("SMS NO" . $sender_no);
             if (count($body_part) > 1) {
@@ -157,7 +159,8 @@ class SMSController extends Controller
                     return "No Ansar found with this id in offer list";
                     break;
             }
-        } else {
+        }
+        else {
             return "No Ansar found with this id in offer list";
         }
     }
