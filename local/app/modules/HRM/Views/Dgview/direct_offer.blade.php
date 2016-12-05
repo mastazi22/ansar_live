@@ -30,7 +30,7 @@
                 $scope.loadingAnsar = true;
                 $http({
                     method:'get',
-                    url:'{{URL::to('HRM/direct_panel_ansar_details')}}',
+                    url:'{{URL::to('HRM/direct_offer_ansar_details')}}',
                     params:{ansar_id:id,type:'PANEL'}
                 }).then(function (response) {
                     $scope.ansarDetail = response.data
@@ -112,7 +112,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="date" class="control-label">Offer Date</label>
-                                    <input type="text" name="offer_date" date-picker class="form-control" placeholder="Offer Date" ng-model="date">
+                                    <input type="text" name="offer_date" id="date" class="form-control" placeholder="Offer Date" ng-model="date">
                                     <p class="text text-danger" ng-if="errors.offer_date!=undefined">
                                         [[errors.offer_date[0] ]]
                                     </p>
@@ -171,6 +171,20 @@
 
                                     <p>
                                         [[ansarDetail.status]]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Last Disembodied Date</label>
+
+                                    <p>
+                                        [[ansarDetail.ansar_details.release_date?(ansarDetail.ansar_details.release_date|dateformat:'DD-MMM-YYYY'):'--']]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Disembodied Reason</label>
+
+                                    <p>
+                                        [[ansarDetail.ansar_details.reason_in_bng?ansarDetail.ansar_details.reason_in_bng:'--']]
                                     </p>
                                 </div>
                                 <input type="hidden" name="ansar_status" value="[[ansarDetail.status]]">

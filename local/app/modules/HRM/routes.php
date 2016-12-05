@@ -225,6 +225,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/load_disembodiment_reason', ['as' => 'load_disembodiment_reason', 'uses' => 'DGController@loadDisembodimentReson']);
         Route::get('/direct_panel_view', ['as' => 'direct_panel_view', 'uses' => 'DGController@directPanelView']);
         Route::get('/direct_panel_ansar_details','DGController@loadAnsarDetailforDirectPanel');
+        Route::get('/direct_offer_ansar_details','DGController@loadAnsarDetailforDirectOffer');
         Route::post('/direct_panel_entry', ['as'=>'direct_panel_entry','uses'=>'DGController@directPanelEntry']);
         Route::get('/direct_panel_cancel_view', ['as' => 'direct_panel_cancel_view', 'uses' => 'DGController@directCancelPanelView']);
         Route::get('/cancel_panel_ansar_details', 'DGController@loadAnsarDetailforCancelPanel');

@@ -1408,6 +1408,29 @@ class DGController extends Controller
         }
         return Response::json([]);
     }
+    public function loadAnsarDetailforDirectOffer()
+    {
+        $ansar_id = Input::get('ansar_id');
+        $status = "No Status Found";
+
+        $ansar_details = DB::table('tbl_ansar_parsonal_info')
+            ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
+            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+            ->join('tbl_ansar_status_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_ansar_status_info.ansar_id')
+            ->leftJoin('tbl_embodiment_log', 'tbl_embodiment_log.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->leftJoin('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
+            ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
+            ->where('tbl_ansar_status_info.block_list_status', '=', 0)
+            ->where('tbl_ansar_status_info.black_list_status', '=', 0)
+            ->distinct()->orderBy('tbl_embodiment_log.id','desc')
+            ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_ansar_parsonal_info.verified', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng','tbl_embodiment_log.release_date',
+                'tbl_disembodiment_reason.reason_in_bng')
+            ->first();
+        if ($ansar_details) {
+            return Response::json(array('ansar_details' => $ansar_details, 'status' => strtoupper(AnsarStatusInfo::where('ansar_id', $ansar_id)->first()->getStatus()[0])));
+        }
+        return Response::json([]);
+    }
 
     public function directPanelEntry(Request $request)
     {
