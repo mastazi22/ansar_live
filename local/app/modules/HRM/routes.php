@@ -367,25 +367,6 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/withdrawn_kpi_list', ['as' => 'withdrawn_kpi_list', 'uses' => 'KpiController@withdrawnKpiList']);
         Route::get('/withdraw-date-edit/{id}', ['as' => 'withdraw-date-edit', 'uses' => 'KpiController@kpiWithdrawDateEdit'])->where('id','^[0-9]+$');
         Route::post('/withdraw-date-update/{id}', ['as' => 'withdraw-date-update', 'uses' => 'KpiController@kpiWithdrawDateUpdate'])->where('id','^[0-9]+$');
-        Route::get('test',function(){
-            $ansars = DB::select(DB::raw('SELECT DISTINCT tbl_sms_send_log.ansar_id as ansar_id FROM `tbl_sms_send_log`
-INNER JOIN tbl_blocklist_info ON tbl_blocklist_info.ansar_id = tbl_sms_send_log.ansar_id
-INNER JOIN tbl_embodiment ON tbl_embodiment.ansar_id = tbl_sms_send_log.ansar_id
-WHERE `offered_district` = 48 AND tbl_blocklist_info.comment_for_block = "NO KPI"'));
-            foreach($ansars as $ansar){
-                DB::beginTransaction();
-                try{
-                    \App\modules\HRM\Models\EmbodimentModel::where('ansar_id',$ansar->ansar_id)->update(['kpi_id'=>6394]);
-                    \App\modules\HRM\Models\BlockListModel::where('ansar_id',$ansar->ansar_id)->delete();
-                    AnsarStatusInfo::where('ansar_id',$ansar->ansar_id)->update(['block_list_status'=>0]);
-                    DB::commit();
-                    Log::info("OK :".$ansar->ansar_id);
-                }catch(\Exception $e){
-                    DB::rollBack();
-                    Log::info("FAIL :".$ansar->ansar_id);
-                }
-            }
-        });
         Route::get('/inactive_kpi_view', ['as' => 'inactive_kpi_view', 'uses' => 'KpiController@inactiveKpiView']);
         Route::get('/inactive_kpi_list', ['as' => 'inactive_kpi_list', 'uses' => 'KpiController@inactiveKpiList']);
         Route::post('/active_kpi/{id}', ['as' => 'active_kpi', 'uses' => 'KpiController@activeKpi'])->where('id','[0-9]+');
