@@ -48,6 +48,7 @@ Route::group(['middleware' => 'auth'], function () {
        Route::get('/user_search', ['as' => 'user_search', 'uses' => 'UserController@userSearch']);
        Route::get('/all_user', ['as' => 'all_user', 'uses' => 'UserController@getAllUser']);
        Route::post('update_permission/{id}', 'UserController@updatePermission');
+       Route::post('handle_registration', 'UserController@handleRegister');
        Route::get('/user_management', ['as' => 'view_user_list', 'uses' => 'UserController@userManagement']);
        Route::get('/edit_user/{id}', ['as' => 'edit_user', 'uses' => 'UserController@editUser']);
        Route::post('/block_user', ['as' => 'block_user', 'uses' => 'UserController@blockUser']);
