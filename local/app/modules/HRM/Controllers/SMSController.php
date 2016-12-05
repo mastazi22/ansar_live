@@ -32,6 +32,7 @@ class SMSController extends Controller
         $body_part = explode(' ', $body);
         Log::info("SMS BODY" . $body);
         if (strcasecmp($body_part[0], 'ans') == 0) {
+            Log::info("SMS NO" . $sender_no);
             if (count($body_part) > 1) {
                 switch ($body_part[1]) {
                     case 'YES':
