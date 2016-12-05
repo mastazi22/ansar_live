@@ -52,6 +52,7 @@ Route::group(['middleware' => 'auth'], function () {
        Route::get('/edit_user/{id}', ['as' => 'edit_user', 'uses' => 'UserController@editUser']);
        Route::post('/block_user', ['as' => 'block_user', 'uses' => 'UserController@blockUser']);
        Route::post('/unblock_user', ['as' => 'unblock_user', 'uses' => 'UserController@unBlockUser']);
+       Route::get('/user_registration', ['as' => 'create_user', 'uses' => 'UserController@userRegistration']);
        Route::get('/edit_user_permission/{id}', ['as' => 'edit_user_permission', 'uses' => 'UserController@editUserPermission']);
    });
 
