@@ -246,10 +246,15 @@ class EmbodimentController extends Controller
     {
 //        return Input::get('transferred_ansar');
         $rules = [
-            'transfer_date' => ['required', 'date_format:d-M-Y', 'regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+            'transfer_date' => ['required', 'regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/'],
             'kpi_id' => 'required|is_array|array_length_same:2|array_type:int',
-            'memorandum_id' => 'required',
         ];
+        if(auth()->user()->type==11||auth()->user()->type==77){
+            $rules['memorandum_id'] = 'required';
+        }
+        else{
+            $rules['memorandum_id'] = 'required|unique:hrm.tbl_memorandum_id';
+        }
         $valid = Validator::make(Input::all(), $rules);
         if ($valid->fails()) {
             return response($valid->messages()->toJson(), 400, ['Content-Type' => 'application/json']);

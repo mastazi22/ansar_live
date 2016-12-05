@@ -715,7 +715,7 @@ class KpiController extends Controller
         $withdraw_date = $request->get('date');
         $rules = array(
             'id' => 'required|numeric|min:0|integer|same:kpi_id',
-            'date' => ['required', 'regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+            'date' => ['required', 'regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/'],
         );
         $messages = array(
             'withdraw-date.required' => 'Withdraw Date is required.',
