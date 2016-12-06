@@ -41,10 +41,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/change_user_password', ['as' => 'edit_user_password', 'uses' => 'UserController@changeUserPassword']);
     Route::post('change_user_image', 'UserController@changeUserImage');
     Route::post('/verify_memorandum_id', 'UserController@verifyMemorandumId');
+    Route::get('user_data','UserController@getUserData');
 
 
    Route::group(['middleware'=>'admin'],function(){
-       Route::get('user_data','UserController@getUserData');
        Route::get('/user_search', ['as' => 'user_search', 'uses' => 'UserController@userSearch']);
        Route::get('/all_user', ['as' => 'all_user', 'uses' => 'UserController@getAllUser']);
        Route::post('update_permission/{id}', 'UserController@updatePermission');
