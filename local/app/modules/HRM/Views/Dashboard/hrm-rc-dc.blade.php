@@ -141,7 +141,7 @@
         function sum(t){
             var s = 0;
             for(var i in t){
-                alert(i)
+                //alert(i)
                 for(var j =0 ;j<t[i].length;j++){
                     s = parseInt(s)+ parseInt(t[i][j].total);
                 }
