@@ -230,7 +230,7 @@
                     @else
                         {!! Form::hidden('unit',auth()->user()->district?auth()->user()->district->id:'') !!}
                     @endif
-                    <button class="btn btn-primary">Print Embodied Letter</button>
+                    <button class="btn btn-primary"><i class="fa fa-print"></i>&nbsp;Print Embodied Letter</button>
                     {!! Form::close() !!}
                 </div>
             </div>

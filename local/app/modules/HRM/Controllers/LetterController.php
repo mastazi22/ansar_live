@@ -73,17 +73,19 @@ class LetterController extends Controller
         }
         switch ($type) {
             case 'TRANSFER':
-                return $this->transferLetterPrint($id, $unit, $view);
+                return $this->transferLetterPrint($id, $unit, $view,$option);
             case 'EMBODIMENT':
                 return $this->embodimentLetterPrint($id, $unit, $view,$option);
             case 'DISEMBODIMENT':
-                return $this->disembodimentLetterPrint($id, $unit, $view);
+                return $this->disembodimentLetterPrint($id, $unit, $view,$option);
         }
     }
 
-    function transferLetterPrint($id, $unit, $v)
+    function transferLetterPrint($id, $unit, $v,$option)
     {
-        $mem = MemorandumModel::where('memorandum_id', $id)->select('memorandum_id as transfer_memorandum_id', 'mem_date as created_at')->first();
+        $mem = DB::table('tbl_memorandum_id')
+            ->join('tbl_transfer_ansar','tbl_transfer_ansar.transfer_memorandum_id','=','tbl_memorandum_id.memorandum_id')
+            ->distinct('tbl_memorandum_id.memorandum_id')->select('tbl_memorandum_id.memorandum_id as memorandum_id', 'mem_date as created_at');
         //$mem = TransferAnsar::where('transfer_memorandum_id', $id)->select('transfer_memorandum_id', 'created_at')->first();
 
         $user = DB::table('tbl_user')
@@ -96,8 +98,19 @@ class LetterController extends Controller
             ->join('tbl_kpi_info as tk', 'tbl_transfer_ansar.transfered_kpi_id', '=', 'tk.id')
             ->join('tbl_ansar_parsonal_info', 'tbl_transfer_ansar.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->where('tbl_transfer_ansar.transfer_memorandum_id', $id)
-            ->select('tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'pk.kpi_name as p_kpi_name', 'tk.kpi_name as t_kpi_name')->get();
+            ->select('tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'pk.kpi_name as p_kpi_name', 'tk.kpi_name as t_kpi_name');
+        if($option=='smartCardNo'){
+            $l  = strlen($id.'');
+            if($l>6) $id = substr($id.'',6);
+            $result->where('tbl_ansar_parsonal_info.ansar_id',$id);
+            $mem->where('tbl_transfer_ansar.ansar_id',$id);
+        }
+        else{
+            $result->where('tbl_transfer_ansar.transfer_memorandum_id', $id);
+            $mem->where('tbl_transfer_ansar.transfer_memorandum_id', $id);
+        }
+        $result = $result->get();
+        $mem = $mem->first();
         if ($mem && $result) {
             return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'ta' => $result, 'view' => 'print_transfer_letter']);
 //            else return View::make('HRM::Letter.print_transfer_letter')->with(['mem' => $mem, 'user' => $user, 'ta' => $result]);
@@ -144,11 +157,13 @@ class LetterController extends Controller
         }
     }
 
-    function disembodimentLetterPrint($id, $unit, $v)
+    function disembodimentLetterPrint($id, $unit, $v,$option)
     {
         DB::enableQueryLog();
         $mem = DB::table('tbl_rest_info')
-            ->join('tbl_memorandum_id', 'tbl_memorandum_id.memorandum_id', '=', 'tbl_rest_info.memorandum_id')->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_rest_info.disembodiment_reason_id')->where('tbl_memorandum_id.memorandum_id', $id)->select('tbl_disembodiment_reason.reason_in_bng as reason', 'tbl_memorandum_id.memorandum_id', 'tbl_memorandum_id.mem_date as created_at')->first();
+            ->join('tbl_memorandum_id', 'tbl_memorandum_id.memorandum_id', '=', 'tbl_rest_info.memorandum_id')
+            ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_rest_info.disembodiment_reason_id')
+            ->select('tbl_disembodiment_reason.reason_in_bng as reason', 'tbl_memorandum_id.memorandum_id', 'tbl_memorandum_id.mem_date as created_at');
         //return Response::json($mem);
         $user = DB::table('tbl_user')
             ->join('tbl_user_details', 'tbl_user_details.user_id', '=', 'tbl_user.id')
@@ -162,10 +177,23 @@ class LetterController extends Controller
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
             ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->where('tbl_rest_info.memorandum_id', $id)->distinct('tbl_embodiment_log.ansar_id')
-            ->select('tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'tbl_kpi_info.kpi_name as kpi_name', 'tbl_ansar_parsonal_info.village_name as village_name', 'tbl_ansar_parsonal_info.post_office_name as pon', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_eng as thana', 'tbl_embodiment_log.joining_date', 'tbl_embodiment_log.release_date')->get();
+            ->distinct('tbl_embodiment_log.ansar_id')
+            ->select('tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'tbl_kpi_info.kpi_name as kpi_name', 'tbl_ansar_parsonal_info.village_name as village_name', 'tbl_ansar_parsonal_info.post_office_name as pon', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_eng as thana', 'tbl_embodiment_log.joining_date', 'tbl_embodiment_log.release_date');
 //        return $result;
        // return DB::getQueryLog();
+        if($option=='smartCardNo'){
+            $l  = strlen($id.'');
+            if($l>6) $id = substr($id.'',6);
+            $result->where('tbl_ansar_parsonal_info.ansar_id',$id);
+            $mem->where('tbl_rest_info.ansar_id',$id);
+        }
+        else{
+            $result->where('tbl_rest_info.memorandum_id', $id);
+            $mem->where('tbl_rest_info.memorandum_id', $id);
+        }
+        $result = $result->get();
+//        return $result;
+        $mem = $mem->first();
         if ($mem && $result) {
             return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'result' => $result, 'view' => 'print_disembodiment_letter']);
 //            else return View::make('HRM::Letter.print_disembodiment_letter')->with(['result' => $result, 'user' => $user, 'mem' => $mem]);

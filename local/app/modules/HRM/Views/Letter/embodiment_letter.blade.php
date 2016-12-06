@@ -102,28 +102,6 @@
                            </div>
                        </div>
                    </div>
-                   {{--<div class="row">--}}
-                       {{--<div class="col-md-4 col-sm-12 col-xs-12">--}}
-                           {{--<div class="form-group">--}}
-                               {{--<label class="control-label">Enter Memorandum No.</label>--}}
-                               {{--<input class="form-control" ng-model="memId" type="text" placeholder="Memorandum No">--}}
-                           {{--</div>--}}
-                       {{--</div>--}}
-                       {{--<div class="col-md-4 col-sm-12 col-xs-12">--}}
-                           {{--<div class="form-group" ng-if="!isDc">--}}
-                               {{--<label class="control-label">@lang('title.unit')</label>--}}
-                               {{--<select class="form-control" ng-model="unit.selectedUnit" ng-disabled="units.length==0">--}}
-                                   {{--<option value="">--@lang('title.unit')--</option>--}}
-                                   {{--<option ng-repeat="u in units" value="[[u.id]]">[[u.unit_name_bng]]</option>--}}
-                               {{--</select>--}}
-                           {{--</div>--}}
-                       {{--</div>--}}
-                       {{--<div class="col-md-4 col-sm-12 col-xs-12" style="margin-top: 25px">--}}
-                           {{--<button class="btn btn-primary" ng-click="generateLetter(memId)" ng-disabled="isGenerating">--}}
-                               {{--<i ng-show="isGenerating " class="fa fa-spinner fa-spin"></i><span ng-class="{'blink-animation':isGenerating}">Generate Embodiment Letter</span>--}}
-                           {{--</button>--}}
-                       {{--</div>--}}
-                   {{--</div>--}}
                    <div ng-if="printType=='smartCardNo'">
                        <div class="row">
                            <div class="col-sm-3">

@@ -295,9 +295,17 @@
                         </table>
                     </div>
                     <div>
-                        <a target="_blank" href="{{URL::to('HRM/print_letter')}}?id=[[letterOption.id]]&unit=[[letterOption.unit]]&&view=full&type=TRANSFER" class="pull-left btn btn-primary" ng-if="pl">
-                            <i class="fa fa-print"></i>&nbsp;&nbsp;Print Letter
-                        </a>
+                        {!! Form::open(['route'=>'print_letter','target'=>'_blank','ng-if'=>'pl','class'=>'pull-left']) !!}
+                        {!! Form::hidden('option','memorandumNo') !!}
+                        {!! Form::hidden('id','[[letterOption.id]]') !!}
+                        {!! Form::hidden('type','TRANSFER') !!}
+                        @if(auth()->user()->type!=22)
+                            {!! Form::hidden('unit','[[letterOption.unit]]') !!}
+                        @else
+                            {!! Form::hidden('unit',auth()->user()->district?auth()->user()->district->id:'') !!}
+                        @endif
+                        <button class="btn btn-primary"><i class="fa fa-print"></i>&nbsp;Print Transfer Letter</button>
+                        {!! Form::close() !!}
                         <button class="pull-right btn btn-primary" open-hide-modal ng-click="modalOpen=true">
                             <i class="fa fa-send"></i>&nbsp;&nbsp;Transfer
                         </button>

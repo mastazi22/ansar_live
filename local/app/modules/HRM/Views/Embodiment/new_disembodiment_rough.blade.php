@@ -263,7 +263,17 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <a ng-if="printLetter" target="_blank" href="{{URL::to('HRM/print_letter')}}?id=[[memorandumId]]&unit=[[param.unit]]&view=full&type=DISEMBODIMENT" class="btn btn-primary pull-left">Print Dis-Embodiment Letter</a>
+                    {!! Form::open(['route'=>'print_letter','target'=>'_blank','ng-if'=>'printLetter','class'=>'pull-left']) !!}
+                    {!! Form::hidden('option','memorandumNo') !!}
+                    {!! Form::hidden('id','[[memorandumId]]') !!}
+                    {!! Form::hidden('type','DISEMBODIMENT') !!}
+                    @if(auth()->user()->type!=22)
+                        {!! Form::hidden('unit','[[param.unit]]') !!}
+                    @else
+                        {!! Form::hidden('unit',auth()->user()->district?auth()->user()->district->id:'') !!}
+                    @endif
+                    <button class="btn btn-primary"><i class="fa fa-print"></i>&nbsp;Print DisEmbodiment Letter</button>
+                    {!! Form::close() !!}
                     <button class="pull-right btn btn-primary" ng-disabled="allLoading" id="disembodiment-confirmation" ng-click="showFormData()">
                         <i class="fa fa-send"></i>&nbsp;&nbsp;Disembodied
                     </button>

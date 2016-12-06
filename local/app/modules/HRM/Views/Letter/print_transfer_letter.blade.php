@@ -1,4 +1,4 @@
-<h3 style="text-align: center">Transfer Letter&nbsp;&nbsp;<a href="#" id="print-report"><span class="glyphicon glyphicon-print"></span></a></h3>
+<h3 style="text-align: center">Transfer Letter&nbsp;&nbsp;<a href="#" id="print-report"><i class="fa fa-print"></i></a></h3>
 <div class="letter">
     <div class="letter-header">
         <div class="header-top" style="background: none">
@@ -11,7 +11,7 @@
         </div>
         <div class="header-bottom">
                                     <span class="pull-left">
-                                        স্বারক নং-{{$mem->transfer_memorandum_id}}
+                                        স্বারক নং-{{$mem->memorandum_id}}
                                     </span>
                                     <span class="pull-right">
                                         তারিখঃ{{LanguageConverter::engToBng(date('d/m/Y',strtotime($mem->created_at)))}} খ্রিঃ
