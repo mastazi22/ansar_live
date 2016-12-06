@@ -132,7 +132,7 @@
                     sex:'all'
                 }
             }).then(function (response) {
-                $scope.offerAcceptLastFiveDays = sum(response.data);
+                $scope.offerAcceptLastFiveDays = sum(response.data.total);
                 $scope.loadingProgressInfo = false;
             }, function (response) {
                 $scope.loadingProgressInfo = false;
@@ -141,8 +141,9 @@
         function sum(t){
             var s = 0;
             for(var i in t){
+                alert(i)
                 for(var j =0 ;j<t[i].length;j++){
-                    s += t[i][j].total;
+                    s = parseInt(s)+ parseInt(t[i][j].total);
                 }
             }
             return s;

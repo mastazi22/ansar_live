@@ -143,7 +143,7 @@
             var s = 0;
             for(var i in t){
                 for(var j =0 ;j<t[i].length;j++){
-                    s += t[i][j].total;
+                    s = parseInt(s)+ parseInt(t[i][j].total);
                 }
             }
             return s;
