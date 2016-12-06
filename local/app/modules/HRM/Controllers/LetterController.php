@@ -21,23 +21,32 @@ class LetterController extends Controller
 
     function getMemorandumIds(Request $requests)
     {
+//        return $requests->all();
         $t = DB::table('tbl_memorandum_id')
             ->join('tbl_transfer_ansar', 'tbl_transfer_ansar.transfer_memorandum_id', '=', 'tbl_memorandum_id.memorandum_id')
-            ->select('tbl_memorandum_id.*')->distinct();
+            ->join('tbl_kpi_info', 'tbl_transfer_ansar.transfered_kpi_id', '=', 'tbl_kpi_info.id')
+            ->select('tbl_memorandum_id.*');
         $e = DB::table('tbl_memorandum_id')
             ->join('tbl_embodiment', 'tbl_embodiment.memorandum_id', '=', 'tbl_memorandum_id.memorandum_id')
-            ->select('tbl_memorandum_id.*')->distinct();
+            ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
+            ->select('tbl_memorandum_id.*');
         $d = DB::table('tbl_memorandum_id')
             ->join('tbl_rest_info', 'tbl_rest_info.memorandum_id', '=', 'tbl_memorandum_id.memorandum_id')
-            ->select('tbl_memorandum_id.*')->distinct();
-
+            ->join('tbl_embodiment_log', 'tbl_rest_info.ansar_id', '=', 'tbl_embodiment_log.ansar_id')
+            ->join('tbl_kpi_info', 'tbl_embodiment_log.kpi_id', '=', 'tbl_kpi_info.id')
+            ->select('tbl_memorandum_id.*');
+        if($requests->unit){
+            $e->where('tbl_kpi_info.unit_id',$requests->unit);
+            $t->where('tbl_kpi_info.unit_id',$requests->unit);
+            $d->where('tbl_kpi_info.unit_id',$requests->unit)->orderBy('tbl_embodiment_log.id','desc');
+        }
         switch ($requests->type) {
             case 'TRANSFER':
-                return $t->get();
+                return $t->distinct()->get();
             case 'EMBODIED':
-                return $e->get();
+                return $e->distinct()->get();
             case 'DISEMBODIED':
-                return $d->get();
+                return $d->distinct()->get();
             default:
                 return [];
         }

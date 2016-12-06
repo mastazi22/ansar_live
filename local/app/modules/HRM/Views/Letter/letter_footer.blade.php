@@ -38,22 +38,19 @@
             <li>তারিখঃ{{LanguageConverter::engToBng(date('d/m/Y',strtotime($mem->created_at)))}}  খ্রিঃ</li>
             <li>&nbsp;</li>
             <li>সদয় অবগতির জন্য<br>&nbsp;</li>
-            <li class="ppp">:&nbsp;<br>:&nbsp;</li>
+            <li class="ppp">"&nbsp;<br>"&nbsp;</li>
             {{--<li>:&nbsp;</li>--}}
-            <li class="ppp">:&nbsp;</li>
-            @if($user&&!(trim($user->division)=="DMA"||trim($user->division)=="CMA"))<li class="ppp">:&nbsp;</li>@endif
+            <li class="ppp">"&nbsp;</li>
+            @if($user&&!(trim($user->division)=="DMA"||trim($user->division)=="CMA"))<li class="ppp">"&nbsp;</li>@endif
             <li>অবগতি ও কার্যক্রমের জন্য।</li>
-            <li class="ppp">&nbsp;<br>:&nbsp;</li>
-            <li>&nbsp;</li>
-            <li>জেলা কমান্ড্যান্ট</li>
-            <li>{{$user?$user->unit:'n\a'}}</li>
+            <li class="ppp" >&nbsp;<br>"&nbsp;</li>
 
         </ul>
     </div>
     <div class="footer-bottom">
-        <ul class="pull-right" style="width: 32%;">
-            {{--<li>তারিখঃ{{date('d/m/Y',strtotime($mem->created_at))}}</li>--}}
-
+        <ul class="pull-right" style="width: 33% !important;">
+            <li>জেলা কমান্ড্যান্ট</li>
+            <li>{{$user?$user->unit:'n\a'}}</li>
         </ul>
     </div>
 </div>
