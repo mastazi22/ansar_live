@@ -142,7 +142,17 @@
                                    </filter-template>
                                </div>
                                <div class="form-group">
-                                   <button class="btn btn-primary" ng-click="generateLetter(smartCardNo)">Generate Letter</button>
+                                   {!! Form::open(['route'=>'print_letter','target'=>'_blank']) !!}
+                                   {!! Form::hidden('option','smartCardNo') !!}
+                                   {!! Form::hidden('id','[[smartCardNo]]') !!}
+                                   {!! Form::hidden('type','EMBODIMENT') !!}
+                                   @if(auth()->user()->type!=22)
+                                       {!! Form::hidden('unit','[[unit.param.unit ]]') !!}
+                                   @else
+                                       {!! Form::hidden('unit',auth()->user()->district?auth()->user()->district->id:'') !!}
+                                   @endif
+                                   <button class="btn btn-primary">Generate Embodied Letter</button>
+                                   {!! Form::close() !!}
                                </div>
                            </div>
                        </div>
@@ -160,12 +170,15 @@
                                    <th>Unit</th>
                                    <th>Action</th>
                                </tr>
+
                                <tr ng-repeat="d in datas|filter: q as results">
                                    <td>[[$index+1]]</td>
-                                   <td>[[d.memorandum_id]]</td>
+                                   <td>
+                                       [[d.memorandum_id]]
+                                   </td>
                                    <td>[[d.mem_date?(d.mem_date):'n/a']]</td>
                                    <td>
-                                       <select ng-if="!isDc" class="form-control" ng-model="unit.selectedUnit[$index]"
+                                       <select ng-if="!isDc" class="form-control" name="unit" ng-model="unit.selectedUnit[$index]"
                                                ng-disabled="units.length==0">
                                            <option value="">--@lang('title.unit')--</option>
                                            <option ng-repeat="u in units" value="[[u.id]]">[[u.unit_name_bng]]</option>
@@ -176,13 +189,20 @@
                                        </div>
                                    </td>
                                    <td>
-                                       <button class="btn btn-primary" ng-click="generateLetter(d.memorandum_id,$index)"
-                                               ng-disabled="isGenerating">
-                                           <i ng-show="isGenerating " class="fa fa-spinner fa-spin"></i><span
-                                                   ng-class="{'blink-animation':isGenerating}">Generate Embodied Letter</span>
-                                       </button>
+                                       {!! Form::open(['route'=>'print_letter','target'=>'_blank']) !!}
+                                       {!! Form::hidden('option','memorandumNo') !!}
+                                       {!! Form::hidden('id','[[d.memorandum_id]]') !!}
+                                       {!! Form::hidden('type','EMBODIMENT') !!}
+                                       @if(auth()->user()->type!=22)
+                                           {!! Form::hidden('unit','[[unit.selectedUnit[$index] ]]') !!}
+                                           @else
+                                       {!! Form::hidden('unit',auth()->user()->district?auth()->user()->district->id:'') !!}
+                                       @endif
+                                       <button class="btn btn-primary">Generate Embodied Letter</button>
+                                       {!! Form::close() !!}
                                    </td>
                                </tr>
+
                                <tr ng-if="datas==undefined||datas.length<=0||results.length<=0">
                                    <td class="warning" colspan="5">No Memorandum no. available</td>
                                </tr>

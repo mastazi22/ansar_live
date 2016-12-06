@@ -8,6 +8,9 @@
     width: 100%;
     padding: 5px;
     font-size: 1em;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
 }
 
 .letter-header .header-top, .letter-body .body-top, .letter-footer .footer-top, .letter-footer .footer-bottom {
@@ -50,7 +53,12 @@
     text-align: justify;
     font-size: 1em;
 }
-
+.pull-left{
+    float: left !important;
+}
+.pull-right{
+    float: right !important;
+}
 .letter-footer .footer-top ul, .letter-footer .footer-bottom ul, .letter-content-middle ul {
     padding: 0;
     margin: 0;
@@ -70,14 +78,22 @@
 }
 
 .letter-content-middle table {
-    font-size: .9em;
+    font-size: 14px;
+    border: 1px solid #ababab;
+    border-collapse: collapse;
+    width: 100%;
 }
-
+.letter-content-middle table td,.letter-content-middle table th{
+    border: 1px solid #ababab;
+    border-collapse: collapse;
+}
 .letter-content-middle table tr th, .letter-content-middle table tr td {
     text-align: center;
     vertical-align: middle;
 }
-
+.ppp{
+    font-size: 20px !important;
+}
 @media print {
     .letter{
         width: 100% !important;
@@ -89,6 +105,22 @@
         size: a4;
         margin: 0cm;
     }
-
-
+    .letter-content-middle table{
+        font-size: 12px !important;
+    }
+    .letter-content-top{
+        font-size: 12px !important;
+    }
+    .header-top h4,.body-top h4,.letter-content-middle h4{
+        font-size: 14px !important;
+    }
+    .header-bottom span{
+        font-size: 12px !important;
+    }
+    ul li:not(.ppp){
+        font-size: 12px !important;
+    }
+    ul li.ppp{
+        font-size: 16px !important;
+    }
 }

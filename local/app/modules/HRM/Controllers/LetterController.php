@@ -44,15 +44,15 @@ class LetterController extends Controller
 
     }
 
-    function printLetter()
+    function printLetter(Request $request)
     {
+//        return $request->all();
         $id = Input::get('id');
         $type = Input::get('type');
         $unit = Input::get('unit');
         $view = Input::get('view');
         $option = Input::get('option');
         $rules = [
-            'id' => 'regex:/[^<>"]+$/',
             'type' => 'regex:/^[A-Z]+$/',
             'unit' => 'numeric|regex:/^[0-9]+$/',
         ];

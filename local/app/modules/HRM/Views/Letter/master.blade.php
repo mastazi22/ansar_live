@@ -3,8 +3,9 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="{{asset('dist/css/letter.css')}}">
-    <link href="{{asset('bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css"/>
-    <link href="{{asset('dist/css/AdminLTE.min.css')}}" rel="stylesheet" type="text/css"/>
+    <link href="{{asset('dist/css/font-awesome.min.css')}}" rel="stylesheet" type="text/css"/>
+    {{--<link href="{{asset('bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css"/>--}}
+    {{--<link href="{{asset('dist/css/AdminLTE.min.css')}}" rel="stylesheet" type="text/css"/>--}}
 </head>
 <body>
 <div class="print-hide">

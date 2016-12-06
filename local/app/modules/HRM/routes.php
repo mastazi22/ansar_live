@@ -271,7 +271,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/transfer_letter_view', ['as' => 'transfer_letter_view', 'uses' => 'LetterController@transferLetterView']);
         Route::get('/embodiment_letter_view', ['as' => 'embodiment_letter_view', 'uses' => 'LetterController@embodimentLetterView']);
         Route::get('/disembodiment_letter_view', ['as' => 'disembodiment_letter_view', 'uses' => 'LetterController@disembodimentLetterView']);
-        Route::get('/print_letter', ['as'=>'print_letter','uses'=>'LetterController@printLetter']);
+        Route::post('/print_letter', ['as'=>'print_letter','uses'=>'LetterController@printLetter']);
         Route::get('/letter_data', ['as'=>'letter_data','uses'=>'LetterController@getMemorandumIds']);
 
     //REPORT ROUTE
