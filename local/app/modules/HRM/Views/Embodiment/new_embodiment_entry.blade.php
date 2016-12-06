@@ -221,7 +221,17 @@
                         </div>
                     </div>
                     {!! Form::close() !!}
-                        <a ng-show="status" target="_blank" href="{{URL::to('HRM/print_letter')}}?id=[[memorandumId]]&unit=[[param.unit]]&view=full&type=EMBODIMENT" class="btn btn-primary" style="margin-top: 10px">Print Embodiment Letter</a>
+                    {!! Form::open(['route'=>'print_letter','target'=>'_blank','ng-show'=>'status']) !!}
+                    {!! Form::hidden('option','memorandumNo') !!}
+                    {!! Form::hidden('id','[[memorandumId]]') !!}
+                    {!! Form::hidden('type','EMBODIMENT') !!}
+                    @if(auth()->user()->type!=22)
+                        {!! Form::hidden('unit','[[param.unit]]') !!}
+                    @else
+                        {!! Form::hidden('unit',auth()->user()->district?auth()->user()->district->id:'') !!}
+                    @endif
+                    <button class="btn btn-primary">Print Embodied Letter</button>
+                    {!! Form::close() !!}
                 </div>
             </div>
         </section>
