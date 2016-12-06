@@ -127,7 +127,7 @@ class Kernel extends ConsoleKernel
                 DB::beginTransaction();
                 try {
                     switch($ansar->come_from){
-                        case 'panel':
+                        case 'Panel':
                             $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
                             $ansar->saveLog('No Reply');
                             $ansar->status()->update([
