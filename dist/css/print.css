@@ -4,168 +4,24 @@
     }
 
     #print-area {
-        display: block;
+        display: block !important;
+        width: 100% !important;
+        overflow: visible !important;
+        position: relative !important;
+        padding: 5px;
     }
+    @page {
+        size: a4;
+        margin: 0mm;
+    }
+    .table-responsive{
+        overflow: visible !important;
+        width: 100% !important;
+    }
+    table { page-break-after:auto }
+    tr    { page-break-inside:avoid; page-break-after:auto }
+    td    { page-break-inside:avoid; page-break-after:auto }
+    thead { display:table-header-group }
+    tfoot { display:table-footer-group }
 
-    #print-area #ansar-id-card-front, #print-area #ansar-id-card-back {
-        width: 380px;
-        padding: 4px;
-        border: 1px solid #ababab;
-        border-radius: 5px;
-        z-index: -2;
-        position: relative;
-    }
-
-    .card-header {
-        width: 100%;
-    }
-
-    .card-header-left-part {
-        float: left;
-        width: 10%;
-    }
-
-    .card-header-right-part {
-        float: left;
-        width: 90%;
-        box-sizing: border-box;
-        padding: 2px;
-    }
-
-    .card-header-right-part h4 {
-        text-align: center;
-        margin-top: 0;
-        font-size: 1.1em;
-        font-weight: bold;
-    }
-
-    .card-header-right-part h5 {
-        text-align: center;
-        margin-top: 0;
-        margin-bottom: 0;
-    }
-
-    .card-body {
-        padding: 2px;
-        position: relative;
-    }
-
-    .card-body::after, .card-footer::after, .card-header::after {
-        content: '';
-        clear: both;
-        display: block;
-    }
-
-    .card-body-left {
-        width: 30%;
-        float: left;
-        box-sizing: border-box;
-        padding: 0 2px 2px 2px;
-    }
-
-    .card-body-left ul, .card-body-middle ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        font-weight: bold;
-        font-size: 0.9em;
-    }
-
-    .card-body-middle {
-        width: 45%;
-        float: left;
-        box-sizing: border-box;
-    }
-
-    .card-body-right {
-        width: 23.5%;
-        float: right;
-        box-sizing: border-box;
-    }
-
-    .card-footer {
-        margin-top: 5px;
-        padding-left: 2px;
-    }
-
-    .card-footer-sing {
-        width: 28%;
-        float: left;
-        box-sizing: border-box;
-        padding-right: 9px;
-        font-size: .9em;
-    }
-
-    .card-footer-barcode {
-        width: 44%;
-        float: left;
-        padding: 0 3px;
-        display: inline-block;
-        vertical-align: bottom;
-        height: 37px;
-        margin-top: 7px;
-    }
-
-    .card-footer-sing div:last-child {
-        border-top: 1px solid #000000;
-        font-weight: bold;
-    }
-
-    .card-footer .card-footer-sing:last-child {
-        padding-right: 0;
-        padding-left: 9px;
-    }
-
-    .card-back-top {
-        width: 100%;
-        text-align: center;
-        padding: 22.5px 70px;
-        font-size: .8em;
-        font-weight: bold;
-        font-style: italic;
-    }
-
-    .card-back-middle {
-        width: 100%;
-        padding: 10px;
-        font-style: italic;
-    }
-
-    .card-back-middle h6, .card-back-middle h4, .card-back-middle h5 {
-        margin-top: 0;
-        margin-bottom: 5px;
-        text-align: center;
-        font-weight: bold;
-    }
-
-    .card-back-middle h6 {
-        font-size: .8em;
-    }
-
-    .card-back-middle h4 {
-        font-size: 1em;
-        font-weight: bolder;
-    }
-
-    .card-back-middle h5 {
-        font-size: .9em;
-        font-weight: bolder;
-    }
-
-    .card-back-footer {
-        margin: 17px -4px -4px -4px;
-        padding: 15px 5px;
-        background-color: #000000 !important;
-        color: #FFFFFF !important;
-        text-align: center;
-        font-size: .8em;
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
-        font-style: italic;
-    }
-
-    .center-profile {
-        width: 450px;
-        margin: 0 auto;
-    }
 }
