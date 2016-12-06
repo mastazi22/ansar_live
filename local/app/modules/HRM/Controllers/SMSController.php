@@ -32,7 +32,7 @@ class SMSController extends Controller
         $sender_no = Input::get('sender');
         $body_part = explode(' ', $body);
         Log::info("SMS BODY" . $body);
-        SMSLog::create(Input::all());
+        ///SMSLog::create(Input::all());
         if (strcasecmp($body_part[0], 'ans') == 0) {
             Log::info("SMS NO" . $sender_no);
             if (count($body_part) > 1) {
@@ -219,6 +219,8 @@ class SMSController extends Controller
                 return "Your Status Is REST";
             case $ansar->retierment_status:
                 return "Your Status Is RETIERMENT";
+            default:
+                return "Your Status Is NOT VERIFIED";
 
         }
     }
