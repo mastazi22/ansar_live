@@ -46,7 +46,7 @@ class LetterController extends Controller
             case 'EMBODIED':
                 return $e->distinct()->get();
             case 'DISEMBODIED':
-                return $d->distinct()->get();
+                return $d->distinct('tbl_rest_info.memorandum_id')->get();
             default:
                 return [];
         }
