@@ -87,29 +87,12 @@
 
         })
         $(function () {
-            function beforePrint(){
-//                console.log($("body").find("#print-body").html())
-                $("#print-area").remove();
-                $('body').append('<div id="print-area">'+$("#print-three_years_over_ansar_report").html()+'</div>')
-            }
-            function afterPrint(){
-                $("#print-area").remove()
-            }
-            if(window.matchMedia){
-                var mediaQueryList = window.matchMedia('print');
-                mediaQueryList.addListener(function(mql) {
-                    if (mql.matches) {
-                        beforePrint();
-                    } else {
-                        afterPrint();
-                    }
-                });
-            }
-            window.onbeforeprint = beforePrint;
-            window.onafterprint = afterPrint;
             $("#print-report").on('click', function (e) {
                 e.preventDefault();
+                $("#print-area").remove();
+                $('body').append('<div id="print-area">'+$("#print-three_years_over_ansar_report").html()+'</div>')
                 window.print();
+                $("#print-area").remove()
             })
         })
     </script>
