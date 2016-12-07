@@ -1,6 +1,6 @@
 <div class="letter-footer">
     <div class="footer-top">
-        <ul class="pull-right" style="margin-top: 40px;width:33%">
+        <ul class="pull-right" style="margin-top: 80px;width:33%">
             <li>{{$user?$user->first_name.' '.$user->last_name:'n\a'}}</li>
             <li>জেলা কমান্ড্যান্ট</li>
             <li>{{$user?$user->unit:'n\a'}}</li>

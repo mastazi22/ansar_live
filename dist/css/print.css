@@ -1,3 +1,7 @@
+
+.print-open{
+    display: none;
+}
 @media print {
     body > * {
         display: none;
@@ -8,14 +12,29 @@
         width: 100% !important;
         overflow: visible !important;
         position: relative !important;
-        padding: 5px;
+        padding: 5px !important;
     }
     .print-hide{
         display: none !important;
     }
+    table{
+        width: 100% !important;
+        border: 1px solid #111111 !important;
+        box-sizing: border-box !important;
+        -moz-box-sizing: border-box !important;
+        -webkit-box-sizing: border-box !important;
+    }
+    table td,table th{
+        border: 1px solid #111111 !important;
+        border-collapse: collapse !important;
+        text-align: center !important;
+    }
     @page {
         size: a4;
         margin: 0mm;
+    }
+    .print-open{
+        display: block;
     }
     .table-responsive{
         overflow: visible !important;
@@ -23,6 +42,7 @@
     }
     table td{
         font-size: 12px !important;
+
     }
     table { page-break-after:auto;
         width:100%; }

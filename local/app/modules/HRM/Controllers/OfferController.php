@@ -22,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
@@ -121,6 +122,7 @@ class OfferController extends Controller
                 ['male' => $request->get('ansar_male'), 'female' => $request->get('ansar_female')],
                 $request->get('district'),
                 $request->get('exclude_district'), Auth::user());
+            return Log::info($data);
             $quota = Helper::getOfferQuota(Auth::user());
             if($quota!==false&&$quota<count($data)) throw new \Exception("Your offer quota limit exit");
             PanelModel::whereIn('ansar_id',$data)->update(['locked'=>1]);

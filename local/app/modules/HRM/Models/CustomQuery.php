@@ -58,33 +58,33 @@ class CustomQuery
         $ansar_female = clone $query;
         $pc_male->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')
-            ->orderBy('tbl_panel_info.id')
+            ->orderBy('tbl_panel_info.panel_date')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($pc['male']);
 //        return DB::getQueryLog();
         $pc_female->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')
-            ->orderBy('tbl_panel_info.id')
+            ->orderBy('tbl_panel_info.panel_date')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($pc['female']);
         $ansar_male->where('tbl_ansar_parsonal_info.designation_id', '=', 1)
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')
-            ->orderBy('tbl_panel_info.id')
+            ->orderBy('tbl_panel_info.panel_date')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($ansar['male']);
         $ansar_female->where('tbl_ansar_parsonal_info.designation_id', '=', 1)
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')
-            ->orderBy('tbl_panel_info.id')
+            ->orderBy('tbl_panel_info.panel_date')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($ansar['female']);
         $apc_male->where('tbl_ansar_parsonal_info.designation_id', '=', 2)
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')
-            ->orderBy('tbl_panel_info.id')
+            ->orderBy('tbl_panel_info.panel_date')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($apc['male']);
         $apc_female->where('tbl_ansar_parsonal_info.designation_id', '=', 2)
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')
-            ->orderBy('tbl_panel_info.id')
+            ->orderBy('tbl_panel_info.panel_date')
             ->select('tbl_ansar_parsonal_info.ansar_id')->take($apc['female']);
 
         $b = $pc_male->unionAll($pc_female)->unionAll($apc_male)->unionAll($apc_female)->unionAll($ansar_male)->unionAll($ansar_female)->pluck('ansar_id');
@@ -514,7 +514,7 @@ class CustomQuery
         }
         $total = clone $ansarQuery;
         $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
-        $ansars = $ansarQuery->orderBy('id')->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
+        $ansars = $ansarQuery->orderBy('tbl_panel_info.id')->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_panel_info.panel_date', 'tbl_panel_info.memorandum_id')->skip($offset)->limit($limit)->get();
         return Response::json(['total' => collect($total->get())->pluck('t', 'code'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'pannel']);
     }

@@ -105,9 +105,10 @@
         $(function () {
             $("#print-report").on('click', function (e) {
                 $("#print-area").remove();
-
+                $("#print_table table").removeClass('table table-bordered')
                 $('body').append('<div id="print-area">'+$("#print_table").html()+'</div>')
                 window.print();
+                $("#print_table table").addClass('table table-bordered')
                 $("#print-area").remove()
             })
         })
@@ -153,13 +154,17 @@
                             <database-search q="q" queue="queue" on-change="loadPage()"></database-search>
                         </div>
                     </div>
-                    <div class="table-responsive">
-                        <div id="print_table">
-                            <template-list data="ansars" key="{{$type}}"></template-list>
+                    <div   id="print_table">
+                        <div class="table-responsive">
+                            <div>
+                                <h4 class="text text-center print-open">{{$pageTitle}}</h4>
+                                <template-list data="ansars" key="{{$type}}"></template-list>
+                            </div>
+
+
                         </div>
-
-
                     </div>
+
                     <div class="row">
                         <div class="col-sm-4">
                             <label for="item_par_page">Show :</label>
