@@ -761,7 +761,7 @@ class CustomQuery
             $ansarQuery->where('tbl_designations.id', $rank);
         }
         if ($division && $division != 'all') {
-            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', '!=', $division);
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', '=', $division);
         }
         if ($unit != 'all') {
 //            $ansarQuery->where('ku.id', '!=', $unit);
@@ -779,6 +779,7 @@ class CustomQuery
         if ($q) {
             $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
         }
+//        return $ansarQuery->toSql();
         $total = clone $ansarQuery;
         $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
         $ansars = $ansarQuery->orderBy('tbl_ansar_parsonal_info.ansar_id','asc')->distinct()->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
