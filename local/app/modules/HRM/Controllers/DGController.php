@@ -183,8 +183,8 @@ class DGController extends Controller
             'kpi_id' => 'required|numeric|regex:/^[0-9]+$/',
             'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
             'mem_id' => 'required',
-            'reporting_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
-            'joining_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/', 'joining_date_validate:reporting_date'],
+            'reporting_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/'],
+            'joining_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/', 'joining_date_validate:reporting_date'],
             'unit' => 'required|numeric|regex:/^[0-9]+$/',
             'thana' => 'required|numeric|regex:/^[0-9]+$/',
         ];
