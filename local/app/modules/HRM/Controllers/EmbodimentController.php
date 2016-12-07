@@ -136,7 +136,7 @@ class EmbodimentController extends Controller
             $rules['memorandum_id'] = 'required';
         }
         else{
-            $rules['memorandum_id'] = 'required|unique:hrm.tbl_memorandum_id';
+            $rules['memorandum_id'] = 'required|unique:hrm.tbl_memorandum_id,memorandum_id|unique:hrm.tbl_embodiment,memorandum_id|unique:hrm.tbl_rest_info,memorandum_id||unique:hrm.tbl_transfer_ansar,transfer_memorandum_id';
         }
         $message = [
             'ansar_id.required' => 'Ansar ID is required',
@@ -253,7 +253,7 @@ class EmbodimentController extends Controller
             $rules['memorandum_id'] = 'required';
         }
         else{
-            $rules['memorandum_id'] = 'required|unique:hrm.tbl_memorandum_id';
+            $rules['memorandum_id'] = 'required|unique:hrm.tbl_memorandum_id,memorandum_id|unique:hrm.tbl_embodiment,memorandum_id|unique:hrm.tbl_rest_info,memorandum_id||unique:hrm.tbl_transfer_ansar,transfer_memorandum_id';
         }
         $valid = Validator::make(Input::all(), $rules);
         if ($valid->fails()) {
@@ -387,11 +387,15 @@ class EmbodimentController extends Controller
             $rules['memorandum_id'] = 'required';
         }
         else{
-            $rules['memorandum_id'] = 'required|unique:hrm.tbl_memorandum_id';
+            $rules['memorandum_id'] = 'required|unique:hrm.tbl_memorandum_id,memorandum_id|unique:hrm.tbl_embodiment,memorandum_id|unique:hrm.tbl_rest_info,memorandum_id||unique:hrm.tbl_transfer_ansar,transfer_memorandum_id';
         }
         $valid = Validator::make($request->all(),$rules);
         if($valid->fails()){
-            return Response::json(['status' => false, 'message' => "Invalid Request"]);
+            $m = '';
+            foreach($valid->messages()->toArray() as $p){
+                $m .= $p[0].',';
+            }
+            return Response::json(['status' => false, 'message' => $m]);
         }
         DB::beginTransaction();
         $user = [];
@@ -792,9 +796,14 @@ class EmbodimentController extends Controller
     public function confirmTransfer(Request $request)
     {
 //        return $request->all();
-        $valid = Validator::make($request->all(), [
-            'memId' => 'required|unique:tbl_memorandum_id,memorandum_id'
-        ]);
+        $rules = [];
+        if(auth()->user()->type==11||auth()->user()->type==77){
+            $rules['memorandum_id'] = 'required';
+        }
+        else{
+            $rules['memorandum_id'] = 'required|unique:hrm.tbl_memorandum_id,memorandum_id|unique:hrm.tbl_embodiment,memorandum_id|unique:hrm.tbl_rest_info,memorandum_id||unique:hrm.tbl_transfer_ansar,transfer_memorandum_id';
+        }
+        $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {
             return response($valid->messages()->toJson(), 400, ['Content-type' => 'application/json']);
         }

@@ -10,6 +10,9 @@
         position: relative !important;
         padding: 5px;
     }
+    .print-hide{
+        display: none !important;
+    }
     @page {
         size: a4;
         margin: 0mm;
@@ -17,6 +20,9 @@
     .table-responsive{
         overflow: visible !important;
         width: 100% !important;
+    }
+    table td{
+        font-size: 12px !important;
     }
     table { page-break-after:auto;
         width:100%; }

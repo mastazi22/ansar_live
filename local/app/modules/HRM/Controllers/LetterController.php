@@ -191,6 +191,7 @@ class LetterController extends Controller
             $result->where('tbl_rest_info.memorandum_id', $id);
             $mem->where('tbl_rest_info.memorandum_id', $id);
         }
+//        return $result->toSql();
         $result = $result->get();
 //        return $result;
         $mem = $mem->first();

@@ -1081,6 +1081,7 @@ class CustomQuery
 
     public static function disembodedAnsarListforReport($offset, $limit, $from_date, $to_date, $division, $unit, $thana)
     {
+        DB::enableQueryLog();
         $ansarQuery = DB::table('tbl_embodiment_log')
             ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment_log.ansar_id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
@@ -1097,10 +1098,12 @@ class CustomQuery
         if ($thana && $thana != 'all') {
             $ansarQuery->where('tbl_kpi_info.thana_id', '=', $thana);
         }
+        $ansarQuery->select('tbl_embodiment_log.ansar_id as id', 'tbl_embodiment_log.reporting_date as r_date', 'tbl_embodiment_log.joining_date as j_date', 'tbl_embodiment_log.release_date as re_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
+            'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi', 'tbl_disembodiment_reason.reason_in_bng as reason');
         $total = clone $ansarQuery;
-        $ansars = $ansarQuery->distinct()->select('tbl_embodiment_log.ansar_id as id', 'tbl_embodiment_log.reporting_date as r_date', 'tbl_embodiment_log.joining_date as j_date', 'tbl_embodiment_log.release_date as re_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
-            'tbl_units.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi', 'tbl_disembodiment_reason.reason_in_bng as reason')->skip($offset)->limit($limit)->get();
-        return Response::json(['total' => $total->distinct()->count(), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
+        $ansars = $ansarQuery->skip($offset)->limit($limit)->get();
+//        return DB::getQueryLog();
+        return Response::json(['total' => DB::table(DB::raw("({$total->toSql()}) x"))->mergeBindings($total)->count(), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);
     }
 
 

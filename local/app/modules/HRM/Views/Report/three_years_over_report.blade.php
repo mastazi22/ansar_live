@@ -176,27 +176,66 @@
                                     <td colspan="7" ng-if="ansars.ansars==undefined||ansars.ansars.length<=0" class="warning">No Ansar available</td>
                                 </tr>
                             </table>
-                            <div class="table_pagination" ng-if="pages.length>1">
-                                <ul class="pagination">
-                                    <li ng-class="{disabled:currentPage == 0}">
-                                        <a href="#" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>
-                                    </li>
-                                    <li ng-class="{disabled:currentPage == 0}">
-                                        <a href="#" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
-                                    </li>
-                                    <li ng-repeat="page in pages|filter:filterMiddlePage"
-                                        ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
-                                        <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
-                                        <a href="#" ng-click="loadPage(page,$event)" ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
-                                        <span ng-show="loadingPage[page.pageNum]"  style="position: relative"><i class="fa fa-spinner fa-pulse" style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
-                                    </li>
-                                    <li ng-class="{disabled:currentPage==pages.length-1}">
-                                        <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
-                                    </li>
-                                    <li ng-class="{disabled:currentPage==pages.length-1}">
-                                        <a href="#" ng-click="loadPage(pages[pages.length-1],$event)">&raquo;&raquo;</a>
-                                    </li>
-                                </ul>
+
+                            {{--<div class="table_pagination" ng-if="pages.length>1">--}}
+                                {{--<ul class="pagination">--}}
+                                    {{--<li ng-class="{disabled:currentPage == 0}">--}}
+                                        {{--<a href="#" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>--}}
+                                    {{--</li>--}}
+                                    {{--<li ng-class="{disabled:currentPage == 0}">--}}
+                                        {{--<a href="#" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>--}}
+                                    {{--</li>--}}
+                                    {{--<li ng-repeat="page in pages|filter:filterMiddlePage"--}}
+                                        {{--ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">--}}
+                                        {{--<span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>--}}
+                                        {{--<a href="#" ng-click="loadPage(page,$event)" ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>--}}
+                                        {{--<span ng-show="loadingPage[page.pageNum]"  style="position: relative"><i class="fa fa-spinner fa-pulse" style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>--}}
+                                    {{--</li>--}}
+                                    {{--<li ng-class="{disabled:currentPage==pages.length-1}">--}}
+                                        {{--<a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>--}}
+                                    {{--</li>--}}
+                                    {{--<li ng-class="{disabled:currentPage==pages.length-1}">--}}
+                                        {{--<a href="#" ng-click="loadPage(pages[pages.length-1],$event)">&raquo;&raquo;</a>--}}
+                                    {{--</li>--}}
+                                {{--</ul>--}}
+                            {{--</div>--}}
+                        </div>
+                        <div class="row print-hide">
+                            <div class="col-sm-4">
+                                <label for="item_par_page">Show :</label>
+                                <select name="item_per_page" ng-change="loadPage()" id="item_par_page" ng-model="itemPerPage">
+                                    <option value="20" ng-selected="true">20</option>
+                                    <option value="40">40</option>
+                                    <option value="60">60</option>
+                                    <option value="80">80</option>
+                                    <option value="100">100</option>
+                                    <option value="150">150</option>
+                                    <option value="200">200</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="table_pagination" ng-if="pages.length>1">
+                                    <ul class="pagination" style="margin: 0">
+                                        <li ng-class="{disabled:currentPage == 0}">
+                                            <a href="#" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>
+                                        </li>
+                                        <li ng-class="{disabled:currentPage == 0}">
+                                            <a href="#" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
+                                        </li>
+                                        <li ng-repeat="page in pages|filter:filterMiddlePage"
+                                            ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
+                                            <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
+                                            <a href="#" ng-click="loadPage(page,$event)" ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
+                                            <span ng-show="loadingPage[page.pageNum]"  style="position: relative"><i class="fa fa-spinner fa-pulse" style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
+                                        </li>
+                                        <li ng-class="{disabled:currentPage==pages.length-1}">
+                                            <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
+                                        </li>
+                                        <li ng-class="{disabled:currentPage==pages.length-1}">
+                                            <a href="#" ng-click="loadPage(pages[pages.length-1],$event)">&raquo;&raquo;</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
