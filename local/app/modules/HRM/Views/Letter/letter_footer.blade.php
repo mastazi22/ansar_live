@@ -3,6 +3,7 @@
         <ul class="pull-right" style="margin-top: 20px;width:33%">
             <li>{{$user?$user->first_name.' '.$user->last_name:'n\a'}}</li>
             <li>জেলা কমান্ড্যান্ট</li>
+            <li>{{$user?$user->unit:'n\a'}}</li>
             <li>মোবাইলঃ<span style="border-bottom: 1px dashed #000000;    top: -5px;display: inline-block;position: relative;">{{$user?$user->mobile_no:'n\a'}}</span></li>
             <li>ই-মেইলঃ{{$user?$user->email:'n\a'}}</li>
         </ul>
@@ -44,13 +45,13 @@
             @if($user&&!(trim($user->division)=="DMA"||trim($user->division)=="CMA"))<li class="ppp">"&nbsp;</li>@endif
             <li>অবগতি ও কার্যক্রমের জন্য।</li>
             <li class="ppp" >&nbsp;<br>"&nbsp;</li>
+            <li class="ppp" style="padding-top: 8px" >"&nbsp;</li>
 
         </ul>
     </div>
     <div class="footer-bottom">
         <ul class="pull-right" style="width: 33% !important;">
             <li>জেলা কমান্ড্যান্ট</li>
-            <li>{{$user?$user->unit:'n\a'}}</li>
         </ul>
     </div>
 </div>
