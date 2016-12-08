@@ -86,7 +86,7 @@ class DGController extends Controller
                 ->where('tbl_sms_offer_info.ansar_id', '=', $ansar_id);
 
             if ($ansarOfferInfo->exists()) {
-                $ansarOfferInfo = $ansarOfferInfo->select('tbl_sms_offer_info.created_at as offerDate', 'tbl_units.unit_name_bng as offerUnit')->first();
+                $ansarOfferInfo = $ansarOfferInfo->select('tbl_sms_offer_info.sms_send_datetime as offerDate', 'tbl_units.unit_name_bng as offerUnit')->first();
             } else {
                 $ansarOfferInfo = DB::table('tbl_sms_receive_info')
                     ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_receive_info.offered_district')
