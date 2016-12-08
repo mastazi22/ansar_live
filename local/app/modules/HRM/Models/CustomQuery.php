@@ -489,7 +489,7 @@ class CustomQuery
 
 
 // Dashboard panel ansar list
-    public static function getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q)
+    public static function getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division = null,$sex, $time, $rank, $q)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::PANEL);
         if ($rank != 'all') {
@@ -503,6 +503,9 @@ class CustomQuery
         }
         if ($thana != 'all') {
             $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if ($sex != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
         }
         if ($time == self::RECENT) {
             $recentTime = Carbon::now();
