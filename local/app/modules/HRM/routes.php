@@ -376,6 +376,25 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/kpi_list_for_withdraw_cancel', ['as'=>'kpi_list_for_withdraw_cancel','uses'=>'KpiController@kpiListForWithdrawCancel']);
         Route::post('/kpi-withdraw-cancel-update/{id}', ['as'=>'kpi-withdraw-cancel-update','uses'=>'KpiController@kpiWithdrawCancelUpdate'])->where('id','^[0-9]+$');
 //End KPI
+//        Route::get('test',function(){
+//           $data = DB::select(DB::raw("SELECT `tbl_embodiment`.`ansar_id`,MAX(`tbl_transfer_ansar`.`transfered_kpi_join_date`) AS t_date FROM tbl_embodiment
+//INNER JOIN tbl_transfer_ansar ON tbl_embodiment.ansar_id = tbl_transfer_ansar.`ansar_id`
+// WHERE tbl_transfer_ansar.`transfered_kpi_id` = tbl_embodiment.kpi_id
+// GROUP BY `tbl_embodiment`.`ansar_id`;"));
+////            $a = collect($data)->pluck('ansar_id');
+////            $t = collect($data)->pluck('t_date');
+////            $c = [];
+////            foreach($t as $b){
+////                array_push($c,['transfered_date'=>$b]);
+////            }
+////            Log::info($c);
+//            foreach($data as $d) {
+//                \App\modules\HRM\Models\EmbodimentModel::where('ansar_id', $d->ansar_id)->update(['transfered_date'=>$d->t_date]);
+//
+//            }
+//            return "success";
+//
+//        });
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
     Route::get('/all_notification', function () {

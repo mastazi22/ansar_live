@@ -118,14 +118,14 @@
                             </span>
                     </div><br>
                     <filter-template
-                            show-item="['range','unit','rank','gender']"
+                            show-item="['range','unit','thana','rank','gender']"
                             type="all"
                             range-change="loadPage()"
                             unit-change="loadPage()"
                             rank-change="loadPage()"
                             gender-change="loadPage()"
                             start-load="range"
-                            field-width="{range:'col-sm-3',unit:'col-sm-3',rank:'col-sm-3',gender:'col-sm-3'}"
+                            field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-2',rank:'col-sm-2',gender:'col-sm-2'}"
                             data="params"
                             on-load="loadPage()"
                     ></filter-template>
