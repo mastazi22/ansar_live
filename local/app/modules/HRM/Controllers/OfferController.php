@@ -2,6 +2,7 @@
 
 namespace App\modules\HRM\Controllers;
 
+use App\modules\HRM\Models\UserOfferQueue;
 use App\Helper\Helper;
 use App\Http\Controllers\Controller;
 use App\Jobs\OfferQueue;
@@ -117,6 +118,12 @@ class OfferController extends Controller
         $district_id = $request->get('district_id');
         DB::beginTransaction();
         try {
+            if(UserOfferQueue::where('user_id',Auth::user()->id)->exists()){
+                throw new \Exception("Your have one pending offer.Please wait until your offer is complete");
+            }
+            $userOffer = UserOfferQueue::create([
+                'user_id'=>Auth::user()->id
+            ]);
             $data = CustomQuery::getAnsarInfo(
                 ['male' => $request->get('pc_male'), 'female' => $request->get('pc_female')],
                 ['male' => $request->get('apc_male'), 'female' => $request->get('apc_female')],
@@ -127,7 +134,7 @@ class OfferController extends Controller
             $quota = Helper::getOfferQuota(Auth::user());
             if($quota!==false&&$quota<count($data)) throw new \Exception("Your offer quota limit exit");
             PanelModel::whereIn('ansar_id',$data)->update(['locked'=>1]);
-            $this->dispatch(new OfferQueue($data,$district_id,Auth::user()));
+            $this->dispatch(new OfferQueue($data,$district_id,Auth::user(),$userOffer));
             DB::commit();
         }
         catch (\Exception $e) {

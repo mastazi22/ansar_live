@@ -25,13 +25,15 @@ class OfferQueue extends Job implements ShouldQueue
     private $data;
     private $user;
     private $district_id;
+    private $userOffer;
 
-    public function __construct($data, $district_id, $user)
+    public function __construct($data, $district_id, $user,$userOffer)
     {
         //$this->data = $request;
         $this->data = $data;
         $this->user = $user;
         $this->district_id = $district_id;
+        $this->userOffer = $userOffer;
     }
 
     /**
@@ -104,7 +106,7 @@ class OfferQueue extends Job implements ShouldQueue
         }
 
         $this->delete();
-
+        $this->userOffer->delete();
 
     }
 }

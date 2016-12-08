@@ -92,9 +92,9 @@ class Kernel extends ConsoleKernel
 
         })->everyMinute()->name("send_offer")->withoutOverlapping();
         $schedule->call(function () {
-            $user = env('SSL_USER_ID');
-            $pass = env('SSL_PASSWORD');
-            $sid = env('SSL_SID');
+            $user = env('SSL_USER_ID','ansarapi');
+            $pass = env('SSL_PASSWORD','x83A7Z96');
+            $sid = env('SSL_SID','ANSARVDP');
             $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
             $offered_cancel = OfferCancel::where('sms_status', 0)->take(10)->get();
             foreach ($offered_cancel as $offer) {
