@@ -111,6 +111,7 @@ class OfferController extends Controller
         }
         $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {
+            Log::info($valid->messages()->toArray());
             return response(collect(['type' => 'error', 'message' => 'Invalid request'])->toJson(), 400, ['Content-Type' => 'application/json']);
         }
         $district_id = $request->get('district_id');

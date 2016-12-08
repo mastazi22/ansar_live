@@ -60,7 +60,7 @@ class ReportController extends Controller
                 ->where('tbl_kpi_info.division_id', '=', $request->division)
                 ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
                 ->select('tbl_ansar_parsonal_info.ansar_id','tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_designations.name_bng',
-                    'tbl_units.unit_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.joining_date')->orderBy('tbl_embodiment.joining_date','desc')->get();
+                    'tbl_units.unit_name_bng', 'tbl_embodiment.transfered_date', 'tbl_embodiment.joining_date')->orderBy('tbl_embodiment.joining_date','desc')->get();
             //return DB::getQueryLog();
             $guards = DB::table('tbl_kpi_info')
                 ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')

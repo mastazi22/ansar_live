@@ -40,13 +40,13 @@ class EmbodimentController extends Controller
     public function kpiName(Request $request)
     {
         $query = [];
-        if (Input::exists('division')) {
+        if (Input::exists('division')&&Input::get('division')!='all') {
             array_push($query,['division_id','=',$request->division]);
             }
-        else if (Input::exists('unit')) {
+        else if (Input::exists('unit')&&Input::get('unit')!='all') {
             array_push($query,['unit_id','=',$request->unit]);
         }
-        else if (Input::exists('id')) {
+        else if (Input::exists('id')&&Input::get('id')!='all') {
             array_push($query,['thana_id','=',$request->id]);
         }
         else if($request->type!='all'){

@@ -191,10 +191,10 @@
                                         [[a.unit_name_bng]]
                                     </td>
                                     <td>
-                                        [[dateConvert(a.reporting_date)]]
+                                        [[dateConvert(a.joining_date)]]
                                     </td>
                                     <td>
-                                        [[dateConvert(a.joining_date)]]
+                                        [[a.transfered_date?dateConvert(a.transfered_date):'--']]
                                     </td>
                                 </tr>
                             </table>

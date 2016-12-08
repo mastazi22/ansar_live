@@ -461,7 +461,7 @@ class FormSubmitHandler extends Controller
         $id = $request->input('id');
 
         if (strcasecmp($id, 'all') == 0) {
-            return Response::json([]);
+            return Response::json(Thana::all());
         }
         $thana = Thana::where('unit_id', '=', $id)->get();
 

@@ -508,22 +508,34 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 else if($rootScope.user.usertype.type_name=='RC'){
                     $scope.selected.range = $rootScope.user.division.id
                     $scope.loadUnit($rootScope.user.division.id)
+                    if($scope.type=='all'){
+                        $scope.loadThana('all');
+                        $scope.loadKPI('all');
+                    }
                 }
                 else if($rootScope.user.usertype.type_name=='Super Admin'||$rootScope.user.usertype.type_name=='Admin'||$rootScope.user.usertype.type_name=='DG'){
-                    switch($scope.startLoad){
-                        case 'range':
-                            $scope.loadRange();
-                            break;
-                        case 'unit':
-                            $scope.loadUnit();
-                            break;
-                        case 'thana':
-                            $scope.loadThana();
-                            break;
-                        case 'kpi':
-                            $scope.loadKpi();
-                            break;
+                    if($scope.type=='all'){
+                        $scope.loadRange();
+                        $scope.loadUnit('all');
+                        $scope.loadThana('all');
+                        $scope.loadKPI('all');
+                    }
+                    else{
+                        switch($scope.startLoad){
+                            case 'range':
+                                $scope.loadRange();
+                                break;
+                            case 'unit':
+                                $scope.loadUnit();
+                                break;
+                            case 'thana':
+                                $scope.loadThana();
+                                break;
+                            case 'kpi':
+                                $scope.loadKpi();
+                                break;
 
+                        }
                     }
                 }
                 $scope.finish = true;

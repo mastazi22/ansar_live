@@ -143,8 +143,8 @@
                             //alert(JSON.stringify(response));
                             console.log(response.data);
                             $scope.alerts = [];
-                            notificationService.notify(response.data.status,response.data.message)
-                            $scope.showLoadScreen = false;$scope.showLoadScreen = false;
+                            notificationService.notify(response.data.type,response.data.message)
+                            $scope.showLoadScreen = true;
                             $scope.buttonText = "Send Offer"
                         }
                 )
@@ -318,7 +318,7 @@
 
                             </div>
                         </div>
-                        <button class="btn btn-primary pull-right" ng-click="sendOffer()" ng-disabled="(isAdmin&&!data.offeredDistrict)">
+                        <button class="btn btn-primary pull-right" confirm  callback="sendOffer()" message="Are you sure to send offer." ng-disabled="(isAdmin&&!data.offeredDistrict)">
                             <i ng-show="showLoadScreen" class="fa fa-send"></i><i ng-hide="showLoadScreen" class="fa fa-spinner fa-pulse"></i>
                             [[buttonText]]
                         </button>
