@@ -2,12 +2,7 @@
 <div class="letter">
     <div class="letter-header">
         <div class="header-top" style="background: none">
-            <h4>গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</br>
-                আনসার ও গ্রাম প্রতিরক্ষা বাহিনী
-                <br>
-                জেলা কমান্ড্যান্টের কার্যালয়</br>
-                {{$user?$user->unit:'n\a'}}
-            </h4>
+            @include('HRM::Letter.letter_header',['user'=>$user])
         </div>
         <div class="header-bottom">
                                     <span class="pull-left">
