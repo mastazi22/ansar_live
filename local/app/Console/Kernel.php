@@ -48,9 +48,9 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             Log::info("called");
 //            //return;
-            $user = env('SSL_USER_ID');
-            $pass = env('SSL_PASSWORD');
-            $sid = env('SSL_SID');
+            $user = env('SSL_USER_ID','ansarapi');
+            $pass = env('SSL_PASSWORD','x83A7Z96');
+            $sid = env('SSL_SID','ANSARVDP');
             $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
             $offered_ansar = OfferSMS::where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
             foreach ($offered_ansar as $offer) {
