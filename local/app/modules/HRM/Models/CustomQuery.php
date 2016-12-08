@@ -58,33 +58,33 @@ class CustomQuery
         $ansar_female = clone $query;
         $pc_male->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')
-            ->orderBy('tbl_panel_info.panel_date')
+            ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($pc['male']);
 //        return DB::getQueryLog();
         $pc_female->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')
-            ->orderBy('tbl_panel_info.panel_date')
+            ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($pc['female']);
         $ansar_male->where('tbl_ansar_parsonal_info.designation_id', '=', 1)
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')
-            ->orderBy('tbl_panel_info.panel_date')
+            ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($ansar['male']);
         $ansar_female->where('tbl_ansar_parsonal_info.designation_id', '=', 1)
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')
-            ->orderBy('tbl_panel_info.panel_date')
+            ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($ansar['female']);
         $apc_male->where('tbl_ansar_parsonal_info.designation_id', '=', 2)
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')
-            ->orderBy('tbl_panel_info.panel_date')
+            ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($apc['male']);
         $apc_female->where('tbl_ansar_parsonal_info.designation_id', '=', 2)
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')
-            ->orderBy('tbl_panel_info.panel_date')
+            ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')->take($apc['female']);
 
         $b = $pc_male->unionAll($pc_female)->unionAll($apc_male)->unionAll($apc_female)->unionAll($ansar_male)->unionAll($ansar_female)->pluck('ansar_id');
