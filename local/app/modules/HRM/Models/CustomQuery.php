@@ -30,7 +30,8 @@ class CustomQuery
             ->join('tbl_division', 'tbl_ansar_parsonal_info.division_id', '=', 'tbl_division.id')
             ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
             ->join('tbl_units as pu', 'tbl_ansar_parsonal_info.unit_id', '=', 'pu.id')
-            ->where('tbl_panel_info.locked', 0);
+            ->where('tbl_panel_info.locked', 0)
+            ->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"');
         if ($user->type == 22) {
             if (in_array($exclude_district, Config::get('app.offer'))) {
                 $d = Config::get('app.exclude_district');
