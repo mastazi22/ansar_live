@@ -247,11 +247,11 @@ GlobalApp.factory('httpService', function ($http) {
             })
 
         },
-        kpi: function (id,type) {
+        kpi: function (d,u,id,type) {
             return $http({
                 url:'/'+prefix+"HRM/KPIName",
                 method:'get',
-                params:{id:id,type:type}
+                params:{division:d,unit:u,id:id,type:type}
             }).then(function (response) {
                 return response.data;
             }, function (response) {
@@ -502,6 +502,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 if($scope.type=='all'){
                     $scope.loadUnit(division_id)
                     $scope.loadThana(division_id)
+                    $scope.loadKPI(division_id)
                 }
                 else{
                     $scope.loadUnit(division_id)
@@ -510,6 +511,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             $scope.changeUnit = function (unit_id) {
                 if($scope.type=='all'){
                     $scope.loadThana(undefined,unit_id)
+                    $scope.loadKPI(undefined,unit_id)
                 }
                 else{
                     $scope.loadThana(undefined,unit_id)
@@ -517,7 +519,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             }
             $scope.changeThana = function (thana_id) {
                 if($scope.type=='all'){
-                    $scope.loadKPI(thana_id)
+                    $scope.loadKPI(undefined,undefined,thana_id)
                 }
                 else{
                     $scope.loadKPI(thana_id)
