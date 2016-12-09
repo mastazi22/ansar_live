@@ -464,13 +464,13 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 })
                 $scope.thanaLoad({param:$scope.selected});
             }
-            $scope.loadKPI = function (id) {
+            $scope.loadKPI = function (d,u,id) {
 
                 //$scope.kpiChange({param:$scope.selected});
                 if(!$scope.show('kpi')) return;
                 $scope.loading.kpi = true;
 
-                httpService.kpi(id,$scope.kpiType).then(function (data) {
+                httpService.kpi(d,u,id,$scope.kpiType).then(function (data) {
                     $scope.loading.kpi = false;
                     if(data.status!=undefined){
                         $scope.errorKey = {kpi:'kpi'};
