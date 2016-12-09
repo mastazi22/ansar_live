@@ -51,6 +51,7 @@
                         division:$scope.param.range==undefined?'all':$scope.param.range,
                         q:$scope.q,
                         rank:$scope.rank,
+                        gender: $scope.param.gender == undefined ? 'all' : $scope.param.gender,
                     }
                 }).then(function (response) {
                     $scope.queue.shift()
@@ -97,19 +98,34 @@
                     </span>
                 </div>
                 <div class="box-body">
-                    <filter-template
-                            show-item="['range','unit','thana']"
-                            type="all"
-                            range-change="loadPage()"
-                            unit-change="loadPage()"
-                            thana-change="loadPage()"
-                            on-load="loadPage()"
-                            start-load="range"
-                            data="param"
-                            field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
-                    >
+                    @if($pageTitle=="Total Paneled Ansars (Recent)")
+                        <filter-template
+                                show-item="['range','unit','thana','gender']"
+                                type="all"
+                                range-change="loadPage()"
+                                unit-change="loadPage()"
+                                thana-change="loadPage()"
+                                gender-change="loadPage()"
+                                on-load="loadPage()"
+                                data="param"
+                                start-load="range"
+                                field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',gender:'col-sm-3'}"
+                        ></filter-template>
+                            @else
+                                <filter-template
+                                        show-item="['range','unit','thana']"
+                                        type="all"
+                                        range-change="loadPage()"
+                                        unit-change="loadPage()"
+                                        thana-change="loadPage()"
+                                        on-load="loadPage()"
+                                        data="param"
+                                        start-load="range"
+                                        field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
+                                >
+                                </filter-template>
+                                    @endif
 
-                    </filter-template>
                     <div class="row">
                         <div class="col-md-8">
                             <h4 class="text text-bold">
@@ -125,29 +141,53 @@
                     </div>
                     <div class="table-responsive">
                         <template-list data="ansars" key="{{$type}}"></template-list>
-                        <div class="table_pagination" ng-if="pages.length>1">
-                            <ul class="pagination">
-                                <li ng-class="{disabled:currentPage == 0}">
-                                    <a href="#" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>
-                                </li>
-                                <li ng-class="{disabled:currentPage == 0}">
-                                    <a href="#" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
-                                </li>
-                                <li ng-repeat="page in pages|filter:filterMiddlePage"
-                                    ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
-                                    <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
-                                    <a href="#" ng-click="loadPage(page,$event)" ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
-                                    <span ng-show="loadingPage[page.pageNum]"  style="position: relative"><i class="fa fa-spinner fa-pulse" style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
-                                </li>
-                                <li ng-class="{disabled:currentPage==pages.length-1}">
-                                    <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
-                                </li>
-                                <li ng-class="{disabled:currentPage==pages.length-1}">
-                                    <a href="#" ng-click="loadPage(pages[pages.length-1],$event)">&raquo;&raquo;</a>
-                                </li>
-                            </ul>
-                        </div>
+
                     </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <label for="item_par_page">Show :</label>
+                                <select name="item_per_page" ng-change="loadPage()" id="item_par_page"
+                                        ng-model="itemPerPage">
+                                    <option value="20" ng-selected="true">20</option>
+                                    <option value="40">40</option>
+                                    <option value="60">60</option>
+                                    <option value="80">80</option>
+                                    <option value="100">100</option>
+                                    <option value="150">150</option>
+                                    <option value="200">200</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="table_pagination" ng-if="pages.length>1">
+                                    <ul class="pagination" style="margin: 0">
+                                        <li ng-class="{disabled:currentPage == 0}">
+                                            <a href="#" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>
+                                        </li>
+                                        <li ng-class="{disabled:currentPage == 0}">
+                                            <a href="#"
+                                               ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
+                                        </li>
+                                        <li ng-repeat="page in pages|filter:filterMiddlePage"
+                                            ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
+                                            <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
+                                            <a href="#" ng-click="loadPage(page,$event)"
+                                               ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
+                                                    <span ng-show="loadingPage[page.pageNum]"
+                                                          style="position: relative"><i class="fa fa-spinner fa-pulse"
+                                                                                        style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
+                                        </li>
+                                        <li ng-class="{disabled:currentPage==pages.length-1}">
+                                            <a href="#"
+                                               ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
+                                        </li>
+                                        <li ng-class="{disabled:currentPage==pages.length-1}">
+                                            <a href="#"
+                                               ng-click="loadPage(pages[pages.length-1],$event)">&raquo;&raquo;</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                 </div>
             </div>
         </section>

@@ -458,12 +458,15 @@ class FormSubmitHandler extends Controller
 
     public function ThanaName(Request $request)
     {
+        $query = [];
         $id = $request->input('id');
-
-        if (strcasecmp($id, 'all') == 0) {
-            return Response::json(Thana::all());
+        if($request->exists('division_id')&&$request->get('division_id')!='all'){
+            $query['division_id'] = $request->get('division_id');
         }
-        $thana = Thana::where('unit_id', '=', $id)->get();
+        if($request->exists('id')&&$request->get('id')!='all'){
+            $query['unit_id'] = $request->get('id');
+        }
+        $thana = Thana::where($query)->get();
 
         return Response::json($thana);
     }

@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
@@ -798,13 +799,14 @@ class EmbodimentController extends Controller
 //        return $request->all();
         $rules = [];
         if(auth()->user()->type==11||auth()->user()->type==77){
-            $rules['memorandum_id'] = 'required';
+            $rules['memId'] = 'required';
         }
         else{
-            $rules['memorandum_id'] = 'required|unique:hrm.tbl_memorandum_id,memorandum_id|unique:hrm.tbl_embodiment,memorandum_id|unique:hrm.tbl_rest_info,memorandum_id||unique:hrm.tbl_transfer_ansar,transfer_memorandum_id';
+            $rules['memId'] = 'required|unique:hrm.tbl_memorandum_id,memorandum_id|unique:hrm.tbl_embodiment,memorandum_id|unique:hrm.tbl_rest_info,memorandum_id||unique:hrm.tbl_transfer_ansar,transfer_memorandum_id';
         }
         $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {
+            Log::info($valid->messages());
             return response($valid->messages()->toJson(), 400, ['Content-type' => 'application/json']);
         }
         $data = $request->ansars;

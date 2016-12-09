@@ -136,7 +136,7 @@
                                 data="param"
                                 start-load="range"
                                 field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',gender:'col-sm-3'}"
-                        >
+                        ></filter-template>
                             @else
                                 <filter-template
                                         show-item="['range','unit','thana']"
@@ -149,8 +149,8 @@
                                         start-load="range"
                                         field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
                                 >
-                                    @endif
                                 </filter-template>
+                                    @endif
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <button id="print-report" class="btn btn-default pull-right"><i

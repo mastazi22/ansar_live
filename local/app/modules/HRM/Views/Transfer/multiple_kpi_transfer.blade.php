@@ -7,7 +7,7 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('TransferController', function ($scope, $http) {
+        GlobalApp.controller('TransferController', function ($scope, $http,notificationService) {
             $scope.ansar_id = '';
             $scope.transfering = false;
             $scope.printLetter = false;
@@ -67,7 +67,6 @@
                 $scope.data.status = false;
                 $scope.ansar_id = '';
                 $scope.formData.joining_date = ''
-                reset()
             }
             $scope.transferAnsar = function () {
                 $scope.error = undefined;
@@ -78,23 +77,17 @@
                     data: angular.toJson({ansars: $scope.submitData, memId: $scope.memId,mem_date:$scope.memDate})
                 }).then(function (response) {
                     console.log(response.data)
-                    $('body').notifyDialog({
-                        type: 'success',
-                        message: response.data.message
-                    }).showDialog();
+                    notificationService.notify('success',response.data.message)
                     $scope.tm = response.data.memId
                     $scope.uid = angular.copy($scope.param.unit);
-                    alert($scope.uid)
+//                    alert($scope.uid)
                     $scope.transfering = false;
                     $scope.printLetter = true;
                     reset();
                 }, function (response) {
                     $scope.error = response.data;
                     if ($scope.error.message) {
-                        $('body').notifyDialog({
-                            type: 'error',
-                            message: response.data.message
-                        }).showDialog();
+                        notificationService.notify('errpr',response.data.message)
                         reset1();
                     }
                     $scope.transfering = false;

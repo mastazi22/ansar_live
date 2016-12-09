@@ -225,21 +225,21 @@ GlobalApp.factory('httpService', function ($http) {
             })
 
         },
-        thana: function (id) {
+        thana: function (division,id) {
             var http = '';
-            if (id == undefined) {
-                http = $http({
-                    method: 'get',
-                    url: '/' + prefix + 'HRM/ThanaName'
-                })
-            }
-            else {
+            //if (id == undefined) {
+            //    http = $http({
+            //        method: 'get',
+            //        url: '/' + prefix + 'HRM/ThanaName'
+            //    })
+            //}
+            //else {
                 http = $http({
                     method: 'get',
                     url: '/' + prefix + 'HRM/ThanaName',
-                    params: {id: id}
+                    params: {id: id,division_id:division}
                 })
-            }
+            //}
             return http.then(function (response) {
                 return response.data
             }, function (response) {
@@ -448,11 +448,11 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 })
                 $scope.unitLoad({param:$scope.selected});
             }
-            $scope.loadThana = function (id) {
+            $scope.loadThana = function (d,id) {
                 if(!$scope.show('thana')) return;
                 $scope.thanas = $scope.kpis = []
                 $scope.loading.thana = true;
-                httpService.thana(id).then(function (data) {
+                httpService.thana(d,id).then(function (data) {
                    // alert(data)
                     $scope.loading.thana = false;
                     if(data.status!=undefined){
@@ -496,6 +496,32 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                     $scope.ranks = data;
 
                 })
+            }
+            $scope.changeRange = function (division_id) {
+                console.log(division_id)
+                if($scope.type=='all'){
+                    $scope.loadUnit(division_id)
+                    $scope.loadThana(division_id)
+                }
+                else{
+                    $scope.loadUnit(division_id)
+                }
+            }
+            $scope.changeUnit = function (unit_id) {
+                if($scope.type=='all'){
+                    $scope.loadThana(undefined,unit_id)
+                }
+                else{
+                    $scope.loadThana(undefined,unit_id)
+                }
+            }
+            $scope.changeThana = function (thana_id) {
+                if($scope.type=='all'){
+                    $scope.loadKPI(thana_id)
+                }
+                else{
+                    $scope.loadKPI(thana_id)
+                }
             }
             if($scope.showItem.indexOf('rank')>-1) $scope.loadRank();
             $rootScope.$watch('user', function (n,o) {
@@ -566,9 +592,11 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 }
             })
             $scope.$watch('loadWatch', function (n, o) {
+                //alert(n)
                 if(n!=undefined){
+                    //alert(1)
                     if($scope.watchChange=='thana'){
-                        $scope.loadThana(n)
+                        $scope.loadThana(undefined,n)
                     }
                 }
             })
