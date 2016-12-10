@@ -1,5 +1,6 @@
 <?php
 use App\modules\HRM\Models\AnsarStatusInfo;
+use App\modules\HRM\Models\BlockListModel;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\RestInfoModel;
@@ -376,25 +377,53 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/kpi_list_for_withdraw_cancel', ['as'=>'kpi_list_for_withdraw_cancel','uses'=>'KpiController@kpiListForWithdrawCancel']);
         Route::post('/kpi-withdraw-cancel-update/{id}', ['as'=>'kpi-withdraw-cancel-update','uses'=>'KpiController@kpiWithdrawCancelUpdate'])->where('id','^[0-9]+$');
 //End KPI
-//        Route::get('test',function(){
-//           $data = DB::select(DB::raw("SELECT `tbl_embodiment`.`ansar_id`,MAX(`tbl_transfer_ansar`.`transfered_kpi_join_date`) AS t_date FROM tbl_embodiment
-//INNER JOIN tbl_transfer_ansar ON tbl_embodiment.ansar_id = tbl_transfer_ansar.`ansar_id`
-// WHERE tbl_transfer_ansar.`transfered_kpi_id` = tbl_embodiment.kpi_id
-// GROUP BY `tbl_embodiment`.`ansar_id`;"));
-////            $a = collect($data)->pluck('ansar_id');
-////            $t = collect($data)->pluck('t_date');
-////            $c = [];
-////            foreach($t as $b){
-////                array_push($c,['transfered_date'=>$b]);
-////            }
-////            Log::info($c);
+        Route::get('test',function(){
+//           $data = DB::select(DB::raw("SELECT `tbl_panel_info`.`id`,`tbl_panel_info`.`ansar_id`,`tbl_ansar_parsonal_info`.`mobile_no_self`,`tbl_designations`.`code` FROM `tbl_panel_info`
+// INNER JOIN `tbl_ansar_parsonal_info` ON `tbl_ansar_parsonal_info`.`ansar_id` = `tbl_panel_info`.`ansar_id`
+// INNER JOIN `tbl_ansar_status_info` ON `tbl_ansar_status_info`.`ansar_id` = tbl_ansar_parsonal_info.`ansar_id`
+// INNER JOIN `tbl_designations` ON `tbl_ansar_parsonal_info`.`designation_id` = `tbl_designations`.id
+// WHERE (`tbl_ansar_parsonal_info`.`mobile_no_self` NOT REGEXP '^[0-9]{11}$' OR
+// `tbl_ansar_parsonal_info`.`mobile_no_self` IS NULL) AND tbl_ansar_status_info.`block_list_status` = 0 ORDER BY `tbl_panel_info`.`ansar_id` ASC"));
 //            foreach($data as $d) {
-//                \App\modules\HRM\Models\EmbodimentModel::where('ansar_id', $d->ansar_id)->update(['transfered_date'=>$d->t_date]);
+//                DB::beginTransaction();
+//                try {
+//                    $ansar = AnsarStatusInfo::where('ansar_id', $d->ansar_id)->first();
+//                    if (!$ansar) throw new\Exception('This Ansar doesn`t exists');
+//                    BlockListModel::create([
+//                        'ansar_id' => $d->ansar_id,
+//                        'block_list_from' => $ansar->getStatus()[0],
+//                        'from_id' => $d->id,
+//                        'date_for_block' => Carbon::now(),
+//                        'comment_for_block' => "Invalid mobile no",
+//                        'action_user_id' => 0,
+//                    ]);
+//                    $ansar->update(['block_list_status' => 1]);
+//                    Log::info("SUCCESS ".$d->ansar_id);
+//                    DB::commit();
+//                }catch(\Exception $e){
+//                    Log::info($e->getMessage());
+//                    DB::rollBack();
+//                }
 //
 //            }
-//            return "success";
-//
-//        });
+            $offer_log = \App\modules\HRM\Models\OfferSmsLog::where('offered_date','2016-12-10')->where('reply_type','NO')->get();
+            foreach($offer_log as $ansar){
+                $status_info = AnsarStatusInfo::where('ansar_id', $ansar->ansar_id)->first();
+                $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
+                $panel_info = new PanelModel;
+                $panel_info->ansar_id = $ansar->ansar_id;
+                $panel_info->panel_date = Carbon::now();
+                $panel_info->come_from = 'Offer';
+                $panel_info->ansar_merit_list = 1;
+                $panel_info->memorandum_id = $panel_log->old_memorandum_id;
+                $panel_info->save();
+                $status_info->offer_sms_status = 0;
+                $status_info->pannel_status = 1;
+                $status_info->save();
+            }
+            return "success";
+
+        });
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
     Route::get('/all_notification', function () {
