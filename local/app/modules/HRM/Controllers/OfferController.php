@@ -49,15 +49,8 @@ class OfferController extends Controller
 
     function calculateQuota($id)
     {
-        $offered = OfferSMS::where('district_id', $id)->count('ansar_id');
-        $totalEmbodiedAnsar = DB::table('tbl_embodiment')->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')->where('tbl_kpi_info.unit_id', $id)->count('tbl_embodiment.ansar_id');
-        $quota = OfferQuota::where('unit_id', $id)->select('quota')->first();
-//            return Response::json(['e'=>$totalEmbodiedAnsar,'q'=>$quota,'o'=>$offered]);
-        $total = -1;
-        if ($quota) {
-            $total = ceil(($totalEmbodiedAnsar * $quota->quota) / 100) - $offered;
-        }
-        return $total;
+
+        return Helper::getOfferQuota(Auth::user());
     }
 
     function getKpi(Request $request)
