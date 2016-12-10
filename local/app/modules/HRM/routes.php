@@ -378,34 +378,34 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('/kpi-withdraw-cancel-update/{id}', ['as'=>'kpi-withdraw-cancel-update','uses'=>'KpiController@kpiWithdrawCancelUpdate'])->where('id','^[0-9]+$');
 //End KPI
         Route::get('test',function(){
-//           $data = DB::select(DB::raw("SELECT `tbl_panel_info`.`id`,`tbl_panel_info`.`ansar_id`,`tbl_ansar_parsonal_info`.`mobile_no_self`,`tbl_designations`.`code` FROM `tbl_panel_info`
-// INNER JOIN `tbl_ansar_parsonal_info` ON `tbl_ansar_parsonal_info`.`ansar_id` = `tbl_panel_info`.`ansar_id`
-// INNER JOIN `tbl_ansar_status_info` ON `tbl_ansar_status_info`.`ansar_id` = tbl_ansar_parsonal_info.`ansar_id`
-// INNER JOIN `tbl_designations` ON `tbl_ansar_parsonal_info`.`designation_id` = `tbl_designations`.id
-// WHERE (`tbl_ansar_parsonal_info`.`mobile_no_self` NOT REGEXP '^[0-9]{11}$' OR
-// `tbl_ansar_parsonal_info`.`mobile_no_self` IS NULL) AND tbl_ansar_status_info.`block_list_status` = 0 ORDER BY `tbl_panel_info`.`ansar_id` ASC"));
-//            foreach($data as $d) {
-//                DB::beginTransaction();
-//                try {
-//                    $ansar = AnsarStatusInfo::where('ansar_id', $d->ansar_id)->first();
-//                    if (!$ansar) throw new\Exception('This Ansar doesn`t exists');
-//                    BlockListModel::create([
-//                        'ansar_id' => $d->ansar_id,
-//                        'block_list_from' => $ansar->getStatus()[0],
-//                        'from_id' => $d->id,
-//                        'date_for_block' => Carbon::now(),
-//                        'comment_for_block' => "Invalid mobile no",
-//                        'action_user_id' => 0,
-//                    ]);
-//                    $ansar->update(['block_list_status' => 1]);
-//                    Log::info("SUCCESS ".$d->ansar_id);
-//                    DB::commit();
-//                }catch(\Exception $e){
-//                    Log::info($e->getMessage());
-//                    DB::rollBack();
-//                }
-//
-//            }
+           $data = DB::select(DB::raw("SELECT `tbl_panel_info`.`id`,`tbl_panel_info`.`ansar_id`,`tbl_ansar_parsonal_info`.`mobile_no_self`,`tbl_designations`.`code` FROM `tbl_panel_info`
+ INNER JOIN `tbl_ansar_parsonal_info` ON `tbl_ansar_parsonal_info`.`ansar_id` = `tbl_panel_info`.`ansar_id`
+ INNER JOIN `tbl_ansar_status_info` ON `tbl_ansar_status_info`.`ansar_id` = tbl_ansar_parsonal_info.`ansar_id`
+ INNER JOIN `tbl_designations` ON `tbl_ansar_parsonal_info`.`designation_id` = `tbl_designations`.id
+ WHERE (`tbl_ansar_parsonal_info`.`mobile_no_self` NOT REGEXP '^[0-9]{11}$' OR
+ `tbl_ansar_parsonal_info`.`mobile_no_self` IS NULL) AND tbl_ansar_status_info.`block_list_status` = 0 ORDER BY `tbl_panel_info`.`ansar_id` ASC"));
+            foreach($data as $d) {
+                DB::beginTransaction();
+                try {
+                    $ansar = AnsarStatusInfo::where('ansar_id', $d->ansar_id)->first();
+                    if (!$ansar) throw new\Exception('This Ansar doesn`t exists');
+                    BlockListModel::create([
+                        'ansar_id' => $d->ansar_id,
+                        'block_list_from' => $ansar->getStatus()[0],
+                        'from_id' => $d->id,
+                        'date_for_block' => Carbon::now(),
+                        'comment_for_block' => "Invalid mobile no",
+                        'action_user_id' => 0,
+                    ]);
+                    $ansar->update(['block_list_status' => 1]);
+                    Log::info("SUCCESS ".$d->ansar_id);
+                    DB::commit();
+                }catch(\Exception $e){
+                    Log::info($e->getMessage());
+                    DB::rollBack();
+                }
+
+            }
 //            $offer_log = \App\modules\HRM\Models\OfferSmsLog::where('offered_date','2016-12-10')->where('reply_type','NO')->get();
 //            foreach($offer_log as $ansar){
 //                $status_info = AnsarStatusInfo::where('ansar_id', $ansar->ansar_id)->first();
