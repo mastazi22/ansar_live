@@ -28,7 +28,7 @@ class SMSController extends Controller
 
     function receiveSMS()
     {
-        $body = Input::get('body');
+        $body = preg_replace('/\s+/',' ',Input::get('body'));
         $sender_no = Input::get('sender');
         $body_part = explode(' ', $body);
         Log::info("SMS BODY" . $body);
