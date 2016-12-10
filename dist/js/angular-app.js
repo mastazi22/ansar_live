@@ -522,7 +522,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                     $scope.loadKPI(undefined,undefined,thana_id)
                 }
                 else{
-                    $scope.loadKPI(thana_id)
+                    $scope.loadKPI(undefined,undefined,thana_id)
                 }
             }
             if($scope.showItem.indexOf('rank')>-1) $scope.loadRank();
