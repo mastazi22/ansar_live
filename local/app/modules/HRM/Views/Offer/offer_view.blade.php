@@ -33,7 +33,7 @@
             var promis;
             $scope.districtId = '{{Auth::user()->district_id}}'
             var userType = '{{Auth::user()->type}}'
-            if (parseInt(userType) == 11 || parseInt(userType) == 33) {
+            if (parseInt(userType) == 11 || parseInt(userType) == 33||parseInt(userType) == 77) {
                 $scope.isAdmin = true;
                 $http({
                     url: '{{URL::to('HRM/DistrictName')}}',
@@ -209,9 +209,10 @@
                     <div class="col-md-8 col-centered">
                         <div class="box box-solid">
                             <div class="box-body">
-                                <h4 ng-if="!isAdmin">You have total <span style="text-decoration: underline"
-                                                                          ng-class="{'text-green':offerQuota>50,'text-danger':offerQuota<=10}">[[offerQuota]]</span>
-                                    offer left</h4>
+                                <h4 ng-if="!isAdmin">You have total
+                                    <span style="text-decoration: underline" ng-class="{'text-green':offerQuota>50,'text-danger':offerQuota<=10}">[[offerQuota]]</span>
+                                    offer left
+                                </h4>
 
                                 <div class="row">
                                     <div class="col-md-4" ng-if="isAdmin">
