@@ -121,7 +121,7 @@ class SMSController extends Controller
                             $status_info = AnsarStatusInfo::where('ansar_id', $ansar->ansar_id)->first();
                             $offer_log = new OfferSmsLog;
                             switch ($offered_ansar->come_from) {
-                                case 'panel':
+                                case 'Panel':
                                     $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
                                     $panel_info = new PanelModel;
                                     $panel_info->ansar_id = $ansar->ansar_id;
