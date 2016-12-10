@@ -3,15 +3,15 @@
         <ul class="pull-right" style="margin-top: 80px;width:33%">
             <li>{{$user?$user->first_name.' '.$user->last_name:'n\a'}}</li>
             <li>
-                @if($user&&trim($user->division)=="DMA")
+                @if($user&&(trim($user->division)=="DMA"||trim($user->division)=="CMA"))
                     জোন অধিনায়ক<br>
                 @else
                     জেলা কমান্ড্যান্ট<br>
                 @endif
             </li>
             <li>
-                @if($user&&trim($user->division)=="DMA")
-                    {{$user?str_replace('ঢাকা',$user->division_bng,$user->unit):'n\a'}}
+                @if($user&&(trim($user->division)=="DMA"||trim($user->division)=="CMA"))
+                    {{$user?preg_replace('/\).+/',')',preg_replace('/.+\(/',$user->division_bng.'(',$user->unit)):'n\a'}}
                 @else
                     {{$user?$user->unit:'n\a'}}
                 @endif
@@ -64,7 +64,7 @@
     <div class="footer-bottom">
         <ul class="pull-right" style="width: 33% !important;">
             <li>
-                @if($user&&trim($user->division)=="DMA")
+                @if($user&&(trim($user->division)=="DMA"||trim($user->division)=="CMA"))
                     জোন অধিনায়ক<br>
                 @else
                     জেলা কমান্ড্যান্ট<br>

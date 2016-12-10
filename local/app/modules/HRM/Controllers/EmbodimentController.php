@@ -127,7 +127,7 @@ class EmbodimentController extends Controller
         $kpi_id = $request->input('kpi_id');
         $rules = [
             'kpi_id' => 'required|numeric|regex:/^[0-9]+$/',
-            'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
+            'ansar_id' => 'required|numeric|regex:/^[0-9]+$/|exists:hrm.tbl_sms_receive_info,ansar_id',
             'reporting_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/'],
             'joining_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/','joining_date_validate:reporting_date'],
             'division_name_eng' => 'required|numeric|regex:/^[0-9]+$/',
