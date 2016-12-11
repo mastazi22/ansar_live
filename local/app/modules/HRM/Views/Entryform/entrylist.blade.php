@@ -417,11 +417,11 @@
                                         {{--checker reject end--}}
 
                                         {{--admin,dc,rc,dg edit--}}
-                                        <a ng-if="(userType == 11 || userType == 22 || userType == 33 || userType == 66) && (ansar.verified == 0 || ansar.verified == 1)"
+                                        <a ng-if="(userType == 11 ||userType == 77|| userType == 22 || userType == 33 || userType == 66) && (ansar.verified == 0 || ansar.verified == 1)"
                                            class="btn btn-primary btn-xs" title="Edit"
                                            href="{{ URL::to('HRM/editEntry/')}}/[[ansar.ansar_id]]"><span
                                                     class="glyphicon glyphicon-edit"></span></a>
-                                        <a ng-if="(userType == 11 || userType == 22 || userType == 33 || userType == 66) && (ansar.verified == 2)" class="btn btn-primary btn-xs"
+                                        <a ng-if="(userType == 11||userType == 77 || userType == 22 || userType == 33 || userType == 66) && (ansar.verified == 2)" class="btn btn-primary btn-xs"
                                            href="{{ URL::to('HRM/editVerifiedEntry/')}}/[[ansar.ansar_id]]" title="Edit">
                                             <span class="glyphicon glyphicon-edit"></span>
                                         </a>
