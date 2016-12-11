@@ -178,9 +178,9 @@
                             <tr ng-if="isSearching&&searchedUser.length==0">
                                 <td colspan="7">No user found</td>
                             </tr>
-                            <tr ng-if="isSearching&&searchedUser.length!=0" ng-repeat="user in searchedUser" ng-class="{'looged-in-user':user.logged_in}">
+                            <tr ng-if="isSearching&&searchedUser.length!=0" ng-repeat="user in searchedUser">
                                 <td>[[(limit*currentPage)+$index+1]]</td>
-                                <td>[[user.user_name]]</td>
+                                <td><i ng-if="user.logged_in" style="vertical-align: middle;" class="fa fa-circle text-success"></i><span style="padding-left: 5px">[[user.user_name]]</span> </td>
                                 <td>
                                     [[user.first_name+" "+user.last_name]]
                                 </td>
@@ -224,9 +224,9 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr ng-show="!isSearching" ng-repeat="user in users" ng-class="{'logged-in-user':user.logged_in}">
+                            <tr ng-show="!isSearching" ng-repeat="user in users">
                                 <td>[[(limit*currentPage)+$index+1]]</td>
-                                <td>[[user.user_name]]</td>
+                                <td><i ng-if="user.logged_in" style="vertical-align: middle;" class="fa fa-circle text-success"></i><span style="padding-left: 5px">[[user.user_name]]</span> </td>
                                 <td>
                                     [[user.first_name+" "+user.last_name]]
                                 </td>

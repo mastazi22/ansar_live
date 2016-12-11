@@ -185,7 +185,7 @@ class DGController extends Controller
 //        return $request->all();
         $rules = [
             'kpi_id' => 'required|numeric|regex:/^[0-9]+$/',
-            'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
+            'ansar_id' => 'required|numeric|regex:/^[0-9]+$/|exists:hrm.tbl_ansar_status_info,ansar_id',
             'mem_id' => 'required',
             'reporting_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/'],
             'joining_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/', 'joining_date_validate:reporting_date'],
@@ -226,8 +226,8 @@ class DGController extends Controller
             $memorandum_entry->mem_date = Carbon::parse($request->mem_date);
             $memorandum_entry->save();
 
-            CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'EMBODIED', 'from_state' => $status, 'to_state' => 'EMBODIED', 'action_by' => auth()->user()->id]);
-            CustomQuery::addDGlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'EMBODIED', 'from_state' => $status, 'to_state' => 'EMBODIED']);
+            CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DIRECT EMBODIMENT', 'from_state' => $status, 'to_state' => 'EMBODIED', 'action_by' => auth()->user()->id]);
+//            CustomQuery::addDGlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'EMBODIED', 'from_state' => $status, 'to_state' => 'EMBODIED']);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -274,7 +274,7 @@ class DGController extends Controller
             $embodiment_infos->saveLog('Rest', Carbon::parse($request->input('dis_date'))->format("Y-m-d"), $request->input('comment'), $request->reason);
             AnsarStatusInfo::where('ansar_id', $request->input('ansar_id'))->update(['embodied_status' => 0, 'rest_status' => 1]);
             $embodiment_infos->delete();
-            CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DISEMBODIMENT', 'from_state' => 'EMBODIED', 'to_state' => 'REST', 'action_by' => auth()->user()->id]);
+            CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DIRECT DISEMBODIMENT', 'from_state' => 'EMBODIED', 'to_state' => 'REST', 'action_by' => auth()->user()->id]);
             DB::commit();
         } catch (\Exception $e) {
             return Response::json(['status' => false, 'message' => $e->getMessage()]);
@@ -327,7 +327,7 @@ class DGController extends Controller
             $transfer->action_by = Auth::user()->id;
             $transfer->save();
             DB::commit();
-            CustomQuery::addDGlog(['ansar_id' => $ansar_id, 'action_type' => 'TRANSFER', 'from_state' => $c_kpi_id, 'to_state' => $t_kpi_id]);
+            CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DIRECT TRANSFER', 'from_state' => $e_id->kpi_id, 'to_state' => $t_kpi_id, 'action_by' => auth()->user()->id]);
         } catch (\Exception $e) {
             DB::rollback();
             return Response::json(['status' => false, 'message' => $e->getMessage()]);
@@ -1369,14 +1369,14 @@ class DGController extends Controller
                     'rest_status' => 1,
                     'pannel_status' => 0
                 ]);
-                CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'CANCEL PANEL', 'from_state' => 'PANEL', 'to_state' => 'REST', 'action_by' => auth()->user()->id]);
+                CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DIRECT CANCEL PANEL', 'from_state' => 'PANEL', 'to_state' => 'REST', 'action_by' => auth()->user()->id]);
             } else {
                 $panel_info->saveLog("Free", Carbon::now(), $cancel_panel_comment);
                 $ansar->update([
                     'free_status' => 1,
                     'pannel_status' => 0
                 ]);
-                CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'CANCEL PANEL', 'from_state' => 'PANEL', 'to_state' => 'FREE', 'action_by' => auth()->user()->id]);
+                CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DIRECT CANCEL PANEL', 'from_state' => 'PANEL', 'to_state' => 'FREE', 'action_by' => auth()->user()->id]);
             }
             $panel_info->delete();
             DB::commit();
@@ -1479,8 +1479,7 @@ class DGController extends Controller
                         'free_status' => 0,
                         'pannel_status' => 1,
                     ]);
-                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'PANEL', 'from_state' => 'FREE', 'to_state' => 'PANELED', 'action_by' => auth()->user()->id]);
-                    CustomQuery::addDGlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'PANELED', 'from_state' => 'FREE', 'to_state' => 'PANELED']);
+                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DIRECT PANEl', 'from_state' => 'FREE', 'to_state' => 'PANELED', 'action_by' => auth()->user()->id]);
                     break;
 
                 case AnsarStatusInfo::REST_STATUS:
@@ -1498,8 +1497,7 @@ class DGController extends Controller
                         'pannel_status' => 1,
                     ]);
                     $rest_info->delete();
-                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'PANEL', 'from_state' => 'REST', 'to_state' => 'PANELED', 'action_by' => auth()->user()->id]);
-                    CustomQuery::addDGlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'PANEL', 'from_state' => 'REST', 'to_state' => 'PANELED']);
+                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DIRECT PANEl', 'from_state' => 'REST', 'to_state' => 'PANELED', 'action_by' => auth()->user()->id]);
                     break;
                 default:
                     throw new \Exception('This Ansar can`t be paneled. Because he is not in Free or Rest status');
@@ -1543,9 +1541,12 @@ class DGController extends Controller
                     $a->panel->saveLog('Offer', Carbon::today());
                     $a->status->update(['pannel_status' => 0, 'offer_sms_status' => 1]);
                     $a->panel->delete();
+                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DIRECT OFFER', 'from_state' => 'PANEL', 'to_state' => 'OFFER', 'action_by' => auth()->user()->id]);
+
                     break;
                 case AnsarStatusInfo::REST_STATUS:
                     $a->status->update(['rest_status' => 0, 'offer_sms_status' => 1]);
+                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DIRECT OFFER', 'from_state' => 'REST', 'to_state' => 'OFFER', 'action_by' => auth()->user()->id]);
                     break;
                 default:
                     throw new \Exception('Invalid Ansar ID');
