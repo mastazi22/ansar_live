@@ -194,6 +194,9 @@
 
                             var data = {
                                 labels: labels,
+                                click: function (event) {
+                                    alert(event.datapoint.y)
+                                },
                                 datasets: [
                                     {
                                         fillColor: "rgba(0,60,100,1)",
