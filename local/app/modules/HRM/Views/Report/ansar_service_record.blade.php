@@ -66,31 +66,15 @@
             }
         })
         $(function () {
-            function beforePrint(){
-                $("#print-area").remove();
-//                console.log($("body").find("#print-body").html())
-                $('body').append('<div id="print-area">'+$("#ansar_service_record").html()+'</div>')
-            }
-            function afterPrint(){
-                $("#print-area").remove()
-            }
-            if(window.matchMedia){
-                var mediaQueryList = window.matchMedia('print');
-                mediaQueryList.addListener(function(mql) {
-                    if (mql.matches) {
-                        beforePrint();
-                    } else {
-                        afterPrint();
-                    }
-                });
-            }
-            window.onbeforeprint = beforePrint;
-            window.onafterprint = afterPrint;
             $('body').on('click','#print-report', function (e) {
                 //alert("pppp")
                 e.preventDefault();
+                $("#print-area").remove();
+//                console.log($("body").find("#print-body").html())
+                $('body').append('<div id="print-area">'+$("#ansar_service_record").html()+'</div>')
                // beforePrint()
                 window.print();
+                $("#print-area").remove()
                // afterPrint()
             })
         })
@@ -192,19 +176,7 @@
                                                 <tr>
                                                     <td>[[ansarDetail.api.panel_date?dateConvert(ansarDetail.api.panel_date):"--"]]</td>
                                                     <td>[[ansarDetail.api.memorandum_id?ansarDetail.api.memorandum_id:"--"]]</td>
-                                                    <td ng-if="1==ansarDetail.asi.block_list_status">Blocked</td>
-                                                    <td ng-if="0==ansarDetail.asi.block_list_status">
-                                                        <span ng-if="1==ansarDetail.asi.free_status">Free</span>
-                                                        <span ng-if="1==ansarDetail.asi.pannel_status">Panel</span>
-                                                        <span ng-if="1==ansarDetail.asi.offer_sms_status">Offered</span>
-                                                        <span ng-if="1==ansarDetail.asi.embodied_status">Embodied</span>
-                                                        <span ng-if="1==ansarDetail.asi.freezing_status">Freeze</span>
-                                                        <span ng-if="1==ansarDetail.asi.early_retierment_statBlockedus">Early retirement</span>
-                                                        <span ng-if="1==ansarDetail.asi.block_list_status"></span>
-                                                        <span ng-if="1==ansarDetail.asi.black_list_status">Blacked</span>
-                                                        <span ng-if="1==ansarDetail.asi.rest_status">Rest</span>
-                                                        <span ng-if="1==ansarDetail.asi.retierment_status">Retirement</span>
-                                                    </td>
+                                                    <td>[[ansarDetail.status]]</td>
                                                     <td>[[ansarDetail.aod.offerDate?dateConvert(ansarDetail.aod.offerDate):'--']]</td>
                                                     <td>[[ansarDetail.aod.offerUnit?ansarDetail.aod.offerUnit:'--']]</td>
                                                     <td>[[ansarDetail.aoci.offerCancel?dateConvert(ansarDetail.aoci.offerCancel):'--']]</td>
