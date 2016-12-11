@@ -343,7 +343,7 @@ class BlockBlackController extends Controller
     public function unblockListEntry(Request $request)
     {
         $rules = [
-          'ansar_id'=>'required|regex:/^[0-9]+$/',
+          'ansar_id'=>'required|regex:/^[0-9]+$/|exists:hrm.tbl_blocklist_info,ansar_id',
           'unblock_date'=>'required',
         ];
         $this->validate($request,$rules);
@@ -384,6 +384,7 @@ class BlockBlackController extends Controller
             }
             DB::commit();
         } catch (\Exception $e) {
+            DB::rollBack();
             return Redirect::back()->with('error_message',$e->getMessage());
         }
         return Redirect::route('unblocklist_entry_view')->with('success_message', 'Ansar Removed from Blocklist Successfully');

@@ -292,9 +292,17 @@
                             <button ng-disabled="!memId||submitData.length<=0" class="btn btn-primary btn-md"
                                     ng-click="transferAnsar()">Transfer
                             </button>
-                            <a ng-if="printLetter" target="_blank" class="btn btn-primary" style="margin-left: 10px"
-                               href="{{URL::to('HRM/print_letter')}}?id=[[tm]]&unit=[[uid]]&type=TRANSFER&view=full">Print
-                                Letter</a>
+                            {!! Form::open(['route'=>'print_letter','target'=>'_blank','ng-if'=>'printLetter','style'=>'display:inline-block']) !!}
+                            {!! Form::hidden('option','memorandumNo') !!}
+                            {!! Form::hidden('id','[[tm]]') !!}
+                            {!! Form::hidden('type','TRANSFER') !!}
+                            @if(auth()->user()->type!=22)
+                                {!! Form::hidden('unit','[[uid]]') !!}
+                            @else
+                                {!! Form::hidden('unit',auth()->user()->district?auth()->user()->district->id:'') !!}
+                            @endif
+                            <button class="btn btn-primary"><i class="fa fa-print"></i>&nbsp;Print Transfer Letter</button>
+                            {!! Form::close() !!}
                         </div>
                     </div>
                 </div>
