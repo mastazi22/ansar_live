@@ -126,14 +126,26 @@
                         console.log(data)
                     },
                     success: function (r) {
-                        if (r.status) $('body').notifyDialog({
-                            type: 'success',
-                            message: 'Profile Image Upadated'
-                        }).showDialog()
-                        else $('body').notifyDialog({
-                            type: 'error',
-                            message: 'Can not update profile image. Try again later'
-                        }).showDialog()
+                        if (r.status){
+                            noty({
+                                type: 'success',
+                                text: r.message,
+                                layout: 'top',
+                                maxVisible: 5,
+                                timeout: 5000,
+                                dismissQueue: true
+                            })
+                        }
+                        else {
+                            noty({
+                                type: 'error',
+                                text: r.message,
+                                layout: 'top',
+                                maxVisible: 5,
+                                timeout: 5000,
+                                dismissQueue: true
+                            })
+                        }
                         $("#pppppp").css('display', 'none')
                         $("#pppppp").css('width', 0 + '%').attr('aria-valuenow', 0);
 //                        console.log(r)

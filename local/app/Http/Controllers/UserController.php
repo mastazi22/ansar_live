@@ -312,8 +312,14 @@ class UserController extends Controller
 
 
 
-    function changeUserImage()
+    function changeUserImage(Request $request)
     {
+        $valid = Validator::make($request->all(),[
+            'image_file'=>'required'
+        ]);
+        if($valid->fails()){
+            return Response::json(['status' => false,'message'=>'Image file required']);
+        }
         $file = Input::file('image_file');
         //return $file;
         $user_folder = storage_path('user/img');
@@ -321,16 +327,23 @@ class UserController extends Controller
             File::makeDirectory($user_folder, 0777, true);
         }
 //        if(is_null($file)) return ;
-        $file_name = Auth::user()->id . "." . $file->getClientOriginalExtension();
-        $path = $user_folder . '/' . $file_name;
-        if (File::exists($path)) File::delete($path);
-        $status = Image::make($file)->resize(200, 200)->save($path);
-        if ($status) {
-            $p = Auth::user()->userProfile;
-            $p->profile_image = 'user/img/' . $file_name;
-            $p->save();
-            return Response::json(['status' => true]);
-        } else return Response::json(['status' => false]);
+        DB::beginTransaction();
+        try {
+            $file_name = Auth::user()->id . "." . $file->getClientOriginalExtension();
+            $path = $user_folder . '/' . $file_name;
+            if (File::exists($path)) File::delete($path);
+            $status = Image::make($file)->resize(200, 200)->save($path);
+            if ($status) {
+                $p = Auth::user()->userProfile;
+                $p->profile_image = 'user/img/' . $file_name;
+                $p->save();
+                DB::commit();
+                return Response::json(['status' => true,'message'=>'Image upload complete']);
+            } else return Response::json(['status' => false,'message'=>'An error occur while uploading image. Try again later']);
+        }catch(\Exception $e){
+            DB::rollBack();
+            return Response::json(['status' => false,'message'=>'An error occur while uploading image. Try again later']);
+        }
     }
 
 
