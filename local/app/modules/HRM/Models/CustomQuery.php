@@ -221,7 +221,7 @@ class CustomQuery
         $usertype = $user->type;
         $userId = $user->id;
         $ansar = '';
-        if ($usertype == 11 || $usertype == 11 || $usertype == 22 || $usertype == 33) {
+        if ($usertype == 11 || $usertype == 77 || $usertype == 22 || $usertype == 33|| $usertype == 66) {
             $ansar = DB::table('tbl_ansar_parsonal_info')
                 ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
                 ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
