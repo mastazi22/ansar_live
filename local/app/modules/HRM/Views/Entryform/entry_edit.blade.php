@@ -23,9 +23,12 @@
                     $timeout(function () {
 
                     })
-                    if(attrs.datePickerDir)$(element).datePicker({
-                        defaultValue:attrs.value
-                    });
+                    if(attrs.datePickerDir) {
+                        //alert(attrs.value)
+                        $(element).datePicker({
+                            defaultValue: attrs.value
+                        });
+                    }
                 }
 
             }
@@ -120,8 +123,8 @@
                 })
             };
             $scope.loadSession()
-            $scope.addEduinput = function () {
-
+            $scope.addEduinput = function (event) {
+                if(event) event.preventDefault()
                 $scope.eduRows.push([
                     {text: "শিক্ষা প্রতিষ্ঠানের নাম", value: '', name: 'institute_name[]'},
                     {text: "Passing year", value: '', name: 'passing_year[]'},
@@ -159,8 +162,8 @@
                 $scope.eduEngRows.splice(index, 1);
             }
 
-            $scope.addTraininput = function () {
-
+            $scope.addTraininput = function (event) {
+                if(event) event.preventDefault();
                 $scope.trainingRows.push([
                     {text: "পদবী", value: '', name: 'training_designation[]', type: 'dropdown', class_name: ''},
                     {text: "প্রতিষ্ঠান", value: '', name: 'institute[]', type: 'text', class_name: ''},
@@ -226,14 +229,14 @@
                         },
                         {
                             text: "Training start date",
-                            value: moment('{{$training->training_start_date}}').format("D-MMM-YYYY"),
+                            value: '{{$training->training_start_date}}',
                             name: 'training_start[]',
                             type: '',
                             class_name: 'date-picker-dir'
                         },
                         {
                             text: "Training end date",
-                            value: moment('{{$training->training_end_date}}').format("D-MMM-YYYY"),
+                            value: '{{$training->training_end_date}}',
                             name: 'training_end[]',
                             type: '',
                             class_name: 'date-picker-dir'
@@ -263,14 +266,14 @@
                 },
                 {
                     text: "Training start date",
-                    value: moment('{{$training->training_start_date_eng}}').format("D-MMM-YYYY"),
+                    value: '{{$training->training_start_date_eng}}',
                     name: 'training_start_eng[]',
                     type: '',
                     class_name: 'date-picker-dir'
                 },
                 {
                     text: "Training end date",
-                    value: moment('{{$training->training_end_date_eng}}').format("D-MMM-YYYY"),
+                    value: '{{$training->training_end_date_eng}}',
                     name: 'training_end_eng[]',
                     type: '',
                     class_name: 'date-picker-dir'
@@ -641,7 +644,7 @@
                                                     <input class="form-control picker " id="data_of_birth"
                                                            name="data_of_birth" date-picker-dir="datePickerDir"
                                                            placeholder="Date of birth"
-                                                           value="[[formatDate('{{ $ansarAllDetails->data_of_birth}}')]]">
+                                                           value="{{ $ansarAllDetails->data_of_birth}}">
                                                     <span style="color:red"
                                                           ng-show="formSubmitResult.error.data_of_birth[0]">[[ formSubmitResult.error.data_of_birth[0] ]]</span>
                                                 </div>
@@ -1113,7 +1116,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td style=" border-top:0px;background: #ffffff;">
-                                                                <button class="btn btn-info" ng-click="addEduinput()" >Add more</button>
+                                                                <a class="btn btn-info" ng-click="addEduinput($event)" >Add more</a>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -1158,7 +1161,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td style=" border-top:0px;background: #ffffff;">
-                                                            <button class="btn btn-info" ng-click="addEduinput()" >Add more</button>
+                                                            <a class="btn btn-info" ng-click="addEduinput()" >Add more</a>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -1209,7 +1212,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td style=" border-top:0px;background: #ffffff;">
-                                                            <button class="btn btn-info" ng-click="addEduinput()" >Add more</button>
+                                                            <a class="btn btn-info" ng-click="addTraininput()" >Add more</a>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -1259,7 +1262,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td style=" border-top:0px;background: #ffffff;">
-                                                            <button class="btn btn-info" ng-click="addEduinput()" >Add more</button>
+                                                            <a class="btn btn-info" ng-click="addTraininput($event)" >Add more</a>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -1297,7 +1300,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td style=" border-top:0px;background: #ffffff;">
-                                                            <button class="btn btn-info" ng-click="addEduinput()" >Add more</button>
+                                                            <a class="btn btn-info" ng-click="addNomineeinput()" >Add more</a>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -1335,7 +1338,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td style=" border-top:0px;background: #ffffff;">
-                                                            <button class="btn btn-info" ng-click="addEduinput()" >Add more</button>
+                                                            <a class="btn btn-info" ng-click="addNomineeinput()" >Add more</a>
                                                         </td>
                                                     </tr>
                                                 </table>
@@ -1415,7 +1418,7 @@
 
                                                 <div class="col-sm-10">
                                                     <input class="form-control  " id="email_self" name="email_self"
-                                                           type="email" placeholder="Email(Self)"
+                                                           type="text" placeholder="Email(Self)"
                                                            value="{{ $ansarAllDetails->email_self}}">
                                                 </div>
 
@@ -1427,7 +1430,7 @@
 
                                                 <div class="col-sm-10">
                                                     <input class="form-control  " id="email_request"
-                                                           name="email_request" type="email"
+                                                           name="email_request" type="text"
                                                            placeholder="Email(Request)"
                                                            value="{{ $ansarAllDetails->email_request}}">
                                                 </div>
