@@ -278,7 +278,7 @@
             "name": "Add Ansar In Block List"
           },
           {
-            "value": "multiple_kpi_transfer_process,unblocklist_entry",
+            "value": "unblocklist_entry_view,unblocklist_entry",
             "name": "Remove Ansar from Blocklist"
           }
         ]

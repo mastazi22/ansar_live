@@ -57,6 +57,7 @@ return [
         "blacklist_entry_view,blacklist_entry",
         "unblacklist_entry_view,unblacklist_entry",
         "blocklist_entry_view,blocklist_entry",
+        "unblocklist_entry_view,unblocklist_entry",
         "multiple_kpi_transfer_process,unblocklist_entry",
         "transfer_process,get_embodied_ansar,complete_transfer_process",
         "multiple_kpi_transfer_process,search_kpi_by_ansar,confirm_transfer",
