@@ -531,7 +531,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 if($rootScope.user.usertype.type_name=='DC'){
                     $scope.selected.range = $rootScope.user.district.division_id
                     $scope.selected.unit = $rootScope.user.district.id
-                    $scope.loadThana($rootScope.user.district.id)
+                    $scope.loadThana(undefined,$rootScope.user.district.id)
                 }
                 else if($rootScope.user.usertype.type_name=='RC'){
                     $scope.selected.range = $rootScope.user.division.id
