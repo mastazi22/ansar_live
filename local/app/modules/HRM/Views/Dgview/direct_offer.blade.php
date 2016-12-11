@@ -178,6 +178,20 @@
                                     </p>
                                 </div>
                                 <div class="form-group">
+                                    <label class="control-label">Last KPI Name</label>
+
+                                    <p>
+                                        [[ansarDetail.ansar_details.kpi_name?ansarDetail.ansar_details.kpi_name:'--']]
+                                    </p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Last KPI Unit</label>
+
+                                    <p>
+                                        [[ansarDetail.ansar_details.tt?ansarDetail.ansar_details.tt:'--']]
+                                    </p>
+                                </div>
+                                <div class="form-group">
                                     <label class="control-label">Last Disembodied Date</label>
 
                                     <p>
