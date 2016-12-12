@@ -1,4 +1,4 @@
-<h3 style="text-align: center">Transfer Letter&nbsp;&nbsp;<a href="#" id="print-report"><i class="fa fa-print"></i></a></h3>
+@if($i==0)<h3 style="text-align: center">Transfer Letter&nbsp;&nbsp;<a href="#" id="print-report"><i class="fa fa-print"></i></a></h3>@endif
 <div class="letter">
     <div class="letter-header">
         <div class="header-top" style="background: none">
@@ -18,7 +18,7 @@
             <h4>“অফিস আদেশ”</h4>
         </div>
         <p class="letter-content-top">
-            প্রশাসনিক কার্যক্রমের অংশ হিসেবে এবং ক্যাম্পের শৃঙ্খলার মানসমুন্নত রাখার স্বার্থে {{$user?$user->unit:'n\a'}} জেলার বিভিন্ন উপজেলার নিম্নবর্ণিত সংস্থার <span style="border-bottom: 1px dotted #000000;padding: 0 10px">{{LanguageConverter::engToBng(count($ta))}}</span> জন অঙ্গীভূত আনসার সদস্যকে সংশ্লিষ্ট আনসার ক্যাম্পে বদলি করা হলো।
+            প্রশাসনিক কার্যক্রমের অংশ হিসেবে এবং ক্যাম্পের শৃঙ্খলার মানসমুন্নত রাখার স্বার্থে {{$user?$user->unit:'n\a'}} জেলার বিভিন্ন উপজেলার নিম্নবর্ণিত সংস্থার <span style="border-bottom: 1px dotted #000000;padding: 0 10px">{{LanguageConverter::engToBng(count($result))}}</span> জন অঙ্গীভূত আনসার সদস্যকে সংশ্লিষ্ট আনসার ক্যাম্পে বদলি করা হলো।
         </p>
         <div class="letter-content-middle">
             <table class="table table-bordered">
@@ -30,17 +30,19 @@
                     <th>বর্তমান সংস্থার নাম</th>
                     <th>বদলিক্রিত সংস্থার নাম</th>
                 </tr>
-                <?php $i=1; ?>
-                @foreach($ta as $r)
+                <?php $ii=1; ?>
+                @for($j=$i*5;$j<($i+1)*5;$j++)
+                    @if(isset($result[$j]))
                     <tr>
-                        <td>{{LanguageConverter::engToBng($i++)}}</td>
-                        <td>{{LanguageConverter::engToBng($r->ansar_id)}}</td>
-                        <td>{{$r->rank}}</td>
-                        <td style="width:120px">{{$r->name}}<br>{{$r->father_name}}</td>
-                        <td>{{$r->p_kpi_name}}</td>
-                        <td>{{$r->t_kpi_name}}</td>
+                        <td>{{LanguageConverter::engToBng($ii++)}}</td>
+                        <td>{{LanguageConverter::engToBng($result[$j]->ansar_id)}}</td>
+                        <td>{{$result[$j]->rank}}</td>
+                        <td style="width:120px">{{$result[$j]->name}}<br>{{$result[$j]->father_name}}</td>
+                        <td>{{$result[$j]->p_kpi_name}}</td>
+                        <td>{{$result[$j]->t_kpi_name}}</td>
                     </tr>
-                    @endforeach
+                    @endif
+                    @endfor
             </table>
         </div>
         <p class="letter-content-last">

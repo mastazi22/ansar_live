@@ -1,4 +1,4 @@
-<h3 style="text-align: center">Embodiment Letter&nbsp;&nbsp;<a href="#" id="print-report"><i class="fa fa-print"></i></a></h3>
+@if($i==0)<h3 style="text-align: center">Embodiment Letter&nbsp;&nbsp;<a href="#" id="print-report"><i class="fa fa-print"></i></a></h3>@endif
 <div class="letter">
     <div class="letter-header">
         <div class="header-top" style="background: none !important;">
@@ -32,18 +32,20 @@
                     <th>সংস্থার নাম </th>
                     <th>অঙ্গিভুতির তারিখ </th>
                 </tr>
-                <?php $i=1; ?>
-                @foreach($result as $r)
+                <?php $ii=1; ?>
+                @for($j=$i*5;$j<($i+1)*5;$j++)
+                    @if(isset($result[$j]))
                     <tr>
-                        <td>{{LanguageConverter::engToBng($i++)}}</td>
-                        <td>{{LanguageConverter::engToBng($r->ansar_id)}}</td>
-                        <td>{{$r->rank}}</td>
-                        <td style="width:120px">{{$r->name}}<br>{{$r->father_name}}</td>
-                        <td>{{$r->village_name}},&nbsp;{{$r->pon}},&nbsp;{{$r->thana}},&nbsp;{{$r->unit}}</td>
-                        <td>{{$r->kpi_name}}</td>
-                        <td>{{LanguageConverter::engToBng(date('d/m/Y',strtotime($r->joining_date)))}}</td>
+                        <td>{{LanguageConverter::engToBng($ii++)}}</td>
+                        <td>{{LanguageConverter::engToBng($result[$j]->ansar_id)}}</td>
+                        <td>{{$result[$j]->rank}}</td>
+                        <td style="width:120px">{{$r->name}}<br>{{$result[$j]->father_name}}</td>
+                        <td>{{$result[$j]->village_name}},&nbsp;{{$result[$j]->pon}},&nbsp;{{$result[$j]->thana}},&nbsp;{{$result[$j]->unit}}</td>
+                        <td>{{$result[$j]->kpi_name}}</td>
+                        <td>{{LanguageConverter::engToBng(date('d/m/Y',strtotime($result[$j]->joining_date)))}}</td>
                     </tr>
-                @endforeach
+                    @endif
+                @endfor
             </table>
         </div>
         @include('HRM::Letter.letter_footer',['user'=>$user])

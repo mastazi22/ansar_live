@@ -35,6 +35,7 @@
                 </tr>
                 <?php $ii=1 ?>
                 @for($j=$i*5;$j<($i+1)*5;$j++)
+                    @if(isset($result[$j]))
                     <tr>
                         <td>{{LanguageConverter::engToBng($ii++)}}</td>
                         <td>{{LanguageConverter::engToBng($result[$j]->ansar_id)}}</td>
@@ -45,6 +46,7 @@
                         <td>{{LanguageConverter::engToBng(date('d/m/Y',strtotime($result[$j]->joining_date)))}}</td>
                         <td>{{LanguageConverter::engToBng(date('d/m/Y',strtotime($result[$j]->release_date)))}}</td>
                     </tr>
+                    @endif
                 @endfor
                 @if(count($result)<=0)
                     <tr>
