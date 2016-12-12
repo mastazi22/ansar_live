@@ -1,4 +1,4 @@
-@if($i==0)<h3 style="text-align: center">Disembodiment Letter&nbsp;&nbsp;<a href="#" id="print-report"><i class="fa fa-print"></i></a></h3>@endif
+@if($i==0)<h3 style="text-align: center" class="print-hide">Disembodiment Letter&nbsp;&nbsp;<a href="#" id="print-report"><i class="fa fa-print"></i></a></h3>@endif
 <div class="letter">
     <div class="letter-header">
         <div class="header-top" style="background: none">
