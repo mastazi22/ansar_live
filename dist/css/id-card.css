@@ -174,11 +174,11 @@
     font-style: italic;
 }
 @media print {
-    @page {
-        margin: .05in .05in .05in .05in;
-    }
+    
     #ansar-id-card-front{
         width:100%;
+        padding-left: 2mm !important;
+        padding-right: 2mm !important;
     }
     .card-header-right-part h4,.card-header-right-part h5{
         font-size: 13px !important;
