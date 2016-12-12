@@ -826,9 +826,6 @@ class EmbodimentController extends Controller
                     $e_ansar = EmbodimentModel::where('ansar_id', $ansar->ansarId)->where('kpi_id', $ansar->currentKpi)->first();
                     //print_r($ansar->ansarId); die;
                     if ($e_ansar) {
-                        $e_ansar->kpi_id = $ansar->transferKpi;
-                        $e_ansar->transfered_date = Carbon::parse($ansar->tKpiJoinDate)->format("Y-m-d");
-                        $e_ansar->save();
                         $transfer = new TransferAnsar;
                         //print_r($ansar->id);die;
                         $transfer->ansar_id = $ansar->ansarId;
@@ -836,10 +833,13 @@ class EmbodimentController extends Controller
                         $transfer->transfer_memorandum_id = $m_id;
                         $transfer->present_kpi_id = $ansar->currentKpi;
                         $transfer->transfered_kpi_id = $ansar->transferKpi;
-                        $transfer->present_kpi_join_date = Carbon::parse($ansar->tKpiJoinDate)->format("Y-m-d");
-                        $transfer->transfered_kpi_join_date = Carbon::createFromFormat("d-M-Y", $ansar->tKpiJoinDate)->format("Y-m-d");
+                        $transfer->transfered_kpi_join_date = Carbon::parse($ansar->tKpiJoinDate)->format("Y-m-d");
+                        $transfer->present_kpi_join_date = Carbon::parse($e_ansar->transfered_date)->format("Y-m-d");
                         $transfer->action_by = Auth::user()->id;
                         $transfer->save();
+                        $e_ansar->kpi_id = $ansar->transferKpi;
+                        $e_ansar->transfered_date = Carbon::parse($ansar->tKpiJoinDate)->format("Y-m-d");
+                        $e_ansar->save();
                         //$status['success']['count']++;
                         //array_push($status['success']['data'], $ansar['ansar_id']);
                         CustomQuery::addActionlog(['ansar_id' => $ansar->ansarId, 'action_type' => 'TRANSFER', 'from_state' => $ansar->currentKpi, 'to_state' => $ansar->transferKpi, 'action_by' => auth()->user()->id]);
