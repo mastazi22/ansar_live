@@ -8,7 +8,7 @@
 
     <div class="card-header">
         <div class="card-header-left-part">
-            <img src="{{asset('dist/img/ansar-vdp.png')}}" class="img-responsive">
+            <img src="{{asset('dist/img/idlogo.png')}}" class="img-responsive">
         </div>
         <div class="card-header-right-part">
             <h4 style="@if($type=='bng') font-size: 1em @elseif($type=='eng') font-size:1em; @endif">{{$rd['title']}}</h4>
@@ -48,7 +48,7 @@
     <div class="card-footer">
         <div class="card-footer-sing">
             <div><img src="{{URL::to('/image').'?file='.$ad->sign_pic}}"
-                      style="width: 80px;height:10px"></div>
+                      style="width: 80px;height:20px"></div>
             <div>{{$rd['bs']}}</div>
         </div>
         <div class="card-footer-barcode">
@@ -57,7 +57,7 @@
         </div>
         <div class="card-footer-sing" style="float: right">
             <div><img src="{{URL::to('/image').'?file=data/authority/Signature.jpg'}}"
-                      style="width: 80px;height:10px"></div>
+                      style="width: 80px;height:20px"></div>
             <div>{{$rd['is']}}</div>
         </div>
     </div>
