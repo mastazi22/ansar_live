@@ -48,3 +48,4 @@
 <script src="{{asset('dist/js/jquery.cookie.js')}}"></script>
 <script src="{{asset('dist/js/moment.min.js')}}"></script>
 <script src="{{asset('dist/js/moment-locales.min.js')}}"></script>
+<script src="{{asset('dist/js/Chart.js')}}"></script>

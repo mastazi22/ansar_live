@@ -194,9 +194,7 @@
 
                             var data = {
                                 labels: labels,
-                                click: function (event) {
-                                    alert(event.datapoint.y)
-                                },
+
                                 datasets: [
                                     {
                                         fillColor: "rgba(0,60,100,1)",
@@ -217,6 +215,10 @@
 
                             var options = {
                                 animation: true,
+                                events:['click'],
+                                onClick: function (event) {
+                                    alert(event.datapoint.y)
+                                },
                             };
 
                             //Get the context of the canvas element we want to select

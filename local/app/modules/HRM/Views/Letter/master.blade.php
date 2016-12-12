@@ -9,7 +9,9 @@
 </head>
 <body>
 <div class="print-hide">
+    @for($i=0;$i<ceil(count($result)/5);$i++)
     @include('HRM::Letter.'.$view)
+        @endfor
 </div>
 
 <script src="{{asset('plugins/jQuery/jQuery-2.1.4.min.js')}}" type="text/javascript"></script>
@@ -18,7 +20,10 @@
     $(function () {
         $(document).on('click','#print-report', function (e) {
             e.preventDefault();
-            $('body').append('<div id="print-area" class="letter">'+$(".letter").html()+'</div>')
+            $(".letter").each(function () {
+                $('body').append('<div id="print-area" class="letter">'+$(this).html()+'</div>')
+            })
+
             window.print();
             $("#print-area").remove()
         })

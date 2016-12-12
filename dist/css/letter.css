@@ -72,7 +72,9 @@
     text-align: left;
     font-size: 1em;
 }
-
+.body-top h4{
+    margin: 0 !important;
+}
 .letter-footer .footer-bottom ul.pull-left {
     width: 40%;
 }
@@ -98,6 +100,7 @@
 @media print {
     .letter{
         width: 100% !important;
+        page-break-before: always;
     }
     .print-hide{
         display: none !important;
@@ -123,5 +126,8 @@
     }
     ul li.ppp{
         font-size: 16px !important;
+    }
+    table td{
+        font-size: 11px !important;
     }
 }

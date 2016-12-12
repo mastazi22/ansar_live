@@ -112,7 +112,7 @@ class LetterController extends Controller
         $result = $result->get();
         $mem = $mem->first();
         if ($mem && $result) {
-            return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'ta' => $result, 'view' => 'print_transfer_letter']);
+            return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'result' => $result, 'view' => 'print_transfer_letter']);
 //            else return View::make('HRM::Letter.print_transfer_letter')->with(['mem' => $mem, 'user' => $user, 'ta' => $result]);
         } else {
             return View::make('HRM::Letter.no_mem_found')->with(['id' => $id]);
