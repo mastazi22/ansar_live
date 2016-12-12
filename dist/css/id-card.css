@@ -177,10 +177,13 @@
 
     #ansar-id-card-front{
         width:100%;
-        padding-left: 2mm !important;
-        padding-right: 2mm !important;
+        padding-left: 1mm !important;
+        padding-right: 1mm !important;
         overflow: visible !important;
         position: relative;
+        box-sizing: border-box !important;
+        -moz-box-sizing: border-box !important;
+        -webkit-box-sizing: border-box !important;
     }
     .card-header-right-part h4,.card-header-right-part h5{
         font-size: 13px !important;
