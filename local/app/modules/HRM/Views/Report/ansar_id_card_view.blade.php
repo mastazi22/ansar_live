@@ -20,13 +20,10 @@
                 // alert(id.getDate()+'-'+((id.getMonth()+1)<10?'0'+(id.getMonth()+1):(id.getMonth()+1))+'-'+id.getFullYear())
                 $scope.isLoading = true;
                 $http({
-                    url: '{{URL::to('HRM/print_card_id')}}',
+                    url: '{{URL::to('HRM/id_card_history')}}',
                     method: 'get',
                     params: {
-                        ansar_id: $scope.ansarId,
-                        type: $scope.reportType,
-                        issue_date: $scope.id,
-                        expire_date: $scope.ed
+                        ansar_id: $scope.ansarId
                     }
                 }).then(function (response) {
                     $scope.isLoading = false;
@@ -36,22 +33,12 @@
                     }
                     else {
                         $scope.errors = ''
-                        $scope.idCard = $sce.trustAsHtml(response.data);
+                        $scope.idCard = response.data;
                         $scope.isLoading = false;
-                        window.onbeforeunload = "Are you sure to leave this page before print id card."
                     }
                 })
             }
 
-        })
-        $(function () {
-            $('body').on('click', '#print-report', function (e) {
-                alert("pppp")
-                e.preventDefault();
-                $('body').append('<div id="print-area" class="letter">' + $("#ansar_id_card").html() + '</div>')
-                window.print();
-                $("#print-area").remove()
-            })
         })
     </script>
     <div ng-controller="printIdController">
@@ -67,11 +54,13 @@
                     </span>
                 </div>
                 <div class="box-body">
+                    <form action="{{URL::route('print_card_id')}}" method="post" target="_blank">
+                        {!! csrf_field() !!}
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label class="control-label">Enter Ansar ID</label>
-                                <input type="text" class="form-control" ng-model="ansarId"
+                                <input type="text" class="form-control" name="ansar_id" ng-model="ansarId"
                                        placeholder="Ansar ID">
 
                                 <p class="text text-danger" ng-if="errors.ansar_id!=undefined">[[errors.ansar_id[0]
@@ -79,7 +68,7 @@
                             </div>
                             <div class="form-group">
                                 <Label class="control-label">Issue Date</Label>
-                                <input type="text" disabled id="issue_date" class="form-control" name="issue_date"
+                                <input type="text"  id="issue_date" class="form-control" name="issue_date"
                                        ng-model="id">
 
                                 <p class="text text-danger" ng-if="errors.issue_date!=undefined">[[errors.issue_date[0]
@@ -87,7 +76,7 @@
                             </div>
                             <div class="form-group">
                                 <Label class="control-label">Expire Date</Label>
-                                <input type="text" disabled id="expire_date" class="form-control" name="expire_date"
+                                <input type="text"  id="expire_date" class="form-control" name="expire_date"
                                        ng-model="ed">
 
                                 <p class="text text-danger" ng-if="errors.expire_date!=undefined">
@@ -96,30 +85,41 @@
                             <div class="form-group">
                                 <Label class="control-label">View ID Card in</Label>
                                         <span class="control-label" style="padding: 5px 8px">
-                                            <input type="radio" class="radio-inline" style="margin: 0 !important;"
+                                            <input type="radio" name="type" class="radio-inline" style="margin: 0 !important;"
                                                    value="eng" ng-model="reportType">&nbsp;<b>English</b>
-                                &nbsp;<input type="radio" class="radio-inline" style="margin: 0 !important;" value="bng"
+                                &nbsp;<input type="radio"  name="type" class="radio-inline" style="margin: 0 !important;" value="bng"
                                              ng-model="reportType">&nbsp;<b>বাংলা</b>
                             </span>
                             </div>
                             <div class="form-group">
-                                <button ng-click="generateIdCard()" class="btn btn-info">Generate ID Card</button>
+                                <a ng-click="generateIdCard()" class="btn btn-info">Generate ID Card</a>
                             </div>
                         </div>
 
                         <div class="col-sm-6 col-sm-offset-1" style="z-index: 5" >
-                            <h3 style="margin-top: 0;">
-                                <a href="#" id="print-report">
-                                    <i class="glyphicon glyphicon-print"></i>
-                                </a>
-                            </h3>
-                            <div id="ansar_id_card">
-                                <div ng-bind-html="idCard"></div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-stripped">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Card Type</th>
+                                        <th>Issue Date</th>
+                                        <th>Expire Date</th>
+                                    </tr>
+                                    <tr ng-repeat="id in idCard">
+                                        <td>[[$index+1]]</td>
+                                        <td>[[id.type]]</td>
+                                        <td>[[id.issue_date]]</td>
+                                        <td>[[id.expire_date]]</td>
+                                    </tr>
+                                </table>
                             </div>
+                            <button class="btn btn-primary"><i class="fa fa-print"></i>&nbsp;Print ID Card</button>
+
                         </div>
 
 
                     </div>
+                    </form>
                 </div>
             </div>
         </section>

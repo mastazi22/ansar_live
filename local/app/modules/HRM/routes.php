@@ -104,7 +104,8 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         //ANSAR ID CARD
 
         Route::get('/print_card_id_view', ['as' => 'print_card_id_view', 'uses' => 'ReportController@ansarPrintIdCardView']);
-        Route::get('/print_card_id', ['as' => 'print_card_id', 'uses' => 'ReportController@printIdCard']);
+        Route::post('/print_card_id', ['as' => 'print_card_id', 'uses' => 'ReportController@printIdCard']);
+        Route::get('/id_card_history', ['as' => 'id_card_history', 'uses' => 'ReportController@getAnsarIDHistory']);
 
         //END ANSAR ID CARD
         //END ANSAR ENTRY

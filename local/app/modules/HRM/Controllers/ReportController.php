@@ -127,6 +127,7 @@ class ReportController extends Controller
 
     function printIdCard()
     {
+//        return Input::all();
         $id = Input::get('ansar_id');
         $issue_date = Input::get('issue_date');
         $expire_date = Input::get('expire_date');
@@ -176,7 +177,12 @@ class ReportController extends Controller
         }
         return View::make('HRM::Report.no_ansar_found')->with('id', $id);
     }
+    function getAnsarIDHistory(Request $request){
 
+        $ansarIdHistory = AnsarIdCard::where('ansar_id', $request->ansar_id)->get();
+        return $ansarIdHistory;
+
+    }
     function getReportData($type, $name)
     {
         $s = file_get_contents(asset("report_" . $type . ".json"));
