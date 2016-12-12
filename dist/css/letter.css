@@ -142,7 +142,7 @@
     ul li.ppp{
         font-size: 16px !important;
     }
-    table td{
+    table td,table th{
         font-size: 10px !important;
     }
 }
