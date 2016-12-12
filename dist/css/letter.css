@@ -98,8 +98,9 @@
     padding-left: 50px !important;
 }
 @media print {
-    .letter:not(:first-child){
+    .letter{
         width: 100% !important;
+        page-break-after: always;
         page-break-before: always;
     }
     .print-hide{
@@ -108,12 +109,16 @@
     @page {
         size: a4;
         margin: 0cm;
+        margin-top: 1cm;
     }
     .letter-content-middle table{
         font-size: 12px !important;
     }
     .letter-content-top{
         font-size: 12px !important;
+    }
+    .header-top h4{
+        margin-top: 0;
     }
     .header-top h4,.body-top h4,.letter-content-middle h4{
         font-size: 14px !important;

@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Events\ActionUserEvent;
 use App\Http\Requests;
-use App\modules\HRM\Models\CustomQuery;
 use App\models\User;
 use App\models\UserLog;
 use App\models\UserPermission;
 use App\models\UserProfile;
 use App\models\UserType;
+use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\ForgetPasswordRequest;
 use App\modules\HRM\Models\LoggedInUser;
 use App\modules\HRM\Models\PersonalInfo;
@@ -17,7 +17,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Input;
@@ -25,11 +24,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Intervention\Image\Facades\Image;
-use Mockery\CountValidator\Exception;
 
 class UserController extends Controller
 {
@@ -37,7 +34,7 @@ class UserController extends Controller
     function handleLogin(Request $request)
     {
         $credential = array('user_name' => Input::get('user_name'), 'password' => Input::get('password'));
-        Log::info("Previous URL Handle: ".Session::get('redirect_url'));
+        Log::info("Previous URL Handle: " . Session::get('redirect_url'));
         if (Auth::attempt($credential)) {
             $user = Auth::user();
             if ($user->status == 0) {
@@ -49,27 +46,25 @@ class UserController extends Controller
 //                return Redirect::action('UserController@login')->with('error', 'You can`t login at this moment. Someone login with your account');
 //            }
             $user->logged()->save(new LoggedInUser([
-                'ip'=>$request->ip()
+                'ip' => $request->ip()
             ]));
             $log = $user->userLog;
-            if($log) {
+            if ($log) {
                 $user->userLog->last_login = Carbon::now();
                 if ($user->userLog->user_status == 0) $user->userLog->user_status = 1;
                 $user->userLog->save();
-            }
-            else{
+            } else {
                 $user->userLog()->save(new UserLog([
-                    'last_login'=>Carbon::now(),
-                    'login_status'=>1
+                    'last_login' => Carbon::now(),
+                    'login_status' => 1
                 ]));
             }
-            Log::info("Previous URL Handle: ".Session::get('redirect_url'));
-            if(Session::has('redirect_url')){
+            Log::info("Previous URL Handle: " . Session::get('redirect_url'));
+            if (Session::has('redirect_url')) {
                 $url = Session::get('redirect_url');
                 Session::forget('redirect_url');
                 return Redirect::to($url);
-            }
-            else return Redirect::to('/');
+            } else return Redirect::to('/');
         } else {
             return Redirect::action('UserController@login')->with('error', 'Invalid user name or password');
         }
@@ -77,7 +72,7 @@ class UserController extends Controller
 
     function logout(Request $request)
     {
-        LoggedInUser::where('ip',$request->ip())->where('user_id',Auth::user()->id)->delete();
+        LoggedInUser::where('ip', $request->ip())->where('user_id', Auth::user()->id)->delete();
         Auth::logout();
         return Redirect::action('UserController@login');
 
@@ -116,7 +111,7 @@ class UserController extends Controller
     function handleRegister()
     {
 
-        if(Input::get('user_type')==22) {
+        if (Input::get('user_type') == 22) {
             $rules = array(
                 'user_name' => 'required|unique:hrm.tbl_user',
                 'password' => 'required|min:6',
@@ -124,8 +119,7 @@ class UserController extends Controller
                 'user_type' => 'required',
                 'district_name' => 'required'
             );
-        }
-        else if(Input::get('user_type')==66) {
+        } else if (Input::get('user_type') == 66) {
             $rules = array(
                 'user_name' => 'required|unique:hrm.tbl_user',
                 'password' => 'required|min:6',
@@ -133,8 +127,7 @@ class UserController extends Controller
                 'user_type' => 'required',
                 'division_name' => 'required'
             );
-        }
-        else {
+        } else {
             $rules = array(
                 'user_name' => 'required|unique:hrm.tbl_user',
                 'password' => 'required|min:6',
@@ -163,6 +156,7 @@ class UserController extends Controller
             $user_log->save();
             $user_permission->user_id = $user->id;
             $user_permission->save();
+            CustomQuery::addActionlog(['ansar_id' => $user->id, 'action_type' => 'CREATE USER', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]);
             return Redirect::action('UserController@userManagement')->with('success_message', 'New user created successfully');
         } else {
 //            return Response::json($validation->errors());
@@ -251,7 +245,10 @@ class UserController extends Controller
         $id = Input::get('user_id');
         $user = User::find($id);
         $user->status = 0;
-        if ($user->save()) return Response::json(['status' => true]);
+        if ($user->save()) {
+            CustomQuery::addActionlog(['ansar_id' => $id, 'action_type' => 'BLOCK USER', 'from_state' => 'BLOCK', 'to_state' => 'UNBLOCK', 'action_by' => auth()->user()->id]);
+            return Response::json(['status' => true]);
+        }
         else return Response::json(['status' => false]);
     }
 
@@ -260,8 +257,10 @@ class UserController extends Controller
         $id = Input::get('user_id');
         $user = User::find($id);
         $user->status = 1;
-        if ($user->save()) return Response::json(['status' => true]);
-        else return Response::json(['status' => false]);
+        if ($user->save()) {
+            CustomQuery::addActionlog(['ansar_id' => $id, 'action_type' => 'UNBLOCK USER', 'from_state' => 'UNBLOCK', 'to_state' => 'BLOCK', 'action_by' => auth()->user()->id]);
+            return Response::json(['status' => true]);
+        } else return Response::json(['status' => false]);
     }
 
     function editUserPermission($id)
@@ -279,7 +278,7 @@ class UserController extends Controller
             $permission = 'all';
         }
 //        return Res;
-        return View::make('User.user_permission_view')->with(array('routes' => collect($routes), 'id' => $id, 'access' => $permission,'user'=>User::find($id)));
+        return View::make('User.user_permission_view')->with(array('routes' => collect($routes), 'id' => $id, 'access' => $permission, 'user' => User::find($id)));
     }
 
     function updatePermission($id)
@@ -287,18 +286,18 @@ class UserController extends Controller
 //        return Input::get('permission');
         $user = User::find($id);
         $all = Input::get('permit_all');
-        $permission = count(Input::get('permission'))==0?null:json_encode(Input::get('permission'));
+        $permission = count(Input::get('permission')) == 0 ? null : json_encode(Input::get('permission'));
         $user->userPermission->permission_type = 0;
         $user->userPermission->permission_list = $permission;
         $user->userPermission->save();
+        CustomQuery::addActionlog(['ansar_id' => $id, 'action_type' => 'EDIT USER PERMISSION', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]);
         return Redirect::action('UserController@userManagement')->with('success_message', $user->user_name . " permission has been updated successfully");
     }
 
     function getAllUser()
     {
-        return response()->json(CustomQuery::getUserInformation(Input::get('limit'), Input::get('offset'),Input::get('user_name')));
+        return response()->json(CustomQuery::getUserInformation(Input::get('limit'), Input::get('offset'), Input::get('user_name')));
     }
-
 
 
     function verifyMemorandumId()
@@ -311,14 +310,13 @@ class UserController extends Controller
     }
 
 
-
     function changeUserImage(Request $request)
     {
-        $valid = Validator::make($request->all(),[
-            'image_file'=>'required'
+        $valid = Validator::make($request->all(), [
+            'image_file' => 'required'
         ]);
-        if($valid->fails()){
-            return Response::json(['status' => false,'message'=>'Image file required']);
+        if ($valid->fails()) {
+            return Response::json(['status' => false, 'message' => 'Image file required']);
         }
         $file = Input::file('image_file');
         //return $file;
@@ -338,14 +336,13 @@ class UserController extends Controller
                 $p->profile_image = 'user/img/' . $file_name;
                 $p->save();
                 DB::commit();
-                return Response::json(['status' => true,'message'=>'Image upload complete']);
-            } else return Response::json(['status' => false,'message'=>'An error occur while uploading image. Try again later']);
-        }catch(\Exception $e){
+                return Response::json(['status' => true, 'message' => 'Image upload complete']);
+            } else return Response::json(['status' => false, 'message' => 'An error occur while uploading image. Try again later']);
+        } catch (\Exception $e) {
             DB::rollBack();
-            return Response::json(['status' => false,'message'=>'An error occur while uploading image. Try again later']);
+            return Response::json(['status' => false, 'message' => 'An error occur while uploading image. Try again later']);
         }
     }
-
 
 
     public function userSearch()
@@ -365,73 +362,82 @@ class UserController extends Controller
     public function getImage()
     {
         $image = storage_path(Input::get('file'));
-        if(!Input::exists('file')) return Image::make(public_path('dist/img/nimage.png'))->response();
-        if (is_null($image) || !File::exists($image)|| File::isDirectory($image)) {
+        if (!Input::exists('file')) return Image::make(public_path('dist/img/nimage.png'))->response();
+        if (is_null($image) || !File::exists($image) || File::isDirectory($image)) {
             return Image::make(public_path('dist/img/nimage.png'))->response();
         }
         //return $image;
         return Image::make($image)->response();
     }
+
     public function getSingImage($id)
     {
-        $image = storage_path(PersonalInfo::where('ansar_id',$id)->first()->sign_pic);
+        $image = storage_path(PersonalInfo::where('ansar_id', $id)->first()->sign_pic);
 //        return File::exists($image)?"exists":"not exists";
         try {
             return Image::make($image)->response();
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
 //            return $e->getMessage();
             return Image::make(storage_path('data/signature/no-signature.jpg'))->response();
         }
     }
+
     public function getThumbImage($id)
     {
-        $image = storage_path(PersonalInfo::where('ansar_id',$id)->first()->thumb_pic);
+        $image = storage_path(PersonalInfo::where('ansar_id', $id)->first()->thumb_pic);
         try {
             return Image::make($image)->response();
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             return Image::make(storage_path('data/fingerprint/no-thumb.jpg'))->response();
         }
     }
-    function forgetPasswordRequest(){
+
+    function forgetPasswordRequest()
+    {
         return view('forget_password');
     }
-    function handleForgetRequest(Request $request){
+
+    function handleForgetRequest(Request $request)
+    {
         $rules = [
-          'user_name'=>'required'
+            'user_name' => 'required'
         ];
         $message = [
-          'required'=>'User name can`t be empty'
+            'required' => 'User name can`t be empty'
         ];
-        $valid = Validator::make($request->all(),$rules,$message);
+        $valid = Validator::make($request->all(), $rules, $message);
         //return $valid->fails()?'true':'false';
-        if($valid->fails()){
+        if ($valid->fails()) {
             return Redirect::back()->withInputs($request->accepts(['_token']))->withErrors($valid);
-        }
-        else{
-            $user = User::where('user_name',$request->get('user_name'));
-            if(!$user->exists()){
-                return Redirect::back()->withInputs($request->accepts(['_token']))->with('error','This user name does not exists');
+        } else {
+            $user = User::where('user_name', $request->get('user_name'));
+            if (!$user->exists()) {
+                return Redirect::back()->withInputs($request->accepts(['_token']))->with('error', 'This user name does not exists');
             }
             try {
                 $fpr = ForgetPasswordRequest::findOrFail($request->get('user_name'));
-                return Redirect::back()->withInput($request->all())->with('error','This user name already has a pending password change request');
-            }catch(\Exception $e){
+                return Redirect::back()->withInput($request->all())->with('error', 'This user name already has a pending password change request');
+            } catch (\Exception $e) {
                 $fpr = new ForgetPasswordRequest;
                 $fpr->user_name = $request->get('user_name');
                 $fpr->save();
             }
 
         }
-        return Redirect::back()->with('success','Password change request sent successfully');
+        return Redirect::back()->with('success', 'Password change request sent successfully');
     }
-    public function changeForgetPassword($user){
-        return view('User.change_password',['user'=>$user]);
+
+    public function changeForgetPassword($user)
+    {
+        return view('User.change_password', ['user' => $user]);
     }
-    public function handleChangeForgetPassword(Request $request){
-        $user = User::where('user_name',$request->get('user'))->first();
+
+    public function handleChangeForgetPassword(Request $request)
+    {
+        $user = User::where('user_name', $request->get('user'))->first();
         $fpr = ForgetPasswordRequest::find($request->get('user'));
-        if(!$user||!$fpr){
-            return Redirect::back()->with('error','User does not exists with this user name');
+        if (!$user || !$fpr) {
+            return Redirect::back()->with('error', 'User does not exists with this user name');
         }
         $rules = [
             'password' => 'required',
@@ -449,37 +455,41 @@ class UserController extends Controller
             $user->password = Hash::make(Input::get('password'));
             if ($user->save()) {
                 $fpr->delete();
-                return Redirect::back()->with('success','Password change successfully');
+                return Redirect::back()->with('success', 'Password change successfully');
             } else {
-                return Redirect::back()->with('error','An error occur while password changing. Please try again later');
+                return Redirect::back()->with('error', 'An error occur while password changing. Please try again later');
             }
         }
     }
-    public function removePasswordRequest($user){
-        try{
+
+    public function removePasswordRequest($user)
+    {
+        try {
             $frp = ForgetPasswordRequest::findOrFail($user);
             $frp->delete();
-            return Redirect::back()->with('success',$user.' request remove successfully');
-        }catch (\Exception $e){
-            return Redirect::back()->with('error',$user.' does not exists');
+            return Redirect::back()->with('success', $user . ' request remove successfully');
+        } catch (\Exception $e) {
+            return Redirect::back()->with('error', $user . ' does not exists');
         }
     }
-    public function viewActionLog($id=null){
-        if($id){
+
+    public function viewActionLog($id = null)
+    {
+        if ($id) {
             $user = User::find($id);
-            $data = $user->actionLog()->select('ansar_id','from_state','to_state','action_type',DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'),DB::raw('DATE_FORMAT(created_at,"%r") as time'))->get();
-        }
-        else {
+            $data = $user->actionLog()->select('ansar_id', 'from_state', 'to_state', 'action_type', DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'), DB::raw('DATE_FORMAT(created_at,"%r") as time'))->get();
+        } else {
             $user = Auth::user();
-            $data =  $user->actionLog()->select('ansar_id','from_state','to_state','action_type',DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'),DB::raw('DATE_FORMAT(created_at,"%r") as time'))->get();
+            $data = $user->actionLog()->select('ansar_id', 'from_state', 'to_state', 'action_type', DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'), DB::raw('DATE_FORMAT(created_at,"%r") as time'))->get();
         }
 
-        return View::make('User.user_activity_log',['logs'=>collect($data)->groupBy('date'),'user'=>$user]);
+        return View::make('User.user_activity_log', ['logs' => collect($data)->groupBy('date'), 'user' => $user]);
     }
 
-    public function getUserData(){
+    public function getUserData()
+    {
         $user = Auth::user();
-        return User::with(['district','division','usertype'])->find($user->id);
+        return User::with(['district', 'division', 'usertype'])->find($user->id);
     }
 
 } 
