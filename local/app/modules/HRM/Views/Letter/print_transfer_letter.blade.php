@@ -51,4 +51,3 @@
         @include('HRM::Letter.letter_footer',['user'=>$user])
     </div>
 </div>
-<div class="page-break"></div>

@@ -11,7 +11,7 @@
 <div>
     <?php $i = 0;?>
     @foreach(array_chunk($result,5) as $r)
-        @include('HRM::Letter.'.$view,['result'=>$r]);
+        @include('HRM::Letter.'.$view,['result'=>$r])
         <?php $i++ ?>
     @endforeach
 </div>

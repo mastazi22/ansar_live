@@ -3,7 +3,9 @@
     margin: 10px auto;
     background: #f8ffe0;
 }
-
+body{
+    font-family: "Times New Roman", sans-serif;
+}
 .letter-header, .letter-body, .letter-footer {
     width: 100%;
     padding: 5px;
@@ -105,11 +107,11 @@
 
         /*page-break-before: always;*/
     }
+    .letter:not(:last-child){
+        page-break-after: always;
+    }
     .letter-body,.letter{
         float: none !important;
-    }
-    .page-break:not(:last-child){
-        page-break-after: always !important;
     }
     .print-hide{
         display: none !important;
