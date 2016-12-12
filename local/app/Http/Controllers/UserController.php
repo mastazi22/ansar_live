@@ -296,7 +296,7 @@ class UserController extends Controller
 
     function getAllUser()
     {
-        return response()->json(CustomQuery::getUserInformation(Input::get('limit'), Input::get('offset')));
+        return response()->json(CustomQuery::getUserInformation(Input::get('limit'), Input::get('offset'),Input::get('user_name')));
     }
 
 

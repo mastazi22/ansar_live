@@ -34,18 +34,24 @@
             $scope.noFound = false;
             $scope.searchUserName = '';
 //            alert($scope.showDialog)
-            for (var i = 0; i < $scope.totalPages; i++) $scope.pages[i] = {pageNum: i, totalCount: totalCount}
+           $scope.loadPagination = function () {
+               for (var i = 0; i < $scope.totalPages; i++)
+                   $scope.pages[i] = {pageNum: i, totalCount: totalCount}
+           }
             $scope.loadPage = function (pageNum, event) {
                 if (event != null) event.preventDefault();
                 $scope.allLoading = true;
-                $scope.currentPage = pageNum;
+                $scope.currentPage = pageNum==undefined?0:pageNum;
                 $http({
                     url: '{{action('UserController@getAllUser')}}',
                     method: 'get',
-                    params: {limit: totalCount, offset: pageNum * totalCount}
+                    params: {limit: totalCount, offset: pageNum * totalCount,user_name: $scope.searchUserName}
                 }).then(function (response) {
-                    $scope.users = response.data;
+                    $scope.users = response.data.users;
                     $scope.blockStatus = [];
+                    $scope.total = response.data.total
+                    $scope.totalPages = Math.ceil(parseInt($scope.total) / totalCount);
+                    $scope.loadPagination();
                     $scope.users.forEach(function (v) {
                         $scope.blockStatus.push(parseInt(v.status)==1?true:false);
                     })
@@ -151,7 +157,7 @@
                         <h4 style="padding-left: 8px;padding-top: 6px">Total users : [[total]]</h4>
                     </div>
                     <div class="col-sm-3">
-                        <form ng-submit="searchId()" class="sidebar-form">
+                        <form ng-submit="loadPage(0)" class="sidebar-form">
                             <div class="input-group">
                                 <input type="text" name="q" ng-model="searchUserName" class="form-control"
                                        placeholder="Search by user name...">
@@ -175,56 +181,10 @@
                                 <th>Activity</th>
                                 <th>Action</th>
                             </tr>
-                            <tr ng-if="isSearching&&searchedUser.length==0">
+                            <tr ng-if="users==undefined||users.length==0">
                                 <td colspan="7">No user found</td>
                             </tr>
-                            <tr ng-if="isSearching&&searchedUser.length!=0" ng-repeat="user in searchedUser">
-                                <td>[[(limit*currentPage)+$index+1]]</td>
-                                <td><i ng-if="user.logged_in" style="vertical-align: middle;" class="fa fa-circle text-success"></i><span style="padding-left: 5px">[[user.user_name]]</span> </td>
-                                <td>
-                                    [[user.first_name+" "+user.last_name]]
-                                </td>
-                                <td>[[user.email]]</td>
-                                <td ng-switch on="user.user_status">
-                                    <span ng-switch-when="0"> New. Not login yet</span>
-                                    <span ng-switch-when="1"> Last Login at&nbsp;[[user.last_login]]</span>
-                                    <span ng-switch-default>Blocked</span>
-                                </td>
-                                <td style="width: 121px">
-                                    <div class="row" style="margin-right: 0;min-width: 121px">
-                                        <div class="col-xs-1">
-                                            <a class="btn btn-primary btn-xs"
-                                               href="{{URL::to('/edit_user')}}/[[user.id]]" title="edit"><span
-                                                        class="glyphicon glyphicon-edit"></span></a>
-                                        </div>
-                                        <div class="col-xs-1">
-                                            <a class="btn btn-danger btn-xs" ng-show="blockStatus[$index]"
-                                               confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"block"}'
-                                               class="block-user" title="block">
-                                                <span class="fa fa-ban"></span>
-                                            </a>
-                                            <a ng-show="!blockStatus[$index]" class="btn btn-success btn-xs"
-                                               confirm-dialog='{"id":[[user.id]],"index":[[$index]],"type":"unblock"}'
-                                               class="block-user" title="unblock">
-                                                <span class="fa fa-unlock"></span>
-                                            </a>
-                                        </div>
-                                        <div class="col-xs-1">
-                                            <a class="btn btn-success btn-xs"
-                                               href="{{URL::to('/edit_user_permission')}}/[[user.id]]"
-                                               title="edit permission"><span
-                                                        class="glyphicon glyphicon-lock"></span></a>
-                                        </div>
-                                        <div class="col-xs-1">
-                                            <a class="btn btn-success btn-xs"
-                                               href="{{URL::to('/action_log')}}/[[user.id]]"
-                                               title="User Action Log"><span
-                                                        class="fa fa-file"></span></a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr ng-show="!isSearching" ng-repeat="user in users">
+                            <tr ng-repeat="user in users">
                                 <td>[[(limit*currentPage)+$index+1]]</td>
                                 <td><i ng-if="user.logged_in" style="vertical-align: middle;" class="fa fa-circle text-success"></i><span style="padding-left: 5px">[[user.user_name]]</span> </td>
                                 <td>
