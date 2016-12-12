@@ -115,7 +115,7 @@
 }
 .card-footer-barcode>img{
     width: 100%;
-    height: 24px;
+    height: 30px;
 }
 .card-footer-sing div:last-child {
     border-top: 1px solid #000000;
@@ -190,6 +190,10 @@
     }
     .card-body *{
         font-size: 12px !important;
+        font-weight:normal !important;
+    }
+    .card-footer *{
+        font-weight: normal; !important;
     }
     .bangla-class .card-body *{
         font-size: 10px !important;

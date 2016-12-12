@@ -48,7 +48,7 @@
     <div class="card-footer">
         <div class="card-footer-sing">
             <div><img src="{{URL::to('/image').'?file='.$ad->sign_pic}}"
-                      style="width: 80px;height:20px"></div>
+                      style="width: 80px;height:22px"></div>
             <div>{{$rd['bs']}}</div>
         </div>
         <div class="card-footer-barcode">
@@ -57,7 +57,7 @@
         </div>
         <div class="card-footer-sing" style="float: right">
             <div><img src="{{URL::to('/image').'?file=data/authority/Signature.jpg'}}"
-                      style="width: 80px;height:20px"></div>
+                      style="width: 80px;height:22px"></div>
             <div>{{$rd['is']}}</div>
         </div>
     </div>
