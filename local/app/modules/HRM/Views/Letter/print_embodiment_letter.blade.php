@@ -33,14 +33,14 @@
                     <th>অঙ্গিভুতির তারিখ </th>
                 </tr>
                 <?php $ii=1; ?>
-                @for($j=$i*5;$j<($i+1)*5;$j++)
+                @for($j=0;$j<count($result);$j++)
                     @if(isset($result[$j]))
                     <tr>
                         <td>{{LanguageConverter::engToBng($ii++)}}</td>
                         <td>{{LanguageConverter::engToBng($result[$j]->ansar_id)}}</td>
                         <td>{{$result[$j]->rank}}</td>
-                        <td style="width:120px">{{$r->name}}<br>{{$result[$j]->father_name}}</td>
-                        <td>{{$result[$j]->village_name}},&nbsp;{{$result[$j]->pon}},&nbsp;{{$result[$j]->thana}},&nbsp;{{$result[$j]->unit}}</td>
+                        <td style="width:120px">{{$result[$j]->name}}<br>{{$result[$j]->father_name}}</td>
+                        <td>{{$result[$j]->village_name or ''}},&nbsp;{{$result[$j]->pon or ''}},&nbsp;{{$result[$j]->thana or ''}},&nbsp;{{$result[$j]->unit or ''}}</td>
                         <td>{{$result[$j]->kpi_name}}</td>
                         <td>{{LanguageConverter::engToBng(date('d/m/Y',strtotime($result[$j]->joining_date)))}}</td>
                     </tr>

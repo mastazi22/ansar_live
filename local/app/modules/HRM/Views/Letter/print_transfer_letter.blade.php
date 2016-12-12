@@ -1,4 +1,4 @@
-@if($i==0)<h3 style="text-align: center">Transfer Letter&nbsp;&nbsp;<a href="#" id="print-report"><i class="fa fa-print"></i></a></h3>@endif
+@if($i==0)<h3 style="text-align: center"  class="print-hide">Transfer Letter&nbsp;&nbsp;<a href="#" id="print-report"><i class="fa fa-print"></i></a></h3>@endif
 <div class="letter">
     <div class="letter-header">
         <div class="header-top" style="background: none">
@@ -31,7 +31,7 @@
                     <th>বদলিক্রিত সংস্থার নাম</th>
                 </tr>
                 <?php $ii=1; ?>
-                @for($j=$i*5;$j<($i+1)*5;$j++)
+                @for($j=0;$j<count($result);$j++)
                     @if(isset($result[$j]))
                     <tr>
                         <td>{{LanguageConverter::engToBng($ii++)}}</td>
@@ -51,3 +51,4 @@
         @include('HRM::Letter.letter_footer',['user'=>$user])
     </div>
 </div>
+<div class="page-break"></div>

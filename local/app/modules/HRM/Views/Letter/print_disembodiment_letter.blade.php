@@ -34,7 +34,7 @@
                     <th>অ-অঙ্গিভুতির তারিখ </th>
                 </tr>
                 <?php $ii=1 ?>
-                @for($j=$i*5;$j<($i+1)*5;$j++)
+                @for($j=0;$j<count($result);$j++)
                     @if(isset($result[$j]))
                     <tr>
                         <td>{{LanguageConverter::engToBng($ii++)}}</td>

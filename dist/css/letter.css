@@ -100,8 +100,16 @@
 @media print {
     .letter{
         width: 100% !important;
-        page-break-after: always;
-        page-break-before: always;
+        position: relative !important;
+        /*float: none;*/
+
+        /*page-break-before: always;*/
+    }
+    .letter-body,.letter{
+        float: none !important;
+    }
+    .page-break:not(:last-child){
+        page-break-after: always !important;
     }
     .print-hide{
         display: none !important;
@@ -109,16 +117,18 @@
     @page {
         size: a4;
         margin: 0cm;
-        margin-top: 1cm;
     }
     .letter-content-middle table{
         font-size: 12px !important;
     }
-    .letter-content-top{
+    .letter-content-top,.letter-content-last{
         font-size: 12px !important;
     }
-    .header-top h4{
-        margin-top: 0;
+    .header-top h4,.body-top h4{
+        margin-top: 0 !important;
+    }
+    .body-top{
+        padding: 0 !important;
     }
     .header-top h4,.body-top h4,.letter-content-middle h4{
         font-size: 14px !important;
@@ -133,6 +143,6 @@
         font-size: 16px !important;
     }
     table td{
-        font-size: 11px !important;
+        font-size: 10px !important;
     }
 }

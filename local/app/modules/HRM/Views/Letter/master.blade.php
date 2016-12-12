@@ -8,26 +8,21 @@
     {{--<link href="{{asset('dist/css/AdminLTE.min.css')}}" rel="stylesheet" type="text/css"/>--}}
 </head>
 <body>
-<div class="print-hide">
-    @for($i=0;$i<ceil(count($result)/5);$i++)
-    @include('HRM::Letter.'.$view)
-        @endfor
+<div>
+    <?php $i = 0;?>
+    @foreach(array_chunk($result,5) as $r)
+        @include('HRM::Letter.'.$view,['result'=>$r]);
+        <?php $i++ ?>
+    @endforeach
 </div>
 
 <script src="{{asset('plugins/jQuery/jQuery-2.1.4.min.js')}}" type="text/javascript"></script>
 <script>
 
     $(function () {
-        $(document).on('click','#print-report', function (e) {
+        $(document).on('click', '#print-report', function (e) {
             e.preventDefault();
-            var d = ''
-            $(".letter").each(function () {
-                d = d + $(this).html()
-
-            })
-            $('body').append('<div id="print-area">'+d+'</div>')
             window.print();
-            $("#print-area").remove()
         })
     })
 </script>
