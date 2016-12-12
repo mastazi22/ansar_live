@@ -429,7 +429,7 @@
                                         {{--admin,dc,rc,dg edit end--}}
                                         {{--admin,dc,rc,dg verify--}}
                                         <a style="margin-left: 2px"
-                                           ng-if="(userType == 11 || userType == 22 || userType == 33 || userType == 66) && (ansar.verified == 0 || ansar.verified == 1)"
+                                           ng-if="(userType == 11 || userType == 22||userType == 77 || userType == 33 || userType == 66) && (ansar.verified == 0 || ansar.verified == 1)"
                                            class="btn btn-success btn-xs verification" title="verify"
                                            confirm event="click" message="Are you sure want to verify this ansar" callback="verify(id,i)" data="{id:ansar.ansar_id, i:$index}"
                                         ><span

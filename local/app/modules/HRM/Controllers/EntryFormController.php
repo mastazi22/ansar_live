@@ -88,7 +88,7 @@ class EntryFormController extends Controller
             } else
                 return 0;
         }
-        if ($usertype == 44 || $usertype == 11 || $usertype == 22 || $usertype == 33 || $usertype == 66) {
+        if ($usertype == 44 || $usertype == 11||$usertype == 77 || $usertype == 22 || $usertype == 33 || $usertype == 66) {
             $success = PersonalInfo::where('ansar_id', $verifyid)->update(['verified' => 2]);
             $statusSuccess = AnsarStatusInfo::where('ansar_id', $verifyid)->update(['free_status' => 1]);
 
