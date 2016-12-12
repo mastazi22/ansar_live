@@ -20,10 +20,12 @@
     $(function () {
         $(document).on('click','#print-report', function (e) {
             e.preventDefault();
+            var d = ''
             $(".letter").each(function () {
-                $('body').append('<div id="print-area" class="letter">'+$(this).html()+'</div>')
-            })
+                d = d + $(this).html()
 
+            })
+            $('body').append('<div id="print-area">'+d+'</div>')
             window.print();
             $("#print-area").remove()
         })

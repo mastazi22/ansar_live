@@ -98,7 +98,7 @@
     padding-left: 50px !important;
 }
 @media print {
-    .letter{
+    .letter:not(:first-child){
         width: 100% !important;
         page-break-before: always;
     }
