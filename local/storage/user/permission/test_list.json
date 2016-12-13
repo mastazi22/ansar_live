@@ -144,11 +144,11 @@
           },
           {
             "value": "entryverify",
-            "name": "Entry Verify(Not Verified)"
+            "name": "Entry Verify"
           },
           {
             "value": "editVerifiedEntry",
-            "name": "Entry Verify(Verified)"
+            "name": "Edit Ansar(Verified)"
           }
         ]
       },
