@@ -77,16 +77,16 @@ class EntryFormController extends Controller
         }
         $verifyid = $request->input('verified_id');
         $ansar = PersonalInfo::where('ansar_id',$verifyid)->first();
-        if(empty($ansar->mobile_no_self)||!preg_match('/^[0-9]+$/',$ansar->mobile_no_self))
+        if(empty($ansar->mobile_no_self)||!preg_match('/^[0-9]{11}$/',$ansar->mobile_no_self))
             return Response::json(['status'=>false,'message'=>'This ansar can`t be verified. Because this ansar`s mobile no is empty or invalid']);
         if ($usertype == 55) {
             $success = PersonalInfo::where('ansar_id', $verifyid)->update(['verified' => 1]);
             if ($success) {
                 CustomQuery::addActionlog(['ansar_id' => $verifyid, 'action_type' => 'VERIFIED', 'from_state' => 'ENTRY', 'to_state' => 'VERIFIED', 'action_by' => auth()->user()->id]);
-                return 1;
+                return ['status'=>true,'message'=>'Ansar Verification Complete'];
 
             } else
-                return 0;
+                return ['status'=>true,'message'=>'Can`t verify Ansar. Please try again later'];
         }
         if ($usertype == 44 || $usertype == 11||$usertype == 77 || $usertype == 22 || $usertype == 33 || $usertype == 66) {
             $success = PersonalInfo::where('ansar_id', $verifyid)->update(['verified' => 2]);
@@ -94,9 +94,9 @@ class EntryFormController extends Controller
 
             if ($success && $statusSuccess) {
                 CustomQuery::addActionlog(['ansar_id' => $verifyid, 'action_type' => 'VERIFIED', 'from_state' => 'VERIFIED', 'to_state' => 'FREE', 'action_by' => auth()->user()->id]);
-                return 1;
+                return ['status'=>true,'message'=>'Ansar Verification Complete'];
             } else
-                return 0;
+                return ['status'=>true,'message'=>'Can`t verify Ansar. Please try again later'];
         }
     }
     public function entryChunkVerify(Request $request)

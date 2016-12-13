@@ -6,7 +6,7 @@
     @endsection
 @section('content')
     <script>
-        GlobalApp.controller('DirectOfferController', function ($scope,$http) {
+        GlobalApp.controller('DirectOfferController', function ($scope,$http,notificationService) {
             $scope.districts = [];
             $scope.ansarId = "";
             $scope.selectedDistrict = "";
@@ -30,8 +30,8 @@
                 $scope.loadingAnsar = true;
                 $http({
                     method:'get',
-                    url:'{{URL::to('HRM/direct_offer_ansar_details')}}',
-                    params:{ansar_id:id,type:'PANEL'}
+                    url:'{{URL::route('ansar_detail_info')}}',
+                    params:{ansar_id:id}
                 }).then(function (response) {
                     $scope.ansarDetail = response.data
                     $scope.loadingAnsar = false;
@@ -83,6 +83,32 @@
                     $scope.submitResult  = response.data
                 })
             }
+            $scope.cancelOffer = function (e) {
+                e.preventDefault()
+                $scope.error=false;
+                $scope.offerCanceling = true;
+                $http({
+                    method:'post',
+                    url:'{{URL::to('HRM/direct_offer_cancel')}}',
+                    data:{ansar_id:$scope.ansarId}
+                }).then(function (response) {
+                    $scope.error=false;
+                    $scope.submitResult  = response.data;
+                    if(response.data.status){
+                        notificationService.notify('success',response.data.message)
+                        $scope.ansarId = "";
+                        $scope.ansarDetail = {}
+                    }
+                    else{
+                        notificationService.notify('error',response.data.message)
+                    }
+                    $scope.offerCanceling = false;
+                },function (response) {
+                    $scope.offerCanceling = false;
+                    if(response.status==500)$scope.error = true;
+                    $scope.submitResult  = response.data
+                })
+            }
             $scope.ppp = function(){
 //                alert(moment().format("DD-MMM-YYYY"))
                 $("input[name='offer_date']").val(moment().format("DD-MMM-YYYY"));
@@ -98,7 +124,14 @@
                             <form action="{{URL::to('HRM/direct_offer')}}" method="post" form-submit reset-except="offer_date" on-reset="ppp()" errors="errors" loading="loadingSubmit" confirm-box="true" message="Are you sure want to offer this Ansar">
                                 <div class="form-group">
                                     <label for="ansar_id" class="control-label">Ansar ID to send Offer</label>
-                                    <input type="text" name="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="makeQueue(ansarId)">
+                                    <div class="input-group">
+                                        <input type="text" name="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-secondary" ng-click="loadAnsarDetail(ansarId)" type="button">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+                                        </span>
+                                    </div>
                                     <p class="text text-danger" ng-if="errors.ansar_id!=undefined">
                                         [[errors.ansar_id[0] ]]
                                     </p>
@@ -123,90 +156,20 @@
                                 </div>
                                 <button class="btn btn-primary" ng-disabled="loadingSubmit" type="submit">
                                     <i ng-show="loadingSubmit" class="fa fa-spinner fa-pulse"></i>
+                                    <i ng-hide="loadingSubmit" class="fa fa-send"></i>
                                     Send Offer</button>
+                                <a class="btn btn-danger" href="#" ng-click="cancelOffer($event)">
+                                    <i ng-show="offerCanceling" class="fa fa-spinner fa-pulse"></i>
+                                    <i ng-hide="offerCanceling" class="fa fa-times"></i>&nbsp;Cancel Offer
+                                </a>
 
                             </form>
                             </div>
-                        <div class="col-sm-6 col-sm-offset-2"
+                        <div class="col-sm-8"
                              style="min-height: 400px;border-left: 1px solid #CCCCCC">
                             <div id="loading-box" ng-if="loadingAnsar">
                             </div>
-                            <div ng-if="ansarDetail.ansar_details.ansar_name_eng==undefined">
-                                <h3 style="text-align: center">No Ansar Found</h3>
-                            </div>
-                            <div ng-if="ansarDetail.ansar_details.ansar_name_eng!=undefined">
-                                <div class="form-group">
-                                    <label class="control-label">Name</label>
-
-                                    <p>
-                                        [[ansarDetail.ansar_details.ansar_name_eng]]
-                                    </p>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label">Rank</label>
-
-                                    <p>
-                                        [[ansarDetail.ansar_details.name_eng]]
-                                    </p>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label">Home District</label>
-
-                                    <p>
-                                        [[ansarDetail.ansar_details.unit_name_eng]]
-                                    </p>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label">Gender</label>
-
-                                    <p>
-                                        [[ansarDetail.ansar_details.sex]]
-                                    </p>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label">Date of Birth</label>
-
-                                    <p>
-                                        [[ansarDetail.ansar_details.data_of_birth]]
-                                    </p>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label status-check">Current Status</label>
-
-                                    <p>
-                                        [[ansarDetail.status]]
-                                    </p>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label">Last KPI Name</label>
-
-                                    <p>
-                                        [[ansarDetail.ansar_details.kpi_name?ansarDetail.ansar_details.kpi_name:'--']]
-                                    </p>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label">Last KPI Unit</label>
-
-                                    <p>
-                                        [[ansarDetail.ansar_details.tt?ansarDetail.ansar_details.tt:'--']]
-                                    </p>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label">Last Disembodied Date</label>
-
-                                    <p>
-                                        [[ansarDetail.ansar_details.release_date?(ansarDetail.ansar_details.release_date|dateformat:'DD-MMM-YYYY'):'--']]
-                                    </p>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label">Disembodied Reason</label>
-
-                                    <p>
-                                        [[ansarDetail.ansar_details.reason_in_bng?ansarDetail.ansar_details.reason_in_bng:'--']]
-                                    </p>
-                                </div>
-                                <input type="hidden" name="ansar_status" value="[[ansarDetail.status]]">
-                            </div>
+                            <template-list data="ansarDetail" key="ansar_history"></template-list>
                         </div>
                     </div>
                 </div>

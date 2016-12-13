@@ -5,6 +5,7 @@ namespace App\modules\HRM\Controllers;
 use App\Helper\Facades\GlobalParameterFacades;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use App\modules\HRM\Models\ActionUserLog;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\BlackListInfoModel;
 use App\modules\HRM\Models\BlackListModel;
@@ -14,6 +15,7 @@ use App\modules\HRM\Models\EmbodimentLogModel;
 use App\modules\HRM\Models\EmbodimentModel;
 use App\modules\HRM\Models\KpiGeneralModel;
 use App\modules\HRM\Models\MemorandumModel;
+use App\modules\HRM\Models\OfferCancel;
 use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\OfferSmsLog;
 use App\modules\HRM\Models\PanelInfoLogModel;
@@ -1558,5 +1560,81 @@ class DGController extends Controller
             return Response::json(['status' => false, 'message' => $e->getMessage()]);
         }
         return Response::json(['status' => true, 'message' => "Offer send successfully"]);
+    }
+
+    public function directOfferCancel(Request $request){
+        $rules = [
+            'ansar_id' => 'required|regex:/^[0-9]+$/|exists:hrm.tbl_ansar_parsonal_info,ansar_id'
+        ];
+        $vaild = Validator::make(Input::all(), $rules);
+        if ($vaild->fails()) {
+            return Response::json(['status' => false, 'message' => "Invalid Ansar id"]);
+        }
+        $ansar_ids = $request->ansar_id;
+        DB::beginTransaction();
+        try {
+            $ansar = PersonalInfo::where('ansar_id',$ansar_ids)->first();
+            $status = $ansar->status->getStatus();
+            if(in_array(AnsarStatusInfo::BLOCK_STATUS,$status)){
+                throw new \Exception("This Ansar is Blocked");
+            }
+            if(!in_array(AnsarStatusInfo::OFFER_STATUS,$status)){
+                throw new \Exception("This Ansar is not in offer status");
+            }
+            $offered_ansar = $ansar->offer_sms_info;
+            if (!$offered_ansar) $received_ansar = $ansar->receiveSMS;
+            if($offered_ansar&&$offered_ansar->come_from=='rest'){
+                $ansar->status()->update([
+                    'offer_sms_status'=>0,
+                    'rest_status'=>1,
+                ]);
+            }
+            else{
+                $panel_log = $ansar->panelLog()->first();
+                $ansar->panel()->save(new PanelModel([
+                    'memorandum_id'=>$panel_log->old_memorandum_id,
+                    'panel_date'=>Carbon::now(),
+                    'come_from'=>'OfferCancel',
+                    'ansar_merit_list'=>1,
+                    'action_user_id'=>auth()->user()->id,
+                ]));
+                $ansar->status()->update([
+                    'offer_sms_status'=>0,
+                    'pannel_status'=>1,
+                ]);
+            }
+            $ansar->offerCancel()->save(new OfferCancel([
+                'offer_cancel_date'=>Carbon::now()
+            ]));
+            if ($offered_ansar) {
+                $ansar->offerLog()->save(new OfferSmsLog([
+                    'offered_date'=>$offered_ansar->sms_send_datetime,
+                    'action_date'=>Carbon::now(),
+                    'offered_district'=>$offered_ansar->district_id,
+                    'action_user_id'=>auth()->user()->id,
+                    'reply_type'=>'No Reply',
+                ]));
+                $offered_ansar->delete();
+            } else {
+                $ansar->offerLog()->save(new OfferSmsLog([
+                    'offered_date'=>$received_ansar->sms_send_datetime,
+                    'offered_district'=>$received_ansar->offered_district,
+                    'action_user_id'=>auth()->user()->id,
+                    'reply_type'=>'Yes',
+                ]));
+                $received_ansar->delete();
+            }
+            auth()->user()->actionLog()->save(new ActionUserLog([
+                'ansar_id' => $ansar_ids,
+                'action_type' => 'CANCEL OFFER',
+                'from_state' => 'OFFER',
+                'to_state' => 'PANEL'
+            ]));
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return Response::json(['status' => false, 'message' =>$e->getMessage()]);
+        }
+        return Response::json(['status' => true, 'message' => 'Offer cancel successfully']);
     }
 }

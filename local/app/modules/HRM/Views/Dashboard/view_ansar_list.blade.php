@@ -179,7 +179,7 @@
                                     <div class="table-responsive">
                                         <div>
                                             <h4 class="text text-center print-open">{{$pageTitle}}</h4>
-                                            <template-list data="ansars" key="{{$type}}"></template-list>
+                                            <template-list data="ansars" key="{{$type}}" call-back="loadPage()"></template-list>
                                         </div>
 
 

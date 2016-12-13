@@ -61,9 +61,9 @@
                     {{--$scope.exist = false;--}}
                 {{--})--}}
             {{--}--}}
-            $scope.dateConvert=function(date){
-                return (moment(date).locale('bn').format('DD-MMMM-YYYY'));
-            }
+//            $scope.dateConvert=function(date){
+//                return (moment(date).locale('bn').format('DD-MMMM-YYYY'));
+//            }
         })
         $(function () {
             $('body').on('click','#print-report', function (e) {
@@ -124,108 +124,7 @@
                         <div class="col-sm-12" id="ansar_service_record">
                             <h3 style="text-align: center">View Ansar Service Record&nbsp;<a href="#" id="print-report"><span class="glyphicon glyphicon-print"></span></a></h3>
 
-                            <div ng-if="!ansarDetail.apid||errorFound==1">
-                                <h4 style="text-align: center">No Ansar is available to show</h4>
-                            </div>
-                            <div ng-if="ansarDetail.apid">
-                                <div class="form-group">
-                                    <div class="col-sm-5 col-sm-offset-3 center-profile">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered">
-                                                <tr>
-                                                    <td rowspan="5"  style="vertical-align: middle;width: 130px;height: 150px;background: #ffffff">
-                                                        <img  style="width: 120px;height: 150px" src="{{URL::to('image').'?file='}}[[ansarDetail.apid.profile_pic]]" alt="">
-                                                    </td>
-                                                    <th style="background: #ffffff">ID</th>
-                                                    <td style="background: #ffffff">[[ansarDetail.apid.ansar_id]]</td>
-                                                </tr>
-                                                <tr>
-
-                                                    <th style="background: #ffffff">Name</th>
-                                                    <td style="background: #ffffff">[[ansarDetail.apid.ansar_name_bng]]</td>
-                                                </tr>
-                                                <tr>
-                                                    <th style="background: #ffffff">Rank</th>
-                                                    <td style="background: #ffffff">[[ansarDetail.apid.name_bng]]</td>
-                                                </tr>
-                                                <tr>
-                                                    <th style="background: #ffffff">Mobile No.</th>
-                                                    <td style="background: #ffffff">[[ansarDetail.apid.mobile_no_self]]</td>
-                                                </tr>
-                                                <tr>
-                                                    <th style="background: #ffffff">Home District</th>
-                                                    <td style="background: #ffffff">[[ansarDetail.apid.unit_name_bng]]</td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered">
-                                                <caption>পানেল্ভুক্তির ও অফারের বিবরণ</caption>
-                                                <tr>
-                                                    <td>পানেল্ভুক্তির তারিখ</td>
-                                                    <td>প্যানেল আইডি নং</td>
-                                                    <td>বর্তমান অবস্থা</td>
-                                                    <td>অফারের তারিখ</td>
-                                                    <td>অফারের জেলা</td>
-                                                    <td>অফার বাতিলের তারিখ</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>[[ansarDetail.api.panel_date?dateConvert(ansarDetail.api.panel_date):"--"]]</td>
-                                                    <td>[[ansarDetail.api.memorandum_id?ansarDetail.api.memorandum_id:"--"]]</td>
-                                                    <td>[[ansarDetail.status]]</td>
-                                                    <td>[[ansarDetail.aod.offerDate?dateConvert(ansarDetail.aod.offerDate):'--']]</td>
-                                                    <td>[[ansarDetail.aod.offerUnit?ansarDetail.aod.offerUnit:'--']]</td>
-                                                    <td>[[ansarDetail.aoci.offerCancel?dateConvert(ansarDetail.aoci.offerCancel):'--']]</td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered">
-                                                <tr>
-                                                    <td style="background: #ffffff">
-                                                        <table class="table table-bordered">
-                                                            <caption>অঙ্গিভুতির বিবরণ</caption>
-                                                            <tr>
-                                                                <td>অঙ্গিভুতির  তারিখ</td>
-                                                                <td>অঙ্গিভুতির আইডি নং</td>
-                                                                <td>জেলার নাম</td>
-                                                                <td>অঙ্গিভুতির সংস্থা</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>[[ansarDetail.aei.joining_date?dateConvert(ansarDetail.aei.joining_date):"--"]]</td>
-                                                                <td>[[ansarDetail.aei.memorandum_id?ansarDetail.aei.memorandum_id:"--"]]</td>
-                                                                <td>[[ansarDetail.aei.unit_name_bng?ansarDetail.aei.unit_name_bng:"--"]]</td>
-                                                                <td>[[ansarDetail.aei.kpi_name?ansarDetail.aei.kpi_name:"--"]]</td>
-                                                            </tr>
-                                                        </table>
-                                                    </td>
-                                                    <td style="background: #ffffff">
-                                                        <table class="table table-bordered">
-                                                            <caption>অঙ্গিভুতির বিবরণ</caption>
-                                                            <tr>
-                                                                <td>অ-অঙ্গিভুতির  তারিখ</td>
-                                                                <td>অ-অঙ্গিভুতির কারন</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>[[ansarDetail.adei.disembodiedDate?dateConvert(ansarDetail.adei.disembodiedDate):"--"]]</td>
-                                                                <td>[[ansarDetail.adei.disembodiedReason?ansarDetail.adei.disembodiedReason:"--"]]</td>
-                                                            </tr>
-                                                        </table>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <template-list data="ansarDetail" key="ansar_history"></template-list>
                         </div>
                     </div>
                 </div>

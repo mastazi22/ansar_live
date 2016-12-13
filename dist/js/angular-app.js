@@ -76,6 +76,9 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
         $rootScope.user = response.data;
     })
     $rootScope.loadingView = false;
+    $rootScope.dateConvert=function(date){
+        return (moment(date).locale('bn').format('DD-MMMM-YYYY'));
+    }
 });
 GlobalApp.filter('num', function() {
     return function(input) {
@@ -84,8 +87,9 @@ GlobalApp.filter('num', function() {
     };
 });
 GlobalApp.filter('dateformat', function () {
-    return function (input, format) {
-        return moment(input).format(format);
+    return function (input, format,local) {
+        if(local==undefined) local='en'
+        return moment(input).locale(local).format(format);
     }
 })
 GlobalApp.directive('showAlert', function () {
@@ -103,11 +107,18 @@ GlobalApp.directive('templateList', function () {
         restrict: 'AE',
         scope: {
             data: '=',
-            dateFormat: '&'
+            dateFormat: '&',
+            callBack: '&',
         },
         templateUrl: function (elem, attrs) {
 
             return '/' + prefix + 'HRM/template_list/' + attrs.key
+        },
+        controller: function ($scope) {
+            $scope.loadPage = function () {
+                $scope.callBack();
+            }
+
         }
     }
 })
@@ -768,7 +779,11 @@ GlobalApp.directive('formSubmit',function (notificationService,$timeout) {
                     },
                     error:function (response) {
                         scope.loading = false;
-                        notificationService.notify('error',"An unknown error occur. Error code: "+response.status);
+                        if(response.status==401){
+                            notificationService.notify('error',"You are not authorize to perform this action");
+
+                        }
+                        else notificationService.notify('error',"An unknown error occur. Error code: "+response.status);
                         $timeout(function(){
                             scope.$apply();
                         })
