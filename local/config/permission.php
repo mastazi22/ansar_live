@@ -48,6 +48,7 @@ return [
         "go_to_new_disembodiment_page,disembodiment-entry",
         "service_extension_view,service_extension_entry",
         "embodiment_date_correction_view,new-embodiment-date-entry",
+        "disembodiment_date_correction_view,new-disembodiment-date-entry",
         "embodiment_memorandum_id_correction_view,new_embodiment_memorandum_id_update",
         "freeze_view,load_ansar_for_freeze,freeze_entry",
         "ansar-withdraw-view,ansar_list_for_withdraw,ansar-withdraw-update",

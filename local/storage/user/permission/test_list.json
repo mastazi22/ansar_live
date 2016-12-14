@@ -218,6 +218,10 @@
             "name": "Service Extension"
           },
           {
+            "value": "disembodiment_date_correction_view,new-disembodiment-date-entry",
+            "name": "Dis-Embodiment Date Correction"
+          },
+          {
             "value": "embodiment_date_correction_view,new-embodiment-date-entry",
             "name": "Embodiment Date Correction"
           },
