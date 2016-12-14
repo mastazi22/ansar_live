@@ -186,7 +186,7 @@
                             </tr>
                             <tr ng-repeat="user in users">
                                 <td>[[(limit*currentPage)+$index+1]]</td>
-                                <td><i ng-if="user.logged_in" style="vertical-align: middle;" class="fa fa-circle text-success"></i><span style="padding-left: 5px">[[user.user_name]]</span> </td>
+                                <td><i ng-if="user.total_time>0" style="vertical-align: middle;" class="fa fa-circle text-success"></i><span style="padding-left: 5px">[[user.user_name]]</span> </td>
                                 <td>
                                     [[user.first_name+" "+user.last_name]]
                                 </td>

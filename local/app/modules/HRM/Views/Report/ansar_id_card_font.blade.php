@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="{{asset('dist/css/id-card.css')}}">
 </head>
 <body>
-<div id="ansar-id-card-front" @if($type=='bng') class="bangla-class" @else style="font-family: engFont" @endif >
+<div id="ansar-id-card-front" style="font-family: 'Times New Roman',sans-serif" >
 
     <div class="card-header">
         <div class="card-header-left-part">
@@ -45,10 +45,10 @@
                   style="width: 80px">
         </div>
     </div>
-    <div class="card-footer">
+    <div class="card-footer" style="margin-top: 5px">
         <div class="card-footer-sing">
             <div><img src="{{URL::to('/image').'?file='.$ad->sign_pic}}"
-                      style="width: 80px;height:22px"></div>
+                      style="width: 80px;height:30px"></div>
             <div>{{$rd['bs']}}</div>
         </div>
         <div class="card-footer-barcode">
@@ -57,7 +57,7 @@
         </div>
         <div class="card-footer-sing" style="float: right">
             <div><img src="{{URL::to('/image').'?file=data/authority/Signature.jpg'}}"
-                      style="width: 80px;height:22px"></div>
+                      style="width: 80px;height:30px"></div>
             <div>{{$rd['is']}}</div>
         </div>
     </div>
