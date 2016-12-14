@@ -158,7 +158,7 @@
                                     <i ng-show="loadingSubmit" class="fa fa-spinner fa-pulse"></i>
                                     <i ng-hide="loadingSubmit" class="fa fa-send"></i>
                                     Send Offer</button>
-                                <a class="btn btn-danger" href="#" ng-click="cancelOffer($event)">
+                                <a class="btn btn-danger" ng-disabled="offerCanceling" href="#" ng-click="cancelOffer($event)">
                                     <i ng-show="offerCanceling" class="fa fa-spinner fa-pulse"></i>
                                     <i ng-hide="offerCanceling" class="fa fa-times"></i>&nbsp;Cancel Offer
                                 </a>
