@@ -102,6 +102,10 @@
         ]
       },
       {
+        "value":"kpi-withdraw-view,kpi-withdraw-update,kpi-withdraw-action-view",
+        "name":"Withdraw KPI"
+      },
+      {
         "text": "KPI Withdraw Cancel",
         "actions": [
           {

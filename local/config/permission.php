@@ -27,6 +27,7 @@ return [
         "active_kpi",
         "kpi-withdraw-cancel-update",
         "withdraw-date-update",
+        "kpi-withdraw-view,kpi-withdraw-update,kpi-withdraw-action-view",
         "anser_list,getnotverifiedansar,getverifiedansar",
         "ansar_registration,handleregistration",
         "editentry,submiteditentry",
