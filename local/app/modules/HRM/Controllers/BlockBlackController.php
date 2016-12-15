@@ -622,8 +622,7 @@ class BlockBlackController extends Controller
     {
         $rules = [
             'ansar_id'=>'required|regex:/^[0-9]+$/|exists:tbl_blacklist_info,ansar_id',
-            'unblack_date'=>'required',
-            'unblack_comment'=>'required'
+            'unblack_date'=>'required'
         ];
         $this->validate($request,$rules);
         $ansar_id = $request->input('ansar_id');

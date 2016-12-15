@@ -68,7 +68,7 @@
                                 {!! Form::textarea('unblock_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'unblock_comment', 'size' => '30x4', 'placeholder' => "Write Reason", 'ng-model' => 'unblock_comment')) !!}
                             </div>
                             <button id="unblock_ansar" class="btn btn-primary"
-                                    ng-disabled="!unblock_date||!unblock_comment||!ansarId"><img
+                                    ng-disabled="!unblock_date||!ansarId"><img
                                         ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}"
                                         width="16" style="margin-top: -2px">Unblock Ansar
                             </button>
