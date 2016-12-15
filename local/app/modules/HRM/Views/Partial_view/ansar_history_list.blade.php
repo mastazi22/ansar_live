@@ -1,8 +1,15 @@
+<style>
+    .font-bolddd *{
+        font-weight: bold !important;
+        font-size: 17px;
+    }
+</style>
+
 <div ng-if="!data.apid">
     <h4 style="text-align: center">No Ansar is available to show</h4>
 </div>
 <div ng-if="data.apid">
-    <div class="form-group">
+    <div class="form-group font-bolddd">
         <div class="col-sm-12 col-xs-12 col-centered">
             <div class="table-responsive">
                 <table class="table table-bordered" style="margin: 0 auto;width: auto !important;">
@@ -34,7 +41,7 @@
             </div>
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group font-bolddd">
         <div class="col-sm-12">
             <div class="table-responsive">
                 <table class="table table-bordered">
@@ -59,7 +66,7 @@
             </div>
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group font-bolddd">
         <div class="col-sm-12">
             <div class="table-responsive">
                 <table class="table table-bordered">
