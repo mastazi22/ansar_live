@@ -348,13 +348,9 @@
                                             <div class="row">
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
-                                                        <label class="control-label">Memorandum no.&nbsp;&nbsp;&nbsp;<span
-                                                                    ng-show="isVerifying">
-                                                        <i class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span>
-                                                            <span class="text-danger" ng-if="isVerified&&!memorandumId">Memorandum no. is required.</span>
-                                                            <span class="text-danger" ng-if="isVerified&&memorandumId">This id already taken.</span>
+                                                        <label class="control-label">Memorandum no.
                                                         </label>
-                                                        <input ng-blur="verifyMemorandumId()" ng-model="submitEntryPanelData.memorandumId" type="text" class="form-control" name="memorandum_id" placeholder="Enter Memorandum no." required>
+                                                        <input ng-model="submitEntryPanelData.memorandumId" type="text" class="form-control" name="memorandum_id" placeholder="Enter Memorandum no." required>
                                                         <p ng-if="add_to_panel_error.memorandumId!=undefined" class="text text-danger">[[add_to_panel_error.memorandumId[0] ]]</p>
                                                     </div>
                                                 </div>
@@ -403,7 +399,7 @@
                                                 </table>
                                             </div>
                                             <button class="btn btn-primary pull-right" id="confirm-panel-entry"
-                                                    ng-disabled="!submitEntryPanelData.panel_date||!submitEntryPanelData.memorandumId||isVerified||isVerifying">
+                                                    ng-disabled="!submitEntryPanelData.panel_date||!submitEntryPanelData.memorandumId">
                                                 <i class="fa fa-check"></i>&nbsp;Confirm
                                             </button>
                                     </form>

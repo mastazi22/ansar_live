@@ -145,7 +145,7 @@ class PanelController extends Controller
             'memorandumId'=>'required',
             'ansar_id'=>'required|is_array|array_type:int',
             'merit'=>'required|is_array|array_type:int|array_length_same:ansar_id',
-            'panel_date'=>["required","after:{$date}","date_format:d-M-Y","regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/"],
+            'panel_date'=>["required","after:{$date}","regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/"],
         ];
         $valid = Validator::make($request->all(),$rules);
         if($valid->fails()){
