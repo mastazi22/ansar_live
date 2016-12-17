@@ -41,6 +41,7 @@ class SendSms extends Job implements SelfHandling, ShouldQueue
         foreach($this->ansar_ids as $ansar_id){
             $ansar = PersonalInfo::where('ansar_id',$ansar_id)->select('mobile_no_self')->first();
             if($ansar){
+                Log::info("EMBODIED ".$ansar_id);
                 $phone = '88'.trim($ansar->mobile_no_self);
                 $body = "You are embodied";
                 $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
