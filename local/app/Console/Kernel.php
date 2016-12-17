@@ -148,6 +148,8 @@ class Kernel extends ConsoleKernel
                                 'rest_status' => 1,
                                 'offer_sms_status' => 0,
                             ]);
+                            $ansar->delete();
+                            break;
                     }
                     DB::commit();
                 } catch (\Exception $e) {
