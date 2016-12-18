@@ -45,7 +45,7 @@
                   style="width: 80px">
         </div>
     </div>
-    <div class="card-footer" style="margin-top: 5px">
+    <div class="card-footer" style="margin-top: 2px">
         <div class="card-footer-sing">
             <div><img src="{{URL::to('/image').'?file='.$ad->sign_pic}}"
                       style="width: 80px;height:30px"></div>
@@ -61,7 +61,7 @@
             <div>{{$rd['is']}}</div>
         </div>
     </div>
-    <h5 style="text-align: center;margin-top: 0;margin-bottom: 5px;font-size: 12px;background: limegreen">{{$rd['footer_title']}}</h5>
+    <h5 style="text-align: center;margin-top: 0;font-size: 12px;background: limegreen">{{$rd['footer_title']}}</h5>
 </div>
 <div>
 
