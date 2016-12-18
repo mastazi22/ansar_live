@@ -157,7 +157,7 @@ class Kernel extends ConsoleKernel
                     Log::info("ERROR: " . $e->getMessage());
                 }
             }
-        })->everyThirtyMinutes()->name("revert_offer")->withoutOverlapping();
+        })->dailyAt("23:59")->name("revert_offer")->withoutOverlapping();
         $schedule->call(function () {
 
             $offeredAnsars = SmsReceiveInfoModel::whereRaw('DATEDIFF(NOW(),sms_received_datetime) >= 7')->get();
@@ -184,7 +184,7 @@ class Kernel extends ConsoleKernel
                     Log::info("ERROR: " . $e->getMessage());
                 }
             }
-        })->everyMinute()->name("revert_offer_accepted")->withoutOverlapping();
+        })->dailyAt("23:59")->name("revert_offer_accepted")->withoutOverlapping();
         $schedule->call(function () {
             $withdraw_kpi_ids = KpiDetailsModel::where('kpi_withdraw_date', '<=', Carbon::now())->whereNotNull('kpi_withdraw_date')->get();
             foreach ($withdraw_kpi_ids as $withdraw_kpi_id) {
@@ -213,7 +213,7 @@ class Kernel extends ConsoleKernel
             $rest_ansars = RestInfoModel::whereDate('active_date','<=',Carbon::today()->toDateString())->whereIn('disembodiment_reason_id',[1,2,8])->get();
             foreach($rest_ansars as $ansar){
                 DB::beginTransaction();
-                if(in_array(AnsarStatusInfo::OFFER_STATUS,$ansar->status->getStatus())||in_array(AnsarStatusInfo::BLOCK_STATUS,$ansar->status->getStatus())||in_array(AnsarStatusInfo::BLACK_STATUS,$ansar->status->getStatus())) continue;
+                if(!in_array(AnsarStatusInfo::REST_STATUS,$ansar->status->getStatus())||in_array(AnsarStatusInfo::BLOCK_STATUS,$ansar->status->getStatus())||in_array(AnsarStatusInfo::BLACK_STATUS,$ansar->status->getStatus())) continue;
                 try{
                     $panel_log = PanelInfoLogModel::where('ansar_id',$ansar->ansar_id)->orderBy('id','desc')->first();
                     PanelModel::create([
