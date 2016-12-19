@@ -76,31 +76,32 @@ class SMSController extends Controller
         } else if (strcasecmp(substr($phone, 0, 3), '+88') == 0) {
             $phone = substr($phone, 3);
         }
-        //return $phone;
-        $ansar = PersonalInfo::where('mobile_no_self', $phone)->first();
+//        return $phone;
+        $ansar = PersonalInfo::where('mobile_no_self', $phone)->pluck('ansar_id');
         $action_date = Carbon::now();
-        if ($ansar) {
+        if (count($ansar)>0) {
             Log::info("SMS RECEIVE : ANSAR FOUND" );
             switch ($type) {
                 case 'YES':
                     DB::beginTransaction();
                     try {
-                        $offered_ansar = OfferSMS::where('ansar_id', $ansar->ansar_id)->first();
+                        $offered_ansar = OfferSMS::whereIn('ansar_id', $ansar)->first();
+//                        return $offered_ansar->ansar_id;
                         if ($offered_ansar) {
                             $yes = new SmsReceiveInfoModel;
-                            $yes->ansar_id = $ansar->ansar_id;
+                            $yes->ansar_id = $offered_ansar->ansar_id;
                             $yes->sms_received_datetime = $action_date;
                             $yes->sms_status = 'ACCEPTED';
                             $yes->offered_district = $offered_ansar->district_id;
                             $yes->sms_send_datetime = $offered_ansar->sms_send_datetime;
                             $yes->sms_end_datetime = $offered_ansar->sms_end_datetime;
                             $yes->save();
-                            switch ($offered_ansar->come_from) {
+                            switch (strtolower($offered_ansar->come_from)) {
                                 case 'panel':
-                                    $this->removeFromPanel($ansar->ansar_id);
+                                    $this->removeFromPanel($offered_ansar->ansar_id);
                                     break;
                                 case 'rest':
-                                    $this->removeFromRest($ansar->ansar_id);
+                                    $this->removeFromRest($offered_ansar->ansar_id);
                                     break;
                             }
                             $offered_ansar->delete();
@@ -110,21 +111,22 @@ class SMSController extends Controller
                         }
                     } catch (\Exception $e) {
                         DB::rollBack();
+                        Log::info($e->getMessage());
                         return "An error occur while accepting offer. Please try again some time.";
                     }
                     return "No Ansar found with this id in offer list";
                 case 'NO':
                     DB::beginTransaction();
                     try {
-                        $offered_ansar = OfferSMS::where('ansar_id', $ansar->ansar_id)->first();
+                        $offered_ansar = OfferSMS::whereIn('ansar_id', $ansar)->first();
                         if ($offered_ansar) {
-                            $status_info = AnsarStatusInfo::where('ansar_id', $ansar->ansar_id)->first();
+                            $status_info = AnsarStatusInfo::where('ansar_id', $offered_ansar->ansar_id)->first();
                             $offer_log = new OfferSmsLog;
                             switch ($offered_ansar->come_from) {
                                 case 'Panel':
-                                    $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
+                                    $panel_log = PanelInfoLogModel::where('ansar_id', $offered_ansar->ansar_id)->select('old_memorandum_id')->first();
                                     $panel_info = new PanelModel;
-                                    $panel_info->ansar_id = $ansar->ansar_id;
+                                    $panel_info->ansar_id = $offered_ansar->ansar_id;
                                     $panel_info->panel_date = Carbon::now();
                                     $panel_info->come_from = 'Offer';
                                     $panel_info->ansar_merit_list = 1;
@@ -142,7 +144,7 @@ class SMSController extends Controller
 
                             }
                             $offer_log->offered_date = $offered_ansar->sms_send_datetime;
-                            $offer_log->ansar_id = $ansar->ansar_id;
+                            $offer_log->ansar_id = $offered_ansar->ansar_id;
                             $offer_log->reply_type = 'No';
                             $offer_log->offered_district = $offered_ansar->district_id;
                             $offer_log->action_user_id = $offered_ansar->action_user_id;
