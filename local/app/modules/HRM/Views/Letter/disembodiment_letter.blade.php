@@ -15,7 +15,7 @@
         })
         GlobalApp.controller('DisEmbodiedLetterController', function ($scope,$http,$sce) {
             $scope.letterPrintView = $sce.trustAsHtml("&nbsp;")
-            $scope.printType = "memorandumNo"
+            $scope.printType = "smartCardNo"
             $scope.unit = {
                 selectedUnit: []
             };
