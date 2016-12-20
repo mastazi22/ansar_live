@@ -255,6 +255,89 @@ class EmbodimentController extends Controller
         return Response::json(['status'=>true,'message'=>'Ansar is Embodied Successfully!']);
 
     }
+    public function newMultipleEmbodimentEntry(Request $request)
+    {
+        return $request->all();
+        $kpi_id = $request->input('kpi_id');
+        $rules = [];
+        if(auth()->user()->type==11||auth()->user()->type==77){
+            $rules['memorandum_id'] = 'required';
+        }
+        else{
+            $rules['memorandum_id'] = 'required|unique:hrm.tbl_memorandum_id,memorandum_id|unique:hrm.tbl_embodiment,memorandum_id|unique:hrm.tbl_rest_info,memorandum_id||unique:hrm.tbl_transfer_ansar,transfer_memorandum_id';
+        }
+        $message = [
+            'memorandum_id.required' => 'Memorandum ID is required'
+        ];
+        $valid = Validator::make($request->all(), $rules, $message);
+        if ($valid->fails()) {
+            return $valid->messages()->toJson();
+        }
+        $memorandum_id = $request->input('memorandum_id');
+        $global_value = GlobalParameterFacades::getValue("embodiment_period");
+        $global_unit = GlobalParameterFacades::getUnit("embodiment_period");
+
+
+        foreach($request->data as $ansar){
+            DB::beginTransaction();
+            try {
+                $sms_receive_info = SmsReceiveInfoModel::where('ansar_id', $ansar['ansar_id'])->first();
+//            return $sms_receive_info->offered_district!=$request->division_name_eng?"same":"differ";
+                if(!$sms_receive_info) {
+                    throw new \Exception('Invalid request for Ansar ID: '.$ansar['ansar_id']);
+                }
+                $kpi = KpiGeneralModel::where('id',$ansar['kpi_id'])->first();
+                if(!$kpi){
+                    throw new \Exception('Invalid request for Ansar ID: '.$ansar['ansar_id']);
+                }
+                if($sms_receive_info->offered_district!=$kpi->unit_id){
+                    throw new \Exception('Ansar ID: '.$ansar['ansar_id'].' not offered for this district');
+                }
+                $kpi->embodiment()->save(new EmbodimentModel([
+                    'ansar_id'=>$ansar['ansar_id'],
+                    'received_sms_id'=>$sms_receive_info->id,
+                    'emboded_status'=>'Emboded',
+                    'action_user_id'=>Auth::user()->id,
+                    'service_ended_date'=>GlobalParameterFacades::getServiceEndedDate(Carbon::parse($ansar['joining_date'])),
+                    'memorandum_id'=>$memorandum_id,
+                    'reporting_date'=>Carbon::parse($ansar['reporting_date'])->format('Y-m-d'),
+                    'transfered_date'=>Carbon::parse($ansar['joining_date'])->format('Y-m-d'),
+                    'joining_date'=>Carbon::parse($ansar['joining_date'])->format('Y-m-d'),
+                ]));
+                $memorandum_entry = new MemorandumModel();
+                $memorandum_entry->memorandum_id = $memorandum_id;
+                $memorandum_entry->mem_date = Carbon::parse($request->mem_date);
+                $memorandum_entry->save();
+
+                $mobile_no = PersonalInfo::where('ansar_id', $ansar['ansar_id'])->select('tbl_ansar_parsonal_info.mobile_no_self')->first();
+                $sms_log_save = new OfferSmsLog();
+                $sms_log_save->ansar_id = $ansar['ansar_id'];
+                $sms_log_save->sms_offer_id = $sms_receive_info->id;
+                $sms_log_save->mobile_no = $mobile_no->mobile_no_self;
+                //$sms_log_save->offer_status=;
+                $sms_log_save->reply_type = "Yes";
+                $sms_log_save->action_date = $sms_receive_info->sms_received_datetime;
+                $sms_log_save->offered_district = $sms_receive_info->offered_district;
+                $sms_log_save->offered_date = $sms_receive_info->sms_send_datetime;
+                $sms_log_save->action_user_id = Auth::user()->id;
+                $sms_log_save->save();
+
+                $sms_receive_info->delete();
+
+                AnsarStatusInfo::where('ansar_id', $ansar['ansar_id'])->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 0, 'embodied_status' => 1, 'pannel_status' => 0, 'freezing_status' => 0]);
+
+                CustomQuery::addActionlog(['ansar_id' => $ansar['ansar_id'], 'action_type' => 'EMBODIED', 'from_state' => 'OFFER', 'to_state' => 'EMBODIED', 'action_by' => auth()->user()->id]);
+                DB::commit();
+
+            } catch (\Exception $e) {
+                DB::rollback();
+                return Response::json(['status'=>false,'message'=>$e->getMessage()]);
+            }
+        }
+//        $this->dispatch(new SendSms($request->ansar_ids));
+        return Response::json(['status'=>true,'message'=>'Ansar is Embodied Successfully!']);
+
+    }
 
     public function transferProcessView()
     {

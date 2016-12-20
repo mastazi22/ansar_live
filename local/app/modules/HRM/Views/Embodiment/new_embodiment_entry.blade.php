@@ -15,6 +15,7 @@
             $scope.queue = []
             $scope.ee = true;
             $scope.ansarDetail = {};
+            $scope.eData = []
             $scope.units = [];
             $scope.thanas = [];
             $scope.totalLength = 0;
@@ -103,14 +104,43 @@
                 })
             }
             $scope.addToCart = function () {
+                $("#cart-modal").modal('hide')
+                $scope.reset = {};
                 $scope.listedAnsar.push({
-                    ansar_id:$scope.multipleAnsar.id,
-                    ansar_name:$scope.multipleAnsar.ansar_name_bng,
-                    rank:$scope.multipleAnsar.name_bng,
+                    ansar_id:$scope.multipleAnsar[0].ansar_id,
+                    ansar_name:$scope.multipleAnsar[0].ansar_name_bng,
+                    rank:$scope.multipleAnsar[0].name_bng,
                     join_date:$scope.joining_datee,
                     kpi_name:$scope.kpiName
                 })
-                $scope.multipleAnsar = [];
+                $scope.eData.push({
+                    ansar_id:$scope.multipleAnsar[0].ansar_id,
+                    joining_date:$scope.joining_datee,
+                    reporting_date:$scope.reporting_datee,
+                    kpi_id:$scope.paramm.kpi
+                })
+                $scope.reset = {unit:true,thana:true,kpi:true};
+                $scope.joining_datee = ''
+                $scope.reporting_datee = ''
+                $scope.multipleAnsar = undefined;
+                $scope.ansar = ''
+            }
+            $scope.removeFromCart = function (index) {
+                $scope.listedAnsar.splice(index,1);
+                $scope.eData.splice(index,1);
+            }
+            $scope.submitEmbodiment = function () {
+
+                $http({
+                    method:'post',
+                    data:angular.toJson({data:$scope.eData}),
+                    url:'{{URL::route('new-embodiment-entry-multiple')}}'
+                }).then(function (response) {
+                    console.log(response.data)
+                }, function (response) {
+
+                })
+
             }
         })
     </script>
@@ -249,6 +279,7 @@
                                 </div>
                                 <div class="table-responsive" ng-if="listedAnsar&&listedAnsar.length>0">
                                     <table class="table table-bordered table-stripped">
+                                        <caption>Selected Ansar List</caption>
                                         <tr>
                                             <th>#</th>
                                             <th>Ansar ID</th>
@@ -266,12 +297,16 @@
                                             <td>[[ansar.join_date|dateformat:"DD-MMM-YYYY"]]</td>
                                             <td>[[ansar.kpi_name]]</td>
                                             <td>
-                                                <a href="#" class="btn btn-danger btn-xs" data-target="#cart-modal" data-toggle="modal">
+                                                <a href="#" class="btn btn-danger btn-xs" ng-click="removeFromCart($index)">
                                                     <i class="fa fa-remove"></i>&nbsp;
                                                 </a>
                                             </td>
                                         </tr>
                                     </table>
+                                </div>
+                                <div>
+                                    <button class="btn btn-primary pull-right" ng-click="submitEmbodiment()">Embodied</button>
+                                    <div class="clearfix"></div>
                                 </div>
                             </div>
                         </div>
@@ -362,6 +397,7 @@
                                             type="single"
                                             data="paramm"
                                             start-load="unit"
+                                            reset="reset"
                                             layout-vertical="1"
                                             get-kpi-name="kpiName"
                                             field-name="{unit:'division_name_eng',thana:'thana_name_eng',kpi:'kpi_id'}"

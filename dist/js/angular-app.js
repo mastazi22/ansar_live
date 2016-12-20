@@ -581,26 +581,26 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             })
             $scope.$watch('reset.range',function (n, o) {
                 if(n) {
-                    //$scope.ranges = [];
+                    if($scope.startLoad!='range')$scope.ranges = [];
                     $scope.selected.range = $scope.type=='all'?'all':'';
                 }
             })
             $scope.$watch('reset.unit',function (n, o) {
                 if(n) {
-                    $scope.units = [];
+                    if($scope.startLoad!='unit')$scope.units = [];
 
                     $scope.selected.unit = $scope.data.unit = $scope.type=='all'?'all':'';
                 }
             })
             $scope.$watch('reset.thana',function (n, o) {
                 if(n) {
-                    $scope.thanas = [];
+                    if($scope.startLoad!='thana')$scope.thanas = [];
                     $scope.selected.thana = $scope.data.thana = $scope.type=='all'?'all':'';
                 }
             })
             $scope.$watch('reset.kpi',function (n, o) {
                 if(n) {
-                    $scope.kpis = [];
+                    if($scope.startLoad!='kpi')$scope.kpis = [];
                     $scope.selected.kpi = $scope.data.kpi = $scope.type=='all'?'all':'';
                 }
             })

@@ -289,6 +289,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/disembodiment_view', ['as' => 'go_to_disembodiment_view_page', 'uses' => 'EmbodimentController@disembodimentListView']);
         Route::get('/check-ansar', ['as'=>'check-ansar','uses'=>'EmbodimentController@loadAnsarForEmbodiment']);
         Route::post('/new-embodiment-entry', ['as'=>'new-embodiment-entry','uses'=>'EmbodimentController@newEmbodimentEntry']);
+        Route::post('/new-embodiment-entry-multiple', ['as'=>'new-embodiment-entry-multiple','uses'=>'EmbodimentController@newMultipleEmbodimentEntry']);
         Route::get('/new_disembodiment', ['as' => 'go_to_new_disembodiment_page', 'uses' => 'EmbodimentController@newDisembodimentView']);
         Route::get('/load_ansar', ['as'=>'load_ansar','uses'=>'EmbodimentController@loadAnsarForDisembodiment']);
         Route::get('/confirm_disembodiment', 'EmbodimentController@confirmDisembodiment');
@@ -380,50 +381,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('/kpi-withdraw-cancel-update/{id}', ['as'=>'kpi-withdraw-cancel-update','uses'=>'KpiController@kpiWithdrawCancelUpdate'])->where('id','^[0-9]+$');
 //End KPI
         Route::get('test',function(){
-           $data = DB::select(DB::raw("SELECT `tbl_panel_info`.`id`,`tbl_panel_info`.`ansar_id`,`tbl_ansar_parsonal_info`.`mobile_no_self`,`tbl_designations`.`code` FROM `tbl_panel_info`
- INNER JOIN `tbl_ansar_parsonal_info` ON `tbl_ansar_parsonal_info`.`ansar_id` = `tbl_panel_info`.`ansar_id`
- INNER JOIN `tbl_ansar_status_info` ON `tbl_ansar_status_info`.`ansar_id` = tbl_ansar_parsonal_info.`ansar_id`
- INNER JOIN `tbl_designations` ON `tbl_ansar_parsonal_info`.`designation_id` = `tbl_designations`.id
- WHERE (`tbl_ansar_parsonal_info`.`mobile_no_self` NOT REGEXP '^[0-9]{11}$' OR
- `tbl_ansar_parsonal_info`.`mobile_no_self` IS NULL) AND tbl_ansar_status_info.`block_list_status` = 0 ORDER BY `tbl_panel_info`.`ansar_id` ASC"));
-            foreach($data as $d) {
-                DB::beginTransaction();
-                try {
-                    $ansar = AnsarStatusInfo::where('ansar_id', $d->ansar_id)->first();
-                    if (!$ansar) throw new\Exception('This Ansar doesn`t exists');
-                    BlockListModel::create([
-                        'ansar_id' => $d->ansar_id,
-                        'block_list_from' => $ansar->getStatus()[0],
-                        'from_id' => $d->id,
-                        'date_for_block' => Carbon::now(),
-                        'comment_for_block' => "Invalid mobile no",
-                        'action_user_id' => 0,
-                    ]);
-                    $ansar->update(['block_list_status' => 1]);
-                    Log::info("SUCCESS ".$d->ansar_id);
-                    DB::commit();
-                }catch(\Exception $e){
-                    Log::info($e->getMessage());
-                    DB::rollBack();
-                }
-
-            }
-//            $offer_log = \App\modules\HRM\Models\OfferSmsLog::where('offered_date','2016-12-10')->where('reply_type','NO')->get();
-//            foreach($offer_log as $ansar){
-//                $status_info = AnsarStatusInfo::where('ansar_id', $ansar->ansar_id)->first();
-//                $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
-//                $panel_info = new PanelModel;
-//                $panel_info->ansar_id = $ansar->ansar_id;
-//                $panel_info->panel_date = Carbon::now();
-//                $panel_info->come_from = 'Offer';
-//                $panel_info->ansar_merit_list = 1;
-//                $panel_info->memorandum_id = $panel_log->old_memorandum_id;
-//                $panel_info->save();
-//                $status_info->offer_sms_status = 0;
-//                $status_info->pannel_status = 1;
-//                $status_info->save();
-//            }
-            return "success";
+           return \App\modules\HRM\Models\PersonalInfo::where('mobile_no_self','LIKE','%0173456%')->pluck('ansar_id');
 
         });
     });
