@@ -17,7 +17,7 @@
             <label class="control-label">@lang('title.unit')&nbsp;
                 <img ng-show="loading.unit" src="{{asset('dist/img/facebook.gif')}}" width="16">
             </label>
-            <select id="unit" ng-disabled="unitFieldDisabled||loading.range||loading.unit||loading.thana||loading.kpi" name="[[fieldName.unit]]" class="form-control" ng-model="selected.unit" ng-change="changeUnit(selected.unit)">
+            <select id="unit" ng-disabled="unitFieldDisabled||loading.range||loading.unit||loading.thana||loading.kpi" name="[[fieldName.unit]]" class="form-control" ng-model="selected.unit" ng-change="changeUnit(selected.range,selected.unit)">
                 <option value="all" ng-if="type=='all'">All</option>
                 <option value="" ng-if="type=='single'||type==undefined">--@lang('title.unit')--</option>
                 <option ng-repeat="d in units" value="[[d.id]]" ng-disabled="unitDisabled==d.id">[[d.unit_name_bng]]</option>
@@ -30,7 +30,7 @@
             <label class="control-label">@lang('title.thana')&nbsp;
                 <img ng-show="loading.thana" src="{{asset('dist/img/facebook.gif')}}" width="16">
             </label>
-            <select id="thana" ng-disabled="thanaFieldDisabled||loading.range||loading.unit||loading.thana||loading.kpi" name="[[fieldName.thana]]" class="form-control" ng-model="selected.thana" ng-change="changeThana(selected.thana)">
+            <select id="thana" ng-disabled="thanaFieldDisabled||loading.range||loading.unit||loading.thana||loading.kpi" name="[[fieldName.thana]]" class="form-control" ng-model="selected.thana" ng-change="changeThana(selected.range,selected.unit,selected.thana)">
                 <option value="all" ng-if="type=='all'">All</option>
                 <option value="" ng-if="type=='single'||type==undefined">--@lang('title.thana')--</option>
                 <option ng-repeat="t in thanas" value="[[t.id]]" ng-disabled="thanaDisabled==t.id">[[t.thana_name_bng]]</option>

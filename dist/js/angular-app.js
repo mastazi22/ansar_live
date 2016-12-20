@@ -519,18 +519,18 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                     $scope.loadUnit(division_id)
                 }
             }
-            $scope.changeUnit = function (unit_id) {
+            $scope.changeUnit = function (d,unit_id) {
                 if($scope.type=='all'){
-                    $scope.loadThana(undefined,unit_id)
-                    $scope.loadKPI(undefined,unit_id)
+                    $scope.loadThana(d,unit_id)
+                    $scope.loadKPI(d,unit_id)
                 }
                 else{
                     $scope.loadThana(undefined,unit_id)
                 }
             }
-            $scope.changeThana = function (thana_id) {
+            $scope.changeThana = function (d,u,thana_id) {
                 if($scope.type=='all'){
-                    $scope.loadKPI(undefined,undefined,thana_id)
+                    $scope.loadKPI(d,u,thana_id)
                 }
                 else{
                     $scope.loadKPI(undefined,undefined,thana_id)
