@@ -41,7 +41,7 @@
                         <td>{{$result[$j]->rank}}</td>
                         <td style="width:120px">{{$result[$j]->name}}<br>{{$result[$j]->father_name}}</td>
                         <td>{{$result[$j]->village_name or ''}},&nbsp;{{$result[$j]->pon or ''}},&nbsp;{{$result[$j]->thana or ''}},&nbsp;{{$result[$j]->unit or ''}}</td>
-                        <td>{{$result[$j]->kpi_name}}</td>
+                        <td>{{$result[$j]->kpi_name."({$result[$j]->kpi_thana})"}}</td>
                         <td>{{LanguageConverter::engToBng(date('d/m/Y',strtotime($result[$j]->joining_date)))}}</td>
                     </tr>
                     @endif
