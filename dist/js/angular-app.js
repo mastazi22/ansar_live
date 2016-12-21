@@ -587,14 +587,14 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             })
             $scope.$watch('reset.unit',function (n, o) {
                 if(n) {
-                    if($scope.startLoad!='unit')$scope.units = [];
+                    if($scope.startLoad!='unit'&&$rootScope.user.usertype.type_name!='RC')$scope.units = [];
 
                     $scope.selected.unit = $scope.data.unit = $scope.type=='all'?'all':'';
                 }
             })
             $scope.$watch('reset.thana',function (n, o) {
                 if(n) {
-                    if($scope.startLoad!='thana')$scope.thanas = [];
+                    if($scope.startLoad!='thana'&&$rootScope.user.usertype.type_name!='DC')$scope.thanas = [];
                     $scope.selected.thana = $scope.data.thana = $scope.type=='all'?'all':'';
                 }
             })

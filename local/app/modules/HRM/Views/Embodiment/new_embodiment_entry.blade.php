@@ -9,9 +9,10 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('NewEmbodimentController', function ($scope, $http, $timeout) {
+        GlobalApp.controller('NewEmbodimentController', function ($scope, $http, notificationService) {
             $scope.ansarId = "";
             $scope.errors = ''
+            $scope.printLetter = false;
             $scope.queue = []
             $scope.ee = true;
             $scope.ansarDetail = {};
@@ -68,6 +69,7 @@
             $scope.loadAnsarDetail = function (id) {
                 $("#embodied-modal").modal('hide')
                 $scope.loadingAnsar = true;
+                $scope.resetData();
                 $http({
                     method: 'get',
                     url: '{{URL::route('check-ansar')}}',
@@ -106,6 +108,17 @@
             $scope.addToCart = function () {
                 $("#cart-modal").modal('hide')
                 $scope.reset = {};
+                var exists = 0;
+                $scope.listedAnsar.forEach(function (v,i) {
+                    if(v.ansar_id==$scope.multipleAnsar[0].ansar_id){
+                        exists = 1;
+                        return;
+                    }
+                })
+                if(exists == 1) {
+                    notificationService.notify("error","This Ansar already added to list")
+                    return ;
+                }
                 $scope.listedAnsar.push({
                     ansar_id:$scope.multipleAnsar[0].ansar_id,
                     ansar_name:$scope.multipleAnsar[0].ansar_name_bng,
@@ -130,17 +143,48 @@
                 $scope.eData.splice(index,1);
             }
             $scope.submitEmbodiment = function () {
-
+                $scope.printLetter = false;
+                $scope.loading = true;
                 $http({
                     method:'post',
-                    data:angular.toJson({data:$scope.eData}),
+                    data:angular.toJson({data:$scope.eData,memorandum_id:$scope.memorandumIdm,mem_date:$scope.memDatee}),
                     url:'{{URL::route('new-embodiment-entry-multiple')}}'
                 }).then(function (response) {
                     console.log(response.data)
+                    if(response.data.status) {
+                        notificationService.notify('success', response.data.message);
+                        $("#embodied-modal-mul").modal('hide');
+                        $scope.mmmID = angular.copy($scope.memorandumIdm);
+                        $scope.eData = [];
+                        $scope.listedAnsar = [];
+                        $scope.multipleAnsar = [];
+                        $scope.ansar = '';
+                        $scope.memorandumIdm = ''
+                        $scope.memDatee = ''
+                        $scope.printLetter = true;
+                        $scope.loading = false;
+                    }
+                    else{
+                        notificationService.notify('error', response.data.message);
+                        $scope.loading = false;
+                        $scope.printLetter = false;
+                    }
                 }, function (response) {
-
+                    notificationService.notify('error', response.statusText);
+                    $scope.loading = false;
+                    $scope.printLetter = false;
                 })
 
+            }
+            $scope.resetData = function () {
+                $scope.eData = [];
+                $scope.listedAnsar = [];
+                $scope.multipleAnsar = [];
+                $scope.ansar = '';
+                $scope.memorandumIdm = ''
+                $scope.memDatee = ''
+                $scope.loading = false;
+                $scope.printLetter = false;
             }
         })
     </script>
@@ -159,6 +203,7 @@
                             type="single"
                             data="params"
                             start-load="range"
+                            unit-load="resetData()"
                             unit-change="loadAnsarDetail()"
                             on-load="loadAnsarDetail()"
                             field-width="{range:'col-sm-4',unit:'col-sm-4'}"
@@ -243,11 +288,7 @@
                                         </button>
                                     </span>
                                 </div>
-                                <p class="text text-warning" ng-if="multipleAnsar&&multipleAnsar.length<=0">
-                                    <i class="fa fa-warning"></i>
-                                    &nbsp;No Ansar available with this ID:[[ansar]]
-                                </p>
-                                <div class="table-responsive" ng-if="multipleAnsar&&multipleAnsar.length>0">
+                                <div class="table-responsive">
                                     <table class="table table-bordered table-stripped">
                                         <tr>
                                             <th>#</th>
@@ -275,11 +316,14 @@
                                                 </a>
                                             </td>
                                         </tr>
+                                        <tr  ng-if="!multipleAnsar||multipleAnsar.length<=0">
+                                            <td colspan="9" class="warning">No Ansar available</td>
+                                        </tr>
                                     </table>
                                 </div>
-                                <div class="table-responsive" ng-if="listedAnsar&&listedAnsar.length>0">
+                                <div class="table-responsive">
                                     <table class="table table-bordered table-stripped">
-                                        <caption>Selected Ansar List</caption>
+                                        <caption class="text text-bold">Selected Ansar List</caption>
                                         <tr>
                                             <th>#</th>
                                             <th>Ansar ID</th>
@@ -302,10 +346,27 @@
                                                 </a>
                                             </td>
                                         </tr>
+                                        <tr  ng-if="listedAnsar.length<=0">
+                                            <td colspan="7" class="warning">
+                                                No Ansar selected
+                                            </td>
+                                        </tr>
                                     </table>
                                 </div>
                                 <div>
-                                    <button class="btn btn-primary pull-right" ng-click="submitEmbodiment()">Embodied</button>
+                                    {!! Form::open(['route'=>'print_letter','target'=>'_blank','ng-show'=>'printLetter','class'=>'pull-left']) !!}
+                                    {!! Form::hidden('option','memorandumNo') !!}
+                                    {!! Form::hidden('id','[[mmmID]]') !!}
+                                    {!! Form::hidden('type','EMBODIMENT') !!}
+                                    @if(auth()->user()->type!=22)
+                                        {!! Form::hidden('unit','[[ params.unit]]') !!}
+                                    @else
+                                        {!! Form::hidden('unit',auth()->user()->district?auth()->user()->district->id:'') !!}
+                                    @endif
+                                    <button class="btn btn-primary"><i class="fa fa-print"></i>&nbsp;Print Embodied Letter
+                                    </button>
+                                    {!! Form::close() !!}
+                                    <button class="btn btn-primary pull-right" ng-disabled="listedAnsar.length<=0" data-target="#embodied-modal-mul" data-toggle="modal">Embodied</button>
                                     <div class="clearfix"></div>
                                 </div>
                             </div>
@@ -369,6 +430,39 @@
                                     </button>
                                 </div>
                                 {!! Form::close() !!}
+                            </div>
+                        </div>
+                    </div>
+                    <div id="embodied-modal-mul" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Embodiment Form</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group required">
+                                        <label class="control-label">Memorandum no. & Date</label>
+
+                                        <div class="row">
+                                            <div class="col-md-7" style="padding-right: 0">
+                                                <input ng-model="memorandumIdm"
+                                                       type="text" class="form-control"
+                                                       placeholder="Enter Memorandum no." required>
+                                            </div>
+                                            <div class="col-md-5">
+                                                <input date-picker ng-model="memDatee"
+                                                       type="text" class="form-control" name="mem_date"
+                                                       placeholder="Memorandum Date" required>
+                                            </div>
+
+                                        </div>
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" ng-click="submitEmbodiment()" class="btn btn-primary pull-right" ng-disabled="loading">
+                                        <i class="fa fa-spinner fa-pulse" ng-show="loading"></i>Confirm Embodiment
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

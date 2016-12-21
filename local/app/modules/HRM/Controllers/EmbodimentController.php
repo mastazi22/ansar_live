@@ -257,8 +257,7 @@ class EmbodimentController extends Controller
     }
     public function newMultipleEmbodimentEntry(Request $request)
     {
-        return $request->all();
-        $kpi_id = $request->input('kpi_id');
+//        return $request->all();
         $rules = [];
         if(auth()->user()->type==11||auth()->user()->type==77){
             $rules['memorandum_id'] = 'required';
@@ -271,12 +270,10 @@ class EmbodimentController extends Controller
         ];
         $valid = Validator::make($request->all(), $rules, $message);
         if ($valid->fails()) {
-            return $valid->messages()->toJson();
+            return Response::json(['status'=>false,'message'=>'Invalid memorandum no.']);
         }
         $memorandum_id = $request->input('memorandum_id');
-        $global_value = GlobalParameterFacades::getValue("embodiment_period");
-        $global_unit = GlobalParameterFacades::getUnit("embodiment_period");
-
+        $result = ['success'=>0,'fail'=>0];
 
         foreach($request->data as $ansar){
             DB::beginTransaction();
@@ -328,14 +325,16 @@ class EmbodimentController extends Controller
 
                 CustomQuery::addActionlog(['ansar_id' => $ansar['ansar_id'], 'action_type' => 'EMBODIED', 'from_state' => 'OFFER', 'to_state' => 'EMBODIED', 'action_by' => auth()->user()->id]);
                 DB::commit();
+                $result['success']++;
 
             } catch (\Exception $e) {
                 DB::rollback();
-                return Response::json(['status'=>false,'message'=>$e->getMessage()]);
+                Log::info($e->getMessage());
+                $result['fail']++;
             }
         }
 //        $this->dispatch(new SendSms($request->ansar_ids));
-        return Response::json(['status'=>true,'message'=>'Ansar is Embodied Successfully!']);
+        return Response::json(['status'=>true,'message'=>"Success {$result['success']}, Failed {$result['fail']}"]);
 
     }
 
