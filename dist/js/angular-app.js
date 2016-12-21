@@ -514,7 +514,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 if($scope.type=='all'){
                     $scope.loadUnit(division_id)
                     $scope.loadThana(division_id)
-                    $scope.loadKPI(division_id)
+                    //$scope.loadKPI(division_id)
                 }
                 else{
                     $scope.loadUnit(division_id)
@@ -524,7 +524,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 console.log($scope.reset)
                 if($scope.type=='all'){
                     $scope.loadThana(d,unit_id)
-                    $scope.loadKPI(d,unit_id)
+                    //$scope.loadKPI(d,unit_id)
                 }
                 else{
                     $scope.loadThana(undefined,unit_id)
