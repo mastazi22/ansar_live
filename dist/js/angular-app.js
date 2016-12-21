@@ -445,6 +445,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 $scope.rangeLoad({param:$scope.selected});
             }
             $scope.loadUnit = function (id) {
+
                 if(!$scope.show('unit')) return;
                 $scope.units = $scope.thanas = $scope.kpis = []
                 $scope.loading.unit = true;
@@ -520,6 +521,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 }
             }
             $scope.changeUnit = function (d,unit_id) {
+                console.log($scope.reset)
                 if($scope.type=='all'){
                     $scope.loadThana(d,unit_id)
                     $scope.loadKPI(d,unit_id)
@@ -579,6 +581,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 }
                 $scope.finish = true;
             })
+
             $scope.$watch('reset.range',function (n, o) {
                 if(n) {
                     if($scope.startLoad!='range')$scope.ranges = [];
@@ -586,6 +589,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 }
             })
             $scope.$watch('reset.unit',function (n, o) {
+                //alert(1)
                 if(n) {
                     if($scope.startLoad!='unit'&&$rootScope.user.usertype.type_name!='RC')$scope.units = [];
 

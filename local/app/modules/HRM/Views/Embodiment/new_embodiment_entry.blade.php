@@ -9,7 +9,7 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('NewEmbodimentController', function ($scope, $http, notificationService) {
+        GlobalApp.controller('NewEmbodimentController', function ($scope, $http, notificationService,$timeout) {
             $scope.ansarId = "";
             $scope.errors = ''
             $scope.printLetter = false;
@@ -107,7 +107,6 @@
             }
             $scope.addToCart = function () {
                 $("#cart-modal").modal('hide')
-                $scope.reset = {};
                 var exists = 0;
                 $scope.listedAnsar.forEach(function (v,i) {
                     if(v.ansar_id==$scope.multipleAnsar[0].ansar_id){
@@ -133,10 +132,14 @@
                     kpi_id:$scope.paramm.kpi
                 })
                 $scope.reset = {unit:true,thana:true,kpi:true};
+
                 $scope.joining_datee = ''
                 $scope.reporting_datee = ''
                 $scope.multipleAnsar = undefined;
                 $scope.ansar = ''
+                $timeout(function () {
+                    $scope.$apply();
+                })
             }
             $scope.removeFromCart = function (index) {
                 $scope.listedAnsar.splice(index,1);
@@ -185,6 +188,9 @@
                 $scope.memDatee = ''
                 $scope.loading = false;
                 $scope.printLetter = false;
+            }
+            $scope.ppppp = function () {
+                $scope.reset = {};
             }
         })
     </script>
@@ -311,7 +317,7 @@
                                             <td>Offered</td>
                                             <td>[[ansar.offerDate|dateformat:"DD-MMM-YYYY"]]</td>
                                             <td>
-                                                <a href="#" class="btn btn-primary btn-xs" data-target="#cart-modal" data-toggle="modal">
+                                                <a href="#" class="btn btn-primary btn-xs" ng-click="ppppp()" data-target="#cart-modal" data-toggle="modal">
                                                     <i class="fa fa-plus"></i>&nbsp; Add to list
                                                 </a>
                                             </td>
