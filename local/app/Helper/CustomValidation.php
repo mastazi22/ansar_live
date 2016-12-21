@@ -15,6 +15,7 @@ use App\modules\HRM\Models\PersonalInfo;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Validator;
+use Mockery\Exception;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class CustomValidation extends Validator
@@ -167,7 +168,7 @@ class CustomValidation extends Validator
     }
     public function validateDateValidity($attribute, $value, $parameters)
     {
-        if(preg_match('/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/',$value)){
+        if(preg_match('/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/',$value)){
             return true;
         }
         return false;
@@ -189,11 +190,12 @@ class CustomValidation extends Validator
         try {
             $diff = Carbon::parse($reporting_date)->diffInMonths(Carbon::parse($value),false);
             Log::info("Different in month :".$diff);
-            if ($diff>=0&&$diff<=1&&Carbon::parse($value)->gte(Carbon::parse($reporting_date))) {
+            if ($diff>=0&&Carbon::parse($value)->gte(Carbon::parse($reporting_date))&&Carbon::parse($value)->lte(Carbon::parse($reporting_date)->addMonths(1))) {
                 return true;
             }
             return false;
         }catch(\Exception $e){
+            Log::info($e->getTraceAsString());
             return false;
         }
     }
