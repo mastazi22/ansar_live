@@ -338,7 +338,7 @@
                                             <td>[[ansar.ansar_id]]</td>
                                             <td>[[ansar.ansar_name]]</td>
                                             <td>[[ansar.rank]]</td>
-                                            <td>[[ansar.join_date|dateformat:"DD-MMM-YYYY"]]</td>
+                                            <td>[[ansar.join_date]]</td>
                                             <td>[[ansar.kpi_name]]</td>
                                             <td>
                                                 <a href="#" class="btn btn-danger btn-xs" ng-click="removeFromCart($index)">
