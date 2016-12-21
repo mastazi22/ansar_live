@@ -40,21 +40,23 @@ class EmbodimentController extends Controller
 {
     public function kpiName(Request $request)
     {
+        DB::enableQueryLog();
         $query = [];
         if (Input::exists('division')&&Input::get('division')!='all') {
             array_push($query,['division_id','=',$request->division]);
             }
-        else if (Input::exists('unit')&&Input::get('unit')!='all') {
+        if (Input::exists('unit')&&Input::get('unit')!='all') {
             array_push($query,['unit_id','=',$request->unit]);
         }
-        else if (Input::exists('id')&&Input::get('id')!='all') {
+        if (Input::exists('id')&&Input::get('id')!='all') {
             array_push($query,['thana_id','=',$request->id]);
         }
-        else if($request->type!='all'){
+        if($request->type!='all'){
             array_push($query,['status_of_kpi','=',1]);
             array_push($query,['withdraw_status','=',0]);
         }
         $kpi = KpiGeneralModel::where($query)->get();
+//        return DB::getQueryLog();
         return Response::json($kpi);
     }
 

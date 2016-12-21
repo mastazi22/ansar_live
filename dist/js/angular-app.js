@@ -551,7 +551,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                     $scope.loadUnit($rootScope.user.division.id)
                     if($scope.type=='all'){
                         $scope.loadThana('all');
-                        $scope.loadKPI('all');
+                        //$scope.loadKPI('all');
                     }
                 }
                 else if($rootScope.user.usertype.type_name=='Super Admin'||$rootScope.user.usertype.type_name=='Admin'||$rootScope.user.usertype.type_name=='DG'){
@@ -559,7 +559,7 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                         $scope.loadRange();
                         $scope.loadUnit('all');
                         $scope.loadThana('all');
-                        $scope.loadKPI('all');
+                        //$scope.loadKPI('all');
                     }
                     else{
                         switch($scope.startLoad){
