@@ -378,15 +378,15 @@
         "text": "Range Setting",
         "actions": [
           {
-            "value": "range.index",
+            "value": "HRM.range.index",
             "name": "View Range"
           },
           {
-            "value": "range.create,range.store",
+            "value": "HRM.range.create,HRM.range.store",
             "name": "New Range"
           },
           {
-            "value": "range.edit,range.update",
+            "value": "HRM.range.edit,HRM.range.update",
             "name": "Edit Range"
           }
         ]
@@ -395,15 +395,15 @@
         "text": "Unit Setting",
         "actions": [
           {
-            "value": "unit.index",
+            "value": "HRM.unit.index",
             "name": "View Unit"
           },
           {
-            "value": "unit.create,unit.store",
+            "value": "HRM.unit.create,HRM.unit.store",
             "name": "New Unit"
           },
           {
-            "value": "unit.edit,unit.update",
+            "value": "HRM.unit.edit,HRM.unit.update",
             "name": "Edit Unit"
           }
         ]

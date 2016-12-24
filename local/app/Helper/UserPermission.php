@@ -64,7 +64,7 @@ class UserPermission
 //        Log::info("Found:".$name);
         $status = false;
         foreach($p as $search){
-            $status = preg_match('/('.$name.')/',$search);
+            $status = preg_match('/('.str_replace('.','\.',$name).')/',$search);
             if($status) break;
         }
 
