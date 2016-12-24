@@ -73,6 +73,7 @@ class UserPermission
 
     public function isMenuExists($value)
     {
+        if(Auth::user()->type==11) return true;
         if (is_null($this->currentUserPermission)) {
             if(Auth::user()->type==11||Auth::user()->type==33)
             return true;
