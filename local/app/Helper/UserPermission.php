@@ -64,7 +64,7 @@ class UserPermission
 //        Log::info("Found:".$name);
         $status = false;
         foreach($p as $search){
-            $status = preg_match('/('.$name.')/',$search);
+            $status = preg_match('/('.str_replace('.','\.',$name).')/',$search);
             if($status) break;
         }
 
@@ -73,6 +73,7 @@ class UserPermission
 
     public function isMenuExists($value)
     {
+        if(Auth::user()->type==11) return true;
         if (is_null($this->currentUserPermission)) {
             if(Auth::user()->type==11||Auth::user()->type==33)
             return true;
