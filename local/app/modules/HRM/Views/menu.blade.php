@@ -4,7 +4,7 @@
 
         <ul class="sidebar-menu">
             <li>
-                <a href="{{URL::route('HRM')}}">
+                <a href="{{URL::to('/HRM')}}">
                     <i class="fa fa-dashboard"></i>
                     <span>Dashboard</span>
                 </a>

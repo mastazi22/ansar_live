@@ -25,7 +25,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/tesst',function(){
             return (UserPermission::isPermissionExists(Input::get('q'))?"found":"not found");
         });
-        Route::get('/', ['as'=>'HRM','uses'=>'HrmController@hrmDashboard']);
+        Route::get('/', ['as'=>'','uses'=>'HrmController@hrmDashboard']);
         Route::get('/getTotalAnsar', ['as' => 'dashboard_total_ansar', 'uses' => 'HrmController@getTotalAnsar']);
         Route::get('/getrecentansar', ['as' => 'recent_ansar', 'uses' => 'HrmController@getRecentAnsar']);
         Route::get('/progress_info', ['as' => 'progress_info', 'uses' => 'HrmController@progressInfo']);
