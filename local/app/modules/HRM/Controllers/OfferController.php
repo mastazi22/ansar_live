@@ -38,8 +38,9 @@ class OfferController extends Controller
     function makeOffer()
     {
         $dis = Auth::user()->district_id;
-        if ($dis) return View::make('HRM::Offer.offer_view')->with(['isFreeze' => CustomQuery::isAnsarFreezeInDistrict($dis)]);
-        else return View::make('HRM::Offer.offer_view')->with(['isFreeze' => false]);
+        //if ($dis) return View::make('HRM::Offer.offer_view')->with(['isFreeze' => CustomQuery::isAnsarFreezeInDistrict($dis)]);
+//        else return View::make('HRM::Offer.offer_view')->with(['isFreeze' => false]);
+        return View::make('HRM::Offer.offer_view')->with(['isFreeze' => false]);
     }
 
     function getQuotaCount()
