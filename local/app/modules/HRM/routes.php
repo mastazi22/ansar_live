@@ -231,8 +231,8 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('/direct_panel_entry', ['as'=>'direct_panel_entry','uses'=>'DGController@directPanelEntry']);
         Route::get('/direct_panel_cancel_view', ['as' => 'direct_panel_cancel_view', 'uses' => 'DGController@directCancelPanelView']);
         Route::get('/cancel_panel_ansar_details', 'DGController@loadAnsarDetailforCancelPanel');
-        Route::post('/cancel_panel_entry_for_dg', 'DGController@cancelPanelEntry');
-        Route::post('/direct_offer', 'DGController@directOfferSend');
+        Route::post('/cancel_panel_entry_for_dg', ['as'=>'cancel_panel_entry_for_dg','uses'=>'DGController@cancelPanelEntry']);
+        Route::post('/direct_offer', ['as'=>'send_direct_offer','uses'=>'DGController@directOfferSend']);
         Route::post('/direct_offer_cancel', 'DGController@directOfferCancel');
         Route::get('/dg_blocklist_entry_view', ['as' => 'dg_blocklist_entry_view', 'uses' => 'DGController@blockListEntryView']);
         Route::get('/blocklist_entry_view', ['as' => 'blocklist_entry_view', 'uses' => 'BlockBlackController@blockListEntryView']);

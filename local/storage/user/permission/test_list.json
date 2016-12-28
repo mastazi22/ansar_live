@@ -355,6 +355,35 @@
     ]
   },
   {
+    "root": "DG Forms",
+    "children": [
+      {
+        "value": "direct_offer,send_direct_offer",
+        "name": "Direct Offer"
+      },
+      {
+        "value": "direct_panel_view,direct_panel_entry",
+        "name": "Direct Panel"
+      },
+      {
+        "value": "direct_panel_cancel_view,cancel_panel_entry_for_dg",
+        "name": "Cancel Direct Panel"
+      },
+      {
+        "value": "direct_embodiment,direct_embodiment_submit",
+        "name": "Direct Embodiment"
+      },
+      {
+        "value": "direct_disembodiment,direct_disembodiment_submit",
+        "name": "Direct Dis-Embodiment"
+      },
+      {
+        "value": "direct_transfer,direct_transfer_submit",
+        "name": "Direct Transfer"
+      }
+    ]
+  },
+  {
     "root": "General Settings",
     "children": [
       {
