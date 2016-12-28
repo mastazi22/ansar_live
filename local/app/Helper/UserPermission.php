@@ -63,6 +63,7 @@ class UserPermission
     {
 //        return false;
 //        Log::info("Found:".$name);
+        if(Auth::user()->type==11) return true;
         $status = false;
         foreach($p as $search){
             $status = preg_match('/('.str_replace('.','\.',$name).')/',$search);
