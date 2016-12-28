@@ -723,10 +723,14 @@ class EmbodimentController extends Controller
         try {
             $global_value = GlobalParameterFacades::getValue("rest_period");
             $global_unit = GlobalParameterFacades::getUnit("rest_period");
-
+            $embodiment_log_update = EmbodimentLogModel::where('ansar_id', $ansar_id)->orderBy('release_date','desc')->first();
+            $embodiment_log_update->release_date = $modified_new_disembodiment_date;
+            $embodiment_log_update->save();
             $rest_info_update = RestInfoModel::where('ansar_id', $ansar_id)->first();
-            $rest_info_update->rest_date = $modified_new_disembodiment_date;
-            $rest_info_update->active_date = GlobalParameterFacades::getActiveDate($modified_new_disembodiment_date);
+            if($rest_info_update) {
+                $rest_info_update->rest_date = $modified_new_disembodiment_date;
+                $rest_info_update->active_date = GlobalParameterFacades::getActiveDate($modified_new_disembodiment_date);
+            }
 //            if (strcasecmp($global_unit, "Year") == 0) {
 //                $rest_period = $global_value;
 //                $rest_info_update->active_date = Carbon::parse($modified_new_disembodiment_date)->addYear($rest_period)->addHour(6);
@@ -739,9 +743,7 @@ class EmbodimentController extends Controller
 //            }
             $rest_info_update->save();
 
-            $embodiment_log_update = EmbodimentLogModel::where('ansar_id', $ansar_id)->orderBy('id','desc')->first();
-            $embodiment_log_update->release_date = $modified_new_disembodiment_date;
-            $embodiment_log_update->save();
+
 
             DB::commit();
         } catch (\Exception $e) {
