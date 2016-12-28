@@ -72,7 +72,7 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group required" ng-init="ansarId='{{Request::old('ansar_id')}}'">
-                                <label for="ansar_id" class="control-label">Ansar ID (Resting Ansar)</label>
+                                <label for="ansar_id" class="control-label">Ansar ID</label>
                                 <input type="text" name="ansar_id" value="{{Request::old('ansar_id')}}" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="makeQueue(ansarId)">
                                 @if($errors->has('ansar_id'))
                                     <p class="text-danger">{{$errors->first('ansar_id')}}</p>
