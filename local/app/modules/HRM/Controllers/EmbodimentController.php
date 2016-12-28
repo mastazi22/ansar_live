@@ -473,7 +473,7 @@ class EmbodimentController extends Controller
             $ansar_infos->where('tbl_embodiment.kpi_id', '=', $request->kpi);
         }
         $ansar_infos = $ansar_infos->distinct()
-            ->select('tbl_kpi_info.kpi_name', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_units.unit_name_bng', 'tbl_thana.thana_name_bng', 'tbl_designations.name_bng')
+            ->select('tbl_kpi_info.kpi_name','tbl_embodiment.joining_date' ,'tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_units.unit_name_bng', 'tbl_thana.thana_name_bng', 'tbl_designations.name_bng')
             ->get();
 //        return DB::getQueryLog();
         if (count($ansar_infos) <= 0) return Response::json(array('result' => true));

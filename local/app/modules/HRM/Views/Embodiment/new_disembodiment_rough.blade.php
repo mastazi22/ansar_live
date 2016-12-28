@@ -181,8 +181,9 @@
                                 <th>Ansar Thana</th>
                                 <th>Designation</th>
                                 <th>KPI Name</th>
+                                <th>Embodied Date</th>
                                 <th>Reason of Disembodiment</th>
-                                <th>Select From Here</th>
+                                <th>Select</th>
                             </tr>
                             <tr ng-repeat="a in ansars.ansar_infos">
                                 <td>[[$index+1]]</td>
@@ -192,6 +193,7 @@
                                 <td>[[a.thana_name_bng]]</td>
                                 <td>[[a.name_bng]]</td>
                                 <td>[[a.kpi_name]]</td>
+                                <td>[[a.joining_date|dateformat:"DD-MMM-YYYY"]]</td>
                                 <td>
                                     <select name="dis-reason" ng-model="formData[$index].disReason" ng-change="!formData[$index].disReason?formData[$index].ansarId=ch[$index]=false:''" class="form-control dis-reason">
                                         <option value="">--Select Reason--</option>
