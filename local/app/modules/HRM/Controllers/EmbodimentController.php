@@ -658,13 +658,14 @@ class EmbodimentController extends Controller
     public function loadAnsarForDisembodimentDateCorrection()
     {
         $ansar_id = Input::get('ansar_id');
-        $ansar_details = DB::table('tbl_rest_info')
-            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_rest_info.ansar_id')
+        $ansar_details = DB::table('tbl_embodiment_log')
+            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment_log.ansar_id')
             ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
             ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->where('tbl_rest_info.ansar_id', '=', $ansar_id)
-            ->select('tbl_rest_info.ansar_id as id', 'tbl_rest_info.rest_date as r_date', 'tbl_ansar_parsonal_info.ansar_name_eng as name', 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.data_of_birth as dob', 'tbl_designations.name_eng as rank', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana')
+            ->where('tbl_embodiment_log.ansar_id', '=', $ansar_id)
+            ->select('tbl_embodiment_log.ansar_id as id', 'tbl_embodiment_log.release_date as r_date', 'tbl_ansar_parsonal_info.ansar_name_eng as name', 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.data_of_birth as dob', 'tbl_designations.name_eng as rank', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana')
+            ->orderBy('r_date','desc')
             ->first();
         return Response::json($ansar_details);
     }
