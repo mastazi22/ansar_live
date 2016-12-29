@@ -90,7 +90,7 @@ class Kernel extends ConsoleKernel
 //                }
 //            }
 
-        })->everyMinute()->name("send_offer")->withoutOverlapping();
+        })->everyMinute()->name("send_offer_sms")->withoutOverlapping();
 //        $schedule->call(function () {
 //            Log::info("called : offer_cancel");
 //            $user = env('SSL_USER_ID','ansarapi');
