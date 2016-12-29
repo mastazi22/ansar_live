@@ -151,7 +151,7 @@ class BlockBlackController extends Controller
             if(!$ansar) throw new\Exception('This Ansar doesn`t exists');
             BlockListModel::create([
                'ansar_id'=>$ansar_id,
-               'block_list_from'=>$ansar->getStatus()[0],
+               'block_list_from'=>$ansar->getStatus()[0]="Embodied"?"Embodiment":$ansar->getStatus()[0],
                'from_id'=>$from_id,
                'date_for_block'=>$modified_block_date,
                'comment_for_block'=>$block_comment,
@@ -271,6 +271,7 @@ class BlockBlackController extends Controller
                         break;
 
                     case "Embodied":
+                        Log::info("OK BLOCK EMBODIED");
                         $blocklist_entry = new BlockListModel();
                         $blocklist_entry->ansar_id = $ansar_id;
                         $blocklist_entry->block_list_from = "Embodiment";
