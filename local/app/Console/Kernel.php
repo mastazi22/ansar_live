@@ -46,7 +46,7 @@ class Kernel extends ConsoleKernel
     {
 
         $schedule->call(function () {
-            Log::info("called");
+            Log::info("called : send_offer");
 //            //return;
             $user = env('SSL_USER_ID','ansarapi');
             $pass = env('SSL_PASSWORD','x83A7Z96');
@@ -92,6 +92,7 @@ class Kernel extends ConsoleKernel
 
         })->everyMinute()->name("send_offer")->withoutOverlapping();
         $schedule->call(function () {
+            Log::info("called : offer_cancel");
             $user = env('SSL_USER_ID','ansarapi');
             $pass = env('SSL_PASSWORD','x83A7Z96');
             $sid = env('SSL_SID','ANSARVDP');
