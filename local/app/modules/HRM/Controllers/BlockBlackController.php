@@ -22,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
@@ -369,27 +370,28 @@ class BlockBlackController extends Controller
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'UNBLOCKED', 'from_state' => 'BLOCKED', 'to_state' => 'FREE', 'action_by' => auth()->user()->id]);
                     break;
                 case AnsarStatusInfo::PANEL_STATUS;
-                    $el = EmbodimentLogModel::where('ansar_id',$ansar_id)->orderBy('release_date','desc')->first();
-                    if($el&&Carbon::now()->diffInMonths(Carbon::parse($el->release_date))<6) {
-                        $p = PanelModel::where('ansar_id', $ansar_id)->first();
-                        $p->saveLog("Rest");
-                        $p->delete();
-                        RestInfoModel::create([
-                            'ansar_id' => $ansar_id,
-                            'old_embodiment_id' => $el->old_embodiment_id,
-                            'memorandum_id' => 'n\a',
-                            'rest_date' => $el->release_date,
-                            'active_date' => GlobalParameterFacades::getActiveDate($el->release_date),
-                            'total_service_days' => Carbon::parse($el->release_date)->diffInDays($el->joining_date),
-                            'disembodiment_reason_id' => $el->disembodiment_reason_id,
-                            'rest_form' => 'Regular',
-                            'action_user_id' => Auth::user()->id,
-                            'comment' => $el->comment,
-                        ]);
-                        $ansar->rest_status = 1;
-                        $ansar->pannel_status = 0;
-                        $ansar->save();
-                    }
+//                    $el = EmbodimentLogModel::where('ansar_id',$ansar_id)->orderBy('release_date','desc')->first();
+//                    Log::info("ddd:".Carbon::now()->diffInMonths(Carbon::parse($el->release_date)));
+//                    if($el&&Carbon::now()->diffInMonths(Carbon::parse($el->release_date))<6) {
+//                        $p = PanelModel::where('ansar_id', $ansar_id)->first();
+//                        $p->saveLog("Rest");
+//                        $p->delete();
+//                        RestInfoModel::create([
+//                            'ansar_id' => $ansar_id,
+//                            'old_embodiment_id' => $el->old_embodiment_id,
+//                            'memorandum_id' => 'n\a',
+//                            'rest_date' => $el->release_date,
+//                            'active_date' => GlobalParameterFacades::getActiveDate($el->release_date),
+//                            'total_service_days' => Carbon::parse($el->release_date)->diffInDays(Carbon::parse($el->joining_date)),
+//                            'disembodiment_reason_id' => $el->disembodiment_reason_id,
+//                            'rest_form' => 'Regular',
+//                            'action_user_id' => Auth::user()->id,
+//                            'comment' => $el->comment,
+//                        ]);
+//                        $ansar->rest_status = 1;
+//                        $ansar->pannel_status = 0;
+//                        $ansar->save();
+//                    }
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'UNBLOCKED', 'from_state' => 'BLOCKED', 'to_state' => 'PANEL', 'action_by' => auth()->user()->id]);
                     break;
                 case AnsarStatusInfo::OFFER_STATUS;
