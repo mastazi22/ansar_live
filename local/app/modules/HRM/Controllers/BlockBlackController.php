@@ -386,6 +386,9 @@ class BlockBlackController extends Controller
                             'action_user_id' => Auth::user()->id,
                             'comment' => $el->comment,
                         ]);
+                        $ansar->rest_status = 1;
+                        $ansar->pannel_status = 0;
+                        $ansar->save();
                     }
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'UNBLOCKED', 'from_state' => 'BLOCKED', 'to_state' => 'PANEL', 'action_by' => auth()->user()->id]);
                     break;
