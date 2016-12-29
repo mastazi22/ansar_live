@@ -108,6 +108,7 @@ class PanelController extends Controller
                     ->where('tbl_ansar_status_info.rest_status', '=', 1)
                     ->where('tbl_rest_info.ansar_id', $request->ansar_id)
                     ->whereBetween('tbl_rest_info.disembodiment_reason_id', array(3, 8))
+                    ->whereRaw('DATE_ADD(tbl_rest_info.rest_date,INTERVAL 6 MONTH) <= NOW()')
                     ->whereNotNull('tbl_ansar_parsonal_info.mobile_no_self')
                     ->distinct()
                     ->select('tbl_rest_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', DB::raw('DATE_FORMAT(tbl_ansar_parsonal_info.data_of_birth,"%d-%b-%Y") as data_of_birth'), 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.created_at')
