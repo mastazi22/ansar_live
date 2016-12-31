@@ -163,10 +163,10 @@
                         <div class="table_pagination" ng-if="pages.length>1">
                             <ul class="pagination">
                                 <li ng-class="{disabled:currentPage == 0}">
-                                    <a href="#" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>
+                                    <a href="#" ng-disabled="currentPage==0" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>
                                 </li>
                                 <li ng-class="{disabled:currentPage == 0}">
-                                    <a href="#" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
+                                    <a href="#" ng-disabled="currentPage==0" ng-click="loadPage(pages[currentPage-1],$event)">&laquo;</a>
                                 </li>
                                 <li ng-repeat="page in pages|filter:filterMiddlePage"
                                     ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
@@ -178,10 +178,10 @@
                                                         style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
                                 </li>
                                 <li ng-class="{disabled:currentPage==pages.length-1}">
-                                    <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
+                                    <a href="#" ng-disabled="currentPage==pages.length-1" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
                                 </li>
                                 <li ng-class="{disabled:currentPage==pages.length-1}">
-                                    <a href="#"
+                                    <a href="#" ng-disabled="currentPage==pages.length-1"
                                        ng-click="loadPage(pages[pages.length-1],$event)">&raquo;&raquo;</a>
                                 </li>
                             </ul>
