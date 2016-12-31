@@ -912,6 +912,7 @@ class EmbodimentController extends Controller
         $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {
             Log::info($valid->messages());
+            Log::info(Auth::user()->user_name);
             return response($valid->messages()->toJson(), 400, ['Content-type' => 'application/json']);
         }
         $data = $request->ansars;
