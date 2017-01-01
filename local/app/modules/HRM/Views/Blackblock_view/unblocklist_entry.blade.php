@@ -44,7 +44,14 @@
                 </div>
             </div>
         @endif
-
+        @if(Session::has('error_message'))
+            <div style="padding: 10px 20px 0 20px;">
+                <div class="alert alert-danger">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <span class="fa fa-warning"></span> {{Session::get('success_message')}}
+                </div>
+            </div>
+        @endif
         <section class="content" style="position: relative;">
             <notify></notify>
             <div class="box box-solid">

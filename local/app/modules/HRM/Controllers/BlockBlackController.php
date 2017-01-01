@@ -372,8 +372,8 @@ class BlockBlackController extends Controller
                     break;
                 case AnsarStatusInfo::PANEL_STATUS;
                     $el = EmbodimentLogModel::where('ansar_id',$ansar_id)->orderBy('release_date','desc')->first();
-                    Log::info("ddd:".Carbon::parse($el->release_date)->addMonths(6)->format("d-m-Y"));
                     if($el&&Carbon::now()->lt(Carbon::parse($el->release_date)->addMonths(6))) {
+                        Log::info("ddd:".Carbon::parse($el->release_date)->addMonths(6)->format("d-m-Y"));
                         $p = PanelModel::where('ansar_id', $ansar_id)->first();
                         $p->saveLog("Rest");
                         $p->delete();
