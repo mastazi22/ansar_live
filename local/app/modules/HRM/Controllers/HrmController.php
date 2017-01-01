@@ -77,20 +77,20 @@ class HrmController extends Controller
 
     public function graphEmbodiment(Request $request)
     {
-        //DB::enableQueryLog();
+        DB::enableQueryLog();
         $ea1 = DB::table('tbl_embodiment_log')
             ->join('tbl_ansar_parsonal_info','tbl_ansar_parsonal_info.ansar_id','=','tbl_embodiment_log.ansar_id')
-        ->whereRaw('joining_date BETWEEN DATE_FORMAT(NOW(),"%Y-01-01") AND NOW()')
+        ->whereRaw('joining_date BETWEEN DATE_FORMAT(DATE_ADD(DATE_SUB(NOW(),INTERVAL 1 YEAR),INTERVAL 1 MONTH),"%Y-%m-01") AND NOW()')
         ->groupBy(DB::raw('MONTH(joining_date)'))->orderBy(DB::raw('YEAR(joining_date)'))->orderBy(DB::raw('MONTH(joining_date)'))
         ->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total,joining_date as month'));
         $ea2 = DB::table('tbl_embodiment')
             ->join('tbl_ansar_parsonal_info','tbl_ansar_parsonal_info.ansar_id','=','tbl_embodiment.ansar_id')
-            ->whereRaw('joining_date BETWEEN DATE_FORMAT(NOW(),"%Y-01-01") AND NOW()')
+            ->whereRaw('joining_date BETWEEN DATE_FORMAT(DATE_ADD(DATE_SUB(NOW(),INTERVAL 1 YEAR),INTERVAL 1 MONTH),"%Y-%m-01") AND NOW()')
             ->groupBy(DB::raw('MONTH(joining_date)'))->orderBy(DB::raw('YEAR(joining_date)'))->orderBy(DB::raw('MONTH(joining_date)'))
             ->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total,joining_date as month'));
         $da = DB::table('tbl_embodiment_log')
             ->join('tbl_ansar_parsonal_info','tbl_ansar_parsonal_info.ansar_id','=','tbl_embodiment_log.ansar_id')
-        ->whereRaw('release_date BETWEEN DATE_FORMAT(NOW(),"%Y-01-01") AND NOW()')
+        ->whereRaw('release_date BETWEEN DATE_FORMAT(DATE_ADD(DATE_SUB(NOW(),INTERVAL 1 YEAR),INTERVAL 1 MONTH),"%Y-%m-01") AND NOW()')
         ->groupBy(DB::raw('MONTH(release_date)'))->orderBy(DB::raw('YEAR(release_date)'))->orderBy(DB::raw('MONTH(release_date)'))
         ->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total,DATE_FORMAT(release_date,"%b,%y") as month'));
         if($request->division_id){
@@ -103,9 +103,9 @@ class HrmController extends Controller
             $ea2->where('tbl_ansar_parsonal_info.unit_id',$request->district_id);
             $da->where('tbl_ansar_parsonal_info.unit_id',$request->district_id);
         }
-        $ea = DB::table(DB::raw("({$ea1->unionAll($ea2)->toSql()}) x"))->select(DB::raw('SUM(total) as total,DATE_FORMAT(month,"%b,%y") as month'))->orderBy(DB::raw('MONTH(month)'))->groupBy(DB::raw('MONTH(month)'));
+        $ea = DB::table(DB::raw("({$ea1->unionAll($ea2)->toSql()}) x"))->select(DB::raw('SUM(total) as total,DATE_FORMAT(month,"%b,%y") as month'))->orderBy(DB::raw('YEAR(month)'))->orderBy(DB::raw('MONTH(month)'))->groupBy(DB::raw('MONTH(month)'));
         $b = Response::json(["ea" => $ea->get(),'da' => $da->get()]);
-//        return DB::getQueryLog();
+        //return DB::getQueryLog();
         return $b;
     }
 
