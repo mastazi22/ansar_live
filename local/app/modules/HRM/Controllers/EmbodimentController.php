@@ -730,6 +730,7 @@ class EmbodimentController extends Controller
             if($rest_info_update) {
                 $rest_info_update->rest_date = $modified_new_disembodiment_date;
                 $rest_info_update->active_date = GlobalParameterFacades::getActiveDate($modified_new_disembodiment_date);
+                $rest_info_update->save();
             }
 //            if (strcasecmp($global_unit, "Year") == 0) {
 //                $rest_period = $global_value;
@@ -741,7 +742,7 @@ class EmbodimentController extends Controller
 //                $rest_period = $global_value;
 //                $rest_info_update->active_date = Carbon::parse($modified_new_disembodiment_date)->addDay($rest_period)->addHour(6);
 //            }
-            $rest_info_update->save();
+
 
 
 
