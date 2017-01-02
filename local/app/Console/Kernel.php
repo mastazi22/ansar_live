@@ -158,34 +158,38 @@ class Kernel extends ConsoleKernel
                     Log::info("ERROR: " . $e->getMessage());
                 }
             }
-        })->dailyAt("23:59")->name("revert_offer")->withoutOverlapping();
+        })->dailyAt("23:50")->name("revert_offer")->withoutOverlapping();
         $schedule->call(function () {
 
-            $offeredAnsars = SmsReceiveInfoModel::whereRaw('DATEDIFF(NOW(),sms_received_datetime) >= 7')->get();
+            $offeredAnsars = SmsReceiveInfoModel::all();
+            $now = Carbon::now();
             foreach ($offeredAnsars as $ansar) {
-                Log::info("CALLED START: OFFER NO REPLY" . $ansar->ansar_id);
-                DB::beginTransaction();
-                try {
-                    $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
-                    $ansar->saveLog();
-                    $ansar->status()->update([
-                        'offer_sms_status' => 0,
-                        'pannel_status' => 1,
-                    ]);
-                    $ansar->panel()->save(new PanelModel([
-                        'memorandum_id' => isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
-                        'panel_date' => Carbon::now(),
-                        'come_from' => 'Offer',
-                        'ansar_merit_list' => 1,
-                    ]));
-                    $ansar->delete();
-                    DB::commit();
-                } catch (\Exception $e) {
-                    DB::rollback();
-                    Log::info("ERROR: " . $e->getMessage());
+                if($now->diffInDays(Carbon::parse($ansar->sms_received_datetime)) >=7){
+                    Log::info("CALLED START: OFFER ACCEPTED" . $ansar->ansar_id);
+                    DB::beginTransaction();
+                    try {
+                        $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
+                        $ansar->saveLog();
+                        $ansar->status()->update([
+                            'offer_sms_status' => 0,
+                            'pannel_status' => 1,
+                        ]);
+                        $ansar->panel()->save(new PanelModel([
+                            'memorandum_id' => isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
+                            'panel_date' => Carbon::now(),
+                            'come_from' => 'Offer',
+                            'ansar_merit_list' => 1,
+                        ]));
+                        $ansar->delete();
+                        DB::commit();
+                    } catch (\Exception $e) {
+                        DB::rollback();
+                        Log::info("ERROR: " . $e->getMessage());
+                    }
                 }
+
             }
-        })->dailyAt("23:59")->name("revert_offer_accepted")->withoutOverlapping();
+        })->dailyAt("23:50")->name("revert_offer_accepted")->withoutOverlapping();
         $schedule->call(function () {
             $withdraw_kpi_ids = KpiDetailsModel::where('kpi_withdraw_date', '<=', Carbon::now())->whereNotNull('kpi_withdraw_date')->get();
             foreach ($withdraw_kpi_ids as $withdraw_kpi_id) {
