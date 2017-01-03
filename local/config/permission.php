@@ -106,6 +106,7 @@ return [
         "get_skill_list",
         "get_disease_list",
         "ansar_rank",
-        "blood_name"
+        "blood_name",
+        "cancel_offer,cancel_offer_handle"
     ]
 ];

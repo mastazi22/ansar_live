@@ -380,6 +380,10 @@
       {
         "value": "direct_transfer,direct_transfer_submit",
         "name": "Direct Transfer"
+      },
+      {
+        "value": "cancel_offer,cancel_offer_handle",
+        "name": "Offer Cancel"
       }
     ]
   },

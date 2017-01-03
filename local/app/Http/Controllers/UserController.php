@@ -473,10 +473,10 @@ class UserController extends Controller
     {
         if ($id) {
             $user = User::find($id);
-            $data = $user->actionLog()->select('ansar_id', 'from_state', 'to_state', 'action_type', DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'), DB::raw('DATE_FORMAT(created_at,"%r") as time'))->orderBy('created_at','desc')->get();
+            $data = $user->actionLog()->whereRaw("DATEDIFF(NOW(),created_at)<=2")->select('ansar_id', 'from_state', 'to_state', 'action_type', DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'), DB::raw('DATE_FORMAT(created_at,"%r") as time'))->orderBy('created_at','desc')->get();
         } else {
             $user = Auth::user();
-            $data = $user->actionLog()->select('ansar_id', 'from_state', 'to_state', 'action_type', DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'), DB::raw('DATE_FORMAT(created_at,"%r") as time'))->orderBy('created_at','desc')->get();
+            $data = $user->actionLog()->whereRaw("DATEDIFF(NOW(),created_at)<=2")->select('ansar_id', 'from_state', 'to_state', 'action_type', DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'), DB::raw('DATE_FORMAT(created_at,"%r") as time'))->orderBy('created_at','desc')->get();
         }
 
         return View::make('User.user_activity_log', ['logs' => collect($data)->groupBy('date'), 'user' => $user]);

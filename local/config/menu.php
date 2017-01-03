@@ -250,6 +250,10 @@ return [
                     "route" => "direct_panel_cancel_view",
                     "icon" => "fa-users",
                 ],
+                "Offer Cancel" => [
+                    "route" => "cancel_offer",
+                    "icon" => "fa-dashboard",
+                ],
                 "Direct Embodiment" => [
                     "route" => "direct_embodiment",
                     "icon" => "fa-dashboard",
@@ -300,10 +304,6 @@ return [
             "children" => [
                 "Global Parameter" => [
                     "route" => "global_parameter",
-                    "icon" => "fa-dashboard",
-                ],
-                "Offer Cancel" => [
-                    "route" => "cancel_offer",
                     "icon" => "fa-dashboard",
                 ],
                 "ID Print List" => [
