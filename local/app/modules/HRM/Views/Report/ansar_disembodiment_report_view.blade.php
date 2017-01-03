@@ -100,7 +100,9 @@
                 e.preventDefault();
                 $("#print-area").remove();
 //                console.log($("body").find("#print-body").html())
-                $('body').append('<div id="print-area">'+$("#print_ansar_disembodiment_report").html()+'</div>')
+                var content = $("#print_ansar_disembodiment_report").clone(true);
+                $(content).find("table").removeAttr('class')
+                $('body').append('<div id="print-area">'+$(content).html()+'</div>')
                 window.print();
                 $("#print-area").remove()
             })
