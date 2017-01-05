@@ -266,6 +266,11 @@ return [
                     "route" => "direct_transfer",
                     "icon" => "fa-dashboard",
                 ],
+                "User Action Log" => [
+                    "route" => "user_action_log",
+                    "icon" => "fa-file",
+                ],
+
 //                "Direct Blacklist" => [
 //                    "route" => "#",
 //                    "icon" => "fa-times",

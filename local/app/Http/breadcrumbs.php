@@ -377,6 +377,10 @@ Breadcrumbs::register('direct_black', function($breadcrumbs) {
     $breadcrumbs->parent('dg_black');
     $breadcrumbs->push('Add Ansar in Blacklist', URL::route('dg_blacklist_entry_view'));
 });
+Breadcrumbs::register('user_action_log', function($breadcrumbs) {
+    $breadcrumbs->parent('dg');
+    $breadcrumbs->push('User Action Log', URL::route('user_action_log'));
+});
 Breadcrumbs::register('direct_unblock', function($breadcrumbs) {
     $breadcrumbs->parent('dg_block');
     $breadcrumbs->push('Remove Ansar from Blocklist', URL::route('dg_unblocklist_entry_view'));

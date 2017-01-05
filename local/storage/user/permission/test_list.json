@@ -384,6 +384,10 @@
       {
         "value": "cancel_offer,cancel_offer_handle",
         "name": "Offer Cancel"
+      },
+      {
+        "value": "user_action_log",
+        "name": "User Action Log"
       }
     ]
   },

@@ -107,6 +107,7 @@ return [
         "get_disease_list",
         "ansar_rank",
         "blood_name",
-        "cancel_offer,cancel_offer_handle"
+        "cancel_offer,cancel_offer_handle",
+        "user_action_log"
     ]
 ];

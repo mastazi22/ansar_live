@@ -238,6 +238,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/blocklist_entry_view', ['as' => 'blocklist_entry_view', 'uses' => 'BlockBlackController@blockListEntryView']);
         Route::get('/blocklist_ansar_details', ['as'=>'blocklist_ansar_details','uses'=>'BlockBlackController@loadAnsarDetailforBlock']);
         Route::post('/blocklist_entry', ['as'=>'blocklist_entry','uses'=>'BlockBlackController@blockListEntry']);
+        Route::any('/user_action_log/{id?}', ['as'=>'user_action_log','uses'=>'DGController@viewUserActionLog']);
         Route::post('/multi_blocklist_entry', ['as'=>'multi_blocklist_entry','uses'=>'BlockBlackController@arrayBlockListEntry']);
 
 

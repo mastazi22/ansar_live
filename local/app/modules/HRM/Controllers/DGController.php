@@ -5,6 +5,7 @@ namespace App\modules\HRM\Controllers;
 use App\Helper\Facades\GlobalParameterFacades;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use App\models\User;
 use App\modules\HRM\Models\ActionUserLog;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\BlackListInfoModel;
@@ -1636,5 +1637,25 @@ class DGController extends Controller
             return Response::json(['status' => false, 'message' =>$e->getMessage()]);
         }
         return Response::json(['status' => true, 'message' => 'Offer cancel successfully']);
+    }
+
+    public function viewUserActionLog(Request $request){
+//        return $request->method();
+        if(strcasecmp($request->method(),"post")==0) {
+            try {
+                DB::enableQueryLog();
+                $user = User::where('user_name', $request->user_name)->first();
+                if(!$user) throw new \Exception();
+                $data = $user->actionLog()->whereBetween('created_at', [Carbon::parse($request->from_date)->format('Y-m-d'), Carbon::parse($request->to_date)->format('Y-m-d')])->select('ansar_id', 'from_state', 'to_state', 'action_type', DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'), DB::raw('DATE_FORMAT(created_at,"%r") as time'))->orderBy('created_at', 'desc')->get();
+//                return DB::getQueryLog();
+                return View::make('HRM::Partial_view.partial_user_action_log', ['logs' => collect($data)->groupBy('date'), 'user' => $user]);
+            }catch(\Exception $e){
+                return View::make('HRM::Partial_view.partial_user_action_log', ['logs' => [], 'user' => null]);
+            }
+        }
+        else if(strcasecmp($request->method(),"get")==0) {
+            return View::make('HRM::Dgview.user_action_log');
+        }
+        else abort(401);
     }
 }
