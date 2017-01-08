@@ -49,16 +49,18 @@ class OfferQueue extends Job implements ShouldQueue
         $district_id = $this->district_id;
         $ansar_ids = $this->data;
         $user = $this->user;
-
+        while(!DB::connection()->getDatabaseName()){
+            Log::info("SERVER RECONNECTING....");
+            DB::reconnect('hrm');
+        }
         for ($i = 0; $i < count($ansar_ids); $i++) {
             DB::beginTransaction();
             try {
-//                Log::info("processed :".$ansar_ids[$i]);
-                $mos = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
-                if (!DB::connection()->getDatabaseName()) {
+                while(!DB::connection()->getDatabaseName()){
                     Log::info("SERVER RECONNECTING....");
                     DB::reconnect('hrm');
                 }
+                $mos = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
                 $mos = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
                 $pa = $mos->panel;
                 if(!$pa) throw new \Exception("No Panel Available");
