@@ -42,7 +42,7 @@
         </div>
         <div class="card-body-right">
             <img src="{{URL::to('/image').'?file='.$ad->profile_pic}}"
-                  style="width: 80px">
+                  style="width: 76px;height: 100px">
         </div>
     </div>
     <div class="card-footer" style="margin-top: 2px">
