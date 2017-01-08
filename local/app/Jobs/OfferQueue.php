@@ -56,8 +56,6 @@ class OfferQueue extends Job implements ShouldQueue
             }
             DB::beginTransaction();
             try {
-
-                $mos = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
                 $mos = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
                 $pa = $mos->panel;
                 if(!$pa) throw new \Exception("No Panel Available");
