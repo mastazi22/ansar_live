@@ -54,11 +54,14 @@ class OfferQueue extends Job implements ShouldQueue
             DB::beginTransaction();
             try {
 //                Log::info("processed :".$ansar_ids[$i]);
+                $mos = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
                 if (!DB::connection()->getDatabaseName()) {
                     Log::info("SERVER RECONNECTING....");
                     DB::reconnect('hrm');
                 }
                 $mos = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
+                $pa = $mos->panel;
+                if(!$pa) throw new \Exception("No Panel Available");
                 if (!$mos && !preg_match('/^(\+88)?0[0-9]{10}/', $mos->mobile_no_self)) throw new \Exception("Invalid mobile number :" . $mos->mobile_no_self);
                 $offer = new OfferSMS([
                     'sms_send_datetime' => Carbon::now(),
@@ -97,9 +100,11 @@ class OfferQueue extends Job implements ShouldQueue
             }
             catch (\Exception $e) {
                 DB::rollback();
-                $pa->update([
-                    'locked'=>0
-                ]);
+                if($pa){
+                    $pa->update([
+                        'locked'=>0
+                    ]);
+                }
                 Log::info($e->getMessage());
                 //return response(collect(['status' => 'error', 'message' => $e->getMessage()])->toJson(), 400, ['Content-Type' => 'application/json']);
             }
