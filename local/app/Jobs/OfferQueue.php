@@ -54,6 +54,7 @@ class OfferQueue extends Job implements ShouldQueue
                 Log::info("SERVER RECONNECTING....");
                 DB::reconnect('hrm');
             }
+            Log::info("CONNECTION DATABASE : ".DB::connection()->getDatabaseName());
             DB::beginTransaction();
             try {
                 $mos = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
