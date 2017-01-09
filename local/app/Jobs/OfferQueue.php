@@ -55,7 +55,7 @@ class OfferQueue extends Job implements ShouldQueue
                 DB::reconnect('hrm');
             }
             Log::info("CONNECTION DATABASE : ".DB::connection('hrm')->getDatabaseName());
-            DB::beginTransaction();
+            DB::connection('hrm')->beginTransaction();
             try {
                 $mos = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
                 $pa = $mos->panel;
@@ -94,10 +94,10 @@ class OfferQueue extends Job implements ShouldQueue
                 ]));
                 //array_push($user, ['ansar_id' => $ansar_ids[$i], 'action_type' => 'SEND OFFER', 'from_state' => 'PANEL', 'to_state' => 'OFFER']);
                 Log::info("processed :" . $ansar_ids[$i]);
-                DB::commit();
+                DB::connection('hrm')->commit();
             }
             catch (\Exception $e) {
-                DB::rollback();
+                DB::connection('hrm')->rollback();
                 if($pa){
                     $pa->update([
                         'locked'=>0
