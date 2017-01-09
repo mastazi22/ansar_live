@@ -50,7 +50,7 @@ class OfferQueue extends Job implements ShouldQueue
         $ansar_ids = $this->data;
         $user = $this->user;
         for ($i = 0; $i < count($ansar_ids); $i++) {
-            if(!DB::connection()->getDatabaseName()){
+            if(!DB::connection('hrm')->getDatabaseName()){
                 Log::info("SERVER RECONNECTING....");
                 DB::reconnect('hrm');
             }
