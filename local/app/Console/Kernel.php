@@ -216,6 +216,7 @@ class Kernel extends ConsoleKernel
         })->dailyAt("00:00")->name('withdraw_kpi')->withoutOverlapping();
         $schedule->call(function () {
             $rest_ansars = RestInfoModel::whereDate('active_date','<=',Carbon::today()->toDateString())->whereIn('disembodiment_reason_id',[1,2,8])->get();
+            Log::info("REST to PANEl : CALLED");
             foreach($rest_ansars as $ansar){
                 DB::beginTransaction();
                 if(!in_array(AnsarStatusInfo::REST_STATUS,$ansar->status->getStatus())||in_array(AnsarStatusInfo::BLOCK_STATUS,$ansar->status->getStatus())||in_array(AnsarStatusInfo::BLACK_STATUS,$ansar->status->getStatus())) continue;
