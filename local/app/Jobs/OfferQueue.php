@@ -49,16 +49,14 @@ class OfferQueue extends Job implements ShouldQueue
         $district_id = $this->district_id;
         $ansar_ids = $this->data;
         $user = $this->user;
-
         for ($i = 0; $i < count($ansar_ids); $i++) {
-            DB::beginTransaction();
+            if(!DB::connection('hrm')->getDatabaseName()){
+                Log::info("SERVER RECONNECTING....");
+                DB::reconnect('hrm');
+            }
+            Log::info("CONNECTION DATABASE : ".DB::connection('hrm')->getDatabaseName());
+            DB::connection('hrm')->beginTransaction();
             try {
-//                Log::info("processed :".$ansar_ids[$i]);
-                $mos = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
-                if (!DB::connection()->getDatabaseName()) {
-                    Log::info("SERVER RECONNECTING....");
-                    DB::reconnect('hrm');
-                }
                 $mos = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
                 $pa = $mos->panel;
                 if(!$pa) throw new \Exception("No Panel Available");
@@ -96,10 +94,10 @@ class OfferQueue extends Job implements ShouldQueue
                 ]));
                 //array_push($user, ['ansar_id' => $ansar_ids[$i], 'action_type' => 'SEND OFFER', 'from_state' => 'PANEL', 'to_state' => 'OFFER']);
                 Log::info("processed :" . $ansar_ids[$i]);
-                DB::commit();
+                DB::connection('hrm')->commit();
             }
             catch (\Exception $e) {
-                DB::rollback();
+                DB::connection('hrm')->rollback();
                 if($pa){
                     $pa->update([
                         'locked'=>0
