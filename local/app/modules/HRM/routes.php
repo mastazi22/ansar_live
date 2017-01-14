@@ -212,6 +212,10 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 ///Start Three Years Over Report
         Route::get('/three_year_over_report_view', ['as' => 'three_year_over_report_view', 'uses' => 'ReportController@threeYearsOverListView']);
         Route::get('/three_years_over_ansar_info', ['as'=>'three_years_over_ansar_info','uses'=>'ReportController@threeYearsOverAnsarInfo']);
+
+        Route::get('/ansar_history', ['as' => 'ansar_history', 'uses' => 'ReportController@ansarHistoryView']);
+        Route::post('/get_ansar_history', ['as'=>'get_ansar_history','uses'=>'ReportController@getAnsarHistory']);
+
         //DG ROUTE
 
         Route::get('/direct_offer', ['as' => 'direct_offer', 'uses' => 'DGController@directOfferView']);
@@ -382,36 +386,36 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('/kpi-withdraw-cancel-update/{id}', ['as'=>'kpi-withdraw-cancel-update','uses'=>'KpiController@kpiWithdrawCancelUpdate'])->where('id','^[0-9]+$');
 //End KPI
         Route::get('test',function(){
-            $rest_ansars = RestInfoModel::whereDate('active_date','<=',Carbon::today()->toDateString())->whereIn('disembodiment_reason_id',[1,2,8])->get();
-            Log::info("REST to PANEl : CALLED");
-
-            foreach($rest_ansars as $ansar){
-
-                if(!in_array(AnsarStatusInfo::REST_STATUS,$ansar->status->getStatus())||in_array(AnsarStatusInfo::BLOCK_STATUS,$ansar->status->getStatus())||in_array(AnsarStatusInfo::BLACK_STATUS,$ansar->status->getStatus())) continue;
-                DB::beginTransaction();
-                try{
-                    $panel_log = PanelInfoLogModel::where('ansar_id',$ansar->ansar_id)->orderBy('id','desc')->first();
-                    PanelModel::create([
-                        'ansar_id'=>$ansar->ansar_id,
-                        'come_from'=>'Rest',
-                        'panel_date'=>Carbon::today(),
-                        'memorandum_id'=>isset($panel_log->old_memorandum_id)?$panel_log->old_memorandum_id:'N\A',
-                        'ansar_merit_list'=>isset($panel_log->merit_list)?$panel_log->merit_list:'N\A',
-                        'action_user_id'=>'0',
-                    ]);
-                    $ansar->status->update([
-                        'pannel_status'=>1,
-                        'rest_status'=>0,
-                    ]);
-                    $ansar->saveLog('Panel');
-                    $ansar->delete();
-                    DB::commit();
-                    Log::info("REST to PANEl :".$ansar->ansar_id);
-                }catch(\Exception $e){
-                    DB::rollBack();
-                    Log::info("REST to PANEl FAILED:".$ansar->ansar_id);
-                }
-            }
+//            $rest_ansars = RestInfoModel::whereDate('active_date','<=',Carbon::today()->toDateString())->whereIn('disembodiment_reason_id',[1,2,8])->get();
+//            Log::info("REST to PANEl : CALLED");
+//
+//            foreach($rest_ansars as $ansar){
+//
+//                if(!in_array(AnsarStatusInfo::REST_STATUS,$ansar->status->getStatus())||in_array(AnsarStatusInfo::BLOCK_STATUS,$ansar->status->getStatus())||in_array(AnsarStatusInfo::BLACK_STATUS,$ansar->status->getStatus())) continue;
+//                DB::beginTransaction();
+//                try{
+//                    $panel_log = PanelInfoLogModel::where('ansar_id',$ansar->ansar_id)->orderBy('id','desc')->first();
+//                    PanelModel::create([
+//                        'ansar_id'=>$ansar->ansar_id,
+//                        'come_from'=>'Rest',
+//                        'panel_date'=>Carbon::today(),
+//                        'memorandum_id'=>isset($panel_log->old_memorandum_id)?$panel_log->old_memorandum_id:'N\A',
+//                        'ansar_merit_list'=>isset($panel_log->merit_list)?$panel_log->merit_list:'N\A',
+//                        'action_user_id'=>'0',
+//                    ]);
+//                    $ansar->status->update([
+//                        'pannel_status'=>1,
+//                        'rest_status'=>0,
+//                    ]);
+//                    $ansar->saveLog('Panel');
+//                    $ansar->delete();
+//                    DB::commit();
+//                    Log::info("REST to PANEl :".$ansar->ansar_id);
+//                }catch(\Exception $e){
+//                    DB::rollBack();
+//                    Log::info("REST to PANEl FAILED:".$ansar->ansar_id);
+//                }
+//            }
         });
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');

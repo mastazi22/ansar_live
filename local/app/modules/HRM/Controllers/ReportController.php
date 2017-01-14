@@ -4,11 +4,13 @@ namespace App\modules\HRM\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use App\modules\HRM\Models\ActionUserLog;
 use App\modules\HRM\Models\AnsarIdCard;
 use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\EmbodimentLogModel;
 use App\modules\HRM\Models\EmbodimentModel;
 use App\modules\HRM\Models\OfferSmsLog;
+use App\modules\HRM\Models\PersonalInfo;
 use App\modules\HRM\Models\RestInfoLogModel;
 use App\modules\HRM\Models\RestInfoModel;
 use Barryvdh\Snappy\Facades\SnappyImage;
@@ -646,5 +648,24 @@ class ReportController extends Controller
             //return Response::json(['isEmbodied'=>$is_embodied,'isRest'=>$is_rest]);
         }
         return $ansars;
+    }
+    function ansarHistoryView(){
+        if(Auth::user()->id==1) {
+            return View::make('HRM::Report.ansar_history');
+        }
+        else abort(401);
+    }
+    function getAnsarHistory(Request $request){
+        if(Auth::user()->id==1) {
+            $ansar_id = $request->ansar_id;
+            if ($ansar_id) {
+                $detail = ActionUserLog::with('user')->where('ansar_id', $ansar_id)->get();
+                $ansarInfo = PersonalInfo::where('ansar_id', $ansar_id)->first();
+                return Response::json(['logs' => $detail, 'ansarInfo' => $ansarInfo]);
+            } else {
+                return Response::json([]);
+            }
+        }
+        else abort(401);
     }
 }
