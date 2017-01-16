@@ -108,6 +108,7 @@ return [
         "ansar_rank",
         "blood_name",
         "cancel_offer,cancel_offer_handle",
-        "user_action_log"
+        "user_action_log",
+        "embodiment_report_view"
     ]
 ];
