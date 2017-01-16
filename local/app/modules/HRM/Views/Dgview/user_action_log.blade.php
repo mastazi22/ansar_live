@@ -17,6 +17,7 @@
                     data:angular.toJson($scope.formData),
                     method:'post'
                 }).then(function (response) {
+                    console.log(response.data)
                     $scope.data = $sce.trustAsHtml(response.data)
                     $scope.loading = false;
                 }, function (response) {
