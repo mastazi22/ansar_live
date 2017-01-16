@@ -38,7 +38,8 @@ class UserPermission
     {
         $status = false;
         foreach($this->permissionList as $search){
-            $status = preg_match('/('.$name.')/',$search);
+            $results = explode(",",$search);
+            $status = in_array($name,$results);
             if($status) break;
         }
         return $status;
@@ -54,7 +55,8 @@ class UserPermission
         $status = false;
         $p = $this->currentUserPermission;
         foreach(json_decode($p) as $search){
-            $status = preg_match('/('.$name.')/',$search);
+            $results = explode(",",$search);
+            $status = in_array($name,$results);
             if($status) break;
         }
         return $status;
@@ -66,7 +68,8 @@ class UserPermission
         if(Auth::user()->type==11) return true;
         $status = false;
         foreach($p as $search){
-            $status = preg_match('/('.str_replace('.','\.',$name).')/',$search);
+            $results = explode(",",$search);
+            $status = in_array($name,$results);
             if($status) break;
         }
 
