@@ -200,7 +200,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 //End Disembodiment Report
 
 ///Start Embodiment Report
-//        Route::get('/embodiment_report_view', ['as' => 'embodiment_report_view', 'uses' => 'ReportController@ansarEmbodimentReportView']);
+        Route::get('/embodiment_report_view', ['as' => 'embodiment_report_view', 'uses' => 'ReportController@ansarEmbodimentReportView']);
         Route::get('/emboded_ansar_info', ['as'=>'emboded_ansar_info','uses'=>'ReportController@embodedAnsarInfo']);
 //End Embodiment Report
 

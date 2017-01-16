@@ -192,10 +192,10 @@ return [
                     "icon" => "fa-file-pdf-o",
                 ],
 
-//                "Embodied Ansar Report" => [
-//                    "route" => "embodiment_report_view",
-//                    "icon" => "fa-file-pdf-o",
-//                ],
+                "Embodied Ansar Report" => [
+                    "route" => "embodiment_report_view",
+                    "icon" => "fa-file-pdf-o",
+                ],
                 "View Disembodied Report" => [
                     "route" => "disembodiment_report_view",
                     "icon" => "fa-file-pdf-o",

@@ -325,6 +325,10 @@
         "name": "View Disembodied Report"
       },
       {
+        "value": "embodiment_report_view",
+        "name": "Embodied Ansar Report"
+      },
+      {
         "value": "blocklist_view",
         "name": "Blocklist Information"
       },
