@@ -290,7 +290,7 @@
                                                     {!! Form::label('activation_date', 'Activation Date:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                                     <div class="col-sm-8"
                                                          ng-class="{ 'has-error': kpiForm.activation_date.$touched && kpiForm.activation_date.$invalid }">
-                                                        {!! Form::text('activation_date', $value = $kpi_info->details->activation_date, $attributes = array('class' => 'form-control', 'id' => 'activation_date', 'required', 'ng-model' => 'activation_date')) !!}
+                                                        {!! Form::text('activation_date', $value = $kpi_info->details->activation_date, $attributes = array('class' => 'form-control', 'id' => 'activation_date', 'required', 'ng-model' => 'activation_date','placeholder'=>'Activation Date')) !!}
                                                         <span ng-if="kpiForm.activation_date.$touched && kpiForm.activation_date.$error.required"><p
                                                                     class="text-danger">Activation Date field is
                                                                 required.</p></span>
@@ -299,7 +299,7 @@
                                                 <div class="form-group">
                                                     {!! Form::label('withdraw_date', 'Withdraw Date:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                                     <div class="col-sm-8">
-                                                        {!! Form::text('withdraw_date', $value = $kpi_info->details->withdraw_date, $attributes = array('class' => 'form-control', 'id' => 'withdraw_date', 'ng-model' => 'withdraw_date')) !!}
+                                                        {!! Form::text('withdraw_date', $value = $kpi_info->details->withdraw_date, $attributes = array('class' => 'form-control', 'id' => 'withdraw_date', 'ng-model' => 'withdraw_date','placeholder'=>'Withdraw Date')) !!}
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
