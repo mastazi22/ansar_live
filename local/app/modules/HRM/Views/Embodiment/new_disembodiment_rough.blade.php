@@ -106,6 +106,15 @@
                     notificationService.notify('error','An unknown error occur. Error code : '+response.status);
                 })
             }
+            $scope.disabledOption = function (id,date) {
+                if(id==1){
+                    var current = moment();
+                    var d = moment(date);
+                    //console.log(current.format("DD-MMM-YYYY")+" "+d.format("DD-MMM-YYYY"));
+                    return current.diff(d,'years')>=3;
+                }
+                return true;
+            }
         })
         GlobalApp.directive('openHideModal', function () {
             return {
@@ -197,7 +206,7 @@
                                 <td>
                                     <select name="dis-reason" ng-model="formData[$index].disReason" ng-change="!formData[$index].disReason?formData[$index].ansarId=ch[$index]=false:''" class="form-control dis-reason">
                                         <option value="">--Select Reason--</option>
-                                        <option ng-repeat="r in ansars.reasons" value="[[r.id]]">[[r.reason_in_bng]]
+                                        <option ng-repeat="r in ansars.reasons" ng-if="disabledOption(r.id,a.joining_date)" value="[[r.id]]">[[r.reason_in_bng]]
                                         </option>
                                     </select>
                                 </td>
