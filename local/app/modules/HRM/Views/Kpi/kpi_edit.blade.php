@@ -8,10 +8,14 @@
         $(document).ready(function () {
             var a = $('#activation_date').val();
             var b = $('#withdraw_date').val();
-            if (a) $('#activation_date').val(moment(a).format("D-MMM-YYYY"))
-            if (b) $('#withdraw_date').val(moment(b).format("D-MMM-YYYY"));
-            $('#activation_date').datePicker(false);
-            $("#withdraw_date").datePicker(false);
+//            if (a) $('#activation_date').val(moment(a).format("D-MMM-YYYY"))
+//            if (b) $('#withdraw_date').val(moment(b).format("D-MMM-YYYY"));
+            $('#activation_date').datePicker({
+                defaultValue:a
+            });
+            $("#withdraw_date").datePicker({
+                defaultValue:b
+            });
 
         })
         GlobalApp.controller('KPIController', function ($scope, getNameService) {
