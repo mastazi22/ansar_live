@@ -138,6 +138,7 @@
       "rank": "Rank",
       "district": "Own District",
       "kpi_name": "KPI Name",
+      "kpi_unit": "Unit",
       "reporting_date": "Reporting Date",
       "joining_date": "Embodiment Date",
       "service_ended_date": "Dis Embodiment Date"

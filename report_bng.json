@@ -138,6 +138,7 @@
       "rank": "পদবী",
       "district": "নিজ জেলা",
       "kpi_name": "সংস্থার নাম",
+      "kpi_unit": "সংস্থার জেলা",
       "reporting_date": "যোগদানের তারিখ",
       "joining_date": "অঙ্গীভুতির তারিখ",
       "service_ended_date": "পরিষেবা দিবসের অন্তকাল"

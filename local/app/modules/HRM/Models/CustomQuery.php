@@ -1067,7 +1067,8 @@ class CustomQuery
         $ansarQuery = DB::table('tbl_embodiment')
             ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
             ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
-            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+            ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+            ->join('tbl_units as ku', 'ku.id', '=', 'tbl_kpi_info.unit_id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
             ->where('tbl_embodiment.service_ended_date', '<', Carbon::now())
             ->where('tbl_embodiment.emboded_status', '=', 'Emboded');
@@ -1085,7 +1086,7 @@ class CustomQuery
         }
         $total = clone $ansarQuery;
         $ansars = $ansarQuery->select('tbl_embodiment.ansar_id as id', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_designations.id as did',
-             'tbl_kpi_info.kpi_name as kpi', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_units.unit_name_bng as unit', 'tbl_designations.name_bng as rank')->skip($offset)->limit($limit)->get();
+             'tbl_kpi_info.kpi_name as kpi', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'pu.unit_name_bng as unit', 'ku.unit_name_bng as k_unit', 'tbl_designations.name_bng as rank')->skip($offset)->limit($limit)->get();
         $total = $total->groupBy('tbl_designations.id')->orderBy('tbl_designations.id')->select(DB::raw('count(tbl_designations.id) as t'), 'tbl_designations.code as code')->pluck('t', 'code');
 
         return Response::json(['total' => $total, 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars]);

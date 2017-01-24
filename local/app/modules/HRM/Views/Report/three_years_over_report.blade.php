@@ -144,6 +144,7 @@
                                     <th>[[report.ansar.name]]</th>
                                     <th>[[report.ansar.district]]</th>
                                     <th>[[report.ansar.kpi_name]]</th>
+                                    <th>[[report.ansar.kpi_unit]]</th>
                                     <th>[[report.ansar.joining_date]]</th>
                                 </tr>
                                 <tr ng-repeat="a in ansars.ansars">
@@ -153,6 +154,7 @@
                                     <td>[[a.rank]]</td>
                                     <td>[[a.unit]]</td>
                                     <td>[[a.kpi]]</td>
+                                    <td>[[a.k_unit]]</td>
                                     <td>[[a.j_date|dateformat:'DD-MMM-YYYY']]</td>
                                 </tr>
                                 <tr>
