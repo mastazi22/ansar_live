@@ -57,6 +57,10 @@
       {
         "value": "progress_info",
         "name": "Progress Info"
+      },
+      {
+        "value": "offer_accept_last_5_day,offer_accept_last_5_day_data",
+        "name": "Offer within last 5 days"
       }
     ]
   },

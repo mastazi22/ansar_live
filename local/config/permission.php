@@ -109,6 +109,7 @@ return [
         "blood_name",
         "cancel_offer,cancel_offer_handle",
         "user_action_log",
-        "embodiment_report_view"
+        "embodiment_report_view",
+        "offer_accept_last_5_day,offer_accept_last_5_day_data"
     ]
 ];
