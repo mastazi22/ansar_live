@@ -64,6 +64,9 @@ class EntryFormController extends Controller
                 $ansar->where('user_id', Auth::user()->id);
             }
             if(!$ansar->exists()){
+                if(Auth::user()->type==55){
+                    return Redirect::back()->with('entryInfo','<p class="text text-danger text-center">No Ansar found with this id</p>');
+                }
                 if(!$e_ansar->exists())return Redirect::back()->with('entryInfo','<p class="text text-danger text-center">No Ansar found with this id</p>');
                 $ansar = PersonalInfo::where('ansar_id',$request->ansar_id);
             }

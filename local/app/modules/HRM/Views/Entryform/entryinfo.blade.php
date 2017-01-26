@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','Original Info')
+@section('title','Entry Info')
 @section('breadcrumb')
     {!! Breadcrumbs::render('orginal_info') !!}
 @endsection

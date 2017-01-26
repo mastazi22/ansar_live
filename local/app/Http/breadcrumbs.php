@@ -127,7 +127,7 @@ Breadcrumbs::register('draft_edit', function($breadcrumbs,$id) {
 });
 Breadcrumbs::register('orginal_info', function($breadcrumbs) {
     $breadcrumbs->parent('pi');
-    $breadcrumbs->push('Original Information', URL::route('orginal_info'));
+    $breadcrumbs->push('Entry Info', URL::route('entry_info'));
 });
 
 Breadcrumbs::register('entryadvancedsearch', function($breadcrumbs) {

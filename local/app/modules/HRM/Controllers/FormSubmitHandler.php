@@ -1027,10 +1027,13 @@ class FormSubmitHandler extends Controller
     public function idsearch(Request $request)
     {
         $ansarID = $request->input('ansarId');
-        $find = PersonalInfo::where('ansar_id', $ansarID)->select('id', 'ansar_id')->first();
-        if ($find) {
-            $file_font = $find->ansar_id . '.jpg';
-            $file_back = $find->ansar_id . '.jpg';
+        $find = PersonalInfo::where('ansar_id', $ansarID)->select('id', 'ansar_id');
+        if(Auth::user()->type==55){
+            $find->where('user_id', Auth::user()->id);
+        }
+        if ($find->exists()) {
+            $file_font = $find->first()->ansar_id . '.jpg';
+            $file_back = $find->first()->ansar_id . '.jpg';
             return Response::json(['status' => true, 'url' => [
                 'font' => URL::route('view_image', ['type' => 'font', 'file' => $file_font]),
                 'back' => URL::route('view_image', ['type' => 'back', 'file' => $file_back])
