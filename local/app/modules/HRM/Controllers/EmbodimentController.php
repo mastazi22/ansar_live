@@ -16,6 +16,7 @@ use App\modules\HRM\Models\KpiGeneralModel;
 use App\modules\HRM\Models\MemorandumModel;
 use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\OfferSmsLog;
+use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\PersonalInfo;
 use App\modules\HRM\Models\RestInfoModel;
 use App\modules\HRM\Models\ServiceExtensionModel;
