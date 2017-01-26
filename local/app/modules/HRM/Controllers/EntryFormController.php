@@ -60,9 +60,13 @@ class EntryFormController extends Controller
                 $ansar->where('division_id',$request->range);
                 $e_ansar->where('tbl_kpi_info.division_id',$request->range);
             }
+
             if(!$ansar->exists()){
                 if(!$e_ansar->exists())return Redirect::back()->with('entryInfo','<p class="text text-danger text-center">No Ansar found with this id</p>');
                 $ansar = PersonalInfo::where('ansar_id',$request->ansar_id);
+            }
+            if(Auth::user()->type==55){
+                $ansar->where('user_id', Auth::user()->id);
             }
             $data = View::make('HRM::Entryform.entry_info',['ansarAllDetails'=>$ansar->first(),'label'=>(object)Config::get('report.label'),'type'=>'eng','title'=>(object)Config::get('report.title')]);
             return Redirect::back()->with('entryInfo',$data->render());

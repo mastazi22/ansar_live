@@ -961,6 +961,9 @@ class FormSubmitHandler extends Controller
             ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
             ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.father_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_division.division_name_eng', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng');
 
+        if(Auth::user()->type==55){
+            $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.user_id', Auth::user()->id);
+        }
         foreach ($request->except('page') as $key => $value) {
             $value = (object)($value);
 //            return $value;

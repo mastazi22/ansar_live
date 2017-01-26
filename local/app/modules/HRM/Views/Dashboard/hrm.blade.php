@@ -137,6 +137,15 @@
                 $scope.loadingProgressInfo = false;
             }, function (response) {
                 $scope.loadingProgressInfo = false;
+                switch (response.status) {
+                    case 404:
+                        response.data = "Not found(404)";
+                        break;
+                    case 500:
+                        response.data = "Server error(500)";
+                        break;
+                }
+                $scope.offerAcceptLastFiveDays = response.data;
             })
         }
         function sum(t){
