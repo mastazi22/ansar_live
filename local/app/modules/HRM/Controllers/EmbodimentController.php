@@ -721,16 +721,40 @@ class EmbodimentController extends Controller
 
         DB::beginTransaction();
         try {
-            $global_value = GlobalParameterFacades::getValue("rest_period");
-            $global_unit = GlobalParameterFacades::getUnit("rest_period");
+            $status = AnsarStatusInfo::where('ansar_id',$ansar_id)->first();
             $embodiment_log_update = EmbodimentLogModel::where('ansar_id', $ansar_id)->orderBy('release_date','desc')->first();
             $embodiment_log_update->release_date = $modified_new_disembodiment_date;
             $embodiment_log_update->save();
-            $rest_info_update = RestInfoModel::where('ansar_id', $ansar_id)->first();
-            if($rest_info_update) {
-                $rest_info_update->rest_date = $modified_new_disembodiment_date;
-                $rest_info_update->active_date = GlobalParameterFacades::getActiveDate($modified_new_disembodiment_date);
-                $rest_info_update->save();
+            if($status->getStatus()[0]==AnsarStatusInfo::PANEL_STATUS){
+                if($embodiment_log_update&&Carbon::now()->lt(Carbon::parse($embodiment_log_update->release_date)->addMonths(6))) {
+                    Log::info("ddd:".Carbon::parse($embodiment_log_update->release_date)->addMonths(6)->format("d-m-Y"));
+                    $p = PanelModel::where('ansar_id', $ansar_id)->first();
+                    $p->saveLog("Rest");
+                    $p->delete();
+                    RestInfoModel::create([
+                        'ansar_id' => $ansar_id,
+                        'old_embodiment_id' => $embodiment_log_update->old_embodiment_id,
+                        'memorandum_id' => 'n\a',
+                        'rest_date' => $embodiment_log_update->release_date,
+                        'active_date' => GlobalParameterFacades::getActiveDate($embodiment_log_update->release_date),
+                        'total_service_days' => Carbon::parse($embodiment_log_update->release_date)->diffInDays(Carbon::parse($embodiment_log_update->joining_date)),
+                        'disembodiment_reason_id' => $embodiment_log_update->disembodiment_reason_id,
+                        'rest_form' => 'Regular',
+                        'action_user_id' => Auth::user()->id,
+                        'comment' => $embodiment_log_update->comment,
+                    ]);
+                    $status->rest_status = 1;
+                    $status->pannel_status = 0;
+                    $status->save();
+                }
+            }
+            else{
+                $rest_info_update = RestInfoModel::where('ansar_id', $ansar_id)->first();
+                if($rest_info_update) {
+                    $rest_info_update->rest_date = $modified_new_disembodiment_date;
+                    $rest_info_update->active_date = GlobalParameterFacades::getActiveDate($modified_new_disembodiment_date);
+                    $rest_info_update->save();
+                }
             }
 //            if (strcasecmp($global_unit, "Year") == 0) {
 //                $rest_period = $global_value;
@@ -745,6 +769,7 @@ class EmbodimentController extends Controller
 
 
 
+            CustomQuery::addActionlog(['ansar_id' => $ansar_id, 'action_type' => 'DISEMBODIMENT DATE CORRECTION', 'from_state' => 0, 'to_state' => 0, 'action_by' => auth()->user()->id]);
 
             DB::commit();
         } catch (\Exception $e) {
