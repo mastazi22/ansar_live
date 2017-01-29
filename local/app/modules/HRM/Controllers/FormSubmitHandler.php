@@ -1062,6 +1062,8 @@ class FormSubmitHandler extends Controller
                 $image = Image::make($file);
                 return $image->response();
             } catch (\Exception $e) {
+
+                return $e->getMessage();
                 return Image::make(public_path('dist/img/image-not-found.png'))->response();
             }
         } else {
