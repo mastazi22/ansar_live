@@ -9,12 +9,17 @@ use App\modules\HRM\Models\AllSkill;
 use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
+use App\modules\HRM\Models\PersonalInfo;
 use App\modules\HRM\Models\Thana;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\View;
+use Intervention\Image\Facades\Image;
 
 class GeneralSettingsController extends Controller
 {
@@ -494,5 +499,51 @@ class GeneralSettingsController extends Controller
             }
             return Redirect::route('skill_view')->with('success_message', 'Skill Updated Successfully!');
         }
+    }
+
+    public function uploadOriginalInfo(Request $request){
+
+        $rules = [
+            'ansar_id'=>'required',
+            'front_side'=>'required|mimes:jpeg,jpg',
+            'back_side'=>'required|mimes:jpeg,jpg',
+        ];
+        $valid = Validator::make($request->all(),$rules);
+        if($valid->fails()){
+            return $valid->messages()->toJson();
+        }
+        $fontPath = storage_path('data/orginalinfo/frontside');
+        $backPath = storage_path('data/orginalinfo/backside');
+
+        try{
+            $p = PersonalInfo::where('ansar_id',$request->ansar_id);
+            if(!$p->exists()){
+                throw new \Exception("Ansar ID not found");
+            }
+            if(File::exists($fontPath.'/'.$request->ansar_id.'.jpg')){
+                File::delete($fontPath.'/'.$request->ansar_id.'.jpg');
+            }
+            if(File::exists($backPath.'/'.$request->ansar_id.'.jpg')){
+                File::delete($backPath.'/'.$request->ansar_id.'.jpg');
+            }
+            $fImage = Image::make($request->file('front_side'));
+            $bImage = Image::make($request->file('back_side'));
+            $fWidth = ($fImage->width()*75)/100;
+            $bWidth = ($bImage->width()*75)/100;
+            $fImage->resize($fWidth,null,function($constraint){
+                $constraint->aspectRatio();
+            })->save($fontPath.'/'.$request->ansar_id.'.jpg');
+            $bImage->resize($bWidth,null,function($constraint){
+                $constraint->aspectRatio();
+            })->save($backPath.'/'.$request->ansar_id.'.jpg');
+            return Response::json(['status'=>true,'message'=>"Original Image Upload Successfully"]);
+        }catch (\Exception $e){
+            return Response::json(['status'=>false,'message'=>$e->getMessage()]);
+        }
+
+    }
+
+    public function uploadOriginalInfoView(){
+        return View::make("HRM::GeneralSettings.upload_original_info");
     }
 }
