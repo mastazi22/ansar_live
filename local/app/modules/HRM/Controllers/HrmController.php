@@ -103,7 +103,8 @@ class HrmController extends Controller
             $ea2->where('tbl_ansar_parsonal_info.unit_id',$request->district_id);
             $da->where('tbl_ansar_parsonal_info.unit_id',$request->district_id);
         }
-        $ea = DB::table(DB::raw("({$ea1->unionAll($ea2)->toSql()}) x"))->select(DB::raw('SUM(total) as total,DATE_FORMAT(month,"%b,%y") as month'))->orderBy(DB::raw('YEAR(month)'))->orderBy(DB::raw('MONTH(month)'))->groupBy(DB::raw('MONTH(month)'));
+        $sql = $ea1->unionAll($ea2);
+        $ea = DB::table(DB::raw("({$sql->toSql()}) x"))->mergeBindings($sql)->select(DB::raw('SUM(total) as total,DATE_FORMAT(month,"%b,%y") as month'))->orderBy(DB::raw('YEAR(month)'))->orderBy(DB::raw('MONTH(month)'))->groupBy(DB::raw('MONTH(month)'));
         $b = Response::json(["ea" => $ea->get(),'da' => $da->get()]);
         //return DB::getQueryLog();
         return $b;
