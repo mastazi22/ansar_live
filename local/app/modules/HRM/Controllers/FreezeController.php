@@ -79,7 +79,7 @@ class FreezeController extends Controller
         $freeze_comment = $request->input('freeze_comment');
         $memorandum_id = $request->input('memorandum_id');
         $modifed_freeze_date = Carbon::parse($freeze_date);
-        return "aise";
+
         DB::beginTransaction();
         try {
             $memorandum_info = new MemorandumModel();
@@ -111,6 +111,7 @@ class FreezeController extends Controller
         } catch (\Exception $e) {
             return Redirect::back()->with('error_message', $e->getMessage());
         }
+        return "aise";
         return Redirect::back()->with('success_message', 'Ansar Freezed for Disciplinary Action Successfully!');
 
     }
