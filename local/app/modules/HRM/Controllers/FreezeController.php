@@ -109,9 +109,11 @@ class FreezeController extends Controller
 
             DB::commit();
         } catch (\Exception $e) {
+            DB::rollback();
+            return "aise";
             return Redirect::back()->with('error_message', $e->getMessage());
         }
-        return "aise";
+        //return "aise";
         return Redirect::back()->with('success_message', 'Ansar Freezed for Disciplinary Action Successfully!');
 
     }
