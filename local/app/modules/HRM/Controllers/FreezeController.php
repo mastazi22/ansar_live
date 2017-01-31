@@ -37,7 +37,7 @@ class FreezeController extends Controller
     }
 
     //submit
-    public function loadAnsarDetailforFreeze()
+    public function loadAnsarDetailforFreeze(Request $request)
     {
         $ansar_id = Input::get('ansar_id');
         $ansar_details = DB::table('tbl_embodiment')
@@ -55,8 +55,14 @@ class FreezeController extends Controller
             ->select('tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_ansar_parsonal_info.ansar_name_eng as name',
                 'tbl_ansar_parsonal_info.data_of_birth as dob', 'tbl_ansar_parsonal_info.sex', 'tbl_kpi_info.id', 'tbl_kpi_info.kpi_name as kpi', 'tbl_designations.name_eng as rank',
                 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status')
-            ->first();
-        return Response::json($ansar_details);
+            ;
+        if($request->exists('unit')){
+            $ansar_details->where('tbl_kpi_info.unit_id',$request->unit);
+        }
+        if($request->exists('range')){
+            $ansar_details->where('tbl_kpi_info.unit_id',$request->range);
+        }
+        return Response::json($ansar_details->first());
     }
 
     public function freezeEntry(Request $request)
@@ -78,6 +84,8 @@ class FreezeController extends Controller
             $memorandum_info->memorandum_id = $memorandum_id;
 
             $embodiment_info = EmbodimentModel::where('ansar_id', $ansar_id)->first();
+            if($request->exists('unit')&&$embodiment_info->kpi->unit_id!=$request->unit) throw new \Exception("Invalid Ansar for freeze");
+            if($request->exists('range')&&$embodiment_info->kpi->division_id!=$request->range) throw new \Exception("Invalid Ansar for freeze");
             if(!$embodiment_info&&$embodiment_info->emboded_status == "freeze") throw new \Exception("Invalid Ansar for freeze");
             if(Carbon::parse($embodiment_info->joining_date)->gt($modifed_freeze_date)) throw new \Exception("Freeze date must be greater then joining date");
             $freeze_info = new FreezingInfoModel();

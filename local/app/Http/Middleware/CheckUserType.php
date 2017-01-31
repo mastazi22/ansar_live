@@ -47,6 +47,8 @@ class CheckUserType
         'letter_data'=>['unit'=>'unit'],
         'send_offer'=>['exclude_district'=>'unit','district_id'=>'unit'],
         'entry_info'=>['unit'=>'unit','range'=>'range'],
+        'freeze_entry'=>['unit'=>'unit','range'=>'range'],
+        'load_ansar_for_freeze'=>['unit'=>'unit','range'=>'range'],
         'entry_report'=>['unit'=>'unit','range'=>'range'],
         'new-embodiment-entry'=>['division_name_eng'=>'unit'],
     ];
