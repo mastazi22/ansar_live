@@ -67,7 +67,7 @@ class FreezeController extends Controller
 
     public function freezeEntry(Request $request)
     {
-        return $request->all();
+
         $rules = [
             'ansar_id'=>'required|regex:/^[0-9]+$/|unique:tbl_freezing_info,ansar_id',
             'freeze_date'=>'required',
@@ -79,6 +79,7 @@ class FreezeController extends Controller
         $freeze_comment = $request->input('freeze_comment');
         $memorandum_id = $request->input('memorandum_id');
         $modifed_freeze_date = Carbon::parse($freeze_date);
+        return "aise";
         DB::beginTransaction();
         try {
             $memorandum_info = new MemorandumModel();
