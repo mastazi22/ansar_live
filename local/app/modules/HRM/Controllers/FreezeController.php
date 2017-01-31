@@ -110,7 +110,6 @@ class FreezeController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
-            return $e->getMessage();
             return Redirect::back()->with('error_message', $e->getMessage());
         }
         //return "aise";
