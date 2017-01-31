@@ -60,7 +60,7 @@ class FreezeController extends Controller
             $ansar_details->where('tbl_kpi_info.unit_id',$request->unit);
         }
         if($request->exists('range')){
-            $ansar_details->where('tbl_kpi_info.unit_id',$request->range);
+            $ansar_details->where('tbl_kpi_info.division_id',$request->range);
         }
         return Response::json($ansar_details->first());
     }
