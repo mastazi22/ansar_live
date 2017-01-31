@@ -67,6 +67,7 @@ class FreezeController extends Controller
 
     public function freezeEntry(Request $request)
     {
+        return $request->all();
         $rules = [
             'ansar_id'=>'required|regex:/^[0-9]+$/|unique:tbl_freezing_info,ansar_id',
             'freeze_date'=>'required',
