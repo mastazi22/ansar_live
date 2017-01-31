@@ -377,6 +377,8 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             fieldName:'=',
             layoutVertical:'@',
             getKpiName:'=',
+            getUnitName:'=',
+            getThanaName:'=',
             data:'=',
             errorKey:'=',
             reset:'=',
@@ -639,11 +641,13 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 scope.rangeChange({param:scope.selected})
             })
             $(element).on('change','#unit', function () {
+                scope.getUnitName = $.trim($(this).children('option:selected').text())
                 scope.selected.thana = scope.type=='all'?'all':''
                 scope.selected.kpi = scope.type=='all'?'all':''
                 scope.unitChange({param:scope.selected})
             })
             $(element).on('change',"#thana", function () {
+                scope.getThanaName = $.trim($(this).children('option:selected').text())
                 scope.selected.kpi = scope.type=='all'?'all':''
                 scope.thanaChange({param:scope.selected})
             })

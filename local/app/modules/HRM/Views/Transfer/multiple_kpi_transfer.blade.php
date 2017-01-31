@@ -45,6 +45,7 @@
                     id: $scope.data.data.ansar_id,
                     name: $scope.data.data.ansar_name_eng,
                     tkn: $scope.kpiName,
+                    tktn: $scope.thanaName,
                     ckn: $scope.data.data.kpi_name,
                     tkjd: $scope.formData.joining_date
                 })
@@ -193,6 +194,7 @@
                                     reset="reset1"
                                     watch-change="thana"
                                     get-kpi-name="kpiName"
+                                    get-thana-name="thanaName"
                                     thana-field-disabled="data==undefined||!data.status||!param.unit"
                                     kpi-field-disabled="data==undefined||!data.status||!param.unit"
                                     data = "formData"
@@ -245,6 +247,7 @@
                                         <th>Name</th>
                                         <th>Current Kpi Name</th>
                                         <th>Transfer Kpi Name</th>
+                                        <th>Transfer Kpi Thana</th>
                                         <th>Transfer Kpi Joining Date</th>
                                         <th>Action</th>
                                     </tr>
@@ -254,6 +257,7 @@
                                         <td>[[t.name]]</td>
                                         <td>[[t.ckn]]</td>
                                         <td>[[t.tkn]]</td>
+                                        <td>[[t.tktn]]</td>
                                         <td>[[t.tkjd]]</td>
                                         <td>
                                             <button class="btn btn-danger btn-xs" ng-click="remove($index)">
