@@ -29,6 +29,7 @@
 <link href="{{asset('plugins/iCheck/square/green.css')}}" rel="stylesheet" type="text/css"/>
 <link href="{{asset('plugins/iCheck/all.css')}}" rel="stylesheet" type="text/css"/>
 <link href="{{asset('dist/css/bank-form.css')}}" rel="stylesheet" type="text/css"/>
+<link href="{{asset('dist/css/dropzone.css')}}" rel="stylesheet" type="text/css"/>
 
 <script src="{{asset('plugins/jQuery/jQuery-2.1.4.min.js')}}" type="text/javascript"></script>
 <script src="{{asset('plugins/jQueryUI/jquery-ui.min.js')}}" type="text/javascript"></script>
@@ -49,3 +50,4 @@
 <script src="{{asset('dist/js/moment.min.js')}}"></script>
 <script src="{{asset('dist/js/moment-locales.min.js')}}"></script>
 <script src="{{asset('dist/js/Chart.js')}}"></script>
+<script src="{{asset('dist/js/dropzone.js')}}"></script>

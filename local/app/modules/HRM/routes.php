@@ -93,6 +93,18 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('advancedentrysearchsubmit', ['as'=>'search_result','uses'=>'FormSubmitHandler@advancedEntrySearchSubmit']);
         //END ENTRY SEARCH
 
+
+        //UPLOAD IMAGES
+        Route::get('upload/photo_signature',['as'=>'photo_signature','uses'=>'PhotoUploadController@uploadPhotoSignature']);
+        Route::get('upload/photo_original',['as'=>'photo_original','uses'=>'PhotoUploadController@uploadOriginalInfo']);
+        Route::post('upload/photo/store',['as'=>'photo_store','uses'=>'PhotoUploadController@storePhoto']);
+        Route::post('upload/signature/store',['as'=>'signature_store','uses'=>'PhotoUploadController@storeSignature']);
+        Route::post('upload/original_front/store',['as'=>'original_front','uses'=>'PhotoUploadController@storeOriginalFrontInfo']);
+        Route::post('upload/original_back/store',['as'=>'original_back','uses'=>'PhotoUploadController@storeOriginalBackInfo']);
+
+        //END UPLOAD IMAGES
+
+
         //ORGINAL INFO
 
         route::get('originalinfo', ['as' => 'orginal_info', 'uses' => 'EntryFormController@ansarOriginalInfo']);
@@ -388,36 +400,11 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('upload_original_info',['as'=>'upload_original_info','uses'=>'GeneralSettingsController@uploadOriginalInfo']);
         Route::get('upload_original_info',['as'=>'upload_original_info_view','uses'=>'GeneralSettingsController@uploadOriginalInfoView']);
         Route::get('test',function(){
-//            $rest_ansars = RestInfoModel::whereDate('active_date','<=',Carbon::today()->toDateString())->whereIn('disembodiment_reason_id',[1,2,8])->get();
-//            Log::info("REST to PANEl : CALLED");
-//
-//            foreach($rest_ansars as $ansar){
-//
-//                if(!in_array(AnsarStatusInfo::REST_STATUS,$ansar->status->getStatus())||in_array(AnsarStatusInfo::BLOCK_STATUS,$ansar->status->getStatus())||in_array(AnsarStatusInfo::BLACK_STATUS,$ansar->status->getStatus())) continue;
-//                DB::beginTransaction();
-//                try{
-//                    $panel_log = PanelInfoLogModel::where('ansar_id',$ansar->ansar_id)->orderBy('id','desc')->first();
-//                    PanelModel::create([
-//                        'ansar_id'=>$ansar->ansar_id,
-//                        'come_from'=>'Rest',
-//                        'panel_date'=>Carbon::today(),
-//                        'memorandum_id'=>isset($panel_log->old_memorandum_id)?$panel_log->old_memorandum_id:'N\A',
-//                        'ansar_merit_list'=>isset($panel_log->merit_list)?$panel_log->merit_list:'N\A',
-//                        'action_user_id'=>'0',
-//                    ]);
-//                    $ansar->status->update([
-//                        'pannel_status'=>1,
-//                        'rest_status'=>0,
-//                    ]);
-//                    $ansar->saveLog('Panel');
-//                    $ansar->delete();
-//                    DB::commit();
-//                    Log::info("REST to PANEl :".$ansar->ansar_id);
-//                }catch(\Exception $e){
-//                    DB::rollBack();
-//                    Log::info("REST to PANEl FAILED:".$ansar->ansar_id);
-//                }
-//            }
+            $s = '';
+            for($i=7484;$i<=7557;$i++){
+                $s .= $i.",";
+            }
+            return $s;
         });
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');

@@ -505,3 +505,16 @@ Breadcrumbs::register('skill_information_entry', function($breadcrumbs) {
     $breadcrumbs->parent('skill_information_list');
     $breadcrumbs->push('Entry of Skill Information', URL::route('skill_entry'));
 });
+
+Breadcrumbs::register('upload', function($breadcrumbs) {
+    $breadcrumbs->parent('hrm');
+    $breadcrumbs->push('Upload', '#');
+});
+Breadcrumbs::register('upload_photo_signature', function($breadcrumbs) {
+    $breadcrumbs->parent('upload');
+    $breadcrumbs->push('Upload photo & signature', URL::route('photo_signature'));
+});
+Breadcrumbs::register('upload_photo_original', function($breadcrumbs) {
+    $breadcrumbs->parent('upload');
+    $breadcrumbs->push('Upload Original Info', URL::route('photo_original'));
+});
