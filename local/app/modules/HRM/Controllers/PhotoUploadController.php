@@ -32,7 +32,7 @@ class PhotoUploadController extends Controller
         ];
         $this->validate($request,$rules);
         $path = storage_path('data/photo');
-        if(!File::exists($path)) File::makeDirectory($path);
+        if(!File::exists($path)) File::makeDirectory($path,true);
         $file = $request->file('file');
         if(File::exists($path.'/'.$file->getClientOriginalName())){
             File::delete($path.'/'.$file->getClientOriginalName());
@@ -49,7 +49,7 @@ class PhotoUploadController extends Controller
         ];
         $this->validate($request,$rules);
         $path = storage_path('data/signature');
-        if(!File::exists($path)) File::makeDirectory($path);
+        if(!File::exists($path)) File::makeDirectory($path,true);
         $file = $request->file('file');
         if(File::exists($path.'/'.$file->getClientOriginalName())){
             File::delete($path.'/'.$file->getClientOriginalName());
@@ -67,7 +67,7 @@ class PhotoUploadController extends Controller
         ];
         $this->validate($request,$rules);
         $path = storage_path('data/orginalinfo/frontside');
-        if(!File::exists($path)) File::makeDirectory($path);
+        if(!File::exists($path)) File::makeDirectory($path,true);
         $file = $request->file('file');
         if(File::exists($path.'/'.$file->getClientOriginalName())){
             File::delete($path.'/'.$file->getClientOriginalName());
@@ -84,7 +84,7 @@ class PhotoUploadController extends Controller
         ];
         $this->validate($request,$rules);
         $path = storage_path('data/orginalinfo/backside');
-        if(!File::exists($path)) File::makeDirectory($path);
+        if(!File::exists($path)) File::makeDirectory($path,true);
         $file = $request->file('file');
         if(File::exists($path.'/'.$file->getClientOriginalName())){
             File::delete($path.'/'.$file->getClientOriginalName());
