@@ -73,7 +73,11 @@ class PhotoUploadController extends Controller
             File::delete($path.'/'.$file->getClientOriginalName());
         }
         try {
-            Image::make($file)->save($path . '/' . $file->getClientOriginalName());
+            $fImage = Image::make($file);
+            $fWidth = ($fImage->width()*75)/100;
+            $fImage->resize($fWidth,null,function($constraint){
+                $constraint->aspectRatio();
+            })->save($path . '/' . $file->getClientOriginalName());
         }catch (\Exception $e){
 
         }
@@ -90,6 +94,11 @@ class PhotoUploadController extends Controller
             File::delete($path.'/'.$file->getClientOriginalName());
         }
         try {
+            $bImage = Image::make($file);
+            $fWidth = ($bImage->width()*75)/100;
+            $bImage->resize($fWidth,null,function($constraint){
+                $constraint->aspectRatio();
+            })->save($path . '/' . $file->getClientOriginalName());
             Image::make($file)->save($path . '/' . $file->getClientOriginalName());
         }catch (\Exception $e){
 
