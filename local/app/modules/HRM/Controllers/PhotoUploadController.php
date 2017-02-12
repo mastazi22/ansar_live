@@ -17,13 +17,13 @@ class PhotoUploadController extends Controller
     //
     public function uploadPhotoSignature(){
 
-        return View::make('HRM::EntryForm.upload_photo_signature');
+        return View::make('HRM::Entryform.upload_photo_signature');
 
     }
     public function uploadOriginalInfo(){
 
 
-        return View::make('HRM::EntryForm.upload_original_info');
+        return View::make('HRM::Entryform.upload_original_info');
     }
 
     public function storePhoto(Request $request){
