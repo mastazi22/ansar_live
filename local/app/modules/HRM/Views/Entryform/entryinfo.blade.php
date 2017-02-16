@@ -41,6 +41,27 @@
                 }
             }
         })
+        $(document).ready(function () {
+            $("#print-report").on('click', function (e) {
+                e.preventDefault();
+                $("#entry-report").find(".col-md-4").addClass("col-xs-4")
+                $("#entry-report").find(".col-md-6").addClass("col-xs-6")
+                $("#entry-report").find(".col-md-12").addClass("col-xs-12")
+                $("#entry-report").find(".col-md-offset-2").addClass("col-xs-offset-2")
+                $("#entry-report").find("img").removeClass("img-thumbnail img-responsive")
+                $("#entry-report table").removeClass("table table-bordered table-stripped borderless")
+                var html = $("#entry-report").html();
+                $('body').append('<div id="print-area">' + html + '</div>')
+                window.print();
+                $("#entry-report").find(".col-md-4").removeClass("col-xs-4")
+                $("#entry-report").find(".col-md-6").removeClass("col-xs-6")
+                $("#entry-report").find(".col-md-12").removeClass("col-xs-12")
+                $("#entry-report").find(".col-md-offset-2").removeClass("col-xs-offset-2")
+                $("#entry-report table").addClass("table table-bordered table-stripped borderless")
+                $("#entry-report").find("img").addClass("img-thumbnail img-responsive")
+                $("#print-area").remove()
+            })
+        })
     </script>
 
     <div ng-controller="originalInfo">
@@ -59,10 +80,17 @@
                                 </div>
                             </form>
                         </div>
+                        <div class="col-md-2 col-sm-2 col-xs-12 col-centered" style="margin-bottom: 20px">
+                            <a href="#" id="print-report" class="btn btn-primary btn-block">
+                                <i class="fa fa-print"></i>&nbsp; Print Info
+                            </a>
+                        </div>
                     </div>
+
                     <div class="row">
-                        <div class="col-md-8 col-sm-12 col-xs-12 col-centered">
+                        <div class="col-md-8 col-sm-12 col-xs-12 col-centered" id="entry-report">
                             @if(Session::has('entryInfo'))
+
                                 {!! Session::get('entryInfo') !!}
                             @endif
                         </div>

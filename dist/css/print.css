@@ -54,4 +54,22 @@
     a:link:after,a:visited:after {
         content: normal !important;
     }
+    .fieldset {
+        border: 1px solid #ababab !important;
+        padding: 5px 10px !important;
+        page-break-inside:avoid;
+        page-break-after:auto
+    }
+
+    .legend {
+        font-size: 16px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: auto !important;
+        background: #ffffff !important;
+    }
+    .profile-image{
+        height:100px !important;
+        width: 100px !important;
+    }
 }

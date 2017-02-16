@@ -137,3 +137,16 @@
   border-top-left-radius: 5px; 
   border-top-right-radius:5px;
 }
+@media print {
+    /*table{*/
+        /*width: 100% !important;*/
+
+    /*}*/
+    /*table td,table th{*/
+        /*padding: 5px 5px !important;*/
+    /*}*/
+    fieldset{
+        page-break-before: auto !important;
+    }
+
+}

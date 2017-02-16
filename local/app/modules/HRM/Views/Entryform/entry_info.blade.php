@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-md-4">
-        <img class="img-thumbnail img-responsive"
+        <img class="img-thumbnail img-responsive profile-image"
              src="{{action('UserController@getImage',['file'=>$ansarAllDetails->profile_pic])}}"
              style="margin:0 auto;width:80%;"/>
     </div>
