@@ -53,12 +53,12 @@
                 var html = $("#entry-report").html();
                 $('body').append('<div id="print-area">' + html + '</div>')
                 window.print();
-                $("#entry-report").find(".col-md-4").removeClass("col-xs-4")
-                $("#entry-report").find(".col-md-6").removeClass("col-xs-6")
-                $("#entry-report").find(".col-md-12").removeClass("col-xs-12")
-                $("#entry-report").find(".col-md-offset-2").removeClass("col-xs-offset-2")
-                $("#entry-report table").addClass("table table-bordered table-stripped borderless")
-                $("#entry-report").find("img").addClass("img-thumbnail img-responsive")
+//                $("#entry-report").find(".col-md-4").removeClass("col-xs-4")
+//                $("#entry-report").find(".col-md-6").removeClass("col-xs-6")
+//                $("#entry-report").find(".col-md-12").removeClass("col-xs-12")
+//                $("#entry-report").find(".col-md-offset-2").removeClass("col-xs-offset-2")
+//                $("#entry-report table").addClass("table table-bordered table-stripped borderless")
+//                $("#entry-report").find("img").addClass("img-thumbnail img-responsive")
                 $("#print-area").remove()
             })
         })
@@ -88,7 +88,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-8 col-sm-12 col-xs-12 col-centered" id="entry-report">
+                        <div class="col-md-10 col-sm-12 col-xs-12 col-centered" id="entry-report">
                             @if(Session::has('entryInfo'))
 
                                 {!! Session::get('entryInfo') !!}

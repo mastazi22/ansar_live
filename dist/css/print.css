@@ -69,7 +69,14 @@
         background: #ffffff !important;
     }
     .profile-image{
-        height:100px !important;
+        height:auto !important;
         width: 100px !important;
     }
+    .entry-table *{
+        font-size: 10px !important;
+    }
+}
+.profile-image{
+    height:auto !important;
+    width: 100px !important;
 }

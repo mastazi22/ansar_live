@@ -87,12 +87,12 @@ class PersonalInfo extends Model
 
     function alldisease()
     {
-        return $this->hasOne(AllDisease::class, 'disease_id');
+        return $this->belongsTo(AllDisease::class, 'disease_id');
     }
 
     function allskill()
     {
-        return $this->hasOne(AllSkill::class, 'skill_id');
+        return $this->belongsTo(AllSkill::class, 'skill_id');
     }
     function receiveSMS(){
         return $this->hasOne(ReceiveSMSModel::class,'ansar_id','ansar_id');
