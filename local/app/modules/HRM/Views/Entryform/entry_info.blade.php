@@ -721,9 +721,9 @@
             <td>বাম হাতের বৃদ্ধা আঙ্গুলের ছাপ</td>
         </tr>
         <tr>
-            <td ><img class="img-thumbnail img-responsive" src="{{URL::route('sign_image',['id'=>$ansarAllDetails->ansar_id])}}"
+            <td ><img  src="{{URL::route('sign_image',['id'=>$ansarAllDetails->ansar_id])}}"
                      /></td>
-            <td ><img class="img-thumbnail img-responsive" src="{{URL::route('thumb_image',['id'=>$ansarAllDetails->ansar_id])}}"
+            <td ><img  src="{{URL::route('thumb_image',['id'=>$ansarAllDetails->ansar_id])}}"
                      /></td>
         </tr>
     </table>
