@@ -715,15 +715,15 @@
             <td><div style="padding:5px;font-size:14px;">{{$ansarAllDetails->email_self}}</div></td>
         </tr>
     </table>
-    <table class="entry-table border-table">
+    <table class="entry-table border-table padding-table">
         <tr>
             <td>তথ্য প্রদানকারীরস্বাক্ষর</td>
             <td>বাম হাতের বৃদ্ধা আঙ্গুলের ছাপ</td>
         </tr>
         <tr>
-            <td><img class="img-thumbnail" src="{{URL::route('sign_image',['id'=>$ansarAllDetails->ansar_id])}}"
+            <td style="max-width: 50%"><img class="img-thumbnail" src="{{URL::route('sign_image',['id'=>$ansarAllDetails->ansar_id])}}"
                      style="height:80px;width:100%;"/></td>
-            <td><img class="img-thumbnail" src="{{URL::route('thumb_image',['id'=>$ansarAllDetails->ansar_id])}}"
+            <td style="max-width: 50%"><img class="img-thumbnail" src="{{URL::route('thumb_image',['id'=>$ansarAllDetails->ansar_id])}}"
                      style="height:80px;width:100%;"/></td>
         </tr>
     </table>
@@ -777,4 +777,7 @@
         padding: 5px 10px !important;
     }
 
+    .entry-table.border-table.padding-table{
+        padding-top: 10px;
+    }
 </style>
