@@ -780,7 +780,10 @@
     .entry-table.border-table.image-table{
         margin-top: 10px;
     }
-    .entry-table.border-table.image-table td{
+    .entry-table.border-table.image-table tr:first-child td{
+        width: 50% !important;
+    }
+    .entry-table.border-table.image-table tr:not(:first-child) td{
         width: 50% !important;
         height:100px !important;
         vertical-align: middle;
