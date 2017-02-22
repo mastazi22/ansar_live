@@ -30,7 +30,7 @@
     <script>
         $(document).ready(function(){
             $("#upload_photo").dropzone({
-                url:"{{URL::route('photo_store')}}",
+                url:"/HRM/upload/photo/store",
                 uploadMultiple:false,
                 parallelUploads:1,
 
@@ -40,7 +40,7 @@
                 }
             })
             $("#upload_signature").dropzone({
-                url:"{{URL::route('signature_store')}}",
+                url:"/HRM/upload/signature/store",
                 uploadMultiple:false,
                 parallelUploads:1,
 
