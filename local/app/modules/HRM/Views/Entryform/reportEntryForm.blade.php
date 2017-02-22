@@ -38,7 +38,7 @@
     <div ng-controller="EntryReportController">
         <section class="content">
             <div class="row " >
-                <div class="box box-solid" style="width:70%;margin:0 auto;">
+                <div class="box box-solid" style="width:80%;margin:0 auto;">
                     <div class="box-body" id="entry-report">
                         @include('HRM::Entryform.entry_info',compact('ansarAllDetails','label'))
                     </div>
