@@ -33,7 +33,7 @@
                 url:"{{URL::route('photo_store')}}",
                 uploadMultiple:false,
                 parallelUploads:1,
-                previewsContainer:false,
+
                 acceptedFiles:'image/jpg,image/jpeg',
                 headers: {
                     'X-CSRF-TOKEN': '{{csrf_token()}}'
@@ -43,7 +43,7 @@
                 url:"{{URL::route('signature_store')}}",
                 uploadMultiple:false,
                 parallelUploads:1,
-                previewsContainer:false,
+
                 acceptedFiles:'image/jpg,image/jpeg',
                 headers: {
                     'X-CSRF-TOKEN': '{{csrf_token()}}'
