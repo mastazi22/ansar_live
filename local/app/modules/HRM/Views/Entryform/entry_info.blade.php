@@ -721,10 +721,10 @@
             <td>বাম হাতের বৃদ্ধা আঙ্গুলের ছাপ</td>
         </tr>
         <tr>
-            <td style="max-width: 50%"><img class="img-thumbnail" src="{{URL::route('sign_image',['id'=>$ansarAllDetails->ansar_id])}}"
-                     style="height:80px;width:100%;"/></td>
-            <td style="max-width: 50%"><img class="img-thumbnail" src="{{URL::route('thumb_image',['id'=>$ansarAllDetails->ansar_id])}}"
-                     style="height:80px;width:100%;"/></td>
+            <td style="width: 50%"><img class="img-thumbnail" src="{{URL::route('sign_image',['id'=>$ansarAllDetails->ansar_id])}}"
+                     style="height:80px;width:auto;"/></td>
+            <td style="width: 50%"><img class="img-thumbnail" src="{{URL::route('thumb_image',['id'=>$ansarAllDetails->ansar_id])}}"
+                     style="height:80px;width:auto"/></td>
         </tr>
     </table>
 </div>
@@ -778,6 +778,6 @@
     }
 
     .entry-table.border-table.padding-table{
-        padding-top: 10px;
+        margin-top: 10px;
     }
 </style>
