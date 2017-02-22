@@ -77,7 +77,7 @@
         <tr>
             <td>*স্ত্রী/স্বামীর নাম <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
-                <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->spouse_name_bng or ' '}}</div>
+                <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->spouse_name_bng or ' '}}&nbsp;</div>
             </td>
         </tr>
         <tr>
@@ -95,7 +95,7 @@
         <tr>
             <td>দীর্ঘ মেয়াদি অসুখ <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
-                <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->alldisease->disease_name_bng or $ansarAllDetails->own_disease?$ansarAllDetails->own_disease:'&nbsp;'}}</div>
+                <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->alldisease->disease_name_bng or $ansarAllDetails->own_disease?$ansarAllDetails->own_disease:'&nbsp;'}}&nbsp;</div>
             </td>
         </tr>
         <tr>
