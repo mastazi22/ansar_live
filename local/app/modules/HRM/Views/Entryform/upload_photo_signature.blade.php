@@ -39,10 +39,12 @@
             border-radius: 10px;
             margin-bottom: 0;
         }
-        .status{
+
+        .status {
             padding: 0 10px;
             font-size: 12px;
         }
+
         .card:not(:first-child) {
             margin-top: 10px;
         }
@@ -155,33 +157,40 @@
                 $.ajax({
                     url: '/HRM/upload/photo/store',
                     data: fd,
-                    type:'post',
+                    type: 'post',
                     cache: false,
                     contentType: false,
                     processData: false,
-                    xhr:function(){
+                    xhr: function () {
                         var xhr = new window.XMLHttpRequest();
                         xhr.upload.addEventListener('progress', function (evt) {
-                            if(evt.lengthComputable){
-                                var percent = evt.loaded/evt.total;
+                            if (evt.lengthComputable) {
+                                var percent = evt.loaded / evt.total;
                                 $("#upload_photo .card").eq(index).find(".progress").css({
-                                    width:(percent*100)+"%"
+                                    width: (percent * 100) + "%"
                                 })
                             }
-                        },false)
+                        }, false)
                         return xhr;
                     },
                     success: function (response) {
                         $("#upload_photo .card").eq(index).find(".status").text("Complete").removeClass('text text-warning').addClass('text text-success')
                         index++;
-                        setTimeout(uploadPhotoFile(),1000);
+                        setTimeout(function () {
+                            uploadPhotoFile()
+                        }, 2000);
                     },
                     error: function (response) {
                         console.log(response)
                         $("#upload_photo .card").eq(index).find(".status").text("Error").removeClass('text text-warning text-success').addClass('text text-danger')
+                        index++;
+                        setTimeout(function () {
+                            uploadPhotoFile()
+                        }, 2000);
                     }
                 })
             }
+
             function uploadSignatureFile() {
                 var file = sfiles.shift();
                 if (file == undefined) {
@@ -194,30 +203,36 @@
                 $.ajax({
                     url: '/HRM/upload/signature/store',
                     data: fd,
-                    type:'post',
+                    type: 'post',
                     cache: false,
                     contentType: false,
                     processData: false,
-                    xhr:function(){
+                    xhr: function () {
                         var xhr = new window.XMLHttpRequest();
                         xhr.upload.addEventListener('progress', function (evt) {
-                            if(evt.lengthComputable){
-                                var percent = evt.loaded/evt.total;
+                            if (evt.lengthComputable) {
+                                var percent = evt.loaded / evt.total;
                                 $("#upload_signature .card").eq(sindex).find(".progress").css({
-                                    width:(percent*100)+"%"
+                                    width: (percent * 100) + "%"
                                 })
                             }
-                        },false)
+                        }, false)
                         return xhr;
                     },
                     success: function (response) {
                         $("#upload_signature .card").eq(sindex).find(".status").text("Complete").removeClass('text text-warning').addClass('text text-success')
                         sindex++;
-                        setTimeout(uploadSignatureFile(),1000);
+                        setTimeout(function () {
+                            uploadSignatureFile()
+                        }, 2000);
                     },
                     error: function (response) {
                         console.log(response)
                         $("#upload_signature .card").eq(sindex).find(".status").text("Error").removeClass('text text-warning text-success').addClass('text text-danger')
+                        sindex++;
+                        setTimeout(function () {
+                            uploadSignatureFile()
+                        }, 2000);
                     }
                 })
             }
