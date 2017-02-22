@@ -680,21 +680,7 @@
         @endforeach
         </tbody>
     </table>
-    <table class="entry-table other-table">
-        <caption>অন্যান্য তথ্য</caption>
-        <tr>
-            <td>Mobile No. (Self) নিজ* <span class="pull-right">:</span></td>
-            <td><div style="font-size:14px;">{{$ansarAllDetails->mobile_no_self}}</div></td>
-        </tr>
-        <tr>
-            <td>Mobile No. (Request) <span class="pull-right">:</span></td>
-            <td><div style="font-size:14px;">{{$ansarAllDetails->mobile_no_request}}</div></td>
-        </tr>
-        <tr>
-            <td>Email (Self) <span class="pull-right">:</span></td>
-            <td><div style="padding:5px;font-size:14px;">{{$ansarAllDetails->email_self}}</div></td>
-        </tr>
-    </table>
+
     <table class="entry-table border-table">
         <caption>Nominee Information</caption>
         <tbody>
@@ -714,8 +700,22 @@
         @endforeach
         </tbody>
     </table>
-    <table class="entry-table border-table">
+    <table class="entry-table other-table">
         <caption>অন্যান্য তথ্য</caption>
+        <tr>
+            <td>Mobile No. (Self) নিজ* <span class="pull-right">:</span></td>
+            <td><div style="font-size:14px;">{{$ansarAllDetails->mobile_no_self}}</div></td>
+        </tr>
+        <tr>
+            <td>Mobile No. (Request) <span class="pull-right">:</span></td>
+            <td><div style="font-size:14px;">{{$ansarAllDetails->mobile_no_request}}</div></td>
+        </tr>
+        <tr>
+            <td>Email (Self) <span class="pull-right">:</span></td>
+            <td><div style="padding:5px;font-size:14px;">{{$ansarAllDetails->email_self}}</div></td>
+        </tr>
+    </table>
+    <table class="entry-table border-table">
         <tr>
             <td>তথ্য প্রদানকারীরস্বাক্ষর</td>
             <td>বাম হাতের বৃদ্ধা আঙ্গুলের ছাপ</td>
