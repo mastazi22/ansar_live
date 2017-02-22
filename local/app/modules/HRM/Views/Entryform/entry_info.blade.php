@@ -715,15 +715,15 @@
             <td><div style="padding:5px;font-size:14px;">{{$ansarAllDetails->email_self}}</div></td>
         </tr>
     </table>
-    <table class="entry-table border-table padding-table">
+    <table class="entry-table border-table image-table">
         <tr>
             <td>তথ্য প্রদানকারীরস্বাক্ষর</td>
             <td>বাম হাতের বৃদ্ধা আঙ্গুলের ছাপ</td>
         </tr>
         <tr>
-            <td style="width: 50% !important"><img class="img-thumbnail img-responsive" src="{{URL::route('sign_image',['id'=>$ansarAllDetails->ansar_id])}}"
+            <td ><img class="img-thumbnail img-responsive" src="{{URL::route('sign_image',['id'=>$ansarAllDetails->ansar_id])}}"
                      /></td>
-            <td style="width: 50% !important"><img class="img-thumbnail img-responsive" src="{{URL::route('thumb_image',['id'=>$ansarAllDetails->ansar_id])}}"
+            <td ><img class="img-thumbnail img-responsive" src="{{URL::route('thumb_image',['id'=>$ansarAllDetails->ansar_id])}}"
                      /></td>
         </tr>
     </table>
@@ -777,7 +777,17 @@
         padding: 5px 10px !important;
     }
 
-    .entry-table.border-table.padding-table{
+    .entry-table.border-table.image-table{
         margin-top: 10px;
+    }
+    .entry-table.border-table.image-table td{
+        width: 50% !important;
+        height:100px !important;
+        vertical-align: middle;
+    }
+    .entry-table.border-table.image-table td>img{
+        width: auto !important;
+        height: 80px !important;
+        vertical-align: middle;
     }
 </style>
