@@ -32,6 +32,7 @@
             $("#upload_photo").dropzone({
                 url:"{{URL::route('photo_store')}}",
                 uploadMultiple:false,
+                parallelUploads:1,
                 acceptedFiles:'image/jpg,image/jpeg',
                 headers: {
                     'X-CSRF-TOKEN': '{{csrf_token()}}'
@@ -40,6 +41,7 @@
             $("#upload_signature").dropzone({
                 url:"{{URL::route('signature_store')}}",
                 uploadMultiple:false,
+                parallelUploads:1,
                 acceptedFiles:'image/jpg,image/jpeg',
                 headers: {
                     'X-CSRF-TOKEN': '{{csrf_token()}}'
