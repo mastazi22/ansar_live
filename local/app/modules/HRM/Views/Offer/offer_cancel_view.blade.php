@@ -46,7 +46,10 @@
                         $scope.noAnsar = false;
                         $scope.selectAnsar = Array.apply(null, new Array(response.data.length)).map(Boolean.prototype.valueOf, false);
                     }
-                    else $scope.noAnsar = true;
+                    else {
+                        $scope.noAnsar = true;
+                        $scope.results = [];
+                    }
                     $scope.loadingAnsar = false;
                 }, function (response) {
                     $scope.alerts = [];
