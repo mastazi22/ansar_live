@@ -346,6 +346,7 @@ class BlockBlackController extends Controller
 
     public function unblockListEntry(Request $request)
     {
+        //return "dadaasadsa";
         $rules = [
           'ansar_id'=>'required|regex:/^[0-9]+$/|exists:hrm.tbl_blocklist_info,ansar_id',
           'unblock_date'=>'required',
@@ -358,12 +359,17 @@ class BlockBlackController extends Controller
 
         DB::beginTransaction();
         try {
+            $ansar = AnsarStatusInfo::where('ansar_id', $ansar_id)->first();
+            if(!in_array(AnsarStatusInfo::BLOCK_STATUS,$ansar->getStatus())){
+
+                throw new \Exception("This ansar is not in block list");
+            }
             $blocklist_entry = BlockListModel::where('ansar_id', $ansar_id)->orderBy('id','desc')->first();
             $blocklist_entry->ansar_id = $ansar_id;
             $blocklist_entry->date_for_unblock = $modified_unblock_date;
             $blocklist_entry->comment_for_unblock = $unblock_comment;
             $blocklist_entry->save();
-            $ansar = AnsarStatusInfo::where('ansar_id', $ansar_id)->first();
+
             $ansar->block_list_status = 0;
             $ansar->save();
             switch ($ansar->getStatus()[0]) {
@@ -411,6 +417,7 @@ class BlockBlackController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
+            return $e->getMessage();
             return Redirect::back()->with('error_message',$e->getMessage());
         }
         return Redirect::route('unblocklist_entry_view')->with('success_message', 'Ansar Removed from Blocklist Successfully');

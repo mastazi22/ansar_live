@@ -64,11 +64,13 @@
                                 <input type="text" name="ansar_id" id="ansar_id" class="form-control"
                                        placeholder="Enter Ansar ID" ng-model="ansarId"
                                        ng-change="loadAnsarDetail(ansarId)">
+                                {!! $errors->first('ansar_id','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <div class="form-group">
                                 <label for="unblock_date" class="control-label">Unlocking Date</label>
                                 <input type="text" name="unblock_date" id="unblock_date" class="form-control"
                                        ng-model="unblock_date">
+                                {!! $errors->first('unblock_date','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <div class="form-group">
                                 <label for="unblock_comment" class="control-label">Reason</label>
