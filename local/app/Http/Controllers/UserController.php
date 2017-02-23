@@ -107,6 +107,13 @@ class UserController extends Controller
     function handleRegister()
     {
 
+        $messages = [
+            'user_name'=>'user name required',
+            'password.required'=>'password required',
+            'r_password.required'=>'confirm password required',
+            'r_password.same'=>'confirm password must be same as password',
+            'user_type'=>'select a user type',
+        ];
         if (Input::get('user_type') == 22) {
             $rules = array(
                 'user_name' => 'required|unique:hrm.tbl_user',
@@ -131,7 +138,7 @@ class UserController extends Controller
                 'user_type' => 'required'
             );
         }
-        $validation = Validator::make(Input::all(), $rules);
+        $validation = Validator::make(Input::all(), $rules,$messages);
         if (!$validation->fails()) {
             $user = new User;
             $user_profile = new UserProfile;

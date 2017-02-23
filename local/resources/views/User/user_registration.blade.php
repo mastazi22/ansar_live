@@ -108,7 +108,7 @@
 
                                     </select>
                                     @if($errors->has('user_type'))
-                                        <p class="text-danger">{{$errors->first('r_password')}}</p>
+                                        <p class="text-danger">{{$errors->first('user_type')}}</p>
                                     @endif
                                 </div>
                             </div>
