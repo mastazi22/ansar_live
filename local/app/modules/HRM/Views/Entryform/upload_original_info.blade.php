@@ -48,7 +48,7 @@
                     var html = '<div class="card">' +
                             '<div class="image-title">' + this.files[i].name + '<span class="status">Queuing...</span></div>' +
                             '<div class="progress-container">' +
-                            '<div class="progress"></div>' +
+                            '<div class="upload-progress"></div>' +
                             '</div>' +
                             '</div>'
                     $("#upload_front").append(html)
@@ -67,7 +67,7 @@
                     var html = '<div class="card">' +
                             '<div class="image-title">' + this.files[i].name + '<span class="status">Queuing...</span></div>' +
                             '<div class="progress-container">' +
-                            '<div class="progress"></div>' +
+                            '<div class="upload-progress"></div>' +
                             '</div>' +
                             '</div>'
                     $("#upload_back").append(html)
@@ -105,7 +105,7 @@
                         xhr.upload.addEventListener('progress', function (evt) {
                             if (evt.lengthComputable) {
                                 var percent = evt.loaded / evt.total;
-                                $("#upload_front .card").eq(index).find(".progress").css({
+                                $("#upload_front .card").eq(index).find(".upload-progress").css({
                                     width: (percent * 100) + "%"
                                 })
                             }
@@ -156,7 +156,7 @@
                             if (evt.lengthComputable) {
                                 var percent =  evt.loaded/ evt.total;
                                 console.log(evt.loaded+" "+evt.total)
-                                $("#upload_back .card").eq(sindex).find(".progress").css({
+                                $("#upload_back .card").eq(sindex).find(".upload-progress").css({
                                     width: (percent * 100) + "%"
                                 })
                             }
