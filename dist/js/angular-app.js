@@ -801,3 +801,16 @@ GlobalApp.directive('formSubmit',function (notificationService,$timeout) {
         }
     }
 })
+GlobalApp.directive('numericField', function () {
+    return {
+        restrict:'A',
+        link: function (scope,elem, attr) {
+
+            $(elem).on('keypress', function (e) {
+                var key = e.keyCode|| e.which;
+                if(key>=48&&key<=57){return true}
+                else return false;
+            })
+        }
+    }
+})

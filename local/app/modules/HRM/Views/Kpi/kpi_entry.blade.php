@@ -189,7 +189,7 @@
                                                     {!! Form::label('total_ansar_request', 'Total Ansar Request:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                                     <div class="col-sm-8"
                                                          ng-class="{ 'has-error': kpiForm.total_ansar_request.$touched && kpiForm.total_ansar_request.$invalid }">
-                                                        {!! Form::text('total_ansar_request', $value = null, $attributes = array('class' => 'form-control', 'id' => 'total_ansar_request', 'placeholder' => 'Enter Total Ansar Request Number', 'required', 'ng-model' => 'total_ansar_request')) !!}
+                                                        {!! Form::text('total_ansar_request', $value = null, $attributes = array('class' => 'form-control', 'id' => 'total_ansar_request', 'placeholder' => 'Enter Total Ansar Request Number', 'required', 'ng-model' => 'total_ansar_request','numeric-field')) !!}
                                                         <span ng-if="kpiForm.total_ansar_request.$touched && kpiForm.total_ansar_request.$error.required"><p
                                                                     class="text-danger">Total Ansar Request field is
                                                                 required.</p></span>
@@ -199,7 +199,7 @@
                                                     {!! Form::label('total_ansar_given', 'Total Ansar Given:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                                     <div class="col-sm-8"
                                                          ng-class="{ 'has-error': kpiForm.total_ansar_given.$touched && kpiForm.total_ansar_given.$invalid }">
-                                                        {!! Form::text('total_ansar_given', $value = null, $attributes = array('class' => 'form-control', 'id' => 'total_ansar_given', 'placeholder' => 'Enter Total Ansar given Number', 'required', 'ng-model' => 'total_ansar_given')) !!}
+                                                        {!! Form::text('total_ansar_given', $value = null, $attributes = array('class' => 'form-control', 'id' => 'total_ansar_given', 'placeholder' => 'Enter Total Ansar given Number', 'required', 'ng-model' => 'total_ansar_given','numeric-field')) !!}
                                                         <span ng-if="kpiForm.total_ansar_given.$touched && kpiForm.total_ansar_given.$error.required"><p
                                                                     class="text-danger">Total Ansar Given field is required.</p></span>
                                                     </div>
@@ -232,7 +232,7 @@
                                                 <div class="form-group">
                                                     {!! Form::label('bullet_no', 'Number of Bullets:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                                     <div class="col-sm-8">
-                                                        {!! Form::text('bullet_no', $value = null, $attributes = array('class' => 'form-control', 'id' => 'bullet_no', 'placeholder' => 'Enter Number of Bullets')) !!}
+                                                        {!! Form::text('bullet_no', $value = null, $attributes = array('class' => 'form-control', 'id' => 'bullet_no', 'placeholder' => 'Enter Number of Bullets','numeric-field')) !!}
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
@@ -260,19 +260,19 @@
                                                 <div class="form-group">
                                                     {!! Form::label('no_of_pc', 'No of PC:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                                     <div class="col-sm-8">
-                                                        {!! Form::text('no_of_pc', $value = null, $attributes = array('class' => 'form-control', 'id' => 'no_of_pc', 'placeholder' => 'Enter Number of PC')) !!}
+                                                        {!! Form::text('no_of_pc', $value = null, $attributes = array('class' => 'form-control', 'id' => 'no_of_pc', 'placeholder' => 'Enter Number of PC','numeric-field')) !!}
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     {!! Form::label('no_of_apc', 'No of APC:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                                     <div class="col-sm-8">
-                                                        {!! Form::text('no_of_apc', $value = null, $attributes = array('class' => 'form-control', 'id' => 'no_of_apc', 'placeholder' => 'Enter Number of APC')) !!}
+                                                        {!! Form::text('no_of_apc', $value = null, $attributes = array('class' => 'form-control', 'id' => 'no_of_apc', 'placeholder' => 'Enter Number of APC','numeric-field')) !!}
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     {!! Form::label('no_of_ansar', 'No of Ansar:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
                                                     <div class="col-sm-8">
-                                                        {!! Form::text('no_of_ansar', $value = null, $attributes = array('class' => 'form-control', 'id' => 'no_of_ansar', 'placeholder' => 'Enter Number of Ansar')) !!}
+                                                        {!! Form::text('no_of_ansar', $value = null, $attributes = array('class' => 'form-control', 'id' => 'no_of_ansar', 'placeholder' => 'Enter Number of Ansar','numeric-field')) !!}
                                                     </div>
                                                 </div>
                                                 <button style="background: #5bc0de; border-color: #46b8da; color: #FFFFFF" class="btn btn-primary" id="prevtab" type="button">Previous Page</button>
