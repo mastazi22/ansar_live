@@ -22,7 +22,7 @@
 <link href="{{asset('dist/css/user_css.css')}}" rel="stylesheet" type="text/css"/>
 <link href="{{asset('dist/css/viewer.min.css')}}" rel="stylesheet" type="text/css"/>
 <link href="{{asset('dist/css/session.css')}}" rel="stylesheet" type="text/css"/>
-<link href="{{asset('dist/css/entryform.css')}}" rel="stylesheet" type="text/css"/>
+<link href="{{asset('dist/css/entryform.css')}}?version={{uniqid("cv_")}}" rel="stylesheet" type="text/css"/>
 {{--<link href="{{asset('dist/css/id-card.css')}}" rel="stylesheet" type="text/css"/>--}}
 <link href="{{asset('dist/css/print.css')}}?version={{uniqid("v_")}}" rel="stylesheet" type="text/css"/>
 <link href="{{asset('dist/css/print_bootstrap.css')}}" rel="stylesheet" type="text/css"/>
@@ -43,8 +43,8 @@
 <script src="{{asset('dist/js/ajaxsubmit.js')}}"></script>
 <script src="{{asset('dist/js/viewer.min.js')}}"></script>
 <script src="{{asset('dist/js/angular-filter.js')}}"></script>
-<script src="{{asset('dist/js/angular-app.js')}}?version=1.1"></script>
-<script src="{{asset('dist/js/angular-route.js')}}?version={{uniqid("av_")}}"></script>
+<script src="{{asset('dist/js/angular-app.js')}}?version={{uniqid("av_")}}"></script>
+<script src="{{asset('dist/js/angular-route.js')}}"></script>
 <script src="{{asset('dist/js/jquery.noty.packaged.min.js')}}"></script>
 <script src="{{asset('dist/js/jquery.cookie.js')}}"></script>
 <script src="{{asset('dist/js/moment.min.js')}}"></script>
