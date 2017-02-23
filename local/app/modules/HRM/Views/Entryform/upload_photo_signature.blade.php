@@ -4,51 +4,6 @@
     {!! Breadcrumbs::render('upload_photo_signature') !!}
 @endsection
 @section('content')
-    <style>
-        #upload_photo, #upload_signature {
-            cursor: pointer;
-            overflow-y: auto;
-            height: 200px;
-            border: 1px dotted #ababab;
-            width: 100%;
-            padding: 10px;
-        }
-
-        .card {
-            padding: 5px 10px;
-            box-shadow: 0px 1px 1px 0px #ababab;
-        }
-
-        .progress-container {
-            width: 100%;
-            box-shadow: 0px 0px 10px 0px #016a62 inset;
-            height: 15px;
-            border-radius: 10px;
-        }
-
-        .image-title {
-            padding-bottom: 5px;
-            font-size: 1em;
-            font-weight: bold;
-        }
-
-        .progress {
-            width: 0%;
-            background: #002a28;
-            height: 100%;
-            border-radius: 10px;
-            margin-bottom: 0;
-        }
-
-        .status {
-            padding: 0 10px;
-            font-size: 12px;
-        }
-
-        .card:not(:first-child) {
-            margin-top: 10px;
-        }
-    </style>
     <section class="content">
         <div class="box box-solid">
             <div class="box-header">
@@ -74,26 +29,7 @@
     </section>
     <script>
         $(document).ready(function () {
-            {{--$("#upload_photo").dropzone({--}}
-            {{--url:"/HRM/upload/photo/store",--}}
-            {{--uploadMultiple:false,--}}
-            {{--parallelUploads:1,--}}
 
-            {{--acceptedFiles:'image/jpg,image/jpeg',--}}
-            {{--headers: {--}}
-            {{--'X-CSRF-TOKEN': '{{csrf_token()}}'--}}
-            {{--}--}}
-            {{--})--}}
-            {{--$("#upload_signature").dropzone({--}}
-            {{--url:"/HRM/upload/signature/store",--}}
-            {{--uploadMultiple:false,--}}
-            {{--parallelUploads:1,--}}
-
-            {{--acceptedFiles:'image/jpg,image/jpeg',--}}
-            {{--headers: {--}}
-            {{--'X-CSRF-TOKEN': '{{csrf_token()}}'--}}
-            {{--}--}}
-            {{--})--}}
             $("#upload_photo").on('click', function (e) {
                 $("#photo").trigger('click');
             })
@@ -153,6 +89,10 @@
                 }
                 var fd = new FormData();
                 fd.append("file", file);
+
+                $("#upload_photo").animate({
+                    scrollTop:$("#upload_photo").scrollTop()+$("#upload_photo .card").eq(index).offset().top-$("#upload_photo").offset().top
+                },100);
                 $("#upload_photo .card").eq(index).find(".status").text("Processing...").addClass('text text-warning')
                 $.ajax({
                     url: '/HRM/upload/photo/store',
@@ -175,6 +115,7 @@
                     },
                     success: function (response) {
                         $("#upload_photo .card").eq(index).find(".status").text("Complete").removeClass('text text-warning').addClass('text text-success')
+
                         index++;
                         setTimeout(function () {
                             uploadPhotoFile()
