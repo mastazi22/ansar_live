@@ -808,7 +808,7 @@ GlobalApp.directive('numericField', function () {
 
             $(elem).on('keypress', function (e) {
                 var key = e.keyCode|| e.which;
-                if(key>=48&&key<=57){return true}
+                if((key>=48&&key<=57)||key==8||key==46||(key>=37&&key<=40)){return true}
                 else return false;
             })
         }
