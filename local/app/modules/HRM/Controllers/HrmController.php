@@ -8,12 +8,12 @@ use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\GlobalParameter;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class HrmController extends Controller
 {
@@ -40,7 +40,7 @@ class HrmController extends Controller
             ->where('tbl_ansar_status_info.black_list_status', 0)
             ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)');
         $arfyoa = DB::table("tbl_ansar_parsonal_info")->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
-        $tnimutt = DB::table('tbl_sms_offer_info')->join('tbl_ansar_parsonal_info','tbl_ansar_parsonal_info.ansar_id','=','tbl_sms_offer_info.ansar_id')->havingRaw('count(tbl_sms_offer_info.ansar_id)>10')->groupBy('tbl_sms_offer_info.ansar_id');
+        $tnimutt = DB::table('tbl_sms_offer_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->havingRaw('count(tbl_sms_offer_info.ansar_id)>10')->groupBy('tbl_sms_offer_info.ansar_id');
         if (Input::exists('division_id')) {
             $tseity->where('tbl_kpi_info.division_id', Input::get('division_id'));
             $arfyoa->where('division_id', Input::get('division_id'));
@@ -52,17 +52,17 @@ class HrmController extends Controller
             $tnimutt->where('tbl_ansar_parsonal_info.unit_id', Input::get('district_id'));
 
         }
-            $tseity = $tseity->count('tbl_embodiment.ansar_id');
-            $arfyoa = $arfyoa->count('tbl_ansar_parsonal_info.ansar_id');
-            $tnimutt = $tnimutt->get();
-            //return $tnimutt;
-            $i = 0;
-            $uiui = array();
-            foreach ($tnimutt as $tttt) {
+        $tseity = $tseity->count('tbl_embodiment.ansar_id');
+        $arfyoa = $arfyoa->count('tbl_ansar_parsonal_info.ansar_id');
+        $tnimutt = $tnimutt->get();
+        //return $tnimutt;
+        $i = 0;
+        $uiui = array();
+        foreach ($tnimutt as $tttt) {
 
-                $uiui[$i] = $tttt->ansar_id;
-                $i++;
-            }
+            $uiui[$i] = $tttt->ansar_id;
+            $i++;
+        }
 
 //return $tnimutt;
         //return (DB::getQueryLog());
@@ -79,33 +79,33 @@ class HrmController extends Controller
     {
         DB::enableQueryLog();
         $ea1 = DB::table('tbl_embodiment_log')
-            ->join('tbl_ansar_parsonal_info','tbl_ansar_parsonal_info.ansar_id','=','tbl_embodiment_log.ansar_id')
-        ->whereRaw('joining_date BETWEEN DATE_FORMAT(DATE_ADD(DATE_SUB(NOW(),INTERVAL 1 YEAR),INTERVAL 1 MONTH),"%Y-%m-01") AND NOW()')
-        ->groupBy(DB::raw('MONTH(joining_date)'))->orderBy(DB::raw('YEAR(joining_date)'))->orderBy(DB::raw('MONTH(joining_date)'))
-        ->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total,joining_date as month'));
+            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment_log.ansar_id')
+            ->whereRaw('joining_date BETWEEN DATE_FORMAT(DATE_ADD(DATE_SUB(NOW(),INTERVAL 1 YEAR),INTERVAL 1 MONTH),"%Y-%m-01") AND NOW()')
+            ->groupBy(DB::raw('MONTH(joining_date)'))->orderBy(DB::raw('YEAR(joining_date)'))->orderBy(DB::raw('MONTH(joining_date)'))
+            ->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total,joining_date as month'));
         $ea2 = DB::table('tbl_embodiment')
-            ->join('tbl_ansar_parsonal_info','tbl_ansar_parsonal_info.ansar_id','=','tbl_embodiment.ansar_id')
+            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
             ->whereRaw('joining_date BETWEEN DATE_FORMAT(DATE_ADD(DATE_SUB(NOW(),INTERVAL 1 YEAR),INTERVAL 1 MONTH),"%Y-%m-01") AND NOW()')
             ->groupBy(DB::raw('MONTH(joining_date)'))->orderBy(DB::raw('YEAR(joining_date)'))->orderBy(DB::raw('MONTH(joining_date)'))
             ->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total,joining_date as month'));
         $da = DB::table('tbl_embodiment_log')
-            ->join('tbl_ansar_parsonal_info','tbl_ansar_parsonal_info.ansar_id','=','tbl_embodiment_log.ansar_id')
-        ->whereRaw('release_date BETWEEN DATE_FORMAT(DATE_ADD(DATE_SUB(NOW(),INTERVAL 1 YEAR),INTERVAL 1 MONTH),"%Y-%m-01") AND NOW()')
-        ->groupBy(DB::raw('MONTH(release_date)'))->orderBy(DB::raw('YEAR(release_date)'))->orderBy(DB::raw('MONTH(release_date)'))
-        ->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total,DATE_FORMAT(release_date,"%b,%y") as month'));
-        if($request->division_id){
-            $ea1->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
-            $ea2->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
-            $da->where('tbl_ansar_parsonal_info.division_id',$request->division_id);
+            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment_log.ansar_id')
+            ->whereRaw('release_date BETWEEN DATE_FORMAT(DATE_ADD(DATE_SUB(NOW(),INTERVAL 1 YEAR),INTERVAL 1 MONTH),"%Y-%m-01") AND NOW()')
+            ->groupBy(DB::raw('MONTH(release_date)'))->orderBy(DB::raw('YEAR(release_date)'))->orderBy(DB::raw('MONTH(release_date)'))
+            ->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total,DATE_FORMAT(release_date,"%b,%y") as month'));
+        if ($request->division_id) {
+            $ea1->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
+            $ea2->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
+            $da->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
         }
-        if($request->district_id){
-            $ea1->where('tbl_ansar_parsonal_info.unit_id',$request->district_id);
-            $ea2->where('tbl_ansar_parsonal_info.unit_id',$request->district_id);
-            $da->where('tbl_ansar_parsonal_info.unit_id',$request->district_id);
+        if ($request->district_id) {
+            $ea1->where('tbl_ansar_parsonal_info.unit_id', $request->district_id);
+            $ea2->where('tbl_ansar_parsonal_info.unit_id', $request->district_id);
+            $da->where('tbl_ansar_parsonal_info.unit_id', $request->district_id);
         }
         $sql = $ea1->unionAll($ea2);
         $ea = DB::table(DB::raw("({$sql->toSql()}) x"))->mergeBindings($sql)->select(DB::raw('SUM(total) as total,DATE_FORMAT(month,"%b,%y") as month'))->orderBy(DB::raw('YEAR(month)'))->orderBy(DB::raw('MONTH(month)'))->groupBy(DB::raw('MONTH(month)'));
-        $b = Response::json(["ea" => $ea->get(),'da' => $da->get()]);
+        $b = Response::json(["ea" => $ea->get(), 'da' => $da->get()]);
         //return DB::getQueryLog();
         return $b;
     }
@@ -156,7 +156,8 @@ class HrmController extends Controller
             $allStatus['recentAnsar']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             $allStatus['recentNotVerified']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             $allStatus['recentFree']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
-            /*if((Auth::user()->type==11||Auth::user()->type==33))*/$allStatus['recentPanel']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
+            /*if((Auth::user()->type==11||Auth::user()->type==33))*/
+            $allStatus['recentPanel']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             $allStatus['recentOffered']->where('tbl_units.division_id', $request->division_id);
             $allStatus['recentOfferedReceived']->where('tbl_units.division_id', $request->division_id);
             $allStatus['recentEmbodied']->where('tbl_kpi_info.division_id', $request->division_id);
@@ -171,7 +172,8 @@ class HrmController extends Controller
             $allStatus['recentAnsar']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             $allStatus['recentNotVerified']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             $allStatus['recentFree']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
-            /*if((Auth::user()->type==11||Auth::user()->type==33))*/$allStatus['recentPanel']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
+            /*if((Auth::user()->type==11||Auth::user()->type==33))*/
+            $allStatus['recentPanel']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             $allStatus['recentOffered']->where('tbl_units.id', $request->unit_id);
             $allStatus['recentOfferedReceived']->where('tbl_units.id', $request->unit_id);
             $allStatus['recentEmbodied']->where('tbl_kpi_info.unit_id', $request->unit_id);
@@ -267,7 +269,7 @@ class HrmController extends Controller
         $thana = Input::get('thana');
         $division = Input::get('division');
         $rank = Input::get('rank');
-        $sex= Input::get('gender');
+        $sex = Input::get('gender');
         $q = Input::get('q');
         $rules = [
             'type' => 'regex:/[a-z]+/',
@@ -292,7 +294,7 @@ class HrmController extends Controller
             case 'free_ansar':
                 return CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
             case 'paneled_ansar':
-                return CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division,$sex, CustomQuery::ALL_TIME, $rank, $q);
+                return CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank, $q);
             case 'embodied_ansar':
                 return CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
             case 'rest_ansar':
@@ -324,7 +326,7 @@ class HrmController extends Controller
         $division = Input::get('division');
         $q = Input::get('q');
 
-        $sex= Input::get('gender');
+        $sex = Input::get('gender');
         $rules = [
             'type' => 'regex:/[a-z]+/',
             'view' => 'regex:/[a-z]+/',
@@ -349,7 +351,7 @@ class HrmController extends Controller
             case 'free_ansar':
                 return CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
             case 'paneled_ansar':
-                return CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division,$sex, CustomQuery::RECENT, $rank, $q);
+                return CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::RECENT, $rank, $q);
             case 'embodied_ansar':
                 return CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
             case 'embodied_ansar_in_different_district':
@@ -461,7 +463,7 @@ class HrmController extends Controller
             //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         }
-        return CustomQuery::ansarListForNotInterested($offset, $limit, $unit, $thana, $division,$q);
+        return CustomQuery::ansarListForNotInterested($offset, $limit, $unit, $thana, $division, $q);
     }
 
     public function getTotalAnsar(Request $request)
@@ -488,7 +490,8 @@ class HrmController extends Controller
             $allStatus['totalAnsar']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             $allStatus['totalNotVerified']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             $allStatus['totalFree']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
-            /*if((Auth::user()->type==11||Auth::user()->type==33))*/$allStatus['totalPanel']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
+            /*if((Auth::user()->type==11||Auth::user()->type==33))*/
+            $allStatus['totalPanel']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             $allStatus['totalOffered']->where('tbl_units.division_id', $request->division_id);
             $allStatus['totalOfferedReceived']->where('tbl_units.division_id', $request->division_id);
             $allStatus['totalEmbodied']->where('tbl_kpi_info.division_id', $request->division_id);
@@ -503,7 +506,8 @@ class HrmController extends Controller
             $allStatus['totalAnsar']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             $allStatus['totalNotVerified']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             $allStatus['totalFree']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
-            /*if((Auth::user()->type==11||Auth::user()->type==33))*/$allStatus['totalPanel']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
+            /*if((Auth::user()->type==11||Auth::user()->type==33))*/
+            $allStatus['totalPanel']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             $allStatus['totalOffered']->where('tbl_units.id', $request->unit_id);
             $allStatus['totalOfferedReceived']->where('tbl_units.id', $request->unit_id);
             $allStatus['totalEmbodied']->where('tbl_kpi_info.unit_id', $request->unit_id);
@@ -596,5 +600,38 @@ class HrmController extends Controller
             return response("Invalid Request", 400, ['Content-Type' => 'text/html']);
         }
         return $result;
+    }
+
+    function getAnsarInfoinExcel()
+    {
+        return View::make('HRM::entryform.ansar_info_excel');
+    }
+
+    function generateAnsarInfoExcel(Request $request)
+    {
+        $ansar_ids = explode(",", $request->ansar_ids);
+        $data = DB::table(DB::raw('(SELECT @i:=0) as i,tbl_ansar_parsonal_info'))
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+            ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
+            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+            ->whereIn('tbl_ansar_parsonal_info.ansar_id', $ansar_ids)
+            ->select(DB::raw('@i:=@i+1 sl_no'), 'tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng',
+                'tbl_ansar_parsonal_info.father_name_bng', 'tbl_designations.name_bng', 'tbl_ansar_parsonal_info.data_of_birth',
+                'tbl_ansar_parsonal_info.village_name', 'tbl_ansar_parsonal_info.union_name_eng',
+                'tbl_ansar_parsonal_info.post_office_name', 'tbl_thana.thana_name_bng',
+                'tbl_units.unit_name_bng', 'tbl_ansar_parsonal_info.mobile_no_self')->get();
+//        $data = collect($data)->toArray();
+
+        $d = array();
+        foreach($data as $dd){
+            array_push($d,collect($dd)->toArray());
+        }
+//                var_dump($d);die;
+        Excel::create('test',function($excel) use ($d){
+            $excel->sheet('sheet1',function($sheet) use($d){
+                $sheet->fromArray($d);
+            });
+        })->download('xls');
+//        return $data;
     }
 }

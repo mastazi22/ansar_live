@@ -201,6 +201,7 @@ return [
         \App\Providers\UserPermissionProvider::class,
         \App\Providers\CustomValidatorProvider::class,
         Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
     ],
 
     /*
@@ -260,6 +261,7 @@ return [
         'Notification'=>\App\Helper\Facades\ForgetPasswordFacedes::class,
         'UserPermission'=>\App\Helper\Facades\UserPermissionFacades::class,
         'Sentry' => Sentry\SentryLaravel\SentryFacade::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ],
 
 ];

@@ -48,6 +48,10 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/show_recent_ansar_list/{type}', ['as' => 'show_recent_ansar_list', 'uses' => 'HrmController@showRecentAnsarList']);
         Route::get('/get_recent_ansar_list', ['as'=>'get_recent_ansar_list','uses'=>'HrmController@getRecentAnsarList']);
 
+
+        Route::get('/ansar_detail_info', ['as'=>'ansar_detail_info','uses'=>'HrmController@getAnsarInfoinExcel']);
+        Route::post('/ansar_detail_info', ['as'=>'generate_ansar_detail_info','uses'=>'HrmController@generateAnsarInfoExcel']);
+
         //END DASHBOARD
 //Start Panel
         Route::get('/panel_view', ['as' => 'view_panel_list', 'uses' => 'PanelController@panelView']);
