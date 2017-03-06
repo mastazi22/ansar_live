@@ -1650,7 +1650,7 @@ class DGController extends Controller
                 DB::enableQueryLog();
                 $user = User::where('user_name', $request->user_name)->first();
                 if(!$user) throw new \Exception();
-                $data = $user->actionLog()->whereDate('created_at','>=',$to_date)->whereDate('created_at','<=',$form_date)->select('ansar_id', 'from_state', 'to_state', 'action_type', DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'), DB::raw('DATE_FORMAT(created_at,"%r") as time'))->orderBy('created_at', 'desc')->get();
+                $data = $user->actionLog()->whereDate('created_at','>',$to_date)->whereDate('created_at','<=',$form_date)->select('ansar_id', 'from_state', 'to_state', 'action_type', DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'), DB::raw('DATE_FORMAT(created_at,"%r") as time'))->orderBy('created_at', 'desc')->get();
 //                return DB::getQueryLog();
                 return View::make('HRM::Partial_view.partial_user_action_log', ['logs' => collect($data)->groupBy('date'), 'user' => $user]);
             }catch(\Exception $e){
