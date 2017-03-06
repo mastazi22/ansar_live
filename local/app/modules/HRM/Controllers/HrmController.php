@@ -604,7 +604,7 @@ class HrmController extends Controller
 
     function getAnsarInfoinExcel()
     {
-        return View::make('HRM::entryform.ansar_info_excel');
+        return View::make('HRM::Entryform.ansar_info_excel');
     }
 
     function generateAnsarInfoExcel(Request $request)
