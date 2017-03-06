@@ -11,7 +11,6 @@ use App\models\UserProfile;
 use App\models\UserType;
 use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\ForgetPasswordRequest;
-use App\modules\HRM\Models\LoggedInUser;
 use App\modules\HRM\Models\PersonalInfo;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -108,11 +107,11 @@ class UserController extends Controller
     {
 
         $messages = [
-            'user_name'=>'user name required',
-            'password.required'=>'password required',
-            'r_password.required'=>'confirm password required',
-            'r_password.same'=>'confirm password must be same as password',
-            'user_type'=>'select a user type',
+            'user_name' => 'user name required',
+            'password.required' => 'password required',
+            'r_password.required' => 'confirm password required',
+            'r_password.same' => 'confirm password must be same as password',
+            'user_type' => 'select a user type',
         ];
         if (Input::get('user_type') == 22) {
             $rules = array(
@@ -138,7 +137,7 @@ class UserController extends Controller
                 'user_type' => 'required'
             );
         }
-        $validation = Validator::make(Input::all(), $rules,$messages);
+        $validation = Validator::make(Input::all(), $rules, $messages);
         if (!$validation->fails()) {
             $user = new User;
             $user_profile = new UserProfile;
@@ -251,8 +250,7 @@ class UserController extends Controller
         if ($user->save()) {
             CustomQuery::addActionlog(['ansar_id' => $id, 'action_type' => 'BLOCK USER', 'from_state' => 'BLOCK', 'to_state' => 'UNBLOCK', 'action_by' => auth()->user()->id]);
             return Response::json(['status' => true]);
-        }
-        else return Response::json(['status' => false]);
+        } else return Response::json(['status' => false]);
     }
 
     function unBlockUser()
@@ -478,12 +476,14 @@ class UserController extends Controller
 
     public function viewActionLog($id = null)
     {
+        $form_date = Carbon::now()->toDateString();
+        $to_date = Carbon::parse($form_date)->subHours(48)->toDateString();
         if ($id) {
             $user = User::find($id);
-            $data = $user->actionLog()->whereRaw("DATEDIFF(NOW(),created_at)<=2")->select('ansar_id', 'from_state', 'to_state', 'action_type', DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'), DB::raw('DATE_FORMAT(created_at,"%r") as time'))->orderBy('created_at','desc')->get();
+            $data = $user->actionLog()->whereDate('created_at', '>', $to_date)->whereDate('created_at', '<=', $form_date)->select('ansar_id', 'from_state', 'to_state', 'action_type', DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'), DB::raw('DATE_FORMAT(created_at,"%r") as time'))->orderBy('created_at', 'desc')->get();
         } else {
             $user = Auth::user();
-            $data = $user->actionLog()->whereRaw("DATEDIFF(NOW(),created_at)<=2")->select('ansar_id', 'from_state', 'to_state', 'action_type', DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'), DB::raw('DATE_FORMAT(created_at,"%r") as time'))->orderBy('created_at','desc')->get();
+            $data = $user->actionLog()->whereDate('created_at', '>', $to_date)->whereDate('created_at', '<=', $form_date)->select('ansar_id', 'from_state', 'to_state', 'action_type', DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'), DB::raw('DATE_FORMAT(created_at,"%r") as time'))->orderBy('created_at', 'desc')->get();
         }
 
         return View::make('User.user_activity_log', ['logs' => collect($data)->groupBy('date'), 'user' => $user]);
