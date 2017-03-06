@@ -617,8 +617,8 @@ class HrmController extends Controller
             ->whereIn('tbl_ansar_parsonal_info.ansar_id', $ansar_ids)
             ->select(DB::raw('@i:=@i+1 sl_no'), 'tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng',
                 'tbl_ansar_parsonal_info.father_name_bng', 'tbl_designations.name_bng', 'tbl_ansar_parsonal_info.data_of_birth',
-                'tbl_ansar_parsonal_info.village_name', 'tbl_ansar_parsonal_info.union_name_eng',
-                'tbl_ansar_parsonal_info.post_office_name', 'tbl_thana.thana_name_bng',
+                'tbl_ansar_parsonal_info.village_name_bng', 'tbl_ansar_parsonal_info.union_name_bng',
+                'tbl_ansar_parsonal_info.post_office_name_bng', 'tbl_thana.thana_name_bng',
                 'tbl_units.unit_name_bng', 'tbl_ansar_parsonal_info.mobile_no_self')->get();
 //        $data = collect($data)->toArray();
 
