@@ -3,7 +3,7 @@
 {{--@section('small_title','Chunk verification')--}}
 @section('breadcrumb')
     {!! Breadcrumbs::render('chunk_verification') !!}
-    @endsection
+@endsection
 @section('content')
     <script>
         GlobalApp.controller('ChunkVerificationController', function ($scope, $http, $interval) {
@@ -11,7 +11,7 @@
             $scope.ansars = []
             $scope.params = {}
             $scope.selectAll = false
-            $scope.messages=[];
+            $scope.messages = [];
             $scope.selected = [];
             $scope.loadAnsar = function () {
                 $scope.loading = true;
@@ -19,14 +19,21 @@
                 $http({
                     method: 'get',
                     url: '{{URL::to('HRM/getnotverifiedansar')}}',
-                    params: {chunk: 'chunk', limit: $scope.showAnsar, offset: 0,division:$scope.params.range,unit:$scope.params.unit,thana:$scope.params.thana}
+                    params: {
+                        chunk: 'chunk',
+                        limit: $scope.showAnsar,
+                        offset: 0,
+                        division: $scope.params.range,
+                        unit: $scope.params.unit,
+                        thana: $scope.params.thana
+                    }
                 }).then(function (response) {
                     $scope.loading = false;
                     $scope.ansars = response.data
                     $scope.selected = Array.apply(null, new Array($scope.ansars.length)).map(Boolean.prototype.valueOf, false)
                     var d = response.data;
-                    var c = Math.ceil(d.length/100);
-                    var i=0;
+                    var c = Math.ceil(d.length / 100);
+                    var i = 0;
 
                     $scope.selected = Array.apply(null, new Array(d.length)).map(Boolean.prototype.valueOf, false)
                     $scope.selectAll = false
@@ -38,18 +45,24 @@
             $scope.$watch('selected', function (n, o) {
                 if (n.length == 0) return;
                 var t = 0, f = 0;
-                $scope.selectAll = n.every(function (value,index) {
+                $scope.selectAll = n.every(function (value, index) {
                     return value;
                 })
             }, true)
             $scope.changeSelectedAll = function () {
                 $scope.selected = Array.apply(null, new Array($scope.ansars.length)).map(Boolean.prototype.valueOf, $scope.selectAll)
             }
+            $scope.addToPanel = function () {
+                $("#panel-modal").modal('show')
+            }
+            $scope.saveToPanel = function () {
+
+            }
         })
         GlobalApp.directive('formSubmit', function () {
-            return{
-                restrict:'AC',
-                link: function (scope,elem,attr) {
+            return {
+                restrict: 'AC',
+                link: function (scope, elem, attr) {
 
                     $(elem).on('click', function (e) {
                         e.preventDefault();
@@ -58,19 +71,65 @@
                         $("#not-verified-form").ajaxSubmit({
                             success: function (response) {
                                 console.log(response)
-                                if(response.status){
+                                if (response.status) {
                                     scope.loadAnsar();
                                     scope.messages = response.messege;
                                 }
-                                else{
+                                else {
                                     $('body').notifyDialog({type: 'error', message: response.message}).showDialog()
                                 }
                             },
-                            error:function(response){
+                            error: function (response) {
                                 scope.errorVerify = response;
                                 scope.loading = false;
                             }
                         })
+                    })
+                }
+            }
+        })
+        GlobalApp.directive('savePanel', function (notificationService) {
+            return {
+                restrict: 'AC',
+                link: function (scope, elem, attr) {
+
+                    $(elem).on('click', function (e) {
+                        e.preventDefault();
+                        scope.loading = true;
+                        scope.errorVerify = undefined;
+                        var data = {};
+                        data['ansar_id'] = $("input[name='not_verified[]']:checked").map(function () {
+                            return $(this).val()
+                        }).get();
+                        data['merit'] = Array.apply(null, new Array(data['ansar_id'].length)).map(function () {
+                            return 1;
+                        })
+                        data['memorandumId'] = $("input[name='memorandumId']").val();
+                        data['panel_date'] = $("input[name='panel_date']").val();
+//                        console.log(data);
+                        $.ajax({
+                            url: '{{URL::route('save-panel-entry')}}',
+                            data: data,
+                            method: 'post',
+                            success: function (response) {
+
+                                if (response.status) {
+//                                    scope.loadAnsar();
+                                    notificationService.notify('success', response.message);
+                                    $("input[name='memorandumId']").val('');
+                                    $("input[name='panel_date']").val('');
+                                    $("#panel-modal").modal('hide');
+
+                                }
+                                else {
+                                    notificationService.notify('error', response.message);
+                                }
+                            },
+                            error: function (response) {
+                                console.log(response)
+                            }
+                        })
+
                     })
                 }
             }
@@ -94,7 +153,7 @@
     </script>
     <div ng-controller="ChunkVerificationController">
         {{--<div class="breadcrumbplace">--}}
-            {{--{!! Breadcrumbs::render('chunk_verification') !!}--}}
+        {{--{!! Breadcrumbs::render('chunk_verification') !!}--}}
         {{--</div>--}}
         <button id="button-top" class="btn btn-primary"
                 style="position: fixed;bottom: 10px;right: 20px;z-index: 1000000000000000;display: none">
@@ -109,7 +168,10 @@
                     </span>
                 </div>
                 <div style="padding: 5px 10px">
-                    <p ng-repeat="message in messages" class="text" ng-class="{'text-success':message.status,'text-danger':!message.status}"><i class="fa" ng-class="{'fa-check':message.status,'fa-warning':!message.status}"></i>&nbsp;[[message.message]]</p>
+                    <p ng-repeat="message in messages" class="text"
+                       ng-class="{'text-success':message.status,'text-danger':!message.status}"><i class="fa"
+                                                                                                   ng-class="{'fa-check':message.status,'fa-warning':!message.status}"></i>&nbsp;[[message.message]]
+                    </p>
                 </div>
                 <div class="box-body">
                     <div id="ppp" style="margin-right: 0" class="row margin-bottom">
@@ -173,7 +235,8 @@
                                 <tr ng-if="ansars.length==0||error!=undefined">
                                     <td class="warning" colspan="8">No unverified ansar found</td>
                                 </tr>
-                                <tr ng-repeat="a in ansars|filter:q as results" ng-if="ansars.length>0&&error==undefined">
+                                <tr ng-repeat="a in ansars|filter:q as results"
+                                    ng-if="ansars.length>0&&error==undefined">
                                     <td>[[$index+1]]</td>
                                     <td><a href="{{URL::to('HRM/entryreport')}}/[[a.ansar_id]]">[[a.ansar_id]]</a></td>
                                     <td>[[a.ansar_name_bng]]</td>
@@ -181,14 +244,44 @@
                                     <td>[[a.thana_name_bng]]</td>
                                     <td>[[a.name_bng]]</td>
                                     <td>[[a.sex]]</td>
-                                    <td><input type="checkbox" ng-model="selected[$index]"
-                                               value="[[a.ansar_id]]" name="not_verified[]"></td>
+                                    <td><input type="checkbox" ng-model="selected[$index]" value="[[a.ansar_id]]"
+                                               name="not_verified[]"></td>
                                 </tr>
                             </table>
                         </form>
+                        @if(UserPermission::userPermissionExists('save-panel-entry'))
+                            <button class="btn btn-primary pull-right" ng-click="addToPanel()">Add To Panel</button>
+                        @endif
                     </div>
                 </div>
             </div>
         </section>
+    </div>
+    <div id="panel-modal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h5 class="modal-title">Add To Panel</h5>
+
+
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Memorandum ID</label>
+                        <input name="memorandumId" type="text" class="form-control" placeholder="Enter memorandum ID">
+                    </div>
+                    <div class="form-group">
+                        <label>Panel Date</label>
+                        <input type="text" name="panel_date" class="form-control" date-picker placeholder="Panel Date">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button save-panel class="btn btn-primary pull-right">Submit</button>
+                </div>
+            </div>
+        </div>
     </div>
 @stop

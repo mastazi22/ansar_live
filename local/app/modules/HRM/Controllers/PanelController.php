@@ -8,6 +8,7 @@ use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\MemorandumModel;
 use App\modules\HRM\Models\PanelModel;
+use App\modules\HRM\Models\PersonalInfo;
 use App\modules\HRM\Models\RestInfoLogModel;
 use App\modules\HRM\Models\RestInfoModel;
 use Carbon\Carbon;
@@ -28,22 +29,22 @@ class PanelController extends Controller
 
     public function statusSelection(Request $request)
     {
-        if($request->type==1) {
+        if ($request->type == 1) {
             $rules = [
                 'come_from_where' => ['required', 'numeric', 'regex:/^(1|2)$/'],
                 'from_id' => 'required|numeric|regex:/^[0-9]+$/',
                 'to_id' => 'required|numeric|regex:/^[0-9]+$/',
                 'ansar_num' => 'required|numeric|max:100|min:1|regex:/^[0-9]+$/'
             ];
-            $valid = Validator::make($request->all(),$rules);
-            if($valid->fails()){
-                return response($valid->messages()->toJson(),400,['Content-type','application/json']);
+            $valid = Validator::make($request->all(), $rules);
+            if ($valid->fails()) {
+                return response($valid->messages()->toJson(), 400, ['Content-type', 'application/json']);
             }
             $statusSelected = $request->get('come_from_where');
 //        $select = Input::get('select');
-            $from_id=$request->get('from_id');
-            $to_id=$request->get('to_id');
-            $count=$request->get('ansar_num');
+            $from_id = $request->get('from_id');
+            $to_id = $request->get('to_id');
+            $count = $request->get('ansar_num');
             if ($statusSelected == 1) {
                 //$ansar_status = AnsarStatusInfo::where('rest_status', 1)->get();
 
@@ -65,8 +66,7 @@ class PanelController extends Controller
                     ->skip(0)
                     ->take($count)
                     ->get();
-            }
-            elseif ($statusSelected == 2) {
+            } elseif ($statusSelected == 2) {
 
                 $ansar_status = DB::table('tbl_ansar_status_info')
                     ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_ansar_status_info.ansar_id')
@@ -84,14 +84,14 @@ class PanelController extends Controller
                     ->take($count)
                     ->get();
             }
-        }
-        else if($request->type==2){
+        } else if ($request->type == 2) {
             $rules = [
                 'come_from_where' => ['required', 'numeric', 'regex:/^(1|2)$/'],
                 'ansar_id' => 'required|numeric|regex:/^[0-9]+$/'
-            ];$valid = Validator::make($request->all(),$rules);
-            if($valid->fails()){
-                return response($valid->messages()->toJson(),400,['Content-type','application/json']);
+            ];
+            $valid = Validator::make($request->all(), $rules);
+            if ($valid->fails()) {
+                return response($valid->messages()->toJson(), 400, ['Content-type', 'application/json']);
             }
 
             $statusSelected = $request->get('come_from_where');
@@ -114,8 +114,7 @@ class PanelController extends Controller
                     ->distinct()
                     ->select('tbl_rest_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', DB::raw('DATE_FORMAT(tbl_ansar_parsonal_info.data_of_birth,"%d-%b-%Y") as data_of_birth'), 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.created_at')
                     ->get();
-            }
-            elseif ($statusSelected == 2) {
+            } elseif ($statusSelected == 2) {
 
                 $ansar_status = DB::table('tbl_ansar_status_info')
                     ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_ansar_status_info.ansar_id')
@@ -131,9 +130,8 @@ class PanelController extends Controller
                     ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', DB::raw('DATE_FORMAT(tbl_ansar_parsonal_info.data_of_birth,"%d-%b-%Y") as data_of_birth'), 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_ansar_parsonal_info.created_at')
                     ->get();
             }
-        }
-        else {
-            return response("Invalid Request",400,['Content-type','text/html']);
+        } else {
+            return response("Invalid Request", 400, ['Content-type', 'text/html']);
         }
 
 
@@ -144,14 +142,14 @@ class PanelController extends Controller
     {
         $date = Carbon::yesterday()->format('d-M-Y');
         $rules = [
-            'memorandumId'=>'required',
-            'ansar_id'=>'required|is_array|array_type:int',
-            'merit'=>'required|is_array|array_type:int|array_length_same:ansar_id',
-            'panel_date'=>["required","after:{$date}","regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/"],
+            'memorandumId' => 'required',
+            'ansar_id' => 'required|is_array|array_type:int',
+            'merit' => 'required|is_array|array_type:int|array_length_same:ansar_id',
+            'panel_date' => ["required", "after:{$date}", "regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/"],
         ];
-        $valid = Validator::make($request->all(),$rules);
-        if($valid->fails()){
-            return Response::json(['status'=>false,'message'=>'Invalid request']);
+        $valid = Validator::make($request->all(), $rules);
+        if ($valid->fails()) {
+            return Response::json(['status' => false, 'message' => 'Invalid request']);
         }
         $selected_ansars = $request->input('ansar_id');
         DB::beginTransaction();
@@ -159,7 +157,7 @@ class PanelController extends Controller
         try {
             $mi = $request->input('memorandumId');
             $pd = $request->input('panel_date');
-            $modified_panel_date=Carbon::parse($pd)->format('Y-m-d');
+            $modified_panel_date = Carbon::parse($pd)->format('Y-m-d');
             $come_from_where = $request->input('come_from_where');
             $ansar_merit = $request->input('merit');
             $memorandum_entry = new MemorandumModel();
@@ -167,7 +165,11 @@ class PanelController extends Controller
             $memorandum_entry->save();
             if (!is_null($selected_ansars)) {
                 for ($i = 0; $i < count($selected_ansars); $i++) {
-
+                    $ansar = PersonalInfo::where('ansar_id', $selected_ansars[$i])->first();
+                    if ($ansar && ($ansar->verified == 0 || $ansar->verified == 1)) {
+                        $ansar->verified = 2;
+                        $ansar->save();
+                    }
                     if ($come_from_where == 1) {
 
                         $panel_entry = new PanelModel;
@@ -200,8 +202,7 @@ class PanelController extends Controller
                         AnsarStatusInfo::where('ansar_id', $selected_ansars[$i])->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 1, 'freezing_status' => 0]);
 
                         array_push($user, ['ansar_id' => $selected_ansars[$i], 'action_type' => 'PANELED', 'from_state' => 'REST', 'to_state' => 'PANELED', 'action_by' => auth()->user()->id]);
-                    }
-                    else {
+                    } else {
                         $panel_entry = new PanelModel;
                         $panel_entry->ansar_id = $selected_ansars[$i];
                         $panel_entry->come_from = "Entry";
@@ -355,15 +356,15 @@ class PanelController extends Controller
             ->where('tbl_ansar_status_info.pannel_status', 1)
             ->where('tbl_ansar_status_info.block_list_status', 0)
             ->where('tbl_ansar_parsonal_info.designation_id', '=', $designation);
-        if(Input::exists('q')&&Input::get('q')){
+        if (Input::exists('q') && Input::get('q')) {
             $ansarList = $ansarList
-                ->where('tbl_ansar_parsonal_info.ansar_id',Input::get('q'))
+                ->where('tbl_ansar_parsonal_info.ansar_id', Input::get('q'))
                 ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_units.unit_name_bng',
-                'tbl_thana.thana_name_bng','tbl_panel_info.panel_date','tbl_panel_info.memorandum_id','tbl_designations.name_bng as rank')->orderBy('tbl_panel_info.panel_date','asc')->get();
-            return View::make('HRM::Panel.panel_individual_list')->with(['designation' => $designation, 'sex' => $sex, 'ansarList' => $ansarList,'q'=>Input::get('q')]);
+                    'tbl_thana.thana_name_bng', 'tbl_panel_info.panel_date', 'tbl_panel_info.memorandum_id', 'tbl_designations.name_bng as rank')->orderBy('tbl_panel_info.panel_date', 'asc')->get();
+            return View::make('HRM::Panel.panel_individual_list')->with(['designation' => $designation, 'sex' => $sex, 'ansarList' => $ansarList, 'q' => Input::get('q')]);
         }
         $ansarList = $ansarList->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_units.unit_name_bng',
-            'tbl_thana.thana_name_bng','tbl_panel_info.panel_date','tbl_panel_info.memorandum_id','tbl_designations.name_bng as rank')->orderBy('tbl_panel_info.panel_date','asc')->get();
+            'tbl_thana.thana_name_bng', 'tbl_panel_info.panel_date', 'tbl_panel_info.memorandum_id', 'tbl_designations.name_bng as rank')->orderBy('tbl_panel_info.panel_date', 'asc')->get();
         return View::make('HRM::Panel.panel_individual_list')->with(['designation' => $designation, 'sex' => $sex, 'ansarList' => $ansarList]);
     }
 }
