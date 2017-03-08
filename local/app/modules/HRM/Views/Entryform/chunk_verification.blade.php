@@ -15,6 +15,7 @@
             $scope.selected = [];
             $scope.loadAnsar = function () {
                 $scope.loading = true;
+                $scope.savingPanel = false;
                 $scope.error = undefined;
                 $http({
                     method: 'get',
@@ -88,15 +89,17 @@
                 }
             }
         })
-        GlobalApp.directive('savePanel', function (notificationService) {
+        GlobalApp.directive('savePanel', function (notificationService,$timeout) {
             return {
                 restrict: 'AC',
                 link: function (scope, elem, attr) {
 
                     $(elem).on('click', function (e) {
                         e.preventDefault();
-                        scope.loading = true;
-                        scope.errorVerify = undefined;
+                        scope.savingPanel = true;
+                        $timeout(function () {
+                            scope.$apply();
+                        })
                         var data = {};
                         data['ansar_id'] = $("input[name='not_verified[]']:checked").map(function () {
                             return $(this).val()
@@ -113,8 +116,9 @@
                             method: 'post',
                             success: function (response) {
 
+                                scope.savingPanel = false;
                                 if (response.status) {
-//                                    scope.loadAnsar();
+                                    scope.loadAnsar();
                                     notificationService.notify('success', response.message);
                                     $("input[name='memorandumId']").val('');
                                     $("input[name='panel_date']").val('');
@@ -127,6 +131,7 @@
                             },
                             error: function (response) {
                                 console.log(response)
+                                scope.savingPanel = false;
                             }
                         })
 
@@ -256,32 +261,33 @@
                 </div>
             </div>
         </section>
-    </div>
-    <div id="panel-modal" class="modal fade" role="dialog">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h5 class="modal-title">Add To Panel</h5>
+        <div id="panel-modal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h5 class="modal-title">Add To Panel</h5>
 
 
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Memorandum ID</label>
-                        <input name="memorandumId" type="text" class="form-control" placeholder="Enter memorandum ID">
                     </div>
-                    <div class="form-group">
-                        <label>Panel Date</label>
-                        <input type="text" name="panel_date" class="form-control" date-picker placeholder="Panel Date">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Memorandum ID</label>
+                            <input name="memorandumId" type="text" class="form-control" placeholder="Enter memorandum ID">
+                        </div>
+                        <div class="form-group">
+                            <label>Panel Date</label>
+                            <input type="text" name="panel_date" class="form-control" date-picker placeholder="Panel Date">
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button save-panel class="btn btn-primary pull-right">Submit</button>
+                    <div class="modal-footer">
+                        <button ng-disabled="savingPanel" save-panel class="btn btn-primary pull-right"><i ng-if="savingPanel" class="fa fa-spinner fa-pulse"></i>Submit</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
 @stop
