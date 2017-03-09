@@ -89,56 +89,56 @@
                 }
             }
         })
-        GlobalApp.directive('savePanel', function (notificationService,$timeout) {
-            return {
-                restrict: 'AC',
-                link: function (scope, elem, attr) {
+        {{--GlobalApp.directive('savePanel', function (notificationService,$timeout) {--}}
+            {{--return {--}}
+                {{--restrict: 'AC',--}}
+                {{--link: function (scope, elem, attr) {--}}
 
-                    $(elem).on('click', function (e) {
-                        e.preventDefault();
-                        scope.savingPanel = true;
-                        $timeout(function () {
-                            scope.$apply();
-                        })
-                        var data = {};
-                        data['ansar_id'] = $("input[name='not_verified[]']:checked").map(function () {
-                            return $(this).val()
-                        }).get();
-                        data['merit'] = Array.apply(null, new Array(data['ansar_id'].length)).map(function () {
-                            return 1;
-                        })
-                        data['memorandumId'] = $("input[name='memorandumId']").val();
-                        data['panel_date'] = $("input[name='panel_date']").val();
-//                        console.log(data);
-                        $.ajax({
-                            url: '{{URL::route('save-panel-entry')}}',
-                            data: data,
-                            method: 'post',
-                            success: function (response) {
+                    {{--$(elem).on('click', function (e) {--}}
+                        {{--e.preventDefault();--}}
+                        {{--scope.savingPanel = true;--}}
+                        {{--$timeout(function () {--}}
+                            {{--scope.$apply();--}}
+                        {{--})--}}
+                        {{--var data = {};--}}
+                        {{--data['ansar_id'] = $("input[name='not_verified[]']:checked").map(function () {--}}
+                            {{--return $(this).val()--}}
+                        {{--}).get();--}}
+                        {{--data['merit'] = Array.apply(null, new Array(data['ansar_id'].length)).map(function () {--}}
+                            {{--return 1;--}}
+                        {{--})--}}
+                        {{--data['memorandumId'] = $("input[name='memorandumId']").val();--}}
+                        {{--data['panel_date'] = $("input[name='panel_date']").val();--}}
+{{--//                        console.log(data);--}}
+                        {{--$.ajax({--}}
+                            {{--url: '{{URL::route('save-panel-entry')}}',--}}
+                            {{--data: data,--}}
+                            {{--method: 'post',--}}
+                            {{--success: function (response) {--}}
 
-                                scope.savingPanel = false;
-                                if (response.status) {
-                                    scope.loadAnsar();
-                                    notificationService.notify('success', response.message);
-                                    $("input[name='memorandumId']").val('');
-                                    $("input[name='panel_date']").val('');
-                                    $("#panel-modal").modal('hide');
+                                {{--scope.savingPanel = false;--}}
+                                {{--if (response.status) {--}}
+                                    {{--scope.loadAnsar();--}}
+                                    {{--notificationService.notify('success', response.message);--}}
+                                    {{--$("input[name='memorandumId']").val('');--}}
+                                    {{--$("input[name='panel_date']").val('');--}}
+                                    {{--$("#panel-modal").modal('hide');--}}
 
-                                }
-                                else {
-                                    notificationService.notify('error', response.message);
-                                }
-                            },
-                            error: function (response) {
-                                console.log(response)
-                                scope.savingPanel = false;
-                            }
-                        })
+                                {{--}--}}
+                                {{--else {--}}
+                                    {{--notificationService.notify('error', response.message);--}}
+                                {{--}--}}
+                            {{--},--}}
+                            {{--error: function (response) {--}}
+                                {{--console.log(response)--}}
+                                {{--scope.savingPanel = false;--}}
+                            {{--}--}}
+                        {{--})--}}
 
-                    })
-                }
-            }
-        })
+                    {{--})--}}
+                {{--}--}}
+            {{--}--}}
+        {{--})--}}
         $(document).ready(function (e) {
             $("#button-top").on('click', function (e) {
                 $('html,body').animate({scrollTop: 0}, 'slow')
@@ -254,40 +254,40 @@
                                 </tr>
                             </table>
                         </form>
-                        @if(UserPermission::userPermissionExists('save-panel-entry'))
-                            <button class="btn btn-primary pull-right" ng-click="addToPanel()">Add To Panel</button>
-                        @endif
+                        {{--@if(UserPermission::userPermissionExists('save-panel-entry'))--}}
+                            {{--<button class="btn btn-primary pull-right" ng-click="addToPanel()">Add To Panel</button>--}}
+                        {{--@endif--}}
                     </div>
                 </div>
             </div>
         </section>
-        <div id="panel-modal" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <h5 class="modal-title">Add To Panel</h5>
+        {{--<div id="panel-modal" class="modal fade" role="dialog">--}}
+            {{--<div class="modal-dialog modal-sm">--}}
+                {{--<div class="modal-content">--}}
+                    {{--<div class="modal-header">--}}
+                        {{--<button type="button" class="close" data-dismiss="modal" aria-label="Close">--}}
+                            {{--<span aria-hidden="true">&times;</span>--}}
+                        {{--</button>--}}
+                        {{--<h5 class="modal-title">Add To Panel</h5>--}}
 
 
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>Memorandum ID</label>
-                            <input name="memorandumId" type="text" class="form-control" placeholder="Enter memorandum ID">
-                        </div>
-                        <div class="form-group">
-                            <label>Panel Date</label>
-                            <input type="text" name="panel_date" class="form-control" date-picker placeholder="Panel Date">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button ng-disabled="savingPanel" save-panel class="btn btn-primary pull-right"><i ng-if="savingPanel" class="fa fa-spinner fa-pulse"></i>Submit</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    {{--</div>--}}
+                    {{--<div class="modal-body">--}}
+                        {{--<div class="form-group">--}}
+                            {{--<label>Memorandum ID</label>--}}
+                            {{--<input name="memorandumId" type="text" class="form-control" placeholder="Enter memorandum ID">--}}
+                        {{--</div>--}}
+                        {{--<div class="form-group">--}}
+                            {{--<label>Panel Date</label>--}}
+                            {{--<input type="text" name="panel_date" class="form-control" date-picker placeholder="Panel Date">--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
+                    {{--<div class="modal-footer">--}}
+                        {{--<button ng-disabled="savingPanel" save-panel class="btn btn-primary pull-right"><i ng-if="savingPanel" class="fa fa-spinner fa-pulse"></i>Submit</button>--}}
+                    {{--</div>--}}
+                {{--</div>--}}
+            {{--</div>--}}
+        {{--</div>--}}
     </div>
 
 @stop

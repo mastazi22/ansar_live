@@ -250,6 +250,7 @@
                                                         </option>
                                                         <option value="1">Rest Status</option>
                                                         <option value="2">Free Status</option>
+                                                        <option value="3">Not Verified</option>
                                                     </select>
                                                     <p ng-if="ansarLoaderror.come_from_where!=undefined" class="text text-danger">[[ansarLoaderror.come_from_where[0] ]]</p>
                                                 </div>
