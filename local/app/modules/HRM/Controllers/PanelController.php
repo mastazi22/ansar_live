@@ -106,7 +106,7 @@ class PanelController extends Controller
         }
         else if ($request->type == 2) {
             $rules = [
-                'come_from_where' => ['required', 'numeric', 'regex:/^(1|2)$/'],
+                'come_from_where' => ['required', 'numeric', 'regex:/^(1|2|3)$/'],
                 'ansar_id' => 'required|numeric|regex:/^[0-9]+$/'
             ];
             $valid = Validator::make($request->all(), $rules);
