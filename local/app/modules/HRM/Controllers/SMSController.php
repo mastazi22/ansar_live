@@ -235,6 +235,7 @@ class SMSController extends Controller
             return 'No Ansar Exists With This ID :' . $id;
         }
         $info = 'Name : ' . $ansar->ansar_name_eng . ', Father Name : ' . $ansar->father_name_eng . ', Mother Name : ' . $ansar->mother_name_eng . ', NID : ' . $ansar->national_id_no . ', DOB : ' . date('d-M-y', strtotime($ansar->data_of_birth)) . ', Mobile : ' . $ansar->mobile_no_self;
+        Log::info($info);
         return $info;
     }
 
