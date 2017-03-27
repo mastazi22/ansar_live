@@ -50,6 +50,7 @@ class SMSController extends Controller
             return "Invalid SMS Format";
         } else {
             if (count($body_part) > 1) {
+                Log::info("SMS NO STATUS" . $sender_no);
                 switch ($body_part[0]) {
                     case 'S':
                     case 's':
