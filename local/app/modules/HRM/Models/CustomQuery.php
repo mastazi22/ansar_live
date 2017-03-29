@@ -1157,6 +1157,7 @@ class CustomQuery
             ->join('tbl_kpi_detail_info', 'tbl_kpi_info.id', '=', 'tbl_kpi_detail_info.kpi_id')
             ->join('tbl_units', 'tbl_kpi_info.unit_id', '=', 'tbl_units.id')
             ->join('tbl_thana', 'tbl_kpi_info.thana_id', '=', 'tbl_thana.id')
+            ->leftJoin('tbl_embodiment', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
             ->where('tbl_kpi_info.status_of_kpi', 1)->where('tbl_kpi_info.withdraw_status', 0)->whereNull('tbl_kpi_detail_info.kpi_withdraw_date');
         if ($thana != 'all') {
             $kpiQuery->where('tbl_kpi_info.thana_id', '=', $thana);
@@ -1177,10 +1178,10 @@ class CustomQuery
             });
         }
         $total = clone $kpiQuery;
-        $kpis = $kpiQuery->select('tbl_kpi_info.id', 'tbl_kpi_info.status_of_kpi', 'tbl_kpi_info.kpi_name as kpi_bng', 'tbl_kpi_info.kpi_name_eng as kpi_eng', 'tbl_kpi_info.kpi_address as address', 'tbl_kpi_info.kpi_contact_no as contact', 'tbl_division.division_name_eng as division_eng', 'tbl_division.division_name_bng as division_bng', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana')->orderBy('tbl_kpi_info.id', 'asc')->skip($offset)->limit($limit)->get();
+        $kpis = $kpiQuery->select('tbl_kpi_info.id', 'tbl_kpi_info.status_of_kpi', 'tbl_kpi_info.kpi_name as kpi_bng', 'tbl_kpi_info.kpi_name_eng as kpi_eng', 'tbl_kpi_info.kpi_address as address', 'tbl_kpi_info.kpi_contact_no as contact', 'tbl_division.division_name_eng as division_eng', 'tbl_division.division_name_bng as division_bng', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana','tbl_kpi_detail_info.total_ansar_request',DB::raw('COUNT(tbl_embodiment.ansar_id) as total_embodied'))->groupBy('tbl_kpi_info.id')->orderBy('tbl_kpi_info.id', 'asc')->skip($offset)->limit($limit)->get();
 //        return View::make('kpi.selected_kpi_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'kpis' => $kpis]);
 //        return DB::getQueryLog();
-        return Response::json(['total' => $total->count('tbl_kpi_info.id'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'kpis' => $kpis]);
+        return Response::json(['total' => $total->distinct()->count('tbl_kpi_info.id'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'kpis' => $kpis]);
 
     }
 

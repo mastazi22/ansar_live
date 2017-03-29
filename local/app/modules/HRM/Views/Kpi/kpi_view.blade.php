@@ -119,12 +119,16 @@
                                 <th>Thana</th>
                                 <th>KPI Address</th>
                                 <th>KPI Contact No.</th>
+                                <th>Total Ansar Request</th>
+                                <th>Total Embodied Ansar</th>
+                                <th>Deficiency</th>
+                                <th>Surplus</th>
                                 <th>Action</th>
                             </tr>
                             <tbody ng-if="errorFound==1" ng-bind-html="errorMessage"></tbody>
                             <tbody>
                             <tr ng-if="kpis.length==0&&errorFound==0">
-                                <td colspan="8" class="warning no-ansar">
+                                <td colspan="12" class="warning no-ansar">
                                     No KPI is available to show.
                                 </td>
                             </tr>
@@ -150,6 +154,10 @@
                                 <td>
                                     [[a.contact]]
                                 </td>
+                                <td>[[a.total_ansar_request]]</td>
+                                <td>[[a.total_embodied]]</td>
+                                <td>[[a.total_ansar_request-a.total_embodied>0?((a.total_ansar_request-a.total_embodied)):0]]</td>
+                                <td>[[a.total_ansar_request-a.total_embodied<0?(-(a.total_ansar_request-a.total_embodied)):0]]</td>
                                 <td>
                                     <div class="col-xs-1">
                                         <a href="{{URL::to('HRM/kpi-edit/'.'[[a.id]]')}}" class="btn btn-primary btn-xs" title="Edit">
