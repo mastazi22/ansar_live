@@ -40,6 +40,7 @@
                 })
             }
             $scope.loadAnsar = function (param) {
+                console.log(param)
                 $scope.allLoading = true;
                 $http({
                     method: 'get',
@@ -154,6 +155,7 @@
             </div>
             <!--Modal Open-->
             {!! Form::open(array('route' => 'ansar-withdraw-update', 'name' => 'kpiWithdrawForm', 'id'=> 'kpi-form', 'ng-app' => 'myValidateApp', 'novalidate')) !!}
+            {!! Form::hidden('kpi_id_withdraw','[[params.kpi]]') !!}
             <div id="withrdaw-option" class="modal fade" role="dialog">
                 <div class="modal-dialog" style="width: 80%;overflow: auto;">
                     <div class="modal-content">
@@ -194,25 +196,6 @@
                                                 {!! Form::text('kpi_withdraw_reason', $value = "", $attributes = array('class' => 'form-control', 'id' => 'kpi_withdraw_reason', 'ng_model' => 'kpi_withdraw_reason', 'required')) !!}
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered" id="pc-table">
-                                            <tr>
-                                                <th>Sl No.</th>
-                                                <th>Ansar ID</th>
-                                                <th>Ansar Name</th>
-                                                <th>Ansar Designation</th>
-                                                <th>Ansar Sex</th>
-                                                <th>KPI Name</th>
-                                                <th>KPI District</th>
-                                                <th>KPI Unit</th>
-                                            </tr>
-                                            <tbody id="cansar-all" class="status">
-                                            <tr colspan="10" class="warning" id="not-find-info">
-                                                <td colspan="10">No Ansar is available to Withdraw</td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
                                     </div>
                                     <button class="btn btn-primary pull-right"
                                             ng-disabled="!kpi_withdraw_date||!kpi_withdraw_reason||!memorandumId||isVerified||isVerifying">
