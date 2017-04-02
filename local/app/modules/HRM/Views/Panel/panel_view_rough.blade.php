@@ -99,6 +99,12 @@
                 $scope.formData.ch = Array.apply(null, Array($scope.formData.ch.length)).map(Boolean.prototype.valueOf, $scope.checkAll);
             }
             $scope.submitPanelEntry = function () {
+                $scope.submitEntryPanelData['ansar_id'] = [];
+                $scope.submitEntryPanelData['merit'] = [];
+                $scope.panelData.forEach(function (value,key,array) {
+                    $scope.submitEntryPanelData['ansar_id'].push(value.ansar_id);
+                    $scope.submitEntryPanelData['merit'].push(value.merit);
+                })
                 console.log($scope.submitEntryPanelData);
                 $scope.loading.loading_add_to_panel = true;
                 $http({
@@ -146,6 +152,7 @@
                     $(elem).on('click', function () {
                         console.log(scope.formData);
                         $("#confirm-panel-modal").modal("toggle")
+
                     })
                 }
             }
