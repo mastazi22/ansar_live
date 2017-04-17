@@ -11,4 +11,11 @@ class Nominee extends Model
     public function personalinfo(){
         return $this->belongsTo('App\models\PersonalInfo','ansar_id');
     }
+
+    function getNomineeContactNoAttribute($value){
+        return UserPermissionFacades::userPermissionExists('view_mobile_no')?$value:"You don`t have permission to view mobile number";
+    }
+    function getNomineeContactNoEngAttribute($value){
+        return UserPermissionFacades::userPermissionExists('view_mobile_no')?$value:"You don`t have permission to view mobile number";
+    }
 }
