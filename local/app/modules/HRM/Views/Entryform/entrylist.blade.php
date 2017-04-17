@@ -369,7 +369,7 @@
                                 <td>[[ansar.data_of_birth|dateformat:'DD-MMM-YYYY' ]]</td>
                                 <td>[[ ansar.sex ]]</td>
                                 <td>[[ ansar.name_eng ]]</td>
-                                <td>[[ ansar.mobile_no_self ]]</td>
+                                <td>[[ ansar.mobile_no_self|checkpermission:"view_mobile_no" ]]</td>
                                 <td style="padding-right: 1px;padding-left: 1px">
                                     <div style="position:relative;margin: 0 auto;display: table">
                                         {{--data entry edit--}}

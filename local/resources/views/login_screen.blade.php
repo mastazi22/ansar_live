@@ -37,6 +37,36 @@
 
             })
         }])
+
+        app.directive('loginAttempt', function ($interval) {
+            return {
+                restrict:'E',
+                controller: function ($scope) {
+                    $scope.stopTimer = function (timer) {
+                        if(angular.isDefined(timer)){
+                            $interval.cancel(timer)
+                        }
+                    }
+                },
+                scope:{
+                  disableId:'@'
+                },
+                link: function (scope, elem, attrs) {
+                    var seconds = parseInt($(elem).html());
+                    var timer = $interval(function () {
+                        seconds--;
+                        $(scope.disableId).prop('disabled',true)
+                        $(elem).html(seconds)
+                        if(seconds<=0) {
+                            scope.stopTimer(timer);
+                            timer = undefined;
+                            location.reload();
+                            $(scope.disableId).prop('disabled',false)
+                        }
+                    },1000)
+                }
+            }
+        })
     </script>
     <style>
         table > tbody > tr > th {
@@ -50,7 +80,7 @@
 
 </head>
 <body class="login-page" ng-app="LoginApp">
-<div class="login-box" style="margin: 1% auto !important;">
+<div class="login-box" style="margin: 1% auto !important;"  ng-controller="loginController">
     <div class="login-logo">
         <a href="{{URL::to('/')}}" style="color: #ffffff;"><b>Ansar & VDP</b>ERP</a>
     </div>
@@ -58,7 +88,7 @@
     <div class="login-box-body" style="background: rgba(255, 255, 255, 0.32);">
         <p class="login-box-msg" style="color: #000;font-weight: bold">Sign in to start your session</p>
         @if(Session::has('error'))
-            <p class="text text-bold text-danger" style="text-align: center;text-transform: uppercase;color:lightyellow">{{Session::get('error')}}</p>
+            <p class="text text-bold text-danger" style="text-align: center;text-transform: uppercase;color:lightyellow">{!! Session::get('error') !!}</p>
         @endif
         <form action="{{action('UserController@handleLogin')}}" method="post">
             {{csrf_field()}}
@@ -73,7 +103,7 @@
             <div class="row">
                 <!-- /.col -->
                 <div class="col-xs-4 col-xs-offset-8">
-                    <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                    <button id="login" type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
                 </div>
                 <!-- /.col -->
             </div>
@@ -81,7 +111,7 @@
         <a href="{{URL::route('forget_password_request')}}" style="color: #ffffff;text-transform: uppercase" >I forgot my password</a><br>
 
     </div>
-    <div class="box box-solid" ng-controller="loginController"
+    <div class="box box-solid"
          style="margin-top: 8px;position: relative;background: rgba(255, 255, 255, 0.32);">
         <div class="overlay" ng-if="loading">
                     <span class="fa">

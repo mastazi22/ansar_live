@@ -86,6 +86,18 @@ GlobalApp.filter('num', function() {
         return isNaN(d)?'':d;
     };
 });
+GlobalApp.filter('checkpermission', function($rootScope) {
+    return function(input,type) {
+        try{
+            var permissions = JSON.parse($rootScope.user.user_permission.permission_list)
+
+            return permissions.indexOf(type) >= 0?input:"You don`t have permission to view mobile number";
+        }catch(e){
+            console.error(e)
+            return input;
+        }
+    };
+});
 GlobalApp.filter('dateformat', function () {
     return function (input, format,local) {
         if(local==undefined) local='en'

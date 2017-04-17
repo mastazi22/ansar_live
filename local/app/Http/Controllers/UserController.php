@@ -13,6 +13,8 @@ use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\ForgetPasswordRequest;
 use App\modules\HRM\Models\PersonalInfo;
 use Carbon\Carbon;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -29,11 +31,22 @@ use Intervention\Image\Facades\Image;
 
 class UserController extends Controller
 {
+    use AuthenticatesUsers,ThrottlesLogins;
 
+    protected $maxLoginAttempts = 3; // Amount of bad attempts user can make
+    protected $lockoutTime = 300; // Time for which user is going to be blocked in seconds
     function handleLogin(Request $request)
     {
         $credential = array('user_name' => Input::get('user_name'), 'password' => Input::get('password'));
         Log::info("Previous URL Handle: " . Session::get('redirect_url'));
+        $throttles = $this->isUsingThrottlesLoginsTrait();
+        if ($throttles && $lockedOut = $this->hasTooManyLoginAttempts($request)) {
+            $this->fireLockoutEvent($request);
+            $key = $this->getThrottleKey($request).':lockout';
+
+
+            return $this->sendLockoutResponse($request);
+        }
         if (Auth::attempt($credential)) {
             $user = Auth::user();
             if ($user->status == 0) {
@@ -61,7 +74,11 @@ class UserController extends Controller
                 Session::forget('redirect_url');
                 return Redirect::to($url);
             } else return Redirect::to('/');
-        } else {
+        }
+        else {
+            if ($throttles && ! $lockedOut) {
+                $this->incrementLoginAttempts($request);
+            }
             return Redirect::action('UserController@login')->with('error', 'Invalid user name or password');
         }
     }
@@ -492,7 +509,7 @@ class UserController extends Controller
     public function getUserData()
     {
         $user = Auth::user();
-        return User::with(['district', 'division', 'usertype'])->find($user->id);
+        return User::with(['district', 'division', 'usertype','userPermission'])->find($user->id);
     }
 
 } 

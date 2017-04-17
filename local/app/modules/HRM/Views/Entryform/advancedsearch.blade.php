@@ -481,7 +481,7 @@
                                 <td>[[ansar.sex]]</td>
                                 <td>[[ansar.unit_name_eng]]</td>
                                 <td>[[dateConvert(ansar.data_of_birth)]]</td>
-                                <td>[[ansar.mobile_no_self]]</td>
+                                <td>[[ansar.mobile_no_self|checkpermission:"view_mobile_no" ]]</td>
                             </tr>
                         </table>
                     </div>

@@ -165,6 +165,10 @@
         "name": "View Ansar Info"
       },
       {
+        "value": "view_mobile_no",
+        "name": "View Mobile No."
+      },
+      {
         "value": "chunk_verify,entryChunkVerify",
         "name": "Verify Entry(Chunk)"
       },

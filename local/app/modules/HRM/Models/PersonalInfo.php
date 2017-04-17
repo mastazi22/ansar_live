@@ -2,6 +2,7 @@
 
 namespace App\modules\HRM\Models;
 
+use App\Helper\Facades\UserPermissionFacades;
 use App\models\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -112,4 +113,8 @@ class PersonalInfo extends Model
         return $this->hasOne(RestInfoModel::class,'ansar_id','ansar_id');
     }
 
+    function getMobileNoSelfAttribute($value){
+
+        return UserPermissionFacades::userPermissionExists('view_mobile_no')?$value:"You don`t have permission to view mobile number";
+    }
 }
