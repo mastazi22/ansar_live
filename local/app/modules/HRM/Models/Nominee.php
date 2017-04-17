@@ -2,6 +2,7 @@
 
 namespace App\modules\HRM\Models;
 
+use App\Helper\Facades\UserPermissionFacades;
 use Illuminate\Database\Eloquent\Model;
 
 class Nominee extends Model
