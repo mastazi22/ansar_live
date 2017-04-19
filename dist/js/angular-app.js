@@ -91,7 +91,7 @@ GlobalApp.filter('checkpermission', function($rootScope) {
         try{
             var permissions = JSON.parse($rootScope.user.user_permission.permission_list)
 
-            return permissions.indexOf(type) >= 0?input:"";
+            return permissions.indexOf(type) >= 0||$rootScope.user.usertype.type_code==11?input:"";
         }catch(e){
             console.error(e)
             return input;
