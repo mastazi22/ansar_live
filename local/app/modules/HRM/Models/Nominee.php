@@ -14,9 +14,9 @@ class Nominee extends Model
     }
 
     function getNomineeContactNoAttribute($value){
-        return UserPermissionFacades::userPermissionExists('view_mobile_no')?$value:"You don`t have permission to view mobile number";
+        return UserPermissionFacades::userPermissionExists('view_mobile_no')?$value:"";
     }
     function getNomineeContactNoEngAttribute($value){
-        return UserPermissionFacades::userPermissionExists('view_mobile_no')?$value:"You don`t have permission to view mobile number";
+        return UserPermissionFacades::userPermissionExists('view_mobile_no')?$value:"";
     }
 }

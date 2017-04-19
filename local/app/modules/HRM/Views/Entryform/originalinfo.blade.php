@@ -41,8 +41,28 @@
                 }
             }
         })
-    </script>
+        $(document).ready(function () {
+            $("#print-report").on('click', function (e) {
+                e.preventDefault();
 
+                var html = "";
+                $("#print-data").find("img").each(function () {
+                    html+=this.outerHTML;
+                })
+
+                $('body').append('<div id="print-area">' + html + '</div>')
+                window.print();
+                $("#print-area").remove()
+            })
+        })
+    </script>
+    <style>
+        @media print{
+            img{
+                width: 100% !important;
+            }
+        }
+    </style>
     <div ng-controller="originalInfo">
         <section class="content">
             <div class="box box-solid">
@@ -60,7 +80,8 @@
                             </form>
                         </div>
                     </div>
-                    <div ng-show="searchedAnsar.status" class="row">
+                    <button id="print-report" ng-show="searchedAnsar.status" class="btn btn-primary" style="margin:5px auto;display:block"><i class="fa fa-print"></i>&nbsp;Print</button>
+                    <div ng-show="searchedAnsar.status" class="row" id="print-data">
                         <div class="col-md-6">
                             <img class="img-responsive img-thumbnail view-image" ng-src="[[fontURL]]">
                         </div>

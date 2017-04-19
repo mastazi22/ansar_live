@@ -115,10 +115,10 @@ class PersonalInfo extends Model
 
     function getMobileNoSelfAttribute($value){
 
-        return UserPermissionFacades::userPermissionExists('view_mobile_no')?$value:"You don`t have permission to view mobile number";
+        return UserPermissionFacades::userPermissionExists('view_mobile_no')?$value:"";
     }
     function getMobileNoRequestAttribute($value){
 
-        return UserPermissionFacades::userPermissionExists('view_mobile_no')?$value:"You don`t have permission to view mobile number";
+        return UserPermissionFacades::userPermissionExists('view_mobile_no')?$value:"";
     }
 }
