@@ -412,7 +412,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 
                     $a = $offer->ansar;
 
-                  Log::info($a);
+                  print_r($a);
                 } catch (\Exception $e) {
                     echo $e->getTrace();
                     DB::rollback();
