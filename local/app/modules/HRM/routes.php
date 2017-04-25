@@ -1,7 +1,6 @@
 <?php
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\BlockListModel;
-use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\RestInfoModel;
@@ -405,19 +404,13 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('upload_original_info',['as'=>'upload_original_info','uses'=>'GeneralSettingsController@uploadOriginalInfo']);
         Route::get('upload_original_info',['as'=>'upload_original_info_view','uses'=>'GeneralSettingsController@uploadOriginalInfoView']);
         Route::get('test',function(){
-            $offered_ansar = OfferSMS::where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
-            foreach ($offered_ansar as $offer) {
-                DB::beginTransaction();
-                try {
-
-                    $a = $offer->ansar;
-
-                  print_r($a);
-                } catch (\Exception $e) {
-                    echo $e->getTrace();
-                    DB::rollback();
-                }
+           /* $s = '';
+            for($i=7484;$i<=7557;$i++){
+                $s .= $i.",";
             }
+            return $s;*/
+            $offered_ansar = OfferSMS::with(['ansar','district'])->where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
+            return $offered_ansar;
         });
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
