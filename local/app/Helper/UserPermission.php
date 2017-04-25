@@ -25,7 +25,7 @@ class UserPermission
     {
         $permissions = file_get_contents(storage_path("user/permission/{$this->permissionFile}"));
         $this->permissionList = Config::get('permission.permission_list');
-        $this->currentUserPermission = Auth::user()->userPermission->permission_list;
+        if(Auth::user())$this->currentUserPermission = Auth::user()->userPermission->permission_list;
         $this->search = '';
     }
 
