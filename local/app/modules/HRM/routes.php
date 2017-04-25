@@ -1,6 +1,7 @@
 <?php
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\BlockListModel;
+use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\RestInfoModel;
