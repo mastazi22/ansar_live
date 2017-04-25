@@ -53,13 +53,13 @@ class Kernel extends ConsoleKernel
             $sid = env('SSL_SID','ANSARVDP');
             $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
             $offered_ansar = OfferSMS::with(['ansar','district'])->where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
-            Log::info($offered_ansar);
+//            Log::info($offered_ansar);
             foreach ($offered_ansar as $offer) {
                 DB::connection('hrm')->beginTransaction();
                 try {
-                    Log::info($offer);
-                    $a = $offer->ansar;
 
+                    $a = $offer->ansar;
+                    //Log::info($a);
 //                    break;
                     $dis = $offer->district->unit_name_eng;
                     $body = 'You (ID:' . $offer->ansar_id . ') are offered for ' . $dis . ' as Rank ' . $a->designation->name_eng . ' Please type (ans YES/ans NO) and send to 6969 within 48 hours. Otherwise your offer will be cancelled - DC ' . strtoupper($dis);
