@@ -414,7 +414,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 
                   Log::info($a);
                 } catch (\Exception $e) {
-                    Log::info('OFFER SEND ERROR: ' . $e->getMessage());
+                    echo $e->getTrace();
                     DB::rollback();
                 }
             }
