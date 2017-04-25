@@ -1,6 +1,7 @@
 <?php
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\BlockListModel;
+use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\RestInfoModel;
@@ -404,11 +405,19 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('upload_original_info',['as'=>'upload_original_info','uses'=>'GeneralSettingsController@uploadOriginalInfo']);
         Route::get('upload_original_info',['as'=>'upload_original_info_view','uses'=>'GeneralSettingsController@uploadOriginalInfoView']);
         Route::get('test',function(){
-            $s = '';
-            for($i=7484;$i<=7557;$i++){
-                $s .= $i.",";
+            $offered_ansar = OfferSMS::where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
+            foreach ($offered_ansar as $offer) {
+                DB::beginTransaction();
+                try {
+
+                    $a = $offer->ansar;
+
+                  Log::info($a);
+                } catch (\Exception $e) {
+                    Log::info('OFFER SEND ERROR: ' . $e->getMessage());
+                    DB::rollback();
+                }
             }
-            return $s;
         });
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
