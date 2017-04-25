@@ -405,13 +405,11 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('upload_original_info',['as'=>'upload_original_info','uses'=>'GeneralSettingsController@uploadOriginalInfo']);
         Route::get('upload_original_info',['as'=>'upload_original_info_view','uses'=>'GeneralSettingsController@uploadOriginalInfoView']);
         Route::get('test',function(){
-           /* $s = '';
+            $s = '';
             for($i=7484;$i<=7557;$i++){
                 $s .= $i.",";
             }
-            return $s;*/
-            $offered_ansar = OfferSMS::with(['ansar','district'])->where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
-            return $offered_ansar;
+            return $s;
         });
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
