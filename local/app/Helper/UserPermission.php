@@ -46,6 +46,7 @@ class UserPermission
     }
     public function userPermissionExists($name)
     {
+        if(!Auth::user())return false;
         if(Auth::user()->type==11) return true;
         if (is_null($this->currentUserPermission)) {
             if(Auth::user()->type==11||Auth::user()->type==33)
@@ -63,7 +64,7 @@ class UserPermission
     }
     public function isUserMenuExists($name,$p)
     {
-//        return false;
+        if(!Auth::user())return false;
 //        Log::info("Found:".$name);
         if(Auth::user()->type==11) return true;
         $status = false;
@@ -78,6 +79,7 @@ class UserPermission
 
     public function isMenuExists($value)
     {
+        if(!Auth::user())return false;
         if(Auth::user()->type==11) return true;
         if (is_null($this->currentUserPermission)) {
             if(Auth::user()->type==11||Auth::user()->type==33)
