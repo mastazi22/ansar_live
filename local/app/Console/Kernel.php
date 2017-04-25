@@ -52,9 +52,9 @@ class Kernel extends ConsoleKernel
             $pass = env('SSL_PASSWORD','x83A7Z96');
             $sid = env('SSL_SID','ANSARVDP');
             $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
-            $offered_ansar = OfferSMS::where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
+            $offered_ansar = OfferSMS::with(['ansar','district'])->where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
             foreach ($offered_ansar as $offer) {
-                DB::beginTransaction();
+                DB::connection('hrm')->beginTransaction();
                 try {
                     Log::info($offer);
                     $a = $offer->ansar;
@@ -84,10 +84,10 @@ class Kernel extends ConsoleKernel
                         $offer->sms_status = 'Failed';
                         $offer->save();
                     }
-                    DB::commit();
+                    DB::connection('hrm')->commit();
                 } catch (\Exception $e) {
                     Log::info('OFFER SEND ERROR: ' . $e->getMessage());
-                    DB::rollback();
+                    DB::connection('hrm')->rollback();
                 }
             }
 
