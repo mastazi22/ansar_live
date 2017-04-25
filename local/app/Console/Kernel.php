@@ -56,9 +56,10 @@ class Kernel extends ConsoleKernel
             foreach ($offered_ansar as $offer) {
                 DB::beginTransaction();
                 try {
+                    Log::info($offer);
                     $a = $offer->ansar;
-                    Log::info($a?$a:"not found");
-                    break;
+
+//                    break;
                     $dis = $offer->district->unit_name_eng;
                     $body = 'You (ID:' . $offer->ansar_id . ') are offered for ' . $dis . ' as Rank ' . $a->designation->name_eng . ' Please type (ans YES/ans NO) and send to 6969 within 48 hours. Otherwise your offer will be cancelled - DC ' . strtoupper($dis);
                     $phone = '88' . trim($a->mobile_no_self);
