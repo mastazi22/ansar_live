@@ -103,7 +103,7 @@ class OfferQueue extends Job implements ShouldQueue
                         'locked'=>0
                     ]);
                 }
-                Log::info($e->getMessage());
+                Log::info($e->getTraceAsString());
                 //return response(collect(['status' => 'error', 'message' => $e->getMessage()])->toJson(), 400, ['Content-Type' => 'application/json']);
             }
         }
