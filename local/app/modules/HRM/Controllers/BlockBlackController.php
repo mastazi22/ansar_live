@@ -5,6 +5,7 @@ namespace App\modules\HRM\Controllers;
 use App\Helper\Facades\GlobalParameterFacades;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use App\Jobs\BlockStatusSms;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\BlackListInfoModel;
 use App\modules\HRM\Models\BlackListModel;
@@ -188,6 +189,7 @@ class BlockBlackController extends Controller
 
             }
             $ansar->update(['block_list_status' => 1]);
+            $this->dispatch(new BlockStatusSms($ansar_id,$block_comment));
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
