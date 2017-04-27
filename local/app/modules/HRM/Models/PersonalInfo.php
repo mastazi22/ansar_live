@@ -5,6 +5,7 @@ namespace App\modules\HRM\Models;
 use App\Helper\Facades\UserPermissionFacades;
 use App\models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class PersonalInfo extends Model
 {
@@ -115,10 +116,10 @@ class PersonalInfo extends Model
 
     function getMobileNoSelfAttribute($value){
 
-        return UserPermissionFacades::userPermissionExists('view_mobile_no')?$value:"";
+        return UserPermissionFacades::userPermissionExists('view_mobile_no')||UserPermissionFacades::isAnsarEmbodied($this->ansar_id)?$value:"";
     }
     function getMobileNoRequestAttribute($value){
 
-        return UserPermissionFacades::userPermissionExists('view_mobile_no')?$value:"";
+        return UserPermissionFacades::userPermissionExists('view_mobile_no')||UserPermissionFacades::isAnsarEmbodied($this->ansar_id)?$value:"";
     }
 }

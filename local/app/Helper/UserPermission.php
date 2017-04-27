@@ -10,6 +10,8 @@ namespace App\Helper;
 
 
 use App\models\User;
+use App\modules\HRM\Models\EmbodimentModel;
+use App\modules\HRM\Models\KpiGeneralModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
@@ -130,6 +132,22 @@ class UserPermission
         if (!$p) {
             return null;
         } else return json_decode($p);
+    }
+
+    public function isAnsarEmbodied($ansar_Id){
+
+        if(Auth::user()){
+            if(Auth::user()->type==11) return true;
+            else if(Auth::user()->type==22){
+
+                $kpi = KpiGeneralModel::where('unit_id',Auth::user()->district_id)->pluck('id');
+                return EmbodimentModel::where('ansar_id',$ansar_Id)->whereIn('kpi_id',$kpi)->exists();
+
+
+            }
+            else return false;
+        }
+        return false;
     }
 
 }
