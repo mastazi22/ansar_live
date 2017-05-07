@@ -1,12 +1,14 @@
 <?php
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\BlockListModel;
+use App\modules\HRM\Models\KpiGeneralModel;
 use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\RestInfoModel;
 use App\modules\HRM\models\SmsReceiveInfoModel;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
@@ -404,12 +406,13 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 //End KPI
         Route::post('upload_original_info',['as'=>'upload_original_info','uses'=>'GeneralSettingsController@uploadOriginalInfo']);
         Route::get('upload_original_info',['as'=>'upload_original_info_view','uses'=>'GeneralSettingsController@uploadOriginalInfoView']);
-        Route::get('test',function(){
-            $s = '';
-            for($i=7484;$i<=7557;$i++){
-                $s .= $i.",";
-            }
-            return $s;
+        Route::get('test/{ansar_Id}',function($ansar_Id){
+//            $s = '';
+//            for($i=7484;$i<=7557;$i++){
+//                $s .= $i.",";
+//            }
+            $kpi = KpiGeneralModel::where('unit_id',Auth::user()->district_id)->pluck('id');
+            return \App\modules\HRM\Models\EmbodimentModel::where('ansar_id',$ansar_Id)->whereIn('kpi_id',$kpi)->exists()?"found":"not found";
         });
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');

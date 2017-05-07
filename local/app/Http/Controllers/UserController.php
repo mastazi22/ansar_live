@@ -509,7 +509,9 @@ class UserController extends Controller
     public function getUserData()
     {
         $user = Auth::user();
-        return User::with(['district', 'division', 'usertype','userPermission'])->find($user->id);
+        DB::enableQueryLog();
+        $v =  User::with(['district', 'division', 'usertype','userPermission','kpi','embodiment'])->find($user->id);
+        return DB::getQueryLog();
     }
 
 } 

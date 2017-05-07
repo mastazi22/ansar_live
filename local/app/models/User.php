@@ -5,6 +5,8 @@ namespace App\models;
 use App\modules\HRM\Models\ActionUserLog;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
+use App\modules\HRM\Models\EmbodimentModel;
+use App\modules\HRM\Models\KpiGeneralModel;
 use App\modules\HRM\Models\LoggedInUser;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
@@ -95,5 +97,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
     public function logged(){
         return $this->hasOne(LoggedInUser::class,'user_id');
+    }
+    public function kpi(){
+        return $this->hasMany(KpiGeneralModel::class,'unit_id','district_id');
+    }
+    public function embodiment(){
+        return $this->kpi()->embodiment;
     }
 }
