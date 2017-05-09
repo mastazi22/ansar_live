@@ -17,6 +17,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
@@ -31,10 +32,11 @@ use Intervention\Image\Facades\Image;
 
 class UserController extends Controller
 {
-    use AuthenticatesUsers,ThrottlesLogins;
+    use AuthenticatesUsers, ThrottlesLogins;
 
     protected $maxLoginAttempts = 3; // Amount of bad attempts user can make
     protected $lockoutTime = 300; // Time for which user is going to be blocked in seconds
+
     function handleLogin(Request $request)
     {
         $credential = array('user_name' => Input::get('user_name'), 'password' => Input::get('password'));
@@ -42,7 +44,7 @@ class UserController extends Controller
         $throttles = $this->isUsingThrottlesLoginsTrait();
         if ($throttles && $lockedOut = $this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
-            $key = $this->getThrottleKey($request).':lockout';
+            $key = $this->getThrottleKey($request) . ':lockout';
 
 
             return $this->sendLockoutResponse($request);
@@ -74,9 +76,8 @@ class UserController extends Controller
                 Session::forget('redirect_url');
                 return Redirect::to($url);
             } else return Redirect::to('/');
-        }
-        else {
-            if ($throttles && ! $lockedOut) {
+        } else {
+            if ($throttles && !$lockedOut) {
                 $this->incrementLoginAttempts($request);
             }
             return Redirect::action('UserController@login')->with('error', 'Invalid user name or password');
@@ -508,10 +509,20 @@ class UserController extends Controller
 
     public function getUserData()
     {
-        $user = Auth::user();
-        DB::enableQueryLog();
-        $v =  User::with(['district', 'division', 'usertype','userPermission','kpi','embodiment'])->find($user->id);
-        return DB::getQueryLog();
+        $v = Cache::remember('user_data', 10, function () {
+            $user = Auth::user();
+
+            $kpis = $user->kpi;
+            $d = [];
+            foreach ($kpis as $kpi) {
+                $e = $kpi->embodiment->pluck('ansar_id')->toArray();
+                $d = array_merge($d, $e);
+            }
+            $v = User::with(['district', 'division', 'usertype', 'userPermission'])->find($user->id);
+            $v['embodiment'] = $d;
+            return $v;
+        });
+        return $v;
     }
 
 } 

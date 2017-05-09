@@ -87,11 +87,11 @@ GlobalApp.filter('num', function() {
     };
 });
 GlobalApp.filter('checkpermission', function($rootScope) {
-    return function(input,type) {
+    return function(input,type1,type2,type3) {
+        console.log(type1+" "+type2+" "+type3)
         try{
-            var permissions = JSON.parse($rootScope.user.user_permission.permission_list)
-
-            return permissions.indexOf(type) >= 0||$rootScope.user.usertype.type_code==11?input:"";
+            var permissions = JSON.parse($rootScope.user.user_permission.permission_list);
+            return permissions.indexOf(type1) >= 0||$rootScope.user.usertype.type_code==11||$rootScope.user.embodiment.indexOf(type3)>=0?input:"";
         }catch(e){
             console.error(e)
             return input;

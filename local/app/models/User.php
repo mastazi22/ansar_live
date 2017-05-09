@@ -102,6 +102,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->hasMany(KpiGeneralModel::class,'unit_id','district_id');
     }
     public function embodiment(){
-        return $this->kpi()->embodiment;
+        $kpis = $this->kpi();
+        $e = [];
+        foreach($kpis as $kpi){
+            array_push($kpi->embodiment->pluck('ansar_id'));
+        }
+        return json_encode($e);
     }
 }

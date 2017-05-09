@@ -31,7 +31,8 @@
                     </tr>
                     <tr>
                         <th style="background: #ffffff">Mobile No.</th>
-                        <td style="background: #ffffff">[[data.apid.mobile_no_self|checkpermission:"view_mobile_no" ]]</td>
+
+                        <td style="background: #ffffff">[[data.apid.mobile_no_self|checkpermission:"view_mobile_no":"embodied":data.apid.ansar_id ]]</td>
                     </tr>
                     <tr>
                         <th style="background: #ffffff">Home District</th>
