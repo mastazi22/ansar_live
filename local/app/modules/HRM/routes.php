@@ -411,8 +411,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 //            for($i=7484;$i<=7557;$i++){
 //                $s .= $i.",";
 //            }
-            $kpi = KpiGeneralModel::where('unit_id',Auth::user()->district_id)->pluck('id');
-            return \App\modules\HRM\Models\EmbodimentModel::where('ansar_id',$ansar_Id)->whereIn('kpi_id',$kpi)->exists()?"found":"not found";
+
         });
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
