@@ -510,6 +510,7 @@ class UserController extends Controller
     public function getUserData()
     {
         $user = Auth::user();
+        if(!Auth::check()) return [];
         $v = Cache::remember('user_data_'+$user->id, 10, function () use ($user) {
 
 
