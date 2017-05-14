@@ -509,19 +509,18 @@ class UserController extends Controller
 
     public function getUserData()
     {
-        $v = Cache::remember('user_data', 10, function () {
-            $user = Auth::user();
+        $v = array();
+        $user = Auth::user();
 
-            $kpis = $user->kpi;
-            $d = [];
-            foreach ($kpis as $kpi) {
-                $e = $kpi->embodiment->pluck('ansar_id')->toArray();
-                $d = array_merge($d, $e);
-            }
-            $v = User::with(['district', 'division', 'usertype', 'userPermission'])->find($user->id);
-            $v['embodiment'] = $d;
-            return $v;
-        });
+        $kpis = $user->kpi;
+        $d = [];
+        foreach ($kpis as $kpi) {
+            $e = $kpi->embodiment->pluck('ansar_id')->toArray();
+            $d = array_merge($d, $e);
+        }
+        $v = User::with(['district', 'division', 'usertype', 'userPermission'])->find($user->id);
+        $v['embodiment'] = $d;
+        return $v;
         return $v;
     }
 
