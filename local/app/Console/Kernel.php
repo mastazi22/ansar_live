@@ -78,7 +78,7 @@ class Kernel extends ConsoleKernel
                     $r = Parser::xml($response);
                     Log::info(json_encode($r));
                     $offer->sms_try += 1;
-                    if (isset($r['PARAMETER']) && strcasecmp($r['PARAMETER'], 'OK') == 0) {
+                    if (isset($r['PARAMETER']) && strcasecmp($r['PARAMETER'], 'OK') == 0&&isset($r['SMSINFO']['MSISDN'])&&strcasecmp($r['SMSINFO']['MSISDN'],'88' . trim($a->mobile_no_self))==0) {
                         $offer->sms_status = 'Send';
                         $offer->save();
                     } else {
