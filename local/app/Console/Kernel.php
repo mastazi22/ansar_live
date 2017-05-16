@@ -63,7 +63,7 @@ class Kernel extends ConsoleKernel
 //                    break;
                     $dis = $offer->district->unit_name_eng;
                     $body = 'You (ID:' . $offer->ansar_id . ') are offered for ' . $dis . ' as Rank ' . $a->designation->name_eng . ' Please type (ans YES/ans NO) and send to 6969 within 48 hours. Otherwise your offer will be cancelled - DC ' . strtoupper($dis);
-                    $phone = '88' . trim($a->getMobileNo());
+                    $phone = '88' . trim($a->mobile_no_self);
                     $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
                     $crl = curl_init();
                     curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, FALSE);
@@ -103,7 +103,7 @@ class Kernel extends ConsoleKernel
             foreach ($offered_cancel as $offer) {
                 $a = $offer->ansar;
                 $body = 'Your offer is cancelled';
-                $phone = '88' . trim($a->getMobileNo());
+                $phone = '88' . trim($a->mobile_no_self);
                 $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
                 $crl = curl_init();
                 curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, FALSE);
