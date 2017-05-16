@@ -48,7 +48,7 @@ class UserPermission
     }
     public function userPermissionExists($name)
     {
-        if(!Auth::user())return true;
+        if(!Auth::user())return false;
         if(Auth::user()->type==11) return true;
         if (is_null($this->currentUserPermission)) {
             if(Auth::user()->type==11||Auth::user()->type==33)
@@ -147,7 +147,7 @@ class UserPermission
             }
             else return false;
         }
-        return true;
+        return false;
     }
 
 }

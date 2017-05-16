@@ -6,6 +6,7 @@ use App\Helper\Facades\UserPermissionFacades;
 use App\models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Request;
 
 class PersonalInfo extends Model
 {
@@ -121,5 +122,9 @@ class PersonalInfo extends Model
     function getMobileNoRequestAttribute($value){
 
         return UserPermissionFacades::userPermissionExists('view_mobile_no')||UserPermissionFacades::isAnsarEmbodied($this->ansar_id)?$value:"";
+    }
+    function getMobileNo(){
+
+        return $this->mobile_no_self;
     }
 }
