@@ -188,35 +188,31 @@
                         n.da.forEach(function (item) {
                             ed.push(item.total)
                         })
-                        $.getScript('http://www.chartjs.org/assets/Chart.js', function () {
+                        $.getScript('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js', function () {
 
                             var data = {
                                 labels: labels,
 
                                 datasets: [
                                     {
-                                        fillColor: "rgba(0,60,100,1)",
-                                        strokeColor: "black",
-                                        pointColor: "rgba(220,220,220,1)",
-                                        pointStrokeColor: "#fff",
+                                        label:'Embodiment',
+                                        backgroundColor: "rgba(0,60,100,1)",
+                                        borderColor: "black",
+                                        borderWidth:1,
                                         data: ea
                                     },
                                     {
-                                        fillColor: "rgba(151,187,205,0.5)",
-                                        strokeColor: "rgba(151,187,205,1)",
-                                        pointColor: "rgba(151,187,205,1)",
-                                        pointStrokeColor: "#fff",
+                                        label:'Dis-Embodiment',
+                                        backgroundColor: "rgba(151,187,205,0.5)",
+                                        borderColor: "rgba(151,187,205,1)",
+                                        borderWidth:1,
                                         data: ed
                                     }
                                 ]
                             }
 
                             var options = {
-                                animation: true,
-                                events:['click'],
-                                onClick: function (event) {
-                                    alert(event.datapoint.y)
-                                },
+                                responsive:true
                             };
 
                             //Get the context of the canvas element we want to select
@@ -224,7 +220,11 @@
                             var ct = c.get(0).getContext('2d');
                             var ctx = document.getElementById("graph-embodiment").getContext("2d");
                             /*********************/
-                            new Chart(ctx).Bar(data, options);
+                            new Chart(ctx,{
+                                type:'bar',
+                                data:data,
+                                options:options
+                            });
                             //document.getElementById("legendDiv").innerHTML = new Chart(ctx).Bar(data,options).generateLegend();
 
                         })

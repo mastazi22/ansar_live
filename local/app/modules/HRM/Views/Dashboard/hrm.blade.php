@@ -11,6 +11,7 @@
 @endsection
 @section('content')
         <!-- Content Wrapper. Contains page content -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script>
 <script>
 
 
@@ -199,46 +200,41 @@
                         n.da.forEach(function (item) {
                             ed.push(item.total)
                         })
-                        $.getScript('http://www.chartjs.org/assets/Chart.js', function () {
+                        var data = {
+                            labels: labels,
 
-                            var data = {
-                                labels: labels,
-
-                                datasets: [
-                                    {
-                                        fillColor: "rgba(0,60,100,1)",
-                                        strokeColor: "black",
-                                        pointColor: "rgba(220,220,220,1)",
-                                        pointStrokeColor: "#fff",
-                                        data: ea
-                                    },
-                                    {
-                                        fillColor: "rgba(151,187,205,0.5)",
-                                        strokeColor: "rgba(151,187,205,1)",
-                                        pointColor: "rgba(151,187,205,1)",
-                                        pointStrokeColor: "#fff",
-                                        data: ed
-                                    }
-                                ]
-                            }
-
-                            var options = {
-                                animation: true,
-                                events:['click'],
-                                onClick: function (event) {
-                                    alert(event.datapoint.y)
+                            datasets: [
+                                {
+                                    label:'Embodiment',
+                                    backgroundColor: "rgba(0,60,100,1)",
+                                    borderColor: "black",
+                                    borderWidth:1,
+                                    data: ea
                                 },
-                            };
+                                {
+                                    label:'Dis-Embodiment',
+                                    backgroundColor: "rgba(151,187,205,0.5)",
+                                    borderColor: "rgba(151,187,205,1)",
+                                    borderWidth:1,
+                                    data: ed
+                                }
+                            ]
+                        }
 
-                            //Get the context of the canvas element we want to select
-                            var c = $('#graph-embodiment');
-                            var ct = c.get(0).getContext('2d');
-                            var ctx = document.getElementById("graph-embodiment").getContext("2d");
-                            /*********************/
-                            new Chart(ctx).Bar(data, options);
-                            //document.getElementById("legendDiv").innerHTML = new Chart(ctx).Bar(data,options).generateLegend();
+                        var options = {
+                            responsive:true
+                        };
 
-                        })
+                        //Get the context of the canvas element we want to select
+                        var c = $('#graph-embodiment');
+                        var ct = c.get(0).getContext('2d');
+                        var ctx = document.getElementById("graph-embodiment").getContext("2d");
+                        /*********************/
+                        new Chart(ctx,{
+                            type:'bar',
+                            data:data,
+                            options:options
+                        });
                     }
                 }, true)
             }
@@ -626,7 +622,7 @@
 
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <canvas id="graph-embodiment" graph style="width: 100%; height: 160px;" class="well"></canvas>
+                    <canvas id="graph-embodiment" graph style="width: 100%; height: 200px;" class="well"></canvas>
                 </div>
                 <!-- /.box-body -->
             </div>
