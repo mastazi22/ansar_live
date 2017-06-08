@@ -69,38 +69,18 @@
                     $scope.loadingAnsar = false;
                 })
             }
+            $scope.$watch('results', function (newValue,oldValue ) {
+
+                if(newValue.length!=undefined) $scope.selectAnsar = Array.apply(null, new Array(newValue.length)).map(Boolean.prototype.valueOf, $scope.selectAll);
+            },true)
             $scope.changeSelectAnsar = function (i) {
-                var index = $scope.selectedAnsar.indexOf($scope.ansars[i]);
+                var index = $scope.selectedAnsar.indexOf($scope.results[i]);
                 if ($scope.selectAnsar[i]) {
                     if (index == -1) {
-//                        switch ($scope.ansars[i].rank) {
-//                            case 1:
-//                                $scope.tsAnsar += 1;
-//                                break
-//                            case 2:
-//                                $scope.tsAPC += 1;
-//                                break
-//                            case 3:
-//                                $scope.tsPC += 1;
-//                                break
-//
-//                        }
-                        $scope.selectedAnsar.push($scope.ansars[i])
+                        $scope.selectedAnsar.push($scope.results[i])
                     }
                 }
                 else {
-//                    switch ($scope.selectedAnsar[index].rank) {
-//                        case 1:
-//                            $scope.tsAnsar -= 1;
-//                            break
-//                        case 2:
-//                            $scope.tsAPC -= 1;
-//                            break
-//                        case 3:
-//                            $scope.tsPC -= 1;
-//                            break
-//
-//                    }
                     $scope.selectedAnsar.splice(index, 1);
                 }
                 $scope.selectAll = $scope.selectedAnsar.length == $scope.ansars.length;
@@ -148,6 +128,7 @@
                     console.log(response.data)
                     $scope.result = response.data;
                     $scope.pl = true;
+                    $scope.q = '';
                     if ($scope.result.data.success.count > 0) $scope.loadAnsar();
 
 
