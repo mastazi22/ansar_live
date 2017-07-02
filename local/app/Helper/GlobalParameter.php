@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Helper;
+
 use Carbon\Carbon;
 
 class GlobalParameter
@@ -10,6 +11,7 @@ class GlobalParameter
     const REST_PERIOD = 'rest_period';
     const ALLOCATED_LEAVE = 'allocated_leave';
     const LAST_ANSAR_ID = "last_ansar_id";
+    const OFFER_QUOTA_DAY = "offer_quota_day";
     private $globalParameter;
 
     /**
@@ -20,37 +22,8 @@ class GlobalParameter
         $this->globalParameter = \App\modules\HRM\Models\GlobalParameter::all();
     }
 
-    public function getValue($type)
+    public function getServiceEndedDate($joining_date)
     {
-        switch($type){
-            case Self::RETIREMENT_AGE:
-                return $this->globalParameter->where('param_name','retirement_age')->first()->param_value;
-            case Self::EMBODIMENT_PERIOD:
-                return $this->globalParameter->where('param_name','embodiment_period')->first()->param_value;
-            case Self::REST_PERIOD:
-                return $this->globalParameter->where('param_name','rest_period')->first()->param_value;
-            case Self::ALLOCATED_LEAVE:
-                return $this->globalParameter->where('param_name','allocated_leave')->first()->param_value;
-            case Self::LAST_ANSAR_ID:
-                return $this->globalParameter->where('param_name','last_ansar_id')->first()->param_value;
-
-        }
-    }
-    public function getUnit($type)
-    {
-        switch($type){
-            case Self::RETIREMENT_AGE:
-                return $this->globalParameter->where('param_name','retirement_age')->first()->param_unit;
-            case Self::EMBODIMENT_PERIOD:
-                return $this->globalParameter->where('param_name','embodiment_period')->first()->param_unit;
-            case Self::REST_PERIOD:
-                return $this->globalParameter->where('param_name','rest_period')->first()->param_unit;
-            case Self::ALLOCATED_LEAVE:
-                return $this->globalParameter->where('param_name','allocated_leave')->first()->param_unit;
-
-        }
-    }
-    public function getServiceEndedDate($joining_date){
         $unit = $this->getUnit($this::EMBODIMENT_PERIOD);
         $value = $this->getValue($this::EMBODIMENT_PERIOD);
         if (strcasecmp($unit, "Year") == 0) {
@@ -65,12 +38,51 @@ class GlobalParameter
         }
         return $service_ended_date;
     }
-    public function getActiveDate($rest_date){
+
+    public function getUnit($type)
+    {
+        switch ($type) {
+            case Self::RETIREMENT_AGE:
+                return $this->globalParameter->where('param_name', 'retirement_age')->first()->param_unit;
+            case Self::EMBODIMENT_PERIOD:
+                return $this->globalParameter->where('param_name', 'embodiment_period')->first()->param_unit;
+            case Self::REST_PERIOD:
+                return $this->globalParameter->where('param_name', 'rest_period')->first()->param_unit;
+            case Self::ALLOCATED_LEAVE:
+                return $this->globalParameter->where('param_name', 'allocated_leave')->first()->param_unit;
+            case Self::OFFER_QUOTA_DAY:
+                return $this->globalParameter->where('param_name', 'offer_quota_day')->first()->param_unit;
+
+        }
+    }
+
+    public function getValue($type)
+    {
+        switch ($type) {
+            case Self::RETIREMENT_AGE:
+                return $this->globalParameter->where('param_name', 'retirement_age')->first()->param_value;
+            case Self::EMBODIMENT_PERIOD:
+                return $this->globalParameter->where('param_name', 'embodiment_period')->first()->param_value;
+            case Self::REST_PERIOD:
+                return $this->globalParameter->where('param_name', 'rest_period')->first()->param_value;
+            case Self::ALLOCATED_LEAVE:
+                return $this->globalParameter->where('param_name', 'allocated_leave')->first()->param_value;
+            case Self::LAST_ANSAR_ID:
+                return $this->globalParameter->where('param_name', 'last_ansar_id')->first()->param_value;
+            case Self::OFFER_QUOTA_DAY:
+                return $this->globalParameter->where('param_name', 'offer_quota_day')->first()->param_value;
+
+        }
+    }
+
+    public function getActiveDate($rest_date)
+    {
         $unit = $this->getUnit($this::REST_PERIOD);
         $value = $this->getValue($this::REST_PERIOD);
         if (strcasecmp($unit, "Year") == 0) {
             $active_date = Carbon::parse($rest_date)->addYear($value);
-        } elseif (strcasecmp($unit, "Month") == 0) {;
+        } elseif (strcasecmp($unit, "Month") == 0) {
+            ;
             $active_date = Carbon::parse($rest_date)->addMonth($value);
         } elseif (strcasecmp($unit, "Day") == 0) {
             $active_date = Carbon::parse($rest_date)->addDay($value);
@@ -78,10 +90,11 @@ class GlobalParameter
         return $active_date;
     }
 
-    public function generateSmartCard($uid,$aid){
-        $unit_code = str_pad($uid.'',3,'0',STR_PAD_LEFT);
-        $ansar_id = str_pad($aid.'',6,'0',STR_PAD_LEFT);
-        return $unit_code.$ansar_id;
+    public function generateSmartCard($uid, $aid)
+    {
+        $unit_code = str_pad($uid . '', 3, '0', STR_PAD_LEFT);
+        $ansar_id = str_pad($aid . '', 6, '0', STR_PAD_LEFT);
+        return $unit_code . $ansar_id;
     }
 
 }
