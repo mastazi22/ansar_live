@@ -30,6 +30,7 @@
             $scope.withdrawId=''
             $scope.verifying = [];
             $scope.errorMessage = '';
+            $scope.queue = [];
             $scope.errorFound = 0;
             $scope.loadPagination = function () {
                 $scope.pages = [];
@@ -46,24 +47,30 @@
             }
             $scope.loadPage = function (page, $event) {
                 if ($event != undefined)  $event.preventDefault();
-                $scope.currentPage = page.pageNum;
-                $scope.loadingPage[page.pageNum] = true;
+                $scope.currentPage = page==undefined?0:page.pageNum;
+                $scope.loadingPage[$scope.currentPage]=true;
                 $http({
                     url: '{{URL::route('inactive_kpi_list')}}',
                     method: 'get',
                     params: {
-                        offset: page.offset,
-                        limit: page.limit,
+                        offset: page==undefined?0:page.offset,
+                        limit: page==undefined?$scope.itemPerPage:page.limit,
                         division: $scope.params.range,
                         unit: $scope.params.unit,
                         thana: $scope.params.thana,
-                        view: 'view'
+                        view: 'view',
+                        q: $scope.q
                     }
                 }).then(function (response) {
                     $scope.kpis = response.data.kpis;
                     console.log($scope.kpis)
 //                    $compile($scope.ansars)
-                    $scope.loadingPage[page.pageNum] = false;
+                    $scope.queue.shift();
+                    $scope.total = response.data.total;
+                    $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
+                    if($scope.queue.length>1) $scope.loadPage();
+                    $scope.loadPagination();
+                    $scope.loadingPage[$scope.currentPage] = false;
                 })
             }
             $scope.loadTotal = function () {
@@ -204,10 +211,15 @@
                             start-load="range"
                             field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
                             data = "params"
-                            on-load="loadTotal()"
+                            on-load="loadPage()"
                     ></filter-template>
-                    <h4>Total KPI: [[total.toLocaleString()]]</h4>
 
+                    <div class="row">
+                        <div class="col-md-8"><h4>Total KPI: [[total.toLocaleString()]]</h4></div>
+                        <div class="col-md-4">
+                            <database-search q="q" queue="queue" on-change="loadPage()" place-holder="Search by KPI name"></database-search>
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr>
