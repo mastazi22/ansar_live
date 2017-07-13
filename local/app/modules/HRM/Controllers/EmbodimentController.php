@@ -1006,4 +1006,10 @@ class EmbodimentController extends Controller
         return Response::json($ansar->first());
 
     }
+
+    public function disembodiedThreeYearOverList(){
+
+        $data = EmbodimentModel::whereYear('joining_date','<=',2013);
+        return $data;
+    }
 }

@@ -44,6 +44,7 @@
             $scope.training = []
             $scope.nomineeRows = [];
             $scope.nomineeEngRows = [];
+            $scope.disableDDT = false;
             $scope.profile_pic = " ";
             $scope.formSubmitResult = {};
             $scope.ppp = {educationIdBng: []};
@@ -79,22 +80,28 @@
 
             $scope.SelectedDivision = "{{$ansarAllDetails->division_id}}";
             if ($scope.SelectedDivision) {
+                $scope.disableDDT = true;
                 getNameService.getDistric($scope.SelectedDivision).then(function (response) {
                     $scope.district = response.data;
+                    $scope.disableDDT = false;
                 })
             }
             $scope.SelectedDistrict = "{{$ansarAllDetails->unit_id}}";
             if ($scope.SelectedDistrict) {
+                $scope.disableDDT = true;
                 getNameService.getThana($scope.SelectedDistrict).then(function (response) {
                     $scope.thana = response.data;
+                    $scope.disableDDT = false;
                 })
             }
 
             $scope.ThanaModel = "{{$ansarAllDetails->thana_id}}";
 
             if ($scope.ThanaModel) {
+                $scope.disableDDT = true;
                 getNameService.getThana($scope.SelectedDistrict).then(function (response) {
                     $scope.thana = response.data;
+                    $scope.disableDDT = false;
                 })
             }
 
@@ -106,15 +113,28 @@
             }
             getNameService.getDivision().then(function (response) {
                 $scope.division = response.data;
+                $scope.disableDDT = false;
             });
             $scope.SelectedItemChanged = function () {
+                $scope.disableDDT = true;
                 getNameService.getDistric($scope.SelectedDivision).then(function (response) {
                     $scope.district = response.data;
+                    $scope.SelectedDistrict = "";
+                    $scope.thana = [];
+                    $scope.ThanaModel = "";
+                    $scope.disableDDT = false;
+                },function (response) {
+                    $scope.formSubmitResult["error"]["division_name_eng"] = ["An error occur while loading. Please try again later"]
                 })
             };
             $scope.SelectedDistrictChanged = function () {
+                $scope.disableDDT = true;
                 getNameService.getThana($scope.SelectedDistrict).then(function (response) {
                     $scope.thana = response.data;
+                    $scope.ThanaModel = "";
+                    $scope.disableDDT = false;
+                },function (response) {
+                    $scope.formSubmitResult["error"]["division_name_eng"] = ["An error occur while loading. Please try again later"]
                 })
             };
             $scope.loadSession = function () {
@@ -891,7 +911,7 @@
 
 
                                                 <div class="col-sm-10 ">
-                                                    <select name="division_name_eng" class="form-control" id="sell"
+                                                    <select ng-disabled="disbaleDDT" name="division_name_eng" class="form-control" id="sell"
                                                             ng-model="SelectedDivision"
                                                             ng-change="SelectedItemChanged()">
                                                         <option value="">--বিভাগ নির্বাচন করুন--</option>
@@ -912,7 +932,7 @@
                                                             style="color: #ff0709;font-size: 1em">*</sup>জেলা:</label>
 
                                                 <div class="col-sm-10 ">
-                                                    <select name="unit_name_eng" class="form-control" id="sell"
+                                                    <select ng-disabled="disbaleDDT" name="unit_name_eng" class="form-control" id="sell"
                                                             ng-model="SelectedDistrict"
                                                             ng-change="SelectedDistrictChanged()">
                                                         <option value="">--জেলা নির্বাচন করুন--</option>
@@ -933,7 +953,7 @@
                                                             style="color: #ff0709;font-size: 1em">*</sup>থানা:</label>
 
                                                 <div class="col-sm-10 ">
-                                                    <select name="thana_name_eng" class="form-control" id="sell"
+                                                    <select ng-disabled="disbaleDDT" name="thana_name_eng" class="form-control" id="sell"
                                                             ng-model="ThanaModel" ng-change="SelectedThanaChanged()">
                                                         <option value="">--থানা নির্বাচন করুন--</option>
                                                         <option ng-repeat="x in thana"

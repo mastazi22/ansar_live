@@ -44,10 +44,12 @@
             $scope.nomineeEngRows = [];
             $scope.profile_pic = " ";
             $scope.formSubmitResult = {};
+            $scope.ThanaModel = "";
             $scope.error = $sce.trustAsHtml("");
             $scope.ppp = {};
             $scope.rank = [];
             $scope.sessions=[];
+            $scope.disableDDT = false;
             $scope.loadingSession = false;
             $scope.selectedSession="";
             $http({
@@ -59,18 +61,27 @@
             $scope.calling = function () {
                 alert($scope.profile_pic);
             }
+            $scope.disableDDT = true;
             getNameService.getDivision().then(function (response) {
                 $scope.division = response.data;
+                $scope.disableDDT = false;
             });
             $scope.SelectedItemChanged = function () {
+                $scope.disableDDT = true;
                 getNameService.getDistric($scope.SelectedDivision).then(function (response) {
                     $scope.district = response.data;
+                    $scope.thana = [];
+                    $scope.ThanaModel = "";
+                    $scope.SelectedDistrict = "";
+                    $scope.disableDDT = false;
                 })
             };
             $scope.SelectedDistrictChanged = function () {
-//            alert($scope.SelectedDistrict);
+                $scope.disableDDT = true;
                 getNameService.getThana($scope.SelectedDistrict).then(function (response) {
                     $scope.thana = response.data;
+                    $scope.ThanaModel = "";
+                    $scope.disableDDT = false;
                 })
             };
 
@@ -691,7 +702,7 @@
                                             <div class="form-horizontal col-md-12 " ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.division_name_eng[0]}">
                                                 <label class="control-label col-sm-2" for="email"><sup style="color: #ff0709;font-size: 1em">*</sup>বিভাগ</label>
                                                 <div class="col-sm-10 ">
-                                                    <select name="division_name_eng" class="form-control" id="sell" ng-model="SelectedDivision" ng-change="SelectedItemChanged()">
+                                                    <select  name="division_name_eng" ng-disabled="disableDDT" class="form-control" id="sell" ng-model="SelectedDivision" ng-change="SelectedItemChanged()">
                                                         <option value="">--বিভাগ নির্বাচন করুন--</option>
                                                         <option ng-repeat="x in division" ng-selected="x.id=='{{Request::old('division_name_eng')}}'" value="[[x.id]]">[[x.division_name_bng]]</option>
                                                     </select>
@@ -702,7 +713,7 @@
                                             <div class="form-horizontal col-md-12 " ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.unit_name_eng[0]}">
                                                 <label class="control-label col-sm-2" for="email"><sup style="color: #ff0709;font-size: 1em">*</sup>জেলা</label>
                                                 <div class="col-sm-10 ">
-                                                    <select name="unit_name_eng" class="form-control" id="sell" ng-model="SelectedDistrict" ng-change="SelectedDistrictChanged()">
+                                                    <select ng-disabled="disableDDT" name="unit_name_eng" class="form-control" id="sell" ng-model="SelectedDistrict" ng-change="SelectedDistrictChanged()">
                                                         <option value="">--জেলা নির্বাচন করুন--</option>
                                                         <option ng-repeat="x in district" ng-selected="x.id=='{{Request::old('unit_name_eng')}}'" value="[[x.id]]">[[ x.unit_name_bng ]]
                                                         </option>
@@ -714,7 +725,7 @@
                                             <div class="form-horizontal col-md-12 " ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.thana_name_eng[0]}">
                                                 <label class="control-label col-sm-2" for="email"><sup style="color: #ff0709;font-size: 1em">*</sup>থানা</label>
                                                 <div class="col-sm-10 ">
-                                                    <select name="thana_name_eng" class="form-control" id="sell" ng-model="ThanaModel" ng-change="SelectedThanaChanged()">
+                                                    <select ng-disabled="disableDDT" name="thana_name_eng" class="form-control" id="sell" ng-model="ThanaModel" ng-change="SelectedThanaChanged()">
                                                         <option value="">--থানা নির্বাচন করুন--</option>
                                                         <option ng-repeat="x in thana" ng-selected="x.id=='{{Request::old('thana_name_eng')}}'" value="[[x.id]]">[[ x.thana_name_bng ]]</option>
                                                     </select>

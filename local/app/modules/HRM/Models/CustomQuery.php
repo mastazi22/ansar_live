@@ -31,7 +31,9 @@ class CustomQuery
             ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
             ->join('tbl_units as pu', 'tbl_ansar_parsonal_info.unit_id', '=', 'pu.id')
             ->where('tbl_panel_info.locked', 0)
-            ->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"');
+            ->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"')
+            ->where('tbl_ansar_status_info.pannel_status', 1)
+            ->where('tbl_ansar_status_info.block_list_status', 0);
         if ($user->type == 22) {
             if (in_array($exclude_district, Config::get('app.offer'))) {
                 $d = Config::get('app.exclude_district');
@@ -50,7 +52,6 @@ class CustomQuery
                 $query = $query->whereIn('pu.id', $unit_id);
             }
         }
-        $query->where('tbl_ansar_status_info.pannel_status', 1)->where('tbl_ansar_status_info.block_list_status', 0)->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50');
         $pc_male = clone $query;
         $pc_female = clone $query;
         $apc_male = clone $query;
@@ -58,33 +59,33 @@ class CustomQuery
         $ansar_male = clone $query;
         $ansar_female = clone $query;
         $pc_male->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
-            ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')
+            ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<55')
             ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($pc['male']);
 //        return DB::getQueryLog();
         $pc_female->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
-            ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')
+            ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<55')
             ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($pc['female']);
         $ansar_male->where('tbl_ansar_parsonal_info.designation_id', '=', 1)
-            ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')
+            ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
             ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($ansar['male']);
         $ansar_female->where('tbl_ansar_parsonal_info.designation_id', '=', 1)
-            ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')
+            ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
             ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($ansar['female']);
         $apc_male->where('tbl_ansar_parsonal_info.designation_id', '=', 2)
-            ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')
+            ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<55')
             ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($apc['male']);
         $apc_female->where('tbl_ansar_parsonal_info.designation_id', '=', 2)
-            ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')
+            ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<55')
             ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')->take($apc['female']);
 
