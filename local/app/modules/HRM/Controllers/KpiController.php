@@ -55,8 +55,32 @@ class KpiController extends Controller
         }
         return CustomQuery::kpiInfo($offset, $limit, $division, $unit, $thana,$q);
     }
-
-
+    public function inactiveKpiList()
+    {
+        $limit = Input::get('limit');
+        $offset = Input::get('offset');
+        $unit = Input::get('unit');
+        $thana = Input::get('thana');
+        $division = Input::get('division');
+        $q = Input::get('q');
+        $rules = [
+            'limit' => 'numeric',
+            'offset' => 'numeric',
+            'unit' => ['required','regex:/^(all)$|^[0-9]+$/'],
+            'thana' => ['required','regex:/^(all)$|^[0-9]+$/'],
+            'division' => ['required','regex:/^(all)$|^[0-9]+$/'],
+        ];
+        $validation = Validator::make(Input::all(), $rules);
+        if ($validation->fails()) {
+            return response('Invalid Request(400)', 400);
+        } else {
+            return CustomQuery::inactiveKpiInfo($offset, $limit, $unit, $thana,$division,$q);
+        }
+    }
+    public function inactiveKpiView()
+    {
+        return view('HRM::Kpi.inactive_kpi_view');
+    }
     public function saveKpiInfo(Request $request)
     {
         $kpi_name = $request->input('kpi_name');
@@ -757,38 +781,9 @@ class KpiController extends Controller
         }
     }
 
-    public function inactiveKpiView()
-    {
-        return view('HRM::Kpi.inactive_kpi_view');
-    }
 
-    public function inactiveKpiList()
-    {
-        $limit = Input::get('limit');
-        $offset = Input::get('offset');
-        $unit = Input::get('unit');
-        $thana = Input::get('thana');
-        $division = Input::get('division');
-        $view = Input::get('view');
-        $rules = [
-            'limit' => 'numeric',
-            'offset' => 'numeric',
-            'unit' => ['required','regex:/^(all)$|^[0-9]+$/'],
-            'thana' => ['required','regex:/^(all)$|^[0-9]+$/'],
-            'division' => ['required','regex:/^(all)$|^[0-9]+$/'],
-            'view' => 'regex:/[a-z]+/'
-        ];
-        $validation = Validator::make(Input::all(), $rules);
-        if ($validation->fails()) {
-            return response('Invalid Request(400)', 400);
-        } else {
-            if (strcasecmp($view, 'view') == 0) {
-                return CustomQuery::inactiveKpiInfo($offset, $limit, $unit, $thana,$division);
-            } else {
-                return CustomQuery::inactiveKpiInfoCount($unit, $thana,$division);
-            }
-        }
-    }
+
+
 
     public function activeKpi($id,Request $request)
     {

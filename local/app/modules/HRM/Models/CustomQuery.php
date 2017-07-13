@@ -1242,7 +1242,7 @@ class CustomQuery
         return Response::json(['total' => $total]);
     }
 
-    public static function inactiveKpiInfo($offset, $limit, $unit, $thana, $division = "all")
+    public static function inactiveKpiInfo($offset, $limit, $unit, $thana, $division = "all",$q)
     {
         $kpiQuery = DB::table('tbl_kpi_info')
             ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
@@ -1266,9 +1266,19 @@ class CustomQuery
             $kpiQuery->where('tbl_kpi_info.division_id', '=', $division);
 
         }
+        if ($q) {
+            global $name;
+            $name = $q;
+            $kpiQuery->where(function ($q) {
+                global $name;
+                $q->where('tbl_kpi_info.kpi_name_eng', 'LIKE', '%' . $name . '%')
+                    ->orWhere('tbl_kpi_info.kpi_name', 'LIKE', '%' . $name . '%');
+            });
+        }
+        $total = clone $kpiQuery;
         $kpis = $kpiQuery->select('tbl_kpi_info.id', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.withdraw_status', 'tbl_kpi_info.status_of_kpi as status', 'tbl_kpi_detail_info.kpi_withdraw_date as date', 'tbl_division.division_name_eng as division', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana')->skip($offset)->limit($limit)->get();
 //        return View::make('kpi.selected_kpi_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'kpis' => $kpis]);
-        return Response::json(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'kpis' => $kpis]);
+        return Response::json(['total' => $total->distinct()->count('tbl_kpi_info.id'),'index' => ((ceil($offset / $limit)) * $limit) + 1, 'kpis' => $kpis]);
 
     }
 
