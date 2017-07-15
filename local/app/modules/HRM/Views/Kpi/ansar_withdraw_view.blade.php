@@ -25,6 +25,9 @@
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
             $scope.errorMessage = '';
             $scope.errorFound = 0;
+            $scope.allSelected = false;
+            $scope.selected = [];
+            $scope.selectedAnsar = [];
             $scope.verifyMemorandumId = function () {
                 var data = {
                     memorandum_id: $scope.memorandumId
@@ -39,6 +42,44 @@
 
                 })
             }
+            $scope.reset = function () {
+                $scope.allSelected = false;
+                $scope.selectedAnsar = [];
+                $scope.ansars = [];
+                $scope.selected = []
+            }
+            $scope.changeSelected = function (i) {
+                var a = 0;
+                $scope.selected.forEach(function (value,index) {
+
+                    if(value===false) {
+
+                        var i = $scope.selectedAnsar.indexOf($scope.ansars[i]);
+                        $scope.selectedAnsar.splice(i,1);
+                    }
+                    else {
+                        a++;
+                        if($scope.selectedAnsar.indexOf($scope.ansars[value])<0)$scope.selectedAnsar.push($scope.ansars[value])
+                    }
+                })
+                console.log(a)
+                $scope.allSelected = a==$scope.ansars.length;
+            }
+            $scope.changeAll = function () {
+                if($scope.allSelected){
+                    $scope.selectedAnsar = []
+                    $scope.ansars.forEach(function (value,index) {
+
+                            $scope.selectedAnsar.push(value);
+                            $scope.selected[index] = index;
+
+                    })
+                }
+                else{
+                    $scope.selectedAnsar = [];
+                    $scope.selected = Array.apply(null,Array($scope.ansars.length)).map(Boolean.prototype.valueOf,false);
+                }
+            }
             $scope.loadAnsar = function (param) {
                 console.log(param)
                 $scope.allLoading = true;
@@ -50,6 +91,7 @@
                     $scope.errorFound = 0;
                     $scope.ansars = response.data;
                     $scope.allLoading = false;
+                    $scope.selected = Array.apply(null,Array($scope.ansars.length)).map(Boolean.prototype.valueOf,false);
                 },function(response){
                     $scope.allLoading = false;
                     $scope.errorFound = 1;
@@ -107,6 +149,9 @@
                             show-item="['range','unit','thana','kpi]"
                             type="single"
                             kpi-change="loadAnsar(param)"
+                            range-change="reset()"
+                            unit-change="reset()"
+                            thana-change="reset()"
                             start-load="range"
                             field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
                             data="params"
@@ -125,6 +170,9 @@
                                         <th>Home District</th>
                                         <th>Reporting Date</th>
                                         <th>Embodiment Date</th>
+                                        <th>
+                                            <input type="checkbox" ng-model="allSelected" ng-change="changeAll()">
+                                        </th>
                                     </tr>
                                     <tr ng-repeat="a in ansars">
                                         <td>[[$index+1]]</td>
@@ -135,6 +183,9 @@
                                         <td>[[a.unit_name_bng]]</td>
                                         <td>[[a.reporting_date|dateformat:'DD-MMM-YYYY']]</td>
                                         <td>[[a.joining_date|dateformat:'DD-MMM-YYYY']]</td>
+                                        <td>
+                                            <input type="checkbox" ng-model="selected[$index]" ng-change="changeSelected($index)" ng-true-value="[[$index]]" ng-false-value="false">
+                                        </td>
                                     </tr>
 
                                     <tr colspan="7" class="warning" ng-if="ansars.length<=0">
@@ -168,6 +219,39 @@
                             <div class="register-box" style="width: auto;margin: 0">
                                 <div class="register-box-body  margin-bottom">
                                     <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered">
+
+                                                    <tr>
+                                                        <th>Sl No.</th>
+                                                        <th>Ansar ID</th>
+                                                        <th>Ansar Name</th>
+                                                        <th>Ansar Designation</th>
+                                                        <th>Ansar Gender</th>
+                                                        <th>Home District</th>
+                                                        <th>Reporting Date</th>
+                                                        <th>Embodiment Date</th>
+                                                    </tr>
+                                                    <tr ng-repeat="a in selectedAnsar">
+                                                        <input type="hidden" name="ansarIds[]" value="[[a.ansar_id]]">
+                                                        <td>[[$index+1]]</td>
+                                                        <td>[[a.ansar_id]]</td>
+                                                        <td>[[a.ansar_name_eng]]</td>
+                                                        <td>[[a.name_bng]]</td>
+                                                        <td>[[a.sex]]</td>
+                                                        <td>[[a.unit_name_bng]]</td>
+                                                        <td>[[a.reporting_date|dateformat:'DD-MMM-YYYY']]</td>
+                                                        <td>[[a.joining_date|dateformat:'DD-MMM-YYYY']]</td>
+
+                                                    </tr>
+
+                                                    <tr colspan="7" class="warning" ng-if="ansars.length<=0">
+                                                        <td colspan="10">No Ansar is available to Withdraw</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
                                         <div class="col-sm-4">
                                             <div class="form-group">
                                                 <label class="control-label">Memorandum no.&nbsp;&nbsp;&nbsp;<span

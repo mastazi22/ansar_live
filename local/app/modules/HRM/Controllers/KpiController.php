@@ -300,6 +300,7 @@ class KpiController extends Controller
             'kpi_id_withdraw' => 'required|numeric|regex:/^[0-9]+$/',
             'memorandum_id' => 'required',
             'kpi_withdraw_date' => 'required|date_format:d-M-Y|date_validity',
+            'ansarIds'=>'required|is_array|array_type:int'
         ];
         $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {
@@ -318,6 +319,7 @@ class KpiController extends Controller
             $user = [];
             if ($kpi_id && $ansar_ids && $withdraw_date && $memorandum_id) {
                 foreach ($ansar_ids as $ansar_id) {
+                    if(!in_array($ansar_id->ansar_id,$request->get('ansarIds'))) continue;
                     $withdraw_ansar_id = $ansar_id->ansar_id;
                     $freeze_change = new FreezingInfoModel();
                     $freeze_change->ansar_id = $withdraw_ansar_id;
