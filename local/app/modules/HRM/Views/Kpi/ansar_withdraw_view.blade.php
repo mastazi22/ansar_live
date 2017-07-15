@@ -50,19 +50,21 @@
             }
             $scope.changeSelected = function (i) {
                 var a = 0;
+                if($scope.selected[i]===false){
+                    var i = $scope.selectedAnsar.indexOf($scope.ansars[i]);
+                    $scope.selectedAnsar.splice(i,1);
+                }
+                else {
+                    $scope.selectedAnsar.push($scope.ansars[$scope.selected[i]])
+                }
                 $scope.selected.forEach(function (value,index) {
 
-                    if(value===false) {
+                    if(value!==false) {
 
-                        var i = $scope.selectedAnsar.indexOf($scope.ansars[i]);
-                        $scope.selectedAnsar.splice(i,1);
-                    }
-                    else {
-                        a++;
-                        if($scope.selectedAnsar.indexOf($scope.ansars[value])<0)$scope.selectedAnsar.push($scope.ansars[value])
+                        a++
                     }
                 })
-                console.log(a)
+                console.log($scope.selectedAnsar)
                 $scope.allSelected = a==$scope.ansars.length;
             }
             $scope.changeAll = function () {
