@@ -248,5 +248,8 @@ class Kernel extends ConsoleKernel
                 }
             }
         })->twiceDaily(0,12)->name('rest_to_panel')->withoutOverlapping();
+        $schedule->call(function(){
+
+        })->twiceDaily(0,12)->name("ansar_retirement")->withoutOverlapping();
     }
 }

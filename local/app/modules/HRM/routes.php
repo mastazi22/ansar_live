@@ -415,8 +415,11 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
                 ->join('tbl_units','tbl_units.id','=','tbl_kpi_info.unit_id')
                 ->where('tbl_units.id',13)
                 ->where('block_list_status',0)
+                ->where('embodied_status',1)
                 ->whereYear('joining_date','<=',2013)
-                ->select('tbl_embodiment.*','tbl_ansar_status_info.block_list_status')->get();
+                ->select('tbl_embodiment.*','tbl_ansar_status_info.block_list_status')
+                ->take(100)
+                ->get();
             foreach ($data as $ansar){
                 EmbodimentModel::find($ansar->id)->delete();
                 $b = AnsarStatusInfo::where('ansar_id',$ansar->ansar_id)->first();
