@@ -413,7 +413,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
                 ->join('tbl_ansar_status_info','tbl_ansar_status_info.ansar_id','=','tbl_embodiment.ansar_id')
                 ->join('tbl_kpi_info','tbl_kpi_info.id','=','tbl_embodiment.kpi_id')
                 ->join('tbl_units','tbl_units.id','=','tbl_kpi_info.unit_id')
-                ->where('tbl_units.id',13)
+                ->where('tbl_units.id',5)
                 ->where('block_list_status',0)
                 ->where('embodied_status',1)
                 ->whereYear('joining_date','<=',2013)
