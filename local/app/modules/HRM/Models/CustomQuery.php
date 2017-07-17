@@ -5,6 +5,7 @@ namespace App\modules\HRM\Models;
 
 
 use App\Helper\Facades\GlobalParameterFacades;
+use App\Helper\Helper;
 use App\Helper\QueryHelper;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +23,8 @@ class CustomQuery
 
     public static function getAnsarInfo($pc = array('male' => 0, 'female' => 0), $apc = array('male' => 0, 'female' => 0), $ansar = array('male' => 0, 'female' => 0), $unit_id = [], $exclude_district = null,$user)
     {
+        $ansar_retirement_age = Helper::getAnsarRetirementAge()-3;
+        $pc_apc_retirement_age = Helper::getPcApcRetirementAge()-3;
         DB::enableQueryLog();
         $query = DB::table('tbl_ansar_parsonal_info')
             ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
@@ -59,33 +62,33 @@ class CustomQuery
         $ansar_male = clone $query;
         $ansar_female = clone $query;
         $pc_male->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
-            ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<55')
+            ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<'.$pc_apc_retirement_age)
             ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($pc['male']);
 //        return DB::getQueryLog();
         $pc_female->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
-            ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<55')
+            ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<'.$pc_apc_retirement_age)
             ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($pc['female']);
         $ansar_male->where('tbl_ansar_parsonal_info.designation_id', '=', 1)
-            ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
+            ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<'.$ansar_retirement_age)
             ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($ansar['male']);
         $ansar_female->where('tbl_ansar_parsonal_info.designation_id', '=', 1)
-            ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<50')
+            ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<'.$ansar_retirement_age)
             ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($ansar['female']);
         $apc_male->where('tbl_ansar_parsonal_info.designation_id', '=', 2)
-            ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<55')
+            ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<'.$pc_apc_retirement_age)
             ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')
             ->take($apc['male']);
         $apc_female->where('tbl_ansar_parsonal_info.designation_id', '=', 2)
-            ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<55')
+            ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<'.$pc_apc_retirement_age)
             ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')->take($apc['female']);
 
