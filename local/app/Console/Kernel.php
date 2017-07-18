@@ -248,6 +248,38 @@ class Kernel extends ConsoleKernel
                 }
             }
         })->twiceDaily(0,12)->name('rest_to_panel')->withoutOverlapping();
+        $schedule->call(function () {
+            $rest_ansars = RestInfoModel::whereRaw('FLOOR(DATEDIFF(rest_date,NOW())/365)>=1')->where('disembodiment_reason_id',5)->get();
+            Log::info("REST to PANEl DICIPLINARY : CALLED");
+
+            foreach($rest_ansars as $ansar){
+
+                if(!in_array(AnsarStatusInfo::REST_STATUS,$ansar->status->getStatus())||in_array(AnsarStatusInfo::BLOCK_STATUS,$ansar->status->getStatus())||in_array(AnsarStatusInfo::BLACK_STATUS,$ansar->status->getStatus())) continue;
+                DB::beginTransaction();
+                try{
+                    $panel_log = PanelInfoLogModel::where('ansar_id',$ansar->ansar_id)->orderBy('id','desc')->first();
+                    PanelModel::create([
+                        'ansar_id'=>$ansar->ansar_id,
+                        'come_from'=>'Rest',
+                        'panel_date'=>Carbon::today(),
+                        'memorandum_id'=>isset($panel_log->old_memorandum_id)?$panel_log->old_memorandum_id:'N\A',
+                        'ansar_merit_list'=>isset($panel_log->merit_list)?$panel_log->merit_list:'N\A',
+                        'action_user_id'=>'0',
+                    ]);
+                    $ansar->status->update([
+                        'pannel_status'=>1,
+                        'rest_status'=>0,
+                    ]);
+                    $ansar->saveLog('Panel');
+                    $ansar->delete();
+                    DB::commit();
+                    Log::info("REST to PANEl :".$ansar->ansar_id);
+                }catch(\Exception $e){
+                    DB::rollBack();
+                    Log::info("REST to PANEl FAILED:".$ansar->ansar_id);
+                }
+            }
+        })->twiceDaily(0,12)->name('rest_to_panel_disciplaney_action')->withoutOverlapping();
         $schedule->call(function(){
 
         })->twiceDaily(0,12)->name("ansar_retirement")->withoutOverlapping();

@@ -511,7 +511,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
         if(!Auth::check()) return [];
-        $v = Cache::remember('user_data_'+$user->id, 10, function () use ($user) {
+        $v = Cache::remember('user_data_'.$user->id, 10, function () use ($user) {
 
 
             $kpis = $user->kpi;
