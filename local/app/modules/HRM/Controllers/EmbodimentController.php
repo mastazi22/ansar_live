@@ -183,6 +183,12 @@ class EmbodimentController extends Controller
         if ($valid->fails()) {
             return $valid->messages()->toJson();
         }
+        $kpi_info = KpiGeneralModel::find($request->kpi_id);
+        $embodimentInfo = $kpi_info->embodiment->count();
+        $kpi_details = $kpi_info->details;
+        if($embodimentInfo+count($request->ansar_ids)>$kpi_details->total_ansar_given){
+            return Response::json(['status'=>false,'message'=>"This Ansar Cannot be Embodied. Because the total number of Ansars in this KPI already exceed"]);
+        };
         $memorandum_id = $request->input('memorandum_id');
         $global_value = GlobalParameterFacades::getValue("embodiment_period");
         $global_unit = GlobalParameterFacades::getUnit("embodiment_period");
@@ -286,7 +292,7 @@ class EmbodimentController extends Controller
                 if(!$sms_receive_info) {
                     throw new \Exception('Invalid request for Ansar ID: '.$ansar['ansar_id']);
                 }
-                $kpi = KpiGeneralModel::where('id',$ansar['kpi_id'])->first();
+                $kpi = KpiGeneralModel::find($ansar['kpi_id']);
                 if(!$kpi){
                     throw new \Exception('Invalid request for Ansar ID: '.$ansar['ansar_id']);
                 }

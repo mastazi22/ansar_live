@@ -6,7 +6,8 @@ use Carbon\Carbon;
 
 class GlobalParameter
 {
-    const RETIREMENT_AGE = 'retirement_age';
+    const RETIREMENT_AGE_ANSAR = 'retirement_age_ansar';
+    const RETIREMENT_AGE_PC_APC = 'retirement_age_pc_apc';
     const EMBODIMENT_PERIOD = 'embodiment_period';
     const REST_PERIOD = 'rest_period';
     const ALLOCATED_LEAVE = 'allocated_leave';
@@ -42,8 +43,10 @@ class GlobalParameter
     public function getUnit($type)
     {
         switch ($type) {
-            case Self::RETIREMENT_AGE:
-                return $this->globalParameter->where('param_name', 'retirement_age')->first()->param_unit;
+            case Self::RETIREMENT_AGE_ANSAR:
+                return $this->globalParameter->where('param_name', 'retirement_age_ansar')->first()->param_unit;
+            case Self::RETIREMENT_AGE_PC_APC:
+                return $this->globalParameter->where('param_name', 'retirement_age_pc_apc')->first()->param_unit;
             case Self::EMBODIMENT_PERIOD:
                 return $this->globalParameter->where('param_name', 'embodiment_period')->first()->param_unit;
             case Self::REST_PERIOD:
@@ -59,8 +62,10 @@ class GlobalParameter
     public function getValue($type)
     {
         switch ($type) {
-            case Self::RETIREMENT_AGE:
-                return $this->globalParameter->where('param_name', 'retirement_age')->first()->param_value;
+            case Self::RETIREMENT_AGE_ANSAR:
+                return $this->globalParameter->where('param_name', 'retirement_age_ansar')->first()->param_value;
+            case Self::RETIREMENT_AGE_PC_APC:
+                return $this->globalParameter->where('param_name', 'retirement_age_pc_apc')->first()->param_value;
             case Self::EMBODIMENT_PERIOD:
                 return $this->globalParameter->where('param_name', 'embodiment_period')->first()->param_value;
             case Self::REST_PERIOD:

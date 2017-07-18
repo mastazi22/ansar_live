@@ -23,6 +23,7 @@
             $scope.updatedDistrict = [];
             $scope.removedDistrict = [];
             $scope.allDistrict = [];
+            $scope.quotaLoading = true;
             $scope.data = {offeredDistrict: ""};
             $scope.selectedAnsar = [];
             $scope.result = {}
@@ -150,11 +151,13 @@
                 )
             }
             $scope.getOfferCount = function () {
+                $scope.quotaLoading = true;
                 $http({
                     url: "{{URL::to('HRM/get_offer_count')}}",
                     method: 'get'
                 }).then(function (response) {
                     $scope.offerQuota = response.data.total_offer;
+                    $scope.quotaLoading = false;
                 }, function (response) {
 
                 })
@@ -210,7 +213,8 @@
                         <div class="box box-solid">
                             <div class="box-body">
                                 <h4 ng-if="!isAdmin">You have total
-                                    <span style="text-decoration: underline" ng-class="{'text-green':offerQuota>50,'text-danger':offerQuota<=10}">[[offerQuota]]</span>
+                                    <span ng-hide="quotaLoading" style="text-decoration: underline" ng-class="{'text-green':offerQuota>50,'text-danger':offerQuota<=10}">[[offerQuota]]</span>
+                                    <i ng-show="quotaLoading" class="fa fa-pulse fa-spinner"></i>
                                     offer left
                                 </h4>
 
@@ -319,7 +323,7 @@
 
                             </div>
                         </div>
-                        <button class="btn btn-primary pull-right" confirm  callback="sendOffer()" message="Are you sure to send offer." ng-disabled="(isAdmin&&!data.offeredDistrict)">
+                        <button class="btn btn-primary pull-right" confirm  callback="sendOffer()" message="Are you sure to send offer." ng-disabled="(isAdmin&&!data.offeredDistrict)||quotaLoading">
                             <i ng-show="showLoadScreen" class="fa fa-send"></i><i ng-hide="showLoadScreen" class="fa fa-spinner fa-pulse"></i>
                             [[buttonText]]
                         </button>
