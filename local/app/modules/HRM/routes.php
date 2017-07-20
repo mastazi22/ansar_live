@@ -417,6 +417,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
             $sid = env('SSL_SID','ANSARVDP');
             $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
             $offered_ansar = OfferSMS::with(['ansar'])->whereDate('sms_send_datetime','=','2017-07-19')->take(10)->get();
+return $offered_ansar;
 //            Log::info($offered_ansar);
             foreach ($offered_ansar as $offer) {
                 try {
@@ -425,16 +426,16 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
                     $body = 'If yesterday you can not send YES then try again today';
                     $phone = '88' . trim($a->mobile_no_self);
                     $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
-                    $crl = curl_init();
-                    curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, FALSE);
-                    curl_setopt($crl, CURLOPT_SSL_VERIFYHOST, 2);
-                    curl_setopt($crl, CURLOPT_URL, $url);
-                    curl_setopt($crl, CURLOPT_HEADER, 0);
-                    curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
-                    curl_setopt($crl, CURLOPT_POST, 1);
-                    curl_setopt($crl, CURLOPT_POSTFIELDS, $param);
-                    $response = curl_exec($crl);
-                    curl_close($crl);
+//                    $crl = curl_init();
+//                    curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, FALSE);
+//                    curl_setopt($crl, CURLOPT_SSL_VERIFYHOST, 2);
+//                    curl_setopt($crl, CURLOPT_URL, $url);
+//                    curl_setopt($crl, CURLOPT_HEADER, 0);
+//                    curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
+//                    curl_setopt($crl, CURLOPT_POST, 1);
+//                    curl_setopt($crl, CURLOPT_POSTFIELDS, $param);
+//                    $response = curl_exec($crl);
+//                    curl_close($crl);
                     echo "SUCCESS<br>";
                 } catch (\Exception $e) {
                     Log::info('OFFER SEND ERROR: ' . $e->getMessage());
