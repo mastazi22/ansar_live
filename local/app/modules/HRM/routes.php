@@ -417,7 +417,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
             $sid = env('SSL_SID','ANSARVDP');
             $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
             $offered_ansar = OfferSMS::with(['ansar'])->whereDate('sms_send_datetime','=','2017-07-19')->take(10)->get();
-return $offered_ansar;
+
 //            Log::info($offered_ansar);
             foreach ($offered_ansar as $offer) {
                 try {
