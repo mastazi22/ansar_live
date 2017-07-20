@@ -409,50 +409,37 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('upload_original_info',['as'=>'upload_original_info','uses'=>'GeneralSettingsController@uploadOriginalInfo']);
         Route::get('upload_original_info',['as'=>'upload_original_info_view','uses'=>'GeneralSettingsController@uploadOriginalInfoView']);
         Route::get('test',function(){
-            $data = DB::table('tbl_embodiment')
-                ->join('tbl_ansar_status_info','tbl_ansar_status_info.ansar_id','=','tbl_embodiment.ansar_id')
-                ->join('tbl_kpi_info','tbl_kpi_info.id','=','tbl_embodiment.kpi_id')
-                ->join('tbl_units','tbl_units.id','=','tbl_kpi_info.unit_id')
-                ->where('tbl_units.id',5)
-                ->where('block_list_status',0)
-                ->where('embodied_status',1)
-                ->whereYear('joining_date','<=',2013)
-                ->select('tbl_embodiment.*','tbl_ansar_status_info.block_list_status')
-                ->take(100)
-                ->get();
-            foreach ($data as $ansar){
-                EmbodimentModel::find($ansar->id)->delete();
-                $b = AnsarStatusInfo::where('ansar_id',$ansar->ansar_id)->first();
-                $b->update(['rest_status'=>1,'embodied_status'=>0]);
-                $rest_entry = new RestInfoModel();
-                $rest_entry->ansar_id = $ansar->ansar_id;
-                $rest_entry->old_embodiment_id = $ansar->id;
-                $rest_entry->memorandum_id = 'auto';
-                $rest_entry->rest_date = Carbon::now();
-                $rest_entry->active_date = Carbon::now();
-                $rest_entry->total_service_days = Carbon::now()->addDays(1)->diffInDays(Carbon::parse($ansar->joining_date));
-                $rest_entry->disembodiment_reason_id = 1;
-                $rest_entry->rest_form = "Regular";
-                $rest_entry->action_user_id = Auth::user()->id;
-                $rest_entry->comment = "NO COMMENT";
-                $rest_entry->save();
-                $embodiment_log_update = new EmbodimentLogModel();
-                $embodiment_log_update->old_embodiment_id = $ansar->id;
-                $embodiment_log_update->old_memorandum_id = $ansar->memorandum_id;
-                $embodiment_log_update->ansar_id = $ansar->ansar_id;
-                $embodiment_log_update->kpi_id = $ansar->kpi_id;
-                $embodiment_log_update->reporting_date = $ansar->reporting_date;
-                $embodiment_log_update->joining_date = $ansar->joining_date;
-                $embodiment_log_update->transfered_date = $ansar->transfered_date;
-                $embodiment_log_update->release_date = Carbon::now();
-                $embodiment_log_update->disembodiment_reason_id = 1;
-                $embodiment_log_update->move_to = "Rest";
-                $embodiment_log_update->service_extension_status = $ansar->service_extension_status;
-                $embodiment_log_update->comment = "NO COMMENT";
-                $embodiment_log_update->action_user_id = 0;
-                $embodiment_log_update->save();
+            if(Auth::user()->type!=11) return;
+            Log::info("called : send_offer");
+//            //return;
+            $user = env('SSL_USER_ID','ansarapi');
+            $pass = env('SSL_PASSWORD','x83A7Z96');
+            $sid = env('SSL_SID','ANSARVDP');
+            $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
+            $offered_ansar = OfferSMS::with(['ansar'])->whereDate('sms_send_datetime','=','2017-07-19')->take(10)->get();
+//            Log::info($offered_ansar);
+            foreach ($offered_ansar as $offer) {
+                try {
+
+                    $a = $offer->ansar;
+                    $body = 'If yesterday you can not send YES then try again today';
+                    $phone = '88' . trim($a->mobile_no_self);
+                    $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
+                    $crl = curl_init();
+                    curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, FALSE);
+                    curl_setopt($crl, CURLOPT_SSL_VERIFYHOST, 2);
+                    curl_setopt($crl, CURLOPT_URL, $url);
+                    curl_setopt($crl, CURLOPT_HEADER, 0);
+                    curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
+                    curl_setopt($crl, CURLOPT_POST, 1);
+                    curl_setopt($crl, CURLOPT_POSTFIELDS, $param);
+                    $response = curl_exec($crl);
+                    curl_close($crl);
+                    echo "SUCCESS<br>";
+                } catch (\Exception $e) {
+                    Log::info('OFFER SEND ERROR: ' . $e->getMessage());
+                }
             }
-            return $data;
 
         });
     });
