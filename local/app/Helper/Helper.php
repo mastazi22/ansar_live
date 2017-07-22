@@ -38,9 +38,10 @@ class Helper
                 ->where('tbl_kpi_info.unit_id',$user->district_id)
                 ->whereRaw('DATE_SUB(tbl_embodiment.service_ended_date,INTERVAL '.GlobalParameterFacades::getValue(GlobalParameter::OFFER_QUOTA_DAY).' '.strtoupper(GlobalParameterFacades::getUnit(GlobalParameter::OFFER_QUOTA_DAY)).') <=NOW() ')->count();
             $q = DB::table('tbl_embodiment')
-                ->join('tbl_kpi_info','tbl_kpi_info.id','=','tbl_embodiment.kpi_id')
+                ->rightJoin('tbl_kpi_info','tbl_kpi_info.id','=','tbl_embodiment.kpi_id')
                 ->join('tbl_kpi_detail_info','tbl_kpi_info.id','=','tbl_kpi_detail_info.kpi_id')
                 ->where('tbl_kpi_info.unit_id',$user->district_id)
+                ->where('tbl_kpi_info.status_of_kpi',1)
                 ->groupBy('tbl_kpi_info.id')
                 ->select(DB::raw('(tbl_kpi_detail_info.total_ansar_given-COUNT(tbl_embodiment.ansar_id)) as vacency'));
             $vacency = DB::table(DB::raw("(".$q->toSql().") src"))->mergeBindings($q)->sum('vacency');
