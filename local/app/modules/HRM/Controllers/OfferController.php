@@ -170,9 +170,9 @@ class OfferController extends Controller
         return View::make('HRM::Offer.offer_quota', ['quota' => $quota]);
     }
 
-    function getOfferQuota()
+    function getOfferQuota(Request $request)
     {
-        return Response::json(CustomQuery::offerQuota());
+        return Response::json(CustomQuery::offerQuota($request->range?$request->range:'all'));
     }
 
     function updateOfferQuota(Request $request)

@@ -2,28 +2,69 @@
 @section('title','Offer Quota')
 @section('breadcrumb')
     {!! Breadcrumbs::render('offer_quota') !!}
-    @endsection
+@endsection
 @section('content')
+    <script>
+        GlobalApp.controller('QuotaController', function ($scope, $rootScope, $http) {
+            $scope.quotas = [];
+            $scope.param = {};
+            $scope.loadQuota = function () {
+                console.log($scope.param)
+                $http({
+                    url: '/HRM/get_offer_quota',
+                    method: 'get',
+                    params: {range: $scope.param.range}
+                }).then(function (response) {
+
+                    $scope.quotas  = response.data;
+                },function (response) {
+
+                })
+            }
+        })
+    </script>
     <div ng-controller="QuotaController">
         {{--<div class="breadcrumbplace">--}}
-            {{--{!! Breadcrumbs::render('offer_quota') !!}--}}
+        {{--{!! Breadcrumbs::render('offer_quota') !!}--}}
         {{--</div>--}}
         <section class="content">
-            @if(Session::has('success'))
-                <div class="alert alert-success">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <i class="fa fa-check"></i>&nbsp;{{Session::get('success')}}
-                </div>
-                @endif
-                @if(Session::has('error'))
-                    <div class="alert alert-danger">
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                        <i class="fa fa-warning"></i>&nbsp;{{Session::get('error')}}
-                    </div>
-                @endif
+
             <div class="box box-solid">
-                <div class="box-body" style="width: 70%;margin: 0 auto">
-                    <form id="offer-quota-form" action="{{URL::route('update_offer_quota')}}" method="post">
+                <div class="box-body">
+                    <filter-template
+                            show-item="['range']"
+                            type="all"
+                            range-change="loadQuota()"
+                            on-load="loadQuota()"
+                            data="param"
+                            start-load="range"
+                            field-width="{range:'col-sm-5'}"
+                    ></filter-template>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+
+                            <tr>
+                                <th>SL. NO</th>
+                                <th>Unit name</th>
+                                <th>Total Offer quota</th>
+                                <th>Used Offer quota</th>
+                                <th>Offer quota Left</th>
+                            </tr>
+                            <tr ng-repeat="q in quotas">
+                                <td>[[$index+1]]</td>
+                                <td>[[q.unit_name_bng]]</td>
+                                <td>[[q.total_quota]]</td>
+                                <td>[[q.quota_used]]</td>
+                                <td>[[q.total_quota-q.quota_used]]</td>
+                            </tr>
+                            <tr ng-if="quotas.length<=0">
+                                <td class="text text-yellow" colspan="5">No data available</td>
+                            </tr>
+
+                        </table>
+
+                    </div>
+                    {{--<form id="offer-quota-form" action="{{URL::route('update_offer_quota')}}" method="post">
                         {{csrf_field()}}
                         @foreach($quota as $q)
                         <div class="row margin-bottom-input form-group">
@@ -41,7 +82,7 @@
                         @endforeach
                         <button id="update-quota"  type="submit" class="btn btn-primary">
                             <i id="ni" class="fa fa-save"></i></i>&nbsp; Save</button>
-                    </form>
+                    </form>--}}
                 </div>
             </div>
         </section>

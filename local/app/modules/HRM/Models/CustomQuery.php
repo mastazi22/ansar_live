@@ -97,11 +97,53 @@ class CustomQuery
         return $b;
     }
 
-    public static function offerQuota()
+    public static function offerQuota($range='all')
     {
-        $offer_quota = DB::table('tbl_offer_quota')
-            ->rightJoin('tbl_units', 'tbl_units.id', '=', 'tbl_offer_quota.unit_id')
-            ->select('tbl_units.unit_name_eng', 'tbl_units.id as unit', 'tbl_offer_quota.quota', 'tbl_offer_quota.id')->get();
+        DB::enableQueryLog();
+        $offered = DB::table('tbl_sms_offer_info')
+        ->rightJoin('tbl_units','tbl_sms_offer_info.district_id','=','tbl_units.id')
+        ->groupBy('tbl_units.id')
+        ->select(DB::raw('count(tbl_sms_offer_info.ansar_id) as total_offer_ansar'),'tbl_units.unit_name_bng as unit_name')
+        ;
+        $offeredr = DB::table('tbl_sms_receive_info')
+            ->rightJoin('tbl_units','tbl_sms_receive_info.offered_district','=','tbl_units.id')
+            ->groupBy('tbl_units.id')
+            ->select(DB::raw('count(tbl_sms_receive_info.ansar_id) as total_offer_ansar'),'tbl_units.unit_name_bng as unit_name')
+            ;
+        $embodied_ansar_total = DB::table('tbl_embodiment')
+            ->join('tbl_kpi_info','tbl_kpi_info.id','=','tbl_embodiment.kpi_id')
+            ->rightJoin('tbl_units','tbl_kpi_info.unit_id','=','tbl_units.id')
+            ->groupBy('tbl_units.id')
+            ->whereRaw('DATE_SUB(tbl_embodiment.service_ended_date,INTERVAL '.GlobalParameterFacades::getValue(\App\Helper\GlobalParameter::OFFER_QUOTA_DAY).' '.strtoupper(GlobalParameterFacades::getUnit(\App\Helper\GlobalParameter::OFFER_QUOTA_DAY)).') <=NOW() ')
+            ->select(DB::raw('count(tbl_embodiment.ansar_id) as total_ansar'),'tbl_units.unit_name_bng as unit_name');
+        $q = DB::table('tbl_embodiment')
+            ->rightJoin('tbl_kpi_info','tbl_kpi_info.id','=','tbl_embodiment.kpi_id')
+            ->join('tbl_kpi_detail_info','tbl_kpi_info.id','=','tbl_kpi_detail_info.kpi_id')
+            ->rightJoin('tbl_units','tbl_kpi_info.unit_id','=','tbl_units.id')
+            ->where('tbl_kpi_info.status_of_kpi',1)
+            ->groupBy('tbl_kpi_info.id')
+            ->select(DB::raw('(tbl_kpi_detail_info.total_ansar_given-COUNT(tbl_embodiment.ansar_id)) as vacency'),'tbl_units.unit_name_bng as unit_name');
+        if(strcasecmp($range,'all')){
+            $offered->where('tbl_units.division_id',$range);
+            $offeredr->where('tbl_units.division_id',$range);
+            $embodied_ansar_total->where('tbl_units.division_id',$range);
+            $q->where('tbl_units.division_id',$range);
+        }
+        $vacency = DB::table(DB::raw("(".$q->toSql().") src"))->mergeBindings($q)->select(DB::raw("sum(vacency) as total_ansar"),'unit_name')->groupBy('unit_name');
+
+        $tqu =DB::table(DB::raw("(".$offered->unionAll($offeredr)->toSql().") src"))->mergeBindings($offered)->select(DB::raw("sum(total_offer_ansar) as total_offered_ansar"),'unit_name')->groupBy('unit_name')->get();
+        $total_offer_quota =DB::table(DB::raw("(".$embodied_ansar_total->unionAll($vacency)->toSql().") src"))->mergeBindings($embodied_ansar_total)->select(DB::raw("sum(total_ansar) as total_ansar"),'unit_name')->groupBy('unit_name')->get();
+//        return DB::getQueryLog();
+//        return $tqu;
+        $quota_used =  array_combine(array_column($tqu,"unit_name"),array_column($tqu,"total_offered_ansar"));
+        $total_quota =  array_combine(array_column($total_offer_quota,"unit_name"),array_column($total_offer_quota,"total_ansar"));
+        $offer_quota = [];
+//        return $quota_used;
+        foreach ($quota_used as $key=>$value){
+            //echo $key;
+            array_push($offer_quota,['unit_name_bng'=>$key,'total_quota'=>isset($total_quota[$key])?$total_quota[$key]:0,'quota_used'=>$value]);
+        }
+
         return $offer_quota;
     }
 
