@@ -131,8 +131,8 @@ class CustomQuery
         }
         $vacency = DB::table(DB::raw("(".$q->toSql().") src"))->mergeBindings($q)->select(DB::raw("sum(vacency) as total_ansar"),'unit_name')->groupBy('unit_name');
 
-        $tqu =DB::table(DB::raw("(".$offered->unionAll($offeredr)->toSql().") src"))->mergeBindings($offered)->select(DB::raw("sum(total_offer_ansar) as total_offered_ansar"),'unit_name')->groupBy('unit_name')->get()->toArray();
-        $total_offer_quota =DB::table(DB::raw("(".$embodied_ansar_total->unionAll($vacency)->toSql().") src"))->mergeBindings($embodied_ansar_total)->select(DB::raw("sum(total_ansar) as total_ansar"),'unit_name')->groupBy('unit_name')->get()->toArray();
+        $tqu =DB::table(DB::raw("(".$offered->unionAll($offeredr)->toSql().") src"))->mergeBindings($offered)->select(DB::raw("sum(total_offer_ansar) as total_offered_ansar"),'unit_name')->groupBy('unit_name')->get();
+        $total_offer_quota =DB::table(DB::raw("(".$embodied_ansar_total->unionAll($vacency)->toSql().") src"))->mergeBindings($embodied_ansar_total)->select(DB::raw("sum(total_ansar) as total_ansar"),'unit_name')->groupBy('unit_name')->get();
 //       return DB::getQueryLog();
         //return $total_offer_quota;
         $quota_used =  array_combine(array_column($tqu,"unit_name"),array_column($tqu,"total_offered_ansar"));
