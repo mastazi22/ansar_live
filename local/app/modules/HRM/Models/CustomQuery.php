@@ -136,7 +136,7 @@ class CustomQuery
 //       return DB::getQueryLog();
         //return $total_offer_quota;
         $quota_used =  array_combine(array_column($tqu,"unit_name"),array_column($tqu,"total_offered_ansar"));
-        return $quota_used;
+        return array_column($tqu,"unit_name");
         $total_quota =  array_combine(array_column($total_offer_quota,"unit_name"),array_column($total_offer_quota,"total_ansar"));
         $offer_quota = [];
 //        return $quota_used;
