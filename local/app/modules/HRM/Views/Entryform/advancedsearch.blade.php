@@ -27,7 +27,8 @@
                 national_id_no: {compare: '=', value: ''},
                 disease_id: {compare: '=', value: ''},
                 own_disease: {compare: 'LIKE', value: ''},
-                education: {compare: '=', value: ''}
+                education: {compare: '=', value: ''},
+                sex: {compare: '=', value: ''}
             }
             $scope.loading = false;
             $scope.itemPerPage = parseInt('{{config('app.item_per_page')}}')
@@ -117,7 +118,8 @@
                     national_id_no: {compare: '=', value: ''},
                     disease_id: {compare: '=', value: ''},
                     own_disease: {compare: 'LIKE', value: ''},
-                    education: {compare: '=', value: ''}
+                    education: {compare: '=', value: ''},
+                    sex: {compare: '=', value: ''}
                 }
                 $scope.district = [];
                 $scope.thana = [];
@@ -231,6 +233,20 @@
                                         </select></td>
                                     <td>
                                         <input type="text" style="width: 100%;" name="smart_card_no" placeholder="Search by Smart card no" ng-model="searchOption.smart_card_no.value">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Gender</td>
+                                    <td><select name="sex" class="ansaradvancedselect"
+                                                ng-model="searchOption.sex.compare">
+                                            <option value="=">EQUAL</option>
+                                        </select></td>
+                                    <td>
+                                        <select name="sex" class="ansaradvancedname" ng-model="searchOption.sex.value" >
+                                            <option value="">--Select an option--</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                        </select>
                                     </td>
                                 </tr>
                                 <tr>
