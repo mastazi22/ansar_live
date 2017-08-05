@@ -1008,11 +1008,11 @@ class FormSubmitHandler extends Controller
                     });
                 }
             }
-//            else if($key=="data_of_birth"){
-//                if ($value->value) {
-//                    $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, Carbon::parse($value->value)->format("y-m-d"));
-//                }
-//            }
+            else if($key=="data_of_birth"){
+                if ($value->value) {
+                    $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, Carbon::parse($value->value)->format("y-m-d"));
+                }
+            }
             else {
                 if ($value->value) {
                     $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->compare=='LIKE'?"%".$value->value."%":$value->value);
@@ -1020,7 +1020,7 @@ class FormSubmitHandler extends Controller
             }
         }
         $data = $ansarAdvancedSearch->paginate(20);
-        return DB::getQueryLog();
+        //return DB::getQueryLog();
         return Response::json($data);
     }
 
