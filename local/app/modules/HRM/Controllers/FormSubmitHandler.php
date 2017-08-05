@@ -953,6 +953,7 @@ class FormSubmitHandler extends Controller
 
     public function advancedEntrySearchSubmit(Request $request)
     {
+//
 //        return $request->all();
         DB::enableQueryLog();
         $ansarAdvancedSearch = DB::table('tbl_ansar_parsonal_info')
@@ -1007,14 +1008,19 @@ class FormSubmitHandler extends Controller
                     });
                 }
             }
+//            else if($key=="data_of_birth"){
+//                if ($value->value) {
+//                    $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, Carbon::parse($value->value)->format("y-m-d"));
+//                }
+//            }
             else {
                 if ($value->value) {
                     $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->compare=='LIKE'?"%".$value->value."%":$value->value);
                 }
             }
         }
-        $data = $ansarAdvancedSearch->paginate(config('app.item_per_page'));
-//        return DB::getQueryLog();
+        $data = $ansarAdvancedSearch->paginate(20);
+        return DB::getQueryLog();
         return Response::json($data);
     }
 
