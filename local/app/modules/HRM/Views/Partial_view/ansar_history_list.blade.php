@@ -61,7 +61,7 @@
                         <td>[[data.status]]</td>
                         <td>[[data.aod.offerDate?(data.aod.offerDate|dateformat:'DD-MMMM-YYYY':'bn'):'--']]</td>
                         <td>[[data.aod.offerUnit?data.aod.offerUnit:'--']]</td>
-                        <td>[[data.aoci.offerCancel?dateConvert(data.aoci.offerCancel):'--']]</td>
+                        <td>[[data.aoci.offerCancel?(data.aoci.offerCancel|dateformat:'DD-MMMM-YYYY':'bn'):'--']]</td>
                     </tr>
                 </table>
             </div>
