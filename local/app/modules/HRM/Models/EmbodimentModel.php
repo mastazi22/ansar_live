@@ -44,6 +44,10 @@ class EmbodimentModel extends Model
     {
         return $this->hasMany(EmbodimentLogModel::class, 'ansar_id', 'ansar_id');
     }
+
+    function transfer(){
+        return $this->hasMany(TransferAnsar::class,'embodiment_id','id');
+    }
 //    function transfer(){
 //        return $this->hasMany('App\models\TransferAnsar','embodiment_id');
 //    }

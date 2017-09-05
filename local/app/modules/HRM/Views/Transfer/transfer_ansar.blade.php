@@ -195,13 +195,20 @@
                                 notificationService.notify('error', newValue.message)
                             }
                             if (newValue.data.success.count > 0) {
-                                notificationService.notify(
-                                    'success', "Success " + newValue.data.success.count + ", Failed " + newValue.data.error.count
-                                )
+
+                                for (i=0;i<newValue.data.success.count;i++){
+                                    notificationService.notify(
+                                        'success', "Ansar("+newValue.data.success.data[i]+") successfully transfered"
+                                    )
+                                }
 
                             }
-                            else {
-                                notificationService.notify('error', "Transfer Failed. Pleas try again later")
+                            if(newValue.data.error.count>0) {
+                                for (i=0;i<newValue.data.error.count;i++){
+                                    notificationService.notify(
+                                        'error',newValue.data.error.data[i]
+                                )
+                                }
                             }
                         }
                     })

@@ -386,6 +386,8 @@ class EmbodimentController extends Controller
 
                     $e_id = EmbodimentModel::where('ansar_id', $ansar['ansar_id'])->where('kpi_id', $kpi_id[0])->first();
                     if ($e_id) {
+                        $t_history = $e_id->transfer()->pluck('present_kpi_id');
+                        if(in_array($kpi_id[1],collect($t_history)->toArray())) throw new \Exception("Ansar(".$e_id->ansar_id.") previously transferred in this kpi");
                         $e_id->kpi_id = $kpi_id[1];
                         $e_id->transfered_date = Carbon::createFromFormat("d-M-Y", $t_date)->format("Y-m-d");
                         $e_id->save();
