@@ -127,7 +127,7 @@
                     $scope.allLoading = false
                     console.log(response.data)
                     $scope.result = response.data;
-                    $scope.pl = true;
+
                     $scope.q = '';
                     if ($scope.result.data.success.count > 0) $scope.loadAnsar();
 
@@ -202,6 +202,8 @@
                                     )
                                 }
 
+                            }else{
+                                $scope.pl = false;
                             }
                             if(newValue.data.error.count>0) {
                                 for (i=0;i<newValue.data.error.count;i++){

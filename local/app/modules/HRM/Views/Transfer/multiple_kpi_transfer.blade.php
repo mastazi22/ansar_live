@@ -84,15 +84,19 @@
                             notificationService.notify('error', newValue.message)
                         }
                         if (newValue.data.success.count > 0) {
-
+                            $scope.printLetter = true;
                             for (i=0;i<newValue.data.success.count;i++){
                                 notificationService.notify(
                                     'success', "Ansar("+newValue.data.success.data[i]+") successfully transfered"
                                 )
                             }
 
+                        }else{
+                            $scope.printLetter = false;
                         }
                         if(newValue.data.error.count>0) {
+
+
                             for (i=0;i<newValue.data.error.count;i++){
                                 notificationService.notify(
                                     'error',newValue.data.error.data[i]
@@ -104,7 +108,6 @@
                     $scope.uid = angular.copy($scope.param.unit);
 //                    alert($scope.uid)
                     $scope.transfering = false;
-                    $scope.printLetter = true;
                     reset();
                 }, function (response) {
                     $scope.error = response.data;

@@ -1000,6 +1000,7 @@ class EmbodimentController extends Controller
                 DB::commit();
             }
         }catch(\Exception $e){
+            DB::rollback();
             return response(collect(['status'=>false,'message' => "An error occur while transfer. Please try again later"])->toJson(), 400, ['Content-Type' => 'application/json']);
         }
         return Response::json(['status' => true, 'data' => $status, 'memId' => $m_id]);
