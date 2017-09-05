@@ -951,6 +951,7 @@ class EmbodimentController extends Controller
             return response($valid->messages()->toJson(), 400, ['Content-type' => 'application/json']);
         }
         $data = $request->ansars;
+        $status = array('success' => array('count' => 0, 'data' => array()), 'error' => array('count' => 0, 'data' => array()));
         DB::beginTransaction();
         try{
             $m_id = $request->memId;
@@ -967,6 +968,9 @@ class EmbodimentController extends Controller
                     $e_ansar = EmbodimentModel::where('ansar_id', $ansar->ansarId)->where('kpi_id', $ansar->currentKpi)->first();
                     //print_r($ansar->ansarId); die;
                     if ($e_ansar) {
+                        $t_history = $e_ansar->transfer()->pluck('present_kpi_id');
+                        if(in_array($ansar->transferKpi,collect($t_history)->toArray())) throw new \Exception("Ansar(".$e_ansar->ansar_id.") previously transferred in this kpi");
+
                         $transfer = new TransferAnsar;
                         //print_r($ansar->id);die;
                         $transfer->ansar_id = $ansar->ansarId;
@@ -981,22 +985,24 @@ class EmbodimentController extends Controller
                         $e_ansar->kpi_id = $ansar->transferKpi;
                         $e_ansar->transfered_date = Carbon::parse($ansar->tKpiJoinDate)->format("Y-m-d");
                         $e_ansar->save();
-                        //$status['success']['count']++;
-                        //array_push($status['success']['data'], $ansar['ansar_id']);
+                        $status['success']['count']++;
+                        array_push($status['success']['data'], $ansar->ansarId);
                         CustomQuery::addActionlog(['ansar_id' => $ansar->ansarId, 'action_type' => 'TRANSFER', 'from_state' => $ansar->currentKpi, 'to_state' => $ansar->transferKpi, 'action_by' => auth()->user()->id]);
                         DB::commit();
                     }
                 } catch (\Exception $e) {
                     DB::rollback();
-                    return response(collect(['message' => "An error occur while transfer. Please try again later"])->toJson(), 400, ['Content-Type' => 'application/json']);
+                    $status['error']['count']++;
+                    array_push($status['error']['data'], $e->getMessage());
+//                    return response(collect(['message' => "An error occur while transfer. Please try again later"])->toJson(), 400, ['Content-Type' => 'application/json']);
                 }
 
                 DB::commit();
             }
         }catch(\Exception $e){
-            return response(collect(['message' => "An error occur while transfer. Please try again later"])->toJson(), 400, ['Content-Type' => 'application/json']);
+            return response(collect(['status'=>false,'message' => "An error occur while transfer. Please try again later"])->toJson(), 400, ['Content-Type' => 'application/json']);
         }
-        return Response::json(['status' => 1, 'message' => 'Ansar transfer complate', 'memId' => $m_id]);
+        return Response::json(['status' => true, 'data' => $status, 'memId' => $m_id]);
     }
 
     public function getSingleEmbodiedAnsarInfo($id){

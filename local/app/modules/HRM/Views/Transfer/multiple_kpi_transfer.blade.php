@@ -78,8 +78,29 @@
                     data: angular.toJson({ansars: $scope.submitData, memId: $scope.memId,mem_date:$scope.memDate})
                 }).then(function (response) {
                     console.log(response.data)
-                    notificationService.notify('success',response.data.message)
-                    $scope.tm = response.data.memId
+                    var newValue = response.data;
+                    if (Object.keys(newValue).length > 0) {
+                        if (!newValue.status) {
+                            notificationService.notify('error', newValue.message)
+                        }
+                        if (newValue.data.success.count > 0) {
+
+                            for (i=0;i<newValue.data.success.count;i++){
+                                notificationService.notify(
+                                    'success', "Ansar("+newValue.data.success.data[i]+") successfully transfered"
+                                )
+                            }
+
+                        }
+                        if(newValue.data.error.count>0) {
+                            for (i=0;i<newValue.data.error.count;i++){
+                                notificationService.notify(
+                                    'error',newValue.data.error.data[i]
+                                )
+                            }
+                        }
+                    }
+                    $scope.tm = newValue.memId
                     $scope.uid = angular.copy($scope.param.unit);
 //                    alert($scope.uid)
                     $scope.transfering = false;
@@ -88,7 +109,7 @@
                 }, function (response) {
                     $scope.error = response.data;
                     if ($scope.error.message) {
-                        notificationService.notify('errpr',response.data.message)
+                        notificationService.notify('error',response.data.message)
                         reset1();
                     }
                     $scope.transfering = false;
