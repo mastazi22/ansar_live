@@ -234,6 +234,7 @@
                                         </caption>
                                         <tr>
                                             <th>#</th>
+                                            <th>Ansar ID</th>
                                             <th>Name</th>
                                             <th>Rank</th>
                                             <th>Home District</th>
@@ -248,6 +249,7 @@
                                         </tr>
                                         <tr ng-repeat="ansar in ansarDetail">
                                             <td>[[$index+1]]</td>
+                                            <td>[[ansar.ansar_id]]</td>
                                             <td>[[ansar.ansar_name_bng]]</td>
                                             <td>[[ansar.name_bng]]</td>
                                             <td>[[ansar.home_district]]</td>

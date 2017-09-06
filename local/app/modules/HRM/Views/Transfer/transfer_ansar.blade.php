@@ -15,6 +15,7 @@
             $scope.params = '';
             $scope.trans = '';
             $scope.showKpiStatus = false;
+            $scope.resetValue = false;
             $scope.totalKpiAnsar = {
                 pc: {
                     given: 0, current: 0
@@ -83,7 +84,7 @@
                 else {
                     $scope.selectedAnsar.splice(index, 1);
                 }
-                $scope.selectAll = $scope.selectedAnsar.length == $scope.ansars.length;
+                $scope.selectAll = $scope.selectedAnsar.length == $scope.results.length;
             }
             $scope.$watch('selectAnsar', function (n, o) {
                 n.forEach(function (e, i, a) {
@@ -91,7 +92,7 @@
                 })
             })
             $scope.changeSelectAll = function () {
-                $scope.selectAnsar = Array.apply(null, new Array($scope.ansars.length)).map(Boolean.prototype.valueOf, $scope.selectAll);
+                $scope.selectAnsar = Array.apply(null, new Array($scope.results.length)).map(Boolean.prototype.valueOf, $scope.selectAll);
             }
             $scope.letterOption={
                 id:$scope.memorandumId,
@@ -172,14 +173,18 @@
                         }
                         $("#transfer-option").modal("toggle")
                         $("#transfer-option").on('show.bs.modal', function () {
+                            scope.resetValue = false;
                             scope.result = [];
                             scope.memorandumId = "";
                             scope.joinDate = "";
                             scope.showKpiStatus = false;
+                            scope.$apply()
 
                         })
                         $("#transfer-option").on('hide.bs.modal', function () {
                             modalOpen = false;
+                            scope.resetValue = true;
+                            scope.$apply()
                         })
                     })
                 }
@@ -323,6 +328,7 @@
                                             kpi-disabled="params.kpi"
                                             field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
                                             data = "trans"
+                                            reset-all="[[resetValue]]"
                                     ></filter-template>
 
                                     <div class="row">

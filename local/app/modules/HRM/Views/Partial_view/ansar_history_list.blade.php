@@ -74,7 +74,7 @@
                     <tr>
                         <td style="background: #ffffff">
                             <table class="table table-bordered">
-                                <caption>অঙ্গিভুতির বিবরণ</caption>
+                                <caption>সর্বশেষ অঙ্গিভুতির বিবরণ</caption>
                                 <tr>
                                     <td>অঙ্গিভুতির  তারিখ</td>
                                     <td>অঙ্গিভুতির আইডি নং</td>
@@ -91,7 +91,7 @@
                         </td>
                         <td style="background: #ffffff">
                             <table class="table table-bordered">
-                                <caption>অ-অঙ্গিভুতির বিবরণ</caption>
+                                <caption>পূর্ববর্তী অ-অঙ্গিভুতির বিবরণ</caption>
                                 <tr>
                                     <td>অ-অঙ্গিভুতির  তারিখ</td>
                                     <td>অ-অঙ্গিভুতির কারন</td>
