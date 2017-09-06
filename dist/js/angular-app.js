@@ -400,7 +400,8 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             customData:'=',
             customModel:'=',
             customChange:'&',
-            kpiType:'@'
+            kpiType:'@',
+            resetAll:'@'
         },
         controller: function ($scope,$rootScope,httpService) {
             $scope.selected = {
@@ -412,6 +413,35 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 gender:$scope.type=='all'?'all':'',
                 custom:$scope.customModel
             }
+            $scope.$watch('resetAll',function (n,o) {
+                n = (n==='true')
+                //alert(typeof n)
+                if(n===true){
+                    //alert("aise")
+                    $scope.selected = {
+                        range:$scope.type=='all'?'all':'',
+                        unit:$scope.type=='all'?'all':'',
+                        thana:$scope.type=='all'?'all':'',
+                        kpi:$scope.type=='all'?'all':'',
+                        rank:$scope.type=='all'?'all':'',
+                        gender:$scope.type=='all'?'all':'',
+                        custom:$scope.customModel
+                    }
+                    if($rootScope.user.usertype.type_name==='DC'){
+                        $scope.kpis = [];
+                    }
+                    else if($rootScope.user.usertype.type_name==='RC'){
+                        $scope.kpis = [];
+                        $scope.thanas = [];
+                    }
+                    else{
+                        $scope.kpis = [];
+                        $scope.thanas = [];
+                        $scope.units = [];
+                    }
+                    //$scope.$apply()
+                }
+            })
             $scope.genders = [
                 {value:'Male',text:'Male'},
                 {value:'Female',text:'Female'},
