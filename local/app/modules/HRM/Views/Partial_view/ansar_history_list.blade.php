@@ -91,7 +91,7 @@
                         </td>
                         <td style="background: #ffffff">
                             <table class="table table-bordered">
-                                <caption>পূর্ববর্তী অ-অঙ্গিভুতির বিবরণ</caption>
+                                <caption>সর্বশেষ অ-অঙ্গিভুতির বিবরণ</caption>
                                 <tr>
                                     <td>অ-অঙ্গিভুতির  তারিখ</td>
                                     <td>অ-অঙ্গিভুতির কারন</td>
