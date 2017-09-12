@@ -1013,6 +1013,11 @@ class FormSubmitHandler extends Controller
                     $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, Carbon::parse($value->value)->format("y-m-d"));
                 }
             }
+            else if($key=="hight_feet"){
+                if ($value->value) {
+                    $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, "=>", Carbon::parse($value->value)->format("y-m-d"));
+                }
+            }
             else {
                 if ($value->value) {
                     $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->compare=='LIKE'?"%".$value->value."%":$value->value);
