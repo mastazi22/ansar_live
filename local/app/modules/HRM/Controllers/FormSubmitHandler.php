@@ -1015,7 +1015,7 @@ class FormSubmitHandler extends Controller
             }
             else if($key=="hight_feet"){
                 if ($value->value) {
-                    $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, "=>", Carbon::parse($value->value)->format("y-m-d"));
+                    $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, ">=", Carbon::parse($value->value)->format("y-m-d"));
                 }
             }
             else {
