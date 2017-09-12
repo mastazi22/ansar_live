@@ -1007,10 +1007,17 @@ class FormSubmitHandler extends Controller
                 }
             } else if ($key == "hight_feet") {
                 if ($value->value) {
-                    $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, ">=", $value->value);
+                    if($value->compare=='>')$ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, ">=", $value->value);
+                    else if($value->compare=='<')$ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, "<=", $value->value);
+                    else $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, "=", $value->value);
                 }
             } else if ($key == "hight_inch") {
-                $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->value ? $value->value : 0);
+                if($request->get('hight_feet')['value']) {
+                    $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->value ? $value->value : 0);
+                }
+                else if ($value->value) {
+                    $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->value);
+                }
 
             } else {
                 if ($value->value) {
