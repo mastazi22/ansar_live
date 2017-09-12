@@ -1,4 +1,5 @@
 <?php
+
 namespace App\modules\HRM\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -428,18 +429,16 @@ class FormSubmitHandler extends Controller
                     }
                 }
             }
-        }
-        else {
+        } else {
             abort(401);
         }
     }
 
     public function DivisionName(Request $request)
     {
-        if($request->id){
-            $division = Division::where('id', $request->id)->orderBy('sort_by','asc')->get();
-        }
-        else $division = Division::where('id', '!=', 0)->orderBy('sort_by','asc')->get();
+        if ($request->id) {
+            $division = Division::where('id', $request->id)->orderBy('sort_by', 'asc')->get();
+        } else $division = Division::where('id', '!=', 0)->orderBy('sort_by', 'asc')->get();
         return Response::json($division);
     }
 
@@ -460,10 +459,10 @@ class FormSubmitHandler extends Controller
     {
         $query = [];
         $id = $request->input('id');
-        if($request->exists('division_id')&&$request->get('division_id')!='all'){
+        if ($request->exists('division_id') && $request->get('division_id') != 'all') {
             $query['division_id'] = $request->get('division_id');
         }
-        if($request->exists('id')&&$request->get('id')!='all'){
+        if ($request->exists('id') && $request->get('id') != 'all') {
             $query['unit_id'] = $request->get('id');
         }
         $thana = Thana::where($query)->get();
@@ -535,14 +534,14 @@ class FormSubmitHandler extends Controller
         return Response::json(CustomQuery::getSearchAnsar($entrysearchvalue, $loadType));
     }
 
-    public function editEntry($ansarid,Request $request)
+    public function editEntry($ansarid, Request $request)
     {
         $personalinfo = PersonalInfo::where('ansar_id', $ansarid)->first();
-        if($request->route()->getName()=='editVerifiedEntry'){
-            if($personalinfo->verified!=2) abort(401);
+        if ($request->route()->getName() == 'editVerifiedEntry') {
+            if ($personalinfo->verified != 2) abort(401);
         }
-        if($request->route()->getName()=='editentry'){
-            if($personalinfo->verified==2) abort(401);
+        if ($request->route()->getName() == 'editentry') {
+            if ($personalinfo->verified == 2) abort(401);
         }
         return View::make('HRM::Entryform.entry_edit')->with('ansarAllDetails', $personalinfo);
     }
@@ -848,8 +847,7 @@ class FormSubmitHandler extends Controller
                 }
             }
 
-        }
-        else {
+        } else {
             abort(401);
         }
     }
@@ -869,7 +867,7 @@ class FormSubmitHandler extends Controller
         if ($valid->fails()) {
             return response("Invalid request(400)", 400);
         }
-        if (Input::exists('chunk')) return response()->json(CustomQuery::getNotVerifiedChunkAnsar(Input::get('limit'), Input::get('offset'),Input::get('division'), Input::get('unit'), Input::get('thana')));
+        if (Input::exists('chunk')) return response()->json(CustomQuery::getNotVerifiedChunkAnsar(Input::get('limit'), Input::get('offset'), Input::get('division'), Input::get('unit'), Input::get('thana')));
         return response()->json(CustomQuery::getNotVerifiedAnsar(Input::get('limit'), Input::get('offset'), Input::get('sort'), Input::get('division'), Input::get('unit'), Input::get('thana'), Input::get('type')));
     }
 
@@ -962,65 +960,61 @@ class FormSubmitHandler extends Controller
             ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
             ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.father_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_division.division_name_eng', 'tbl_designations.name_eng', 'tbl_units.unit_name_eng');
 
-        if(Auth::user()->type==55){
+        if (Auth::user()->type == 55) {
             $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.user_id', Auth::user()->id);
         }
         foreach ($request->except('page') as $key => $value) {
             $value = (object)($value);
 //            return $value;
-            if($key=='smart_card_no'){
-                if($value->value){
-                    $l = strlen($value->value)-6;
-                    $id = substr($value->value,$l<0?0:$l);
-                    $ansarAdvancedSearch->where('ansar_id',intval($id));
+            if ($key == 'smart_card_no') {
+                if ($value->value) {
+                    $l = strlen($value->value) - 6;
+                    $id = substr($value->value, $l < 0 ? 0 : $l);
+                    $ansarAdvancedSearch->where('ansar_id', intval($id));
                 }
-            }
-            else if ($key == 'education') {
-                if($value->value) $ansarAdvancedSearch->join('tbl_ansar_education_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_ansar_education_info.ansar_id')
+            } else if ($key == 'education') {
+                if ($value->value) $ansarAdvancedSearch->join('tbl_ansar_education_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_ansar_education_info.ansar_id')
                     ->where('tbl_ansar_education_info.education_id', $value->compare, $value->value);
-            }
-            else if ($key == 'disease_id') {
-                if($value->value && strcasecmp($value->value,'type'))$ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->value);
-            }
-            else if($key=='ansar_name'){
-                if($value->value){
+            } else if ($key == 'disease_id') {
+                if ($value->value && strcasecmp($value->value, 'type')) $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->value);
+            } else if ($key == 'ansar_name') {
+                if ($value->value) {
                     global $v;
                     global $c;
                     $v = $value->value;
                     $c = $value->compare;
-                    $ansarAdvancedSearch->where(function($q){
-                        global $v,$c;
-                        $q->where('tbl_ansar_parsonal_info.ansar_name_eng', $c, $c=='LIKE'?"%".$v."%":$v);
-                        $q->orWhere('tbl_ansar_parsonal_info.ansar_name_bng', $c, $c=='LIKE'?"%".$v."%":$v);
+                    $ansarAdvancedSearch->where(function ($q) {
+                        global $v, $c;
+                        $q->where('tbl_ansar_parsonal_info.ansar_name_eng', $c, $c == 'LIKE' ? "%" . $v . "%" : $v);
+                        $q->orWhere('tbl_ansar_parsonal_info.ansar_name_bng', $c, $c == 'LIKE' ? "%" . $v . "%" : $v);
                     });
                 }
-            }
-            else if($key=='father_name'){
-                if($value->value){
+            } else if ($key == 'father_name') {
+                if ($value->value) {
                     global $v;
                     global $c;
                     $v = $value->value;
                     $c = $value->compare;
-                    $ansarAdvancedSearch->where(function($q){
-                        global $v,$c;
-                        $q->where('tbl_ansar_parsonal_info.father_name_eng', $c, $c=='LIKE'?"%".$v."%":$v);
-                        $q->orWhere('tbl_ansar_parsonal_info.father_name_bng', $c, $c=='LIKE'?"%".$v."%":$v);
+                    $ansarAdvancedSearch->where(function ($q) {
+                        global $v, $c;
+                        $q->where('tbl_ansar_parsonal_info.father_name_eng', $c, $c == 'LIKE' ? "%" . $v . "%" : $v);
+                        $q->orWhere('tbl_ansar_parsonal_info.father_name_bng', $c, $c == 'LIKE' ? "%" . $v . "%" : $v);
                     });
                 }
-            }
-            else if($key=="data_of_birth"){
+            } else if ($key == "data_of_birth") {
                 if ($value->value) {
                     $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, Carbon::parse($value->value)->format("y-m-d"));
                 }
-            }
-            else if($key=="hight_feet"){
+            } else if ($key == "hight_feet") {
                 if ($value->value) {
-                    $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, ">=", Carbon::parse($value->value)->format("y-m-d"));
+                    $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, ">=", $value->value);
                 }
-            }
-            else {
+            } else if ($key == "hight_inch") {
+                $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->value ? $value->value : 0);
+
+            } else {
                 if ($value->value) {
-                    $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->compare=='LIKE'?"%".$value->value."%":$value->value);
+                    $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->compare == 'LIKE' ? "%" . $value->value . "%" : $value->value);
                 }
             }
         }
@@ -1039,7 +1033,7 @@ class FormSubmitHandler extends Controller
     {
         $ansarID = $request->input('ansarId');
         $find = PersonalInfo::where('ansar_id', $ansarID)->select('id', 'ansar_id');
-        if(Auth::user()->type==55){
+        if (Auth::user()->type == 55) {
             $find->where('user_id', Auth::user()->id);
         }
         if ($find->exists()) {
