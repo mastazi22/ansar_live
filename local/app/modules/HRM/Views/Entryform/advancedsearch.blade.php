@@ -7,7 +7,8 @@
     <script>
         $(document).ready(function () {
             $('#birth_from_name').datePicker({
-                defaultValue:false
+                defaultValue:false,
+                editable:false
             });
         })
         GlobalApp.controller('advancedEntrySearch', function ($scope, $http, httpService,$location,$anchorScroll) {

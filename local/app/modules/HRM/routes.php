@@ -136,6 +136,9 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/get_print_id_list', ['as' => 'get_print_id_list', 'uses' => 'ReportController@getPrintIdList']);
         Route::post('/change_ansar_card_status', ['as' => 'change_ansar_card_status', 'uses' => 'ReportController@ansarCardStatusChange']);
         Route::post('/global_parameter_update', ['as' => 'global_parameter_update', 'uses' => 'HrmController@updateGlobalParameter']);
+        Route::get('/system_setting', ['as' => 'system_setting', 'uses' => 'HrmController@systemSettingIndex']);
+        Route::get('/system_setting_edit/{id}', ['as' => 'system_setting_edit', 'uses' => 'HrmController@systemSettingEdit']);
+        Route::post('/system_setting_update/{id}', ['as' => 'system_setting_update', 'uses' => 'HrmController@systemSettingUpdate']);
         Route::get('/global_parameter', ['as' => 'global_parameter', 'uses' => 'HrmController@globalParameterView']);
         Route::get('/cancel_offer', ['as' => 'cancel_offer', 'uses' => 'OfferController@cancelOfferView']);
         //END ADMIN ROUTE

@@ -5,12 +5,16 @@ namespace App\modules\HRM\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\modules\HRM\Models\CustomQuery;
+use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\GlobalParameter;
+use App\modules\HRM\Models\SystemSetting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
@@ -633,5 +637,37 @@ class HrmController extends Controller
             });
         })->download('xls');
 //        return $data;
+    }
+
+    function systemSettingIndex(){
+
+        $system_setting = SystemSetting::all();
+        return view("HRM::system_setting",['data'=>$system_setting]);
+
+    }
+    function systemSettingUpdate(Request $request,$id){
+        $data = [
+            'setting_value'=>$request->exists('values')?implode(',',$request->values):null,
+            'active'=>$request->exists('active')?$request->active:0,
+            'description'=>$request->description
+        ];
+        DB::beginTransaction();
+        try{
+            SystemSetting::find($id)->update($data);
+            DB::commit();
+        }catch(\Exception $e){
+            DB::rollback();
+            Log::info($e->getTraceAsString());
+            return redirect()->route('system_setting')->with('error',$e->getMessage());
+        }
+        return redirect()->route('system_setting')->with('success',"Setting updated successfully");
+
+    }
+    function systemSettingEdit(Request $request,$id){
+
+        $system_setting = SystemSetting::find($id);
+        $units = District::where('id','<>',0)->get();
+        return view("HRM::system_setting_edit",['data'=>$system_setting,'units'=>$units]);
+
     }
 }

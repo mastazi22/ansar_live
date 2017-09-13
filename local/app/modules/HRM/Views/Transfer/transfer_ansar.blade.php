@@ -208,7 +208,7 @@
                                 }
 
                             }else{
-                                $scope.pl = false;
+                                scope.pl = false;
                             }
                             if(newValue.data.error.count>0) {
                                 for (i=0;i<newValue.data.error.count;i++){

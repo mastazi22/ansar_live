@@ -311,6 +311,10 @@ return [
                     "route" => "global_parameter",
                     "icon" => "fa-dashboard",
                 ],
+                "System Setting" => [
+                    "route" => "system_setting",
+                    "icon" => "fa-cog",
+                ],
                 "ID Print List" => [
                     "route" => "print_id_list",
                     "icon" => "fa-dashboard",

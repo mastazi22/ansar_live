@@ -3,6 +3,7 @@
 namespace App\modules\HRM\Controllers;
 
 use App\Helper\Facades\GlobalParameterFacades;
+use App\Helper\SystemSettingHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Jobs\SendSms;
@@ -376,6 +377,8 @@ class EmbodimentController extends Controller
         $status = array('success' => array('count' => 0, 'data' => array()), 'error' => array('count' => 0, 'data' => array()));
         DB::beginTransaction();
         try {
+            $tp = SystemSettingHelper::getValue(SystemSettingHelper::$TRANSFER_POLICY);
+            Log::info($tp);
             $memorandum = new MemorandumModel;
             $memorandum->memorandum_id = $m_id;
             $memorandum->mem_date = Carbon::parse(Input::get('mem_date'));
@@ -386,8 +389,11 @@ class EmbodimentController extends Controller
 
                     $e_id = EmbodimentModel::where('ansar_id', $ansar['ansar_id'])->where('kpi_id', $kpi_id[0])->first();
                     if ($e_id) {
-                        $t_history = $e_id->transfer()->pluck('present_kpi_id');
-                        if(in_array($kpi_id[1],collect($t_history)->toArray())) throw new \Exception("Ansar(".$e_id->ansar_id.") previously transferred in this kpi");
+                        if($kpi_id[0]==$kpi_id[1]) throw new \Exception("Ansar(" . $e_id->ansar_id . ") can`t transferred in same kpi");
+                        if(in_array($e_id->kpi->unit_id,$tp['data'])&&$tp['status']==1) {
+                            $t_history = $e_id->transfer()->pluck('present_kpi_id');
+                            if (in_array($kpi_id[1], collect($t_history)->toArray())) throw new \Exception("Ansar(" . $e_id->ansar_id . ") previously transferred in this kpi");
+                        }
                         $e_id->kpi_id = $kpi_id[1];
                         $e_id->transfered_date = Carbon::createFromFormat("d-M-Y", $t_date)->format("Y-m-d");
                         $e_id->save();
@@ -936,7 +942,7 @@ class EmbodimentController extends Controller
 
     public function confirmTransfer(Request $request)
     {
-//        return $request->all();
+
         $rules = [];
         if(auth()->user()->type==11||auth()->user()->type==77){
             $rules['memId'] = 'required';
@@ -952,6 +958,7 @@ class EmbodimentController extends Controller
         }
         $data = $request->ansars;
         $status = array('success' => array('count' => 0, 'data' => array()), 'error' => array('count' => 0, 'data' => array()));
+
         DB::beginTransaction();
         try{
             $m_id = $request->memId;
@@ -959,6 +966,9 @@ class EmbodimentController extends Controller
             $memorandum->memorandum_id = $m_id;
             $memorandum->mem_date = Carbon::parse(Input::get('mem_date'));
             $memorandum->save();
+            $tp = SystemSettingHelper::getValue(SystemSettingHelper::$TRANSFER_POLICY);
+
+            Log::info($tp);
             foreach ($data as $ansar) {
                 $ansar = (object)$ansar;
 
@@ -968,9 +978,11 @@ class EmbodimentController extends Controller
                     $e_ansar = EmbodimentModel::where('ansar_id', $ansar->ansarId)->where('kpi_id', $ansar->currentKpi)->first();
                     //print_r($ansar->ansarId); die;
                     if ($e_ansar) {
-                        $t_history = $e_ansar->transfer()->pluck('present_kpi_id');
-                        if(in_array($ansar->transferKpi,collect($t_history)->toArray())) throw new \Exception("Ansar(".$e_ansar->ansar_id.") previously transferred in this kpi");
 
+                        if(in_array($e_ansar->kpi->unit_id,$tp['data'])&&$tp['status']==1) {
+                            $t_history = $e_ansar->transfer()->pluck('present_kpi_id');
+                            if (in_array($ansar->transferKpi, collect($t_history)->toArray())) throw new \Exception("Ansar(" . $e_ansar->ansar_id . ") previously transferred in this kpi");
+                        }
                         $transfer = new TransferAnsar;
                         //print_r($ansar->id);die;
                         $transfer->ansar_id = $ansar->ansarId;

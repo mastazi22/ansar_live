@@ -400,6 +400,14 @@ Breadcrumbs::register('global_parameter', function($breadcrumbs) {
     $breadcrumbs->parent('admin');
     $breadcrumbs->push('Global Parameter', URL::route('global_parameter'));
 });
+Breadcrumbs::register('system_setting', function($breadcrumbs) {
+    $breadcrumbs->parent('admin');
+    $breadcrumbs->push('System Setting', URL::route('system_setting'));
+});
+Breadcrumbs::register('system_setting_edit', function($breadcrumbs) {
+    $breadcrumbs->parent('system_setting');
+    $breadcrumbs->push('Edit System Setting', '#');
+});
 Breadcrumbs::register('offer_cancel', function($breadcrumbs) {
     $breadcrumbs->parent('admin');
     $breadcrumbs->push('Cancel Offer', URL::route('cancel_offer'));
