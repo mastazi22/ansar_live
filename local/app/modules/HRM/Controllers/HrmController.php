@@ -4,12 +4,15 @@ namespace App\modules\HRM\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use App\Jobs\ExportData;
 use App\modules\HRM\Models\CustomQuery;
+use App\modules\HRM\Models\DataExportStatus;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\GlobalParameter;
 use App\modules\HRM\Models\SystemSetting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
@@ -264,7 +267,7 @@ class HrmController extends Controller
         return view('HRM::Dashboard.offer_accept_last_5_days');
     }
 
-    public function getAnsarList()
+    public function getAnsarList(Request $request)
     {
         $type = Input::get('type');
         $limit = Input::get('limit');
@@ -290,35 +293,69 @@ class HrmController extends Controller
             //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         }
+        $data = [];
         switch ($type) {
             case 'all_ansar':
-                return CustomQuery::getAllAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getAllAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                break;
             case 'not_verified_ansar':
-                return CustomQuery::getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                break;
             case 'free_ansar':
-                return CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                break;
             case 'paneled_ansar':
-                return CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank, $q);
+                break;
             case 'embodied_ansar':
-                return CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                break;
             case 'rest_ansar':
-                return CustomQuery::getTotalRestAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalRestAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                break;
             case 'freezed_ansar':
-                return CustomQuery::getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                break;
             case 'blocked_ansar':
-                return CustomQuery::getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                break;
             case 'blacked_ansar':
-                return CustomQuery::getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                break;
             case 'offerred_ansar':
-                return CustomQuery::getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                break;
             case 'own_embodied_ansar':
-                return CustomQuery::getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                break;
             case 'embodied_ansar_in_different_district':
-                return CustomQuery::getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                break;
+
         }
+        if ($request->exists('export')) {
+            //export data
+            $file_name = \Illuminate\Support\Str::random(8) . Carbon::now()->timestamp;
+
+            $data = collect($data['ansars'])->chunk(100)->toArray();
+            $status = DataExportStatus::create([
+                'file_name' => $file_name,
+                'user_id' => Auth::user()->id,
+                'status' => 'pending',
+                'total_part' => count($data),
+                'counter' => 0
+            ]);
+            foreach ($data as $d) {
+
+                $this->dispatch(new ExportData($d, $status, $type));
+
+            }
+            return Response::json(['status' => true, 'message' => "Export request submit successfully. You will be notified when export complete"]);
+        }
+        return Response::json($data);
     }
 
-    public function getRecentAnsarList()
+    public function getRecentAnsarList(Request $request)
     {
         $type = Input::get('type');
         $limit = Input::get('limit');
@@ -349,30 +386,62 @@ class HrmController extends Controller
         }
         switch ($type) {
             case 'all_ansar':
-                return CustomQuery::getAllAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getAllAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                break;
             case 'not_verified_ansar':
-                return CustomQuery::getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                break;
             case 'free_ansar':
-                return CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                break;
             case 'paneled_ansar':
-                return CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::RECENT, $rank, $q);
+                break;
             case 'embodied_ansar':
-                return CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                break;
             case 'embodied_ansar_in_different_district':
-                return CustomQuery::getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                break;
             case 'own_embodied_ansar':
-                return CustomQuery::getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                break;
             case 'rest_ansar':
-                return CustomQuery::getTotalRestAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalRestAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                break;
             case 'freezed_ansar':
-                return CustomQuery::getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                break;
             case 'blocked_ansar':
-                return CustomQuery::getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                break;
             case 'blacked_ansar':
-                return CustomQuery::getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                break;
             case 'offerred_ansar':
-                return CustomQuery::getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                break;
         }
+        if ($request->exists('export')) {
+            //export data
+            $file_name = \Illuminate\Support\Str::random(8) . Carbon::now()->timestamp;
+
+            $data = collect($data['ansars'])->chunk(100)->toArray();
+            $status = DataExportStatus::create([
+                'file_name' => $file_name,
+                'user_id' => Auth::user()->id,
+                'status' => 'pending',
+                'total_part' => count($data),
+                'counter' => 0
+            ]);
+            foreach ($data as $d) {
+
+                $this->dispatch(new ExportData($d, $status, $type));
+
+            }
+            return Response::json(['status' => true, 'message' => "Export request submit successfully. You will be notified when export complete"]);
+        }
+        return Response::json($data);
     }
 
     public function showAnsarForServiceEnded($count)
@@ -627,47 +696,52 @@ class HrmController extends Controller
 //        $data = collect($data)->toArray();
 
         $d = array();
-        foreach($data as $dd){
-            array_push($d,collect($dd)->toArray());
+        foreach ($data as $dd) {
+            array_push($d, collect($dd)->toArray());
         }
 //                var_dump($d);die;
-        Excel::create('test',function($excel) use ($d){
-            $excel->sheet('sheet1',function($sheet) use($d){
+        Excel::create('test', function ($excel) use ($d) {
+            $excel->sheet('sheet1', function ($sheet) use ($d) {
                 $sheet->fromArray($d);
             });
         })->download('xls');
 //        return $data;
     }
 
-    function systemSettingIndex(){
+    function systemSettingIndex()
+    {
 
         $system_setting = SystemSetting::all();
-        return view("HRM::system_setting",['data'=>$system_setting]);
+        return view("HRM::system_setting", ['data' => $system_setting]);
 
     }
-    function systemSettingUpdate(Request $request,$id){
+
+    function systemSettingUpdate(Request $request, $id)
+    {
         $data = [
-            'setting_value'=>$request->exists('values')?implode(',',$request->values):null,
-            'active'=>$request->exists('active')?$request->active:0,
-            'description'=>$request->description
+            'setting_value' => $request->exists('values') ? implode(',', $request->values) : null,
+            'active' => $request->exists('active') ? $request->active : 0,
+            'description' => $request->description
         ];
         DB::beginTransaction();
-        try{
+        try {
             SystemSetting::find($id)->update($data);
             DB::commit();
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::rollback();
             Log::info($e->getTraceAsString());
-            return redirect()->route('system_setting')->with('error',$e->getMessage());
+            return redirect()->route('system_setting')->with('error', $e->getMessage());
         }
-        return redirect()->route('system_setting')->with('success',"Setting updated successfully");
+        return redirect()->route('system_setting')->with('success', "Setting updated successfully");
 
     }
-    function systemSettingEdit(Request $request,$id){
+
+    function systemSettingEdit(Request $request, $id)
+    {
 
         $system_setting = SystemSetting::find($id);
-        $units = District::where('id','<>',0)->get();
-        return view("HRM::system_setting_edit",['data'=>$system_setting,'units'=>$units]);
+        $units = District::where('id', '<>', 0)->get();
+        return view("HRM::system_setting_edit", ['data' => $system_setting, 'units' => $units]);
 
     }
 }

@@ -165,6 +165,12 @@ GlobalApp.directive('datePicker', function () {
         restrict: 'AC',
         link: function (scope, element, attrs) {
             //alert(scope.event)
+            var data = attrs.datePicker
+            if(data){
+                $(element).datePicker({
+                    defaultValue:eval(data)
+                })
+            }
             $(element).datePicker({
                 defaultValue:false
             })

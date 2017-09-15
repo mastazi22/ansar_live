@@ -412,33 +412,18 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('upload_original_info',['as'=>'upload_original_info','uses'=>'GeneralSettingsController@uploadOriginalInfo']);
         Route::get('upload_original_info',['as'=>'upload_original_info_view','uses'=>'GeneralSettingsController@uploadOriginalInfoView']);
         Route::get('test',function(){
-            if(Auth::user()->type!=11) return;
-            Log::info("called : send_offer");
-//            //return;
-            $user = env('SSL_USER_ID','ansarapi');
-            $pass = env('SSL_PASSWORD','x83A7Z96');
-            $sid = env('SSL_SID','ANSARVDP');
-            $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
-            try {
 
-                $body = 'test';
-                $phone = '8801739740375';
-                $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
-                $crl = curl_init();
-                curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, FALSE);
-                curl_setopt($crl, CURLOPT_SSL_VERIFYHOST, 2);
-                curl_setopt($crl, CURLOPT_URL, $url);
-                curl_setopt($crl, CURLOPT_HEADER, 0);
-                curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($crl, CURLOPT_POST, 1);
-                curl_setopt($crl, CURLOPT_POSTFIELDS, $param);
-                $response = curl_exec($crl);
-                curl_close($crl);
-                var_dump(\Nathanmac\Utilities\Parser\Facades\Parser::xml($response));
-                echo "<br><br>";
-            } catch (\Exception $e) {
-                Log::info('OFFER SEND ERROR: ' . $e->getMessage());
-            }
+            $s = "<th>SL. No</th>
+        <th>Ansar ID</th>
+        <th>Rank</th>
+        <th>Name</th>
+        <th>Birth Date</th>
+        <th>Home District</th>
+        <th>Thana</th>
+        <th>Offer District</th>
+        <th>Offer Date</th>";
+            $data = preg_split('/<th>|<\/th>/',$s);
+            return array_values(array_filter($data,function ($value){return trim($value);}));
 
         });
     });

@@ -492,26 +492,73 @@ class UserController extends Controller
         }
     }
 
-    public function viewActionLog($id = null)
+    public function viewActionLog(Request $request, $id = null)
     {
-        $form_date = Carbon::now()->toDateString();
-        $to_date = Carbon::parse($form_date)->subHours(48)->toDateString();
+        if ($request->ajax()) {
+            try {
+                $actions = [
+                    'EMBODIED',
+                    'PANELED',
+                    'SEND OFFER',
+                    'CANCEL OFFER',
+                    'DISEMBODIMENT',
+                    'BLOCKED',
+                    'BLACKED',
+                    'FREEZE',
+                    'CANCEL PANEL',
+                    'ADD ENTRY',
+                    'EDIT ENTRY',
+                    'SAVE DRAFT',
+                    'VERIFIED',
+                    'REJECT',
+                    'ADD KPI',
+                    'WITHDRAW KPI',
+                    'REDUCE KPI',
+                    'EDIT KPI',
+                    'UNBLOCKED',
+                    'UNBLACKED',
+                    'TRANSFER',
+                    'DIRECT OFFER',
+                    'DIRECT PANEl',
+                    'DIRECT EMBODIMENT',
+                    'DIRECT DISEMBODIMENT',
+                    'DIRECT TRANSFER',
+                    'DIRECT CANCEL PANEL',
+                    'BLOCK USER',
+                    'UNBLOCK USER',
+                    'CREATE USER',
+                    'EDIT USER PERMISSION',
+                    'DISEMBODIMENT DATE CORRECTION'];
+                $form_date = Carbon::parse($request->from_date)->toDateString();
+                $to_date = Carbon::parse($request->to_date)->toDateString();
+                if ($id) {
+                    $user = User::find($id);
+                    $data = $user->actionLog()->whereDate('created_at', '>', $to_date)->whereDate('created_at', '<=', $form_date)->select('ansar_id', 'from_state', 'to_state', 'action_type', DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'), DB::raw('DATE_FORMAT(created_at,"%r") as time'))->orderBy('created_at', 'desc')->get();
+                } else {
+                    $user = Auth::user();
+                    $data = $user->actionLog()->whereDate('created_at', '>', $to_date)->whereDate('created_at', '<=', $form_date)->select('ansar_id', 'from_state', 'to_state', 'action_type', DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'), DB::raw('DATE_FORMAT(created_at,"%r") as time'))->orderBy('created_at', 'desc')->get();
+                }
+                $data = View::make('User.action_log_part', ['logs' => collect($data)->groupBy('date'), 'user' => $user])->render();
+            } catch (\Exception $e) {
+                Log::info($e->getTraceAsString());
+                $data = "<div class=\"alert alert-danger\"><i class=\"fa fa-warning\"></i>&nbInvalid request</div>";
+            }
+            return $data;
+        }
         if ($id) {
             $user = User::find($id);
-            $data = $user->actionLog()->whereDate('created_at', '>', $to_date)->whereDate('created_at', '<=', $form_date)->select('ansar_id', 'from_state', 'to_state', 'action_type', DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'), DB::raw('DATE_FORMAT(created_at,"%r") as time'))->orderBy('created_at', 'desc')->get();
         } else {
             $user = Auth::user();
-            $data = $user->actionLog()->whereDate('created_at', '>', $to_date)->whereDate('created_at', '<=', $form_date)->select('ansar_id', 'from_state', 'to_state', 'action_type', DB::raw('DATE_FORMAT(created_at,"%d %b. %Y") as date'), DB::raw('DATE_FORMAT(created_at,"%r") as time'))->orderBy('created_at', 'desc')->get();
         }
 
-        return View::make('User.user_activity_log', ['logs' => collect($data)->groupBy('date'), 'user' => $user]);
+        return View::make('User.user_activity_log', ['user' => $user]);
     }
 
     public function getUserData()
     {
         $user = Auth::user();
-        if(!Auth::check()) return [];
-        $v = Cache::remember('user_data_'.$user->id, 10, function () use ($user) {
+        if (!Auth::check()) return [];
+        $v = Cache::remember('user_data_' . $user->id, 10, function () use ($user) {
 
 
             $kpis = $user->kpi;
