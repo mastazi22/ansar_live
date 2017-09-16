@@ -31,12 +31,12 @@ class ExportData extends Job implements ShouldQueue
         'paneled_ansar' => ["SL. No", "Ansar ID", "Rank", "Name", "Birth Date", "Home District", "Thana", "Panel Date & Time", "Panel Id"],
         'embodied_ansar' => ["SL. No", "Ansar ID", "Rank", "Name", "Birth Date", "Home District", "Thana", "Kpi Name", "Embodiment Date", "Embodiment Id"],
         'rest_ansar' => ["SL. No", "Ansar ID", "Name", "Birth Date","Rank",  "Home District", "Thana", "Rest Date"],
-        'freezed_ansar' => ["SL. No", "Ansar ID", "Rank", "Name", "Birth Date", "Home District", "Thana", "Freeze Reason", "Freeze Date"],
-        'blocked_ansar' => ["SL. No", "Ansar ID", "Rank", "Name", "Birth Date", "Home District", "Thana", "Block Reason", "Block Date"],
-        'blacked_ansar' => ["SL. No", "Ansar ID", "Rank", "Name", "Birth Date", "Home District", "Thana", "Black Reason", "Black Date"],
-        'offerred_ansar' => ["SL. No", "Ansar ID", "Rank", "Name", "Birth Date", "Home District", "Thana", "Offer District", "Offer Date"],
-        'own_embodied_ansar' => ["SL. No", "Ansar ID", "Rank", "Name", "Birth Date", "Home District", "Thana", "Kpi Name", "Embodiment Date", "Embodiment Id"],
-        'embodied_ansar_in_different_district' => ["SL. No", "Ansar ID", "Rank", "Name", "Birth Date", "Home District", "Thana", "Kpi Name", "Embodiment Date", "Embodiment Id"],
+        'freezed_ansar' => ["SL. No", "Ansar ID", "Name", "Birth Date","Rank",  "Home District", "Thana", "Freeze Reason", "Freeze Date"],
+        'blocked_ansar' => ["SL. No", "Ansar ID", "Name", "Birth Date","Rank",  "Home District", "Thana", "Block Reason", "Block Date"],
+        'blacked_ansar' => ["SL. No", "Ansar ID", "Name", "Birth Date","Rank",  "Home District", "Thana", "Black Reason", "Black Date"],
+        'offerred_ansar' => ["SL. No", "Ansar ID", "Name", "Birth Date","Rank",  "Home District", "Thana", "Offer District", "Offer Date"],
+        'own_embodied_ansar' => ["SL. No", "Ansar ID", "Name", "Birth Date","Rank",  "Home District", "Thana", "Kpi Name", "Embodiment Date", "Embodiment Id"],
+        'embodied_ansar_in_different_district' => ["SL. No", "Ansar ID", "Name", "Birth Date","Rank",  "Home District", "Thana", "Kpi Name", "Embodiment Date", "Embodiment Id"],
     ];
     private $type;
 
@@ -61,10 +61,11 @@ class ExportData extends Job implements ShouldQueue
 
             Excel::load($save_path . '/' . $this->export_status->file_name . '.xls', function ($excel) {
 
-                $excel->sheet('sheet1', function ($sheet) {
+                $excel->sheet('sheet'.($this->export_status->counter+1), function ($sheet) {
 
                     $counter = $this->export_status->counter*100+1;
                     $dd = [];
+                    array_push($dd, $this->all_headers[$this->type]);
                     foreach ($this->export_data as $r) {
 
                         $r = array_values((array)$r);
@@ -103,7 +104,13 @@ class ExportData extends Job implements ShouldQueue
                     $sheet->fromArray($dd, null, 'A1', false, false);
 
                 });
-                $i++;
+                for ($i=2;$i<=$this->export_status->total_part;$i++){
+                    $excel->sheet('sheet' . $i, function ($sheet) {
+
+
+
+                    });
+                }
 
             })->store('xls', $save_path);
             $this->export_status->status='success';

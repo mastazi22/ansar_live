@@ -6,6 +6,7 @@ use App\modules\HRM\Models\ActionUserLog;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
 use App\modules\HRM\Models\EmbodimentModel;
+use App\modules\HRM\Models\ExportDataJob;
 use App\modules\HRM\Models\KpiGeneralModel;
 use App\modules\HRM\Models\LoggedInUser;
 use Illuminate\Auth\Authenticatable;
@@ -108,5 +109,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
             array_push($kpi->embodiment->pluck('ansar_id'));
         }
         return json_encode($e);
+    }
+    public function exportJob(){
+        return $this->hasOne(ExportDataJob::class,'user_id');
     }
 }

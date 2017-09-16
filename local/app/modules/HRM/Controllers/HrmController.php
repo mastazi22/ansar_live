@@ -8,6 +8,7 @@ use App\Jobs\ExportData;
 use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\DataExportStatus;
 use App\modules\HRM\Models\District;
+use App\modules\HRM\Models\ExportDataJob;
 use App\modules\HRM\Models\GlobalParameter;
 use App\modules\HRM\Models\SystemSetting;
 use Carbon\Carbon;
@@ -338,16 +339,27 @@ class HrmController extends Controller
             $file_name = \Illuminate\Support\Str::random(8) . Carbon::now()->timestamp;
 
             $data = collect($data['ansars'])->chunk(100)->toArray();
-            $status = DataExportStatus::create([
-                'file_name' => $file_name,
-                'user_id' => Auth::user()->id,
-                'status' => 'pending',
-                'total_part' => count($data),
-                'counter' => 0
-            ]);
-            foreach ($data as $d) {
 
-                $this->dispatch(new ExportData($d, $status, $type));
+            $counter = 0;
+            $export_job = Auth::user()->exportJob()->create([
+                'total_file'=>(int)ceil(count($data)/(float)20),
+                'file_completed'=>0
+            ]);
+
+            foreach ($data as $d) {
+                if ($counter % 20 == 0) {
+                    $status = $export_job->exportStatus()->create([
+                        'file_name' => $file_name,
+                        'user_id' => Auth::user()->id,
+                        'status' => 'pending',
+                        'total_part' => 20,
+                        'counter' => 0
+                    ]);
+                }
+                $counter++;
+                if (isset($status)) {
+                    $this->dispatch(new ExportData($d, $status, $type));
+                }
 
             }
             return Response::json(['status' => true, 'message' => "Export request submit successfully. You will be notified when export complete"]);
@@ -355,7 +367,8 @@ class HrmController extends Controller
         return Response::json($data);
     }
 
-    public function getRecentAnsarList(Request $request)
+    public
+    function getRecentAnsarList(Request $request)
     {
         $type = Input::get('type');
         $limit = Input::get('limit');
@@ -444,13 +457,15 @@ class HrmController extends Controller
         return Response::json($data);
     }
 
-    public function showAnsarForServiceEnded($count)
+    public
+    function showAnsarForServiceEnded($count)
     {
         $pages = ceil($count / 10);
         return View::make('HRM::Dashboard.ansar_service_ended_list')->with(['total' => $count, 'pages' => $pages, 'item_per_page' => 10]);
     }
 
-    public function serviceEndedInfoDetails()
+    public
+    function serviceEndedInfoDetails()
     {
         $limit = Input::get('limit');
         $offset = Input::get('offset');
@@ -478,13 +493,15 @@ class HrmController extends Controller
         return CustomQuery::ansarListForServiceEnded($offset, $limit, $unit, $thana, $division, $interval, $q);
     }
 
-    public function showAnsarForReachedFifty($count)
+    public
+    function showAnsarForReachedFifty($count)
     {
         $pages = ceil($count / 10);
         return View::make('HRM::Dashboard.ansar_fifty_age_list')->with(['total' => $count, 'pages' => $pages, 'item_per_page' => 10]);
     }
 
-    public function ansarReachedFiftyDetails()
+    public
+    function ansarReachedFiftyDetails()
     {
         $limit = Input::get('limit');
         $offset = Input::get('offset');
@@ -508,13 +525,15 @@ class HrmController extends Controller
         return CustomQuery::ansarListWithFiftyYears($offset, $limit, $unit, $thana, $division, $q);
     }
 
-    public function showAnsarForNotInterested($count)
+    public
+    function showAnsarForNotInterested($count)
     {
         $pages = ceil($count / 10);
         return View::make('HRM::Dashboard.ansar_not_interested')->with(['total' => $count, 'pages' => $pages, 'item_per_page' => 10]);
     }
 
-    public function notInterestedInfoDetails()
+    public
+    function notInterestedInfoDetails()
     {
         $limit = Input::get('limit');
         $offset = Input::get('offset');
@@ -539,7 +558,8 @@ class HrmController extends Controller
         return CustomQuery::ansarListForNotInterested($offset, $limit, $unit, $thana, $division, $q);
     }
 
-    public function getTotalAnsar(Request $request)
+    public
+    function getTotalAnsar(Request $request)
     {
 //        return "pppp";
         DB::enableQueryLog();
