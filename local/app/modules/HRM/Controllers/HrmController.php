@@ -22,9 +22,12 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Helper\ExportDataToExcel;
 
 class HrmController extends Controller
 {
+    use ExportDataToExcel;
+
     function hrmDashboard()
     {
         // return $optional.' '.$type;
@@ -335,36 +338,7 @@ class HrmController extends Controller
 
         }
         if ($request->exists('export')) {
-            //export data
-
-
-            $data = collect($data['ansars'])->chunk(100)->toArray();
-
-            $counter = 0;
-            $export_job = Auth::user()->exportJob()->create([
-                'total_file'=>(int)ceil(count($data)/(float)20),
-                'file_completed'=>0
-            ]);
-            $per_file = 20;
-            $total = count($data);
-            foreach ($data as $d) {
-                if ($counter % 20 == 0) {
-                    $file_name = \Illuminate\Support\Str::random(8) . Carbon::now()->timestamp;
-                    $status = $export_job->exportStatus()->create([
-                        'file_name' => $file_name,
-                        'user_id' => Auth::user()->id,
-                        'status' => 'pending',
-                        'total_part' => $total-$per_file>=20?20:$total-$per_file,
-                        'counter' => 0
-                    ]);
-                }
-                $counter++;
-                if (isset($status)) {
-                    $this->dispatch(new ExportData($d, $status, $type));
-                }
-
-            }
-            return Response::json(['status' => true, 'message' => "Export request submit successfully. You will be notified when export complete"]);
+            $this->exportData($data['ansars'], $type);
         }
         return Response::json($data);
     }
@@ -439,22 +413,8 @@ class HrmController extends Controller
         }
         if ($request->exists('export')) {
             //export data
-            $file_name = \Illuminate\Support\Str::random(8) . Carbon::now()->timestamp;
+            $this->exportData($data['ansars'], $type);
 
-            $data = collect($data['ansars'])->chunk(100)->toArray();
-            $status = DataExportStatus::create([
-                'file_name' => $file_name,
-                'user_id' => Auth::user()->id,
-                'status' => 'pending',
-                'total_part' => count($data),
-                'counter' => 0
-            ]);
-            foreach ($data as $d) {
-
-                $this->dispatch(new ExportData($d, $status, $type));
-
-            }
-            return Response::json(['status' => true, 'message' => "Export request submit successfully. You will be notified when export complete"]);
         }
         return Response::json($data);
     }
@@ -467,7 +427,7 @@ class HrmController extends Controller
     }
 
     public
-    function serviceEndedInfoDetails()
+    function serviceEndedInfoDetails(Request $request)
     {
         $limit = Input::get('limit');
         $offset = Input::get('offset');
@@ -492,7 +452,11 @@ class HrmController extends Controller
             //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         }
-        return CustomQuery::ansarListForServiceEnded($offset, $limit, $unit, $thana, $division, $interval, $q);
+        $data =  CustomQuery::ansarListForServiceEnded($offset, $limit, $unit, $thana, $division, $interval, $q);
+        if($request->exists('export')){
+            $this->exportData($data['ansars'],'3_year_over_list');
+        }
+        return Response::json($data);
     }
 
     public

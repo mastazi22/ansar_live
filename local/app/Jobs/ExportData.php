@@ -39,6 +39,7 @@ class ExportData extends Job implements ShouldQueue
         'offerred_ansar' => ["SL. No", "Ansar ID", "Name", "Birth Date","Rank",  "Home District", "Thana", "Offer District", "Offer Date"],
         'own_embodied_ansar' => ["SL. No", "Ansar ID", "Name", "Birth Date","Rank",  "Home District", "Thana", "Kpi Name", "Embodiment Date", "Embodiment Id"],
         'embodied_ansar_in_different_district' => ["SL. No", "Ansar ID", "Name", "Birth Date","Rank",  "Home District", "Thana", "Kpi Name", "Embodiment Date", "Embodiment Id"],
+        '3_year_over_list' => ["SL. No", "Ansar ID", "Name", "Rank", "Current KPI Name", "KPI Unit", "KPI Thana", "Joining Date", "Service Ended Date"],
     ];
     private $type;
 
@@ -48,11 +49,6 @@ class ExportData extends Job implements ShouldQueue
         $this->export_data = collect($export_data)->toArray();
         $this->export_status = $export_status;
         $this->type = $type;
-        $files = Session::get('files');
-        if(!$files) $files = [];
-        $files[$export_status->file_name] = $export_status->total_part;
-        Session::put('files',$files);
-        Log::info(Session::get('files'));
     }
 
     /**
@@ -128,13 +124,5 @@ class ExportData extends Job implements ShouldQueue
             }
         }
 
-    }
-    function updateFileStatus($file_name){
-        $files = Session::get('files');
-        if(is_array($files)) {
-            $files[$file_name]-=1;
-            Session::put('files', $files);
-            Log::info(Session::get('files'));
-        }
     }
 }

@@ -72,7 +72,7 @@
                 if(type=='page')$scope.export_page = true;
                 else $scope.export_all = true;
                 $http({
-                    url: '{{URL::to('HRM/get_ansar_list')}}',
+                    url: '{{URL::route('get_recent_ansar_list')}}',
                     method: 'get',
                     params: {
                         type: $scope.ansarType,

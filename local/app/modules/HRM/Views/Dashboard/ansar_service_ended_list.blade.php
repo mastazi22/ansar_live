@@ -43,6 +43,7 @@
             }
             $scope.loadPage = function (page,$event) {
                 if($event!=undefined)  $event.preventDefault();
+                $scope.exportPage = page;
                 $scope.currentPage = page==undefined?0:page.pageNum;
                 $scope.loadingPage[$scope.currentPage]=true;
                 $scope.allLoading = true;
@@ -68,6 +69,29 @@
                     if($scope.queue.length>1) $scope.loadPage();
                     $scope.numOfPage = Math.ceil($scope.total/$scope.itemPerPage);
                     $scope.loadPagination();
+                })
+            }
+            $scope.exportData = function (type) {
+                var page = $scope.exportPage;
+                if(type=='page')$scope.export_page = true;
+                else $scope.export_all = true;
+                $http({
+                    url: '{{URL::route('service_ended_info_details')}}',
+                    method: 'get',
+                    params: {
+                        offset: type=='all'?-1:(page == undefined ? 0 : page.offset),
+                        limit: type=='all'?-1:(page == undefined ? $scope.itemPerPage : page.limit),
+                        unit: $scope.param.unit == undefined ? 'all' : $scope.param.unit,
+                        thana: $scope.param.thana == undefined ? 'all' : $scope.param.thana,
+                        division: $scope.param.range == undefined ? 'all' : $scope.param.range,
+                        q: $scope.q,
+                        interval:$scope.interval,
+                        export:type
+                    }
+                }).then(function (res) {
+                    $scope.export_page =  $scope.export_all = false;
+                },function (res) {
+                    $scope.export_page =  $scope.export_all = false;
                 })
             }
             $scope.filterMiddlePage = function (value, index, array) {
@@ -112,7 +136,21 @@
                             custom-change="loadPage()"
                             field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',custom:'col-sm-3'}"
                     ></filter-template>
-
+                    <div class="row">
+                        <div class="col-sm-12" style="margin-bottom: 5px">
+                            <div class="btn-group btn-group-sm pull-right">
+                                {{--<button id="print-report" class="btn btn-default"><i--}}
+                                {{--class="fa fa-print"></i>&nbsp;Print--}}
+                                {{--</button>--}}
+                                <button id="export-report" ng-disabled="export_page||export_all" ng-click="exportData('page')" class="btn btn-default ">
+                                    <i ng-show="!export_page" class="fa fa-file-excel-o"></i><i ng-show="export_page" class="fa fa-spinner fa-pulse"></i>&nbsp;Export this page
+                                </button>
+                                <button  ng-disabled="export_page||export_all" ng-click="exportData('all')" id="export-report-all" class="btn btn-default">
+                                    <i ng-show="!export_all" class="fa fa-file-excel-o"></i><i ng-show="export_all" class="fa fa-spinner fa-pulse"></i>&nbsp;Export all
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                      <div class="row">
                         <div class="col-md-8">
                             <h4 class="text text-bold">Total Ansars :PC([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])&nbsp;APC([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])&nbsp;Ansar([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</h4>

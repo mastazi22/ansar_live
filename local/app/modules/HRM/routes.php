@@ -415,13 +415,13 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 
             $s = "<th>SL. No</th>
         <th>Ansar ID</th>
-        <th>Rank</th>
         <th>Name</th>
-        <th>Birth Date</th>
-        <th>Home District</th>
-        <th>Thana</th>
-        <th>Offer District</th>
-        <th>Offer Date</th>";
+        <th>Rank</th>
+        <th>Current KPI Name</th>
+        <th>KPI Unit</th>
+        <th>KPI Thana</th>
+        <th>Joining Date</th>
+        <th>Service Ended Date</th>";
             $data = preg_split('/<th>|<\/th>/',$s);
             return array_values(array_filter($data,function ($value){return trim($value);}));
 
