@@ -4,12 +4,14 @@ namespace App\Jobs;
 
 use App\Jobs\Job;
 use App\modules\HRM\Models\DataExportStatus;
+use App\modules\HRM\Models\ExportDataJob;
 use Carbon\Carbon;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel;
 use Psy\Util\Str;
 
@@ -42,9 +44,15 @@ class ExportData extends Job implements ShouldQueue
 
     public function __construct($export_data, $export_status, $type)
     {
+
         $this->export_data = collect($export_data)->toArray();
         $this->export_status = $export_status;
         $this->type = $type;
+        $files = Session::get('files');
+        if(!$files) $files = [];
+        $files[$export_status->file_name] = $export_status->total_part;
+        Session::put('files',$files);
+        Log::info(Session::get('files'));
     }
 
     /**
@@ -61,11 +69,10 @@ class ExportData extends Job implements ShouldQueue
 
             Excel::load($save_path . '/' . $this->export_status->file_name . '.xls', function ($excel) {
 
-                $excel->sheet('sheet'.($this->export_status->counter+1), function ($sheet) {
+                $excel->sheet('sheet1', function ($sheet) {
 
                     $counter = $this->export_status->counter*100+1;
                     $dd = [];
-                    array_push($dd, $this->all_headers[$this->type]);
                     foreach ($this->export_data as $r) {
 
                         $r = array_values((array)$r);
@@ -99,24 +106,35 @@ class ExportData extends Job implements ShouldQueue
 
 
                 }
-                $excel->sheet('sheet' . $i, function ($sheet) use ($dd) {
+                $excel->sheet('sheet1', function ($sheet) use ($dd) {
 
                     $sheet->fromArray($dd, null, 'A1', false, false);
 
                 });
-                for ($i=2;$i<=$this->export_status->total_part;$i++){
-                    $excel->sheet('sheet' . $i, function ($sheet) {
-
-
-
-                    });
-                }
 
             })->store('xls', $save_path);
             $this->export_status->status='success';
             $this->export_status->counter +=1;
             $this->export_status->save();
+
+        }
+        if($this->export_status->counter==$this->export_status->total_part){
+            $edj = ExportDataJob::find($this->export_status->data_export_job_id);
+            $edj->file_completed+=1;
+            $edj->save();
+            if($edj->file_completed==$edj->total_file){
+                //do something
+                Log::info("FILE GENERATING COMPLETE. ID : ".$edj->id);
+            }
         }
 
+    }
+    function updateFileStatus($file_name){
+        $files = Session::get('files');
+        if(is_array($files)) {
+            $files[$file_name]-=1;
+            Session::put('files', $files);
+            Log::info(Session::get('files'));
+        }
     }
 }

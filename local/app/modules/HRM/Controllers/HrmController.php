@@ -336,7 +336,7 @@ class HrmController extends Controller
         }
         if ($request->exists('export')) {
             //export data
-            $file_name = \Illuminate\Support\Str::random(8) . Carbon::now()->timestamp;
+
 
             $data = collect($data['ansars'])->chunk(100)->toArray();
 
@@ -345,14 +345,16 @@ class HrmController extends Controller
                 'total_file'=>(int)ceil(count($data)/(float)20),
                 'file_completed'=>0
             ]);
-
+            $per_file = 20;
+            $total = count($data);
             foreach ($data as $d) {
                 if ($counter % 20 == 0) {
+                    $file_name = \Illuminate\Support\Str::random(8) . Carbon::now()->timestamp;
                     $status = $export_job->exportStatus()->create([
                         'file_name' => $file_name,
                         'user_id' => Auth::user()->id,
                         'status' => 'pending',
-                        'total_part' => 20,
+                        'total_part' => $total-$per_file>=20?20:$total-$per_file,
                         'counter' => 0
                     ]);
                 }
