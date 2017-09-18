@@ -13,18 +13,23 @@ use App\Jobs\ExportData;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
 
 trait ExportDataToExcel
 {
     public function exportData($data,$type=''){
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
+
             $data = collect($data)->chunk(100)->toArray();
             $counter = 0;
             $export_job = Auth::user()->exportJob()->create([
                 'total_file' => (int)ceil(count($data) / (float)20),
-                'file_completed' => 0
+                'file_completed' => 0,
+                'download_url'=>'',
+                'notification_url'=>"ws://".Request::getHost().":8090"
             ]);
             $per_file = 0;
             $total = count($data);
