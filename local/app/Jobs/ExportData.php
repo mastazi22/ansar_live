@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel;
 use Psy\Util\Str;
+use WebSocket\Client;
 
 class ExportData extends Job implements ShouldQueue
 {
@@ -121,6 +122,9 @@ class ExportData extends Job implements ShouldQueue
             if($edj->file_completed==$edj->total_file){
                 //do something
                 Log::info("FILE GENERATING COMPLETE. ID : ".$edj->id);
+                $client = new Client("ws://ansarerp.dev:8090");
+                $client->send(json_encode(['user'=>'server','to'=>$edj->user_id,'message'=>"Report exported complete.<br>Download link:http://xxxxx.com/".$edj->id]));
+                $client->close();
             }
         }
 

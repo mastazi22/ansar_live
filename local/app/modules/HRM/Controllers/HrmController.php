@@ -338,7 +338,7 @@ class HrmController extends Controller
 
         }
         if ($request->exists('export')) {
-            $this->exportData($data['ansars'], $type);
+            return $this->exportData($data['ansars'], $type);
         }
         return Response::json($data);
     }
@@ -413,7 +413,7 @@ class HrmController extends Controller
         }
         if ($request->exists('export')) {
             //export data
-            $this->exportData($data['ansars'], $type);
+            return $this->exportData($data['ansars'], $type);
 
         }
         return Response::json($data);
@@ -454,7 +454,7 @@ class HrmController extends Controller
         }
         $data =  CustomQuery::ansarListForServiceEnded($offset, $limit, $unit, $thana, $division, $interval, $q);
         if($request->exists('export')){
-            $this->exportData($data['ansars'],'3_year_over_list');
+            return $this->exportData($data['ansars'],'3_year_over_list');
         }
         return Response::json($data);
     }
@@ -467,7 +467,7 @@ class HrmController extends Controller
     }
 
     public
-    function ansarReachedFiftyDetails()
+    function ansarReachedFiftyDetails(Request $request)
     {
         $limit = Input::get('limit');
         $offset = Input::get('offset');
@@ -488,7 +488,12 @@ class HrmController extends Controller
             //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         }
-        return CustomQuery::ansarListWithFiftyYears($offset, $limit, $unit, $thana, $division, $q);
+        $data =  CustomQuery::ansarListWithFiftyYears($offset, $limit, $unit, $thana, $division, $q);
+        if($request->exists('export')){
+            return $this->exportData($data['ansars'],'3_year_over_list');
+        }
+
+        return Response::json($data);
     }
 
     public

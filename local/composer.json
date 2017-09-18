@@ -15,7 +15,9 @@
         "maatwebsite/excel": "~2.1.0",
         "nathanmac/Parser": "3.*",
         "laravelcollective/html": "5.2.*",
-        "sentry/sentry-laravel": "^0.4.1"
+        "sentry/sentry-laravel": "^0.4.1",
+        "cboden/ratchet": "^0.4",
+        "textalk/websocket": "1.0.*"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

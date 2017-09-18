@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\NotificationServer;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\EmbodimentModel;
 use App\modules\HRM\Models\FreezingInfoModel;
@@ -30,6 +31,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \App\Console\Commands\Inspire::class,
+        NotificationServer::class,
     ];
 
     /**

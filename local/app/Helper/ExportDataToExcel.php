@@ -35,7 +35,7 @@ trait ExportDataToExcel
                         'file_name' => $file_name,
                         'user_id' => Auth::user()->id,
                         'status' => 'pending',
-                        'total_part' => $total - $per_file >= 20 ? 20 : $total % $per_file,
+                        'total_part' => $total - $per_file >= 20 ? 20 : $total - $per_file,
                         'counter' => 0
                     ]);
                     $per_file += 20;
@@ -49,9 +49,9 @@ trait ExportDataToExcel
             DB::commit();
         }catch(\Exception $e){
             DB::rollback();
-            return Response::json(['status' => false, 'message' => "OPS!!! An error occur while exporting. Please try again later"]);
+            return Response::json(['status' => false,'type'=>'export', 'message' => "OPS!!! An error occur while exporting. Please try again later"]);
         }
-        return Response::json(['status' => true, 'message' => "Export request submit successfully. You will be notified when export complete"]);
+        return Response::json(['status' => true,'type'=>'export', 'message' => "Export request submit successfully. You will be notified when export complete"]);
 
     }
 }
