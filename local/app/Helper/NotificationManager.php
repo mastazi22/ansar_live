@@ -48,6 +48,7 @@ class NotificationManager implements MessageComponentInterface
     function onClose(ConnectionInterface $conn)
     {
         // TODO: Implement onClose() method.
+        if($this->connections->search($conn->resourceId))$this->connections->forget($conn->resourceId);
         Log::info("connection close....".$conn->resourceId);
     }
 
@@ -77,22 +78,18 @@ class NotificationManager implements MessageComponentInterface
 
             $data = json_decode($msg,true);
 
-            $keys = array_keys($data);
-            foreach ($keys as $key){
-                if($key==='user') {
-                    if($data[$key]=='server'){
-                        foreach ($this->users as $k=>$v){
-                            if($data['to']==$v){
-                                $conn = $this->connections->get($k);
-                                Log::info($conn?$conn->resourceId:'nnnnn');
-                                $this->connections->get($k)->send($data['message']);
-                                break;
-                            }
+            $key = 'user';
+            if(isset($data[$key])) {
+                if($data[$key]=='server'){
+                    foreach ($this->users as $k=>$v){
+                        if($data['to']==$v){
+                            $conn = $this->connections->get($k);
+                            Log::info($conn?$conn->resourceId:'nnnnn');
+                            $this->connections->get($k)->send($data['message']);
                         }
                     }
-                    else $this->users[$from->resourceId] = $data[$key];
-                    break;
                 }
+                else $this->users[$from->resourceId] = $data[$key];
             }
 
         }catch (\Exception $e){

@@ -25,6 +25,11 @@ Route::group(['prefix'=>'HRM','middleware'=>'manageDatabase','namespace'=>'\App\
 Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserType','permission'] ],function(){
     Route::group(['namespace'=>'\App\modules\HRM\Controllers'],function(){
 
+
+        Route::get('download/file/{dataJob}',['as'=>'download_file','uses'=>'DownloadController@downloadFile']);
+        Route::get('delete/file/{dataJob}',['as'=>'delete_file','uses'=>'DownloadController@deleteFiles']);
+
+
         Route::get('view_image/{type}/{file}',['as'=>'view_image','uses'=>'FormSubmitHandler@getImage']);
         //DASHBOARD
         Route::get('/tesst',function(){

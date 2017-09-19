@@ -9,7 +9,7 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
     $httpProvider.useApplyAsync(true)
     var retryCount = 0;
     $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
-    $httpProvider.interceptors.push(function ($q, $injector,notificationService) {
+    $httpProvider.interceptors.push(function ($q, $injector, notificationService) {
         return {
             response: function (response) {
                 if (response.data.status == 'logout') {
@@ -19,12 +19,12 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
                 else if (response.data.status == 'forbidden') {
 
                 }
-                else if(response.data.type=='export'){
-                    if(response.data.status){
-                        notificationService.notify('success',response.data.message);
+                else if (response.data.type == 'export') {
+                    if (response.data.status) {
+                        notificationService.notify('success', response.data.message);
                     }
-                    else{
-                        notificationService.notify('error',response.data.message);
+                    else {
+                        notificationService.notify('error', response.data.message);
                     }
                 }
                 return response;
@@ -48,8 +48,10 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
                 return $q.reject(response);
             }
         }
+
         function retryHttpRequest(config, deferred) {
             retryCount++;
+
             function successCallback(response) {
                 deferred.resolve(response);
             }
@@ -78,53 +80,68 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
 
     //console.log(this)
 
-}).run(function ($rootScope,$http) {
+}).run(function ($rootScope, $http, $window) {
 
+    var ws;
     $rootScope.user = ''
-    $http.get('/'+prefix+'user_data').then(function (response) {
+    $http.get('/' + prefix + 'user_data').then(function (response) {
         $rootScope.user = response.data;
+        ws = openSocketConnection($rootScope.user.id);
     })
     $rootScope.loadingView = false;
-    $rootScope.dateConvert=function(date){
+    $rootScope.dateConvert = function (date) {
         return (moment(date).locale('bn').format('DD-MMMM-YYYY'));
     }
-    var ws = new WebSocket("ws://"+window.location.hostname+":8090");
-    ws.onopen = function (event) {
-        console.log(event)
-        alert("message sending.....")
-        ws.send(JSON.stringify({'user':1}))
-    }
-    ws.onerror = function (event) {
-        console.log(event)
-    }
-    ws.onmessage = function (event) {
-        console.log(event)
-    }
-    ws.onclose = function (event) {
-        console.log(event)
+    var windowElement = angular.element($window);
+    windowElement.on('beforeunload', function (event) {
+
+        if (ws) ws.close();
+    });
+
+    function openSocketConnection(id) {
+        var ws = new WebSocket("ws://" + window.location.hostname + ":8090");
+        ws.onopen = function (event) {
+            console.log(event)
+            ws.send(JSON.stringify({'user': id}))
+        }
+        ws.onerror = function (event) {
+            console.log(event)
+        }
+        ws.onmessage = function (event) {
+            noty({
+                text: event.data,
+                layout:'bottomRight',
+                type:'success'
+            })
+        }
+        ws.onclose = function (event) {
+            console.log(event)
+        }
+        return ws;
+
     }
 });
-GlobalApp.filter('num', function() {
-    return function(input) {
-        var d =  parseInt(input.replace(',',''));
-        return isNaN(d)?'':d;
+GlobalApp.filter('num', function () {
+    return function (input) {
+        var d = parseInt(input.replace(',', ''));
+        return isNaN(d) ? '' : d;
     };
 });
-GlobalApp.filter('checkpermission', function($rootScope) {
-    return function(input,type1,type2,type3) {
-        console.log(type1+" "+type2+" "+type3)
-        try{
+GlobalApp.filter('checkpermission', function ($rootScope) {
+    return function (input, type1, type2, type3) {
+        console.log(type1 + " " + type2 + " " + type3)
+        try {
             var permissions = JSON.parse($rootScope.user.user_permission.permission_list);
-            return permissions.indexOf(type1) >= 0||$rootScope.user.usertype.type_code==11||$rootScope.user.embodiment.indexOf(type3)>=0?input:"";
-        }catch(e){
+            return permissions.indexOf(type1) >= 0 || $rootScope.user.usertype.type_code == 11 || $rootScope.user.embodiment.indexOf(type3) >= 0 ? input : "";
+        } catch (e) {
             console.error(e)
             return input;
         }
     };
 });
 GlobalApp.filter('dateformat', function () {
-    return function (input, format,local) {
-        if(local==undefined) local='en'
+    return function (input, format, local) {
+        if (local == undefined) local = 'en'
         return moment(input).locale(local).format(format);
     }
 })
@@ -190,13 +207,13 @@ GlobalApp.directive('datePicker', function () {
         link: function (scope, element, attrs) {
             //alert(scope.event)
             var data = attrs.datePicker
-            if(data){
+            if (data) {
                 $(element).datePicker({
-                    defaultValue:eval(data)
+                    defaultValue: eval(data)
                 })
             }
             $(element).datePicker({
-                defaultValue:false
+                defaultValue: false
             })
 
         }
@@ -227,12 +244,12 @@ GlobalApp.directive('modalShow', function ($timeout) {
         scope: {
             data: '=',
             callback: '&',
-            target:'@'
+            target: '@'
         },
         link: function (scope, element, attrs) {
             //alert(scope.event)
             $(element).on('click', function () {
-                scope.callback({data:scope.data});
+                scope.callback({data: scope.data});
                 $timeout(function () {
                     scope.$apply();
                     $(scope.target).modal('show')
@@ -278,7 +295,7 @@ GlobalApp.factory('httpService', function ($http) {
             })
 
         },
-        thana: function (division,id) {
+        thana: function (division, id) {
             var http = '';
             //if (id == undefined) {
             //    http = $http({
@@ -287,11 +304,11 @@ GlobalApp.factory('httpService', function ($http) {
             //    })
             //}
             //else {
-                http = $http({
-                    method: 'get',
-                    url: '/' + prefix + 'HRM/ThanaName',
-                    params: {id: id,division_id:division}
-                })
+            http = $http({
+                method: 'get',
+                url: '/' + prefix + 'HRM/ThanaName',
+                params: {id: id, division_id: division}
+            })
             //}
             return http.then(function (response) {
                 return response.data
@@ -300,11 +317,11 @@ GlobalApp.factory('httpService', function ($http) {
             })
 
         },
-        kpi: function (d,u,id,type) {
+        kpi: function (d, u, id, type) {
             return $http({
-                url:'/'+prefix+"HRM/KPIName",
-                method:'get',
-                params:{division:d,unit:u,id:id,type:type}
+                url: '/' + prefix + "HRM/KPIName",
+                method: 'get',
+                params: {division: d, unit: u, id: id, type: type}
             }).then(function (response) {
                 return response.data;
             }, function (response) {
@@ -322,20 +339,20 @@ GlobalApp.factory('httpService', function ($http) {
             })
         },
         disease: function () {
-            return $http.get('/'+prefix+'HRM/getDiseaseName').then(function (response) {
+            return $http.get('/' + prefix + 'HRM/getDiseaseName').then(function (response) {
                 return response.data;
             })
         },
         skill: function () {
-            return $http.get('/'+prefix+'HRM/getallskill')
+            return $http.get('/' + prefix + 'HRM/getallskill')
         },
         education: function () {
-            return $http.get('/'+prefix+'HRM/getalleducation').then(function (response) {
+            return $http.get('/' + prefix + 'HRM/getalleducation').then(function (response) {
                 return response.data;
             })
         },
         bloodGroup: function () {
-            return $http.get('/'+prefix+'HRM/getBloodName').then(function (response) {
+            return $http.get('/' + prefix + 'HRM/getBloodName').then(function (response) {
                 return response.data;
             })
         }
@@ -382,89 +399,89 @@ GlobalApp.controller('WithdrawActionController', function ($scope, $http, kpiInf
             }
         }, function (response) {
             $scope.isSubmitting = false;
-            if (response.status == 422)$scope.error = response.data;
+            if (response.status == 422) $scope.error = response.data;
         })
     }
 })
-GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
+GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
     $rootScope.loadingView = true;
     return {
-        restrict:'E',
-        scope:{
-            showItem:'@',// ['range','unit','thana','kpi']
-            rangeChange:'&',//{func()}
-            unitChange:'&',//{func()}
-            thanaChange:'&',//{func()}
-            kpiChange:'&',//{func()}
-            rankChange:'&',//{func()}
-            genderChange:'&',//{func()}
-            rangeLoad:'&',//{func()}
-            unitLoad:'&',//{func()}
-            thanaLoad:'&',//{func()}
-            kpiLoad:'&',//{func()}
-            kpiDisabled:'=',
-            rangeDisabled:'=',
-            thanaDisabled:'=',
-            unitDisabled:'=',
-            kpiFieldDisabled:'=',
-            unitFieldDisabled:'=',
-            rangeFieldDisabled:'=',
-            thanaFieldDisabled:'=',
-            loadWatch:'=',
-            watchChange:'@',
-            onLoad:"&",
-            type:'@',//['all','single']
-            startLoad:'@',//['range','unit','thana','kpi']
-            fieldWidth:'=',
-            fieldName:'=',
-            layoutVertical:'@',
-            getKpiName:'=',
-            getUnitName:'=',
-            getThanaName:'=',
-            data:'=',
-            errorKey:'=',
-            reset:'=',
-            errorMessage:'=',
-            customField:'=',
-            customLabel:'@',
-            customData:'=',
-            customModel:'=',
-            customChange:'&',
-            kpiType:'@',
-            resetAll:'@'
+        restrict: 'E',
+        scope: {
+            showItem: '@',// ['range','unit','thana','kpi']
+            rangeChange: '&',//{func()}
+            unitChange: '&',//{func()}
+            thanaChange: '&',//{func()}
+            kpiChange: '&',//{func()}
+            rankChange: '&',//{func()}
+            genderChange: '&',//{func()}
+            rangeLoad: '&',//{func()}
+            unitLoad: '&',//{func()}
+            thanaLoad: '&',//{func()}
+            kpiLoad: '&',//{func()}
+            kpiDisabled: '=',
+            rangeDisabled: '=',
+            thanaDisabled: '=',
+            unitDisabled: '=',
+            kpiFieldDisabled: '=',
+            unitFieldDisabled: '=',
+            rangeFieldDisabled: '=',
+            thanaFieldDisabled: '=',
+            loadWatch: '=',
+            watchChange: '@',
+            onLoad: "&",
+            type: '@',//['all','single']
+            startLoad: '@',//['range','unit','thana','kpi']
+            fieldWidth: '=',
+            fieldName: '=',
+            layoutVertical: '@',
+            getKpiName: '=',
+            getUnitName: '=',
+            getThanaName: '=',
+            data: '=',
+            errorKey: '=',
+            reset: '=',
+            errorMessage: '=',
+            customField: '=',
+            customLabel: '@',
+            customData: '=',
+            customModel: '=',
+            customChange: '&',
+            kpiType: '@',
+            resetAll: '@'
         },
-        controller: function ($scope,$rootScope,httpService) {
+        controller: function ($scope, $rootScope, httpService) {
             $scope.selected = {
-                range:$scope.type=='all'?'all':'',
-                unit:$scope.type=='all'?'all':'',
-                thana:$scope.type=='all'?'all':'',
-                kpi:$scope.type=='all'?'all':'',
-                rank:$scope.type=='all'?'all':'',
-                gender:$scope.type=='all'?'all':'',
-                custom:$scope.customModel
+                range: $scope.type == 'all' ? 'all' : '',
+                unit: $scope.type == 'all' ? 'all' : '',
+                thana: $scope.type == 'all' ? 'all' : '',
+                kpi: $scope.type == 'all' ? 'all' : '',
+                rank: $scope.type == 'all' ? 'all' : '',
+                gender: $scope.type == 'all' ? 'all' : '',
+                custom: $scope.customModel
             }
-            $scope.$watch('resetAll',function (n,o) {
-                n = (n==='true')
+            $scope.$watch('resetAll', function (n, o) {
+                n = (n === 'true')
                 //alert(typeof n)
-                if(n===true){
+                if (n === true) {
                     //alert("aise")
                     $scope.selected = {
-                        range:$scope.type=='all'?'all':'',
-                        unit:$scope.type=='all'?'all':'',
-                        thana:$scope.type=='all'?'all':'',
-                        kpi:$scope.type=='all'?'all':'',
-                        rank:$scope.type=='all'?'all':'',
-                        gender:$scope.type=='all'?'all':'',
-                        custom:$scope.customModel
+                        range: $scope.type == 'all' ? 'all' : '',
+                        unit: $scope.type == 'all' ? 'all' : '',
+                        thana: $scope.type == 'all' ? 'all' : '',
+                        kpi: $scope.type == 'all' ? 'all' : '',
+                        rank: $scope.type == 'all' ? 'all' : '',
+                        gender: $scope.type == 'all' ? 'all' : '',
+                        custom: $scope.customModel
                     }
-                    if($rootScope.user.usertype.type_name==='DC'){
+                    if ($rootScope.user.usertype.type_name === 'DC') {
                         $scope.kpis = [];
                     }
-                    else if($rootScope.user.usertype.type_name==='RC'){
+                    else if ($rootScope.user.usertype.type_name === 'RC') {
                         $scope.kpis = [];
                         $scope.thanas = [];
                     }
-                    else{
+                    else {
                         $scope.kpis = [];
                         $scope.thanas = [];
                         $scope.units = [];
@@ -473,110 +490,112 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 }
             })
             $scope.genders = [
-                {value:'Male',text:'Male'},
-                {value:'Female',text:'Female'},
-                {value:'Other',text:'Other'},
+                {value: 'Male', text: 'Male'},
+                {value: 'Female', text: 'Female'},
+                {value: 'Other', text: 'Other'},
             ]
             $scope.finish = false;
             $scope.loading = {
-                range:false,
-                unit:false,
-                thana:false,
-                kpi:false,
+                range: false,
+                unit: false,
+                thana: false,
+                kpi: false,
             }
             $scope.show = function (item) {
-                return $scope.showItem.indexOf(item)>-1&&hasPermission(item);
+                return $scope.showItem.indexOf(item) > -1 && hasPermission(item);
             }
-            function hasPermission(item){
-                if(item=='rank'||item=='gender') return true;
-                if(!$rootScope.user) return false;
-                if($rootScope.user.usertype.type_name=='DC'&&(item=='range'||item=='unit')){
+
+            function hasPermission(item) {
+                if (item == 'rank' || item == 'gender') return true;
+                if (!$rootScope.user) return false;
+                if ($rootScope.user.usertype.type_name == 'DC' && (item == 'range' || item == 'unit')) {
                     return false;
                 }
-                else if($rootScope.user.usertype.type_name=='RC'&&item=='range'){
+                else if ($rootScope.user.usertype.type_name == 'RC' && item == 'range') {
                     return false;
                 }
-                else if($rootScope.user.usertype.type_name=='Checker'||$rootScope.user.usertype.type_name=='Dataentry'){
+                else if ($rootScope.user.usertype.type_name == 'Checker' || $rootScope.user.usertype.type_name == 'Dataentry') {
                     return false;
                 }
-                else{
+                else {
                     return true;
                 }
             }
+
             $scope.loadRange = function () {
 
-                if(!$scope.show('range')) return;
+                if (!$scope.show('range')) return;
                 $scope.loading.range = true;
                 httpService.range().then(function (data) {
                     $scope.loading.range = false;
-                    if(data.status!=undefined){
-                        $scope.errorKey = {range:'range'};
-                        $scope.errorMessage = {range:data.statusText};
+                    if (data.status != undefined) {
+                        $scope.errorKey = {range: 'range'};
+                        $scope.errorMessage = {range: data.statusText};
                         return;
                     }
                     $scope.ranges = data;
                 })
-                $scope.rangeLoad({param:$scope.selected});
+                $scope.rangeLoad({param: $scope.selected});
             }
             $scope.loadUnit = function (id) {
 
-                if(!$scope.show('unit')) return;
+                if (!$scope.show('unit')) return;
                 $scope.units = $scope.thanas = $scope.kpis = []
                 $scope.loading.unit = true;
                 httpService.unit(id).then(function (data) {
-                    if(data.status!=undefined){
-                        $scope.errorKey = {unit:'unit'};
-                        $scope.errorMessage = {unit:data.statusText};
+                    if (data.status != undefined) {
+                        $scope.errorKey = {unit: 'unit'};
+                        $scope.errorMessage = {unit: data.statusText};
                         return;
                     }
                     $scope.units = data;
                     $scope.loading.unit = false;
                 })
-                $scope.unitLoad({param:$scope.selected});
+                $scope.unitLoad({param: $scope.selected});
             }
-            $scope.loadThana = function (d,id) {
-                if(!$scope.show('thana')) return;
+            $scope.loadThana = function (d, id) {
+                if (!$scope.show('thana')) return;
                 $scope.thanas = $scope.kpis = []
                 $scope.loading.thana = true;
-                httpService.thana(d,id).then(function (data) {
-                   // alert(data)
+                httpService.thana(d, id).then(function (data) {
+                    // alert(data)
                     $scope.loading.thana = false;
-                    if(data.status!=undefined){
-                        $scope.errorKey = {thana:'thana'};
-                        $scope.errorMessage = {thana:data.statusText};
+                    if (data.status != undefined) {
+                        $scope.errorKey = {thana: 'thana'};
+                        $scope.errorMessage = {thana: data.statusText};
                         return;
                     }
                     $scope.thanas = data;
                 })
-                $scope.thanaLoad({param:$scope.selected});
+                $scope.thanaLoad({param: $scope.selected});
             }
-            $scope.loadKPI = function (d,u,id) {
+            $scope.loadKPI = function (d, u, id) {
 
                 //$scope.kpiChange({param:$scope.selected});
-                if(!$scope.show('kpi')) return;
+                if (!$scope.show('kpi')) return;
                 $scope.loading.kpi = true;
 
-                httpService.kpi(d,u,id,$scope.kpiType).then(function (data) {
+                httpService.kpi(d, u, id, $scope.kpiType).then(function (data) {
                     $scope.loading.kpi = false;
-                    if(data.status!=undefined){
-                        $scope.errorKey = {kpi:'kpi'};
-                        $scope.errorMessage = {kpi:data.statusText};
+                    if (data.status != undefined) {
+                        $scope.errorKey = {kpi: 'kpi'};
+                        $scope.errorMessage = {kpi: data.statusText};
                         return;
                     }
                     $scope.kpis = data;
 
 
                 })
-                $scope.kpiLoad({param:$scope.selected});
+                $scope.kpiLoad({param: $scope.selected});
             }
-            $scope.loadRank= function () {
+            $scope.loadRank = function () {
 
                 //$scope.kpiChange({param:$scope.selected});
-                if(!$scope.show('rank')) return;
+                if (!$scope.show('rank')) return;
                 httpService.rank().then(function (data) {
-                    if(data.status!=undefined){
-                        $scope.errorKey = {rank:'rank'};
-                        $scope.errorMessage = {rank:data.statusText};
+                    if (data.status != undefined) {
+                        $scope.errorKey = {rank: 'rank'};
+                        $scope.errorMessage = {rank: data.statusText};
                         return;
                     }
                     $scope.ranks = data;
@@ -585,58 +604,58 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
             }
             $scope.changeRange = function (division_id) {
                 console.log(division_id)
-                if($scope.type=='all'){
+                if ($scope.type == 'all') {
                     $scope.loadUnit(division_id)
                     $scope.loadThana(division_id)
                     //$scope.loadKPI(division_id)
                 }
-                else{
+                else {
                     $scope.loadUnit(division_id)
                 }
             }
-            $scope.changeUnit = function (d,unit_id) {
+            $scope.changeUnit = function (d, unit_id) {
                 console.log($scope.reset)
-                if($scope.type=='all'){
-                    $scope.loadThana(d,unit_id)
+                if ($scope.type == 'all') {
+                    $scope.loadThana(d, unit_id)
                     //$scope.loadKPI(d,unit_id)
                 }
-                else{
-                    $scope.loadThana(undefined,unit_id)
+                else {
+                    $scope.loadThana(undefined, unit_id)
                 }
             }
-            $scope.changeThana = function (d,u,thana_id) {
-                if($scope.type=='all'){
-                    $scope.loadKPI(d,u,thana_id)
+            $scope.changeThana = function (d, u, thana_id) {
+                if ($scope.type == 'all') {
+                    $scope.loadKPI(d, u, thana_id)
                 }
-                else{
-                    $scope.loadKPI(undefined,undefined,thana_id)
+                else {
+                    $scope.loadKPI(undefined, undefined, thana_id)
                 }
             }
-            if($scope.showItem.indexOf('rank')>-1) $scope.loadRank();
-            $rootScope.$watch('user', function (n,o) {
-                if(!n) return;
-                if($rootScope.user.usertype.type_name=='DC'){
+            if ($scope.showItem.indexOf('rank') > -1) $scope.loadRank();
+            $rootScope.$watch('user', function (n, o) {
+                if (!n) return;
+                if ($rootScope.user.usertype.type_name == 'DC') {
                     $scope.selected.range = $rootScope.user.district.division_id
                     $scope.selected.unit = $rootScope.user.district.id
-                    $scope.loadThana(undefined,$rootScope.user.district.id)
+                    $scope.loadThana(undefined, $rootScope.user.district.id)
                 }
-                else if($rootScope.user.usertype.type_name=='RC'){
+                else if ($rootScope.user.usertype.type_name == 'RC') {
                     $scope.selected.range = $rootScope.user.division.id
                     $scope.loadUnit($rootScope.user.division.id)
-                    if($scope.type=='all'){
+                    if ($scope.type == 'all') {
                         $scope.loadThana('all');
                         //$scope.loadKPI('all');
                     }
                 }
-                else if($rootScope.user.usertype.type_name=='Super Admin'||$rootScope.user.usertype.type_name=='Admin'||$rootScope.user.usertype.type_name=='DG'){
-                    if($scope.type=='all'){
+                else if ($rootScope.user.usertype.type_name == 'Super Admin' || $rootScope.user.usertype.type_name == 'Admin' || $rootScope.user.usertype.type_name == 'DG') {
+                    if ($scope.type == 'all') {
                         $scope.loadRange();
                         $scope.loadUnit('all');
                         $scope.loadThana('all');
                         //$scope.loadKPI('all');
                     }
-                    else{
-                        switch($scope.startLoad){
+                    else {
+                        switch ($scope.startLoad) {
                             case 'range':
                                 $scope.loadRange();
                                 break;
@@ -656,152 +675,152 @@ GlobalApp.directive('filterTemplate', function ($timeout,$rootScope) {
                 $scope.finish = true;
             })
 
-            $scope.$watch('reset.range',function (n, o) {
-                if(n) {
-                    if($scope.startLoad!='range')$scope.ranges = [];
-                    $scope.selected.range = $scope.type=='all'?'all':'';
+            $scope.$watch('reset.range', function (n, o) {
+                if (n) {
+                    if ($scope.startLoad != 'range') $scope.ranges = [];
+                    $scope.selected.range = $scope.type == 'all' ? 'all' : '';
                 }
             })
-            $scope.$watch('reset.unit',function (n, o) {
+            $scope.$watch('reset.unit', function (n, o) {
                 //alert(1)
-                if(n) {
-                    if($scope.startLoad!='unit'&&$rootScope.user.usertype.type_name!='RC')$scope.units = [];
+                if (n) {
+                    if ($scope.startLoad != 'unit' && $rootScope.user.usertype.type_name != 'RC') $scope.units = [];
 
-                    $scope.selected.unit = $scope.data.unit = $scope.type=='all'?'all':'';
+                    $scope.selected.unit = $scope.data.unit = $scope.type == 'all' ? 'all' : '';
                 }
             })
-            $scope.$watch('reset.thana',function (n, o) {
-                if(n) {
-                    if($scope.startLoad!='thana'&&$rootScope.user.usertype.type_name!='DC')$scope.thanas = [];
-                    $scope.selected.thana = $scope.data.thana = $scope.type=='all'?'all':'';
+            $scope.$watch('reset.thana', function (n, o) {
+                if (n) {
+                    if ($scope.startLoad != 'thana' && $rootScope.user.usertype.type_name != 'DC') $scope.thanas = [];
+                    $scope.selected.thana = $scope.data.thana = $scope.type == 'all' ? 'all' : '';
                 }
             })
-            $scope.$watch('reset.kpi',function (n, o) {
-                if(n) {
-                    if($scope.startLoad!='kpi')$scope.kpis = [];
-                    $scope.selected.kpi = $scope.data.kpi = $scope.type=='all'?'all':'';
+            $scope.$watch('reset.kpi', function (n, o) {
+                if (n) {
+                    if ($scope.startLoad != 'kpi') $scope.kpis = [];
+                    $scope.selected.kpi = $scope.data.kpi = $scope.type == 'all' ? 'all' : '';
                 }
             })
             $scope.$watch('loadWatch', function (n, o) {
                 //alert(n)
-                if(n!=undefined){
+                if (n != undefined) {
                     //alert(1)
-                    if($scope.watchChange=='thana'){
-                        $scope.loadThana(undefined,n)
+                    if ($scope.watchChange == 'thana') {
+                        $scope.loadThana(undefined, n)
                     }
                 }
             })
 
         },
-        templateUrl:'/' + prefix + 'HRM/template_list/range_unit_thana_kpi_rank_gender_template',
-        link: function (scope,element,attrs) {
+        templateUrl: '/' + prefix + 'HRM/template_list/range_unit_thana_kpi_rank_gender_template',
+        link: function (scope, element, attrs) {
             //alert("aise")
             $rootScope.loadingView = false;
             scope.data = scope.selected;
             $timeout(function () {
                 scope.$watch('finish', function (n, o) {
-                    if(n)  scope.onLoad({param:scope.selected});
+                    if (n) scope.onLoad({param: scope.selected});
                 })
 
             })
 
-            $(element).on('change',"#range", function () {
+            $(element).on('change', "#range", function () {
                 //alert('aSsas')
-                scope.selected.unit = scope.type=='all'?'all':''
-                scope.selected.thana = scope.type=='all'?'all':''
-                scope.selected.kpi = scope.type=='all'?'all':''
-                scope.rangeChange({param:scope.selected})
+                scope.selected.unit = scope.type == 'all' ? 'all' : ''
+                scope.selected.thana = scope.type == 'all' ? 'all' : ''
+                scope.selected.kpi = scope.type == 'all' ? 'all' : ''
+                scope.rangeChange({param: scope.selected})
             })
-            $(element).on('change','#unit', function () {
+            $(element).on('change', '#unit', function () {
                 scope.getUnitName = $.trim($(this).children('option:selected').text())
-                scope.selected.thana = scope.type=='all'?'all':''
-                scope.selected.kpi = scope.type=='all'?'all':''
-                scope.unitChange({param:scope.selected})
+                scope.selected.thana = scope.type == 'all' ? 'all' : ''
+                scope.selected.kpi = scope.type == 'all' ? 'all' : ''
+                scope.unitChange({param: scope.selected})
             })
-            $(element).on('change',"#thana", function () {
+            $(element).on('change', "#thana", function () {
                 scope.getThanaName = $.trim($(this).children('option:selected').text())
-                scope.selected.kpi = scope.type=='all'?'all':''
-                scope.thanaChange({param:scope.selected})
+                scope.selected.kpi = scope.type == 'all' ? 'all' : ''
+                scope.thanaChange({param: scope.selected})
             })
-            $(element).on('change',"#rank", function () {
-                scope.rankChange({param:scope.selected})
+            $(element).on('change', "#rank", function () {
+                scope.rankChange({param: scope.selected})
             })
-            $(element).on('change',"#kpi", function () {
+            $(element).on('change', "#kpi", function () {
                 scope.getKpiName = $.trim($(this).children('option:selected').text())
                 $timeout(function () {
                     scope.$apply();
-                    scope.kpiChange({param:scope.selected})
+                    scope.kpiChange({param: scope.selected})
                 })
 
             })
-            $(element).on('change',"#gender", function () {
-                scope.genderChange({param:scope.selected})
+            $(element).on('change', "#gender", function () {
+                scope.genderChange({param: scope.selected})
             })
-            $(element).on('change',"#custom", function () {
+            $(element).on('change', "#custom", function () {
                 scope.customModel = scope.selected.custom;
                 $timeout(function () {
                     scope.$apply();
-                    scope.customChange({param:scope.selected})
+                    scope.customChange({param: scope.selected})
                 })
 
             })
         }
     }
 })
-GlobalApp.directive('tableSearch',function () {
-    return{
-        restrict:'ACE',
-        template:'<div class="row" style="margin: 0">' +
-            '<div class="col-sm-8" style="padding-left: 0">' +
+GlobalApp.directive('tableSearch', function () {
+    return {
+        restrict: 'ACE',
+        template: '<div class="row" style="margin: 0">' +
+        '<div class="col-sm-8" style="padding-left: 0">' +
         '<h5 class="text text-bold" style="color:black;font-size:1.1em">Total : [[results==undefined?0:results.length]]</h5>' +
         '</div> <div class="col-sm-4" style="padding-right: 0">' +
         '<input type="text" class="form-control" ng-model="q" placeholder="[[placeHolder?placeHolder:\'Search Ansar in this table\']]">' +
-        '</div>'+
+        '</div>' +
         '</div>',
-        scope:{
-            q:'=',
-            results:'=',
-            placeHolder:'@'
+        scope: {
+            q: '=',
+            results: '=',
+            placeHolder: '@'
         }
     }
 })
-GlobalApp.directive('databaseSearch',function () {
-    return{
-        restrict:'ACE',
-        template:'<input type="text" ng-model="q" class="form-control" style="margin-bottom: 10px" ng-change="queue.push(1)" placeholder="[[placeHolder?placeHolder:\'Search by Ansar ID\']]">',
-        scope:{
-            queue:'=',
-            q:'=',
-            placeHolder:'@',
-            onChange:'&'
+GlobalApp.directive('databaseSearch', function () {
+    return {
+        restrict: 'ACE',
+        template: '<input type="text" ng-model="q" class="form-control" style="margin-bottom: 10px" ng-change="queue.push(1)" placeholder="[[placeHolder?placeHolder:\'Search by Ansar ID\']]">',
+        scope: {
+            queue: '=',
+            q: '=',
+            placeHolder: '@',
+            onChange: '&'
         },
-        controller:function ($scope) {
-            $scope.$watch('queue',function (n, o) {
+        controller: function ($scope) {
+            $scope.$watch('queue', function (n, o) {
                 //alert(n)
-                if(n.length===1) {
+                if (n.length === 1) {
                     $scope.onChange();
                 }
-                
-            },true)
+
+            }, true)
         }
     }
 })
-GlobalApp.directive('formSubmit',function (notificationService,$timeout) {
-    return{
-        restrict:'ACE',
-        scope:{
-            errors:'=',
-            loading:'=',
-            status:'=',
-            confirmBox:'@',
-            message:'@',
-            onReset:'&',
-            resetExcept:'@'
+GlobalApp.directive('formSubmit', function (notificationService, $timeout) {
+    return {
+        restrict: 'ACE',
+        scope: {
+            errors: '=',
+            loading: '=',
+            status: '=',
+            confirmBox: '@',
+            message: '@',
+            onReset: '&',
+            resetExcept: '@'
         },
-        link:function (scope, element, attrs) {
+        link: function (scope, element, attrs) {
             $(element).on('submit', function (e) {
                 e.preventDefault();
-                if(scope.confirmBox){
+                if (scope.confirmBox) {
                     $(element).confirmDialog({
                         message: scope.message,
                         ok_button_text: 'Confirm',
@@ -814,57 +833,58 @@ GlobalApp.directive('formSubmit',function (notificationService,$timeout) {
                         }
                     })
                 }
-                else{
+                else {
                     submitForm();
                 }
             })
-            function submitForm(){
+
+            function submitForm() {
 
                 $(element).ajaxSubmit({
-                    beforeSubmit:function () {
+                    beforeSubmit: function () {
                         scope.loading = true;
                         scope.status = false;
                         scope.errors = '';
-                        $timeout(function(){
+                        $timeout(function () {
                             scope.$apply();
                         })
                     },
-                    success:function (result) {
+                    success: function (result) {
                         scope.loading = false;
                         // console.log(result)
                         var response = ''
                         try {
                             response = JSON.parse(result);
-                        }catch(err){
+                        } catch (err) {
                             response = result
                         }
-                        if(response.status===true){
-                            notificationService.notify('success',response.message);
+                        if (response.status === true) {
+                            notificationService.notify('success', response.message);
                             scope.status = true;
                             $(element).resetForm();
                             scope.onReset();
                         }
-                        else if(response.status===false){
+                        else if (response.status === false) {
                             scope.status = false;
-                            notificationService.notify('error',response.message);
+                            notificationService.notify('error', response.message);
                         }
-                        else{
+                        else {
                             scope.status = false;
                             scope.errors = response;
                             console.log(scope.errors)
                         }
-                        $timeout(function(){
+                        $timeout(function () {
                             scope.$apply();
                         })
                     },
-                    error:function (response) {
+                    error: function (response) {
                         scope.loading = false;
-                        if(response.status==401){
-                            notificationService.notify('error',"You are not authorize to perform this action");
+                        if (response.status == 401) {
+                            notificationService.notify('error', "You are not authorize to perform this action");
 
                         }
-                        else notificationService.notify('error',"An unknown error occur. Error code: "+response.status);
-                        $timeout(function(){
+                        else notificationService.notify('error', "An unknown error occur. Error code: " + response.status);
+                        $timeout(function () {
                             scope.$apply();
                         })
                     }
@@ -875,12 +895,14 @@ GlobalApp.directive('formSubmit',function (notificationService,$timeout) {
 })
 GlobalApp.directive('numericField', function () {
     return {
-        restrict:'A',
-        link: function (scope,elem, attr) {
+        restrict: 'A',
+        link: function (scope, elem, attr) {
 
             $(elem).on('keypress', function (e) {
-                var key = e.keyCode|| e.which;
-                if((key>=48&&key<=57)||key==8||key==46||(key>=37&&key<=40)){return true}
+                var key = e.keyCode || e.which;
+                if ((key >= 48 && key <= 57) || key == 8 || key == 46 || (key >= 37 && key <= 40)) {
+                    return true
+                }
                 else return false;
             })
         }

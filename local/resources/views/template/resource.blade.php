@@ -51,3 +51,4 @@
 <script src="{{asset('dist/js/moment-locales.min.js')}}"></script>
 <script src="{{asset('dist/js/Chart.js')}}"></script>
 <script src="{{asset('dist/js/dropzone.js')}}"></script>
+<script src="{{asset('node_modules/noty/lib/noty.min.js')}}"></script>

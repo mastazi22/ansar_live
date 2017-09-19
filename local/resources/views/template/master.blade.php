@@ -15,7 +15,7 @@
             })
             $('#national_id_no,#birth_certificate_no,#mobile_no_self').keypress(function (e) {
                 var code = e.keyCode ? e.keyCode : e.which;
-                if ((code >= 47 && code <= 57) || code == 8);
+                if ((code >= 47 && code <= 57) || code == 8) ;
                 else e.preventDefault();
             });
             $(".module-small-header").on('click', function (e) {
@@ -37,11 +37,11 @@
             })
         });
 
-        GlobalApp.controller('MenuController', function ($scope,$rootScope) {
+        GlobalApp.controller('MenuController', function ($scope, $rootScope) {
             $scope.menu = [];
             var permission = '{{auth()->user()->userPermission->permission_list?auth()->user()->userPermission->permission_list:""}}'
             var p_type = parseInt('{{auth()->user()->userPermission->permission_type}}')
-            if (permission)$scope.menu = JSON.parse(permission.replace(/&quot;/g, '"'))
+            if (permission) $scope.menu = JSON.parse(permission.replace(/&quot;/g, '"'))
             //alert($scope.menu.indexOf('reduce_guard_strength')>=0||p_type==1)
             $scope.checkMenu = function (value) {
                 return $scope.menu.indexOf(value) >= 0 || p_type == 1
@@ -127,6 +127,36 @@
                             </ul>
                         </li>
                     @endif
+                    @if(!is_null(request()->route())&&strcasecmp(request()->route()->getPrefix(),'HRM')==0)
+                        <li class="dropdown notifications-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-file-excel-o"></i>
+                                <span class="label label-warning">{{Notification::getTotal()}}</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="header">You have {{Notification::getTotal()}} forget password notifications
+                                </li>
+                                <li>
+                                    <!-- inner menu: contains the actual data -->
+                                    <ul class="menu">
+                                        @foreach(Notification::getNotification() as $notification)
+                                            <li>
+                                                <a href="{{URL::to((request()->route()?request()->route()->getPrefix():'')."/change_password/".$notification->user_name)}}"
+                                                   style="white-space: normal !important;overflow: auto !important;text-overflow: initial !important;">
+                                                    <i class="fa fa-users text-aqua"></i>
+                                                    <span style="color: #000000;font-size: 1.3em;">{{$notification->user_name}}</span>
+                                                    forgets password.
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </li>
+                                <li class="footer"><a
+                                            href="{{URL::to((request()->route()?request()->route()->getPrefix():'')."/all_notification")}}">View
+                                        all</a></li>
+                            </ul>
+                        </li>
+                    @endif
                     <li class="dropdown user user-menu"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <img
                                     src="{{action('UserController@getImage',['file'=>auth()->user()->userProfile->profile_image])}}"
@@ -179,9 +209,11 @@
                 <small class="small-title">@yield('small_title')</small>
             </h1>
         </section>
-        <div class="fade" ng-if="loadingView" ng-class="{in:loadingView}" style="position: absolute;width:100%;height: 100%;z-index:10;background: #ffffff">
+        <div class="fade" ng-if="loadingView" ng-class="{in:loadingView}"
+             style="position: absolute;width:100%;height: 100%;z-index:10;background: #ffffff">
             <div style="position: absolute;margin-top: 25%;margin-left: 50%;transform: translate(-50%,-50%);font-size: 1.2em">
-                <i class="fa fa-spinner fa-pulse fa-2x"></i>&nbsp;&nbsp;<span class="text text-bold" style="vertical-align: super">
+                <i class="fa fa-spinner fa-pulse fa-2x"></i>&nbsp;&nbsp;<span class="text text-bold"
+                                                                              style="vertical-align: super">
                     LOADING......
                 </span>
             </div>

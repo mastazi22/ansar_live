@@ -31,6 +31,9 @@ trait ExportDataToExcel
                 'download_url'=>'',
                 'notification_url'=>"ws://".Request::getHost().":8090"
             ]);
+            $export_job->download_url =url()->route('download_file',$export_job);
+            $export_job->delete_url =url()->route('delete_file',$export_job);
+            $export_job->save();
             $per_file = 0;
             $total = count($data);
             foreach ($data as $d) {
