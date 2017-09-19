@@ -15,7 +15,7 @@ class NotificationServer extends Command
      *
      * @var string
      */
-    protected $signature = 'websocket:init';
+    protected $signature = 'wsserver:init';
 
     /**
      * The console command description.

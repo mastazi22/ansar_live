@@ -122,8 +122,8 @@ class ExportData extends Job implements ShouldQueue
             if($edj->file_completed==$edj->total_file){
                 //do something
                 Log::info("FILE GENERATING COMPLETE. ID : ".$edj->id);
-                $client = new Client("ws://ansarerp.dev:8090");
-                $client->send(json_encode(['user'=>'server','to'=>$edj->user_id,'message'=>"Report exported complete.<br>Download link:http://xxxxx.com/".$edj->id]));
+                $client = new Client($edj->notification_url);
+                $client->send(json_encode(['user'=>'server','to'=>$edj->user_id,'message'=>"Report exported complete.<br>Download link:".$edj->download_link."/".$edj->id]));
                 $client->close();
             }
         }
