@@ -9,7 +9,7 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
     $httpProvider.useApplyAsync(true)
     var retryCount = 0;
     $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
-    $httpProvider.interceptors.push(function ($q, $injector) {
+    $httpProvider.interceptors.push(function ($q, $injector,notificationService) {
         return {
             response: function (response) {
                 if (response.data.status == 'logout') {
@@ -18,6 +18,14 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
                 }
                 else if (response.data.status == 'forbidden') {
 
+                }
+                else if(response.data.type=='export'){
+                    if(response.data.status){
+                        notificationService.notify('success',response.data.message);
+                    }
+                    else{
+                        notificationService.notify('error',response.data.message);
+                    }
                 }
                 return response;
             },
@@ -71,6 +79,7 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
     //console.log(this)
 
 }).run(function ($rootScope,$http) {
+
     $rootScope.user = ''
     $http.get('/'+prefix+'user_data').then(function (response) {
         $rootScope.user = response.data;
@@ -78,6 +87,21 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
     $rootScope.loadingView = false;
     $rootScope.dateConvert=function(date){
         return (moment(date).locale('bn').format('DD-MMMM-YYYY'));
+    }
+    var ws = new WebSocket("ws://"+window.location.hostname+":8090");
+    ws.onopen = function (event) {
+        console.log(event)
+        alert("message sending.....")
+        ws.send(JSON.stringify({'user':1}))
+    }
+    ws.onerror = function (event) {
+        console.log(event)
+    }
+    ws.onmessage = function (event) {
+        console.log(event)
+    }
+    ws.onclose = function (event) {
+        console.log(event)
     }
 });
 GlobalApp.filter('num', function() {
