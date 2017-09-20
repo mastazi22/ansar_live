@@ -43,11 +43,11 @@ class DownloadController extends Controller
             }
             $des = $path.'/export.zip';
             $zip = new \ZipArchive();
-            if($zip->open($des,\ZipArchive::CREATE)){
+            if($zip->open($des,\ZipArchive::OVERWRITE)){
 
                 for ($i=0;$i<count($files);$i++){
 
-                    $zip->addFile($files[$i],($i+1).'');
+                    $zip->addFile($files[$i],($i+1).'.xls');
 
                 }
                 $zip->close();

@@ -110,7 +110,7 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute','ngCook
         if (ws) ws.close();
     });
 
-    function openSocketConnection(id) {
+    function openSocketConnection() {
         var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
         ws.onopen = function (event) {
             console.log(event)
@@ -128,6 +128,7 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute','ngCook
         }
         ws.onclose = function (event) {
             console.log(event)
+
         }
         return ws;
 
