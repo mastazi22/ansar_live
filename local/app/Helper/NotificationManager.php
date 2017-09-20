@@ -13,16 +13,13 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
-
-interface OnMessageSend{
-
-}
 class NotificationManager implements MessageComponentInterface
 {
 
 
     private $connections;
     private $users = [];
+    private $uid = [];
     /**
      * When a new connection is opened it will be passed to this method
      * @param  ConnectionInterface $conn The socket/connection that just connected to your application
@@ -37,7 +34,7 @@ class NotificationManager implements MessageComponentInterface
     {
         // TODO: Implement onOpen() method.
         if(!$this->connections->search($conn)) $this->connections->put($conn->resourceId,$conn);
-        Log::info("connection open....".$conn->resourceId);
+        Log::info("connection open....".$conn->resourceId." total connection ".$this->connections->count());
     }
 
     /**
@@ -62,6 +59,7 @@ class NotificationManager implements MessageComponentInterface
     function onError(ConnectionInterface $conn, \Exception $e)
     {
         // TODO: Implement onError() method.
+        Log::info($e->getMessage());
     }
 
     /**
@@ -88,8 +86,19 @@ class NotificationManager implements MessageComponentInterface
                             $this->connections->get($k)->send($data['message']);
                         }
                     }
+                    $this->connections->forget($from->resourceId);
+                    $from->close();
                 }
-                else $this->users[$from->resourceId] = $data[$key];
+                else {
+                    if(isset($this->uid[$data['uid']])){
+                        $conn = $this->connections->get($this->uid[$data['uid']]);
+                        if($conn) $conn->close();
+                        $this->connections->forget($this->uid[$data['uid']]);
+                        unset($this->users[$this->uid[$data['uid']]]);
+                    }
+                    $this->users[$from->resourceId] = $data[$key];
+                    $this->uid[$data['uid']] = $from->resourceId;
+                }
             }
 
         }catch (\Exception $e){

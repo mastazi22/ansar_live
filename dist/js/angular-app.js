@@ -2,7 +2,7 @@
  * Created by arafat on 10/25/2016.
  */
 var prefix = '';
-var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], function ($interpolateProvider, $httpProvider, $sceProvider, $routeProvider) {
+var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute','ngCookies'], function ($interpolateProvider, $httpProvider, $sceProvider, $routeProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
     //$sceProvider.enabled(false)
@@ -80,13 +80,25 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
 
     //console.log(this)
 
-}).run(function ($rootScope, $http, $window) {
+}).run(function ($rootScope, $http, $window,$cookies) {
 
     var ws;
     $rootScope.user = ''
     $http.get('/' + prefix + 'user_data').then(function (response) {
         $rootScope.user = response.data;
         ws = openSocketConnection($rootScope.user.id);
+        var p = setInterval(function () {
+            console.log(ws.bufferedAmount)
+            if(ws.readyState===1&&ws.bufferedAmount===0){
+                var uid = $cookies.get('uid')
+                if(!uid){
+                    uid = 'id'+(new Date()).getTime();
+                    $cookies.put('uid',uid);
+                }
+                ws.send(JSON.stringify({'user': $rootScope.user.id,'uid':uid}))
+                clearInterval(p)
+            }
+        },500)
     })
     $rootScope.loadingView = false;
     $rootScope.dateConvert = function (date) {
@@ -99,10 +111,10 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
     });
 
     function openSocketConnection(id) {
-        var ws = new WebSocket("ws://" + window.location.hostname + ":8090");
+        var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
         ws.onopen = function (event) {
             console.log(event)
-            ws.send(JSON.stringify({'user': id}))
+
         }
         ws.onerror = function (event) {
             console.log(event)

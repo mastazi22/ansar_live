@@ -35,7 +35,8 @@
 <script src="{{asset('plugins/jQueryUI/jquery-ui.min.js')}}" type="text/javascript"></script>
 <script src="{{asset('bootstrap/js/bootstrap.min.js')}}" type="text/javascript"></script>
 <script src="{{asset('plugins/iCheck/icheck.min.js')}}" type="text/javascript"></script>
-<script src="{{asset('dist/js/angular.js')}}" type="text/javascript"></script>
+{{--<script src="{{asset('dist/js/angular.js')}}" type="text/javascript"></script>--}}
+<script src="{{asset('node_modules/angular/angular.js')}}" type="text/javascript"></script>
 <script src="{{asset('dist/js/datePicker.js')}}" type="text/javascript"></script>
 <script src="{{asset('dist/js/sortTable.js')}}" type="text/javascript"></script>
 <script src="{{asset('dist/js/notify.js')}}" type="text/javascript"></script>
@@ -52,3 +53,4 @@
 <script src="{{asset('dist/js/Chart.js')}}"></script>
 <script src="{{asset('dist/js/dropzone.js')}}"></script>
 <script src="{{asset('node_modules/noty/lib/noty.min.js')}}"></script>
+<script src="{{asset('node_modules/angular-cookies/angular-cookies.js')}}"></script>

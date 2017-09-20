@@ -2,6 +2,7 @@
   "name": "ansarerp",
   "version": "0.0.1",
   "dependencies": {
-    
+    "angular": "^1.6.6",
+    "angular-cookies": "^1.6.6"
   }
 }
