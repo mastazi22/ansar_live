@@ -2,6 +2,7 @@
 return [
     'module'=>[
         'HRM',
-        'SD'
+        'SD',
+        'recruitment'
     ]
 ];
