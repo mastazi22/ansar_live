@@ -119,9 +119,11 @@ return [
     'item_per_page'=>20,
     'title_lg_HRM'=>'Human Resource Management',
     'title_lg_SD'=>'Salary Disbursement',
+    'title_lg_recruitment'=>'Ansar Recruitment',
     'title_lg_'=>'Ansar & VDP ERP',
     'title_mini_HRM'=>'HRM',
     'title_mini_SD'=>'SD',
+    'title_mini_recruitment'=>'AR',
     'title_mini_'=>'ERP',
     'modules'=>[
         ['name'=>'HRM','route'=>'HRM'],

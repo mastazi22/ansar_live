@@ -362,5 +362,10 @@ return [
         ]
     ],
     "sd"=>[],
-    "recruitment"=>[]
+    "recruitment"=>[
+        "Job Category"=>[
+            "route"=>"recruitment.category.index",
+            "icon"=>"fa-list"
+        ]
+    ]
 ];

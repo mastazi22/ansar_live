@@ -199,6 +199,8 @@
         @include('SD::menu')
     @elseif(strcasecmp(request()->route()->getPrefix(),'HRM')==0)
         @include('HRM::menu')
+    @elseif(strcasecmp(request()->route()->getPrefix(),'recruitment')==0)
+        @include('recruitment::menu')
     @endif
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->

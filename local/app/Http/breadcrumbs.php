@@ -526,3 +526,14 @@ Breadcrumbs::register('upload_photo_original', function($breadcrumbs) {
     $breadcrumbs->parent('upload');
     $breadcrumbs->push('Upload Original Info', URL::route('photo_original'));
 });
+
+//end HRM
+//start recruitment
+Breadcrumbs::register('recruitment', function($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Recruitment', URL::to('recruitment'));
+});
+Breadcrumbs::register('job_category', function($breadcrumbs) {
+    $breadcrumbs->parent('recruitment');
+    $breadcrumbs->push('Job Category', URL::to('recruitment.category.index'));
+});
