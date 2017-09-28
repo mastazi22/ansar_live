@@ -531,9 +531,30 @@ Breadcrumbs::register('upload_photo_original', function($breadcrumbs) {
 //start recruitment
 Breadcrumbs::register('recruitment', function($breadcrumbs) {
     $breadcrumbs->parent('home');
-    $breadcrumbs->push('Recruitment', URL::to('recruitment'));
+    $breadcrumbs->push('Recruitment', URL::to('/recruitment'));
 });
 Breadcrumbs::register('job_category', function($breadcrumbs) {
     $breadcrumbs->parent('recruitment');
-    $breadcrumbs->push('Job Category', URL::to('recruitment.category.index'));
+    $breadcrumbs->push('Job Category', URL::route('recruitment.category.index'));
+});
+Breadcrumbs::register('create_job_category', function($breadcrumbs) {
+    $breadcrumbs->parent('job_category');
+    $breadcrumbs->push('Create Job Category', URL::route('recruitment.category.create'));
+});
+Breadcrumbs::register('edit_job_category', function($breadcrumbs) {
+    $breadcrumbs->parent('job_category');
+    $breadcrumbs->push('Edit Job Category', '#');
+});
+
+Breadcrumbs::register('job_circular', function($breadcrumbs) {
+    $breadcrumbs->parent('recruitment');
+    $breadcrumbs->push('Job Circular', URL::route('recruitment.circular.index'));
+});
+Breadcrumbs::register('create_job_circular', function($breadcrumbs) {
+    $breadcrumbs->parent('job_circular');
+    $breadcrumbs->push('Create Job Circular', URL::route('recruitment.circular.create'));
+});
+Breadcrumbs::register('edit_job_circular', function($breadcrumbs) {
+    $breadcrumbs->parent('job_circular');
+    $breadcrumbs->push('Edit Job Circular', '#');
 });

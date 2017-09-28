@@ -361,11 +361,15 @@ return [
             ]
         ]
     ],
-    "sd"=>[],
-    "recruitment"=>[
-        "Job Category"=>[
-            "route"=>"recruitment.category.index",
-            "icon"=>"fa-list"
+    "sd" => [],
+    "recruitment" => [
+        "Job Category" => [
+            "route" => "recruitment.category.index",
+            "icon" => "fa-list"
+        ],
+        "Job Circular" => [
+            "route" => "recruitment.circular.index",
+            "icon" => "fa-clipboard"
         ]
     ]
 ];

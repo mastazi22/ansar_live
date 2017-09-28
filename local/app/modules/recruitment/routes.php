@@ -5,7 +5,8 @@ Route::group(['prefix'=>'recruitment','middleware'=>'manageDatabase','namespace'
     Route::get('/',['as'=>'recruitment','uses'=>'RecruitmentController@index']);
 
     //job category route
-    Route::resource('category','JobCategoryController',['except'=>['destroy']]);
+    Route::resource('category','JobCategoryController',['except'=>['destroy','show']]);
+    Route::resource('circular','JobCircularController',['except'=>['destroy','show']]);
 
 
 });

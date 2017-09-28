@@ -3,13 +3,15 @@
 namespace App\modules\recruitment\Controllers;
 
 use App\modules\recruitment\Models\JobCategory;
+use App\modules\recruitment\Models\JobCircular;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 
-class JobCategoryController extends Controller
+class JobCircularController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,10 +20,11 @@ class JobCategoryController extends Controller
      */
     public function index(Request $request)
     {
+        //
         if($request->ajax()){
-            return $this->getData($request);
+            return $this->searchData($request);
         }
-        return view('recruitment::job_category.index');
+        return view('recruitment::job_circular.index');
     }
 
     /**
@@ -32,7 +35,8 @@ class JobCategoryController extends Controller
     public function create()
     {
         //
-        return view('recruitment::job_category.create');
+        $job_categories = JobCategory::pluck('category_name_eng','id')->prepend('--Select a job category--','0');
+        return view('recruitment::job_circular.create',['categories'=>$job_categories]);
     }
 
     /**
@@ -43,24 +47,26 @@ class JobCategoryController extends Controller
      */
     public function store(Request $request)
     {
-
+        //
         $rules = [
-            'category_name_eng'=>'required'
+            'circular_name'=>'required',
+            'job_category_id'=>'required|regex:/^[1-9]?[1-9]+$/',
+            'start_date'=>['required','regex:/^[0-9]{2}-[A-Za-z]{3}-[0-9]{4}$/'],
+            'end_date'=>['required','regex:/^[0-9]{2}-[A-Za-z]{3}-[0-9]{4}$/']
         ];
         $this->validate($request,$rules);
-
-        if(!$request->exists('status')) $request['status']='inactive';
         DB::beginTransaction();
         try{
-
-            $c = JobCategory::create($request->all());
+            $request['start_date'] = Carbon::parse($request->start_date)->format('Y-m-d');
+            $request['end_date'] = Carbon::parse($request->end_date)->format('Y-m-d');
+            $c = JobCategory::find($request->job_category_id)->circular()->create($request->except('job_category_id'));
             DB::commit();
 
-        }catch(\Exception $e){
-            DB::rollback();
-            return redirect()->route('recruitment.category.index')->with('session_error',"An error occur while create new category. Please try agin later");
+        }catch (\Exception $e){
+            DB::rollBack();
+            return redirect()->route('recruitment.circular.index')->with('session_error',"An error occur while create new circular. Please try agin later");
         }
-        return redirect()->route('recruitment.category.index')->with('session_success',"New category added successfully");
+        return redirect()->route('recruitment.circular.index')->with('session_success',"New circular added successfully");
     }
 
     /**
@@ -83,8 +89,6 @@ class JobCategoryController extends Controller
     public function edit($id)
     {
         //
-        $data = JobCategory::find($id);
-        return view('recruitment::job_category.edit',compact('data'));
     }
 
     /**
@@ -97,24 +101,6 @@ class JobCategoryController extends Controller
     public function update(Request $request, $id)
     {
         //
-        $rules = [
-            'category_name_eng'=>'required'
-        ];
-        $this->validate($request,$rules);
-
-        if(!$request->exists('status')) $request['status']='inactive';
-        DB::beginTransaction();
-        try{
-
-            $c = JobCategory::find($id);
-            $c->update($request->all());
-            DB::commit();
-
-        }catch(\Exception $e){
-            DB::rollback();
-            return redirect()->route('recruitment.category.index')->with('session_error',"An error occur while create new category. Please try agin later");
-        }
-        return redirect()->route('recruitment.category.index')->with('session_success',"New category added successfully");
     }
 
     /**
@@ -128,15 +114,18 @@ class JobCategoryController extends Controller
         //
     }
 
-    private function getData($request){
+    private function searchData($request){
         if($request->exists('q')&&$request->q){
-            $data = JobCategory::where('category_name_eng','like',"%{$request->q}%")
-                ->orWhere('category_name_bng','like',"%{$request->q}%")
-                ->orWhere('category_description','like',"%{$request->q}%")
-                ->orWhere('status','=',$request->q)
+            $q = $request->q;
+            $data = JobCircular::whereHas('category',function ($query) use($q){
+                $query->where('category_name_eng','like',"%{$q}%")
+                    ->orWhere('category_name_bng','like',"%{$q}%");
+            })
+                ->where('circular_name','like',"%{$request->q}%")
+                ->orWhere('status','like',"%{$request->q}%")
                 ->get();
             return response()->json($data);
         }
-        return response()->json(JobCategory::all());
+        return response()->json(JobCircular::with('category')->get());
     }
 }

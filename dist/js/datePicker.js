@@ -34,7 +34,8 @@
             todayMonth:0,
             todayYear:0,
             defaultValue:moment(),
-            dateFormat:'DD-MMM-YYYY'
+            dateFormat:'DD-MMM-YYYY',
+            editable:true
         }
         $.extend(this.option,option);
         this.init()
@@ -374,6 +375,13 @@
 
     Plugin.prototype.addEventListener = function() {
         var _self = this;
+        if(_self.option.editable===false) {
+            alert("ppp")
+            $('#'+_self.option.element).keydown(function (e) {
+                console.log(e.keyCode)
+                e.preventDefault();
+            })
+        }
         $('#'+_self.option.element+' .month-year-view').on('click', function (e) {
             switch (_self.option.currentView) {
                 case 'week':

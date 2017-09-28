@@ -87,8 +87,9 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute','ngCook
     $http.get('/' + prefix + 'user_data').then(function (response) {
         $rootScope.user = response.data;
         ws = openSocketConnection($rootScope.user.id);
+        var i = 0;
         var p = setInterval(function () {
-            console.log(ws.bufferedAmount)
+
             if(ws.readyState===1&&ws.bufferedAmount===0){
                 var uid = $cookies.get('uid')
                 if(!uid){
