@@ -125,6 +125,7 @@ class OfferController extends Controller
                 $request->get('district'),
                 $request->get('exclude_district'), Auth::user());
             Log::info($data);
+            Log::info($request->all());
             $quota = Helper::getOfferQuota(Auth::user());
             if($quota!==false&&$quota<count($data)) throw new \Exception("Your offer quota limit exit");
             PanelModel::whereIn('ansar_id',$data)->update(['locked'=>1]);
