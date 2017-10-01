@@ -184,12 +184,12 @@
                                             <button id="print-report" class="btn btn-default"><i
                                                         class="fa fa-print"></i>&nbsp;Print
                                             </button>
-                                            <button id="export-report" ng-disabled="export_page||export_all" ng-click="exportData('page')" class="btn btn-default ">
+                                            {{--<button id="export-report" ng-disabled="export_page||export_all" ng-click="exportData('page')" class="btn btn-default ">
                                                 <i ng-show="!export_page" class="fa fa-file-excel-o"></i><i ng-show="export_page" class="fa fa-spinner fa-pulse"></i>&nbsp;Export this page
                                             </button>
                                             <button  ng-disabled="export_page||export_all" ng-click="exportData('all')" id="export-report-all" class="btn btn-default">
                                                 <i ng-show="!export_all" class="fa fa-file-excel-o"></i><i ng-show="export_all" class="fa fa-spinner fa-pulse"></i>&nbsp;Export all
-                                            </button>
+                                            </button>--}}
                                         </div>
                                     </div>
                                 </div>

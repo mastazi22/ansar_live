@@ -136,12 +136,12 @@
                             custom-change="loadPage()"
                             field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',custom:'col-sm-3'}"
                     ></filter-template>
-                    <div class="row">
+                    {{--<div class="row">
                         <div class="col-sm-12" style="margin-bottom: 5px">
                             <div class="btn-group btn-group-sm pull-right">
-                                {{--<button id="print-report" class="btn btn-default"><i--}}
-                                {{--class="fa fa-print"></i>&nbsp;Print--}}
-                                {{--</button>--}}
+                                --}}{{--<button id="print-report" class="btn btn-default"><i--}}{{--
+                                --}}{{--class="fa fa-print"></i>&nbsp;Print--}}{{--
+                                --}}{{--</button>--}}{{--
                                 <button id="export-report" ng-disabled="export_page||export_all" ng-click="exportData('page')" class="btn btn-default ">
                                     <i ng-show="!export_page" class="fa fa-file-excel-o"></i><i ng-show="export_page" class="fa fa-spinner fa-pulse"></i>&nbsp;Export this page
                                 </button>
@@ -150,7 +150,7 @@
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </div>--}}
                      <div class="row">
                         <div class="col-md-8">
                             <h4 class="text text-bold">Total Ansars :PC([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])&nbsp;APC([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])&nbsp;Ansar([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</h4>

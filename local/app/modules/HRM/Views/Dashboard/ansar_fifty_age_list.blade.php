@@ -122,11 +122,11 @@
 
                     </filter-template>
                     <div class="row">
-                        <div class="col-sm-12" style="margin-bottom: 5px">
+                        {{--<div class="col-sm-12" style="margin-bottom: 5px">
                             <div class="btn-group btn-group-sm pull-right">
-                                {{--<button id="print-report" class="btn btn-default"><i--}}
-                                {{--class="fa fa-print"></i>&nbsp;Print--}}
-                                {{--</button>--}}
+                                --}}{{--<button id="print-report" class="btn btn-default"><i--}}{{--
+                                --}}{{--class="fa fa-print"></i>&nbsp;Print--}}{{--
+                                --}}{{--</button>--}}{{--
                                 <button id="export-report" ng-disabled="export_page||export_all" ng-click="exportData('page')" class="btn btn-default ">
                                     <i ng-show="!export_page" class="fa fa-file-excel-o"></i><i ng-show="export_page" class="fa fa-spinner fa-pulse"></i>&nbsp;Export this page
                                 </button>
@@ -134,7 +134,7 @@
                                     <i ng-show="!export_all" class="fa fa-file-excel-o"></i><i ng-show="export_all" class="fa fa-spinner fa-pulse"></i>&nbsp;Export all
                                 </button>
                             </div>
-                        </div>
+                        </div>--}}
                     </div>
                     <div class="row">
                         <div class="col-md-8">
