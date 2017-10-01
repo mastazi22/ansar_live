@@ -213,7 +213,7 @@
                     if (response.data.status) {
                         notificationService.notify('success', response.data.message);
                         // $("#re-embodied-model,#re-embodied-model-mul").modal('hide')
-                        $scope.printData = "id=" + $scope.transferData.memorandum_transfer + "&unit=" + $scope.child.selectedUnit + "&view=full&type=TRANSFER"
+                        $scope.printData = {"id":$scope.transferData.memorandum_transfer,"unit":$scope.child.selectedUnit,"view":"full","type":"TRANSFER"}
                         $scope.printLetter = true;
                         $scope.transferData = {};
                         $scope.getFreezeList();
@@ -873,10 +873,15 @@
                                     ng-if="!printLetter">
                                 <i class="fa fa-pulse fa-spinner" ng-if="submitting"></i>&nbsp;Submit
                             </button>
-                            <a target="_blank" href="{{URL::to('HRM/print_letter')}}?[[printData]]"
-                               class="btn btn-primary pull-right" ng-if="printLetter"><i class="fa fa-print"></i>&nbsp;&nbsp;Print
-                                Letter</a>
+
                         </div>
+                    </form>
+                    <form method="post"  ng-if="printLetter" target="_blank" action="{{URL::to('HRM/print_letter')}}">
+                        {!! csrf_field() !!}
+                        <input ng-repeat="(key,value) in printData" type="hidden" name="[[key]]" value="[[value]]">
+                        <button type="submit"
+                                class="btn btn-primary pull-right"><i class="fa fa-print"></i>&nbsp;&nbsp;Print
+                            Letter</button>
                     </form>
                 </div>
 
@@ -972,11 +977,15 @@
                                     ng-if="!printLetter">
                                 <i class="fa fa-pulse fa-spinner" ng-if="submitting"></i>&nbsp;Submit
                             </button>
-                            <a target="_blank" href="{{URL::to('HRM/print_letter')}}?[[printData]]"
-                               class="btn btn-primary pull-right" ng-if="printLetter"><i class="fa fa-print"></i>&nbsp;&nbsp;Print
-                                Letter</a>
 
                         </div>
+                    </form>
+                    <form method="post"  ng-if="printLetter" target="_blank" action="{{URL::to('HRM/print_letter')}}">
+                        {!! csrf_field() !!}
+                        <input ng-repeat="(key,value) in printData" type="hidden" name="[[key]]" value="[[value]]">
+                        <button type="submit"
+                                class="btn btn-primary pull-right"><i class="fa fa-print"></i>&nbsp;&nbsp;Print
+                            Letter</button>
                     </form>
                 </div>
 

@@ -30,12 +30,12 @@
                 </a>
             </li>
             @if(auth()->user()->type==11)
-             <li>
-                <a href="{{URL::to('recruitment')}}">
-                    <i class="fa fa-user"></i>
-                <span>{{ucfirst('ansar recruitment')}}</span>
-                </a>
-            </li>
+             {{--<li>--}}
+                {{--<a href="{{URL::to('recruitment')}}">--}}
+                    {{--<i class="fa fa-user"></i>--}}
+                {{--<span>{{ucfirst('ansar recruitment')}}</span>--}}
+                {{--</a>--}}
+            {{--</li>--}}
                 <li>
                     <a href="{{URL::to('user_management')}}">
                         <i class="fa fa-user"></i>

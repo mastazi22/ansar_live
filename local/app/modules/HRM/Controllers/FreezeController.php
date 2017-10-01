@@ -202,6 +202,9 @@ class FreezeController extends Controller
                 DB::beginTransaction();
                 try {
                     if (!$frezeInfo || !$embodiment) throw new \Exception("Invalid Request");
+                    $m = new MemorandumModel;
+                    $m->memorandum_id = $request->memorandum;
+                    $m->save();
                     FreezingInfoLog::create([
                         'old_freez_id' => $frezeInfo->id,
                         'ansar_id' => $ansarId,
@@ -265,6 +268,9 @@ class FreezeController extends Controller
             DB::beginTransaction();
             foreach($ansarids as $ansarid){
                 try {
+                    $m = new MemorandumModel;
+                    $m->memorandum_id = $request->memorandum_transfer;
+                    $m->save();
                     $frezeInfo = FreezingInfoModel::where('ansar_id', $ansarid)->first();
                     $updateEmbodiment = $frezeInfo->embodiment;
                     $date = Carbon::now();
