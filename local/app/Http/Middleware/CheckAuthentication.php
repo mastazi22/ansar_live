@@ -25,6 +25,9 @@ class CheckAuthentication
             }
             return redirect()->action('UserController@login');
         }
+        $input = $request->input();
+        $input['action_user_id'] = auth()->user()->id;
+        $request->replace($input);
         return $next($request);
     }
 }

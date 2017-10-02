@@ -9,5 +9,5 @@ class JobCircularConstraint extends Model
     //
     protected $table = 'job_circular_constraint';
     protected $connection = 'recruitment';
-    protected $guarded = ['id','job_circular_id'];
+    protected $guarded = ['id'];
 }

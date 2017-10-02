@@ -53,14 +53,17 @@
         <section class="content" >
             <div ng-if="$scope.dataErrors.status" class="alert alert-danger">
                 <i class="fa fa-warning"></i>&nbsp;[[$scope.dataErrors.message]]
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             </div>
             @if(Session::has('session_error'))
                 <div class="alert alert-danger">
                     <i class="fa fa-warning"></i>&nbsp;{{Session::get('session_error')}}
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 </div>
                 @elseif(Session::has('session_success'))
                 <div class="alert alert-success">
                     <i class="fa fa-check"></i>&nbsp;{{Session::get('session_success')}}
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 </div>
                 @endif
             <div class="box box-solid">

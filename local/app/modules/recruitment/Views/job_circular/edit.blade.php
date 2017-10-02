@@ -1,7 +1,7 @@
 @extends('template.master')
-@section('title','Edit Job Category')
+@section('title','Edit Job Circular')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('edit_job_category') !!}
+    {!! Breadcrumbs::render('edit_job_circular') !!}
 @endsection
 @section('content')
 
@@ -10,7 +10,7 @@
             <div class="box-body">
                 <div class="row">
                     <div class="col-sm-6 col-centered">
-                        @include('recruitment::job_category.form',['data'=>$data])
+                        @include('recruitment::job_circular.form',['data'=>$data])
                     </div>
                 </div>
             </div>

@@ -9,7 +9,7 @@ class JobCircular extends Model
     //
     protected $table = 'job_circular';
     protected $connection = 'recruitment';
-    protected $guarded = ['id','job_category_id'];
+    protected $guarded = ['id'];
 
     public function category(){
         return $this->belongsTo(JobCategory::class,'job_category_id');
@@ -20,6 +20,6 @@ class JobCircular extends Model
     }
 
     public function constraint(){
-        return $this->hasMany(JobCircularConstraint::class,'job_circular_id');
+        return $this->hasOne(JobCircularConstraint::class,'job_circular_id');
     }
 }
