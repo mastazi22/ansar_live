@@ -2,7 +2,7 @@
  * Created by arafat on 10/25/2016.
  */
 var prefix = '';
-var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute','ngCookies'], function ($interpolateProvider, $httpProvider, $sceProvider, $routeProvider) {
+var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], function ($interpolateProvider, $httpProvider, $sceProvider, $routeProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
     //$sceProvider.enabled(false)
@@ -80,13 +80,13 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute','ngCook
 
     //console.log(this)
 
-}).run(function ($rootScope, $http, $window,$cookies) {
+}).run(function ($rootScope, $http, $window) {
 
     var ws;
     $rootScope.user = ''
     $http.get('/' + prefix + 'user_data').then(function (response) {
         $rootScope.user = response.data;
-        ws = openSocketConnection($rootScope.user.id);
+        /*ws = openSocketConnection($rootScope.user.id);
         var p = setInterval(function () {
             console.log(ws)
             if(ws.readyState===3) clearInterval(p)
@@ -99,19 +99,19 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute','ngCook
                 ws.send(JSON.stringify({'user': $rootScope.user.id,'uid':uid}))
                 clearInterval(p)
             }
-        },500)
+        },500)*/
     })
     $rootScope.loadingView = false;
     $rootScope.dateConvert = function (date) {
         return (moment(date).locale('bn').format('DD-MMMM-YYYY'));
     }
-    var windowElement = angular.element($window);
+    /*var windowElement = angular.element($window);
     windowElement.on('beforeunload', function (event) {
 
         if (ws) ws.close();
-    });
+    });*/
 
-    function openSocketConnection() {
+    /*function openSocketConnection() {
         var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
         ws.onopen = function (event) {
             console.log(event)
@@ -133,7 +133,7 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute','ngCook
         }
         return ws;
 
-    }
+    }*/
 });
 GlobalApp.filter('num', function () {
     return function (input,defaultValue) {

@@ -11,7 +11,9 @@
     <script>
         GlobalApp.controller('NewEmbodimentController', function ($scope, $http, notificationService, $timeout,$rootScope) {
             $scope.ansarId = "";
-            $scope.errors = ''
+            $scope.errors = {division_name_eng:[],thana_name_eng:[],kpi_id:[]}
+            $scope.eMessage = {division_name_eng:$scope.errors.division_name_eng[0],thana_name_eng:$scope.errors.thana_name_eng[0],kpi_id:$scope.errors.kpi_id[0]};
+
             $scope.printLetter = [{},{}];
             $scope.queue = []
             $scope.ee = true;
@@ -208,10 +210,6 @@
                 if(newVal!==undefined&&newVal.constructor===Object){
                     $scope.printLetter[0] = newVal.printData;
                 }
-            },true)
-            $scope.$watch('printLetter',function (newVal, oldVal) {
-                alert(1);
-                console.log(newVal)
             },true)
         })
     </script>
@@ -446,7 +444,7 @@
                                             layout-vertical="1"
                                             field-name="{unit:'division_name_eng',thana:'thana_name_eng',kpi:'kpi_id'}"
                                             error-key="{unit:'division_name_eng',thana:'thana_name_eng',kpi:'kpi_id'}"
-                                            error-message="{division_name_eng:errors.division_name_eng[0],thana_name_eng:errors.thana_name_eng[0],kpi_id:errors.kpi_id[0]}"
+                                            error-message="eMessage"
                                     >
 
                                     </filter-template>
