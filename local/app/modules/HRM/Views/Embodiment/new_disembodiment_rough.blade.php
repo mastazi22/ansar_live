@@ -78,6 +78,7 @@
                     }
                     $scope.submitData.push($scope.formData[i])
                 }
+                $scope.newParam = JSON.parse(JSON.stringify($scope.param))
                 $scope.printLetter = false;
                 $http({
                     url:'{{URL::to('HRM/disembodiment-entry')}}',
@@ -279,7 +280,7 @@
                     {!! Form::hidden('id','[[memorandumId]]') !!}
                     {!! Form::hidden('type','DISEMBODIMENT') !!}
                     @if(auth()->user()->type!=22)
-                        {!! Form::hidden('unit','[[param.unit]]') !!}
+                        {!! Form::hidden('unit','[[newParam.unit]]') !!}
                     @else
                         {!! Form::hidden('unit',auth()->user()->district?auth()->user()->district->id:'') !!}
                     @endif
