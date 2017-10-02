@@ -87,9 +87,9 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute','ngCook
     $http.get('/' + prefix + 'user_data').then(function (response) {
         $rootScope.user = response.data;
         ws = openSocketConnection($rootScope.user.id);
-        var i = 0;
         var p = setInterval(function () {
-
+            console.log(ws)
+            if(ws.readyState===3) clearInterval(p)
             if(ws.readyState===1&&ws.bufferedAmount===0){
                 var uid = $cookies.get('uid')
                 if(!uid){
@@ -136,9 +136,9 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute','ngCook
     }
 });
 GlobalApp.filter('num', function () {
-    return function (input) {
+    return function (input,defaultValue) {
         var d = parseInt(input.replace(',', ''));
-        return isNaN(d) ? '' : d;
+        return isNaN(d) ? defaultValue==undefined?'':defaultValue : d;
     };
 });
 GlobalApp.filter('checkpermission', function ($rootScope) {
@@ -221,6 +221,7 @@ GlobalApp.directive('datePicker', function () {
         link: function (scope, element, attrs) {
             //alert(scope.event)
             var data = attrs.datePicker
+            console.log(data)
             if (data) {
                 $(element).datePicker({
                     defaultValue: eval(data)
@@ -922,3 +923,116 @@ GlobalApp.directive('numericField', function () {
         }
     }
 })
+GlobalApp.controller('jobCircularConstraintController',function ($scope,$filter,$http) {
+
+    $scope.constraint = {
+        gender:{male:'',female:''},
+        age:{min:'0',max:'0',date:''},
+        height:{male:{feet:'0',inch:'0'},female:{feet:'0',inch:'0'}},
+        weight:{male:'0',female:'0'},
+        chest:{male:'0',female:'0'},
+        education:{min:'0',max:'0'}
+
+    };
+    $scope.minEduList = {};
+    $scope.maxEduList = {};
+    $scope.onSave = function (elem) {
+        document.getElementsByName(elem)[0].value = JSON.stringify($scope.constraint);
+
+
+    }
+    $http.get('/' + prefix + 'recruitment/educations').then(
+        function (response) {
+            $scope.minEduList = response.data;
+            $scope.maxEduList = response.data;
+        },
+        function (error) {
+
+        }
+    )
+    $scope.initConstraint = function (data) {
+
+        $scope.constraint = JSON.parse(data);
+        $scope.onSave('constraint')
+
+    }
+    $scope.$watch('constraint',function (newVal) {
+
+        $scope.constraint.age.min = $filter('num')($scope.constraint.age.min+"",0);
+        $scope.constraint.age.max = $filter('num')($scope.constraint.age.max+"",0);
+        $scope.constraint.height.male.feet = $filter('num')($scope.constraint.height.male.feet+"",0);
+        $scope.constraint.height.male.inch = $filter('num')($scope.constraint.height.male.inch+"",0);
+        $scope.constraint.height.female.feet = $filter('num')($scope.constraint.height.female.feet+"",0);
+        $scope.constraint.height.female.inch = $filter('num')($scope.constraint.height.female.inch+"",0);
+        $scope.constraint.weight.male = $filter('num')($scope.constraint.weight.male+"",0);
+        $scope.constraint.weight.female = $filter('num')($scope.constraint.weight.female+"",0);
+        $scope.constraint.chest.male = $filter('num')($scope.constraint.chest.male+"",0);
+        $scope.constraint.chest.female = $filter('num')($scope.constraint.chest.female+"",0);
+
+    },true)
+
+})
+/*GlobalApp.directive('dataTable',function () {
+
+    return {
+        restrict:'A',
+        scope:{
+            tableTitle:'@',
+            headers:'@',
+            dataKey:'@',
+            itemPerPage:'@',
+            onPageChange:'&',
+            showItemPerPage:'@',
+            requestDetail:'=',
+            enableSearch:'@'
+        },
+        controller:function ($scope, $http) {
+            $scope.allLoading = true;
+            $scope.q = '';
+            $scope.loadPagination = function () {
+                $scope.pages = [];
+                for (var i = 0; i < $scope.numOfPage; i++) {
+                    $scope.pages.push({
+                        pageNum: i,
+                        offset: i * $scope.itemPerPage,
+                        limit: $scope.itemPerPage
+                    })
+                    $scope.loadingPage[i] = false;
+                }
+            }
+            $scope.loadPage = function (page, $event) {
+                if ($event !== undefined)  $event.preventDefault();
+                if($scope.requestDetail.method==='get'){
+                    if($scope.enableSearch) $scope.requestDetail.params['q'] = $scope.q;
+                    $scope.requestDetail.params['offset'] = page === undefined ? 0 : page.offset;
+                    $scope.requestDetail.params['limit'] = page === undefined ? $scope.itemPerPage : page.limit;
+                }
+                else{
+                    if($scope.enableSearch) $scope.requestDetail.data['q'] = $scope.q;
+                    $scope.requestDetail.data['offset'] = page === undefined ? 0 : page.offset;
+                    $scope.requestDetail.data['limit'] = page === undefined ? $scope.itemPerPage : page.limit;
+                }
+                $scope.currentPage = page;
+                $scope.loadingPage[$scope.currentPage] = true;
+                $http($scope.requestDetail).then(function (response) {
+                    $scope.datas = response.data;
+                    $scope.queue.shift();
+                    if ($scope.queue.length > 1) $scope.loadPage();
+                    $scope.loadingPage[$scope.currentPage] = false;
+
+                    $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
+                    $scope.loadPagination();
+                })
+            }
+
+            $scope.filterMiddlePage = function (value, index, array) {
+                var minPage = $scope.currentPage - 3 < 0 ? 0 : ($scope.currentPage > array.length - 4 ? array.length - 8 : $scope.currentPage - 3);
+                var maxPage = minPage + 7;
+                if (value.pageNum >= minPage && value.pageNum <= maxPage) {
+                    return true;
+                }
+            }
+        }
+    }
+
+})*/
