@@ -747,13 +747,13 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                 scope.rangeChange({param: scope.selected})
             })
             $(element).on('change', '#unit', function () {
-                scope.getUnitName = $.trim($(this).children('option:selected').text())
+                if(scope.getUnitName!==undefined) scope.getUnitName= $.trim($(this).children('option:selected').text())
                 scope.selected.thana = scope.type == 'all' ? 'all' : ''
                 scope.selected.kpi = scope.type == 'all' ? 'all' : ''
                 scope.unitChange({param: scope.selected})
             })
             $(element).on('change', "#thana", function () {
-                scope.getThanaName = $.trim($(this).children('option:selected').text())
+                if(scope.getThanaName!==undefined)scope.getThanaName = $.trim($(this).children('option:selected').text())
                 scope.selected.kpi = scope.type == 'all' ? 'all' : ''
                 scope.thanaChange({param: scope.selected})
             })
@@ -761,7 +761,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                 scope.rankChange({param: scope.selected})
             })
             $(element).on('change', "#kpi", function () {
-                scope.getKpiName = $.trim($(this).children('option:selected').text())
+                if(scope.getKpiName!==undefined)scope.getKpiName = $.trim($(this).children('option:selected').text())
                 $timeout(function () {
                     scope.$apply();
                     scope.kpiChange({param: scope.selected})
