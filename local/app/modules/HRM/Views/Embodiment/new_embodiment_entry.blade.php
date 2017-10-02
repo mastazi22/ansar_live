@@ -484,7 +484,7 @@
                                 <div class="modal-body">
                                     <div class="form-group required">
                                         <label for="reporting_date" class="control-label">Reporting Date</label>
-                                        {!! Form::text('reporting_date', null, $attributes = array('class' => 'form-control', 'id' => 'reporting_date', 'ng-model' => 'reporting_datee','date-picker', 'required')) !!}
+                                        {!! Form::text('reporting_date', null, $attributes = array('class' => 'form-control', 'id' => 'reporting_date', 'ng-model' => 'reporting_datee','date-picker'=>'', 'required')) !!}
                                         <p class="text-danger" ng-if="errors.reporting_date!=undefined">[[errors.reporting_date[0] ]]</p>
                                     </div>
                                     <div class="form-group required">

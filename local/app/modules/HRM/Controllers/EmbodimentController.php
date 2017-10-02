@@ -92,7 +92,7 @@ class EmbodimentController extends Controller
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
             ->where('tbl_ansar_status_info.block_list_status', '=', 0)
             ->where('tbl_ansar_status_info.black_list_status', '=', 0)
-            ->orderBy('tbl_panel_info_log.panel_date','desc')->groupBy('tbl_ansar_parsonal_info.ansar_id')
+            ->orderBy('tbl_panel_info_log.id','desc')->groupBy('tbl_ansar_parsonal_info.ansar_id')
             ->select('tbl_ansar_parsonal_info.ansar_name_bng','tbl_ansar_parsonal_info.ansar_id',
                 'pu.unit_name_bng as home_district', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_designations.name_bng',
                 'tbl_panel_info_log.panel_date', 'tbl_panel_info_log.old_memorandum_id as memorandum_id',
