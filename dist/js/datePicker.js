@@ -109,7 +109,7 @@
     }
 
     Plugin.prototype.isLeapYear = function(year) {
-        if (year % 4 == 0 || year % 400 == 0) {
+        if (year % 4 === 0 || year % 400 === 0) {
             return true
         }
         else return false;
@@ -374,6 +374,7 @@
     }
 
     Plugin.prototype.addEventListener = function() {
+        var id;
         var _self = this;
         if(_self.option.editable===false) {
             alert("ppp")
@@ -459,6 +460,13 @@
                 left: $(_self.element).offset().left + 'px',
                 zIndex: '300000'
             })
+            id = setInterval(function () {
+                $('#'+_self.option.element).css({
+                    top: ($(_self.element).offset().top + $(_self.element).outerHeight()) + "px",
+                    left: $(_self.element).offset().left + 'px',
+                    zIndex: '300000'
+                })
+            },100)
             _self.initCalender()
         })
         //$('body').on('blur','#'+_self.option.ppp, function (e) {
@@ -472,6 +480,7 @@
             //alert(e.target.id)
             if($(e.target).hasClass('date-picker')||$(e.target).parents('.date-picker').length>0|| e.target.id==_self.element.id);
             else{
+                clearInterval(id)
                 $('.date-picker').addClass('not-visible')
             }
         })
@@ -480,6 +489,7 @@
             if((code>=48&& code<=57)|| code==45||code==9||code==37||code==38||code==39||code==40);
             else e.preventDefault();
         })
+
     }
 
     Plugin.prototype.makeCalender = function(month) {

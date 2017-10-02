@@ -193,6 +193,11 @@ class EmbodimentController extends Controller
                 if (!$kpi) {
                     throw new \Exception('Invalid request for Ansar ID: ' . $ansar_id);
                 }
+                $embodimentInfo = $kpi_info->embodiment->count();
+                $kpi_details = $kpi_info->details;
+                if ($embodimentInfo + count($request->ansar_ids) > $kpi_details->total_ansar_given) {
+                    throw new \Exception("This Ansar Cannot be Embodied. Because the total number of Ansars in this KPI already exceed");
+                };
                 if (strcasecmp($global_unit, "Year") == 0) {
                     $service_ending_period = $global_value;
                     $service_ended_date = Carbon::parse($request->input('joining_date'))->addYear($service_ending_period)->subDay(1);
@@ -245,7 +250,13 @@ class EmbodimentController extends Controller
             }
         }
         $this->dispatch(new SendSms($request->ansar_ids));
-        return Response::json(['status' => true, 'message' => 'Ansar is Embodied Successfully!']);
+        $letter = [];
+        $letter['option'] = 'memorandumNo';
+        $letter['id'] = $memorandum_id;
+        $letter['type'] = 'EMBODIMENT';
+        $letter['unit'] = $request->unit_id;
+        $letter['status'] = true;
+        return Response::json(['status' => true, 'message' => 'Ansar is Embodied Successfully!','printData'=>$letter]);
 
     }
 
@@ -267,7 +278,7 @@ class EmbodimentController extends Controller
         }
         $memorandum_id = $request->input('memorandum_id');
         $result = ['success' => 0, 'fail' => 0];
-
+        $letter = [];
         foreach ($request->data as $ansar) {
             DB::beginTransaction();
             try {
@@ -326,8 +337,14 @@ class EmbodimentController extends Controller
                 $result['fail']++;
             }
         }
-//        $this->dispatch(new SendSms($request->ansar_ids));
-        return Response::json(['status' => true, 'message' => "Success {$result['success']}, Failed {$result['fail']}"]);
+        if($result['success']>0) {
+            $letter['option'] = 'memorandumNo';
+            $letter['id'] = $memorandum_id;
+            $letter['type'] = 'EMBODIMENT';
+            $letter['unit'] = $request->unit_id;
+            $letter['status'] = true;
+        }
+        return Response::json(['status' => true, 'message' => "Success {$result['success']}, Failed {$result['fail']}",'letterData'=>$letter]);
 
     }
 

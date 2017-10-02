@@ -434,33 +434,33 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
             unitLoad: '&',//{func()}
             thanaLoad: '&',//{func()}
             kpiLoad: '&',//{func()}
-            kpiDisabled: '=',
-            rangeDisabled: '=',
-            thanaDisabled: '=',
-            unitDisabled: '=',
-            kpiFieldDisabled: '=',
-            unitFieldDisabled: '=',
-            rangeFieldDisabled: '=',
-            thanaFieldDisabled: '=',
-            loadWatch: '=',
+            kpiDisabled: '=?',
+            rangeDisabled: '=?',
+            thanaDisabled: '=?',
+            unitDisabled: '=?',
+            kpiFieldDisabled: '=?',
+            unitFieldDisabled: '=?',
+            rangeFieldDisabled: '=?',
+            thanaFieldDisabled: '=?',
+            loadWatch: '=?',
             watchChange: '@',
             onLoad: "&",
             type: '@',//['all','single']
             startLoad: '@',//['range','unit','thana','kpi']
-            fieldWidth: '=',
-            fieldName: '=',
+            fieldWidth: '=?',
+            fieldName: '=?',
             layoutVertical: '@',
-            getKpiName: '=',
-            getUnitName: '=',
-            getThanaName: '=',
-            data: '=',
-            errorKey: '=',
-            reset: '=',
-            errorMessage: '=',
-            customField: '=',
+            getKpiName: '=?',
+            getUnitName: '=?',
+            getThanaName: '=?',
+            data: '=?',
+            errorKey: '=?',
+            reset: '=?',
+            errorMessage: '=?',
+            customField: '=?',
             customLabel: '@',
-            customData: '=',
-            customModel: '=',
+            customData: '=?',
+            customModel: '=?',
             customChange: '&',
             kpiType: '@',
             resetAll: '@'
@@ -747,13 +747,13 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                 scope.rangeChange({param: scope.selected})
             })
             $(element).on('change', '#unit', function () {
-                if(scope.getUnitName!==undefined) scope.getUnitName= $.trim($(this).children('option:selected').text())
+                scope.getUnitName= $.trim($(this).children('option:selected').text())
                 scope.selected.thana = scope.type == 'all' ? 'all' : ''
                 scope.selected.kpi = scope.type == 'all' ? 'all' : ''
                 scope.unitChange({param: scope.selected})
             })
             $(element).on('change', "#thana", function () {
-                if(scope.getThanaName!==undefined)scope.getThanaName = $.trim($(this).children('option:selected').text())
+                scope.getThanaName = $.trim($(this).children('option:selected').text())
                 scope.selected.kpi = scope.type == 'all' ? 'all' : ''
                 scope.thanaChange({param: scope.selected})
             })
@@ -761,7 +761,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                 scope.rankChange({param: scope.selected})
             })
             $(element).on('change', "#kpi", function () {
-                if(scope.getKpiName!==undefined)scope.getKpiName = $.trim($(this).children('option:selected').text())
+                scope.getKpiName = $.trim($(this).children('option:selected').text())
                 $timeout(function () {
                     scope.$apply();
                     scope.kpiChange({param: scope.selected})
@@ -824,13 +824,14 @@ GlobalApp.directive('formSubmit', function (notificationService, $timeout) {
     return {
         restrict: 'ACE',
         scope: {
-            errors: '=',
-            loading: '=',
-            status: '=',
+            errors: '=?',
+            loading: '=?',
+            status: '=?',
             confirmBox: '@',
             message: '@',
             onReset: '&',
-            resetExcept: '@'
+            resetExcept: '@',
+            responseData:'=?'
         },
         link: function (scope, element, attrs) {
             $(element).on('submit', function (e) {
@@ -856,7 +857,7 @@ GlobalApp.directive('formSubmit', function (notificationService, $timeout) {
             function submitForm() {
 
                 $(element).ajaxSubmit({
-                    beforeSubmit: function () {
+                    beforeSubmit: function (data) {
                         scope.loading = true;
                         scope.status = false;
                         scope.errors = '';
@@ -877,6 +878,7 @@ GlobalApp.directive('formSubmit', function (notificationService, $timeout) {
                             notificationService.notify('success', response.message);
                             scope.status = true;
                             $(element).resetForm();
+                            scope.responseData = response;
                             scope.onReset();
                         }
                         else if (response.status === false) {
