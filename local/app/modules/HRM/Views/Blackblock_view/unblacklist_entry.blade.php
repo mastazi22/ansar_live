@@ -11,7 +11,9 @@
 
     <script>
         $(document).ready(function () {
-            $('#unblack_date').datePicker(true);
+            $('#unblack_date').datepicker({
+                dateFormat:'dd-M-yy'
+            });
         })
         GlobalApp.controller('UnblackController', function ($scope, $http, $sce) {
             $scope.ansarId = "";

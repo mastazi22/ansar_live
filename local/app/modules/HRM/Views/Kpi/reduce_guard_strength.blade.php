@@ -10,7 +10,7 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#reduce_guard_strength_date').datePicker(true);
+            $('#reduce_guard_strength_date').datepicker({                dateFormat:'dd-M-yy'            })(true);
         })
         GlobalApp.controller('AnsarReduceController', function ($scope, $http, notificationService, $filter) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}')

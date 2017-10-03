@@ -10,7 +10,7 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#freeze_date').datePicker();
+            $('#freeze_date').datepicker({                dateFormat:'dd-M-yy'            })();
         })
         GlobalApp.controller('FreezeController', function ($scope, $http, $sce) {
             $scope.ansarId = "";

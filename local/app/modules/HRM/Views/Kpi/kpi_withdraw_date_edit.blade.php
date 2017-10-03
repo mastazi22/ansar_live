@@ -10,7 +10,9 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#withdraw-date').datePicker(false);
+            $('#withdraw-date').datepicker({
+                dateFormat:'dd-M-yy'
+            });
         })
     </script>
     <style>

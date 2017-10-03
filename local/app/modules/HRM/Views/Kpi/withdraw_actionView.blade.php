@@ -49,6 +49,6 @@
 
 </div>
 <script>
-    $("#date-picker").datePicker({})
+    $("#date-picker").datepicker({                dateFormat:'dd-M-yy'            })({})
 </script>
 

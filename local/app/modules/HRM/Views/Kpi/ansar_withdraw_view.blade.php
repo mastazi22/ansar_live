@@ -10,7 +10,9 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#kpi_withdraw_date').datePicker(true);
+            $('#kpi_withdraw_date').datepicker({
+                dateFormat:'dd-M-yy'
+            });
         })
         GlobalApp.controller('ReportGuardSearchController', function ($scope, $http, $sce) {
             $scope.ansars = [];

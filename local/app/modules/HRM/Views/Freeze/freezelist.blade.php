@@ -446,7 +446,9 @@
             $(window).resize(function () {
                 $('.test-dropdown-below,.test-dropdown-above').css('display', 'none');
             })
-            $("#joining_date,#rest_date").datePicker(false);
+            $("#joining_date,#rest_date").datepicker({
+                dateFormat:'dd-M-yy'
+            });
         })
     </script>
 
@@ -1129,7 +1131,7 @@
 
     </div>
     <script>
-        $("#black_date").datePicker({
+        $("#black_date").datepicker({                dateFormat:'dd-M-yy'            })({
             defaultValue: false
         })
     </script>

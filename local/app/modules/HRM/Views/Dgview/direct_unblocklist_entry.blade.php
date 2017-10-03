@@ -12,7 +12,9 @@
 
     <script>
         $(document).ready(function () {
-            $('#unblock_date').datePicker(true);
+            $('#unblock_date').datepicker({
+                dateFormat:'dd-M-yy'
+            });
         })
         GlobalApp.controller('DGUnblockController', function ($scope,$http,$sce) {
             $scope.ansarId = "";

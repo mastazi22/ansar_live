@@ -11,7 +11,7 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#withdraw_date').datePicker(true);
+            $('#withdraw_date').datepicker({                dateFormat:'dd-M-yy'            })(true);
         })
         GlobalApp.controller('KpiWithdrawController', function ($scope, $http) {
             $scope.selectedUnit = "";

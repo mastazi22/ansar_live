@@ -10,10 +10,10 @@
             var b = $('#withdraw_date').val();
 //            if (a) $('#activation_date').val(moment(a).format("D-MMM-YYYY"))
 //            if (b) $('#withdraw_date').val(moment(b).format("D-MMM-YYYY"));
-            $('#activation_date').datePicker({
+            $('#activation_date').datepicker({                dateFormat:'dd-M-yy'            })({
                 defaultValue:a
             });
-            $("#withdraw_date").datePicker({
+            $("#withdraw_date").datepicker({                dateFormat:'dd-M-yy'            })({
                 defaultValue:b
             });
 

@@ -11,7 +11,9 @@
 
     <script>
         $(document).ready(function () {
-            $('#new_disembodiment_date').datePicker(true);
+            $('#new_disembodiment_date').datepicker({
+                dateFormat:'dd-M-yy'
+            });
         })
         GlobalApp.controller('MemorandumIDCorrectionController', function ($scope,$http,$sce) {
             $scope.ansarId = "";

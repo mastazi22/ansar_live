@@ -8,10 +8,10 @@
 
     <script>
 //        $(document).ready(function () {
-//            $('#data_of_birth').datePicker({
+//            $('#data_of_birth').datepicker({                dateFormat:'dd-M-yy'            })({
 //                defaultValue:false
 //            });
-//            //$("#to_date").datePicker(true);
+//            //$("#to_date").datepicker({                dateFormat:'dd-M-yy'            })(true);
 //
 //        })
         GlobalApp.directive('datePickerDir', function ($timeout) {
@@ -23,9 +23,9 @@
                     $timeout(function () {
 
                     })
-                    if(attrs.datePickerDir) {
+                    if(attrs.datepicker({                dateFormat:'dd-M-yy'            })Dir) {
                         //alert(attrs.value)
-                        $(element).datePicker({
+                        $(element).datepicker({                dateFormat:'dd-M-yy'            })({
                             defaultValue: attrs.value
                         });
                     }

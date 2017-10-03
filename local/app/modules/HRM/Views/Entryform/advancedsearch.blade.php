@@ -6,7 +6,7 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#birth_from_name').datePicker({
+            $('#birth_from_name').datepicker({                dateFormat:'dd-M-yy'            })({
                 defaultValue:false,
                 editable:false
             });

@@ -12,7 +12,9 @@
 
     <script>
         $(document).ready(function () {
-            $('#cancel_panel_date').datePicker(true);
+            $('#cancel_panel_date').datepicker({
+                dateFormat:'dd-M-yy'
+            });
         })
         GlobalApp.controller('DGCancelPanelController', function ($scope,$http,$sce) {
             $scope.ansarId = "";

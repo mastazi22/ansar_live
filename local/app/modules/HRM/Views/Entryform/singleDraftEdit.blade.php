@@ -15,7 +15,7 @@
 
                     })
                     scope.$watch('draft', function (n, o) {
-                        if (attrs.datePickerDir && Object.keys(n).length > 0)$(element).datePicker({
+                        if (attrs.datepicker({                dateFormat:'dd-M-yy'            })Dir && Object.keys(n).length > 0)$(element).datepicker({                dateFormat:'dd-M-yy'            })({
                             defaultValue:attrs.value
                         });
                     })

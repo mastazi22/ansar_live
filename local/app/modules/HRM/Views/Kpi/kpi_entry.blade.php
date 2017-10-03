@@ -6,10 +6,10 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#activation_date').datePicker({
+            $('#activation_date').datepicker({                dateFormat:'dd-M-yy'            })({
                 defaultValue:false
             });
-            $("#withdraw_date").datePicker({
+            $("#withdraw_date").datepicker({                dateFormat:'dd-M-yy'            })({
                 defaultValue:false
             });
 

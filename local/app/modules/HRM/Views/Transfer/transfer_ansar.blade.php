@@ -7,7 +7,7 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller("TransferController", function ($scope, $http, $timeout) {
+        GlobalApp.controller("TransferController", function ($scope, $http, $timeout,$rootScope) {
             $scope.ansars = [];
             $scope.tsPC = 0;
             $scope.tsAPC = 0;
@@ -72,7 +72,7 @@
             }
             $scope.$watch('results', function (newValue,oldValue ) {
 
-                if(newValue.length!=undefined) $scope.selectAnsar = Array.apply(null, new Array(newValue.length)).map(Boolean.prototype.valueOf, $scope.selectAll);
+                if(newValue!==undefined&&newValue.constructor===Array&&newValue.length!==undefined) $scope.selectAnsar = Array.apply(null, new Array(newValue.length)).map(Boolean.prototype.valueOf, $scope.selectAll);
             },true)
             $scope.changeSelectAnsar = function (i) {
                 var index = $scope.selectedAnsar.indexOf($scope.results[i]);
@@ -101,6 +101,13 @@
             $scope.pl = false
             $scope.confirmTransferAnsar = function () {
                 var ansar_id = [];
+                $scope.letterOption={
+                    id:$rootScope.user.district_id?$rootScope.user.district_id:angular.copy($scope.memorandumId),
+                    unit:angular.copy($scope.trans.unit),
+                    option:'memorandumNo',
+                    type:'TRANSFER',
+                    status:false,
+                }
                 $scope.pl = false
                 $scope.modalOpen = false;
                 $scope.selectedAnsar.forEach(function (a) {
@@ -121,16 +128,16 @@
                     data: angular.toJson(data),
                     method: 'post'
                 }).then(function (response) {
-                    $scope.letterOption={
-                        id:angular.copy($scope.memorandumId),
-                        unit:angular.copy($scope.trans.unit)
-                    }
+
                     $scope.allLoading = false
                     console.log(response.data)
                     $scope.result = response.data;
 
                     $scope.q = '';
-                    if ($scope.result.data.success.count > 0) $scope.loadAnsar();
+                    if ($scope.result.data.success.count > 0) {
+                        $scope.loadAnsar();
+                        $scope.letterOption.status = true
+                    }
 
 
                 }, function (response) {
@@ -223,7 +230,7 @@
             }
         })
         $(document).ready(function () {
-            $("#join_date_in_tk").datePicker(false);
+            $("#join_date_in_tk").datepicker({                dateFormat:'dd-M-yy'            })(false);
         })
     </script>
     <div notification-message ng-controller="TransferController">
@@ -290,15 +297,8 @@
                         </table>
                     </div>
                     <div>
-                        {!! Form::open(['route'=>'print_letter','target'=>'_blank','ng-if'=>'pl','class'=>'pull-left']) !!}
-                        {!! Form::hidden('option','memorandumNo') !!}
-                        {!! Form::hidden('id','[[letterOption.id]]') !!}
-                        {!! Form::hidden('type','TRANSFER') !!}
-                        @if(auth()->user()->type!=22)
-                            {!! Form::hidden('unit','[[letterOption.unit]]') !!}
-                        @else
-                            {!! Form::hidden('unit',auth()->user()->district?auth()->user()->district->id:'') !!}
-                        @endif
+                        {!! Form::open(['route'=>'print_letter','target'=>'_blank','ng-if'=>'letterOption.status','class'=>'pull-left']) !!}
+                        <input type="hidden" ng-repeat="(key,value) in letterOption" name="[[key]]" value="[[value]]">
                         <button class="btn btn-primary"><i class="fa fa-print"></i>&nbsp;Print Transfer Letter</button>
                         {!! Form::close() !!}
                         <button class="pull-right btn btn-primary" open-hide-modal ng-click="modalOpen=true">

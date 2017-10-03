@@ -223,12 +223,11 @@ GlobalApp.directive('datePicker', function () {
             var data = attrs.datePicker
             console.log(data)
             if (data) {
-                $(element).datePicker({
-                    defaultValue: eval(data)
-                })
+                $(element).val(eval(data));
+
             }
-            $(element).datePicker({
-                defaultValue: false
+            $(element).datepicker({
+                dateFormat:'dd-M-yy'
             })
 
         }

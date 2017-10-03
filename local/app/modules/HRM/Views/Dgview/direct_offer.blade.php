@@ -178,7 +178,7 @@
     </div>
     <script>
         $(document).ready(function () {
-            $("#date").datePicker()
+            $("#date").datepicker({                dateFormat:'dd-M-yy'            })()
         })
     </script>
 @stop

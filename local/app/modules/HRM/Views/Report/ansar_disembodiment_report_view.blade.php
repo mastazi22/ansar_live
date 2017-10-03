@@ -10,10 +10,10 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#from_date').datePicker({
+            $('#from_date').datepicker({                dateFormat:'dd-M-yy'            })({
                 defaultValue:false
             });
-            $("#to_date").datePicker({
+            $("#to_date").datepicker({                dateFormat:'dd-M-yy'            })({
                 defaultValue:false
             });
 

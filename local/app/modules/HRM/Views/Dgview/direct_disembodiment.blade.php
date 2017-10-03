@@ -7,7 +7,7 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $("#dis_date").datePicker();
+            $("#dis_date").datepicker({                dateFormat:'dd-M-yy'            })();
         })
         GlobalApp.controller('DirectEmbodimentController', function ($scope, $http, $sce, notificationService) {
             $scope.ansarId = "";

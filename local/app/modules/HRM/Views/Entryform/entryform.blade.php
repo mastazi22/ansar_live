@@ -18,7 +18,7 @@
                     $timeout(function () {
 
                     })
-                    if(attrs.datePickerDir)$(element).datePicker({
+                    if(attrs.datepicker({                dateFormat:'dd-M-yy'            })Dir)$(element).datepicker({                dateFormat:'dd-M-yy'            })({
                         defaultValue:attrs.value
                     });
                 }

@@ -11,7 +11,7 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#direct_panel_date').datePicker();
+            $('#direct_panel_date').datepicker({                dateFormat:'dd-M-yy'            })();
         })
         GlobalApp.controller('DGPanelController', function ($scope, $http, $sce) {
             $scope.ansarId = "";

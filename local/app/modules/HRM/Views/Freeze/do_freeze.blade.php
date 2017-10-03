@@ -4,8 +4,10 @@
 
 <script>
         $(document).ready(function () {
-            $('#freeze_date').datePicker(true);
-            //$('.picker').datePicker();
+            $('#freeze_date').datepicker({
+                dateFormat:'dd-M-yy'
+            });
+            //$('.picker').datepicker({                dateFormat:'dd-M-yy'            })();
         })
         </script>
         

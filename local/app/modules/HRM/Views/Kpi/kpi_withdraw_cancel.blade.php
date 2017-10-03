@@ -388,7 +388,7 @@
             cancel_callback: function (element) {
             }
         })
-        $("#date-picker").datePicker({
+        $("#date-picker").datepicker({                dateFormat:'dd-M-yy'            })({
             defaultValue:false
         })
     </script>

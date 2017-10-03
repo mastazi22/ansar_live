@@ -10,11 +10,9 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#disembodiment_date').datePicker({
-                defaultValue:moment()
-            });
+            $('#disembodiment_date').datepicker({dateFormat: 'dd-M-yy'});
         })
-        GlobalApp.controller('NewDisembodimentController', function ($scope, $http,notificationService) {
+        GlobalApp.controller('NewDisembodimentController', function ($scope, $http, notificationService) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}');
             $scope.queue = [];
             $scope.districts = [];
@@ -44,10 +42,10 @@
                 }).then(function (response) {
                     console.log(response.data)
                     $scope.queue.shift();
-                    if($scope.queue.length>1) $scope.loadAnsar();
+                    if ($scope.queue.length > 1) $scope.loadAnsar();
                     $scope.allLoading = false;
-                    if(response.data.status===false){
-                        notificationService.notify('error',response.data.message);
+                    if (response.data.status === false) {
+                        notificationService.notify('error', response.data.message);
                     }
                     $scope.ansars = response.data;
                 })
@@ -69,11 +67,11 @@
             $scope.showFormData = function () {
                 $scope.allLoading = true;
                 $scope.submitData = [];
-                for(var i=0;i<$scope.formData.length;i++){
-                    if($scope.formData[i]==undefined){
+                for (var i = 0; i < $scope.formData.length; i++) {
+                    if ($scope.formData[i] == undefined) {
                         continue;
                     }
-                    if($scope.formData[i].disReason==undefined||!$scope.formData[i].disReason||$scope.formData[i].ansarId==undefined||!$scope.formData[i].ansarId){
+                    if ($scope.formData[i].disReason == undefined || !$scope.formData[i].disReason || $scope.formData[i].ansarId == undefined || !$scope.formData[i].ansarId) {
                         continue;
                     }
                     $scope.submitData.push($scope.formData[i])
@@ -81,38 +79,38 @@
                 $scope.newParam = JSON.parse(JSON.stringify($scope.param))
                 $scope.printLetter = false;
                 $http({
-                    url:'{{URL::to('HRM/disembodiment-entry')}}',
-                    method:'post',
-                    data:angular.toJson({
-                        ansars:$scope.submitData,
-                        memorandum_id:$scope.memorandumId,
-                        mem_date:$scope.memDate,
-                        disembodiment_comment:$scope.disembodiment_comment,
-                        disembodiment_date:$scope.disembodiment_date,
+                    url: '{{URL::to('HRM/disembodiment-entry')}}',
+                    method: 'post',
+                    data: angular.toJson({
+                        ansars: $scope.submitData,
+                        memorandum_id: $scope.memorandumId,
+                        mem_date: $scope.memDate,
+                        disembodiment_comment: $scope.disembodiment_comment,
+                        disembodiment_date: $scope.disembodiment_date,
                     })
                 }).then(function (response) {
-                    if(response.data.status){
-                        notificationService.notify('success',response.data.message);
+                    if (response.data.status) {
+                        notificationService.notify('success', response.data.message);
                         $scope.loadAnsar();
-                        $scope.ch =[]
+                        $scope.ch = []
                         $scope.formData = [];
                         $scope.printLetter = true;
                     }
-                    else{
-                        notificationService.notify('error',response.data.message);
+                    else {
+                        notificationService.notify('error', response.data.message);
                     }
                     $scope.allLoading = false;
                 }, function (response) {
                     $scope.allLoading = false;
-                    notificationService.notify('error','An unknown error occur. Error code : '+response.status);
+                    notificationService.notify('error', 'An unknown error occur. Error code : ' + response.status);
                 })
             }
-            $scope.disabledOption = function (id,date) {
-                if(id==1){
+            $scope.disabledOption = function (id, date) {
+                if (id == 1) {
                     var current = moment();
                     var d = moment(date);
                     //console.log(current.format("DD-MMM-YYYY")+" "+d.format("DD-MMM-YYYY"));
-                    return current.diff(d,'years')>=3;
+                    return current.diff(d, 'years') >= 3;
                 }
                 return true;
             }
@@ -205,20 +203,28 @@
                                 <td>[[a.kpi_name]]</td>
                                 <td>[[a.joining_date|dateformat:"DD-MMM-YYYY"]]</td>
                                 <td>
-                                    <select name="dis-reason" ng-model="formData[$index].disReason" ng-change="!formData[$index].disReason?formData[$index].ansarId=ch[$index]=false:''" class="form-control dis-reason">
+                                    <select name="dis-reason" ng-model="formData[$index].disReason"
+                                            ng-change="!formData[$index].disReason?formData[$index].ansarId=ch[$index]=false:''"
+                                            class="form-control dis-reason">
                                         <option value="">--Select Reason--</option>
-                                        <option ng-repeat="r in ansars.reasons" ng-if="disabledOption(r.id,a.joining_date)" value="[[r.id]]">[[r.reason_in_bng]]
+                                        <option ng-repeat="r in ansars.reasons"
+                                                ng-if="disabledOption(r.id,a.joining_date)" value="[[r.id]]">
+                                            [[r.reason_in_bng]]
                                         </option>
                                     </select>
                                 </td>
                                 <td>
                                     <div class="styled-checkbox">
-                                        <input  type="checkbox"  id="a_[[a.ansar_id]]" ng-change="formData[$index].ansarId=ch[$index]" ng-disabled="!formData[$index].disReason" ng-model="ch[$index]" class="ansar-check" ng-true-value="[[a.ansar_id]]">
+                                        <input type="checkbox" id="a_[[a.ansar_id]]"
+                                               ng-change="formData[$index].ansarId=ch[$index]"
+                                               ng-disabled="!formData[$index].disReason" ng-model="ch[$index]"
+                                               class="ansar-check" ng-true-value="[[a.ansar_id]]">
                                         <label for="a_[[a.ansar_id]]"></label>
                                     </div>
                                 </td>
                             </tr>
-                            <tr colspan="10" class="warning" ng-if="ansars.ansar_infos==undefined||ansars.ansar_infos.length<=0">
+                            <tr colspan="10" class="warning"
+                                ng-if="ansars.ansar_infos==undefined||ansars.ansar_infos.length<=0">
                                 <td colspan="10">No Ansar Found to show</td>
                             </tr>
                             </tbody>
@@ -286,7 +292,8 @@
                     @endif
                     <button class="btn btn-primary"><i class="fa fa-print"></i>&nbsp;Print DisEmbodiment Letter</button>
                     {!! Form::close() !!}
-                    <button class="pull-right btn btn-primary" ng-disabled="allLoading" id="disembodiment-confirmation" ng-click="showFormData()">
+                    <button class="pull-right btn btn-primary" ng-disabled="allLoading" id="disembodiment-confirmation"
+                            ng-click="showFormData()">
                         <i class="fa fa-send"></i>&nbsp;&nbsp;Disembodied
                     </button>
                 </div>
