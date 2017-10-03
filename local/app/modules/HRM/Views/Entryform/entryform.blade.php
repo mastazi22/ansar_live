@@ -9,24 +9,7 @@
 
 
     <script>
-        GlobalApp.directive('datePickerDir', function ($timeout) {
-            return {
-                restrict: "AC",
-                link: function (scope, element, attrs) {
 
-                    //alert('asaddad')
-                    $timeout(function () {
-
-                    })
-                    if(attrs.datepicker({                dateFormat:'dd-M-yy'            })Dir)$(element).datepicker({                dateFormat:'dd-M-yy'            })({
-                        defaultValue:attrs.value
-                    });
-                }
-
-            }
-
-        })
-        ;
 
 
         GlobalApp.controller('fullEntryFormController', function ($scope, getNameService, getBloodService, getDiseaseSkillService, $sce,$http) {
@@ -494,7 +477,7 @@
                                                 <label class="control-label col-sm-2" for="email"><sup style="color: #ff0709;font-size: 1em">*</sup>Date of birth</label>
 
                                                 <div class="col-sm-10">
-                                                    <input class="form-control picker " id="data_of_birth" name="data_of_birth" ng-model="data_of_birth" date-picker-dir="datePickerDir" placeholder="Date of birth" value="{{Request::old('data_of_birth')}}">
+                                                    <input class="form-control picker " id="data_of_birth" name="data_of_birth" ng-model="data_of_birth" date-picker="" placeholder="Date of birth" value="{{Request::old('data_of_birth')}}">
                                                     <span style="color:red" ng-show="formSubmitResult.error.data_of_birth[0]">[[ formSubmitResult.error.data_of_birth[0] ]]</span>
                                                 </div>
                                             </div>

@@ -7,33 +7,6 @@
 
 
     <script>
-//        $(document).ready(function () {
-//            $('#data_of_birth').datepicker({                dateFormat:'dd-M-yy'            })({
-//                defaultValue:false
-//            });
-//            //$("#to_date").datepicker({                dateFormat:'dd-M-yy'            })(true);
-//
-//        })
-        GlobalApp.directive('datePickerDir', function ($timeout) {
-            return {
-                restrict: "AC",
-                link: function (scope, element, attrs) {
-
-                    //alert('asaddad')
-                    $timeout(function () {
-
-                    })
-                    if(attrs.datepicker({                dateFormat:'dd-M-yy'            })Dir) {
-                        //alert(attrs.value)
-                        $(element).datepicker({                dateFormat:'dd-M-yy'            })({
-                            defaultValue: attrs.value
-                        });
-                    }
-                }
-
-            }
-
-        })
         GlobalApp.controller('fullEntryFormController', function ($scope, getNameService, getBloodService, getDiseaseSkillService, $sce, $http) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}')
             $scope.SelectedDistrict = ""
@@ -662,7 +635,7 @@
 
                                                 <div class="col-sm-10">
                                                     <input class="form-control picker " id="data_of_birth"
-                                                           name="data_of_birth" date-picker-dir="datePickerDir"
+                                                           name="data_of_birth" date-picker=""
                                                            placeholder="Date of birth"
                                                            value="{{ $ansarAllDetails->data_of_birth}}">
                                                     <span style="color:red"
