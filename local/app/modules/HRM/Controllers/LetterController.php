@@ -4,6 +4,7 @@ namespace App\modules\HRM\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\MemorandumModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -40,13 +41,15 @@ class LetterController extends Controller
             $t->where('tbl_kpi_info.unit_id',$requests->unit);
             $d->where('tbl_kpi_info.unit_id',$requests->unit)->orderBy('tbl_embodiment_log.id','desc');
         }
+        return $t->toSql();
         switch ($requests->type) {
             case 'TRANSFER':
-                return $t->distinct()->get();
+                return view('HRM::Letter.partial_letter_view',['data'=>$t->distinct()->paginate(20),'units'=>District::all()]);
             case 'EMBODIED':
-                return $e->distinct()->get();
+                return view('HRM::Letter.partial_letter_view',['data'=>$e->distinct()->paginate(20),'units'=>District::all()]);
             case 'DISEMBODIED':
-                return $d->distinct('tbl_rest_info.memorandum_id')->get();
+                return view('HRM::Letter.partial_letter_view',['data'=>$d->distinct('tbl_rest_info.memorandum_id')->paginate(20),'units'=>District::all()]);
+
             default:
                 return [];
         }

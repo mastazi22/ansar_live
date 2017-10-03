@@ -15,6 +15,7 @@
         })
         GlobalApp.controller('TransferLetterController', function ($scope, $http, $sce) {
             $scope.letterPrintView = $sce.trustAsHtml("&nbsp;")
+            $scope.letterView = $sce.trustAsHtml("&nbsp;")
             $scope.printType = "smartCardNo"
             $scope.unit = {
                 selectedUnit: []
@@ -38,13 +39,14 @@
                 })
             }
             $scope.loadData = function () {
+                alert('1')
                 $http({
                     method: 'get',
                     params: {type: "TRANSFER"},
                     url: '{{URL::route('letter_data')}}'
                 }).then(function (response) {
                     if (!$scope.isDc) $scope.unit.selectedUnit = [];
-                    $scope.datas = response.data;
+                    $scope.letterView = $sce.trustAsHtml(response.data);
                     console.log($scope.datas)
                 })
             }
@@ -180,7 +182,8 @@
                                     >
                                     </filter-template>
                                 </div>
-                                <div class="form-group">
+                                <div ng-bind-html="letterView"></div>
+                                {{--<div class="form-group">
                                     {!! Form::open(['route'=>'print_letter','target'=>'_blank']) !!}
                                     {!! Form::hidden('option','smartCardNo') !!}
                                     {!! Form::hidden('id','[[smartCardNo]]') !!}
@@ -192,13 +195,13 @@
                                     @endif
                                     <button class="btn btn-primary">Generate Transfer Letter</button>
                                     {!! Form::close() !!}
-                                </div>
+                                </div>--}}
                             </div>
                         </div>
                     </div>
                     <div ng-if="printType=='memorandumNo'">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
+                            {{--<table class="table table-bordered table-striped">
                                 <caption>
                                     <table-search q="q" results="results" place-holder="Search Memorandum no."></table-search>
                                 </caption>
@@ -245,10 +248,11 @@
                                 <tr ng-if="datas==undefined||datas.length<=0||results.length<=0">
                                     <td class="warning" colspan="5">No Memorandum no. available</td>
                                 </tr>
-                            </table>
+                            </table>--}}
+                            <div ng-bind-html="letterPrintView"></div>
                         </div>
                     </div>
-                    <div ng-bind-html="letterPrintView"></div>
+
                 </div>
             </div>
         </section>
