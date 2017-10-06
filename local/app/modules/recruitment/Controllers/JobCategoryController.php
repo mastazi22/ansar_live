@@ -45,7 +45,8 @@ class JobCategoryController extends Controller
     {
 
         $rules = [
-            'category_name_eng'=>'required'
+            'category_name_eng'=>'required',
+            'category_name_bng'=>'required'
         ];
         $this->validate($request,$rules);
 
@@ -59,6 +60,7 @@ class JobCategoryController extends Controller
         }catch(\Exception $e){
             DB::rollback();
             return redirect()->route('recruitment.category.index')->with('session_error',"An error occur while create new category. Please try agin later");
+//            return redirect()->route('recruitment.category.index')->with('session_error',$e->getMessage());
         }
         return redirect()->route('recruitment.category.index')->with('session_success',"New category added successfully");
     }
@@ -112,7 +114,8 @@ class JobCategoryController extends Controller
 
         }catch(\Exception $e){
             DB::rollback();
-            return redirect()->route('recruitment.category.index')->with('session_error',"An error occur while create new category. Please try agin later");
+//            return redirect()->route('recruitment.category.index')->with('session_error',"An error occur while create new category. Please try agin later");
+            return redirect()->route('recruitment.category.index')->with('session_error',$e->getMessage());
         }
         return redirect()->route('recruitment.category.index')->with('session_success',"New category added successfully");
     }

@@ -13,10 +13,17 @@
 <div class="form-group">
     {!! Form::label('category_name_bng','Job Category Name Bng :',['class'=>'control-label']) !!}
     {!! Form::text('category_name_bng',null,['class'=>'form-control','placeholder'=>'Enter category name in bangla']) !!}
+    @if(isset($errors)&&$errors->first('category_name_bng'))
+        <p class="text text-danger">{{$errors->first('category_name_bng')}}</p>
+    @endif
 </div>
 <div class="form-group">
     {!! Form::label('category_description','Job Category Description :',['class'=>'control-label']) !!}
     {!! Form::textarea('category_description',null,['size' => '30x5','class'=>'form-control','placeholder'=>'Enter category description']) !!}
+</div>
+<div class="form-group">
+    {!! Form::label('category_rank','Job Category Rank :',['class'=>'control-label']) !!}
+    {!! Form::text('category_rank',null,['class'=>'form-control','placeholder'=>'Enter category rank']) !!}
 </div>
 <div class="form-group">
     {!! Form::label('test','Status : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}

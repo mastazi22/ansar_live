@@ -60,13 +60,14 @@ class JobCircularController extends Controller
         try{
             $request['start_date'] = Carbon::parse($request->start_date)->format('Y-m-d');
             $request['end_date'] = Carbon::parse($request->end_date)->format('Y-m-d');
-            $c = JobCategory::find($request->job_category_id)->circular()->create($request->except('job_category_id'));
+            $c = JobCategory::find($request->job_category_id)->circular()->create($request->except(['job_category_id','constraint']));
             $c->constraint()->create(['constraint'=>$request->constraint]);
             DB::commit();
 
         }catch (\Exception $e){
             DB::rollBack();
-            return redirect()->route('recruitment.circular.index')->with('session_error',"An error occur while create new circular. Please try again later");
+//            return redirect()->route('recruitment.circular.index')->with('session_error',"An error occur while create new circular. Please try again later");
+            return redirect()->route('recruitment.circular.index')->with('session_error',$e->getMessage());
         }
         return redirect()->route('recruitment.circular.index')->with('session_success',"New circular added successfully");
     }
