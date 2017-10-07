@@ -132,14 +132,25 @@ class JobCategoryController extends Controller
     }
 
     private function getData($request){
+        $data = '';
         if($request->exists('q')&&$request->q){
-            $data = JobCategory::where('category_name_eng','like',"%{$request->q}%")
-                ->orWhere('category_name_bng','like',"%{$request->q}%")
-                ->orWhere('category_description','like',"%{$request->q}%")
-                ->orWhere('status','=',$request->q)
-                ->get();
-            return response()->json($data);
+            if(!$data) {
+                $data = JobCategory::where(function($query) use($request){
+                    $query->orWhere('category_name_eng','like',"%{$request->q}%");
+                    $query->orWhere('category_name_bng','like',"%{$request->q}%");
+                    $query->orWhere('category_description','like',"%{$request->q}%");
+                });
+            }
         }
-        return response()->json(JobCategory::all());
+        if($request->exists('status')&&$request->status!='all'){
+            if(!$data){
+                $data = JobCategory::where('status',$request->status);
+            }
+            else{
+                $data->where('status',$request->status);
+            }
+        }
+        if($data) return response()->json($data->get());
+        else return response()->json(JobCategory::all());
     }
 }

@@ -9,5 +9,7 @@ use App\Http\Controllers\Controller;
 
 class ApplicantScreeningController extends Controller
 {
-    //
+    public function index(){
+        return view('recruitment::applicant.index');
+    }
 }

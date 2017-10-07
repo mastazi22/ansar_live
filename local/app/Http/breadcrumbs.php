@@ -558,3 +558,11 @@ Breadcrumbs::register('edit_job_circular', function($breadcrumbs) {
     $breadcrumbs->parent('job_circular');
     $breadcrumbs->push('Edit Job Circular', '#');
 });
+Breadcrumbs::register('applicant_selection', function($breadcrumbs) {
+    $breadcrumbs->parent('recruitment');
+    $breadcrumbs->push('Applicant Management', '#');
+});
+Breadcrumbs::register('recruitment.circular.index', function($breadcrumbs) {
+    $breadcrumbs->parent('applicant_selection');
+    $breadcrumbs->push('Circular Summery', URL::route('recruitment.applicant.index'));
+});

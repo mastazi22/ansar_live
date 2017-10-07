@@ -370,6 +370,17 @@ return [
         "Job Circular" => [
             "route" => "recruitment.circular.index",
             "icon" => "fa-clipboard"
+        ],
+        "Applicant Management"=>[
+            "route"=>"#",
+            "icon"=>"fa-user",
+            "children"=>[
+                "Circular Summery"=>[
+                    "route"=>"recruitment.applicant.index",
+                    "icon"=>"fa-user"
+                ]
+            ]
         ]
+
     ]
 ];
