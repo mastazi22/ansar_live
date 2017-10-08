@@ -33,11 +33,11 @@ class CheckAuthentication
         Log::info("user_name: ".auth()->user()->user_name);
         Log::info("action url : ".$request->url());
         Log::info("request data : ");
-        RequestDumper::create([
+        /*RequestDumper::create([
             'user_id'=>auth()->user()->id,
             'request_url'=>$request->url(),
             'request_data'=>serialize($request->all())
-        ]);
+        ]);*/
         Log::info($request->all());
         return $next($request);
     }
