@@ -183,7 +183,7 @@ class FormSubmitHandler extends Controller
                     $personalinfo->father_name_bng = $request->input('father_name_bng');
                     $personalinfo->mother_name_eng = $request->input('mother_name_eng');
                     $personalinfo->mother_name_bng = $request->input('mother_name_bng');
-                    $personalinfo->data_of_birth = Carbon::createFromFormat("d-M-Y", $request->input('data_of_birth'))->format("Y-m-d");
+                    $personalinfo->data_of_birth = Carbon::parse($request->input('data_of_birth'))->format("Y-m-d");
                     $personalinfo->marital_status = $request->input('marital_status');
 //                $personalinfo->marital_status_bng = $request->input('marital_status_bng');
                     $personalinfo->spouse_name_eng = $request->input('spouse_name_eng');
@@ -329,13 +329,13 @@ class FormSubmitHandler extends Controller
                                 $training[$i]->ansar_id = $ansarid;
                                 $training[$i]->training_designation = $training_designation[$i];
                                 $training[$i]->training_institute_name = $training_institute_name[$i];
-                                $training[$i]->training_start_date = $training_start_date[$i] ? Carbon::createFromFormat("d-M-Y", $training_start_date[$i])->format("Y-m-d") : "0000-00-00";
-                                $training[$i]->training_end_date = $training_end_date[$i] ? Carbon::createFromFormat("d-M-Y", $training_end_date[$i])->format("Y-m-d") : "0000-00-00";
+                                $training[$i]->training_start_date = $training_start_date[$i] ? Carbon::parse( $training_start_date[$i])->format("Y-m-d") : "0000-00-00";
+                                $training[$i]->training_end_date = $training_end_date[$i] ? Carbon::parse( $training_end_date[$i])->format("Y-m-d") : "0000-00-00";
                                 $training[$i]->trining_certificate_no = $trining_certificate_no[$i];
                                 $training[$i]->training_designation_eng = $training_designation_eng[$i];
                                 $training[$i]->training_institute_name_eng = $training_institute_name_eng[$i];
-                                $training[$i]->training_start_date_eng = $training_start_date_eng[$i] ? Carbon::createFromFormat("d-M-Y", $training_start_date_eng[$i])->format("Y-m-d") : "0000-00-00";
-                                $training[$i]->training_end_date_eng = $training_end_date_eng[$i] ? Carbon::createFromFormat("d-M-Y", $training_end_date_eng[$i])->format("Y-m-d") : "0000-00-00";
+                                $training[$i]->training_start_date_eng = $training_start_date_eng[$i] ? Carbon::parse( $training_start_date_eng[$i])->format("Y-m-d") : "0000-00-00";
+                                $training[$i]->training_end_date_eng = $training_end_date_eng[$i] ? Carbon::parse( $training_end_date_eng[$i])->format("Y-m-d") : "0000-00-00";
                                 $training[$i]->trining_certificate_no_eng = $trining_certificate_no_eng[$i];
                                 $successtraining = $training[$i]->save();
                             }
@@ -604,7 +604,7 @@ class FormSubmitHandler extends Controller
                 $personalinfo->father_name_bng = $request->input('father_name_bng');
                 $personalinfo->mother_name_eng = $request->input('mother_name_eng');
                 $personalinfo->mother_name_bng = $request->input('mother_name_bng');
-                $personalinfo->data_of_birth = Carbon::createFromFormat("d-M-Y", $request->input('data_of_birth'))->format("Y-m-d");
+                $personalinfo->data_of_birth = Carbon::parse($request->input('data_of_birth'))->format("Y-m-d");
                 $personalinfo->marital_status = $request->input('marital_status');
 //                $personalinfo->marital_status_bng = $request->input('marital_status_bng');
                 $personalinfo->spouse_name_eng = $request->input('spouse_name_eng');
