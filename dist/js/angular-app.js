@@ -226,6 +226,7 @@ GlobalApp.directive('datePicker', function () {
                 $(element).val(eval(data));
 
             }
+
             $(element).datepicker({
                 dateFormat:'dd-M-yy'
             })
