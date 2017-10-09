@@ -12,8 +12,8 @@ $index=1;
             <td>{{$kpi_info->kpi_name}}</td>
             <td>{{$kpi_info->unit_name_eng}}</td>
             <td>{{$kpi_info->thana_name_eng}}</td>
-            <td>{{\Carbon\Carbon::createFromFormat('Y-m-d',$kpi_info->reporting_date)->format('d-M-Y')}}</td>
-            <td>{{\Carbon\Carbon::createFromFormat('Y-m-d',$kpi_info->joining_date)->format('d-M-Y')}}</td>
+            <td>{{\Carbon\Carbon::parse($kpi_info->reporting_date)->format('d-M-Y')}}</td>
+            <td>{{\Carbon\Carbon::parse($kpi_info->joining_date)->format('d-M-Y')}}</td>
             <input type="hidden" name="kpi_id_withdraw" value="{{$kpi_info->kpi_id}}">
         </tr>
 <?php

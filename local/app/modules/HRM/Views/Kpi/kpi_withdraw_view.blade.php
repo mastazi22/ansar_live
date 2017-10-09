@@ -179,7 +179,7 @@
                                     [[a.contact]]
                                 </td>
                                 <td>
-                                    <a href="#/withdraw/[[a.id]]" ng-click="ppp()" class="btn btn-info">Withdraw</a>
+                                    <a href="#!withdraw/[[a.id]]" ng-click="ppp()" class="btn btn-info">Withdraw</a>
                                 </td>
                             </tr>
                             </tbody>

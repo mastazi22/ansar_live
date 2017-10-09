@@ -65,7 +65,7 @@
                                 <div class="form-group required">
                                     {!! Form::label('withdraw-date', 'Withdraw Date:', $attributes = array('class' => 'col-md-3 control-label')) !!}
                                     <div class="col-md-9">
-                                        {!! Form::text('withdraw-date', $value =  (Request::old('withdraw-date')?Request::old('withdraw-date'):\Carbon\Carbon::createFromFormat('Y-m-d',$kpi_details->kpi_withdraw_date)->format('d-M-Y')), $attributes = array('class' => 'form-control', 'id' => 'withdraw-date', 'placeholder' => 'Enter Withdraw Date')) !!}
+                                        {!! Form::text('withdraw-date', $value =  (Request::old('withdraw-date')?Request::old('withdraw-date'):\Carbon\Carbon::parse($kpi_details->kpi_withdraw_date)->format('d-M-Y')), $attributes = array('class' => 'form-control', 'id' => 'withdraw-date', 'placeholder' => 'Enter Withdraw Date')) !!}
                                         @if($errors->has('withdraw-date'))
                                             <p class="text-danger">{{$errors->first('withdraw-date')}}</p>
                                         @endif
