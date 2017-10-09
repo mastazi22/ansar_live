@@ -72,8 +72,14 @@ class UserPermission
         $status = false;
         foreach($p as $search){
             $results = explode(",",$search);
+           // Log::info($results);
+           // Log::info("NAME ===".$name);
             $status = in_array($name,$results);
-            if($status) break;
+            if($status) {
+                Log::info("FOUND ".$name);
+                break;
+            }
+
         }
 
         return $status;
@@ -81,6 +87,7 @@ class UserPermission
 
     public function isMenuExists($value)
     {
+
         if(!Auth::user())return false;
         if(Auth::user()->type==11) return true;
         if (is_null($this->currentUserPermission)) {
@@ -90,9 +97,14 @@ class UserPermission
         }
         $p = json_decode($this->currentUserPermission);
         if (is_array($value)) {
+            //Log::info("STATUS :".($this->checkMenu($value,$p)?"true":"false"));
             return $this->checkMenu($value,$p);
         }
-        else return $this->isUserMenuExists($value,$p);
+        else {
+            //Log::info("STATUS NOT:".($this->isUserMenuExists($value,$p)?"true":"false"));
+            return $this->isUserMenuExists($value,$p);
+        }
+
     }
 
     public function getTotal()
@@ -102,15 +114,17 @@ class UserPermission
 
     public function checkMenu($array,$p)
     {
+        Log::info($array);
         foreach($array as $a){
             if($a['route']=="#"){
-                return $this->checkMenu($a['children'],$p);
+                //Log::info($a['children']);
+                $this->checkMenu($a['children'],$p);
             }
             else if($this->isUserMenuExists($a['route'],$p)){
                 return true;
             }
         }
-        return false;
+        //return true;
     }
 
     public function getPageItem($page, $count)
