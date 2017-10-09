@@ -5,77 +5,69 @@
 @endsection
 @section('content')
     <script>
-        $(function () {
-            $(document).on('click','#print-report', function (e) {
-                e.preventDefault();
-                $('body').append('<div id="print-area" class="letter">'+$(".letter").html()+'</div>')
-                window.print();
-                $("#print-area").remove()
-            })
-        })
-        GlobalApp.controller('EmbodimentLetterController', function ($scope,$http,$sce) {
-            $scope.letterPrintView = $sce.trustAsHtml("&nbsp;")
+        GlobalApp.controller('EmbodimentLetterController', function ($scope, $http, $sce,$rootScope,httpService) {
+            $scope.letterView = $sce.trustAsHtml("&nbsp;")
             $scope.printType = "smartCardNo"
-
             $scope.unit = {
-                selectedUnit: [],
-                param:''
+                selectedUnit: []
             };
             $scope.units = [];
-            $scope.loadingLetter=false;
-            $scope.memId = ""
             $scope.allLoading = false;
-            $scope.isDc = parseInt("{{auth()->user()->type}}")==22?true:false;
-            if($scope.isDc){
-                $scope.unit.selectedUnit = parseInt("{{auth()->user()->district_id}}")
+            $scope.q = '';
+            $scope.isDc = $rootScope.user.type==22 ? true : false;
+            if ($scope.isDc) {
+                $scope.unit.selectedUnit = $rootScope.user.district_id
             }
-            else{
-                $http({
-                    method:'get',
-                    url:'{{URL::to('HRM/DistrictName')}}'
-                }).then(function (response) {
+            else {
+                httpService.unit().then(function (response) {
                     $scope.units = response.data;
                 }, function (response) {
 
                 })
             }
-            $scope.loadData = function () {
+            $scope.loadData = function (url,q) {
+                $scope.allLoading = true;
                 $http({
                     method: 'get',
-                    params: {type: "EMBODIED"},
-                    url: '{{URL::route('letter_data')}}'
+                    params: {type: "EMBODIMENT",q:q},
+                    url: url==undefined?'{{URL::route('letter_data')}}':url
                 }).then(function (response) {
                     if (!$scope.isDc) $scope.unit.selectedUnit = [];
-                    $scope.datas = response.data;
-                    console.log($scope.datas)
+                    $scope.letterView = $sce.trustAsHtml(response.data);
+                    $scope.allLoading = false;
+                },function (res) {
+                    $scope.allLoading = false;
                 })
             }
-            $scope.generateLetter = function (id,i) {
-                $scope.allLoading = true;
-                console.log($scope.param);
-                var unit = ''
-                if($scope.printType=='smartCardNo'){
-                    unit = $scope.unit.param.unit;
+        })
+        GlobalApp.directive('compileHtml',function ($compile) {
+            return {
+                restrict:'A',
+                link:function (scope,elem,attr) {
+                    scope.$watch('letterView',function(n){
+
+                        if(attr.ngBindHtml) {
+                            $compile(elem[0].children)(scope)
+                        }
+                    })
+
                 }
-                else{
-                    unit=$scope.unit.selectedUnit[i] == undefined ? $scope.unit.selectedUnit : $scope.unit.selectedUnit[i]
+            }
+        })
+        GlobalApp.directive('paginate',function () {
+            return {
+                restrict:'A',
+                scope:{
+                    ref:'&'
+                },
+                link:function (scope,elem,attr) {
+                    $(elem).find('.pagination a').on('click',function (e) {
+                        e.preventDefault();
+                        var urll = $(this).attr('href')
+                        scope.ref({url:urll})
+                    })
+
                 }
-                $http({
-                    method:'get',
-                    url:'{{URL::route('print_letter')}}',
-                    params:{
-                        id:id,
-                        option:$scope.printType,
-                        type:'EMBODIMENT',
-                        unit:unit
-                    }
-                }).then(function (response) {
-                    $scope.letterPrintView = $sce.trustAsHtml(response.data);
-                    $scope.allLoading = false;
-                },function(response){
-                    $scope.letterPrintView = $sce.trustAsHtml("<h4 class='text-danger' style='text-align: center'>"+response.data+"</h4>");
-                    $scope.allLoading = false;
-                })
             }
         })
     </script>
@@ -136,7 +128,7 @@
                        </div>
                    </div>
                    <div ng-if="printType=='memorandumNo'">
-                       <div class="table-responsive">
+                       {{--<div class="table-responsive">
                            <table class="table table-bordered table-striped">
                                <caption>
                                    <table-search q="q" results="results" place-holder="Search Memorandum no."></table-search>
@@ -185,9 +177,9 @@
                                    <td class="warning" colspan="5">No Memorandum no. available</td>
                                </tr>
                            </table>
-                       </div>
+                       </div>--}}
+                       <div id="letter_data_view" ng-bind-html="letterView" compile-html></div>
                    </div>
-                   <div ng-bind-html="letterPrintView"></div>
                </div>
             </div>
         </section>

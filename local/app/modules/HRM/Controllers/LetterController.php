@@ -26,29 +26,35 @@ class LetterController extends Controller
         $t = DB::table('tbl_memorandum_id')
             ->join('tbl_transfer_ansar', 'tbl_transfer_ansar.transfer_memorandum_id', '=', 'tbl_memorandum_id.memorandum_id')
             ->join('tbl_kpi_info', 'tbl_transfer_ansar.transfered_kpi_id', '=', 'tbl_kpi_info.id')
-            ->select('tbl_memorandum_id.*');
+            ->select('tbl_memorandum_id.*')->groupBy('tbl_memorandum_id.memorandum_id');
         $e = DB::table('tbl_memorandum_id')
             ->join('tbl_embodiment', 'tbl_embodiment.memorandum_id', '=', 'tbl_memorandum_id.memorandum_id')
             ->join('tbl_kpi_info', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
-            ->select('tbl_memorandum_id.*');
+            ->select('tbl_memorandum_id.*')->groupBy('tbl_memorandum_id.memorandum_id');
         $d = DB::table('tbl_memorandum_id')
             ->join('tbl_rest_info', 'tbl_rest_info.memorandum_id', '=', 'tbl_memorandum_id.memorandum_id')
             ->join('tbl_embodiment_log', 'tbl_rest_info.ansar_id', '=', 'tbl_embodiment_log.ansar_id')
             ->join('tbl_kpi_info', 'tbl_embodiment_log.kpi_id', '=', 'tbl_kpi_info.id')
-            ->select('tbl_memorandum_id.*');
+            ->select('tbl_memorandum_id.*')->groupBy('tbl_memorandum_id.memorandum_id');
         if($requests->unit){
             $e->where('tbl_kpi_info.unit_id',$requests->unit);
             $t->where('tbl_kpi_info.unit_id',$requests->unit);
             $d->where('tbl_kpi_info.unit_id',$requests->unit)->orderBy('tbl_embodiment_log.id','desc');
         }
-        return $t->toSql();
+        if($requests->q){
+            $e->where('tbl_memorandum_id.memorandum_id','LIKE','%'.$requests->q.'%');
+            $t->where('tbl_memorandum_id.memorandum_id','LIKE','%'.$requests->q.'%');
+            $d->where('tbl_memorandum_id.memorandum_id','LIKE','%'.$requests->q.'%');
+        }
+        //return $t->toSql();
         switch ($requests->type) {
             case 'TRANSFER':
-                return view('HRM::Letter.partial_letter_view',['data'=>$t->distinct()->paginate(20),'units'=>District::all()]);
-            case 'EMBODIED':
-                return view('HRM::Letter.partial_letter_view',['data'=>$e->distinct()->paginate(20),'units'=>District::all()]);
-            case 'DISEMBODIED':
-                return view('HRM::Letter.partial_letter_view',['data'=>$d->distinct('tbl_rest_info.memorandum_id')->paginate(20),'units'=>District::all()]);
+                //return $t->distinct()->paginate(20);
+                return view('HRM::Letter.partial_letter_view',['data'=>$t->distinct()->paginate(20),'units'=>District::all(),'type'=>'TRANSFER']);
+            case 'EMBODIMENT':
+                return view('HRM::Letter.partial_letter_view',['data'=>$e->distinct()->paginate(20),'units'=>District::all(),'type'=>'EMBODIMENT']);
+            case 'DISEMBODIMENT':
+                return view('HRM::Letter.partial_letter_view',['data'=>$d->distinct('tbl_rest_info.memorandum_id')->paginate(20),'units'=>District::all(),'type'=>'DISEMBODIMENT']);
 
             default:
                 return [];
@@ -86,9 +92,10 @@ class LetterController extends Controller
 
     function transferLetterPrint($id, $unit, $v,$option)
     {
+        DB::enableQueryLog();
         $mem = DB::table('tbl_memorandum_id')
             ->join('tbl_transfer_ansar','tbl_transfer_ansar.transfer_memorandum_id','=','tbl_memorandum_id.memorandum_id')
-            ->distinct('tbl_memorandum_id.memorandum_id')->select('tbl_memorandum_id.memorandum_id as memorandum_id', 'mem_date as created_at');
+            ->distinct('tbl_memorandum_id.memorandum_id')->orderBy('tbl_memorandum_id.created_at','desc')->select('tbl_memorandum_id.memorandum_id as memorandum_id', 'mem_date as created_at');
         //$mem = TransferAnsar::where('transfer_memorandum_id', $id)->select('transfer_memorandum_id', 'created_at')->first();
 
         $user = DB::table('tbl_user')
@@ -102,6 +109,7 @@ class LetterController extends Controller
             ->join('tbl_ansar_parsonal_info', 'tbl_transfer_ansar.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
             ->where('tk.unit_id',$unit)
+            ->orderBy('tbl_transfer_ansar.created_at','desc')
             ->select('tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'pk.kpi_name as p_kpi_name', 'tk.kpi_name as t_kpi_name');
         if($option=='smartCardNo'){
             $l  = strlen($id.'');
@@ -113,8 +121,10 @@ class LetterController extends Controller
             $result->where('tbl_transfer_ansar.transfer_memorandum_id', $id);
             $mem->where('tbl_transfer_ansar.transfer_memorandum_id', $id);
         }
-        $result = $result->get();
+        $result = DB::table(DB::raw('('.$result->toSql().') x'))->mergeBindings($result)->groupBy('x.ansar_id')->get();
         $mem = $mem->first();
+//        return DB::getQueryLog();
+//        return $result;
         if ($mem && $result) {
             return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'result' => $result, 'view' => 'print_transfer_letter']);
 //            else return View::make('HRM::Letter.print_transfer_letter')->with(['mem' => $mem, 'user' => $user, 'ta' => $result]);

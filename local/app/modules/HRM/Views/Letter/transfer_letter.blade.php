@@ -5,145 +5,74 @@
 @endsection
 @section('content')
     <script>
-        $(function () {
-            $(document).on('click', '#print-report', function (e) {
-                e.preventDefault();
-                $('body').append('<div id="print-area" class="letter">' + $(".letter").html() + '</div>')
-                window.print();
-                $("#print-area").remove()
-            })
-        })
-        GlobalApp.controller('TransferLetterController', function ($scope, $http, $sce) {
-            $scope.letterPrintView = $sce.trustAsHtml("&nbsp;")
+        GlobalApp.controller('TransferLetterController', function ($scope, $http, $sce,$rootScope,httpService) {
             $scope.letterView = $sce.trustAsHtml("&nbsp;")
             $scope.printType = "smartCardNo"
             $scope.unit = {
                 selectedUnit: []
             };
             $scope.units = [];
-            $scope.loadingLetter = false;
-            $scope.memId = ""
             $scope.allLoading = false;
-            $scope.isDc = parseInt("{{auth()->user()->type}}") == 22 ? true : false;
+            $scope.q = '';
+            $scope.isDc = $rootScope.user.type==22 ? true : false;
             if ($scope.isDc) {
-                $scope.unit.selectedUnit = parseInt("{{auth()->user()->district_id}}")
+                $scope.unit.selectedUnit = $rootScope.user.district_id
             }
             else {
-                $http({
-                    method: 'get',
-                    url: '{{URL::to('HRM/DistrictName')}}'
-                }).then(function (response) {
+                httpService.unit().then(function (response) {
                     $scope.units = response.data;
                 }, function (response) {
 
                 })
             }
-            $scope.loadData = function () {
-                alert('1')
-                $http({
-                    method: 'get',
-                    params: {type: "TRANSFER"},
-                    url: '{{URL::route('letter_data')}}'
-                }).then(function (response) {
-                    if (!$scope.isDc) $scope.unit.selectedUnit = [];
-                    $scope.letterView = $sce.trustAsHtml(response.data);
-                    console.log($scope.datas)
-                })
-            }
-            $scope.generateLetter = function (i) {
+            $scope.loadData = function (url,q) {
                 $scope.allLoading = true;
                 $http({
                     method: 'get',
-                    url: '{{URL::route('print_letter')}}',
-                    params: {
-                        id: $scope.datas[i].memorandum_id,
-                        type: 'TRANSFER',
-                        unit: $scope.unit.selectedUnit[i] == undefined ? $scope.unit.selectedUnit : $scope.unit.selectedUnit[i]
-                    }
+                    params: {type: "TRANSFER",q:q},
+                    url: url==undefined?'{{URL::route('letter_data')}}':url
                 }).then(function (response) {
-                    $scope.letterPrintView = $sce.trustAsHtml(response.data);
+                    if (!$scope.isDc) $scope.unit.selectedUnit = [];
+                    $scope.letterView = $sce.trustAsHtml(response.data);
                     $scope.allLoading = false;
-                }, function (response) {
-                    $scope.letterPrintView = $sce.trustAsHtml("<h4 class='text-danger' style='text-align: center'>" + response.data + "</h4>");
+                },function (res) {
                     $scope.allLoading = false;
                 })
+            }
+        })
+        GlobalApp.directive('compileHtml',function ($compile) {
+            return {
+                restrict:'A',
+                link:function (scope,elem,attr) {
+                    scope.$watch('letterView',function(n){
+
+                        if(attr.ngBindHtml) {
+                            $compile(elem[0].children)(scope)
+                        }
+                    })
+
+                }
+            }
+        })
+        GlobalApp.directive('paginate',function () {
+            return {
+                restrict:'A',
+                scope:{
+                  ref:'&'
+                },
+                link:function (scope,elem,attr) {
+                    $(elem).find('.pagination a').on('click',function (e) {
+                        e.preventDefault();
+                        var urll = $(this).attr('href')
+                        scope.ref({url:urll})
+                    })
+
+                }
             }
         })
     </script>
     <div ng-controller="TransferLetterController">
         <section class="content" ng-init="loadData()">
-            {{--<div class="box box-solid">--}}
-                {{--<div class="overlay" ng-if="allLoading">--}}
-                    {{--<span class="fa">--}}
-                        {{--<i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>--}}
-                    {{--</span>--}}
-                {{--</div>--}}
-                {{--<div class="box-body">--}}
-                    {{--<div class="row">--}}
-                    {{--<div class="col-md-4 col-sm-12 col-xs-12">--}}
-                    {{--<div class="form-group">--}}
-                    {{--<label class="control-label">Enter Memorandum No.</label>--}}
-                    {{--<input class="form-control" ng-model="memId" type="text" placeholder="Memorandum No">--}}
-                    {{--</div>--}}
-                    {{--</div>--}}
-                    {{--<div class="col-md-4 col-sm-12 col-xs-12">--}}
-                    {{--<div class="form-group" ng-if="!isDc">--}}
-                    {{--<label class="control-label">@lang('title.unit')</label>--}}
-                    {{--<select class="form-control" ng-model="unit.selectedUnit" ng-disabled="units.length==0">--}}
-                    {{--<option value="">--@lang('title.unit')--</option>--}}
-                    {{--<option ng-repeat="u in units" value="[[u.id]]">[[u.unit_name_bng]]</option>--}}
-                    {{--</select>--}}
-                    {{--</div>--}}
-                    {{--</div>--}}
-                    {{--<div class="col-md-4 col-sm-12 col-xs-12" style="margin-top: 25px">--}}
-                    {{--<button class="btn btn-primary" ng-click="generateLetter(memId)" ng-disabled="isGenerating">--}}
-                    {{--<i ng-show="isGenerating " class="fa fa-spinner fa-spin"></i><span ng-class="{'blink-animation':isGenerating}">Generate Transfer Letter</span>--}}
-                    {{--</button>--}}
-                    {{--</div>--}}
-                    {{--</div>--}}
-                    {{--<div class="table-responsive">--}}
-                        {{--<table class="table table-bordered table-striped">--}}
-                            {{--<caption>--}}
-                                {{--<table-search q="q" results="results" place-holder="Search Memorandum no."></table-search>--}}
-                            {{--</caption>--}}
-                            {{--<tr>--}}
-                                {{--<th>#</th>--}}
-                                {{--<th>Memorandum no.</th>--}}
-                                {{--<th>Memorandum Date</th>--}}
-                                {{--<th>Unit</th>--}}
-                                {{--<th>Action</th>--}}
-                            {{--</tr>--}}
-                            {{--<tr ng-repeat="d in datas|filter: q as results">--}}
-                                {{--<td>[[$index+1]]</td>--}}
-                                {{--<td>[[d.memorandum_id]]</td>--}}
-                                {{--<td>[[d.mem_date?(d.mem_date):'n/a']]</td>--}}
-                                {{--<td>--}}
-                                    {{--<select ng-if="!isDc" class="form-control" ng-model="unit.selectedUnit[$index]"--}}
-                                            {{--ng-disabled="units.length==0">--}}
-                                        {{--<option value="">--@lang('title.unit')--</option>--}}
-                                        {{--<option ng-repeat="u in units" value="[[u.id]]">[[u.unit_name_bng]]</option>--}}
-                                    {{--</select>--}}
-
-                                    {{--<div ng-if="isDc">--}}
-                                        {{--{{auth()->user()->district?auth()->user()->district->unit_name_eng:''}}--}}
-                                    {{--</div>--}}
-                                {{--</td>--}}
-                                {{--<td>--}}
-                                    {{--<button class="btn btn-primary" ng-click="generateLetter($index)"--}}
-                                            {{--ng-disabled="isGenerating">--}}
-                                        {{--<i ng-show="isGenerating " class="fa fa-spinner fa-spin"></i><span--}}
-                                                {{--ng-class="{'blink-animation':isGenerating}">Generate Transfer Letter</span>--}}
-                                    {{--</button>--}}
-                                {{--</td>--}}
-                            {{--</tr>--}}
-                            {{--<tr ng-if="datas==undefined||datas.length<=0||results.length<=0">--}}
-                                {{--<td class="warning" colspan="5">No Memorandum no. available</td>--}}
-                            {{--</tr>--}}
-                        {{--</table>--}}
-                    {{--</div>--}}
-                    {{--<div ng-bind-html="letterPrintView"></div>--}}
-                {{--</div>--}}
-            {{--</div>--}}
             <div class="box box-solid">
                 <div class="overlay" ng-if="allLoading">
                     <span class="fa">
@@ -182,8 +111,8 @@
                                     >
                                     </filter-template>
                                 </div>
-                                <div ng-bind-html="letterView"></div>
-                                {{--<div class="form-group">
+
+                                <div class="form-group">
                                     {!! Form::open(['route'=>'print_letter','target'=>'_blank']) !!}
                                     {!! Form::hidden('option','smartCardNo') !!}
                                     {!! Form::hidden('id','[[smartCardNo]]') !!}
@@ -195,62 +124,12 @@
                                     @endif
                                     <button class="btn btn-primary">Generate Transfer Letter</button>
                                     {!! Form::close() !!}
-                                </div>--}}
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div ng-if="printType=='memorandumNo'">
-                        <div class="table-responsive">
-                            {{--<table class="table table-bordered table-striped">
-                                <caption>
-                                    <table-search q="q" results="results" place-holder="Search Memorandum no."></table-search>
-                                </caption>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Memorandum no.</th>
-                                    <th>Memorandum Date</th>
-                                    <th>Unit</th>
-                                    <th>Action</th>
-                                </tr>
-
-                                <tr ng-repeat="d in datas|filter: q as results">
-                                    <td>[[$index+1]]</td>
-                                    <td>
-                                        [[d.memorandum_id]]
-                                    </td>
-                                    <td>[[d.mem_date?(d.mem_date):'n/a']]</td>
-                                    <td>
-                                        <select ng-if="!isDc" class="form-control" name="unit" ng-model="unit.selectedUnit[$index]"
-                                                ng-disabled="units.length==0">
-                                            <option value="">--@lang('title.unit')--</option>
-                                            <option ng-repeat="u in units" value="[[u.id]]">[[u.unit_name_bng]]</option>
-                                        </select>
-
-                                        <div ng-if="isDc">
-                                            {{auth()->user()->district?auth()->user()->district->unit_name_eng:''}}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        {!! Form::open(['route'=>'print_letter','target'=>'_blank']) !!}
-                                        {!! Form::hidden('option','memorandumNo') !!}
-                                        {!! Form::hidden('id','[[d.memorandum_id]]') !!}
-                                        {!! Form::hidden('type','TRANSFER') !!}
-                                        @if(auth()->user()->type!=22)
-                                            {!! Form::hidden('unit','[[unit.selectedUnit[$index] ]]') !!}
-                                        @else
-                                            {!! Form::hidden('unit',auth()->user()->district?auth()->user()->district->id:'') !!}
-                                        @endif
-                                        <button class="btn btn-primary">Generate Transfer Letter</button>
-                                        {!! Form::close() !!}
-                                    </td>
-                                </tr>
-
-                                <tr ng-if="datas==undefined||datas.length<=0||results.length<=0">
-                                    <td class="warning" colspan="5">No Memorandum no. available</td>
-                                </tr>
-                            </table>--}}
-                            <div ng-bind-html="letterPrintView"></div>
-                        </div>
+                    <div ng-if="printType=='memorandumNo'" >
+                        <div id="letter_data_view" ng-bind-html="letterView" compile-html></div>
                     </div>
 
                 </div>
