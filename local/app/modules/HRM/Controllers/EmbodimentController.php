@@ -394,7 +394,7 @@ class EmbodimentController extends Controller
                             if (in_array($kpi_id[1], collect($t_history)->toArray())) throw new \Exception("Ansar(" . $e_id->ansar_id . ") previously transferred in this kpi");
                         }
                         $e_id->kpi_id = $kpi_id[1];
-                        $e_id->transfered_date = Carbon::createFromFormat("d-M-Y", $t_date)->format("Y-m-d");
+                        $e_id->transfered_date = Carbon::parse($t_date)->format("Y-m-d");
                         $e_id->save();
                         $transfer = new TransferAnsar;
                         $transfer->ansar_id = $ansar['ansar_id'];
@@ -403,7 +403,7 @@ class EmbodimentController extends Controller
                         $transfer->present_kpi_id = $kpi_id[0];
                         $transfer->transfered_kpi_id = $kpi_id[1];
                         $transfer->present_kpi_join_date = Carbon::parse($ansar['joining_date']);
-                        $transfer->transfered_kpi_join_date = Carbon::createFromFormat("d-M-Y", $t_date)->format("Y-m-d");
+                        $transfer->transfered_kpi_join_date = Carbon::parse( $t_date)->format("Y-m-d");
                         $transfer->action_by = Auth::user()->id;
                         $transfer->save();
 

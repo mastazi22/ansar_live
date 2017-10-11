@@ -13,9 +13,9 @@
         <td>{{$ansar->name}}</td>
         <td>{{$ansar->unit}}</td>
         <td>{{$ansar->kpi}}</td>
-        <td>{{\Carbon\Carbon::createFromFormat('Y-m-d',$ansar->r_date)->format('d-M-Y')}}</td>
-        <td>{{\Carbon\Carbon::createFromFormat('Y-m-d',$ansar->j_date)->format('d-M-Y')}}</td>
-        <td>{{\Carbon\Carbon::createFromFormat('Y-m-d',$ansar->se_date)->format('d-M-Y')}}</td>
+        <td>{{\Carbon\Carbon::parse($ansar->r_date)->format('d-M-Y')}}</td>
+        <td>{{\Carbon\Carbon::parse($ansar->j_date)->format('d-M-Y')}}</td>
+        <td>{{\Carbon\Carbon::parse($ansar->se_date)->format('d-M-Y')}}</td>
     </tr>
 @endforeach
 @endif

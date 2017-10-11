@@ -20,8 +20,8 @@
                 <tr>
                     <td>{{$i++}}</td>
                     <td>{{strcasecmp($h->type,"eng")==0?"English":"Bangla"}}</td>
-                    <td>{{\Carbon\Carbon::createFromFormat("Y-m-d",$h->issue_date)->format("d-M-Y")}}</td>
-                    <td>{{\Carbon\Carbon::createFromFormat("Y-m-d",$h->expire_date)->format("d-M-Y")}}</td>
+                    <td>{{\Carbon\Carbon::parse($h->issue_date)->format("d-M-Y")}}</td>
+                    <td>{{\Carbon\Carbon::parse($h->expire_date)->format("d-M-Y")}}</td>
                     <td>{{$h->status?"Active":"Blocked"}}</td>
                 </tr>
             @empty

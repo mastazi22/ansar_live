@@ -16,7 +16,7 @@
         <td>{{$ansar->sex}}</td>
         <td>{{$ansar->block_list_from}}</td>
         <td>{{$ansar->comment_for_block}}</td>
-        <td>{{\Carbon\Carbon::createFromFormat('Y-m-d',$ansar->date_for_block)->format('d-M-Y')}}</td>
+        <td>{{\Carbon\Carbon::parse($ansar->date_for_block)->format('d-M-Y')}}</td>
     </tr>
 @endforeach
 @endif

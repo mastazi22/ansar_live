@@ -19,7 +19,7 @@
                 <td>{{$ansar->ansar_name_bng}}</td>
                 <td>{{$ansar->unit_name_bng}}</td>
                 <td>{{$ansar->thana_name_bng}}</td>
-                <td>{{\Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$ansar->created_at)->format("d-M-Y  h:i:s A")}}</td>
+                <td>{{\Carbon\Carbon::parse($ansar->created_at)->format("d-M-Y  h:i:s A")}}</td>
                 <td>{{$ansar->memorandum_id}}</td>
             </tr>
         @empty

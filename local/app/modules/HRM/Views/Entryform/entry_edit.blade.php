@@ -635,7 +635,7 @@
 
                                                 <div class="col-sm-10">
                                                     <input class="form-control picker " id="data_of_birth"
-                                                           name="data_of_birth" date-picker=""
+                                                           name="data_of_birth" date-picker="moment('{{ $ansarAllDetails->data_of_birth}}').format('DD-MMM-YYYY')"
                                                            placeholder="Date of birth"
                                                            value="{{ $ansarAllDetails->data_of_birth}}">
                                                     <span style="color:red"

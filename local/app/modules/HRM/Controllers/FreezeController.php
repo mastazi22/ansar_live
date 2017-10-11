@@ -296,12 +296,12 @@ class FreezeController extends Controller
                     $transfer->present_kpi_id = $updateEmbodiment->kpi_id;
                     $transfer->transfered_kpi_id = $request->selectedKpi;
                     $transfer->present_kpi_join_date = $updateEmbodiment->transfered_date;
-                    $transfer->transfered_kpi_join_date = Carbon::createFromFormat("d-M-Y", $request->joining_date)->format("Y-m-d");
+                    $transfer->transfered_kpi_join_date = Carbon::parse($request->joining_date)->format("Y-m-d");
                     $transfer->action_by = Auth::user()->id;
                     $transfer->save();
                     $updateEmbodiment->service_ended_date = Carbon::parse($updateEmbodiment->service_ended_date)->addDays($date_differ);
                     $updateEmbodiment->emboded_status = 'Emboded';
-                    $updateEmbodiment->transfered_date = Carbon::createFromFormat("d-M-Y", $request->joining_date)->format("Y-m-d");
+                    $updateEmbodiment->transfered_date = Carbon::parse( $request->joining_date)->format("Y-m-d");
                     $updateEmbodiment->kpi_id = $request->selectedKpi;
                     $updateEmbodiment->save();
                     AnsarStatusInfo::where('ansar_id', $ansarid)->update(['freezing_status' => 0, 'embodied_status' => 1]);

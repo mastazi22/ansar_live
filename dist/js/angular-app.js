@@ -370,7 +370,28 @@ GlobalApp.factory('httpService', function ($http) {
             return $http.get('/' + prefix + 'HRM/getBloodName').then(function (response) {
                 return response.data;
             })
-        }
+        },
+        category: function (data) {
+            return $http({
+                url:'/' + prefix + 'recruitment/category',
+                method:'get',
+                params:data
+            })
+        },
+        circular: function (data) {
+            return $http({
+                url:'/' + prefix + 'recruitment/circular',
+                method:'get',
+                params:data
+            })
+        },
+        circularSummery: function (data) {
+            return $http({
+                url:'/' + prefix + 'recruitment/applicant',
+                method:'post',
+                data:data
+            })
+        },
     }
 })
 GlobalApp.factory('notificationService', function () {

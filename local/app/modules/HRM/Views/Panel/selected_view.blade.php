@@ -5,7 +5,7 @@
         <td>{{ $rest->name_eng }}</td>
         <td>{{ $rest->unit_name_eng }}</td>
         <td>{{ $rest->thana_name_eng }}</td>
-        <td>{{\Carbon\Carbon::createFromFormat('Y-m-d',$rest->data_of_birth)->format('d-M-Y')}}</td>
+        <td>{{\Carbon\Carbon::parse($rest->data_of_birth)->format('d-M-Y')}}</td>
         <td>{{ $rest->sex }}</td>
         {{--<td>{{ ->name_of_degree }}</td>--}}
         <td>{!! Form::text($rest->ansar_id.'ml', $value = '1', ['size' => '4x5'], $attributes = array('class' => 'form-control', 'id' => 'ansar_merit_list', 'placeholder' =>'1', 'required')) !!}

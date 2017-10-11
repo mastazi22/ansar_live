@@ -132,6 +132,7 @@ class JobCategoryController extends Controller
     }
 
     private function getData($request){
+
         $data = '';
         if($request->exists('q')&&$request->q){
             if(!$data) {

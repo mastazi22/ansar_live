@@ -6,7 +6,7 @@
             <td><a href="{{URL::to('HRM/entryreport',['ansarid'=>$ansar->id])}}">{{$ansar->id}}</a></td>
             <td>{{$ansar->rank}}</td>
             <td>{{$ansar->name}}</td>
-            <td>{{\Carbon\Carbon::createFromFormat('Y-m-d',$ansar->birth_date)->format('d-M-Y')}}</td>
+            <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
             <td>{{\Carbon\Carbon::parse($ansar->created_at)->format('d-M-Y  h:i:s A')}}</td>
@@ -24,7 +24,7 @@
             <td><a href="{{URL::to('HRM/entryreport',['ansarid'=>$ansar->id])}}">{{$ansar->id}}</a></td>
             <td>{{$ansar->rank}}</td>
             <td>{{$ansar->name}}</td>
-            <td>{{\Carbon\Carbon::createFromFormat('Y-m-d',$ansar->birth_date)->format('d-M-Y')}}</td>
+            <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
             <td>{{$ansar->kpi_name}}</td>
@@ -43,7 +43,7 @@
             <td><a href="{{URL::to('HRM/entryreport',['ansarid'=>$ansar->id])}}">{{$ansar->id}}</a></td>
             <td>{{$ansar->rank}}</td>
             <td>{{$ansar->name}}</td>
-            <td>{{\Carbon\Carbon::createFromFormat('Y-m-d',$ansar->birth_date)->format('d-M-Y')}}</td>
+            <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
             <td>{{$ansar->kpi_name}}</td>
@@ -62,7 +62,7 @@
             <td><a href="{{URL::to('HRM/entryreport',['ansarid'=>$ansar->id])}}">{{$ansar->id}}</a></td>
             <td>{{$ansar->rank}}</td>
             <td>{{$ansar->name}}</td>
-            <td>{{\Carbon\Carbon::createFromFormat('Y-m-d',$ansar->birth_date)->format('d-M-Y')}}</td>
+            <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
             <td>{{\Carbon\Carbon::parse($ansar->sms_send_datetime)->format('d-M-Y h:i:s')}}</td>
@@ -79,7 +79,7 @@
             <td><a href="{{URL::to('HRM/entryreport',['ansarid'=>$ansar->id])}}">{{$ansar->id}}</a></td>
             <td>{{$ansar->rank}}</td>
             <td>{{$ansar->name}}</td>
-            <td>{{\Carbon\Carbon::createFromFormat('Y-m-d',$ansar->birth_date)->format('d-M-Y')}}</td>
+            <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
             <td>{{\Carbon\Carbon::parse($ansar->rest_date)->format('d-M-Y')}}</td>
@@ -96,7 +96,7 @@
             <td><a href="{{URL::to('HRM/entryreport',['ansarid'=>$ansar->id])}}">{{$ansar->id}}</a></td>
             <td>{{$ansar->rank}}</td>
             <td>{{$ansar->name}}</td>
-            <td>{{\Carbon\Carbon::createFromFormat('Y-m-d',$ansar->birth_date)->format('d-M-Y')}}</td>
+            <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
             <td>{{$ansar->freez_reason}}</td>
@@ -114,7 +114,7 @@
             <td><a href="{{URL::to('HRM/entryreport',['ansarid'=>$ansar->id])}}">{{$ansar->id}}</a></td>
             <td>{{$ansar->rank}}</td>
             <td>{{$ansar->name}}</td>
-            <td>{{\Carbon\Carbon::createFromFormat('Y-m-d',$ansar->birth_date)->format('d-M-Y')}}</td>
+            <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
             <td>{{$ansar->comment_for_block}}</td>
@@ -132,7 +132,7 @@
             <td><a href="{{URL::to('HRM/entryreport',['ansarid'=>$ansar->id])}}">{{$ansar->id}}</a></td>
             <td>{{$ansar->rank}}</td>
             <td>{{$ansar->name}}</td>
-            <td>{{\Carbon\Carbon::createFromFormat('Y-m-d',$ansar->birth_date)->format('d-M-Y')}}</td>
+            <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
             <td>{{$ansar->reason}}</td>
@@ -151,7 +151,7 @@
             <td><a href="{{URL::to('HRM/entryreport',['ansarid'=>$ansar->id])}}">{{$ansar->id}}</a></td>
             <td>{{$ansar->rank}}</td>
             <td>{{$ansar->name}}</td>
-            <td>{{\Carbon\Carbon::createFromFormat('Y-m-d',$ansar->birth_date)->format('d-M-Y')}}</td>
+            <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
         </tr>

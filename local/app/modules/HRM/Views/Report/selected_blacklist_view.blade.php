@@ -16,7 +16,7 @@
             <td>{{$ansar->sex}}</td>
             <td>{{$ansar->black_list_from}}</td>
             <td>{{$ansar->black_list_comment}}</td>
-            <td>{{\Carbon\Carbon::createFromFormat('Y-m-d',$ansar->black_listed_date)->format('d-M-Y')}}</td>
+            <td>{{\Carbon\Carbon::parse($ansar->black_listed_date)->format('d-M-Y')}}</td>
         </tr>
     @endforeach
 @endif

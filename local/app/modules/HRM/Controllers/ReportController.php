@@ -161,20 +161,20 @@ class ReportController extends Controller
             $ansarIdHistory = AnsarIdCard::where('ansar_id', $id)->get();
             $id_card = new AnsarIdCard;
             $id_card->ansar_id = $id;
-            $id_card->issue_date = Carbon::createFromFormat('d-M-Y', $issue_date)->format("Y-m-d");
-            $id_card->expire_date = Carbon::createFromFormat('d-M-Y', $expire_date)->format("Y-m-d");
+            $id_card->issue_date = Carbon::parse( $issue_date)->format("Y-m-d");
+            $id_card->expire_date = Carbon::parse( $expire_date)->format("Y-m-d");
             $id_card->type = strtoupper($type);
             $id_card->status = 1;
             if (!$id_card->saveOrFail()) {
                 return View::make('HRM::Report.no_ansar_found')->with('id', $id);
             }
-            return View::make('HRM::Report.ansar_id_card_font', ['rd' => $report_data, 'ad' => $ansar, 'id' => Carbon::createFromFormat('d-M-Y', $issue_date)->format("d/m/Y"), 'ed' => Carbon::createFromFormat('d-M-Y', $expire_date)->format("d/m/Y"), 'type' => $type]);
+            return View::make('HRM::Report.ansar_id_card_font', ['rd' => $report_data, 'ad' => $ansar, 'id' => Carbon::parse( $issue_date)->format("d/m/Y"), 'ed' => Carbon::parse( $expire_date)->format("d/m/Y"), 'type' => $type]);
             $path = public_path("{$id}.jpg");
-            SnappyImage::loadView('HRM::Report.ansar_id_card_font', ['rd' => $report_data, 'ad' => $ansar, 'id' => Carbon::createFromFormat('d-M-Y', $issue_date)->format("d/m/Y"), 'ed' => Carbon::createFromFormat('d-M-Y', $expire_date)->format("d/m/Y"), 'type' => $type])->setOption('quality', 100)
+            SnappyImage::loadView('HRM::Report.ansar_id_card_font', ['rd' => $report_data, 'ad' => $ansar, 'id' => Carbon::parse( $issue_date)->format("d/m/Y"), 'ed' => Carbon::parse( $expire_date)->format("d/m/Y"), 'type' => $type])->setOption('quality', 100)
                 ->setOption('crop-x', 0)->setOption('crop-y', 0)->setOption('crop-h', 292)->setOption('crop-w', 340)->setOption('encoding', 'utf-8')->save($path);
             $image = Image::make($path)->encode('data-url');
             File::delete($path);
-//            return View::make('HRM::Report.ansar_id_card_font',['rd' => $report_data, 'ad' => $ansar, 'id' => Carbon::createFromFormat('d-M-Y', $issue_date)->format("d/m/Y"), 'ed' => Carbon::createFromFormat('d-M-Y', $expire_date)->format("d/m/Y"), 'type' => $type]);
+//            return View::make('HRM::Report.ansar_id_card_font',['rd' => $report_data, 'ad' => $ansar, 'id' => Carbon::parse( $issue_date)->format("d/m/Y"), 'ed' => Carbon::parse( $expire_date)->format("d/m/Y"), 'type' => $type]);
             return View::make('HRM::Report.id_card_print')->with(['image' => $image->encode('data-url'), 'history' => $ansarIdHistory]);
         }
         return View::make('HRM::Report.no_ansar_found')->with('id', $id);
@@ -470,8 +470,8 @@ class ReportController extends Controller
         if ($valid->fails()) {
             return response($valid->messages()->toJson(), 400, ['Content-Type', 'application/json']);
         }
-        $f_date = Carbon::createFromFormat("d-M-Y", Input::get('f_date'))->format("Y-m-d");
-        $t_date = Carbon::createFromFormat("d-M-Y", Input::get('t_date'))->format("Y-m-d");
+        $f_date = Carbon::parse( Input::get('f_date'))->format("Y-m-d");
+        $t_date = Carbon::parse( Input::get('t_date'))->format("Y-m-d");
 //        return Response::json(["f"=>$f_date,"t"=>$t_date]);
         $ansars = AnsarIdCard::whereBetween('created_at', [$f_date, $t_date])->get();
         return Response::json(['ansars' => $ansars]);
@@ -632,8 +632,8 @@ class ReportController extends Controller
         if ($valid->fails()) {
             return response($valid->messages()->toJson(), 400, ['Content-Type' => 'application/json']);
         }
-        $fd = Carbon::createFromFormat("d-M-Y", Input::get('from_date'))->format("Y-m-d");
-        $td = Carbon::createFromFormat("d-M-Y", Input::get('to_date'))->format("Y-m-d");
+        $fd = Carbon::parse( Input::get('from_date'))->format("Y-m-d");
+        $td = Carbon::parse( Input::get('to_date'))->format("Y-m-d");
         $rejection_no = Input::get('rejection_no');
         $ansars = [];
         $rejected_ansar = OfferSmsLog::whereBetween('action_date', [$fd, $td])->whereIn('reply_type', ['No Reply', 'No'])->groupBy('ansar_id')->having(DB::raw('count(ansar_id)'), '>=', $rejection_no)->select('ansar_id', DB::raw('count(ansar_id)'))->get();
