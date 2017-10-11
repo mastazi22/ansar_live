@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class JobAppliciant extends Model
 {
     //
-    protected $table = 'job_appliciant';
+    protected $table = 'job_applicant';
     protected $connection = 'recruitment';
     protected $guarded = ['id','job_circular_id'];
 

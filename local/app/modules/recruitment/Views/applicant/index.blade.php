@@ -17,7 +17,7 @@
                 $q.all([
                     httpService.category({status: $scope.status}),
                     httpService.circular({status: $scope.status}),
-                    httpService.circularSummery({category: $scope.category,circular: $scope.circular})
+                    httpService.circularSummery({status:$scope.status,category: $scope.category,circular: $scope.circular})
                 ])
                     .then(function (response) {
                         $scope.circular = 'all';
@@ -35,18 +35,28 @@
                     })
             }
             $scope.loadCircular = function (id) {
-                httpService.circular({status:$scope.status,category_id:id})
-                    .then(function (response) {
-                        $scope.circular = 'all';
-                        $scope.circulars = response.data;
-                    },function (response) {
-                        $scope.circular = 'all';
-                        $scope.circulars = [];
-                        console.log(response);
-                    })
+                $q.all([
+                    httpService.circular({status:$scope.status,category_id:id}),
+                    httpService.circularSummery({status:$scope.status,category:id})
+                ]).then(function (response) {
+                    $scope.circular = 'all';
+                    $scope.circulars = response[0].data;
+                    $scope.circularSummery = response[1].data;
+                },function (response) {
+                    $scope.circular = 'all';
+                    $scope.circulars = $scope.circularSummery = [];
+                    console.log(response);
+                })
+
             }
             $scope.loadApplicant = function (category, circular) {
-
+                httpService.circularSummery({status:$scope.status,category:category,circular:circular})
+                    .then(function (response) {
+                    $scope.circularSummery = response.data;
+                },function (response) {
+                    $scope.circularSummery = [];
+                    console.log(response);
+                })
             }
             $scope.statusChange = function () {
                 loadAll();
@@ -76,7 +86,7 @@
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label for="" class="control-label">Job Circular</label>
-                            <select name="" ng-model="circular" id="" class="form-control">
+                            <select name="" ng-model="circular" id="" ng-change="loadApplicant(category,circular)" class="form-control">
                                 <option value="all">All</option>
                                 <option ng-repeat="c in circulars" value="[[c.id]]">[[c.circular_name]]</option>
                             </select>
@@ -90,6 +100,31 @@
                             </select>
                         </div>
                     </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Sl. No</th>
+                            <th>Circular Name</th>
+                            <th>Category Name</th>
+                            <th>Total Applicant</th>
+                            <th>Total Male Applicant</th>
+                            <th>Total Female Applicant</th>
+                            <th>Total Paid Applicant</th>
+                        </tr>
+                        <tr ng-repeat="a in circularSummery">
+                            <td>[[$index+1]]</td>
+                            <td>[[a.circular_name]]</td>
+                            <td>[[a.category.category_name_eng]]</td>
+                            <td>[[a.appliciant_count]]</td>
+                            <td>[[a.appliciant_male_count]]</td>
+                            <td>[[a.appliciant_female_count]]</td>
+                            <td>[[a.appliciant_paid_count]]</td>
+                        </tr>
+                        <tr ng-if="circularSummery.length<=0">
+                            <td class="bg-warning" colspan="7">No data available</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>
