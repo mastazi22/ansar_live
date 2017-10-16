@@ -2,6 +2,7 @@
 
 namespace App\modules\HRM\Models;
 
+use App\modules\recruitment\Models\JobApplicantQuota;
 use Illuminate\Database\Eloquent\Model;
 
 class District extends Model
@@ -9,6 +10,7 @@ class District extends Model
     protected $connection = 'hrm';
     protected $table = 'tbl_units';
     protected $guarded = [];
+
     function kpi()
     {
         return $this->hasMany('App\modules\HRM\Models\KpiGeneralModel', 'unit_id', 'unit_id');
@@ -26,7 +28,9 @@ class District extends Model
 //    }
     public function division()
     {
-    return $this->belongsTo(Division::class,'division_id');
-
+        return $this->belongsTo(Division::class, 'division_id');
+    }
+    public function applicantQuota(){
+        return $this->hasOne(JobApplicantQuota::class,'district_id');
     }
 }

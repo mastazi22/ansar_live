@@ -8,12 +8,15 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ApplicantScreeningController extends Controller
 {
     public function index(Request $request)
     {
         if ($request->ajax()) {
+            DB::enableQueryLog();
             $cicular_summery = JobCircular::with('category')->withCount([
                 'appliciant',
                 'appliciantMale',
@@ -21,7 +24,7 @@ class ApplicantScreeningController extends Controller
                 'appliciantPaid'
             ]);
             if($request->exists('category')&&$request->category!='all'){
-                $cicular_summery->where('id',$request->category);
+                $cicular_summery->where('job_category_id',$request->category);
             }
             if($request->exists('circular')&&$request->circular!='all'){
                 $cicular_summery->where('id',$request->circular);
@@ -35,7 +38,9 @@ class ApplicantScreeningController extends Controller
                     $q->orWhere('status',$request->status);
                 });*/
             }
-            return response()->json($cicular_summery->get());
+            $summery = $cicular_summery->get();
+            Log::info(DB::getQueryLog());
+            return response()->json($summery);
         }
         return view('recruitment::applicant.index');
     }

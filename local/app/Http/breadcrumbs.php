@@ -562,7 +562,16 @@ Breadcrumbs::register('applicant_selection', function($breadcrumbs) {
     $breadcrumbs->parent('recruitment');
     $breadcrumbs->push('Applicant Management', '#');
 });
+
 Breadcrumbs::register('recruitment.circular.index', function($breadcrumbs) {
     $breadcrumbs->parent('applicant_selection');
     $breadcrumbs->push('Circular Summery', URL::route('recruitment.applicant.index'));
+});
+Breadcrumbs::register('setting', function($breadcrumbs) {
+    $breadcrumbs->parent('recruitment');
+    $breadcrumbs->push('Settings', '#');
+});
+Breadcrumbs::register('recruitment.quota.index', function($breadcrumbs) {
+    $breadcrumbs->parent('setting');
+    $breadcrumbs->push('Applicant Quota', URL::route('recruitment.quota.index'));
 });

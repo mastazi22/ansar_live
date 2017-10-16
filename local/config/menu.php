@@ -380,7 +380,17 @@ return [
                     "icon"=>"fa-user"
                 ]
             ]
-        ]
+        ],
+        "Settings"=>[
+            "route"=>"#",
+            "icon"=>"fa-cog",
+            "children"=>[
+                "Applicant Quota"=>[
+                    "route"=>"recruitment.quota.index",
+                    "icon"=>"fa-cog"
+                ]
+            ]
+        ],
 
     ]
 ];

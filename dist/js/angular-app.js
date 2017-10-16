@@ -392,6 +392,13 @@ GlobalApp.factory('httpService', function ($http) {
                 data:data
             })
         },
+        applicantQuota: function (data) {
+            return $http({
+                url:'/' + prefix + 'recruitment/settings/applicant_quota',
+                method:'post',
+                data:data
+            })
+        },
     }
 })
 GlobalApp.factory('notificationService', function () {
