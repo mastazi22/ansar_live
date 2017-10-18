@@ -377,7 +377,11 @@ return [
             "children"=>[
                 "Circular Summery"=>[
                     "route"=>"recruitment.applicant.index",
-                    "icon"=>"fa-user"
+                    "icon"=>"fa-circle"
+                ],
+                "Search Applicant"=>[
+                    "route"=>"recruitment.applicant.search",
+                    "icon"=>"fa-circle"
                 ]
             ]
         ],

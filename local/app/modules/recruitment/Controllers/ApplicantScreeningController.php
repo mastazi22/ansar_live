@@ -44,4 +44,8 @@ class ApplicantScreeningController extends Controller
         }
         return view('recruitment::applicant.index');
     }
+
+    public function searchApplicant(){
+        return view('recruitment::applicant.search');
+    }
 }

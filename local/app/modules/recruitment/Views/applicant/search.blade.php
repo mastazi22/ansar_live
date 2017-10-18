@@ -1,82 +1,12 @@
 @extends('template.master')
-@section('title','Circular Summery')
+@section('title','Search Applicant')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('recruitment.applicant.index') !!}
+    {!! Breadcrumbs::render('recruitment.applicant.search') !!}
 @endsection
 @section('content')
     <script>
         GlobalApp.controller('circularSummery', function ($scope, $http, $q, httpService) {
-            $scope.categories = [];
-            $scope.circulars = [];
-            $scope.circularSummery = [];
-            $scope.allStatus = {'all': 'All', 'inactive': 'Inactive', 'active': 'Active'}
-            $scope.circular = 'all';
-            $scope.category = 'all';
-            $scope.status = 'active';
-            var loadAll = function () {
-                $scope.circular = 'all';
-                $scope.category = 'all';
-                $scope.allLoading = true;
-                $q.all([
-                    httpService.category({status: $scope.status}),
-                    httpService.circular({status: $scope.status}),
-                    httpService.circularSummery({
-                        status: $scope.status,
-                        category: $scope.category,
-                        circular: $scope.circular
-                    })
-                ])
-                    .then(function (response) {
-                        $scope.circular = 'all';
-                        $scope.category = 'all';
-                        $scope.categories = response[0].data;
-                        $scope.circulars = response[1].data;
-                        $scope.circularSummery = response[2].data;
-                        $scope.allLoading = false;
-                    }, function (response) {
-                        $scope.circular = 'all';
-                        $scope.category = 'all';
-                        $scope.categories = [];
-                        $scope.circulars = [];
-                        $scope.circularSummery = [];
-                        console.log(response);
-                        $scope.allLoading = false;
-                    })
-            }
-            $scope.loadCircular = function (id) {
-                $scope.allLoading = true;
-                $q.all([
-                    httpService.circular({status: $scope.status, category_id: id}),
-                    httpService.circularSummery({status: $scope.status, category: id})
-                ]).then(function (response) {
-                    $scope.circular = 'all';
-                    $scope.circulars = response[0].data;
-                    $scope.circularSummery = response[1].data;
-                    $scope.allLoading = false;
-                }, function (response) {
-                    $scope.circular = 'all';
-                    $scope.circulars = $scope.circularSummery = [];
-                    $scope.allLoading = false;
-                    console.log(response);
-                })
 
-            }
-            $scope.loadApplicant = function (category, circular) {
-                $scope.allLoading = true;
-                httpService.circularSummery({status: $scope.status, category: category, circular: circular})
-                    .then(function (response) {
-                        $scope.circularSummery = response.data;
-                        $scope.allLoading = false;
-                    }, function (response) {
-                        $scope.circularSummery = [];
-                        console.log(response);
-                        $scope.allLoading = false;
-                    })
-            }
-            $scope.statusChange = function () {
-                loadAll();
-            }
-            loadAll();
 
         })
     </script>
@@ -88,7 +18,7 @@
                     </span>
             </div>
             <div class="box-body">
-                <div class="row">
+                {{--<div class="row">
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label for="" class="control-label">Job Category</label>
@@ -142,7 +72,7 @@
                             <td class="bg-warning" colspan="7">No data available</td>
                         </tr>
                     </table>
-                </div>
+                </div>--}}
             </div>
         </div>
     </section>
