@@ -392,6 +392,13 @@ GlobalApp.factory('httpService', function ($http) {
                 data:data
             })
         },
+        searchApplicant: function (data) {
+            return $http({
+                url:'/' + prefix + 'recruitment/applicant/search',
+                method:'post',
+                data:data
+            })
+        },
         applicantQuota: function (data) {
             return $http({
                 url:'/' + prefix + 'recruitment/settings/applicant_quota',
@@ -957,7 +964,7 @@ GlobalApp.controller('jobCircularConstraintController',function ($scope,$filter,
 
     $scope.constraint = {
         gender:{male:'',female:''},
-        age:{min:'0',max:'0',date:''},
+        age:{min:'0',max:'0',minDate:'',maxDate:''},
         height:{male:{feet:'0',inch:'0'},female:{feet:'0',inch:'0'}},
         weight:{male:'0',female:'0'},
         chest:{male:'0',female:'0'},

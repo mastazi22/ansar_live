@@ -98,14 +98,19 @@
                         <fieldset>
                             <legend>Age</legend>
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="control-label">Min age</label>
                                         <input type="text" placeholder="Min age" class="form-control" ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
                                                ng-model="constraint.age.min">
                                     </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Min age date</label>
+                                        <input type="text" placeholder="Min age date" date-picker="" class="form-control" ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
+                                               ng-model="constraint.age.minDate">
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <div class="form-group">
                                             <label class="control-label">Max age</label>
@@ -113,8 +118,15 @@
                                                    ng-model="constraint.age.max">
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <div class="form-group">
+                                            <label class="control-label">Max age date</label>
+                                            <input type="text" placeholder="Max age date" date-picker="" class="form-control" ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
+                                                   ng-model="constraint.age.maxDate">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-4">
+                                {{--<div class="col-md-4">
                                     <div class="form-group">
                                         <div class="form-group">
                                             <label class="control-label">On date</label>
@@ -122,7 +134,7 @@
                                                    ng-model="constraint.age.date">
                                         </div>
                                     </div>
-                                </div>
+                                </div>--}}
                             </div>
                         </fieldset>
                         <fieldset>
