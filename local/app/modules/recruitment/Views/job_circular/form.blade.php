@@ -43,13 +43,31 @@
 
     </div>
         <div class="form-group">
+            {!! Form::label('Select applicant division','Select applicant division',['class'=>'control-label']) !!}
+            <div class="form-control" style="height: 200px;overflow: auto;">
+                <ul>
+                    @foreach($ranges as $r)
+                        <li style="list-style: none">
+                            @if(isset($data))
+                                {!! Form::checkbox('applicatn_range[]',$r->id,in_array($r->id,explode(',',$data->applicatn_range)),['style'=>'vertical-align:sub','class'=>'range-app']) !!}
+                                &nbsp;{{$r->division_name_bng}}
+                            @else
+                                {!! Form::checkbox('applicatn_range[]',$r->id,true,['style'=>'vertical-align:sub']) !!}
+                                &nbsp;{{$r->division_name_bng}}
+                            @endif
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+        <div class="form-group">
             {!! Form::label('Select applicant district','Select applicant district',['class'=>'control-label']) !!}
             <div class="form-control" style="height: 200px;overflow: auto;">
                 <ul>
                     @foreach($units as $u)
                         <li style="list-style: none">
                             @if(isset($data))
-                                {!! Form::checkbox('applicatn_units[]',$u->id,in_array($u->id,explode(',',$data->applicatn_units)),['style'=>'vertical-align:sub']) !!}
+                                {!! Form::checkbox('applicatn_units[]',$u->id,in_array($u->division_id,explode(',',$data->applicatn_range))&&in_array($u->id,explode(',',$data->applicatn_units)),['style'=>'vertical-align:sub','data-division-id'=>$u->division_id]) !!}
                                 &nbsp;{{$u->unit_name_bng}}
                             @else
                                 {!! Form::checkbox('applicatn_units[]',$u->id,true,['style'=>'vertical-align:sub']) !!}
@@ -291,3 +309,17 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $(".range-app").on('change',function (event) {
+            var status = $(this).prop('checked');
+            var v = $(this).val();
+            if(status){
+                $('*[data-division-id="'+v+'"]').prop('checked',true)
+            }
+            else{
+                $('*[data-division-id="'+v+'"]').prop('checked',false)
+            }
+        })
+    })
+</script>

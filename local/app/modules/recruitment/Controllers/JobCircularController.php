@@ -3,6 +3,7 @@
 namespace App\modules\recruitment\Controllers;
 
 use App\modules\HRM\Models\District;
+use App\modules\HRM\Models\Division;
 use App\modules\recruitment\Models\JobCategory;
 use App\modules\recruitment\Models\JobCircular;
 use Carbon\Carbon;
@@ -39,7 +40,8 @@ class JobCircularController extends Controller
         //
         $job_categories = JobCategory::pluck('category_name_eng', 'id')->prepend('--Select a job category--', '0');
         $units = District::where('id','!=',0)->get();
-        return view('recruitment::job_circular.create', ['categories' => $job_categories,'units'=>$units]);
+        $range = Division::where('id','!=',0)->get();
+        return view('recruitment::job_circular.create', ['categories' => $job_categories,'units'=>$units,'ranges'=>$range]);
     }
 
     /**
@@ -64,6 +66,7 @@ class JobCircularController extends Controller
             $request['start_date'] = Carbon::parse($request->start_date)->format('Y-m-d');
             $request['end_date'] = Carbon::parse($request->end_date)->format('Y-m-d');
             $request['applicatn_units'] = implode(',',$request->applicatn_units);
+            $request['applicatn_range'] = implode(',',$request->applicatn_range);
             $c = JobCategory::find($request->job_category_id)->circular()->create($request->except(['job_category_id', 'constraint']));
             $c->constraint()->create(['constraint' => $request->constraint]);
             DB::commit();
@@ -98,7 +101,8 @@ class JobCircularController extends Controller
         $job_categories = JobCategory::pluck('category_name_eng', 'id')->prepend('--Select a job category--', '0');
         $data = JobCircular::with('constraint')->find($id);
         $units = District::where('id','!=',0)->get();
-        return view('recruitment::job_circular.edit', ['categories' => $job_categories, 'data' => $data,'units'=>$units]);
+        $range = Division::where('id','!=',0)->get();
+        return view('recruitment::job_circular.edit', ['categories' => $job_categories, 'data' => $data,'units'=>$units,'ranges'=>$range]);
 
     }
 
@@ -125,6 +129,7 @@ class JobCircularController extends Controller
             if (!$request->exists('status')) $request['status'] = 'inactive';
             if (!$request->exists('auto_terminate')) $request['auto_terminate'] = '0';
             $request['applicatn_units'] = implode(',',$request->applicatn_units);
+            $request['applicatn_range'] = implode(',',$request->applicatn_range);
             $c = JobCircular::find($id);
             $c->update($request->except('constraint'));
             if ($c->constraint) $c->constraint()->update(['constraint' => $request->constraint]);
