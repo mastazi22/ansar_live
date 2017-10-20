@@ -42,6 +42,24 @@
         <label for="status" class=""></label>
 
     </div>
+        <div class="form-group">
+            {!! Form::label('Select applicant district','Select applicant district',['class'=>'control-label']) !!}
+            <div class="form-control" style="height: 200px;overflow: auto;">
+                <ul>
+                    @foreach($units as $u)
+                        <li style="list-style: none">
+                            @if(isset($data))
+                                {!! Form::checkbox('applicatn_units[]',$u->id,in_array($u->id,explode(',',$data->applicatn_units)),['style'=>'vertical-align:sub']) !!}
+                                &nbsp;{{$u->unit_name_bng}}
+                            @else
+                                {!! Form::checkbox('applicatn_units[]',$u->id,true,['style'=>'vertical-align:sub']) !!}
+                                &nbsp;{{$u->unit_name_bng}}
+                            @endif
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
     <div class="form-group">
         {!! Form::label('test','Auto De-Activate Circular After End Date : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
         <input type="checkbox" value="1" name="auto_terminate"
@@ -203,15 +221,31 @@
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label class="control-label">Male</label>
-                                        <input type="text" ng-disabled="constraint.gender.male!='male'"
-                                               ng-model="constraint.chest.male" class="form-control" placeholder="">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <input type="text" ng-disabled="constraint.gender.male!='male'"
+                                                       ng-model="constraint.chest.male.min" class="form-control" placeholder="">
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <input type="text" ng-disabled="constraint.gender.male!='male'"
+                                                       ng-model="constraint.chest.male.max" class="form-control" placeholder="">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="form-group">
                                         <label class="control-label">Female</label>
-                                        <input type="text" ng-disabled="constraint.gender.female!='female'"
-                                               ng-model="constraint.chest.female" class="form-control" placeholder="">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <input type="text" ng-disabled="constraint.gender.male!='female'"
+                                                       ng-model="constraint.chest.female.min" class="form-control" placeholder="">
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <input type="text" ng-disabled="constraint.gender.male!='female'"
+                                                       ng-model="constraint.chest.female.max" class="form-control" placeholder="">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -967,7 +967,7 @@ GlobalApp.controller('jobCircularConstraintController',function ($scope,$filter,
         age:{min:'0',max:'0',minDate:'',maxDate:''},
         height:{male:{feet:'0',inch:'0'},female:{feet:'0',inch:'0'}},
         weight:{male:'0',female:'0'},
-        chest:{male:'0',female:'0'},
+        chest:{male:{min:'0',max:'0'},female:{min:'0',max:'0'}},
         education:{min:'0',max:'0'}
 
     };
@@ -989,7 +989,8 @@ GlobalApp.controller('jobCircularConstraintController',function ($scope,$filter,
     )
     $scope.initConstraint = function (data) {
 
-        $scope.constraint = JSON.parse(data);
+        var d = JSON.parse(data);
+        $scope.constraint = d;
         $scope.onSave('constraint')
 
     }
@@ -1003,8 +1004,10 @@ GlobalApp.controller('jobCircularConstraintController',function ($scope,$filter,
         $scope.constraint.height.female.inch = $filter('num')($scope.constraint.height.female.inch+"",0);
         $scope.constraint.weight.male = $filter('num')($scope.constraint.weight.male+"",0);
         $scope.constraint.weight.female = $filter('num')($scope.constraint.weight.female+"",0);
-        $scope.constraint.chest.male = $filter('num')($scope.constraint.chest.male+"",0);
-        $scope.constraint.chest.female = $filter('num')($scope.constraint.chest.female+"",0);
+        $scope.constraint.chest.male.min = $filter('num')($scope.constraint.chest.male.min+"",0);
+        $scope.constraint.chest.male.max = $filter('num')($scope.constraint.chest.male.max+"",0);
+        $scope.constraint.chest.female.min = $filter('num')($scope.constraint.chest.female.min+"",0);
+        $scope.constraint.chest.female.max = $filter('num')($scope.constraint.chest.female.max+"",0);
 
     },true)
 
