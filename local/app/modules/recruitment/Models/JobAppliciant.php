@@ -30,4 +30,7 @@ class JobAppliciant extends Model
     public function appliciantEducationInfo(){
         return $this->hasMany(JobAppliciantEducationInfo::class,'job_appliciant_id');
     }
+    public function payment(){
+        return $this->hasOne(JobAppliciantPaymentHistory::class,'job_appliciant_id','applicant_id');
+    }
 }

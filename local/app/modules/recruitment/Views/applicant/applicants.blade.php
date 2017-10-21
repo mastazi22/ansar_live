@@ -5,6 +5,22 @@
 @endsection
 @section('content')
     <section class="content">
+        @if(Session::has('success_message'))
+            <div style="padding: 10px 20px 0 20px;">
+                <div class="alert alert-success">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <span class="glyphicon glyphicon-ok"></span> {{Session::get('success_message')}}
+                </div>
+            </div>
+        @endif
+        @if(Session::has('error_message'))
+            <div style="padding: 10px 20px 0 20px;">
+                <div class="alert alert-danger">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <span class="fa fa-remove"></span> {{Session::get('error_message')}}
+                </div>
+            </div>
+        @endif
         <div class="box box-solid">
             {{--<div class="overlay" ng-if="allLoading">
                     <span class="fa">
@@ -42,12 +58,28 @@
                         </div>
                     </div>
                 </div>--}}
+                <div class="row" style="margin-bottom: 20px">
+                    <div class="col-sm-6 col-sm-offset-6">
+                        <form action="{{URL::route('recruitment.applicant.list',['type'=>'pending'])}}" method="get">
+                            <div class="input-group">
+                                <input type="text" name="q" class="form-control" placeholder="Search here by txID or mobile no">
+                                <span class="input-group-btn">
+                                            <button class="btn btn-primary">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <tr>
                             <th>Applicant Name</th>
                             <th>Applicant ID</th>
+
                             <th>Applicant Password</th>
+                            <th>txID</th>
                             <th>Gender</th>
                             <th>Birth Date</th>
                             <th>Division</th>
@@ -57,12 +89,14 @@
                             <th>Chest</th>
                             <th>Weight</th>
                             <th>Mobile no</th>
+                            <th>Action</th>
                         </tr>
                         @foreach($applicants as $a)
                         <tr>
                             <td>{{$a->applicant_name_bng}}</td>
                             <td>{{$a->applicant_id}}</td>
                             <td>{{$a->applicant_password}}</td>
+                            <td>{{$a->payment->txID}}</td>
                             <td>{{$a->gender}}</td>
                             <td>{{$a->date_of_birth}}</td>
                             <td>{{$a->division->division_name_bng}}</td>
@@ -72,6 +106,9 @@
                             <td>{{$a->chest_normal.'-'.$a->chest_extended}} inch</td>
                             <td>{{$a->weight}} kg</td>
                             <td>{{$a->mobile_no_self}}</td>
+                            <td>
+                                <a class="btn btn-sm btn-primary" href="{{URL::route('recruitment.applicant.mark_as_paid',['id'=>$a->applicant_id])}}">Mark as paid</a>
+                            </td>
                         </tr>
                         @endforeach
                         <tr ng-if="circularSummery.length<=0">
