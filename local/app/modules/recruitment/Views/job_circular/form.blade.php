@@ -142,7 +142,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label">Min age date</label>
-                                        <input type="text" placeholder="Min age date" date-picker="" class="form-control" ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
+                                        <input type="text" placeholder="Min age date" date-picker="" date-format="dd-mm-yy" class="form-control" ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
                                                ng-model="constraint.age.minDate">
                                     </div>
                                 </div>
@@ -157,7 +157,7 @@
                                     <div class="form-group">
                                         <div class="form-group">
                                             <label class="control-label">Max age date</label>
-                                            <input type="text" placeholder="Max age date" date-picker="" class="form-control" ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
+                                            <input type="text" placeholder="Max age date" date-picker="" date-format="dd-mm-yy" class="form-control" ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
                                                    ng-model="constraint.age.maxDate">
                                         </div>
                                     </div>

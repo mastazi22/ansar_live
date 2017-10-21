@@ -221,6 +221,7 @@ GlobalApp.directive('datePicker', function () {
         link: function (scope, element, attrs) {
             //alert(scope.event)
             var data = attrs.datePicker
+            var format = attrs.dateFormat||'dd-M-yy';
             console.log(data)
             if (data) {
                 $(element).val(eval(data));
@@ -228,7 +229,7 @@ GlobalApp.directive('datePicker', function () {
             }
 
             $(element).datepicker({
-                dateFormat:'dd-M-yy'
+                dateFormat:format
             })
 
         }
