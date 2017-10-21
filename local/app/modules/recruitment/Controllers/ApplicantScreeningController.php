@@ -4,7 +4,6 @@ namespace App\modules\recruitment\Controllers;
 
 use App\modules\recruitment\Models\JobAppliciant;
 use App\modules\recruitment\Models\JobCircular;
-use function foo\func;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -70,7 +69,7 @@ class ApplicantScreeningController extends Controller
         })->with(['division','district','thana'])->where('status','applied');
         return response()->json($query->get());
     }
-    /*public function applicantList($type){
+    public function applicantList($type){
         return view('recruitment::applicant.applicants',['applicants'=>JobAppliciant::with(['division','district','thana'])->where('status','pending')->paginate(50)]);
-    }*/
+    }
 }
