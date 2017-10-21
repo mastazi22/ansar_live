@@ -13,7 +13,7 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase'],'n
     Route::get('/applicant/search',['as'=>'recruitment.applicant.search','uses'=>'ApplicantScreeningController@searchApplicant']);
     Route::post('/applicant/search',['as'=>'recruitment.applicant.search_result','uses'=>'ApplicantScreeningController@loadApplicants']);
 
-    Route::get('/applicant/list/{type}',['as'=>'recruitment.applicant.list','uses'=>'ApplicantScreeningController@applicantList']);
+   // Route::get('/applicant/list/{type}',['as'=>'recruitment.applicant.list','uses'=>'ApplicantScreeningController@applicantList']);
 
     //settings
     Route::any('/settings/applicant_quota',['as'=>'recruitment.quota.index','uses'=>'JobApplicantQuotaController@index']);

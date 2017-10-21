@@ -70,7 +70,7 @@ class ApplicantScreeningController extends Controller
         })->with(['division','district','thana'])->where('status','applied');
         return response()->json($query->get());
     }
-    public function applicantList($type){
+    /*public function applicantList($type){
         return view('recruitment::applicant.applicants',['applicants'=>JobAppliciant::with(['division','district','thana'])->where('status','pending')->paginate(50)]);
-    }
+    }*/
 }
