@@ -16,6 +16,7 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase'],'n
     Route::get('/applicant/list/{type}',['as'=>'recruitment.applicant.list','uses'=>'ApplicantScreeningController@applicantList']);
     Route::get('/applicant/mark_as_paid/{id}',['as'=>'recruitment.applicant.mark_as_paid','uses'=>'ApplicantScreeningController@markAsPaid']);
     Route::post('/applicant/mark_as_paid/{id}',['as'=>'recruitment.applicant.update_as_paid','uses'=>'ApplicantScreeningController@updateAsPaid']);
+    Route::any('/applicant/update_as_paid_by_file',['as'=>'recruitment.applicant.update_as_paid_by_file','uses'=>'ApplicantScreeningController@updateAsPaidByFile']);
 
     //settings
     Route::any('/settings/applicant_quota',['as'=>'recruitment.quota.index','uses'=>'JobApplicantQuotaController@index']);

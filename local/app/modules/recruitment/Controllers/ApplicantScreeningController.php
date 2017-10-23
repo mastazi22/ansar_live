@@ -4,12 +4,14 @@ namespace App\modules\recruitment\Controllers;
 
 use App\modules\recruitment\Models\JobAppliciant;
 use App\modules\recruitment\Models\JobCircular;
+use http\Exception;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ApplicantScreeningController extends Controller
 {
@@ -129,5 +131,61 @@ class ApplicantScreeningController extends Controller
             return redirect()->back()->with('flash_error', $e->getMessage());
         }
         return view('recruitment::applicant.mark_as_paid', ['id' => $id]);
+    }
+    public function updateAsPaidByFile(Request $request)
+    {
+        if(!strcasecmp($request->method(),'post')){
+            $rules = [
+                'file' => 'required'
+
+            ];
+            $this->validate($request, $rules);
+           // return $request->file('file')->path();
+            DB::beginTransaction();
+            try {
+                $data = Excel::load($request->file('file'),function($reader){
+
+                })->get();
+                //return $data;
+                foreach ($data as $d){
+                    $applicant = JobAppliciant::whereHas('payment', function($q) use($d){
+                        $q->where('txID',trim($d['txid']));
+                    })->first();
+                    if($applicant){
+                        $payment = $applicant->payment;
+                        if ($payment) {
+                            $payment->returntxID = trim($d->returntxid);
+                            $payment->bankTxID = trim($d->banktxid);
+                            $payment->bankTxStatus = 'SUCCESS';
+                            $payment->txnAmount = 200;
+                            $payment->spCode = '000';
+                            $payment->spCodeDes = 'ApprovedManual';
+                            $payment->paymentOption = trim($d->paymentoption);
+                            $payment->save();
+                            $applicant->status = 'applied';
+                            $applicant->save();
+                            Log::info('Found '.$d);
+                            DB::commit();
+
+                        }else{
+                            Log::info('not found '.$d);
+                        }
+                    }
+                    else{
+                        Log::info('not found a'.$d);
+                    }
+//                return redirect()->route('recruitment.applicant.list')->with('error_message', 'This applicant has not pay yet');
+                }
+                return redirect()->route('recruitment.applicant.list',['type'=>'pending'])->with('success_message', 'updated successfully');
+            } catch (Exception $e) {
+                DB::rollback();
+                Log::info($e->getTraceAsString());
+                return $e->getTraceAsString();
+                return redirect()->back()->with('flash_error', $e->getMessage());
+            }
+        }
+        else{
+            return view('recruitment::applicant.mark_as_paid_file');
+        }
     }
 }
