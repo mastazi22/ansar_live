@@ -82,14 +82,14 @@ class ApplicantScreeningController extends Controller
                 $query->whereHas('payment', function ($q) use ($request) {
                     $q->where('txID', 'like', '%' . $request->q . '%');
                 })->orWhere('mobile_no_self', 'like', '%' . $request->q . '%');
-            })->where('status', 'pending')->paginate(50);
+            })->where('status', $type)->paginate(50);
         }
         else{
             $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'])->whereHas('payment', function ($q) {
                 $q->whereNotNull('txID');
-            })->where('status', 'pending')->paginate(50);
+            })->where('status', $type)->paginate(50);
         }
-        return view('recruitment::applicant.applicants', ['applicants' => $applicants]);
+        return view('recruitment::applicant.applicants', ['applicants' => $applicants,'type'=>$type]);
     }
 
     public function markAsPaid($id)

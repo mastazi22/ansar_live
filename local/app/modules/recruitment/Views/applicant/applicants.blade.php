@@ -60,7 +60,7 @@
                 </div>--}}
                 <div class="row" style="margin-bottom: 20px">
                     <div class="col-sm-6 col-sm-offset-6">
-                        <form action="{{URL::route('recruitment.applicant.list',['type'=>'pending'])}}" method="get">
+                        <form action="{{URL::route('recruitment.applicant.list',['type'=>$type])}}" method="get">
                             <div class="input-group">
                                 <input type="text" name="q" class="form-control" placeholder="Search here by txID or mobile no">
                                 <span class="input-group-btn">
@@ -89,7 +89,9 @@
                             <th>Chest</th>
                             <th>Weight</th>
                             <th>Mobile no</th>
+                            @if($type=='pending')
                             <th>Action</th>
+                                @endif
                         </tr>
                         @foreach($applicants as $a)
                         <tr>
@@ -106,9 +108,12 @@
                             <td>{{$a->chest_normal.'-'.$a->chest_extended}} inch</td>
                             <td>{{$a->weight}} kg</td>
                             <td>{{$a->mobile_no_self}}</td>
-                            <td>
-                                <a class="btn btn-sm btn-primary" href="{{URL::route('recruitment.applicant.mark_as_paid',['id'=>$a->applicant_id])}}">Mark as paid</a>
-                            </td>
+                            @if($type=='pending')
+                                <td>
+
+                                    <a class="btn btn-sm btn-primary" href="{{URL::route('recruitment.applicant.mark_as_paid',['id'=>$a->applicant_id])}}">Mark as paid</a>
+                                </td>
+                                @endif
                         </tr>
                         @endforeach
                         <tr ng-if="circularSummery.length<=0">
