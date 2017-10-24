@@ -25,7 +25,9 @@ class JobCircular extends Model
         return $this->hasMany(JobAppliciant::class,'job_circular_id')->where('gender','Female');
     }
     public function appliciantPaid(){
-        return $this->hasMany(JobAppliciant::class,'job_circular_id')->where('status','applied');
+        return $this->hasMany(JobAppliciant::class,'job_circular_id')->whereHas('payment',function($q){
+            $q->where('bankTxStatus','SUCCESS');
+        })->where('status','applied');
     }
 
     public function constraint(){
