@@ -100,7 +100,7 @@
                             <td>{{$a->applicant_name_bng}}</td>
                             <td>{{$a->applicant_id}}</td>
                             <td>{{$a->applicant_password}}</td>
-                            <td>{{$a->payment->txID}}</td>
+                            <td>{{$a->payment->txID or 'n\a'}}</td>
                             <td>{{$a->gender}}</td>
                             <td>{{$a->date_of_birth}}</td>
                             <td>{{$a->division->division_name_bng}}</td>

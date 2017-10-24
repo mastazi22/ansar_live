@@ -75,30 +75,38 @@ class ApplicantScreeningController extends Controller
         return response()->json($query->get());
     }
 
-    public function applicantList(Request $request, $type='')
+    public function applicantList(Request $request, $type=null)
     {
+        DB::enableQueryLog();
         if ($request->q) {
-            $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'])->whereHas('payment', function ($q) {
-                $q->whereNotNull('txID');
-            })->where(function ($query) use ($request) {
+            $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'])->where(function ($query) use ($request) {
                 $query->whereHas('payment', function ($q) use ($request) {
                     $q->where('txID', 'like', '%' . $request->q . '%');
                 })->orWhere('mobile_no_self', 'like', '%' . $request->q . '%');
             });
+            if($type=='applied'){
+                $applicants->whereHas('payment', function ($q) {
+                    $q->whereNotNull('txID');
+                });
+            }
             if($type){
                 $applicants->where('status', $type);
             }
             $applicants = $applicants->paginate(50);
         }
         else{
-            $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'])->whereHas('payment', function ($q) {
-                $q->whereNotNull('txID');
-            })->where('status', $type);
+            $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment']);
+            if($type=='applied'){
+                $applicants->whereHas('payment', function ($q) {
+                    $q->whereNotNull('txID');
+                });
+            }
             if($type){
                 $applicants->where('status', $type);
             }
             $applicants = $applicants->paginate(50);
         }
+//        return DB::getQueryLog();
         return view('recruitment::applicant.applicants', ['applicants' => $applicants,'type'=>$type]);
     }
 
