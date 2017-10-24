@@ -146,7 +146,7 @@ class ApplicantScreeningController extends Controller
                 $data = Excel::load($request->file('file'),function($reader){
 
                 })->get();
-                //return $data;
+//                return $data;
                 foreach ($data as $d){
                     $applicant = JobAppliciant::whereHas('payment', function($q) use($d){
                         $q->where('txID',trim($d['txid']));
@@ -154,6 +154,10 @@ class ApplicantScreeningController extends Controller
                     if($applicant){
                         $payment = $applicant->payment;
                         if ($payment) {
+                            if($applicant->status=='applied'){
+                                Log::info('Found exists');
+                                continue;
+                            }
                             $payment->returntxID = trim($d->returntxid);
                             $payment->bankTxID = trim($d->banktxid);
                             $payment->bankTxStatus = 'SUCCESS';
