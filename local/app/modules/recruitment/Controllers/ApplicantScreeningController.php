@@ -75,7 +75,7 @@ class ApplicantScreeningController extends Controller
         return response()->json($query->get());
     }
 
-    public function applicantList(Request $request, $type)
+    public function applicantList(Request $request, $type='')
     {
         if ($request->q) {
             $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'])->whereHas('payment', function ($q) {
@@ -84,12 +84,20 @@ class ApplicantScreeningController extends Controller
                 $query->whereHas('payment', function ($q) use ($request) {
                     $q->where('txID', 'like', '%' . $request->q . '%');
                 })->orWhere('mobile_no_self', 'like', '%' . $request->q . '%');
-            })->where('status', $type)->paginate(50);
+            });
+            if($type){
+                $applicants->where('status', $type);
+            }
+            $applicants = $applicants->paginate(50);
         }
         else{
             $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'])->whereHas('payment', function ($q) {
                 $q->whereNotNull('txID');
-            })->where('status', $type)->paginate(50);
+            })->where('status', $type);
+            if($type){
+                $applicants->where('status', $type);
+            }
+            $applicants = $applicants->paginate(50);
         }
         return view('recruitment::applicant.applicants', ['applicants' => $applicants,'type'=>$type]);
     }
