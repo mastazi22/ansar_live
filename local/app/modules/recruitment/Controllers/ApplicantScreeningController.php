@@ -23,7 +23,8 @@ class ApplicantScreeningController extends Controller
                 'appliciant',
                 'appliciantMale',
                 'appliciantFemale',
-                'appliciantPaid'
+                'appliciantPaid',
+                'appliciantNotPaid'
             ]);
             if ($request->exists('category') && $request->category != 'all') {
                 $cicular_summery->where('job_category_id', $request->category);
@@ -75,7 +76,7 @@ class ApplicantScreeningController extends Controller
         return response()->json($query->get());
     }
 
-    public function applicantList(Request $request, $type=null)
+    public function applicantListSupport(Request $request, $type=null)
     {
         DB::enableQueryLog();
         if ($request->q) {
@@ -89,7 +90,10 @@ class ApplicantScreeningController extends Controller
                     $q->whereNotNull('txID');
                 });
             }
-            if($type){
+            else if($type=='Male'||$type=='Female'){
+                $applicants->where('gender', $type);
+            }
+            else if($type){
                 $applicants->where('status', $type);
             }
             $applicants = $applicants->paginate(50);
@@ -101,13 +105,80 @@ class ApplicantScreeningController extends Controller
                     $q->whereNotNull('txID');
                 });
             }
-            if($type){
+            else if($type=='Male'||$type=='Female'){
+                $applicants->where('gender', $type);
+            }
+            else if($type){
                 $applicants->where('status', $type);
             }
             $applicants = $applicants->paginate(50);
         }
 //        return DB::getQueryLog();
-        return view('recruitment::applicant.applicants', ['applicants' => $applicants,'type'=>$type]);
+        return view('recruitment::applicant.applicants_support', ['applicants' => $applicants,'type'=>$type]);
+    }
+    public function applicantList(Request $request, $circular_id,$type=null)
+    {
+        if($request->ajax()){
+            DB::enableQueryLog();
+            if ($request->q) {
+                $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'])->where(function ($query) use ($request) {
+                    $query->whereHas('payment', function ($q) use ($request) {
+                        $q->where('txID', 'like', '%' . $request->q . '%');
+                    })->orWhere('mobile_no_self', 'like', '%' . $request->q . '%');
+                });
+                if($type=='applied'){
+                    $applicants->whereHas('payment', function ($q) {
+                        $q->whereNotNull('txID');
+                    });
+                }
+                else if($type=='Male'||$type=='Female'){
+                    $applicants->where('gender', $type);
+                }
+                else if($type){
+                    $applicants->where('status', $type);
+                }
+                if($request->range&&$request->range!='all'){
+                    $applicants->where('division_id', $request->range);
+                }
+                if($request->unit&&$request->unit!='all'){
+                    $applicants->where('unit_id', $request->unit);
+                }
+                if($request->thana&&$request->thana!='all'){
+                    $applicants->where('thana_id', $request->thana);
+                }
+                $applicants->where('job_circular_id',$circular_id);
+                $applicants = $applicants->paginate(50);
+            }
+            else{
+                $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment']);
+                if($type=='applied'){
+                    $applicants->whereHas('payment', function ($q) {
+                        $q->whereNotNull('txID');
+                    });
+                }
+                if($type=='Male'||$type=='Female'){
+                    $applicants->where('gender', $type);
+                }
+                else if($type){
+                    $applicants->where('status', $type);
+                }
+                if($request->range&&$request->range!='all'){
+                    $applicants->where('division_id', $request->range);
+                }
+                if($request->unit&&$request->unit!='all'){
+                    $applicants->where('unit_id', $request->unit);
+                }
+                if($request->thana&&$request->thana!='all'){
+                    $applicants->where('thana_id', $request->thana);
+                }
+                $applicants->where('job_circular_id',$circular_id);
+                $applicants = $applicants->paginate(50);
+            }
+//        return DB::getQueryLog();
+            return view('recruitment::applicant.data', ['applicants' => $applicants]);
+        }
+
+        return view('recruitment::applicant.applicants', ['type'=>$type,'circular_id'=>$circular_id]);
     }
 
     public function markAsPaid($id)
