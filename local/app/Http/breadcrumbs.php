@@ -567,6 +567,10 @@ Breadcrumbs::register('recruitment.applicant.index', function($breadcrumbs) {
     $breadcrumbs->parent('applicant_selection');
     $breadcrumbs->push('Circular Summery', URL::route('recruitment.applicant.index'));
 });
+Breadcrumbs::register('recruitment.applicant.list', function($breadcrumbs) {
+    $breadcrumbs->parent('recruitment.applicant.index');
+    $breadcrumbs->push('Applicants list', '#');
+});
 Breadcrumbs::register('recruitment.applicant.search', function($breadcrumbs) {
     $breadcrumbs->parent('applicant_selection');
     $breadcrumbs->push('Search Applicant', URL::route('recruitment.applicant.search'));

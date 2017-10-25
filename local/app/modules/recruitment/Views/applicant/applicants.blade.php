@@ -1,7 +1,7 @@
 @extends('template.master')
-@section('title','Applicants')
+@section('title','Applicants List')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('recruitment.applicant.index') !!}
+    {!! Breadcrumbs::render('recruitment.applicant.list') !!}
 @endsection
 @section('content')
     <script>
