@@ -135,8 +135,14 @@ class ApplicantScreeningController extends Controller
                 else if($type=='Male'||$type=='Female'){
                     $applicants->where('gender', $type);
                 }
-                else if($type){
-                    $applicants->where('status', $type);
+                else if($type=='pending'){
+                    $applicants->where(function($q){
+                        $q->whereHas('payment', function ($q) {
+                            $q->whereNotNull('txID');
+                            $q->where('bankTxStatus','FAIL');
+                        });
+                        $q->orWhere('status','pending');
+                    });
                 }
                 if($request->range&&$request->range!='all'){
                     $applicants->where('division_id', $request->range);
@@ -161,8 +167,14 @@ class ApplicantScreeningController extends Controller
                 if($type=='Male'||$type=='Female'){
                     $applicants->where('gender', $type);
                 }
-                else if($type){
-                    $applicants->where('status', $type);
+                else if($type=='pending'){
+                    $applicants->where(function($q){
+                        $q->whereHas('payment', function ($q) {
+                            $q->whereNotNull('txID');
+                            $q->where('bankTxStatus','FAIL');
+                        });
+                        $q->orWhere('status','pending');
+                    });
                 }
                 if($request->range&&$request->range!='all'){
                     $applicants->where('division_id', $request->range);
