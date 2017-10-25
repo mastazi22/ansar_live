@@ -30,7 +30,13 @@ class JobCircular extends Model
         })->where('status','applied');
     }
     public function appliciantNotPaid(){
-        return $this->hasMany(JobAppliciant::class,'job_circular_id')->where('status','pending');
+        return $this->hasMany(JobAppliciant::class,'job_circular_id')->where(function($q){
+            $q->whereHas('payment', function ($q) {
+                $q->whereNotNull('txID');
+                $q->where('bankTxStatus','FAIL');
+            });
+            $q->orWhere('status','pending');
+        });
     }
 
     public function constraint(){
