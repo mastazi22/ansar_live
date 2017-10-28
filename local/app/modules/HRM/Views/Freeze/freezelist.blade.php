@@ -1036,7 +1036,7 @@
                                     <label class="control-label" for="rest_date">
                                         *Disembodiment Date:
                                     </label>
-                                    <input type="text" class="form-control" id="rest_date" id="memorandum_id"
+                                    <input type="text" class="form-control" date-picker
                                            ng-model="formData.rest_date"
                                            name="rest_date">
                                 </div>
@@ -1131,8 +1131,6 @@
 
     </div>
     <script>
-        $("#black_date").datepicker({                dateFormat:'dd-M-yy'            })({
-            defaultValue: false
-        })
+
     </script>
 @stop
