@@ -24,6 +24,10 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase'],'n
     Route::any('/settings/applicant_quota/edit',['as'=>'recruitment.quota.edit','uses'=>'JobApplicantQuotaController@edit']);
     Route::post('/settings/applicant_quota/update',['as'=>'recruitment.quota.update','uses'=>'JobApplicantQuotaController@update']);
 
+    //support
+    Route::get('/supports/feedback',['as'=>'supports.feedback','uses'=>'SupportController@problemReport']);
+    Route::post('/supports/feedback/{id}',['as'=>'supports.feedback.submit','uses'=>'SupportController@replyProblem']);
+
 
 
 });
