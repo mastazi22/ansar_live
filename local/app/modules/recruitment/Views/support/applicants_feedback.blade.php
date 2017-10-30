@@ -92,6 +92,9 @@
                             <td>
                                 <a href="#" data-action="{{URL::route('supports.feedback.submit',['id'=>$a->id])}}" data-type="verify" class="btn btn-primary btn-xs ddd">Verify</a>
                                 <a href="#" data-action="{{URL::route('supports.feedback.submit',['id'=>$a->id])}}" data-type="reject" class="btn btn-danger btn-xs ddd">Reject</a>
+                                {!! Form::open(['route'=>['supports.feedback.delete',$a->id],'style'=>'display:inline']) !!}
+                                <button type="submit" class="btn btn-danger btn-xs">Remove</button>
+                                {!! Form::close() !!}
                             </td>
                         </tr>
                         @endforeach
