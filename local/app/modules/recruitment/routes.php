@@ -24,6 +24,12 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase'],'n
     Route::any('/settings/applicant_quota/edit',['as'=>'recruitment.quota.edit','uses'=>'JobApplicantQuotaController@edit']);
     Route::post('/settings/applicant_quota/update',['as'=>'recruitment.quota.update','uses'=>'JobApplicantQuotaController@update']);
 
+    Route::get('/test',function (){
+       $data = \Maatwebsite\Excel\Facades\Excel::load(storage_path('bt.xls'),function (){
 
+       })->get() ;
+       $a = collect($data)->pluck('txid');
+       return implode('\',\'',$a->toArray());
+    });
 
 });
