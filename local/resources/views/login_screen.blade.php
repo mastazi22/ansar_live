@@ -7,67 +7,7 @@
             background: rgba(255, 255, 255, .4) !important;
         }
     </style>
-    <script>
-        /*var app = angular.module('LoginApp', [], ['$interpolateProvider', function ($interpolateProvider) {
-            $interpolateProvider.startSymbol('[[');
-            $interpolateProvider.endSymbol(']]');
-        }])
-        app.controller('loginController', ['$scope', '$http', function ($scope, $http) {
-            $scope.panelData = {
-                pcMale: 0,
-                pcFemale: 0,
-                apcMale: 0,
-                apcFemale: 0,
-                ansarMale: 0,
-                ansarFemale: 0,
-            }
-            $scope.loading = true;
-            $http({
-                url: '{{URL::route('central_panel_list')}}',
-                method: 'get'
-            }).then(function (response) {
-                $scope.panelData.pcMale = response.data.pm;
-                $scope.panelData.pcFemale = response.data.pf;
-                $scope.panelData.apcMale = response.data.apm;
-                $scope.panelData.apcFemale = response.data.apf;
-                $scope.panelData.ansarMale = response.data.am;
-                $scope.panelData.ansarFemale = response.data.af;
-                $scope.loading = false;
-            }, function (response) {
 
-            })
-        }])*/
-
-        app.directive('loginAttempt', function ($interval) {
-            return {
-                restrict:'E',
-                controller: function ($scope) {
-                    $scope.stopTimer = function (timer) {
-                        if(angular.isDefined(timer)){
-                            $interval.cancel(timer)
-                        }
-                    }
-                },
-                scope:{
-                  disableId:'@'
-                },
-                link: function (scope, elem, attrs) {
-                    var seconds = parseInt($(elem).html());
-                    var timer = $interval(function () {
-                        seconds--;
-                        $(scope.disableId).prop('disabled',true)
-                        $(elem).html(seconds)
-                        if(seconds<=0) {
-                            scope.stopTimer(timer);
-                            timer = undefined;
-                            location.reload();
-                            $(scope.disableId).prop('disabled',false)
-                        }
-                    },1000)
-                }
-            }
-        })
-    </script>
     <style>
         table > tbody > tr > th {
             background: rgba(255, 255, 255, .5) !important;
@@ -79,7 +19,7 @@
     </style>
 
 </head>
-<body class="login-page" ng-app="LoginApp">
+<body class="login-page">
 <div class="login-box" style="margin: 1% auto !important;"  ng-controller="loginController">
     <div class="login-logo">
         <a href="{{URL::to('/')}}" style="color: #ffffff;"><b>Ansar & VDP</b>ERP</a>
