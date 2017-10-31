@@ -41,14 +41,14 @@ class UserController extends Controller
     {
         $credential = array('user_name' => Input::get('user_name'), 'password' => Input::get('password'));
         Log::info("Previous URL Handle: " . Session::get('redirect_url'));
-        $throttles = $this->isUsingThrottlesLoginsTrait();
+        /*$throttles = $this->isUsingThrottlesLoginsTrait();
         if ($throttles && $lockedOut = $this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
             $key = $this->getThrottleKey($request) . ':lockout';
 
 
             return $this->sendLockoutResponse($request);
-        }
+        }*/
         if (Auth::attempt($credential)) {
             $user = Auth::user();
             if ($user->status == 0) {
@@ -77,9 +77,6 @@ class UserController extends Controller
                 return Redirect::to($url);
             } else return Redirect::to('/');
         } else {
-            if ($throttles && !$lockedOut) {
-                $this->incrementLoginAttempts($request);
-            }
             return Redirect::action('UserController@login')->with('error', 'Invalid user name or password');
         }
     }
