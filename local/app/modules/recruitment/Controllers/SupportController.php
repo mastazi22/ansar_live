@@ -41,7 +41,7 @@ class SupportController extends Controller
                         $payment->spCodeDes = 'ApprovedManual';
                         $payment->paymentOption = $feedBack->payment_option;
                         $payment->save();
-                        $applicant->status = 'applied';
+                        $applicant->status = $applicant->status=='initial'?'paid':'applied';
                         $applicant->save();
                         $feedBack->status='verify';
                         $feedBack->save();
