@@ -139,14 +139,13 @@
                             <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]" class="btn btn-link">[[a.appliciant_count]]</a></td>
                             <td><a href="#" class="btn btn-link">[[a.appliciant_initial_count]]</a></td>
                             <td><a href="#" class="btn btn-link">[[a.appliciant_paid_not_apply_count]]</a></td>
-                            <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]" class="btn btn-link">[[a.appliciant_count]]</a></td>
                             <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]/Male" class="btn btn-link">[[a.appliciant_male_count]]</a></td>
                             <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]/Female" class="btn btn-link">[[a.appliciant_female_count]]</a></td>
                             <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]/applied" class="btn btn-link">[[a.appliciant_paid_count]]</a></td>
                             <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]/pending" class="btn btn-link">[[a.appliciant_not_paid_count]]</a></td>
                         </tr>
                         <tr ng-if="circularSummery.length<=0">
-                            <td class="bg-warning" colspan="7">No data available</td>
+                            <td class="bg-warning" colspan="10">No data available</td>
                         </tr>
                     </table>
                 </div>
