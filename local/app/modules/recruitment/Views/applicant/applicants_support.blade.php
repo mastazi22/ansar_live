@@ -89,7 +89,7 @@
                             <th>Chest</th>
                             <th>Weight</th>
                             <th>Mobile no</th>
-                            @if($type=='pending')
+                            @if($type=='pending'||$type=='initial')
                             <th>Action</th>
                             @elseif(!$type)
                                 <th>Status</th>
@@ -110,10 +110,10 @@
                             <td>{{$a->chest_normal.'-'.$a->chest_extended}} inch</td>
                             <td>{{$a->weight}} kg</td>
                             <td>{{$a->mobile_no_self}}</td>
-                            @if($type=='pending')
+                            @if($type=='pending'||$type=='initial')
                                 <td>
 
-                                    <a class="btn btn-sm btn-primary" href="{{URL::route('recruitment.applicant.mark_as_paid',['id'=>$a->applicant_id])}}">Mark as paid</a>
+                                    <a class="btn btn-sm btn-primary" href="{{URL::route('recruitment.applicant.mark_as_paid',['id'=>$a->applicant_id,'type'=>$type])}}">Mark as paid</a>
                                 </td>
                             @elseif(!$type)
                                 <td>{{$a->status}}</td>

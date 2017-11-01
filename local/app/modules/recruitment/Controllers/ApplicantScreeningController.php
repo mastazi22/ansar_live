@@ -2,6 +2,7 @@
 
 namespace App\modules\recruitment\Controllers;
 
+use App\Jobs\FeedbackSMS;
 use App\modules\recruitment\Models\JobAppliciant;
 use App\modules\recruitment\Models\JobCircular;
 use http\Exception;
@@ -78,7 +79,7 @@ class ApplicantScreeningController extends Controller
         return response()->json($query->get());
     }
 
-    public function applicantListSupport(Request $request, $type=null)
+    public function applicantListSupport(Request $request, $type = null)
     {
         DB::enableQueryLog();
         if ($request->q) {
@@ -87,42 +88,38 @@ class ApplicantScreeningController extends Controller
                     $q->where('txID', 'like', '%' . $request->q . '%');
                 })->orWhere('mobile_no_self', 'like', '%' . $request->q . '%');
             });
-            if($type=='applied'){
+            if ($type == 'applied') {
                 $applicants->whereHas('payment', function ($q) {
                     $q->whereNotNull('txID');
-                    $q->where('bankTxStatus','SUCCESS');
+                    $q->where('bankTxStatus', 'SUCCESS');
                 });
                 $applicants->where('status', $type);
-            }
-            else if($type=='Male'||$type=='Female'){
+            } else if ($type == 'Male' || $type == 'Female') {
                 $applicants->where('gender', $type);
-            }
-            else if($type){
+            } else if ($type) {
                 $applicants->where('status', $type);
             }
             $applicants = $applicants->paginate(50);
-        }
-        else{
+        } else {
             $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment']);
-            if($type=='applied'){
+            if ($type == 'applied') {
                 $applicants->whereHas('payment', function ($q) {
                     $q->whereNotNull('txID');
                 });
-            }
-            else if($type=='Male'||$type=='Female'){
+            } else if ($type == 'Male' || $type == 'Female') {
                 $applicants->where('gender', $type);
-            }
-            else if($type){
+            } else if ($type) {
                 $applicants->where('status', $type);
             }
             $applicants = $applicants->paginate(50);
         }
 //        return DB::getQueryLog();
-        return view('recruitment::applicant.applicants_support', ['applicants' => $applicants,'type'=>$type]);
+        return view('recruitment::applicant.applicants_support', ['applicants' => $applicants, 'type' => $type]);
     }
-    public function applicantList(Request $request, $circular_id,$type=null)
+
+    public function applicantList(Request $request, $circular_id, $type = null)
     {
-        if($request->ajax()){
+        if ($request->ajax()) {
             DB::enableQueryLog();
             if ($request->q) {
                 $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'])->where(function ($query) use ($request) {
@@ -130,78 +127,74 @@ class ApplicantScreeningController extends Controller
                         $q->where('txID', 'like', '%' . $request->q . '%');
                     })->orWhere('mobile_no_self', 'like', '%' . $request->q . '%');
                 });
-                if($type=='applied'){
+                if ($type == 'applied') {
                     $applicants->whereHas('payment', function ($q) {
                         $q->whereNotNull('txID');
-                        $q->where('bankTxStatus','SUCCESS');
+                        $q->where('bankTxStatus', 'SUCCESS');
                     });
-                }
-                else if($type=='Male'||$type=='Female'){
+                } else if ($type == 'Male' || $type == 'Female') {
                     $applicants->where('gender', $type);
-                }
-                else if($type=='pending'){
-                    $applicants->where(function($q){
+                } else if ($type == 'pending') {
+                    $applicants->where(function ($q) {
                         $q->whereHas('payment', function ($q) {
                             $q->whereNotNull('txID');
-                            $q->where('bankTxStatus','FAIL');
+                            $q->where('bankTxStatus', 'FAIL');
                         });
-                        $q->orWhere('status','pending');
+                        $q->orWhere('status', 'pending');
                     });
                 }
-                if($request->range&&$request->range!='all'){
+                if ($request->range && $request->range != 'all') {
                     $applicants->where('division_id', $request->range);
                 }
-                if($request->unit&&$request->unit!='all'){
+                if ($request->unit && $request->unit != 'all') {
                     $applicants->where('unit_id', $request->unit);
                 }
-                if($request->thana&&$request->thana!='all'){
+                if ($request->thana && $request->thana != 'all') {
                     $applicants->where('thana_id', $request->thana);
                 }
-                $applicants->where('job_circular_id',$circular_id);
+                $applicants->where('job_circular_id', $circular_id);
                 $applicants = $applicants->paginate(50);
-            }
-            else{
+            } else {
                 $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment']);
-                if($type=='applied'){
+                if ($type == 'applied') {
                     $applicants->whereHas('payment', function ($q) {
                         $q->whereNotNull('txID');
-                        $q->where('bankTxStatus','SUCCESS');
+                        $q->where('bankTxStatus', 'SUCCESS');
                     });
                 }
-                if($type=='Male'||$type=='Female'){
+                if ($type == 'Male' || $type == 'Female') {
                     $applicants->where('gender', $type);
-                }
-                else if($type=='pending'){
-                    $applicants->where(function($q){
+                } else if ($type == 'pending') {
+                    $applicants->where(function ($q) {
                         $q->whereHas('payment', function ($q) {
                             $q->whereNotNull('txID');
-                            $q->where('bankTxStatus','FAIL');
+                            $q->where('bankTxStatus', 'FAIL');
                         });
-                        $q->orWhere('status','pending');
+                        $q->orWhere('status', 'pending');
                     });
                 }
-                if($request->range&&$request->range!='all'){
+                if ($request->range && $request->range != 'all') {
                     $applicants->where('division_id', $request->range);
                 }
-                if($request->unit&&$request->unit!='all'){
+                if ($request->unit && $request->unit != 'all') {
                     $applicants->where('unit_id', $request->unit);
                 }
-                if($request->thana&&$request->thana!='all'){
+                if ($request->thana && $request->thana != 'all') {
                     $applicants->where('thana_id', $request->thana);
                 }
-                $applicants->where('job_circular_id',$circular_id);
+                $applicants->where('job_circular_id', $circular_id);
                 $applicants = $applicants->paginate(50);
             }
 //        return DB::getQueryLog();
             return view('recruitment::applicant.data', ['applicants' => $applicants]);
         }
 
-        return view('recruitment::applicant.applicants', ['type'=>$type,'circular_id'=>$circular_id]);
+        return view('recruitment::applicant.applicants', ['type' => $type, 'circular_id' => $circular_id]);
     }
 
-    public function markAsPaid($id)
+    public function markAsPaid($type,$id)
     {
-        return view('recruitment::applicant.mark_as_paid', ['id' => $id]);
+        return view('recruitment::applicant.mark_as_paid', ['id' => $id,'type'=>$type]);
     }
 
     public function updateAsPaid(Request $request, $id)
@@ -209,9 +202,11 @@ class ApplicantScreeningController extends Controller
         $rules = [
             'bankTxID' => 'required',
             'paymentOption' => 'required',
+            'type' => 'required'
 
         ];
         $this->validate($request, $rules);
+//        return $request->all();
         DB::beginTransaction();
         try {
             $applicant = JobAppliciant::where('applicant_id', $id)->first();
@@ -225,41 +220,48 @@ class ApplicantScreeningController extends Controller
                 $payment->spCodeDes = 'ApprovedManual';
                 $payment->paymentOption = $request->paymentOption;
                 $payment->save();
-                $applicant->status = 'applied';
+                $applicant->status = $request->type == 'initial' ? 'paid' : 'applied';
                 $applicant->save();
                 DB::commit();
-                return redirect()->route('recruitment.applicant.list',['type'=>'pending'])->with('success_message', 'updated successfully');
+//                return $applicant;
+                if ($request->type == 'initial') {
+                    $message = "Your id:" . $applicant->applicant_id . " and password:" . $applicant->applicant_password;
+                    $this->dispatch(new FeedbackSMS($message,$applicant->mobile_no_self));
+                    }
+
+                return redirect()->route('recruitment.applicant.list', ['type' => $request->type])->with('success_message', 'updated successfully');
             }
-            return redirect()->route('recruitment.applicant.list')->with('error_message', 'This applicant has not pay yet');
+            return redirect()->route('recruitment.applicant.list',['type' => $request->type])->with('error_message', 'This applicant has not pay yet');
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->with('flash_error', $e->getMessage());
         }
         return view('recruitment::applicant.mark_as_paid', ['id' => $id]);
     }
+
     public function updateAsPaidByFile(Request $request)
     {
-        if(!strcasecmp($request->method(),'post')){
+        if (!strcasecmp($request->method(), 'post')) {
             $rules = [
                 'file' => 'required'
 
             ];
             $this->validate($request, $rules);
-           // return $request->file('file')->path();
+            // return $request->file('file')->path();
             DB::beginTransaction();
             try {
-                $data = Excel::load($request->file('file'),function($reader){
+                $data = Excel::load($request->file('file'), function ($reader) {
 
                 })->get();
 //                return $data;
-                foreach ($data as $d){
-                    $applicant = JobAppliciant::whereHas('payment', function($q) use($d){
-                        $q->where('txID',trim($d['txid']));
+                foreach ($data as $d) {
+                    $applicant = JobAppliciant::whereHas('payment', function ($q) use ($d) {
+                        $q->where('txID', trim($d['txid']));
                     })->first();
-                    if($applicant){
+                    if ($applicant) {
                         $payment = $applicant->payment;
                         if ($payment) {
-                            if($applicant->status=='applied'){
+                            if ($applicant->status == 'applied') {
                                 Log::info('Found exists');
                                 continue;
                             }
@@ -273,27 +275,25 @@ class ApplicantScreeningController extends Controller
                             $payment->save();
                             $applicant->status = 'applied';
                             $applicant->save();
-                            Log::info('Found '.$d);
+                            Log::info('Found ' . $d);
                             DB::commit();
 
-                        }else{
-                            Log::info('not found '.$d);
+                        } else {
+                            Log::info('not found ' . $d);
                         }
-                    }
-                    else{
-                        Log::info('not found a'.$d);
+                    } else {
+                        Log::info('not found a' . $d);
                     }
 //                return redirect()->route('recruitment.applicant.list')->with('error_message', 'This applicant has not pay yet');
                 }
-                return redirect()->route('recruitment.applicant.list',['type'=>'pending'])->with('success_message', 'updated successfully');
+                return redirect()->route('recruitment.applicant.list', ['type' => 'pending'])->with('success_message', 'updated successfully');
             } catch (Exception $e) {
                 DB::rollback();
                 Log::info($e->getTraceAsString());
                 return $e->getTraceAsString();
                 return redirect()->back()->with('flash_error', $e->getMessage());
             }
-        }
-        else{
+        } else {
             return view('recruitment::applicant.mark_as_paid_file');
         }
     }

@@ -23,7 +23,7 @@
                 <div class="row">
                     <div class="col-sm-6 col-centered">
                         {!! Form::open(['route'=>['recruitment.applicant.update_as_paid',$id]]) !!}
-
+                        {!! Form::hidden('type',$type) !!}
                         <div class="form-group">
                             {!! Form::label('bankTxID','bankTxID :',['class'=>'control-label']) !!}
                             {!! Form::text('bankTxID',null,['class'=>'form-control']) !!}
