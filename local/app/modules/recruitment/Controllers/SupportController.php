@@ -77,4 +77,12 @@ class SupportController extends Controller
             return redirect()->back()->with('error_message','Invalid Request');
         }
     }
+    public function replyProblemDelete($id){
+        $feedback = FeebBack::find($id);
+        if($feedback){
+            $feedback->delete();
+            return redirect()->back()->with('success_message', 'deleted successfully');
+        }
+        return redirect()->back()->with('error_message', 'not found');
+    }
 }
