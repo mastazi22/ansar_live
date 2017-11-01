@@ -54,22 +54,6 @@
                 }
             }
         })
-        GlobalApp.directive('paginate',function () {
-            return {
-                restrict:'A',
-                scope:{
-                    ref:'&'
-                },
-                link:function (scope,elem,attr) {
-                    $(elem).find('.pagination a').on('click',function (e) {
-                        e.preventDefault();
-                        var urll = $(this).attr('href')
-                        scope.ref({url:urll})
-                    })
-
-                }
-            }
-        })
     </script>
     <div ng-controller="DisEmbodiedLetterController" ng-init="loadData()">
         <section class="content">

@@ -6,7 +6,7 @@
                 <div class="input-group">
                     <input type="text" ng-model="q" class="form-control" placeholder="search by mem. ID">
                     <span class="input-group-addon">
-                        <a href="#" onclick="return false" ng-click="loadData(undefied,q)">
+                        <a href="#" onclick="return false" ng-click="loadData(undefined,q)">
                             <i class="fa fa-search"></i>
                         </a>
                     </span>

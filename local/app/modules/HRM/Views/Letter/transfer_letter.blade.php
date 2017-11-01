@@ -30,7 +30,7 @@
                 $http({
                     method: 'get',
                     params: {type: "TRANSFER",q:q},
-                    url: url==undefined?'{{URL::route('letter_data')}}':url
+                    url: url===undefined?'{{URL::route('letter_data')}}':url
                 }).then(function (response) {
                     if (!$scope.isDc) $scope.unit.selectedUnit = [];
                     $scope.letterView = $sce.trustAsHtml(response.data);
@@ -54,22 +54,7 @@
                 }
             }
         })
-        GlobalApp.directive('paginate',function () {
-            return {
-                restrict:'A',
-                scope:{
-                  ref:'&'
-                },
-                link:function (scope,elem,attr) {
-                    $(elem).find('.pagination a').on('click',function (e) {
-                        e.preventDefault();
-                        var urll = $(this).attr('href')
-                        scope.ref({url:urll})
-                    })
 
-                }
-            }
-        })
     </script>
     <div ng-controller="TransferLetterController">
         <section class="content" ng-init="loadData()">
