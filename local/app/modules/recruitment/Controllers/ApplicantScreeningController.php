@@ -88,7 +88,9 @@ class ApplicantScreeningController extends Controller
             if($type=='applied'){
                 $applicants->whereHas('payment', function ($q) {
                     $q->whereNotNull('txID');
+                    $q->where('bankTxStatus','SUCCESS');
                 });
+                $applicants->where('status', $type);
             }
             else if($type=='Male'||$type=='Female'){
                 $applicants->where('gender', $type);
