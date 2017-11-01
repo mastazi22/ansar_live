@@ -44,6 +44,15 @@ class JobCircular extends Model
             });
         });
     }
+    public function appliciantInitial(){
+        return $this->hasMany(JobAppliciant::class,'job_circular_id')->where(function($q){
+            $q->whereHas('payment', function ($q) {
+                $q->whereNotNull('txID');
+            });
+            $q->where('status','initial');
+
+        });
+    }
 
     public function constraint(){
         return $this->hasOne(JobCircularConstraint::class,'job_circular_id');

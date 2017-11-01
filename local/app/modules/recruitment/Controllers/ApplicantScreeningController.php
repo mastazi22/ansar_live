@@ -24,7 +24,8 @@ class ApplicantScreeningController extends Controller
                 'appliciantMale',
                 'appliciantFemale',
                 'appliciantPaid',
-                'appliciantNotPaid'
+                'appliciantNotPaid',
+                'appliciantInitial'
             ]);
             if ($request->exists('category') && $request->category != 'all') {
                 $cicular_summery->where('job_category_id', $request->category);
