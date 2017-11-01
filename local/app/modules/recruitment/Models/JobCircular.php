@@ -27,7 +27,10 @@ class JobCircular extends Model
     public function appliciantPaid(){
         return $this->hasMany(JobAppliciant::class,'job_circular_id')->whereHas('payment',function($q){
             $q->where('bankTxStatus','SUCCESS');
-        })->where('status','applied');
+        })->where(function ($q){
+            $q->where('status','applied');
+            $q->orWhere('status','paid');
+        });
     }
     public function appliciantNotPaid(){
         return $this->hasMany(JobAppliciant::class,'job_circular_id')->where(function($q){
@@ -35,7 +38,10 @@ class JobCircular extends Model
                 $q->whereNotNull('txID');
                 $q->where('bankTxStatus','FAIL');
             });
-            $q->orWhere('status','pending');
+            $q->orWhere(function ($q){
+                $q->where('status','pending');
+                $q->orWhere('status','initial');
+            });
         });
     }
 
