@@ -132,6 +132,7 @@ class ApplicantScreeningController extends Controller
                         $q->whereNotNull('txID');
                         $q->where('bankTxStatus', 'SUCCESS');
                     });
+                    $applicants->where('status','applied');
                 } else if ($type == 'Male' || $type == 'Female') {
                     $applicants->where('gender', $type);
                 } else if ($type == 'pending') {
@@ -161,6 +162,7 @@ class ApplicantScreeningController extends Controller
                         $q->whereNotNull('txID');
                         $q->where('bankTxStatus', 'SUCCESS');
                     });
+                    $applicants->where('status','applied');
                 }
                 if ($type == 'Male' || $type == 'Female') {
                     $applicants->where('gender', $type);
