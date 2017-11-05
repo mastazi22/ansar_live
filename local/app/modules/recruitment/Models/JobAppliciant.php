@@ -5,6 +5,7 @@ namespace App\modules\recruitment\Models;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
 use App\modules\HRM\Models\Thana;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class JobAppliciant extends Model
@@ -32,5 +33,8 @@ class JobAppliciant extends Model
     }
     public function payment(){
         return $this->hasOne(JobAppliciantPaymentHistory::class,'job_appliciant_id','applicant_id');
+    }
+    public function getDateOfBirthAttribute($value){
+        return Carbon::parse($value)->format('d-M-Y');
     }
 }

@@ -393,9 +393,9 @@ GlobalApp.factory('httpService', function ($http) {
                 data:data
             })
         },
-        searchApplicant: function (data) {
+        searchApplicant: function (url,data) {
             return $http({
-                url:'/' + prefix + 'recruitment/applicant/search',
+                url:url===undefined?'/' + prefix + 'recruitment/applicant/search':url,
                 method:'post',
                 data:data
             })

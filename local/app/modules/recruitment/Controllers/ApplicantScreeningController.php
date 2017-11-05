@@ -5,7 +5,6 @@ namespace App\modules\recruitment\Controllers;
 use App\Jobs\FeedbackSMS;
 use App\modules\recruitment\Models\JobAppliciant;
 use App\modules\recruitment\Models\JobCircular;
-use http\Exception;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -58,25 +57,53 @@ class ApplicantScreeningController extends Controller
 
     public function loadApplicants(Request $request)
     {
-        $rules = [
-            'category' => ['regex:/^([0-9]+)|(all)$/'],
-            'circular' => ['regex:/^([0-9]+)|(all)$/']
-        ];
-        $this->validate($request, $rules);
+        if($request->ajax()){
+            $rules = [
+                'category' => ['regex:/^([0-9]+)|(all)$/'],
+                'circular' => ['regex:/^([0-9]+)|(all)$/'],
+                'limit'=>'regex:/^[0-9]+$/'
+            ];
+            $this->validate($request, $rules);
 
-        $query = JobAppliciant::whereHas('circular', function ($q) use ($request) {
-            $q->where('status', 'active');
-            if ($request->exists('circular') && $request->circular != 'all') {
-                $q->where('id', $request->circular);
-            }
-            $q->whereHas('category', function ($q) use ($request) {
+            $query = JobAppliciant::whereHas('circular', function ($q) use ($request) {
                 $q->where('status', 'active');
-                if ($request->exists('category') && $request->category != 'all') {
-                    $q->where('id', $request->category);
+                if ($request->exists('circular') && $request->circular != 'all') {
+                    $q->where('id', $request->circular);
                 }
-            });
-        })->with(['division', 'district', 'thana'])->where('status', 'applied');
-        return response()->json($query->get());
+                $q->whereHas('category', function ($q) use ($request) {
+                    $q->where('status', 'active');
+                    if ($request->exists('category') && $request->category != 'all') {
+                        $q->where('id', $request->category);
+                    }
+                });
+            })->with(['division', 'district', 'thana'])->where('status', 'applied');
+            if($request->filter){
+                foreach ($request->filter as $key=>$value){
+                    if($value['value']){
+                        if($key=='height'){
+                            $height = ($value['feet']?floatval($value['feet']):0)*12+($value['feet']?floatval($value['inch']):0);
+                            $query->whereRaw('(height_feet*12+height_inch)'.$value['comparator'].$height);
+                        }
+                        else if($key=='age' && $value['data']){
+                            $query->whereRaw('DATEDIFF(NOW(),date_of_birth)/365'.$value['comparator'].$value['data'] );
+                        }
+                        else if($key=='training'){
+                            $query->whereNotNull('training_info');
+                        }
+                        else if($key=='reference'){
+                            $query->whereNotNull('connection_relation');
+                        }
+                        else if($value['data']){
+                            $query->where($key,$value['comparator'],$value['data']);
+                        }
+                    }
+                }
+            }
+//        return response()->json($query->get());
+            return view('recruitment::applicant.part_search',['applicants'=>$query->paginate($request->limit?$request->limit:50)]);
+
+        }
+        return abort(401);
     }
 
     public function applicantListSupport(Request $request, $type = null)
