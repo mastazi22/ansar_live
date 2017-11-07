@@ -15,8 +15,11 @@ use Illuminate\Support\Facades\DB;
 class SupportController extends Controller
 {
     //
-    public function problemReport(){
-        $applicants  = FeebBack::where('problem_type','payment')->where('status','pending')->paginate(50);
+    public function problemReport(Request $request){
+        if(!strcasecmp($request->method(),'post')){
+            $applicants  = FeebBack::where('problem_type','payment')->where('status','pending')->where('mobile_no_self',$request->mobile_no_self)->paginate(50);
+        }
+        else $applicants  = FeebBack::where('problem_type','payment')->where('status','pending')->paginate(50);
         return view('recruitment::support.applicants_feedback',['applicants'=>$applicants]);
     }
 

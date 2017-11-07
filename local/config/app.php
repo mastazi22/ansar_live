@@ -129,7 +129,7 @@ return [
         ['name'=>'HRM','route'=>'HRM'],
         ['name'=>'SD','route'=>'#'],
         ['name'=>'ADAPS','route'=>'#'],
-//        ['name'=>strtoupper('recruitment'),'route'=>'recruitment'],
+        ['name'=>strtoupper('recruitment'),'route'=>'recruitment'],
     ],
     'offer'=>[
         42,18,42,66,67,68,69,65,71,70,72

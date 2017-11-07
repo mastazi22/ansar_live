@@ -25,7 +25,7 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase'],'n
     Route::post('/settings/applicant_quota/update',['as'=>'recruitment.quota.update','uses'=>'JobApplicantQuotaController@update']);
 
     //support
-    Route::get('/supports/feedback',['as'=>'supports.feedback','uses'=>'SupportController@problemReport']);
+    Route::any('/supports/feedback',['as'=>'supports.feedback','uses'=>'SupportController@problemReport']);
     Route::post('/supports/feedback/{id}',['as'=>'supports.feedback.submit','uses'=>'SupportController@replyProblem']);
     Route::post('/supports/feedback/delete/{id}',['as'=>'supports.feedback.delete','uses'=>'SupportController@replyProblemDelete']);
 

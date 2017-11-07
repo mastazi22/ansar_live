@@ -1,8 +1,12 @@
 <?php $i = (intVal($applicants->currentPage() - 1) * $applicants->perPage()) + 1; ?>
 <div>
     <div class="table-responsive">
-        <table class="table table-bordered">
-            <caption style="font-size: 20px;color:#111111">All applied applicants</caption>
+        <table class="table table-bordered table-condensed">
+            <caption style="font-size: 20px;color:#111111">All applied applicants
+                <button class="btn btn-primary btn-xs" ng-click="selectAllApplicant()">Select all applicant</button>
+                <button class="btn btn-primary btn-xs" ng-disabled="selectedList.length<=0" ng-click="confirmSelection()">Confirm selection</button>
+                <button class="btn btn-danger btn-xs" ng-disabled="selectedList.length<=0" ng-click="confirmSelection()">Reject selection</button>
+            </caption>
             <tr>
                 <th>Sl. No</th>
                 <th>Applicant Name</th>
@@ -29,7 +33,8 @@
                     <td>{{$a->chest_normal.'-'.$a->chest_extended}} inch</td>
                     <td>{{$a->weight}} kg</td>
                     <td>
-                        action
+                        <button ng-if="selectedList.indexOf('{{$a->id}}')<0" class="btn btn-primary btn-xs" ng-click="addToSelection('{{$a->id}}')"><i class="fa fa-plus"></i>&nbsp; Add To Selection </button>
+                        <button ng-if="selectedList.indexOf('{{$a->id}}')>=0" class="btn btn-danger btn-xs" ng-click="removeToSelection('{{$a->id}}')"><i class="fa fa-minus"></i>&nbsp; Remove Selection </button>
                     </td>
                 </tr>
             @empty

@@ -58,11 +58,12 @@
                         </div>
                     </div>
                 </div>--}}
-                {{--<div class="row" style="margin-bottom: 20px">
+                <div class="row" style="margin-bottom: 20px">
                     <div class="col-sm-6 col-sm-offset-6">
-                        <form action="{{URL::route('recruitment.applicant.list',['type'=>$type])}}" method="get">
+                        <form action="{{URL::route('supports.feedback')}}" method="post">
+                            {!! csrf_field() !!}
                             <div class="input-group">
-                                <input type="text" name="q" class="form-control" placeholder="Search here by txID or mobile no">
+                                <input type="text" name="mobile_no_self" class="form-control" placeholder="Search here by mobile no">
                                 <span class="input-group-btn">
                                             <button class="btn btn-primary">
                                                 <i class="fa fa-search"></i>
@@ -71,7 +72,7 @@
                             </div>
                         </form>
                     </div>
-                </div>--}}
+                </div>
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <tr>

@@ -100,6 +100,9 @@ class ApplicantScreeningController extends Controller
                 }
             }
 //        return response()->json($query->get());
+            if($request->select_all){
+                return response()->json($query->pluck('id'));
+            }
             return view('recruitment::applicant.part_search',['applicants'=>$query->paginate($request->limit?$request->limit:50)]);
 
         }
