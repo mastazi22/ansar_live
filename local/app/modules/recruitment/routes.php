@@ -30,11 +30,13 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase'],'n
     Route::post('/supports/feedback/delete/{id}',['as'=>'supports.feedback.delete','uses'=>'SupportController@replyProblemDelete']);
 
     Route::get('/test',function (){
-       $data = \Maatwebsite\Excel\Facades\Excel::load(storage_path('bt.xls'),function (){
+       $data = \Maatwebsite\Excel\Facades\Excel::load(storage_path('txid.xls'),function (){
 
        })->get() ;
        $a = collect($data)->pluck('txid');
        return implode('\',\'',$a->toArray());
+//        return $a;
     });
+
 
 });

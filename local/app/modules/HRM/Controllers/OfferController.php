@@ -2,7 +2,6 @@
 
 namespace App\modules\HRM\Controllers;
 
-use App\modules\HRM\Models\UserOfferQueue;
 use App\Helper\Helper;
 use App\Http\Controllers\Controller;
 use App\Jobs\OfferQueue;
@@ -11,12 +10,12 @@ use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\OfferCancel;
 use App\modules\HRM\Models\OfferQuota;
-use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\OfferSmsLog;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\PersonalInfo;
-use App\modules\HRM\Models\ReceiveSMSModel;
+use App\modules\HRM\Models\RequestDumper;
+use App\modules\HRM\Models\UserOfferQueue;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -28,8 +27,6 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
-use Mockery\Exception;
-use Monolog\Handler\Curl;
 
 class OfferController extends Controller
 {
@@ -80,9 +77,9 @@ class OfferController extends Controller
                 ['male' => $request->get('ansar_male'), 'female' => $request->get('ansar_female')],
                 $request->get('district'),
                 $request->get('exclude_district'), Auth::user());
-            PanelModel::whereIn('ansar_id',$data)->update(['locked'=>1]);
+            PanelModel::whereIn('ansar_id', $data)->update(['locked' => 1]);
             DB::commit();
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
             return response(collect(['type' => 'error', 'message' => $e->getMessage()])->toJson(), 400, ['Content-Type' => 'application/json']);
         }
@@ -112,11 +109,11 @@ class OfferController extends Controller
         $district_id = $request->get('district_id');
         DB::beginTransaction();
         try {
-            if(UserOfferQueue::where('user_id',Auth::user()->id)->exists()){
+            if (UserOfferQueue::where('user_id', Auth::user()->id)->exists()) {
                 throw new \Exception("Your have one pending offer.Please wait until your offer is complete");
             }
             $userOffer = UserOfferQueue::create([
-                'user_id'=>Auth::user()->id
+                'user_id' => Auth::user()->id
             ]);
             $data = CustomQuery::getAnsarInfo(
                 ['male' => $request->get('pc_male'), 'female' => $request->get('pc_female')],
@@ -126,13 +123,17 @@ class OfferController extends Controller
                 $request->get('exclude_district'), Auth::user());
             Log::info($data);
             Log::info($request->all());
+            RequestDumper::create([
+                'user_id' => auth()->user()->id,
+                'request_url' => $request->url(),
+                'request_data' => serialize($request->all())
+            ]);
             $quota = Helper::getOfferQuota(Auth::user());
-            if($quota!==false&&$quota<count($data)) throw new \Exception("Your offer quota limit exit");
-            PanelModel::whereIn('ansar_id',$data)->update(['locked'=>1]);
-            $this->dispatch(new OfferQueue($data,$district_id,Auth::user(),$userOffer));
+            if ($quota !== false && $quota < count($data)) throw new \Exception("Your offer quota limit exit");
+            PanelModel::whereIn('ansar_id', $data)->update(['locked' => 1]);
+            $this->dispatch(new OfferQueue($data, $district_id, Auth::user(), $userOffer));
             DB::commit();
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
             return response(collect(['status' => 'error', 'message' => $e->getMessage()])->toJson(), 400, ['Content-Type' => 'application/json']);
         }
@@ -143,17 +144,17 @@ class OfferController extends Controller
     {
         $pa = $ansar->panel;
         $ansar->status()->update([
-            'pannel_status'=>0,
-            'offer_sms_status'=>1,
+            'pannel_status' => 0,
+            'offer_sms_status' => 1,
         ]);
         $ansar->panel->panelLog()->save(new PanelInfoLogModel([
-            'ansar_id'=>$pa->ansar_id,
-            'merit_list'=>$pa->ansar_merit_list,
-            'panel_date'=>$pa->panel_date,
-            'old_memorandum_id'=>!$pa->memorandum_id ? "N\A" : $pa->memorandum_id,
-            'movement_date'=>Carbon::today(),
-            'come_from'=>$pa->come_from,
-            'move_to'=>'Offer',
+            'ansar_id' => $pa->ansar_id,
+            'merit_list' => $pa->ansar_merit_list,
+            'panel_date' => $pa->panel_date,
+            'old_memorandum_id' => !$pa->memorandum_id ? "N\A" : $pa->memorandum_id,
+            'movement_date' => Carbon::today(),
+            'come_from' => $pa->come_from,
+            'move_to' => 'Offer',
         ]));
         $ansar->panel()->delete();
     }
@@ -173,7 +174,7 @@ class OfferController extends Controller
 
     function getOfferQuota(Request $request)
     {
-        return Response::json(CustomQuery::offerQuota($request->range?$request->range:'all'));
+        return Response::json(CustomQuery::offerQuota($request->range ? $request->range : 'all'));
     }
 
     function updateOfferQuota(Request $request)
@@ -226,47 +227,46 @@ class OfferController extends Controller
         for ($i = 0; $i < count($ansar_ids); $i++) {
             DB::beginTransaction();
             try {
-                $ansar = PersonalInfo::where('ansar_id',$ansar_ids[$i])->first();
+                $ansar = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
                 $offered_ansar = $ansar->offer_sms_info;
                 if (!$offered_ansar) $received_ansar = $ansar->receiveSMS;
-                if($offered_ansar&&$offered_ansar->come_from=='rest'){
+                if ($offered_ansar && $offered_ansar->come_from == 'rest') {
                     $ansar->status()->update([
-                        'offer_sms_status'=>0,
-                        'rest_status'=>1,
+                        'offer_sms_status' => 0,
+                        'rest_status' => 1,
                     ]);
-                }
-                else{
+                } else {
                     $panel_log = $ansar->panelLog()->first();
                     $ansar->panel()->save(new PanelModel([
-                        'memorandum_id'=>$panel_log->old_memorandum_id,
-                        'panel_date'=>Carbon::now(),
-                        'come_from'=>'OfferCancel',
-                        'ansar_merit_list'=>1,
-                        'action_user_id'=>auth()->user()->id,
+                        'memorandum_id' => $panel_log->old_memorandum_id,
+                        'panel_date' => Carbon::now(),
+                        'come_from' => 'OfferCancel',
+                        'ansar_merit_list' => 1,
+                        'action_user_id' => auth()->user()->id,
                     ]));
                     $ansar->status()->update([
-                        'offer_sms_status'=>0,
-                        'pannel_status'=>1,
+                        'offer_sms_status' => 0,
+                        'pannel_status' => 1,
                     ]);
                 }
                 $ansar->offerCancel()->save(new OfferCancel([
-                    'offer_cancel_date'=>Carbon::now()
+                    'offer_cancel_date' => Carbon::now()
                 ]));
                 if ($offered_ansar) {
                     $ansar->offerLog()->save(new OfferSmsLog([
-                        'offered_date'=>$offered_ansar->sms_send_datetime,
-                        'action_date'=>Carbon::now(),
-                        'offered_district'=>$offered_ansar->district_id,
-                        'action_user_id'=>auth()->user()->id,
-                        'reply_type'=>'No Reply',
+                        'offered_date' => $offered_ansar->sms_send_datetime,
+                        'action_date' => Carbon::now(),
+                        'offered_district' => $offered_ansar->district_id,
+                        'action_user_id' => auth()->user()->id,
+                        'reply_type' => 'No Reply',
                     ]));
                     $offered_ansar->delete();
                 } else {
                     $ansar->offerLog()->save(new OfferSmsLog([
-                        'offered_date'=>$received_ansar->sms_send_datetime,
-                        'offered_district'=>$received_ansar->offered_district,
-                        'action_user_id'=>auth()->user()->id,
-                        'reply_type'=>'Yes',
+                        'offered_date' => $received_ansar->sms_send_datetime,
+                        'offered_district' => $received_ansar->offered_district,
+                        'action_user_id' => auth()->user()->id,
+                        'reply_type' => 'Yes',
                     ]));
                     $received_ansar->delete();
                 }
