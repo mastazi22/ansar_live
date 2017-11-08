@@ -64,7 +64,6 @@ class ApplicantScreeningController extends Controller
                 'limit'=>'regex:/^[0-9]+$/'
             ];
             $this->validate($request, $rules);
-
             $query = JobAppliciant::whereHas('circular', function ($q) use ($request) {
                 $q->where('status', 'active');
                 if ($request->exists('circular') && $request->circular != 'all') {
@@ -76,7 +75,10 @@ class ApplicantScreeningController extends Controller
                         $q->where('id', $request->category);
                     }
                 });
-            })->with(['division', 'district', 'thana'])->where('status', 'applied');
+            })->where('status', 'applied');
+            $query->join('db_amis.tbl_division as dd','dd.id','=','job_applicant.division_id');
+            $query->join('db_amis.tbl_units as uu','uu.id','=','job_applicant.unit_id');
+            $query->join('db_amis.tbl_thana as tt','tt.id','=','job_applicant.thana_id');
             if($request->filter){
                 foreach ($request->filter as $key=>$value){
                     if($value['value']){
@@ -93,13 +95,21 @@ class ApplicantScreeningController extends Controller
                         else if($key=='reference'){
                             $query->whereNotNull('connection_relation');
                         }
-                        else if($value['data']){
+                        else if(isset($value['data'])&&$value['data']&&$key!='applicant_quota'){
                             $query->where($key,$value['comparator'],$value['data']);
                         }
                     }
                 }
+                if($request->filter['applicant_quota']['value']){
+                    $query->join('job_applicant_quota','job_applicant_quota.district_id','=','job_applicant.unit_id');
+
+                    $query->selectRaw("job_applicant.*,dd.division_name_bng,uu.unit_name_bng,tt.thana_name_bng,job_applicant_quota.male as male_count,job_applicant_quota.female as female_count,@unit:= IF(@current_unit=job_applicant.`unit_id`,@unit+1,1) AS unit_limit,
+@current_unit:=job_applicant_quota.district_id AS districtt")->orderBy('job_applicant_quota.district_id');
+                    $q = clone $query;
+                    $query = DB::table(DB::raw('('.$q->toSql().') x'))->mergeBindings($q->getQuery())->selectRaw('*')->whereRaw('unit_limit<=male_count');
+                }
             }
-//        return response()->json($query->get());
+//            return response()->json($query->paginate(50));
             if($request->select_all){
                 return response()->json($query->pluck('id'));
             }

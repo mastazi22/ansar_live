@@ -20,9 +20,15 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase'],'n
     Route::any('/applicant/update_as_paid_by_file',['as'=>'recruitment.applicant.update_as_paid_by_file','uses'=>'ApplicantScreeningController@updateAsPaidByFile']);
 
     //settings
+        //quota
     Route::any('/settings/applicant_quota',['as'=>'recruitment.quota.index','uses'=>'JobApplicantQuotaController@index']);
     Route::any('/settings/applicant_quota/edit',['as'=>'recruitment.quota.edit','uses'=>'JobApplicantQuotaController@edit']);
     Route::post('/settings/applicant_quota/update',['as'=>'recruitment.quota.update','uses'=>'JobApplicantQuotaController@update']);
+        //point table
+    Route::get('/settings/applicant_point',['as'=>'recruitment.point.index','uses'=>'PointTableController@index']);
+    Route::post('/settings/applicant_point/fields',['as'=>'recruitment.point.fields','uses'=>'PointTableController@getPointsField']);
+    Route::post('/settings/applicant_point/store',['as'=>'recruitment.point.store','uses'=>'PointTableController@store']);
+    Route::post('/settings/applicant_point/delete/{id}',['as'=>'recruitment.point.delete','uses'=>'PointTableController@delete']);
 
     //support
     Route::any('/supports/feedback',['as'=>'supports.feedback','uses'=>'SupportController@problemReport']);

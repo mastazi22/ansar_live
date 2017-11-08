@@ -44,7 +44,8 @@
                 age: {value: false, data: '', comparator: '='},
                 training: {value: false},
                 reference: {value: false},
-                gender: {value: false, data: 'Male', comparator: '='}
+                gender: {value: false, data: 'Male', comparator: '='},
+                applicant_quota: {value: false}
             }
             $scope.comparisonOperator = {
                 'Greater then': '>',
@@ -379,6 +380,10 @@
                                     </select>
                                 </div>
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="checkbox" id="applicant_quota" ng-model="filter.applicant_quota.value" class="fancy-checkbox">
+                            <label for="applicant_quota" class="control-label">Apply Quota</label>
                         </div>
                     </div>
                     <div class="modal-footer">

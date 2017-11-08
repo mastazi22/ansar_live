@@ -583,3 +583,7 @@ Breadcrumbs::register('recruitment.quota.index', function($breadcrumbs) {
     $breadcrumbs->parent('setting');
     $breadcrumbs->push('Applicant Quota', URL::route('recruitment.quota.index'));
 });
+Breadcrumbs::register('recruitment.point.index', function($breadcrumbs) {
+    $breadcrumbs->parent('setting');
+    $breadcrumbs->push('Applicant Point', URL::route('recruitment.point.index'));
+});

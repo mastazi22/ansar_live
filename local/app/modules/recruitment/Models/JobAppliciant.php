@@ -34,7 +34,13 @@ class JobAppliciant extends Model
     public function payment(){
         return $this->hasOne(JobAppliciantPaymentHistory::class,'job_appliciant_id','applicant_id');
     }
+    public function quota(){
+        return $this->belongsTo(JobApplicantQuota::class,'unit_id','district_id');
+    }
     public function getDateOfBirthAttribute($value){
         return Carbon::parse($value)->format('d-M-Y');
+    }
+    public function getColumns(){
+        return $this->getConnection()->getSchemaBuilder()->getColumnListing($this->getTable());
     }
 }

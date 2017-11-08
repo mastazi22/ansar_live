@@ -392,7 +392,12 @@ return [
                 "Applicant Quota"=>[
                     "route"=>"recruitment.quota.index",
                     "icon"=>"fa-cog"
-                ]
+                ],
+                "Applicant point"=>[
+                    "route"=>"recruitment.point.index",
+                    "icon"=>"fa-cog"
+                ],
+
             ]
         ],
 

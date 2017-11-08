@@ -26,9 +26,9 @@
                     <td>{{$a->applicant_name_bng}}</td>
                     <td>{{$a->gender}}</td>
                     <td>{{$a->date_of_birth}}</td>
-                    <td>{{$a->division->division_name_bng}}</td>
-                    <td>{{$a->district->unit_name_bng}}</td>
-                    <td>{{$a->thana->thana_name_bng}}</td>
+                    <td>{{$a->division_name_bng}}</td>
+                    <td>{{$a->unit_name_bng}}</td>
+                    <td>{{$a->thana_name_bng}}</td>
                     <td>{{$a->height_feet}} feet {{$a->height_inch}} inch</td>
                     <td>{{$a->chest_normal.'-'.$a->chest_extended}} inch</td>
                     <td>{{$a->weight}} kg</td>
