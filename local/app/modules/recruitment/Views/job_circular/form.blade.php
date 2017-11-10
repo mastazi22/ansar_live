@@ -45,9 +45,17 @@
     <div class="form-group">
         {!! Form::label('test','Payment Status : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
         <input type="checkbox" value="on" name="payment_status"
-               @if((isset($data)&&$data->status!='off')||Request::old('status')!='off')checked
+               @if((isset($data)&&$data->payment_status=='on')||Request::old('payment_status')=='on')checked
                @endif id="payment_status" class="switch-checkbox">
         <label for="payment_status" class=""></label>
+
+    </div>
+    <div class="form-group">
+        {!! Form::label('test','Application Status : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
+        <input type="checkbox" value="on" name="application_status"
+               @if((isset($data)&&$data->application_status=='on')||Request::old('application_status')=='on')checked
+               @endif id="application_status" class="switch-checkbox">
+        <label for="application_status" class=""></label>
 
     </div>
         <div class="form-group">
