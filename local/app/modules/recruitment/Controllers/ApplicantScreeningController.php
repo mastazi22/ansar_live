@@ -41,7 +41,7 @@ class ApplicantScreeningController extends Controller
                 $cicular_summery->where('id', $request->circular);
             }
             if ($request->exists('status') && $request->status != 'all') {
-                $cicular_summery->where('status', $request->status);
+                $cicular_summery->where('circular_status', $request->status);
                 /*$cicular_summery->where(function($q) use($request){
                     $q->whereHas('category',function($q) use($request){
                         $q->where('status',$request->status);
@@ -71,7 +71,7 @@ class ApplicantScreeningController extends Controller
             ];
             $this->validate($request, $rules);
             $query = JobAppliciant::whereHas('circular', function ($q) use ($request) {
-                $q->where('status', 'active');
+                $q->where('circular_status', 'running');
                 if ($request->exists('circular') && $request->circular != 'all') {
                     $q->where('id', $request->circular);
                 }

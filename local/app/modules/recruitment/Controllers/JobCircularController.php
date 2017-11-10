@@ -179,8 +179,8 @@ class JobCircularController extends Controller
 
         }
         if($request->exists('status')&&$request->status!='all'){
-            if($data) $data->where('status',$request->status);
-            else $data = JobCircular::with('category')->where('status',$request->status);
+            if($data) $data->where('circular_status',$request->status);
+            else $data = JobCircular::with('category')->where('circular_status',$request->status);
         }
         if($request->exists('category_id')&&$request->category_id){
             if($data) $data->where('job_category_id',$request->category_id);

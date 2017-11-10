@@ -9,10 +9,10 @@
             $scope.categories = [];
             $scope.circulars = [];
             $scope.circularSummery = [];
-            $scope.allStatus = {'all': 'All', 'inactive': 'Inactive', 'active': 'Active'}
+            $scope.allStatus = {'all': 'All', 'running': 'Running', 'shutdown': 'close'}
             $scope.circular = 'all';
             $scope.category = 'all';
-            $scope.status = 'active';
+            $scope.status = 'running';
             var loadAll = function () {
                 $scope.circular = 'all';
                 $scope.category = 'all';
