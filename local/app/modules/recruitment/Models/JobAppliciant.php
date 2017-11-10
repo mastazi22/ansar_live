@@ -29,7 +29,7 @@ class JobAppliciant extends Model
     }
 
     public function appliciantEducationInfo(){
-        return $this->hasMany(JobAppliciantEducationInfo::class,'job_appliciant_id');
+        return $this->hasMany(JobAppliciantEducationInfo::class,'job_applicant_id');
     }
     public function payment(){
         return $this->hasOne(JobAppliciantPaymentHistory::class,'job_appliciant_id','applicant_id');
@@ -42,5 +42,12 @@ class JobAppliciant extends Model
     }
     public function getColumns(){
         return $this->getConnection()->getSchemaBuilder()->getColumnListing($this->getTable());
+    }
+    public function editHistory(){
+        return $this->hasMany(JobApplicantEditHistory::class,'applicant_id');
+    }
+
+    public function selectedApplicant(){
+        return $this->hasOne(JobSelectedApplicant::class,'applicant_id','applicant_id');
     }
 }

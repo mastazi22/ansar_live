@@ -14,6 +14,12 @@
             }).then(function (response) {
                 $scope.pointFields = response.data;
             })
+            $http({
+                url:'{{URL::route('recruitment.point.index')}}',
+                method:'get'
+            }).then(function (response) {
+                $scope.rows = response.data;
+            })
             $scope.addNewPoint = function () {
                 $scope.rows.push({
                     id:'',

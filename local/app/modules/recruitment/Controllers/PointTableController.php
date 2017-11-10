@@ -12,7 +12,10 @@ use Illuminate\Support\Facades\DB;
 class PointTableController extends Controller
 {
     //
-    public function index(){
+    public function index(Request $request){
+        if($request->ajax()){
+            return response()->json(JobApplicantPoints::all());
+        }
         return view('recruitment::applicant_point.index');
     }
     public function getPointsField(Request $request){

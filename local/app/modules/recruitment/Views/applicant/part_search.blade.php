@@ -2,10 +2,18 @@
 <div>
     <div class="table-responsive">
         <table class="table table-bordered table-condensed">
-            <caption style="font-size: 20px;color:#111111">All applied applicants
+            <caption style="font-size: 20px;color:#111111">All applied applicants({{$applicants->total()}})
                 <button class="btn btn-primary btn-xs" ng-click="selectAllApplicant()">Select all applicant</button>
-                <button class="btn btn-primary btn-xs" ng-disabled="selectedList.length<=0" ng-click="confirmSelection()">Confirm selection</button>
-                <button class="btn btn-danger btn-xs" ng-disabled="selectedList.length<=0" ng-click="confirmSelection()">Reject selection</button>
+                <button class="btn btn-primary btn-xs" ng-disabled="selectedList.length<=0" ng-click="confirmSelectionOrRejection()">Confirm selection</button>
+                <button class="btn btn-danger btn-xs" ng-disabled="selectedList.length<=0" ng-click="selectApplicants('rejection')">Reject selection</button>
+            <div class="input-group" style="margin-top: 10px">
+                <input ng-keyup="$event.keyCode==13?loadApplicant():''" class="form-control" ng-model="q" type="text" placeholder="Search by national id">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" ng-click="loadApplicant()">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </span>
+            </div>
             </caption>
             <tr>
                 <th>Sl. No</th>
@@ -23,7 +31,11 @@
             @forelse($applicants as $a)
                 <tr>
                     <td>{{$i++}}</td>
-                    <td>{{$a->applicant_name_bng}}</td>
+                    <td>{{$a->applicant_name_bng}}
+                        <a href="{{URL::route('recruitment.applicant.detail_view',['id'=>$a->applicant_id])}}" target="_blank" class="">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                    </td>
                     <td>{{$a->gender}}</td>
                     <td>{{$a->date_of_birth}}</td>
                     <td>{{$a->division_name_bng}}</td>
@@ -33,8 +45,8 @@
                     <td>{{$a->chest_normal.'-'.$a->chest_extended}} inch</td>
                     <td>{{$a->weight}} kg</td>
                     <td>
-                        <button ng-if="selectedList.indexOf('{{$a->id}}')<0" class="btn btn-primary btn-xs" ng-click="addToSelection('{{$a->id}}')"><i class="fa fa-plus"></i>&nbsp; Add To Selection </button>
-                        <button ng-if="selectedList.indexOf('{{$a->id}}')>=0" class="btn btn-danger btn-xs" ng-click="removeToSelection('{{$a->id}}')"><i class="fa fa-minus"></i>&nbsp; Remove Selection </button>
+                        <button ng-if="selectedList.indexOf('{{$a->applicant_id}}')<0" class="btn btn-primary btn-xs" ng-click="addToSelection('{{$a->applicant_id}}')"><i class="fa fa-plus"></i>&nbsp; Add To Selection </button>
+                        <button ng-if="selectedList.indexOf('{{$a->applicant_id}}')>=0" class="btn btn-danger btn-xs" ng-click="removeToSelection('{{$a->applicant_id}}')"><i class="fa fa-minus"></i>&nbsp; Remove Selection </button>
                     </td>
                 </tr>
             @empty

@@ -24,9 +24,23 @@
         }
     </style>
     <script>
-        GlobalApp.controller('applicantSearch', function ($scope, $http, $q, httpService, $sce) {
+        GlobalApp.controller('applicantSearch', function ($scope, $http, $q, httpService, $sce,notificationService) {
             var p = '50'
+            $scope.relations = {
+                '': '--সম্পর্ক নির্বাচন করুন--',
+                'father': 'Father',
+                'mother': 'Mother',
+                'brother': 'Brother',
+                'sister': 'Sister',
+                'cousin': 'Cousin',
+                'uncle': 'Uncle',
+                'aunt': 'Aunt',
+                'neighbour': 'Neighbour'
+            };
             $scope.categories = [];
+            $scope.q = '';
+            $scope.selectMessage = '';
+            $scope.educations = [];
             $scope.circulars = [];
             $scope.applicants = $sce.trustAsHtml('loading data....');
             $scope.allStatus = {'all': 'All', 'inactive': 'Inactive', 'active': 'Active'}
@@ -43,8 +57,9 @@
                 weight: {value: false, data: '', comparator: '='},
                 age: {value: false, data: '', comparator: '='},
                 training: {value: false},
-                reference: {value: false},
+                reference: {value: false,data:'', comparator: '='},
                 gender: {value: false, data: 'Male', comparator: '='},
+                education: {value: false, data: '', comparator: '='},
                 applicant_quota: {value: false}
             }
             $scope.comparisonOperator = {
@@ -65,14 +80,17 @@
                         category: $scope.category,
                         circular: $scope.circular,
                         limit: $scope.limitList,
-                        filter: $scope.filter
-                    })
+                        filter: $scope.filter,
+                        q:$scope.q
+                    }),
+                    $http.get("{{URL::to('HRM/getalleducation')}}")
                 ])
                     .then(function (response) {
                         $scope.circular = 'all';
                         $scope.category = 'all';
                         $scope.categories = response[0].data;
                         $scope.circulars = response[1].data;
+                        $scope.educations = response[3].data;
                         $scope.applicants = $sce.trustAsHtml(response[2].data);
                         $scope.allLoading = false;
                     }, function (response) {
@@ -93,7 +111,8 @@
                         category: $scope.category,
                         circular: $scope.circular,
                         limit: $scope.limitList,
-                        filter: $scope.filter
+                        filter: $scope.filter,
+                        q:$scope.q
                     })
                 ]).then(function (response) {
                     $scope.circular = 'all';
@@ -125,7 +144,8 @@
                     category: $scope.category,
                     circular: $scope.circular,
                     limit: $scope.limitList,
-                    filter: $scope.filter
+                    filter: $scope.filter,
+                    q:$scope.q
                 }).then(function (response) {
                     $scope.applicants = $sce.trustAsHtml(response.data);
                     $scope.allLoading = false;
@@ -142,12 +162,13 @@
                     circular: $scope.circular,
                     limit: $scope.limitList,
                     filter: $scope.filter,
-                    select_all:true
+                    select_all: true,
+                    q:$scope.q
                 }).then(function (response) {
                     console.log(response.data)
                     $scope.allLoading = false;
                     $scope.selectedList = response.data.map(function (n) {
-                        return n+'';
+                        return n + '';
                     });
                 }, function (response) {
                     $scope.allLoading = false;
@@ -165,12 +186,38 @@
             }
             $scope.removeToSelection = function (id) {
                 var i = $scope.selectedList.indexOf(id)
-               if(i>=0) $scope.selectedList.splice(i,1);
+                if (i >= 0) $scope.selectedList.splice(i, 1);
             }
             $scope.applyFilter = function () {
                 $scope.selectedList = [];
                 $scope.loadApplicant();
             }
+            $scope.confirmSelectionOrRejection = function () {
+                $("#chooser").modal('show')
+            }
+            $scope.selectApplicants = function (type,subType) {
+                $scope.allLoading = true;
+                $http({
+                    url:'{{URL::route('recruitment.applicant.confirm_selection_or_rejection')}}',
+                    method:'post',
+                    data:{
+                        applicants:$scope.selectedList,
+                        type:type,
+                        sub_type:subType,
+                        message:$scope.selectMessage
+                    }
+                }).then(function (response) {
+                    $scope.allLoading = false;
+                    notificationService.notify(response.data.status,response.data.message)
+                    $scope.selectedList = [];
+                    $scope.loadApplicant();
+                },function (response) {
+                    $scope.allLoading = false;
+                })
+            }
+            $scope.$watch('selectMessage',function (newVal) {
+                $scope.selectMessage = newVal.length>160?newVal.substr(0,160):newVal;
+            })
             loadAll();
 
 
@@ -361,7 +408,13 @@
                             <input type="checkbox" id="reference" ng-model="filter.reference.value"
                                    class="fancy-checkbox">
                             <label for="reference" class="control-label">With Reference</label>
-
+                            <div class="row" ng-if="filter.reference.value">
+                                <div class="col-sm-6">
+                                    <select ng-model="filter.reference.data" name="" id="" class="form-control">
+                                        <option ng-repeat="(k,v) in relations" value="[[k]]">[[v]]</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <input type="checkbox" id="training" ng-model="filter.training.value"
@@ -382,14 +435,60 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <input type="checkbox" id="applicant_quota" ng-model="filter.applicant_quota.value" class="fancy-checkbox">
+                            <input type="checkbox" id="applicant_quota" ng-model="filter.applicant_quota.value"
+                                   class="fancy-checkbox">
                             <label for="applicant_quota" class="control-label">Apply Quota</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="checkbox" id="education" ng-model="filter.education.value"
+                                   class="fancy-checkbox">
+                            <label for="education" class="control-label">Education</label>
+                            <div class="row" ng-if="filter.education.value">
+                                <div class="col-sm-6">
+                                    <select name="" id="" class="form-control"
+                                            ng-model="filter.education.comparator">
+                                        <option ng-repeat="(key,value) in comparisonOperator" value="[[value]]">
+                                            [[key]]
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-6">
+                                    <select  class="form-control" ng-model="filter.education.data" name="" id="">
+                                        <option value="">--Select a education</option>
+                                        <option ng-repeat="e in educations" value="[[e.id]]">
+                                            [[e.education_deg_bng]]
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-primary pull-right" ng-click="applyFilter()" data-dismiss="modal">Apply
                             filter
                         </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="chooser">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Choose a option</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-8 col-centered" style="text-align: center">
+                                <p>Character left: [[selectMessage.length]]/160</p>
+                                <textarea style="margin-bottom: 10px" class="form-control" ng-model="selectMessage" name="" id="" cols="30" rows="5" placeholder="Type your message">
+
+                                </textarea>
+                                <button class="btn btn-primary" data-dismiss="modal" style="margin-bottom: 10px" ng-click="selectApplicants('selection',0)">Confirm selection & cancel previous selection</button>
+                                <button  class="btn btn-primary" data-dismiss="modal" ng-click="selectApplicants('selection',1)">Confirm selection & add to previous selection</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -10,6 +10,10 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase'],'n
     Route::resource('circular','JobCircularController',['except'=>['destroy','show']]);
     //applicant management
     Route::any('/applicant',['as'=>'recruitment.applicant.index','uses'=>'ApplicantScreeningController@index']);
+    Route::get('/applicant/detail/view/{id}',['as'=>'recruitment.applicant.detail_view','uses'=>'ApplicantScreeningController@applicantDetailView']);
+    Route::get('/applicant/detail/{id}',['as'=>'recruitment.applicant.detail','uses'=>'ApplicantScreeningController@getApplicantData']);
+    Route::post('/applicant/update',['as'=>'recruitment.applicant.update','uses'=>'ApplicantScreeningController@updateApplicantData']);
+    Route::post('/applicant/confirm_selection_or_rejection',['as'=>'recruitment.applicant.confirm_selection_or_rejection','uses'=>'ApplicantScreeningController@confirmSelectionOrRejection']);
     Route::get('/applicant/search',['as'=>'recruitment.applicant.search','uses'=>'ApplicantScreeningController@searchApplicant']);
     Route::post('/applicant/search',['as'=>'recruitment.applicant.search_result','uses'=>'ApplicantScreeningController@loadApplicants']);
 

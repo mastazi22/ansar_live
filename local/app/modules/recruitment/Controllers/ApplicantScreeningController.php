@@ -3,8 +3,13 @@
 namespace App\modules\recruitment\Controllers;
 
 use App\Jobs\FeedbackSMS;
+use App\modules\HRM\Models\District;
+use App\modules\HRM\Models\Division;
+use App\modules\HRM\Models\Thana;
 use App\modules\recruitment\Models\JobAppliciant;
 use App\modules\recruitment\Models\JobCircular;
+use App\modules\recruitment\Models\JobSelectedApplicant;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -12,6 +17,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use Psy\Exception\Exception;
 
 class ApplicantScreeningController extends Controller
 {
@@ -79,6 +85,9 @@ class ApplicantScreeningController extends Controller
             $query->join('db_amis.tbl_division as dd','dd.id','=','job_applicant.division_id');
             $query->join('db_amis.tbl_units as uu','uu.id','=','job_applicant.unit_id');
             $query->join('db_amis.tbl_thana as tt','tt.id','=','job_applicant.thana_id');
+            if($request->q){
+                $query->where('national_id_no',$request->q);
+            }
             if($request->filter){
                 foreach ($request->filter as $key=>$value){
                     if($value['value']){
@@ -92,8 +101,14 @@ class ApplicantScreeningController extends Controller
                         else if($key=='training'){
                             $query->whereNotNull('training_info');
                         }
-                        else if($key=='reference'){
+                        else if($key=='reference'&&$value['data']){
                             $query->whereNotNull('connection_relation');
+                            $query->where('connection_relation',$value['data']);
+                        }
+                        else if($key=='education'){
+                            $query->whereHas('appliciantEducationInfo',function ($q) use ($value){
+                                $q->where('job_education_id',$value['comparator'],$value['data']);
+                            });
                         }
                         else if(isset($value['data'])&&$value['data']&&$key!='applicant_quota'){
                             $query->where($key,$value['comparator'],$value['data']);
@@ -111,7 +126,7 @@ class ApplicantScreeningController extends Controller
             }
 //            return response()->json($query->paginate(50));
             if($request->select_all){
-                return response()->json($query->pluck('id'));
+                return response()->json($query->pluck('job_applicant.applicant_id'));
             }
             return view('recruitment::applicant.part_search',['applicants'=>$query->paginate($request->limit?$request->limit:50)]);
 
@@ -337,6 +352,123 @@ class ApplicantScreeningController extends Controller
             }
         } else {
             return view('recruitment::applicant.mark_as_paid_file');
+        }
+    }
+
+    public function getApplicantData($id){
+        try {
+            $data = JobAppliciant::with('appliciantEducationInfo')->where('applicant_id',$id);
+            $data = $data->first();
+            if($data) return ['data'=>$data,'units'=>District::where('division_id',$data->division_id)->get(),'thanas'=>Thana::where('unit_id',$data->unit_id)->get()];
+            throw new \Exception('error');
+        }catch (\Exception $e){
+            return response()->json(['message'=>'Not found'])->setStatusCode(404);
+        }
+
+    }
+    public function applicantDetailView($id){
+        return view('recruitment::applicant.applicant_edit',['id'=>$id]);
+
+    }
+    public function updateApplicantData(Request $request){
+        $rules = [
+            'applicant_name_eng' => 'required',
+            'applicant_name_bng' => 'required',
+            'father_name_bng' => 'required',
+            'mother_name_bng' => 'required',
+            'date_of_birth' => 'required',
+            'marital_status' => 'required',
+            'national_id_no' => 'required|numeric|regex:/^[0-9]{10,17}$/',
+            'division_id' => 'required',
+            'unit_id' => 'required',
+            'thana_id' => 'required',
+            'height_feet' => 'required|numeric',
+            'height_inch' => 'required|numeric',
+            'gender' => 'required',
+            'mobile_no_self' => 'required|regex:/^(\+?88)?0[0-9]{10}$/|unique:job_applicant,mobile_no_self,'.$request->id,
+            'connection_mobile_no' => 'regex:/^(\+?88)?0[0-9]{10}$/',
+        ];
+        $this->validate($request,$rules);
+        DB::beginTransaction();
+        try{
+            $educations = $request->appliciant_education_info;
+            $new_data = serialize($request->all());
+            unset($request['appliciant_education_info']);
+            $applicant = JobAppliciant::with('appliciantEducationInfo')->find($request->id);
+            unset($request['id']);
+            $current_data = serialize($applicant->toArray());
+            $request['date_of_birth'] = Carbon::parse($request->date_of_birth)->format('Y-m-d');
+            $data = $request->except('action_user_id');
+
+            for($i=0;$i<count($educations);$i++){
+                unset($educations[$i]['id']);
+                unset($educations[$i]['created_at']);
+                unset($educations[$i]['updated_at']);
+                unset($educations[$i]['gade_divission_eng']);
+                unset($educations[$i]['name_of_degree_eng']);
+                unset($educations[$i]['name_of_degree']);
+                unset($educations[$i]['institute_name_eng']);
+                unset($educations[$i]['passing_year_eng']);
+            }
+//                        return $educations;
+            $applicant->update($data);
+            $applicant->appliciantEducationInfo()->delete();
+            $applicant->appliciantEducationInfo()->insert($educations);
+            $applicant->editHistory()->create([
+                'new_data'=>$new_data,
+                'previous_data'=>$current_data,
+                'action_user_id'=>auth()->user()->id
+            ]);
+            DB::commit();
+            return response()->json(['status'=>'success','message'=>'info updated successfully']);
+        }catch(\Exception $e){
+            DB::rollback();
+            return response()->json(['status'=>'error','message'=>$e->getMessage()]);
+        }
+    }
+    public function confirmSelectionOrRejection(Request $request){
+        if($request->type==='selection'){
+            DB::beginTransaction();
+            try{
+                if($request->sub_type==0){
+                    $pre_selected = JobSelectedApplicant::where('action_user_id',auth()->user()->id)->get();
+                    foreach ($pre_selected as $p){
+                        $p->applicant()->update(['status'=>'applied']);
+                        $p->delete();
+                    }
+                }
+                foreach ($request->applicants as $applicant_id){
+                    $applicant = JobAppliciant::where('applicant_id',$applicant_id)->first();
+                    if($applicant){
+                        $applicant->update(['status'=>'selected']);
+                        $applicant->selectedApplicant()->create([
+                            'action_user_id'=>auth()->user()->id,
+                            'message'=>$request->message
+                        ]);
+                    }
+                }
+                DB::commit();
+            }catch(\Exception $e){
+                DB::rollback();
+                return response()->json(['status'=>'error','message'=>$e->getMessage()]);
+            }
+            return response()->json(['status'=>'success','message'=>'Applicants selected successfully']);
+        }
+        else if($request->type==='rejection'){
+            DB::beginTransaction();
+            try{
+                foreach ($request->applicants as $applicant_id){
+                    $applicant = JobAppliciant::where('applicant_id',$applicant_id)->first();
+                    if($applicant){
+                        $applicant->update(['status'=>'rejected']);
+                    }
+                }
+                DB::commit();
+            }catch(\Exception $e){
+                DB::rollback();
+                return response()->json(['status'=>'error','message'=>$e->getMessage()]);
+            }
+            return response()->json(['status'=>'success','message'=>'Applicants rejected successfully']);
         }
     }
 }
