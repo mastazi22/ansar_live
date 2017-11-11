@@ -107,7 +107,22 @@ class ApplicantScreeningController extends Controller
                         }
                         else if($key=='education'){
                             $query->whereHas('appliciantEducationInfo',function ($q) use ($value){
-                                $q->where('job_education_id',$value['comparator'],$value['data']);
+                                $q->where(function ($qq) use ($value){
+                                    foreach ($value['data'] as $v){
+                                        if($value['comparator']=='>') {
+                                            $qq->where('job_education_id',$value['comparator'],$v);
+                                        }
+                                        else if($value['comparator']=='<') {
+                                            $qq->where('job_education_id',$value['comparator'],$v);
+                                        }
+                                        else{
+                                            $qq->orWhere('job_education_id',$value['comparator'],$v);
+                                        }
+                                    }
+
+                                });
+
+
                             });
                         }
                         else if(isset($value['data'])&&$value['data']&&$key!='applicant_quota'){

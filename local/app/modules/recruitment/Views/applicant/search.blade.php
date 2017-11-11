@@ -58,7 +58,7 @@
                 training: {value: false},
                 reference: {value: false,data:'', comparator: '='},
                 gender: {value: false, data: 'Male', comparator: '='},
-                education: {value: false, data: '', comparator: '='},
+                education: {value: false, data: [], comparator: '='},
                 applicant_quota: {value: false}
             }
             $scope.comparisonOperator = {
@@ -452,7 +452,7 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-6">
-                                    <select  class="form-control" ng-model="filter.education.data" name="" id="">
+                                    <select  class="form-control" multiple ng-model="filter.education.data" name="" id="">
                                         <option value="">--Select a education</option>
                                         <option ng-repeat="e in educations" value="[[e.id]]">
                                             [[e.education_deg_bng]]
