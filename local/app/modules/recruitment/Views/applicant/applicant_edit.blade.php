@@ -11,9 +11,10 @@
     <script>
 
 
-        GlobalApp.controller('fullEntryFormController', function ($scope, $q, $http,httpService,notificationService) {
+        GlobalApp.controller('fullEntryFormController', function ($scope, $q, $http, httpService, notificationService) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}')
             $scope.formData = {};
+            $scope.fields = [];
             $scope.eduRows = [];
             $scope.eduEngRows = [];
             $scope.allLoading = true;
@@ -38,9 +39,10 @@
             }
             $scope.disableDDT = true;
             $q.all([
-                $http({method:'get',url:'{{URL::route('recruitment.applicant.detail',['id'=>$id])}}'}),
+                $http({method: 'get', url: '{{URL::route('recruitment.applicant.detail',['id'=>$id])}}'}),
                 httpService.range(),
-                httpService.education()
+                httpService.education(),
+                $http({method: 'get', url: '{{URL::route('recruitment.applicant.getfieldstore')}}'})
             ]).then(function (response) {
                 console.log(response)
                 $scope.allLoading = false;
@@ -49,13 +51,14 @@
                 $scope.thana = response[0].data.thanas;
                 $scope.division = response[1];
                 $scope.ppp = response[2];
+                $scope.fields = response[3].data['field_value'].split(',');
                 $scope.disableDDT = false;
-                $scope.formData.division_id+='';
-                $scope.formData.unit_id+='';
-                $scope.formData.thana_id+='';
-                $scope.formData.appliciant_education_info.forEach(function (d,i) {
+                $scope.formData.division_id += '';
+                $scope.formData.unit_id += '';
+                $scope.formData.thana_id += '';
+                $scope.formData.appliciant_education_info.forEach(function (d, i) {
 
-                    $scope.formData.appliciant_education_info[i].job_education_id+='';
+                    $scope.formData.appliciant_education_info[i].job_education_id += '';
                 })
             });
             $scope.SelectedItemChanged = function () {
@@ -63,15 +66,15 @@
                 httpService.unit($scope.formData.division_id).then(function (response) {
                     $scope.district = response;
                     $scope.thana = [];
-                        $scope.formData.unit_id = '';
-                        $scope.formData.thana_id = '';
+                    $scope.formData.unit_id = '';
+                    $scope.formData.thana_id = '';
 
                     $scope.disableDDT = false;
                 })
             };
             $scope.SelectedDistrictChanged = function () {
                 $scope.disableDDT = true;
-                httpService.thana($scope.formData.division_id,$scope.formData.unit_id).then(function (response) {
+                httpService.thana($scope.formData.division_id, $scope.formData.unit_id).then(function (response) {
                     $scope.thana = response;
                     $scope.formData.thana_id = "";
                     $scope.disableDDT = false;
@@ -83,29 +86,29 @@
             }
             $scope.addEducation = function () {
                 $scope.formData.appliciant_education_info.push({
-                    job_education_id:'',
-                    job_applicant_id:$scope.formData.id,
-                    institute_name:'',
-                    gade_divission:'',
-                    passing_year:''
+                    job_education_id: '',
+                    job_applicant_id: $scope.formData.id,
+                    institute_name: '',
+                    gade_divission: '',
+                    passing_year: ''
                 })
             }
             $scope.updateData = function () {
                 $scope.allLoading = true;
                 $http({
-                    method:'post',
-                    data:$scope.formData,
-                    url:'{{URL::route('recruitment.applicant.update')}}'
+                    method: 'post',
+                    data: $scope.formData,
+                    url: '{{URL::route('recruitment.applicant.update')}}'
                 }).then(function (response) {
                     $scope.allLoading = false;
-                    notificationService.notify(response.data.status,response.data.message)
-                },function (response) {
+                    notificationService.notify(response.data.status, response.data.message)
+                }, function (response) {
                     $scope.allLoading = false;
-                    if(response.status==422){
+                    if (response.status == 422) {
                         $scope.formSubmitResult['error'] = response.data;
                     }
-                    else{
-                        notificationService.notify('error','An unknown error occur. Please try again later')
+                    else {
+                        notificationService.notify('error', 'An unknown error occur. Please try again later')
                     }
                 })
             }
@@ -113,11 +116,7 @@
     </script>
 
     <div id="entryform" ng-controller="fullEntryFormController" d-picker>
-        <div class="overlay" ng-if="allLoading">
-                    <span class="fa">
-                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
-                    </span>
-        </div>
+
         <div>
 
             <section class="content">
@@ -146,9 +145,14 @@
                             </div>
 
                             <div class="box box-info">
+                                <div class="overlay" ng-if="allLoading">
+                                    <span class="fa">
+                                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                                    </span>
+                                </div>
                                 <div class="box-body">
                                     {{--Start Ansar Name (English) Field --}}
-                                    <div class="form group col-md-12"
+                                    <div class="form group col-md-12" ng-if="fields.indexOf('applicant_name_eng')>=0"
                                          ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.ansar_name_eng[0]}">
 
                                         <label class="control-label col-sm-2" for="email"><sup
@@ -156,7 +160,8 @@
 
                                         <div class="col-sm-10">
                                             <input type="text" class="form-control " name="ansar_name_eng"
-                                                   ng-model="formData.applicant_name_eng" placeholder="Enter your name"/>
+                                                   ng-model="formData.applicant_name_eng"
+                                                   placeholder="Enter your name"/>
                                             <span style="color:red"
                                                   ng-show="formSubmitResult.error.applicant_name_eng[0]">[[ formSubmitResult.error.applicant_name_eng[0] ]]</span>
                                         </div>
@@ -165,13 +170,15 @@
                                     {{--End Ansar Name (English) Field --}}
                                     {{--Start Ansar Name (Bangla) Field --}}
                                     <div class="form-horizontal col-md-12 "
+                                         ng-if="fields.indexOf('applicant_name_bng')>=0"
                                          ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.ansar_name_bng[0]}">
                                         <label class="control-label col-sm-2" for="email"><sup
                                                     style="color: #ff0709;font-size: 1em">*</sup>নাম:</label>
 
                                         <div class="col-sm-10">
                                             <input type="text" class="form-control" id="ansar_name_bng"
-                                                   name="formData.applicant_name_bng" ng-model="formData.applicant_name_bng"
+                                                   name="formData.applicant_name_bng"
+                                                   ng-model="formData.applicant_name_bng"
                                                    placeholder="আপনার নাম লিখুন"/>
                                             <span style="color:red"
                                                   ng-show="formSubmitResult.error.applicant_name_bng[0]">[[ formSubmitResult.error.applicant_name_bng[0] ]]</span>
@@ -179,7 +186,7 @@
                                     </div>
                                     {{--End Ansar Name (Bangla) Field --}}
                                     {{--Start Ansar Father Name (Bangla) Field --}}
-                                    <div class="form group col-md-12 "
+                                    <div class="form group col-md-12 " ng-if="fields.indexOf('father_name_bng')>=0"
                                          ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.father_name_bng[0]}">
                                         <label class="control-label col-sm-2" for="email"><sup
                                                     style="color: #ff0709;font-size: 1em">*</sup>পিতার
@@ -187,7 +194,8 @@
 
                                         <div class="col-sm-10">
                                             <input class="form-control " id="father_name_bng"
-                                                   name="formData.father_name_bng" ng-model="formData.father_name_bng" type="text"
+                                                   name="formData.father_name_bng" ng-model="formData.father_name_bng"
+                                                   type="text"
                                                    placeholder="পিতার নাম">
                                             <span style="color:red"
                                                   ng-show="formSubmitResult.error.father_name_bng[0]">[[ formSubmitResult.error.father_name_bng[0] ]]</span>
@@ -195,7 +203,7 @@
                                     </div>
                                     {{--End Ansar Father Name (Bangla) Field --}}
                                     {{--Start Ansar Mother Name (Bangla) Field --}}
-                                    <div class="form group col-md-12 "
+                                    <div class="form group col-md-12 " ng-if="fields.indexOf('mother_name_bng')>=0"
                                          ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.mother_name_bng[0]}">
                                         <label class="control-label col-sm-2" for="email"><sup
                                                     style="color: #ff0709;font-size: 1em">*</sup>মাতার
@@ -203,7 +211,8 @@
 
                                         <div class="col-sm-10">
                                             <input class="form-control  " id="mother_name_bng"
-                                                   name="mother_name_bng" ng-model="formData.mother_name_bng" type="text"
+                                                   name="mother_name_bng" ng-model="formData.mother_name_bng"
+                                                   type="text"
                                                    placeholder="মাতার নাম">
                                             <span style="color:red"
                                                   ng-show="formSubmitResult.error.mother_name_bng[0]">[[ formSubmitResult.error.mother_name_bng[0] ]]</span>
@@ -212,8 +221,8 @@
                                     </div>
                                     {{--End Ansar Mother Name (Bangla) Field --}}
                                     {{--Start Ansar Date of Birth Field --}}
-                                    <div class="form group col-md-12 "
-                                         ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.data_of_birth[0]}">
+                                    <div class="form group col-md-12 " ng-if="fields.indexOf('date_of_birth')>=0"
+                                         ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.date_of_birth[0]}">
                                         <label class="control-label col-sm-2" for="email"><sup
                                                     style="color: #ff0709;font-size: 1em">*</sup>Date of
                                             birth</label>
@@ -229,7 +238,7 @@
                                     </div>
                                     {{--End Ansar Date of Birth Field --}}
                                     {{--Start Ansar Married Status Field --}}
-                                    <div class="form-horizontal col-md-12 "
+                                    <div class="form-horizontal col-md-12 " ng-if="fields.indexOf('marital_status')>=0"
                                          ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.marital_status[0]}">
 
                                         <label class="control-label col-sm-2" for="email"><sup
@@ -254,7 +263,7 @@
                                     </div>
                                     {{--End Ansar Married Status Field --}}
                                     {{--Start Ansar National Id Field --}}
-                                    <div class="form group col-md-12 "
+                                    <div class="form group col-md-12 " ng-if="fields.indexOf('national_id_no')>=0"
                                          ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.national_id_no[0]}">
                                         <label class="control-label col-sm-2" for="email"><sup
                                                     style="color: #ff0709;font-size: 1em">*</sup>National Id no</label>
@@ -280,7 +289,8 @@
                             <div class="box box-info">
                                 <div class="box-body">
 
-                                    <div class="form-horizontal col-md-12">
+                                    <div class="form-horizontal col-md-12"
+                                         ng-if="fields.indexOf('village_name_bng')>=0">
                                         <label class="control-label col-sm-2" for="email">গ্রাম/বাড়ি নং:</label>
                                         <div class="col-sm-10">
                                             <input class="form-control  " id="village_name_bng"
@@ -289,7 +299,8 @@
                                         </div>
 
                                     </div>
-                                    <div class="form-horizontal col-md-12">
+                                    <div class="form-horizontal col-md-12"
+                                         ng-if="fields.indexOf('post_office_name_bng')>=0">
                                         <label class="control-label col-sm-2" for="email">ডাকঘর:</label>
 
                                         <div class="col-sm-10">
@@ -299,7 +310,7 @@
                                         </div>
 
                                     </div>
-                                    <div class="form group col-md-12">
+                                    <div class="form group col-md-12" ng-if="fields.indexOf('union_name_bng')>=0">
                                         <label class="control-label col-sm-2" for="email">ইউনিয়ন
                                             নাম/ওয়ার্ড:</label>
                                         <div class="col-sm-10">
@@ -308,7 +319,7 @@
                                                    placeholder="ইউনিয়ন নাম">
                                         </div>
                                     </div>
-                                    <div class="form-horizontal col-md-12 "
+                                    <div class="form-horizontal col-md-12 " ng-if="fields.indexOf('division_id')>=0"
                                          ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.division_name_eng[0]}">
                                         <label class="control-label col-sm-2" for="email"><sup
                                                     style="color: #ff0709;font-size: 1em">*</sup>বিভাগ</label>
@@ -327,7 +338,7 @@
                                         </div>
 
                                     </div>
-                                    <div class="form-horizontal col-md-12 "
+                                    <div class="form-horizontal col-md-12 " ng-if="fields.indexOf('unit_id')>=0"
                                          ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.unit_name_eng[0]}">
                                         <label class="control-label col-sm-2" for="email"><sup
                                                     style="color: #ff0709;font-size: 1em">*</sup>জেলা</label>
@@ -345,8 +356,8 @@
                                         </div>
 
                                     </div>
-                                    <div class="form-horizontal col-md-12 "
-                                         ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.thana_name_eng[0]}">
+                                    <div class="form-horizontal col-md-12 " ng-if="fields.indexOf('thana_id')>=0"
+                                         ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.thana_id[0]}">
                                         <label class="control-label col-sm-2" for="email"><sup
                                                     style="color: #ff0709;font-size: 1em">*</sup>থানা</label>
                                         <div class="col-sm-10 ">
@@ -374,7 +385,7 @@
                             </div>
                             <div class="box box-info">
                                 <div class="box-body">
-                                    <div class="form-horizontal col-md-12 "
+                                    <div class="form-horizontal col-md-12 " ng-if="fields.indexOf('height_feet')>=0"
                                          ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.height_feet[0]}">
                                         <label class="control-label col-sm-2" for="email"><sup
                                                     style="color: #ff0709;font-size: 1em">*</sup>Height</label>
@@ -393,7 +404,7 @@
                                                   ng-show="formSubmitResult.error.height_inch[0]">[[ formSubmitResult.error.height_inch[0] ]]</span>
                                         </div>
                                     </div>
-                                    <div class="form-horizontal col-md-12">
+                                    <div class="form-horizontal col-md-12" ng-if="fields.indexOf('weight')>=0">
                                         <label class="control-label col-sm-2" for="email">Weight</label>
 
                                         <div class="col-sm-10">
@@ -401,19 +412,20 @@
                                                    ng-model="formData.weight" type="text" placeholder="weight">
                                         </div>
                                     </div>
-                                    <div class="form-horizontal col-md-12">
+                                    <div class="form-horizontal col-md-12"
+                                         ng-if="fields.indexOf('chest_normal')>=0||fields.indexOf('chest_extended')>=0">
                                         <label for="" class="control-label col-sm-2">
 
                                         </label>
                                         <div class="col-sm-10">
                                             <div class="row">
-                                                <div class="col-sm-6">
+                                                <div class="col-sm-6" ng-if="fields.indexOf('chest_normal')>=0">
                                                     <label for="" class="control-label">Chest normal</label>
                                                     <input type="text" class="form-control"
                                                            placeholder="chest normal"
                                                            ng-model="formData.chest_normal">
                                                 </div>
-                                                <div class="col-sm-6">
+                                                <div class="col-sm-6" ng-if="fields.indexOf('chest_extended')>=0">
                                                     <label for="" class="control-label">Chest extended</label>
                                                     <input type="text" class="form-control"
                                                            placeholder="chest extended"
@@ -423,12 +435,13 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-horizontal col-md-12 "
-                                         ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.sex[0]}">
+                                    <div class="form-horizontal col-md-12 " ng-if="fields.indexOf('gender')>=0"
+                                         ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.gender[0]}">
                                         <label class="control-label col-sm-2" for="email"><sup
                                                     style="color: #ff0709;font-size: 1em">*</sup>Gender</label>
                                         <div class="col-sm-10 ">
-                                            <select name="sex" ng-model="formData.gender" class="form-control" id="sell">
+                                            <select name="sex" ng-model="formData.gender" class="form-control"
+                                                    id="sell">
                                                 <option value="">--Select an option--</option>
                                                 <option value="Male">Male</option>
                                                 <option value="Female">Female</option>
@@ -442,7 +455,7 @@
                             </div>
                         </fieldset>
 
-                        <fieldset>
+                        <fieldset ng-if="fields.indexOf('educations')>=0">
                             <div class="level-title-session-entry">
                                 <h5 style="text-align: center;">শিক্ষাগত যোগ্যতার তথ্য</h5>
                             </div>
@@ -509,7 +522,7 @@
                             </div>
                             <div class="box box-info">
                                 <div class="box-body">
-                                    <div class="form-horizontal col-md-12 "
+                                    <div class="form-horizontal col-md-12 " ng-if="fields.indexOf('mobile_no_self')>=0"
                                          ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.mobile_no_self[0]}">
                                         <label class="control-label col-sm-2" for="email"><sup
                                                     style="color: #ff0709;font-size: 1em">*</sup>Mobile
@@ -530,47 +543,56 @@
 
                                         </div>
                                     </div>
-                                    <div class="form-horizontal col-md-12">
+                                    <div class="form-horizontal col-md-12" ng-if="fields.indexOf('training_info')>=0">
                                         <label class="control-label col-sm-2" for="email">Training info</label>
 
                                         <div class="col-sm-10">
                                             <input class="form-control  "
-                                                   ng-model="formData.training_info" type="text" placeholder="Training info">
+                                                   ng-model="formData.training_info" type="text"
+                                                   placeholder="Training info">
                                         </div>
                                     </div>
-                                    <div class="form-horizontal col-md-12">
+                                    <div class="form-horizontal col-md-12" ng-if="fields.indexOf('connection_name')>=0">
                                         <label class="control-label col-sm-2" for="email">Reference name</label>
 
                                         <div class="col-sm-10">
                                             <input class="form-control  "
-                                                   ng-model="formData.connection_name" type="text" placeholder="Reference name">
+                                                   ng-model="formData.connection_name" type="text"
+                                                   placeholder="Reference name">
                                         </div>
                                     </div>
-                                    <div class="form-horizontal col-md-12">
-                                        <label class="control-label col-sm-2" for="email">Relation with reference</label>
+                                    <div class="form-horizontal col-md-12"
+                                         ng-if="fields.indexOf('connection_relation')>=0">
+                                        <label class="control-label col-sm-2" for="email">Relation with
+                                            reference</label>
 
                                         <div class="col-sm-10">
                                             <select class="form-control  " ng-model="formData.connection_relation">
-                                                <option ng-repeat="(key,value) in relations" value="[[key]]">[[value]]</option>
+                                                <option ng-repeat="(key,value) in relations" value="[[key]]">[[value]]
+                                                </option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="form-horizontal col-md-12">
+                                    <div class="form-horizontal col-md-12"
+                                         ng-if="fields.indexOf('connection_address')>=0">
                                         <label class="control-label col-sm-2" for="email">Reference address</label>
 
                                         <div class="col-sm-10">
                                             <textarea class="form-control" rows="10" cols="30"
-                                                      ng-model="formData.connection_address" type="text" placeholder="Reference address">
+                                                      ng-model="formData.connection_address" type="text"
+                                                      placeholder="Reference address">
 
                                             </textarea>
                                         </div>
                                     </div>
-                                    <div class="form-horizontal col-md-12">
+                                    <div class="form-horizontal col-md-12"
+                                         ng-if="fields.indexOf('connection_mobile_no')>=0">
                                         <label class="control-label col-sm-2" for="email">Reference mobile no</label>
 
                                         <div class="col-sm-10">
                                             <input class="form-control  "
-                                                   ng-model="formData.connection_mobile_no" type="text" placeholder="Reference mobile no">
+                                                   ng-model="formData.connection_mobile_no" type="text"
+                                                   placeholder="Reference mobile no">
                                         </div>
                                     </div>
                                 </div>

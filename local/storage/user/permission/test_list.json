@@ -547,5 +547,34 @@
         "name": "Load Blood Group"
       }
     ]
+  },
+  {
+    "root": "Recruitment",
+    "children": [
+      {
+        "value": "recruitment",
+        "name": "Ansar recruitment"
+      },
+      {
+        "value": "recruitment.applicant.search,recruitment.applicant.search_result",
+        "name": "Search Applicant"
+      },
+      {
+        "value": "recruitment.applicant.detail_view,recruitment.applicant.detail,recruitment.applicant.update,recruitment.applicant.getfieldstore",
+        "name": "Edit Applicant"
+      },
+      {
+        "value": "recruitment.quota.index,recruitment.quota.edit,recruitment.quota.update",
+        "name": "Applicant Quota"
+      },
+      {
+        "value": "recruitment.point.index,recruitment.point.edit,recruitment.point.update",
+        "name": "Applicant Points"
+      },
+      {
+        "value": "recruitment.applicant.editfield,recruitment.applicant.editfieldstore,recruitment.applicant.getfieldstore",
+        "name": "Applicant editable fields"
+      }
+    ]
   }
 ]

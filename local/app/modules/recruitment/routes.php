@@ -1,5 +1,5 @@
 <?php
-Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase'],'namespace'=>'\App\modules\recruitment\Controllers'],function (){
+Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','checkUserType','permission'],'namespace'=>'\App\modules\recruitment\Controllers'],function (){
 
 
     Route::get('/',['as'=>'recruitment','uses'=>'RecruitmentController@index']);
@@ -16,6 +16,9 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase'],'n
     Route::post('/applicant/confirm_selection_or_rejection',['as'=>'recruitment.applicant.confirm_selection_or_rejection','uses'=>'ApplicantScreeningController@confirmSelectionOrRejection']);
     Route::get('/applicant/search',['as'=>'recruitment.applicant.search','uses'=>'ApplicantScreeningController@searchApplicant']);
     Route::post('/applicant/search',['as'=>'recruitment.applicant.search_result','uses'=>'ApplicantScreeningController@loadApplicants']);
+    Route::get('/applicant/editfield',['as'=>'recruitment.applicant.editfield','uses'=>'ApplicantScreeningController@applicantEditField']);
+    Route::post('/applicant/editfield',['as'=>'recruitment.applicant.editfieldstore','uses'=>'ApplicantScreeningController@saveApplicantEditField']);
+    Route::get('/applicant/geteditfield',['as'=>'recruitment.applicant.getfieldstore','uses'=>'ApplicantScreeningController@loadApplicantEditField']);
 
     Route::get('/applicant/list/{type?}',['as'=>'recruitment.applicant.list','uses'=>'ApplicantScreeningController@applicantListSupport']);
     Route::get('/applicants/list/{circular_id}/{type?}',['as'=>'recruitment.applicants.list','uses'=>'ApplicantScreeningController@applicantList']);
@@ -39,6 +42,9 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase'],'n
     Route::post('/supports/feedback/{id}',['as'=>'supports.feedback.submit','uses'=>'SupportController@replyProblem']);
     Route::post('/supports/feedback/delete/{id}',['as'=>'supports.feedback.delete','uses'=>'SupportController@replyProblemDelete']);
 
+
+    //load image
+    Route::get('/profile_image',['as'=>'profile_image','uses'=>'ApplicantScreeningController@loadImage']);
     Route::get('/test',function (){
        $data = \Maatwebsite\Excel\Facades\Excel::load(storage_path('txid.xls'),function (){
 

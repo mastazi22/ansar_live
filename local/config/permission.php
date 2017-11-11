@@ -110,6 +110,12 @@ return [
         "cancel_offer,cancel_offer_handle",
         "user_action_log",
         "embodiment_report_view",
-        "offer_accept_last_5_day,offer_accept_last_5_day_data"
+        "offer_accept_last_5_day,offer_accept_last_5_day_data",
+        "recruitment.applicant.search,recruitment.applicant.search_result",
+        "recruitment.applicant.detail_view,recruitment.applicant.detail,recruitment.applicant.update,recruitment.applicant.getfieldstore",
+        "recruitment.applicant.editfield,recruitment.applicant.editfieldstore,recruitment.applicant.getfieldstore".
+        "recruitment.point.index,recruitment.point.edit,recruitment.point.update",
+        "recruitment.quota.index,recruitment.quota.edit,recruitment.quota.update",
+        "recruitment"
     ]
 ];

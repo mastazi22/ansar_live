@@ -170,5 +170,12 @@
       {"value":"create_session","name":"Add New Session"},
       {"value":"edit_session","name":"Edit Session"}
     ]
+  },
+  {
+    "controller":{"value":"RecruitmentController","name":"Recruitment"},
+    "routes":[
+      {"value":"create_session","name":"Add New Session"},
+      {"value":"edit_session","name":"Edit Session"}
+    ]
   }
 ]

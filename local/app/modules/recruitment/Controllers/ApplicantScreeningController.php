@@ -9,13 +9,16 @@ use App\modules\HRM\Models\Thana;
 use App\modules\recruitment\Models\JobAppliciant;
 use App\modules\recruitment\Models\JobCircular;
 use App\modules\recruitment\Models\JobSelectedApplicant;
+use App\modules\recruitment\Models\JobSettings;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Intervention\Image\Facades\Image;
 use Maatwebsite\Excel\Facades\Excel;
 use Psy\Exception\Exception;
 
@@ -58,7 +61,11 @@ class ApplicantScreeningController extends Controller
 
     public function searchApplicant()
     {
-        return view('recruitment::applicant.search');
+        if(auth()->user()->type==11) {
+            return view('recruitment::applicant.search');
+        }else{
+            return view('recruitment::applicant.search_non_admin');
+        }
     }
 
     public function loadApplicants(Request $request)
@@ -69,6 +76,9 @@ class ApplicantScreeningController extends Controller
                 'circular' => ['regex:/^([0-9]+)|(all)$/'],
                 'limit'=>'regex:/^[0-9]+$/'
             ];
+            if(auth()->user()->type==66||auth()->user()->type==22){
+                $rules['q']='required|regex:/^[0-9]+$/';
+            }
             $this->validate($request, $rules);
             $query = JobAppliciant::whereHas('circular', function ($q) use ($request) {
                 $q->where('circular_status', 'running');
@@ -106,44 +116,54 @@ class ApplicantScreeningController extends Controller
                             $query->where('connection_relation',$value['data']);
                         }
                         else if($key=='education'){
-                            $query->whereHas('appliciantEducationInfo',function ($q) use ($value){
-                                $q->where(function ($qq) use ($value){
-                                    foreach ($value['data'] as $v){
-                                        if($value['comparator']=='>') {
-                                            $qq->where('job_education_id',$value['comparator'],$v);
+                            if(count($value['data'])){
+                                $query->whereHas('appliciantEducationInfo',function ($q) use ($value){
+                                    $q->where(function ($qq) use ($value){
+                                        foreach ($value['data'] as $v){
+                                            if($value['comparator']=='>') {
+                                                $qq->where('job_education_id',$value['comparator'],$v);
+                                            }
+                                            else if($value['comparator']=='<') {
+                                                $qq->where('job_education_id',$value['comparator'],$v);
+                                            }
+                                            else{
+                                                $qq->orWhere('job_education_id',$value['comparator'],$v);
+                                            }
                                         }
-                                        else if($value['comparator']=='<') {
-                                            $qq->where('job_education_id',$value['comparator'],$v);
-                                        }
-                                        else{
-                                            $qq->orWhere('job_education_id',$value['comparator'],$v);
-                                        }
-                                    }
+
+                                    });
+
 
                                 });
+                            }
 
-
-                            });
                         }
                         else if(isset($value['data'])&&$value['data']&&$key!='applicant_quota'){
                             $query->where($key,$value['comparator'],$value['data']);
                         }
                     }
                 }
-                if($request->filter['applicant_quota']['value']){
+                /*if($request->filter['applicant_quota']['value']){
                     $query->join('job_applicant_quota','job_applicant_quota.district_id','=','job_applicant.unit_id');
 
                     $query->selectRaw("job_applicant.*,dd.division_name_bng,uu.unit_name_bng,tt.thana_name_bng,job_applicant_quota.male as male_count,job_applicant_quota.female as female_count,@unit:= IF(@current_unit=job_applicant.`unit_id`,@unit+1,1) AS unit_limit,
 @current_unit:=job_applicant_quota.district_id AS districtt")->orderBy('job_applicant_quota.district_id');
                     $q = clone $query;
                     $query = DB::table(DB::raw('('.$q->toSql().') x'))->mergeBindings($q->getQuery())->selectRaw('*')->whereRaw('unit_limit<=male_count');
-                }
+                }*/
             }
 //            return response()->json($query->paginate(50));
+            if(auth()->user()->type==66){
+                $query->where('job_applicant.division_id',auth()->user()->division_id);
+            }
+            if(auth()->user()->type==22){
+                $query->where('job_applicant.unit_id',auth()->user()->district_id);
+            }
             if($request->select_all){
                 return response()->json($query->pluck('job_applicant.applicant_id'));
             }
-            return view('recruitment::applicant.part_search',['applicants'=>$query->paginate($request->limit?$request->limit:50)]);
+            if(auth()->user()->type==11)return view('recruitment::applicant.part_search',['applicants'=>$query->paginate($request->limit?$request->limit:50)]);
+            else return view('recruitment::applicant.applicant_info',['applicants'=>$query->first()]);
 
         }
         return abort(401);
@@ -485,5 +505,36 @@ class ApplicantScreeningController extends Controller
             }
             return response()->json(['status'=>'success','message'=>'Applicants rejected successfully']);
         }
+    }
+
+    public function loadImage(Request $request){
+        $image = storage_path($request->file);
+        if (!$request->exists('file')) return Image::make(public_path('dist/img/nimage.png'))->response();
+        if (is_null($image) || !File::exists($image) || File::isDirectory($image)) {
+            return Image::make(public_path('dist/img/nimage.png'))->response();
+        }
+        //return $image;
+        return Image::make($image)->response();
+    }
+    public function applicantEditField(Request $request){
+        return view('recruitment::applicant.applicant_edit_field');
+    }
+    public function saveApplicantEditField(Request $request){
+        $fields = array_filter($request->fields);
+        $js = JobSettings::where('field_type','applicants_field')->first();
+        if($js){
+            $js->update(['field_value'=>implode(',',$fields)]);
+        }
+        else{
+            JobSettings::create([
+                'field_type'=>'applicants_field',
+                'field_value'=>implode(',',$fields)
+            ]);
+        }
+        return response()->json(['status'=>'success','message'=>'operation complete successfully']);
+    }
+    public function loadApplicantEditField(){
+        $js = JobSettings::where('field_type','applicants_field')->first();
+        return $js;
     }
 }

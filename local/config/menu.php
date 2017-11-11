@@ -402,6 +402,10 @@ return [
                     "route"=>"recruitment.point.index",
                     "icon"=>"fa-cog"
                 ],
+                "Applicant editable field"=>[
+                    "route"=>"recruitment.applicant.editfield",
+                    "icon"=>"fa-cog"
+                ],
 
             ]
         ],
