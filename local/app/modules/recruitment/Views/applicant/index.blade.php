@@ -13,12 +13,13 @@
             $scope.circular = 'all';
             $scope.category = 'all';
             $scope.status = 'running';
+            var ss = {'running':'active','shutdown':'inactive'};
             var loadAll = function () {
                 $scope.circular = 'all';
                 $scope.category = 'all';
                 $scope.allLoading = true;
                 $q.all([
-                    httpService.category({status: $scope.status}),
+                    httpService.category({status: ss[$scope.status]}),
                     httpService.circular({status: $scope.status}),
                     httpService.circularSummery({
                         status: $scope.status,

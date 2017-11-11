@@ -46,7 +46,6 @@
             $scope.allStatus = {'all': 'All', 'inactive': 'Inactive', 'active': 'Active'}
             $scope.circular = 'all';
             $scope.category = 'all';
-            $scope.status = 'active';
             $scope.limitList = '50';
             $scope.ansarSelection = 'overall';
             $scope.selectedList = [];
@@ -74,8 +73,8 @@
                 $scope.category = 'all';
                 $scope.allLoading = true;
                 $q.all([
-                    httpService.category({status: $scope.status}),
-                    httpService.circular({status: $scope.status}),
+                    httpService.category({status: 'active'}),
+                    httpService.circular({status: 'running'}),
                     httpService.searchApplicant(undefined, {
                         category: $scope.category,
                         circular: $scope.circular,
@@ -106,7 +105,7 @@
             $scope.loadCircular = function (id) {
                 $scope.allLoading = true;
                 $q.all([
-                    httpService.circular({status: $scope.status, category_id: id}),
+                    httpService.circular({status: 'running', category_id: id}),
                     httpService.searchApplicant(undefined, {
                         category: $scope.category,
                         circular: $scope.circular,
