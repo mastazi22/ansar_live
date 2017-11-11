@@ -382,7 +382,12 @@ return [
                 "Search Applicant"=>[
                     "route"=>"recruitment.applicant.search",
                     "icon"=>"fa-circle"
+                ],
+                "Applicant Mark Entry"=>[
+                    "route"=>"recruitment.applicant.index",
+                    "icon"=>"fa-circle"
                 ]
+
             ]
         ],
         "Settings"=>[
