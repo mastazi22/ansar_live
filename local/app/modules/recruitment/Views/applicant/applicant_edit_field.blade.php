@@ -8,11 +8,26 @@
         GlobalApp.controller('applicantQuota', function ($scope, $http, $q, httpService,notificationService) {
             $scope.pointFields = [];
             $scope.rows = [];
-            $http({
-                url:'{{URL::route('recruitment.point.fields')}}',
-                method:'post'
-            }).then(function (response) {
-                $scope.pointFields = response.data;
+            $scope.exFields = ''
+            $q.all([
+                $http({method: 'get', url: '{{URL::route('recruitment.applicant.getfieldstore')}}'}),
+                $http({
+                    url:'{{URL::route('recruitment.point.fields')}}',
+                    method:'post'
+                })
+
+            ]).then(function (response) {
+                $scope.pointFields = response[1].data;
+                $scope.exFields = response[0].data.field_value.split(',')
+                $scope.rows = new Array($scope.pointFields.length);
+                for(var i=0;i<$scope.pointFields.length;i++){
+                    if($scope.exFields.indexOf($scope.pointFields[i])>=0){
+                        $scope.rows[i] = $scope.pointFields[i];
+                    }
+                    else{
+                        $scope.rows[i] = false;
+                    }
+                }
             })
             $scope.saveField = function () {
                 $scope.allLoading = true;
