@@ -4,7 +4,6 @@ namespace App\modules\recruitment\Controllers;
 
 use App\modules\recruitment\Models\JobApplicantMarks;
 use App\modules\recruitment\Models\JobAppliciant;
-use function foo\func;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
