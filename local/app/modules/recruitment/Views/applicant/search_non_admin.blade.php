@@ -132,14 +132,38 @@
                 $scope.loadApplicant();
                 $scope.selectedList = [];
             }
-
+            $scope.applicantsDetail = [];
 
             $scope.addToSelection = function (id) {
-                $scope.selectedList.push(id);
+                if($scope.selectedList.indexOf(id)>=0){
+                    notificationService.notify('error','Applicant already added to selection')
+                    return ;
+                }
+                $scope.allLoading = true;
+                $http({
+                    url:'{{URL::route('recruitment.applicant.selected_applicant')}}',
+                    data:{applicant_id:id},
+                    method:'post'
+                }).then(function (response) {
+                    $scope.allLoading = false;
+                    if(response.data) {
+                        $scope.applicantsDetail.push(response.data);
+                        $scope.selectedList.push(id);
+                        $scope.applicants = $sce.trustAsHtml('<h4 class="text-center">No Applicant available</h4>');
+                        $scope.q = '';
+                    }else{
+                        notificationService.notify('error','Invalid applicant')
+                    }
+                },function (response) {
+                    notificationService.notify('error','An error occur while adding. please try again later')
+                })
             }
             $scope.removeToSelection = function (id) {
                 var i = $scope.selectedList.indexOf(id)
-                if (i >= 0) $scope.selectedList.splice(i, 1);
+                if (i >= 0) {
+                    $scope.selectedList.splice(i, 1);
+                    $scope.applicantsDetail.splice(i,1)
+                }
             }
             $scope.applyFilter = function () {
                 $scope.selectedList = [];
@@ -163,7 +187,7 @@
                     $scope.allLoading = false;
                     notificationService.notify(response.data.status,response.data.message)
                     $scope.selectedList = [];
-                    $scope.loadApplicant();
+                    $scope.applicantsDetail = [];
                 },function (response) {
                     $scope.allLoading = false;
                 })
@@ -255,24 +279,64 @@
                 <div ng-bind-html="applicants" compile-html>
 
                 </div>
+                <div style="margin-top: 20px;text-align: center" ng-if="selectedList.length>0">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#chooser">
+                        Confirm Selection
+                    </button>
+                </div>
             </div>
         </div>
         <div class="modal fade" id="chooser">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Choose a option</h4>
+                        <h4 class="modal-title">Confirm selection</h4>
                     </div>
                     <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-condensed">
+                            <tr>
+                                <th>Sl. No</th>
+                                <th>Applicant Name</th>
+                                <th>Gender</th>
+                                <th>Birth Date</th>
+                                <th>Division</th>
+                                <th>District</th>
+                                <th>Thana</th>
+                                <th>Height</th>
+                                <th>Chest</th>
+                                <th>Weight</th>
+                                <th>Action</th>
+                            </tr>
+                                <tr ng-repeat="a in applicantsDetail">
+                                    <td>[[$index+1]]</td>
+                                    <td>[[a.applicant_name_bng]]</td>
+                                    <td>[[a.gender]]</td>
+                                    <td>[[a.date_of_birth]]</td>
+                                    <td>[[a.division_name_bng]]</td>
+                                    <td>[[a.unit_name_bng]]</td>
+                                    <td>[[a.thana_name_bng]]</td>
+                                    <td>[[a.height_feet]] feet [[a.height_inch]] inch</td>
+                                    <td>[[a.chest_normal+'-'+a.chest_extended]] inch</td>
+                                    <td>[[a.weight]] kg</td>
+                                    <td>
+                                        <button class="btn btn-danger btn-xs" ng-click="removeToSelection(a.applicant_id)">
+                                            Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr ng-if="selectedList.length<=0">
+                                    <td colspan="11" class="bg-warning">
+                                        No applicant available
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
                         <div class="row">
                             <div class="col-sm-8 col-centered" style="text-align: center">
-                                <p>Character left: [[selectMessage.length]]/160</p>
-                                <textarea style="margin-bottom: 10px" class="form-control" ng-model="selectMessage" name="" id="" cols="30" rows="5" placeholder="Type your message">
-
-                                </textarea>
-                                <button class="btn btn-primary" data-dismiss="modal" style="margin-bottom: 10px" ng-click="selectApplicants('selection',0)">Confirm selection & cancel previous selection</button>
-                                <button  class="btn btn-primary" data-dismiss="modal" ng-click="selectApplicants('selection',1)">Confirm selection & add to previous selection</button>
+                                <button class="btn btn-primary" ng-disabled="selectedList.length<=0" data-dismiss="modal" style="margin-bottom: 10px" ng-click="selectApplicants('selection',0)">Confirm selection & cancel previous selection</button>
+                                <button  class="btn btn-primary"  ng-disabled="selectedList.length<=0" data-dismiss="modal" ng-click="selectApplicants('selection',1)">Confirm selection & add to previous selection</button>
                             </div>
                         </div>
                     </div>

@@ -179,7 +179,7 @@ class Kernel extends ConsoleKernel
             $apiUser       = 'join_ans_vdp';
             $apiPass       = 'shurjoSM123';
 
-            $applicants = JobSelectedApplicant::with('applicant')->where('message_status','pending')->limit(10)->get();
+            $applicants = JobSelectedApplicant::with('applicant')->where('message_status','pending')->where('sms_status','on')->limit(10)->get();
             foreach ($applicants as $a) {
 
 

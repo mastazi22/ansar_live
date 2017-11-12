@@ -168,6 +168,36 @@ class ApplicantScreeningController extends Controller
         }
         return abort(401);
     }
+    public function loadSelectedApplicant(Request $request)
+    {
+        if($request->ajax()){
+            $query = JobAppliciant::whereHas('circular', function ($q) use ($request) {
+                $q->where('circular_status', 'running');
+                if ($request->exists('circular') && $request->circular != 'all') {
+                    $q->where('id', $request->circular);
+                }
+                $q->whereHas('category', function ($q) use ($request) {
+                    $q->where('status', 'active');
+                    if ($request->exists('category') && $request->category != 'all') {
+                        $q->where('id', $request->category);
+                    }
+                });
+            })->where('status', 'applied');
+            $query->join('db_amis.tbl_division as dd','dd.id','=','job_applicant.division_id');
+            $query->join('db_amis.tbl_units as uu','uu.id','=','job_applicant.unit_id');
+            $query->join('db_amis.tbl_thana as tt','tt.id','=','job_applicant.thana_id');
+            if(auth()->user()->type==66){
+                $query->where('job_applicant.division_id',auth()->user()->division_id);
+            }
+            if(auth()->user()->type==22){
+                $query->where('job_applicant.unit_id',auth()->user()->district_id);
+            }
+            $query->where('job_applicant.applicant_id',$request->applicant_id);
+            return $query->first();
+
+        }
+        return abort(401);
+    }
 
     public function applicantListSupport(Request $request, $type = null)
     {
