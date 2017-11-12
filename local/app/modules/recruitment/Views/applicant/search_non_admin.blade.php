@@ -192,6 +192,27 @@
                     $scope.allLoading = false;
                 })
             }
+            $scope.rejectApplicants = function (id) {
+                $scope.allLoading = true;
+                $http({
+                    url:'{{URL::route('recruitment.applicant.confirm_selection_or_rejection')}}',
+                    method:'post',
+                    data:{
+                        applicants:[id],
+                        type:'rejection',
+                        sub_type:1,
+                        message:$scope.selectMessage
+                    }
+                }).then(function (response) {
+                    $scope.applicants = $sce.trustAsHtml('<h4 class="text-center">No Applicant available</h4>');
+                    $scope.allLoading = false;
+                    notificationService.notify(response.data.status,response.data.message)
+                    $scope.selectedList = [];
+                    $scope.applicantsDetail = [];
+                },function (response) {
+                    $scope.allLoading = false;
+                })
+            }
             $scope.$watch('selectMessage',function (newVal) {
                 $scope.selectMessage = newVal.length>160?newVal.substr(0,160):newVal;
             })

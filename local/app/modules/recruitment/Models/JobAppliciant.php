@@ -50,4 +50,8 @@ class JobAppliciant extends Model
     public function selectedApplicant(){
         return $this->hasOne(JobSelectedApplicant::class,'applicant_id','applicant_id');
     }
+
+    public function marks(){
+        return $this->hasOne(JobApplicantMarks::class,'applicant_id','applicant_id');
+    }
 }

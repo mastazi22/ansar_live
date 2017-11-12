@@ -384,7 +384,7 @@ return [
                     "icon"=>"fa-circle"
                 ],
                 "Applicant Mark Entry"=>[
-                    "route"=>"recruitment.applicant.index",
+                    "route"=>"recruitment.marks.index",
                     "icon"=>"fa-circle"
                 ]
 

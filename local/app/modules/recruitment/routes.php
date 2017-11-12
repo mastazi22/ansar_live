@@ -8,6 +8,7 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
     //job category route
     Route::resource('category','JobCategoryController',['except'=>['destroy','show']]);
     Route::resource('circular','JobCircularController',['except'=>['destroy','show']]);
+    Route::resource('marks','JobApplicantMarksController',['except'=>['show']]);
     //applicant management
     Route::any('/applicant',['as'=>'recruitment.applicant.index','uses'=>'ApplicantScreeningController@index']);
     Route::get('/applicant/detail/view/{id}',['as'=>'recruitment.applicant.detail_view','uses'=>'ApplicantScreeningController@applicantDetailView']);

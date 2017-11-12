@@ -197,8 +197,9 @@
                    href="{{URL::route('recruitment.applicant.detail_view',['id'=>$applicants->applicant_id])}}"><i
                             class="fa fa-edit"></i>&nbsp;Edit info</a>
                 <button class="btn btn-primary" ng-click="addToSelection('{{$applicants->applicant_id}}')"><i
-                            class="fa fa-plus"></i>&nbsp;Add to selection
-                </button>
+                            class="fa fa-plus"></i>&nbsp;Add to selection</button>
+                <button class="btn btn-danger" ng-click="rejectApplicants('{{$applicants->applicant_id}}')"><i
+                            class="fa fa-minus"></i>&nbsp;Reject applicant</button>
             </div>
         </div>
     </div>

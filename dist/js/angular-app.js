@@ -874,7 +874,7 @@ GlobalApp.directive('formSubmit', function (notificationService, $timeout) {
                 e.preventDefault();
                 if (scope.confirmBox) {
                     $(element).confirmDialog({
-                        message: scope.message,
+                        message: scope.message||"Are u sure?",
                         ok_button_text: 'Confirm',
                         cancel_button_text: 'Cancel',
                         event: 'submit',
