@@ -154,12 +154,12 @@
 
         <table class="entry-table other-table">
             <caption>অন্যান্য তথ্য</caption>
-            <tr>
+            {{--<tr>
                 <td>Mobile No. (Self) নিজ* <span class="pull-right">:</span></td>
                 <td>
                     <div style="font-size:14px;">{{$applicants->mobile_no_self}}</div>
                 </td>
-            </tr>
+            </tr>--}}
             <tr>
                 <td>Training Info<span class="pull-right">:</span></td>
                 <td>
