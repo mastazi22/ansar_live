@@ -6,9 +6,37 @@
 @section('content')
     <script>
         GlobalApp.controller('applicantQuota', function ($scope, $http, $q, httpService,notificationService) {
+            $scope.mapping = {
+                "applicant_name_eng":"Applicant name(English)",
+                "applicant_name_bng":"Applicant name(Bangle)",
+                "date_of_birth":"Birth Date",
+                "father_name_bng":"Father name(Bangle)",
+                "mother_name_bng":"Mother name(Bangle)",
+                "marital_status":"Marital status",
+                "national_id_no":"National id no.",
+                "division_id":"Division",
+                "unit_id":"District",
+                "thana_id":"Thana",
+                "post_office_name_bng":"Post office name(Bangle)",
+                "village_name_bng":"Village name(Bangle)",
+                "union_name_bng":"Union name(Bangle)",
+                "height_feet":"Height in feet",
+                "height_inch":"Height in inch",
+                "chest_normal":"Chest normal",
+                "chest_extended":"Chest extended",
+                "weight":"Weight",
+                "gender":"Gender",
+                "mobile_no_self":"Mobile no(self)",
+                "training_info":"Training info",
+                "connection_name":"Reference name",
+                "connection_relation":"Relation with reference",
+                "connection_address":"Reference address",
+                "connection_mobile_no":"Reference mobile"
+            }
             $scope.pointFields = [];
             $scope.rows = [];
             $scope.exFields = ''
+            $scope.allLoading = true;
             $q.all([
                 $http({method: 'get', url: '{{URL::route('recruitment.applicant.getfieldstore')}}'}),
                 $http({
@@ -17,17 +45,21 @@
                 })
 
             ]).then(function (response) {
+                $scope.allLoading = false;
                 $scope.pointFields = response[1].data;
                 $scope.exFields = response[0].data.field_value.split(',')
-                $scope.rows = new Array($scope.pointFields.length);
-                for(var i=0;i<$scope.pointFields.length;i++){
-                    if($scope.exFields.indexOf($scope.pointFields[i])>=0){
-                        $scope.rows[i] = $scope.pointFields[i];
+                var keys = Object.keys($scope.mapping)
+                $scope.rows = new Array(keys.length);
+                for(var i=0;i<keys.length;i++){
+                    if($scope.exFields.indexOf(keys[i])>=0){
+                        $scope.rows[i] = keys[i];
                     }
                     else{
                         $scope.rows[i] = false;
                     }
                 }
+            },function (response) {
+                $scope.allLoading = false;
             })
             $scope.saveField = function () {
                 $scope.allLoading = true;
@@ -56,10 +88,10 @@
             </div>
             <div class="box-body">
                 <div>
-                    <div style="display: inline-block;margin-right: 50px" ng-repeat="k in pointFields">
+                    <div style="display: inline-block;margin-right: 50px" ng-repeat="(k,v) in mapping">
                         <input type="checkbox" id="[[k]]" ng-model="rows[$index]" ng-true-value="'[[k]]'"
                                class="fancy-checkbox">
-                        <label for="[[k]]" class="control-label">[[k]]</label>
+                        <label for="[[k]]" class="control-label">[[v]]</label>
                     </div>
                 </div>
                 <div class="row" style="margin-top: 20px">
