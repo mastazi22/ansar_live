@@ -213,6 +213,35 @@
                     $scope.allLoading = false;
                 })
             }
+            $scope.acceptedApplicants = function (id) {
+                $('#accept-applicant').confirmDialog({
+                    message: "Are u sure to accept this ansar for Battalion Ansar?",
+                    ok_button_text: 'Confirm',
+                    cancel_button_text: 'Cancel',
+                    event: 'click',
+                    ok_callback: function (element) {
+                        $scope.allLoading = true;
+                        $http({
+                            url:'{{URL::route('recruitment.applicant.confirm_accepted')}}',
+                            method:'post',
+                            data:{
+                                applicant_id:id
+                            }
+                        }).then(function (response) {
+                            $scope.applicants = $sce.trustAsHtml('<h4 class="text-center">No Applicant available</h4>');
+                            $scope.allLoading = false;
+                            notificationService.notify(response.data.status,response.data.message)
+                            $scope.selectedList = [];
+                            $scope.applicantsDetail = [];
+                        },function (response) {
+                            $scope.allLoading = false;
+                        })
+                    },
+                    cancel_callback: function (element) {
+                    }
+                })
+
+            }
             $scope.$watch('selectMessage',function (newVal) {
                 $scope.selectMessage = newVal.length>160?newVal.substr(0,160):newVal;
             })

@@ -15,6 +15,7 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
     Route::get('/applicant/detail/{id}',['as'=>'recruitment.applicant.detail','uses'=>'ApplicantScreeningController@getApplicantData']);
     Route::post('/applicant/update',['as'=>'recruitment.applicant.update','uses'=>'ApplicantScreeningController@updateApplicantData']);
     Route::post('/applicant/confirm_selection_or_rejection',['as'=>'recruitment.applicant.confirm_selection_or_rejection','uses'=>'ApplicantScreeningController@confirmSelectionOrRejection']);
+    Route::post('/applicant/confirm_accepted',['as'=>'recruitment.applicant.confirm_accepted','uses'=>'ApplicantScreeningController@confirmAcepted']);
     Route::get('/applicant/search',['as'=>'recruitment.applicant.search','uses'=>'ApplicantScreeningController@searchApplicant']);
     Route::post('/applicant/search',['as'=>'recruitment.applicant.search_result','uses'=>'ApplicantScreeningController@loadApplicants']);
     Route::post('/applicant/detail/selected_applicant',['as'=>'recruitment.applicant.selected_applicant','uses'=>'ApplicantScreeningController@loadSelectedApplicant']);

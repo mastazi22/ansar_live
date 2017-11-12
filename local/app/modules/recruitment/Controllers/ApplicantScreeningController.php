@@ -536,6 +536,26 @@ class ApplicantScreeningController extends Controller
             return response()->json(['status'=>'success','message'=>'Applicants rejected successfully']);
         }
     }
+    public function confirmAcepted(Request $request){
+        if($request->exists('applicant_id')&&$request->applicant_id){
+            DB::beginTransaction();
+            try{
+                $applicant = JobAppliciant::where('applicant_id',$request->applicant_id)->first();
+                if($applicant){
+                    $applicant->update(['status'=>'accepted']);
+                    $applicant->accepted()->create([
+                        'action_user_id'=>auth()->user()->id
+                    ]);
+                }
+                DB::commit();
+            }catch(\Exception $e){
+                DB::rollback();
+                return response()->json(['status'=>'error','message'=>$e->getMessage()]);
+            }
+            return response()->json(['status'=>'success','message'=>'Applicant accepted successfully']);
+        }
+        return response()->json(['status'=>'error','message'=>"invalid applicant id"]);
+    }
 
     public function loadImage(Request $request){
         $image = storage_path($request->file);
