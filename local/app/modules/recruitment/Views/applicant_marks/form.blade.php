@@ -5,16 +5,17 @@
     {!! Form::hidden('applicant_id',$applicant_id) !!}
 @endif
 <div class="form-group">
+    {!! Form::label('physical','Physical Fitness Exam',['class'=>'control-label']) !!}
+    {!! Form::text('physical',null,['class'=>'form-control','placeholder'=>'Enter physical exam number']) !!}
+</div>
+<div class="form-group">
+    {!! Form::label('edu_training','Education & Training',['class'=>'control-label']) !!}
+    {!! Form::text('edu_training',null,['class'=>'form-control','placeholder'=>'Enter education & training mark']) !!}
+</div>
+
+<div class="form-group">
     {!! Form::label('written','Written Exam',['class'=>'control-label']) !!}
     {!! Form::text('written',null,['class'=>'form-control','placeholder'=>'Enter written exam number']) !!}
-</div>
-<div class="form-group">
-    {!! Form::label('medical','Medical Exam',['class'=>'control-label']) !!}
-    {!! Form::text('medical',null,['class'=>'form-control','placeholder'=>'Enter medical exam number']) !!}
-</div>
-<div class="form-group">
-    {!! Form::label('physical','Physical Exam',['class'=>'control-label']) !!}
-    {!! Form::text('physical',null,['class'=>'form-control','placeholder'=>'Enter physical exam number']) !!}
 </div>
 <div class="form-group">
     {!! Form::label('viva','Viva Exam',['class'=>'control-label']) !!}

@@ -21,7 +21,7 @@ class JobApplicantMarksController extends Controller
     {
         if($request->ajax()){
             $applicants = JobAppliciant::with(['marks'=>function($q){
-                $q->select(DB::raw('*,(written+medical+physical+viva) as total'));
+                $q->select(DB::raw('*,(written+edu_training+physical+viva) as total'));
             }])->whereHas('selectedApplicant',function ($q){
 
             });

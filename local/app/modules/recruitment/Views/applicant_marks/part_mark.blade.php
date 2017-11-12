@@ -16,9 +16,10 @@
             <tr>
                 <th>Sl. No</th>
                 <th>Applicant Name</th>
+                <th>Physical Fitness</th>
+                <th>Education & Training</th>
                 <th>Written</th>
-                <th>Medical</th>
-                <th>Physical</th>
+
                 <th>Viva</th>
                 <th>Total</th>
                 <th>Action</th>
@@ -27,9 +28,11 @@
                 <tr>
                     <td>{{$i++}}</td>
                     <td>{{$a->applicant_name_bng}}</td>
-                    <td>{{$a->marks?($a->marks->written?$a->marks->written:'--'):'--'}}</td>
-                    <td>{{$a->marks?($a->marks->medical?$a->marks->medical:'--'):'--'}}</td>
                     <td>{{$a->marks?($a->marks->physical?$a->marks->physical:'--'):'--'}}</td>
+                    <td>{{$a->marks?($a->marks->edu_training?$a->marks->edu_training:'--'):'--'}}</td>
+                    <td>{{$a->marks?($a->marks->written?$a->marks->written:'--'):'--'}}</td>
+
+
                     <td>{{$a->marks?($a->marks->viva?$a->marks->viva:'--'):'--'}}</td>
                     <td>{{$a->marks?($a->marks->total?$a->marks->total:'--'):'--'}}</td>
                     @if($a->marks)
