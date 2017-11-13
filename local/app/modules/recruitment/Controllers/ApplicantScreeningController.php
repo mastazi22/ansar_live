@@ -263,6 +263,8 @@ class ApplicantScreeningController extends Controller
                         });
                         $q->orWhere('status', 'pending');
                     });
+                }else if ($type == 'selected') {
+                    $applicants->where('status', 'selected');
                 }
                 if ($request->range && $request->range != 'all') {
                     $applicants->where('division_id', $request->range);
