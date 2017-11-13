@@ -500,13 +500,6 @@ class ApplicantScreeningController extends Controller
         if($request->type==='selection'){
             DB::beginTransaction();
             try{
-                if($request->sub_type==0){
-                    $pre_selected = JobSelectedApplicant::where('action_user_id',auth()->user()->id)->get();
-                    foreach ($pre_selected as $p){
-                        $p->applicant()->update(['status'=>'applied']);
-                        $p->delete();
-                    }
-                }
                 foreach ($request->applicants as $applicant_id){
                     $applicant = JobAppliciant::where('applicant_id',$applicant_id)->first();
                     if($applicant){
