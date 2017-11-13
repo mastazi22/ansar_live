@@ -140,7 +140,7 @@ class FreezeController extends Controller
 
     public function freezeRembodied(Request $request)
     {
-
+//        return $request->all();
         $ansarids = $request->ansarId;
         $results = [];
         if (is_array($ansarids)) {
@@ -172,7 +172,7 @@ class FreezeController extends Controller
                         'ansar_id' => $ansarid,
                     ]);
                     $frezeInfo->delete();
-                    $updateEmbodiment->service_ended_date = Carbon::parse($updateEmbodiment->service_ended_date)->addDays($date_differ);
+                    if($request->include_freeze_date===1)$updateEmbodiment->service_ended_date = Carbon::parse($updateEmbodiment->service_ended_date)->addDays($date_differ);
                     $updateEmbodiment->emboded_status = 'Emboded';
                     $updateEmbodiment->save();
                     AnsarStatusInfo::where('ansar_id', $ansarid)->update(['freezing_status' => 0, 'embodied_status' => 1]);
@@ -262,7 +262,6 @@ class FreezeController extends Controller
 
     public function transferFreezedAnsar(Request $request)
     {
-
         $ansarids = $request->ansarIds;
         if(is_array($ansarids)) {
             DB::beginTransaction();
@@ -299,7 +298,7 @@ class FreezeController extends Controller
                     $transfer->transfered_kpi_join_date = Carbon::parse($request->joining_date)->format("Y-m-d");
                     $transfer->action_by = Auth::user()->id;
                     $transfer->save();
-                    $updateEmbodiment->service_ended_date = Carbon::parse($updateEmbodiment->service_ended_date)->addDays($date_differ);
+                    if($request->exists('include_freeze_date')&&intval($request->include_freeze_date)===1)$updateEmbodiment->service_ended_date = Carbon::parse($updateEmbodiment->service_ended_date)->addDays($date_differ);
                     $updateEmbodiment->emboded_status = 'Emboded';
                     $updateEmbodiment->transfered_date = Carbon::parse( $request->joining_date)->format("Y-m-d");
                     $updateEmbodiment->kpi_id = $request->selectedKpi;

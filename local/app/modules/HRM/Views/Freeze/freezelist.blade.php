@@ -867,6 +867,16 @@
                                        ng-model="transferData.memorandum_transfer" name="memorandum_id"
                                        placeholder="Enter Memorandum no.">
                             </div>
+                            <div class="form-group required col-md-offset-1 col-md-10">
+                                <label class="control-label" for="include_freeze_date">
+                                    Include freezing days
+                                </label>
+                                <input  type="checkbox" style="vertical-align: text-top;"
+                                       id="include_freeze_date"
+                                       ng-model="transferData.include_freeze_date" name="include_freeze_date"
+                                        ng-true-value="1" ng-false-value="0"
+                                       placeholder="Enter Memorandum no.">
+                            </div>
 
                         </div>
                         <div class="modal-footer">
@@ -970,6 +980,16 @@
                                            id="memorandum_id"
                                            ng-model="transferData.memorandum_transfer" name="memorandum_id"
                                            placeholder="Enter Memorandum no.">
+                                </div>
+                                <div class="form-group required col-md-offset-1 col-md-10">
+                                    <label class="control-label" for="include_freeze_date">
+                                        Include freezing days
+                                    </label>
+                                    <input  type="checkbox" style="vertical-align: text-top;"
+                                            id="include_freeze_date"
+                                            ng-model="transferData.include_freeze_date" name="include_freeze_date"
+                                            ng-true-value="1" ng-false-value="0"
+                                            placeholder="Enter Memorandum no.">
                                 </div>
                             </div>
                         </div>
