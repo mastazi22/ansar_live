@@ -30,30 +30,20 @@ class SMSController extends Controller
             'message' => 'required'
         ];
         $this->validate($request, $rules);
+        $divisions = array_filter($request->divisions);
+        $units = array_filter($request->units);
         if ($request->status == 'selected') {
-            $query = JobAppliciant::whereHas('selectedApplicant', function () {
 
-            })->where('status', $request->status)->where('job_circular_id', $request->circular);
-            $divisions = array_filter($request->divisions);
-            $units = array_filter($request->units);
-            if (count($divisions) > 0) {
-                $query->whereIn('division_id', $divisions);
-            }
-            if (count($units) > 0) {
-                $query->whereIn('unit_id', $units);
-            }
-            $applicants = $query->get();
             DB::beginTransaction();
             try {
-                foreach ($applicants as $a) {
-
-                    $a->selectedApplicant()->update([
-                        'message' => $request->message,
-                        'sms_status' => 'on'
-                    ]);
-                    DB::commit();
-
-                }
+                DB::statement("call update_sms_status(:message,:circular_id,:divisions,:units,:a_status)",[
+                    'message'=>$request->message,
+                    'circular_id'=>$request->circular,
+                    'divisions'=>count($divisions)>0?implode(',',$divisions):'',
+                    'units'=>count($units)>0?implode(',',$units):'',
+                    'a_status'=>'selected'
+                ]);
+                DB::commit();
             } catch (\Exception $e) {
                 DB::rollback();
                 return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
@@ -61,29 +51,17 @@ class SMSController extends Controller
             return response()->json(['status' => 'success', 'message' => 'Message send successfully']);
         }
         else if ($request->status == 'accepted') {
-            $query = JobAppliciant::whereHas('accepted', function () {
 
-            })->where('status', $request->status)->where('job_circular_id', $request->circular);
-            $divisions = array_filter($request->divisions);
-            $units = array_filter($request->units);
-            if (count($divisions) > 0) {
-                $query->whereIn('division_id', $divisions);
-            }
-            if (count($units) > 0) {
-                $query->whereIn('unit_id', $units);
-            }
-            $applicants = $query->get();
             DB::beginTransaction();
             try {
-                foreach ($applicants as $a) {
-
-                    $a->accepted()->update([
-                        'message' => $request->message,
-                        'sms_status' => 'on'
-                    ]);
-                    DB::commit();
-
-                }
+                DB::statement("call update_sms_status(:message,:circular_id,:divisions,:units,:a_status)",[
+                    'message'=>$request->message,
+                    'circular_id'=>$request->circular,
+                    'divisions'=>count($divisions)>0?implode(',',$divisions):'',
+                    'units'=>count($units)>0?implode(',',$units):'',
+                    'a_status'=>'accepted'
+                ]);
+                DB::commit();
             } catch (\Exception $e) {
                 DB::rollback();
                 return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
