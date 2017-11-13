@@ -386,6 +386,10 @@ return [
                 "Applicant Mark Entry"=>[
                     "route"=>"recruitment.marks.index",
                     "icon"=>"fa-circle"
+                ],
+                "Send SMS to Applicant"=>[
+                    "route"=>"recruitment.applicant.sms",
+                    "icon"=>"fa-circle"
                 ]
 
             ]
