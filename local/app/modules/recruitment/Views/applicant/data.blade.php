@@ -12,7 +12,9 @@
             <th>Height</th>
             <th>Chest</th>
             <th>Weight</th>
-            <th>Mobile no</th>
+            @if(Auth::user()->type==11)
+                <th>Mobile no</th>
+            @endif
             <th>Status</th>
 
         </tr>
@@ -30,7 +32,9 @@
                     <td>{{$a->height_feet}} feet {{$a->height_inch}} inch</td>
                     <td>{{$a->chest_normal.'-'.$a->chest_extended}} inch</td>
                     <td>{{$a->weight}} kg</td>
-                    <td>{{$a->mobile_no_self}}</td>
+                    @if(Auth::user()->type==11)
+                        <td>{{$a->mobile_no_self}}</td>
+                    @endif
                     <td>{{$a->status}}</td>
                 </tr>
             @endforeach
