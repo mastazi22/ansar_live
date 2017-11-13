@@ -32,7 +32,7 @@ class SMSController extends Controller
         $this->validate($request, $rules);
         $divisions = array_filter($request->divisions);
         $units = array_filter($request->units);
-        if ($request->status == 'selected') {
+        if ($request->status == 'sel') {
 
             DB::beginTransaction();
             try {
@@ -50,7 +50,7 @@ class SMSController extends Controller
             }
             return response()->json(['status' => 'success', 'message' => 'Message send successfully']);
         }
-        else if ($request->status == 'accepted') {
+        else if ($request->status == 'acc') {
 
             DB::beginTransaction();
             try {

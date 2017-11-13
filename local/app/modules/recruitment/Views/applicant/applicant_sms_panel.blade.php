@@ -47,6 +47,7 @@
                     $scope.allLoading = false;
                     notificationService.notify(response.data.status,response.data.message);
                 },function (response) {
+                    $scope.allLoading = false;
                     notificationService.notify('error',response.statusText);
                 })
             }
@@ -147,8 +148,8 @@
                             </label>
                             <select name="" id="" class="form-control" ng-model="param.status">
                                 <option value="">--Select a status--</option>
-                                <option value="selected">Selected</option>
-                                <option value="accepted">Accepted</option>
+                                <option value="sel">Selected</option>
+                                <option value="acc">Accepted</option>
                             </select>
                         </div>
                         <div class="form-group">
