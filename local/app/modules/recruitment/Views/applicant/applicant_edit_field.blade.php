@@ -31,7 +31,8 @@
                 "connection_name":"Reference name",
                 "connection_relation":"Relation with reference",
                 "connection_address":"Reference address",
-                "connection_mobile_no":"Reference mobile"
+                "connection_mobile_no":"Reference mobile",
+                "education":"Education"
             }
             $scope.pointFields = [];
             $scope.rows = [];

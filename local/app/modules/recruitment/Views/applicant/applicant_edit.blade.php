@@ -455,7 +455,7 @@
                             </div>
                         </fieldset>
 
-                        <fieldset ng-if="fields.indexOf('educations')>=0">
+                        <fieldset ng-if="fields.indexOf('education')>=0">
                             <div class="level-title-session-entry">
                                 <h5 style="text-align: center;">শিক্ষাগত যোগ্যতার তথ্য</h5>
                             </div>
