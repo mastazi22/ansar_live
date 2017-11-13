@@ -116,6 +116,7 @@ return [
         "recruitment.applicant.editfield,recruitment.applicant.editfieldstore,recruitment.applicant.getfieldstore".
         "recruitment.point.index,recruitment.point.edit,recruitment.point.update",
         "recruitment.quota.index,recruitment.quota.edit,recruitment.quota.update",
-        "recruitment"
+        "recruitment",
+        "include_freeze_days"
     ]
 ];

@@ -64,7 +64,7 @@
                 },
                 @endif
 
-        ]
+            ]
             var userType = parseInt('{{auth()->user()->type}}')
             $scope.loadKpi = function () {
                 $scope.loadingKpi = true;
@@ -213,7 +213,12 @@
                     if (response.data.status) {
                         notificationService.notify('success', response.data.message);
                         // $("#re-embodied-model,#re-embodied-model-mul").modal('hide')
-                        $scope.printData = {"id":$scope.transferData.memorandum_transfer,"unit":$scope.child.selectedUnit,"view":"full","type":"TRANSFER"}
+                        $scope.printData = {
+                            "id": $scope.transferData.memorandum_transfer,
+                            "unit": $scope.child.selectedUnit,
+                            "view": "full",
+                            "type": "TRANSFER"
+                        }
                         $scope.printLetter = true;
                         $scope.transferData = {};
                         $scope.getFreezeList();
@@ -386,7 +391,7 @@
                 $scope.checkedAll = r;
             }, true)
             $scope.checkAll = function () {
-                if (!$scope.checkedAll)$scope.checked = Array.apply(null, Array($scope.allFreezeAnsar.length)).map(Boolean.prototype.valueOf, false);
+                if (!$scope.checkedAll) $scope.checked = Array.apply(null, Array($scope.allFreezeAnsar.length)).map(Boolean.prototype.valueOf, false);
                 else {
                     $scope.allFreezeAnsar.forEach(function (value, index) {
                         $scope.checked[index] = index;
@@ -447,7 +452,7 @@
                 $('.test-dropdown-below,.test-dropdown-above').css('display', 'none');
             })
             $("#joining_date,#rest_date").datepicker({
-                dateFormat:'dd-M-yy'
+                dateFormat: 'dd-M-yy'
             });
         })
     </script>
@@ -703,7 +708,8 @@
                           message="Are you sure want to Black this ansar">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"
-                                    onclick="event.preventDefault()">&times;</button>
+                                    onclick="event.preventDefault()">&times;
+                            </button>
                             <h4 class="modal-title">Ansar
                                 ID:[[getSingleRow.ansar_id]],Name:[[getSingleRow.ansar_name_bng]]</h4>
                         </div>
@@ -747,7 +753,8 @@
                           message="Are you sure want to Black those ansars">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"
-                                    onclick="event.preventDefault()">&times;</button>
+                                    onclick="event.preventDefault()">&times;
+                            </button>
                             <h4 class="modal-title">Black List</h4>
                         </div>
                         <div class="modal-body">
@@ -803,7 +810,8 @@
                     <form class="form" role="form" method="post" ng-submit="transferAnsar([getSingleRow.ansar_id])">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"
-                                    onclick="event.preventDefault()">&times;</button>
+                                    onclick="event.preventDefault()">&times;
+                            </button>
                             <h4 class="modal-title" style="text-align:center">
                                 <label class="control-label" for="disembodiment_reason_id">
                                     Ansar ID: [[getSingleRow.ansar_id]]
@@ -867,16 +875,18 @@
                                        ng-model="transferData.memorandum_transfer" name="memorandum_id"
                                        placeholder="Enter Memorandum no.">
                             </div>
-                            <div class="form-group required col-md-offset-1 col-md-10">
-                                <label class="control-label" for="include_freeze_date">
-                                    Include freezing days
-                                </label>
-                                <input  type="checkbox" style="vertical-align: text-top;"
-                                       id="include_freeze_date"
-                                       ng-model="transferData.include_freeze_date" name="include_freeze_date"
-                                        ng-true-value="1" ng-false-value="0"
-                                       placeholder="Enter Memorandum no.">
-                            </div>
+                            @if(UserPermission::userPermissionExists('include_freeze_days'))
+                                <div class="form-group required col-md-offset-1 col-md-10">
+                                    <label class="control-label" for="include_freeze_date">
+                                        Include freezing days
+                                    </label>
+                                    <input type="checkbox" style="vertical-align: text-top;"
+                                           id="include_freeze_date"
+                                           ng-model="transferData.include_freeze_date" name="include_freeze_date"
+                                           ng-true-value="1" ng-false-value="0"
+                                           placeholder="Enter Memorandum no.">
+                                </div>
+                            @endif
 
                         </div>
                         <div class="modal-footer">
@@ -888,12 +898,13 @@
 
                         </div>
                     </form>
-                    <form method="post"  ng-if="printLetter" target="_blank" action="{{URL::to('HRM/print_letter')}}">
+                    <form method="post" ng-if="printLetter" target="_blank" action="{{URL::to('HRM/print_letter')}}">
                         {!! csrf_field() !!}
                         <input ng-repeat="(key,value) in printData" type="hidden" name="[[key]]" value="[[value]]">
                         <button type="submit"
                                 class="btn btn-primary pull-right"><i class="fa fa-print"></i>&nbsp;&nbsp;Print
-                            Letter</button>
+                            Letter
+                        </button>
                     </form>
                 </div>
 
@@ -907,7 +918,8 @@
                     <form class="form" role="form" method="post" ng-submit="transChecked()">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"
-                                    onclick="event.preventDefault()">&times;</button>
+                                    onclick="event.preventDefault()">&times;
+                            </button>
                             <h4 class="modal-title">
                                 Transfer
                             </h4>
@@ -985,11 +997,11 @@
                                     <label class="control-label" for="include_freeze_date">
                                         Include freezing days
                                     </label>
-                                    <input  type="checkbox" style="vertical-align: text-top;"
-                                            id="include_freeze_date"
-                                            ng-model="transferData.include_freeze_date" name="include_freeze_date"
-                                            ng-true-value="1" ng-false-value="0"
-                                            placeholder="Enter Memorandum no.">
+                                    <input type="checkbox" style="vertical-align: text-top;"
+                                           id="include_freeze_date"
+                                           ng-model="transferData.include_freeze_date" name="include_freeze_date"
+                                           ng-true-value="1" ng-false-value="0"
+                                           placeholder="Enter Memorandum no.">
                                 </div>
                             </div>
                         </div>
@@ -1002,12 +1014,13 @@
 
                         </div>
                     </form>
-                    <form method="post"  ng-if="printLetter" target="_blank" action="{{URL::to('HRM/print_letter')}}">
+                    <form method="post" ng-if="printLetter" target="_blank" action="{{URL::to('HRM/print_letter')}}">
                         {!! csrf_field() !!}
                         <input ng-repeat="(key,value) in printData" type="hidden" name="[[key]]" value="[[value]]">
                         <button type="submit"
                                 class="btn btn-primary pull-right"><i class="fa fa-print"></i>&nbsp;&nbsp;Print
-                            Letter</button>
+                            Letter
+                        </button>
                     </form>
                 </div>
 
@@ -1110,7 +1123,8 @@
                           message="Are you sure want to Re-Embodied those ansar">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal"
-                                    onclick="event.preventDefault()">&times;</button>
+                                    onclick="event.preventDefault()">&times;
+                            </button>
                             <h4 class="modal-title">
                                 Dis-Embodied
                             </h4>
@@ -1134,7 +1148,8 @@
                                 <label class="control-label" for="unfreeze_date">
                                     *Unfreeze Date:
                                 </label>
-                                <input type="text" date-picker placeholder="Unfreeze date" class="form-control" placeholder="Black Date"
+                                <input type="text" date-picker placeholder="Unfreeze date" class="form-control"
+                                       placeholder="Black Date"
                                        id="unfreeze_date" ng-model="unfreeze_date" name="unfreeze_date">
                             </div>
                         </div>

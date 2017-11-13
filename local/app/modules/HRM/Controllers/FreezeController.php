@@ -2,6 +2,7 @@
 
 namespace App\modules\HRM\Controllers;
 
+use App\Helper\Facades\UserPermissionFacades;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\modules\HRM\Models\AnsarStatusInfo;
@@ -298,7 +299,8 @@ class FreezeController extends Controller
                     $transfer->transfered_kpi_join_date = Carbon::parse($request->joining_date)->format("Y-m-d");
                     $transfer->action_by = Auth::user()->id;
                     $transfer->save();
-                    if($request->exists('include_freeze_date')&&intval($request->include_freeze_date)===1)$updateEmbodiment->service_ended_date = Carbon::parse($updateEmbodiment->service_ended_date)->addDays($date_differ);
+
+                    if(!UserPermissionFacades::userPermissionExists('include_freeze_days')||($request->exists('include_freeze_date')&&intval($request->include_freeze_date)===1))$updateEmbodiment->service_ended_date = Carbon::parse($updateEmbodiment->service_ended_date)->addDays($date_differ);
                     $updateEmbodiment->emboded_status = 'Emboded';
                     $updateEmbodiment->transfered_date = Carbon::parse( $request->joining_date)->format("Y-m-d");
                     $updateEmbodiment->kpi_id = $request->selectedKpi;
