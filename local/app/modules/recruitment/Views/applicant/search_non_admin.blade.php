@@ -24,7 +24,7 @@
         }
     </style>
     <script>
-        GlobalApp.controller('applicantSearch', function ($scope, $http, $q, httpService, $sce,notificationService) {
+        GlobalApp.controller('applicantSearch', function ($scope, $http, $q, httpService, $sce,notificationService,$rootScope) {
             var p = '50'
             $scope.relations = {
                 '': '--সম্পর্ক নির্বাচন করুন--',
@@ -213,6 +213,7 @@
                     $scope.allLoading = false;
                 })
             }
+            var v = '<div class="text-center" style="margin-top: 20px"><i class="fa fa-spinner fa-pulse"></i></div>'
             $scope.acceptedApplicants = function (id) {
                 $('#accept-applicant').confirmDialog({
                     message: "Are u sure to accept this ansar for Battalion Ansar?",
@@ -242,18 +243,155 @@
                 })
 
             }
+            $scope.editApplicant = function (url) {
+                $("#edit-form").modal('show');
+                $rootScope.detail = $sce.trustAsHtml(v);
+                $http.get(url).then(function (response) {
+                    $rootScope.detail = $sce.trustAsHtml(response.data.view);
+                    $rootScope.applicant_id = response.data.id;
+                })
+            }
+            $scope.submitComplete = function () {
+                $("#edit-form").modal('hide');
+            }
             $scope.$watch('selectMessage',function (newVal) {
                 $scope.selectMessage = newVal.length>160?newVal.substr(0,160):newVal;
+            })
+            $rootScope.$on('refreshData',function (event) {
+                $scope.loadApplicant()
             })
             loadAll();
 
 
+
         })
+
+
+        GlobalApp.controller('fullEntryFormController', function ($scope, $q, $http, httpService, notificationService,$rootScope) {
+            $scope.isAdmin = parseInt('{{Auth::user()->type}}')
+            $scope.formData = {};
+            $scope.fields = [];
+            $scope.eduRows = [];
+            $scope.eduEngRows = [];
+            $scope.allLoading = true;
+            $scope.relations = {
+                '': '--সম্পর্ক নির্বাচন করুন--',
+                'father': 'Father',
+                'mother': 'Mother',
+                'brother': 'Brother',
+                'sister': 'Sister',
+                'cousin': 'Cousin',
+                'uncle': 'Uncle',
+                'aunt': 'Aunt',
+                'neighbour': 'Neighbour'
+            };
+
+            $scope.profile_pic = " ";
+            $scope.formSubmitResult = {};
+            $scope.ppp = [];
+            $scope.disableDDT = false;
+            $scope.calling = function () {
+                alert($scope.profile_pic);
+            }
+            $scope.disableDDT = true;
+            $scope.loadApplicantDetail = function () {
+                $q.all([
+                    $http({method: 'get', url: '{{URL::to('recruitment/applicant/detail')}}/'+$rootScope.applicant_id}),
+                    httpService.range(),
+                    httpService.education(),
+                    $http({method: 'get', url: '{{URL::route('recruitment.applicant.getfieldstore')}}'})
+                ]).then(function (response) {
+                    console.log(response)
+                    $scope.allLoading = false;
+                    $scope.formData = response[0].data.data;
+                    $scope.district = response[0].data.units;
+                    $scope.thana = response[0].data.thanas;
+                    $scope.division = response[1];
+                    $scope.ppp = response[2];
+                    $scope.fields = response[3].data['field_value'].split(',');
+                    $scope.disableDDT = false;
+                    $scope.formData.division_id += '';
+                    $scope.formData.unit_id += '';
+                    $scope.formData.thana_id += '';
+                    $scope.formData.appliciant_education_info.forEach(function (d, i) {
+
+                        $scope.formData.appliciant_education_info[i].job_education_id += '';
+                    })
+                });
+            }
+            $scope.SelectedItemChanged = function () {
+                $scope.disableDDT = true;
+                httpService.unit($scope.formData.division_id).then(function (response) {
+                    $scope.district = response;
+                    $scope.thana = [];
+                    $scope.formData.unit_id = '';
+                    $scope.formData.thana_id = '';
+
+                    $scope.disableDDT = false;
+                })
+            };
+            $scope.SelectedDistrictChanged = function () {
+                $scope.disableDDT = true;
+                httpService.thana($scope.formData.division_id, $scope.formData.unit_id).then(function (response) {
+                    $scope.thana = response;
+                    $scope.formData.thana_id = "";
+                    $scope.disableDDT = false;
+                })
+            };
+
+            $scope.eduDeleteRows = function (index) {
+                $scope.formData.appliciant_education_info.splice(index, 1);
+            }
+            $scope.addEducation = function () {
+                $scope.formData.appliciant_education_info.push({
+                    job_education_id: '',
+                    job_applicant_id: $scope.formData.id,
+                    institute_name: '',
+                    gade_divission: '',
+                    passing_year: ''
+                })
+            }
+            $scope.updateData = function () {
+                $scope.allLoading = true;
+                $http({
+                    method: 'post',
+                    data: $scope.formData,
+                    url: '{{URL::route('recruitment.applicant.update')}}'
+                }).then(function (response) {
+                    $scope.allLoading = false;
+                    notificationService.notify(response.data.status, response.data.message)
+                    $("#edit-form").modal('toggle');
+                    $rootScope.$emit('refreshData',{})
+                }, function (response) {
+                    $scope.allLoading = false;
+                    if (response.status == 422) {
+                        $scope.formSubmitResult['error'] = response.data;
+                    }
+                    else {
+                        notificationService.notify('error', 'An unknown error occur. Please try again later')
+                    }
+                })
+            }
+        });
         GlobalApp.directive('compileHtml', function ($compile) {
             return {
                 restrict: 'A',
                 link: function (scope, elem, attr) {
                     scope.$watch('applicants', function (n) {
+
+                        if (attr.ngBindHtml) {
+                            $compile(elem[0].children)(scope)
+                        }
+                    })
+
+                }
+            }
+        })
+        GlobalApp.directive('compileHtmll', function ($compile) {
+            return {
+                restrict: 'A',
+                link: function (scope, elem, attr) {
+                    scope.$watch('detail', function (n) {
 
                         if (attr.ngBindHtml) {
                             $compile(elem[0].children)(scope)
@@ -385,10 +523,23 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-8 col-centered" style="text-align: center">
-                                <button class="btn btn-primary" ng-disabled="selectedList.length<=0" data-dismiss="modal" style="margin-bottom: 10px" ng-click="selectApplicants('selection',0)">Confirm selection & cancel previous selection</button>
-                                <button  class="btn btn-primary"  ng-disabled="selectedList.length<=0" data-dismiss="modal" ng-click="selectApplicants('selection',1)">Confirm selection & add to previous selection</button>
+                                {{--<button class="btn btn-primary" ng-disabled="selectedList.length<=0" data-dismiss="modal" style="margin-bottom: 10px" ng-click="selectApplicants('selection',0)">Confirm selection & cancel previous selection</button>--}}
+                                <button  class="btn btn-primary"  ng-disabled="selectedList.length<=0" data-dismiss="modal" ng-click="selectApplicants('selection',1)">Confirm selection</button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="edit-form">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Edit form</h4>
+                    </div>
+                    <div class="modal-body" ng-bind-html="detail" compile-htmll>
+
                     </div>
                 </div>
             </div>

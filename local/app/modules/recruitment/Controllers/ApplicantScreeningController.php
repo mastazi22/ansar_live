@@ -437,7 +437,7 @@ class ApplicantScreeningController extends Controller
 
     }
     public function applicantDetailView($id){
-        return view('recruitment::applicant.applicant_edit',['id'=>$id]);
+        return response()->json(['view'=>view('recruitment::applicant.applicant_edit')->render(),'id'=>$id]);
 
     }
     public function updateApplicantData(Request $request){

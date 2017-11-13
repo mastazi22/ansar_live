@@ -193,8 +193,10 @@
         </table>
         <div class="row" style="margin-top: 20px">
             <div class="col-sm-12 text-center">
-                <a class="btn btn-primary" target="_blank"
+                {{--<a class="btn btn-primary" target="_blank"
                    href="{{URL::route('recruitment.applicant.detail_view',['id'=>$applicants->applicant_id])}}"><i
+                            class="fa fa-edit"></i>&nbsp;Edit info</a>--}}
+                <a class="btn btn-primary" ng-click="editApplicant('{{URL::route('recruitment.applicant.detail_view',['id'=>$applicants->applicant_id])}}')"><i
                             class="fa fa-edit"></i>&nbsp;Edit info</a>
                 <button class="btn btn-primary" ng-click="addToSelection('{{$applicants->applicant_id}}')"><i
                             class="fa fa-plus"></i>&nbsp;Add to selection</button>
