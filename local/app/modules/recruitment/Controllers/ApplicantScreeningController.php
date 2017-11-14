@@ -6,11 +6,14 @@ use App\Jobs\FeedbackSMS;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
 use App\modules\HRM\Models\Thana;
+use App\modules\recruitment\Models\JobApplicantMarks;
+use App\modules\recruitment\Models\JobApplicantQuota;
 use App\modules\recruitment\Models\JobAppliciant;
 use App\modules\recruitment\Models\JobCircular;
 use App\modules\recruitment\Models\JobSelectedApplicant;
 use App\modules\recruitment\Models\JobSettings;
 use Carbon\Carbon;
+use function foo\func;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -585,4 +588,34 @@ class ApplicantScreeningController extends Controller
         $js = JobSettings::where('field_type','applicants_field')->first();
         return $js;
     }
+    public function acceptedApplicantView()
+    {
+        return view('recruitment::applicant.applicant_accepted');
+    }
+    public function loadApplicantByQuota(Request $request)
+    {
+
+        $rules = [
+            'unit'=>'required|regex:/^[0-9]+$/',
+            'circular'=>'required|regex:/^[0-9]+$/',
+        ];
+        $this->validate($request,$rules);
+        $quota = JobApplicantQuota::where('district_id',$request->unit)->first();
+        $applicant_male = JobApplicantMarks::with(['applicant'=>function($q){
+            $q->with(['district','appliciantEducationInfo'=>function($qq){
+                $qq->with('educationInfo');
+            }]);
+        }])->whereHas('applicant',function($q) use($request){
+
+            $q->whereHas('selectedApplicant',function(){
+
+            })->where('status','selected')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit);
+        })->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'))->orderBy('total_mark','desc');
+        if($quota){
+            $applicant_male->limit($quota->male);
+        }
+        return response()->json(['applicants'=>$applicant_male->get(),'unit'=>District::find($request->unit)]);
+
+    }
+
 }

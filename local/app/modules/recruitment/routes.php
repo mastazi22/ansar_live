@@ -24,6 +24,8 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
     Route::get('/applicant/editfield',['as'=>'recruitment.applicant.editfield','uses'=>'ApplicantScreeningController@applicantEditField']);
     Route::post('/applicant/editfield',['as'=>'recruitment.applicant.editfieldstore','uses'=>'ApplicantScreeningController@saveApplicantEditField']);
     Route::get('/applicant/geteditfield',['as'=>'recruitment.applicant.getfieldstore','uses'=>'ApplicantScreeningController@loadApplicantEditField']);
+    Route::get('/applicant/final_list',['as'=>'recruitment.applicant.final_list','uses'=>'ApplicantScreeningController@acceptedApplicantView']);
+    Route::post('/applicant/final_list/load',['as'=>'recruitment.applicant.final_list_load','uses'=>'ApplicantScreeningController@loadApplicantByQuota']);
 
     Route::get('/applicant/list/{type?}',['as'=>'recruitment.applicant.list','uses'=>'ApplicantScreeningController@applicantListSupport']);
     Route::get('/applicants/list/{circular_id}/{type?}',['as'=>'recruitment.applicants.list','uses'=>'ApplicantScreeningController@applicantList']);

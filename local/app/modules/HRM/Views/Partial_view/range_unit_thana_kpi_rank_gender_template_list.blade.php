@@ -1,7 +1,7 @@
 <div ng-class="{row:!layoutVertical}">
     <div ng-class="fieldWidth.range" ng-if="show('range')">
         <div class="form-group">
-            <label class="control-label">@lang('title.range')&nbsp;
+            <label class="control-label">{{trim(Lang::get('title.range'))}}
                 <img ng-show="loading.range" src="{{asset('dist/img/facebook.gif')}}" width="16">
             </label>
             <select id="range" ng-disabled="rangeFieldDisabled||loading.range||loading.unit||loading.thana||loading.kpi" name="[[fieldName.range]]" class="form-control" ng-model="selected.range" ng-change="loadUnit(selected.range)">
@@ -14,7 +14,7 @@
     </div>
     <div ng-class="fieldWidth.unit" ng-if="show('unit')">
         <div class="form-group">
-            <label class="control-label">@lang('title.unit')&nbsp;
+            <label class="control-label">{{trim(Lang::get('title.unit'))}}
                 <img ng-show="loading.unit" src="{{asset('dist/img/facebook.gif')}}" width="16">
             </label>
             <select id="unit" ng-disabled="unitFieldDisabled||loading.range||loading.unit||loading.thana||loading.kpi" name="[[fieldName.unit]]" class="form-control" ng-model="selected.unit" ng-change="loadThana(selected.range||undefined,selected.unit)">
@@ -27,7 +27,7 @@
     </div>
     <div ng-class="fieldWidth.thana" ng-if="show('thana')">
         <div class="form-group">
-            <label class="control-label">@lang('title.thana')&nbsp;
+            <label class="control-label">@lang('title.thana')
                 <img ng-show="loading.thana" src="{{asset('dist/img/facebook.gif')}}" width="16">
             </label>
             <select id="thana" ng-disabled="thanaFieldDisabled||loading.range||loading.unit||loading.thana||loading.kpi" name="[[fieldName.thana]]" class="form-control" ng-model="selected.thana" ng-change="loadKPI(selected.range||undefined,selected.unit||undefined,selected.thana)">
@@ -40,7 +40,7 @@
     </div>
     <div ng-class="fieldWidth.kpi" ng-if="show('kpi')">
         <div class="form-group">
-            <label class="control-label">@lang('title.kpi')&nbsp;
+            <label class="control-label">@lang('title.kpi')
                 <img ng-show="loading.kpi" src="{{asset('dist/img/facebook.gif')}}" width="16">
             </label>
             <select id="kpi" ng-disabled="kpiFieldDisabled||loading.range||loading.unit||loading.thana||loading.kpi" name="[[fieldName.kpi]]" class="form-control" ng-model="selected.kpi">

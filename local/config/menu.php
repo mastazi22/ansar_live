@@ -390,6 +390,10 @@ return [
                 "Send SMS to Applicant"=>[
                     "route"=>"recruitment.applicant.sms",
                     "icon"=>"fa-circle"
+                ],
+                "Final Accepted Applicant"=>[
+                    "route"=>"recruitment.applicant.final_list",
+                    "icon"=>"fa-circle"
                 ]
 
             ]
