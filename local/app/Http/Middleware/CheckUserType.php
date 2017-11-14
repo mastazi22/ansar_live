@@ -51,6 +51,7 @@ class CheckUserType
         'load_ansar_for_freeze'=>['unit'=>'unit','range'=>'range'],
         'entry_report'=>['unit'=>'unit','range'=>'range'],
         'new-embodiment-entry'=>['division_name_eng'=>'unit'],
+        'report.applicants.status'=>['range'=>'range','unit'=>'unit'],
     ];
     public function handle($request, Closure $next)
     {

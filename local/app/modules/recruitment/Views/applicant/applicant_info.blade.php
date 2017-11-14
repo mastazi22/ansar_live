@@ -1,7 +1,7 @@
 @if($applicants)
     <div class="container-fluid" style="margin-top: 20px">
         <img class="pull-right profile-image"
-             src="{{URL::to('recruitment/profile_image').'?file='.$applicants->profile_pic}}"
+             src="{{URL::to('recruitment/profile_image').'?file='.base64_encode($applicants->profile_pic)}}"
              alt="">
         <table class="entry-table" style="width: 100%">
             <caption style="text-align: center;font-size: 1em;font-weight: bold">বাক্তিগত ও পারিবারিক তথ্য</caption>

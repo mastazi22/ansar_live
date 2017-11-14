@@ -48,6 +48,10 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
     Route::post('/supports/feedback/delete/{id}',['as'=>'supports.feedback.delete','uses'=>'SupportController@replyProblemDelete']);
 
 
+    Route::any('/reports/applicat_status',['as'=>'report.applicants.status','uses'=>'ApplicantReportsController@applicantStatusReport']);
+    Route::post('/reports/applicat_status/export',['as'=>'report.applicants.status_export','uses'=>'ApplicantReportsController@exportData']);
+
+
     //load image
     Route::get('/profile_image',['as'=>'profile_image','uses'=>'ApplicantScreeningController@loadImage']);
     Route::get('/test',function (){

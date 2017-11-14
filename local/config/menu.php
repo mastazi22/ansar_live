@@ -394,6 +394,17 @@ return [
 
             ]
         ],
+        "Reports"=>[
+            "route"=>"#",
+            "icon"=>"fa-file-excel-o",
+            "children"=>[
+                "View Applicant Status Report"=>[
+                    "route"=>"report.applicants.status",
+                    "icon"=>"fa-file-excel-o"
+                ]
+
+            ]
+        ],
         "Settings"=>[
             "route"=>"#",
             "icon"=>"fa-cog",

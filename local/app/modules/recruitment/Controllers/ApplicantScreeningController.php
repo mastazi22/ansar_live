@@ -556,7 +556,7 @@ class ApplicantScreeningController extends Controller
     }
 
     public function loadImage(Request $request){
-        $image = storage_path($request->file);
+        $image = base64_decode($request->file);
         if (!$request->exists('file')) return Image::make(public_path('dist/img/nimage.png'))->response();
         if (is_null($image) || !File::exists($image) || File::isDirectory($image)) {
             return Image::make(public_path('dist/img/nimage.png'))->response();
