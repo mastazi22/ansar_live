@@ -578,6 +578,32 @@
       {
         "value": "recruitment.applicant.editfield,recruitment.applicant.editfieldstore,recruitment.applicant.getfieldstore",
         "name": "Applicant editable fields"
+      },
+      {
+        "text": "Applicant Marks",
+        "actions": [
+          {
+            "value": "recruitment.marks.index",
+            "name": "View Marks"
+          },
+          {
+            "value": "recruitment.marks.edit,recruitment.marks.store",
+            "name": "Add Marks"
+          },
+          {
+            "value": "recruitment.marks.edit,recruitment.marks.update",
+            "name": "Edit Marks"
+          }
+        ]
+      },
+      {
+        "text": "Reports",
+        "actions": [
+          {
+            "value": "report.applicants.status,report.applicants.status_export",
+            "name": "Applicant Status Wise Report"
+          }
+        ]
       }
     ]
   }

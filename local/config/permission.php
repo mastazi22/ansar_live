@@ -117,6 +117,10 @@ return [
         "recruitment.point.index,recruitment.point.edit,recruitment.point.update",
         "recruitment.quota.index,recruitment.quota.edit,recruitment.quota.update",
         "recruitment",
-        "include_freeze_days"
+        "include_freeze_days",
+        "recruitment.marks.edit,recruitment.marks.store",
+        "recruitment.marks.edit,recruitment.marks.update",
+        "recruitment.marks.index",
+        "report.applicants.status,report.applicants.status_export"
     ]
 ];
