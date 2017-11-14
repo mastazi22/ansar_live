@@ -32,7 +32,7 @@ class JobApplicantMarksController extends Controller
                 $applicants->where('unit_id',$request->unit);
             }
             if($request->exists('thana')&&$request->thana!='all'){
-                $applicants->where('than_id',$request->thana);
+                $applicants->where('thana_id',$request->thana);
             }
             if($request->exists('q')&&$request->q){
                 $applicants->where(function($q) use($request){
