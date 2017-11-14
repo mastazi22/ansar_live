@@ -121,6 +121,7 @@ return [
         "recruitment.marks.edit,recruitment.marks.store",
         "recruitment.marks.edit,recruitment.marks.update",
         "recruitment.marks.index",
-        "report.applicants.status,report.applicants.status_export"
+        "report.applicants.status,report.applicants.status_export",
+        "recruitment.marks.destroy"
     ]
 ];

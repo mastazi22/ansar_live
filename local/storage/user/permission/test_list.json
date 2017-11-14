@@ -593,6 +593,10 @@
           {
             "value": "recruitment.marks.edit,recruitment.marks.update",
             "name": "Edit Marks"
+          },
+          {
+            "value": "recruitment.marks.destroy",
+            "name": "Delete Marks"
           }
         ]
       },
