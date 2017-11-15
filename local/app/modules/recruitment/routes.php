@@ -67,7 +67,7 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
            if(!$jj->exists()){
                 $p = $d;
                 unset($p['']);
-               \App\modules\recruitment\Models\JobApplicantMarks::create($p);
+               \App\modules\recruitment\Models\JobApplicantMarks::create(collect($p)->toArray());
            }
        }
     });
