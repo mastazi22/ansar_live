@@ -77,7 +77,8 @@ class JobApplicantMarksController extends Controller
         try{
             $a = JobAppliciant::where('applicant_id',$request->applicant_id)->first();
             if($a){
-                $a->marks()->create($request->except('appicant_id'));
+                if(!$a->marks)$a->marks()->create($request->except('appicant_id'));
+                else throw new \Exception('Applicant mark alredy exists');
             }
             else throw new \Exception('No applicant found');
             DB::commit();
