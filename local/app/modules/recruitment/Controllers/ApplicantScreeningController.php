@@ -546,7 +546,7 @@ class ApplicantScreeningController extends Controller
         try{
             $accepted = JobAppliciant::whereHas('accepted',function($q){
 
-            })->where('status','accepted')->where('unit_id',$request->unit)->count();
+            })->where('status','accepted')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit)->count();
             $quota = JobApplicantQuota::where('district_id',$request->unit)->first();
             $applicant_male = JobApplicantMarks::with(['applicant'=>function($q){
                 $q->with('accepted');
@@ -555,7 +555,7 @@ class ApplicantScreeningController extends Controller
                 $q->whereHas('selectedApplicant',function(){
 
                 })->where('status','selected')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit);
-            })->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'))->orderBy('total_mark','desc');
+            })->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'))->havingRaw('total_mark>0')->orderBy('total_mark','desc');
             if($quota){
                 if(intval($quota->male)-$accepted>0)$applicants = $applicant_male->limit(intval($quota->male)-$accepted)->get();
                 else $applicants = [];
@@ -635,7 +635,7 @@ class ApplicantScreeningController extends Controller
             $q->whereHas('selectedApplicant',function(){
 
             })->where('status','selected')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit);
-        })->select(DB::raw('DISTINCT *,(written+viva+physical+edu_training) as total_mark'))->orderBy('total_mark','desc');
+        })->select(DB::raw('DISTINCT *,(written+viva+physical+edu_training) as total_mark'))->havingRaw('total_mark>0')->orderBy('total_mark','desc');
         if($quota){
             if(intval($quota->male)-$accepted>0)$applicant_male->limit(intval($quota->male)-$accepted);
             else return view('recruitment::applicant.data_accepted',['applicants'=>[]]);
