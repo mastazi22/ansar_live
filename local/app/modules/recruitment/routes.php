@@ -58,12 +58,16 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
     //load image
     Route::get('/profile_image',['as'=>'profile_image','uses'=>'ApplicantScreeningController@loadImage']);
     Route::get('/test',function (){
-       $data = \Maatwebsite\Excel\Facades\Excel::load(storage_path('txid.xls'),function (){
+       $data = \Maatwebsite\Excel\Facades\Excel::load(storage_path('vulll.xls'),function (){
 
        })->get() ;
-       $a = collect($data)->pluck('txid');
-       return implode('\',\'',$a->toArray());
-//        return $a;
+       foreach ($data as $d){
+           $jj = \App\modules\recruitment\Models\JobApplicantMarks::where('applicant_id',$d['applicant_id']);
+           if(!$jj->exists()){
+                $p = $d;
+               \App\modules\recruitment\Models\JobApplicantMarks::create($p);
+           }
+       }
     });
 
 

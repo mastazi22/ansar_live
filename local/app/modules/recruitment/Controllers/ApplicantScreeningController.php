@@ -635,7 +635,7 @@ class ApplicantScreeningController extends Controller
             $q->whereHas('selectedApplicant',function(){
 
             })->where('status','selected')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit);
-        })->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'))->orderBy('total_mark','desc');
+        })->select(DB::raw('DISTINCT *,(written+viva+physical+edu_training) as total_mark'))->orderBy('total_mark','desc');
         if($quota){
             if(intval($quota->male)-$accepted>0)$applicant_male->limit(intval($quota->male)-$accepted);
             else return view('recruitment::applicant.data_accepted',['applicants'=>[]]);
