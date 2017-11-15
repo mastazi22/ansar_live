@@ -2,11 +2,17 @@
 
 namespace App\modules\recruitment\Controllers;
 
+use App\modules\HRM\Models\District;
+use App\modules\recruitment\Models\JobApplicantMarks;
+use App\modules\recruitment\Models\JobApplicantQuota;
 use App\modules\recruitment\Models\JobAppliciant;
+use Barryvdh\Snappy\Facades\SnappyPdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ApplicantReportsController extends Controller
@@ -34,6 +40,48 @@ class ApplicantReportsController extends Controller
             return view('recruitment::reports.data',['applicants'=>$applicants->paginate(300)]);
         }
         return view('recruitment::reports.applicants_status_report');
+    }
+    public function applicantAcceptedListReport(Request $request){
+
+        if(strcasecmp($request->method(),'post')==0){
+            $rules = [
+                'unit'=>'required|regex:/^[0-9]+$/',
+                'circular'=>'required|regex:/^[0-9]+$/',
+            ];
+            $this->validate($request,$rules);
+            $applicants = JobApplicantMarks::with(['applicant'=>function($q){
+                $q->with(['appliciantEducationInfo'=>function($q){
+                    $q->with('educationInfo');
+                },'district']);
+            }])->whereHas('applicant',function($q) use($request){
+
+                $q->whereHas('accepted',function(){
+
+                })->where('status','accepted')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit);
+            })->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'))->orderBy('total_mark','desc');
+            /*$applicants = JobAppliciant::with(['appliciantEducationInfo'=>function($q){
+                $q->with('educationInfo');
+            },'district','marks'=>function($qq){
+                $qq->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'));
+            }])->whereHas('accepted',function(){
+
+            })->where('status','accepted')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit);
+//            return $applicants->get();*/
+            $pdf = SnappyPdf::loadView('recruitment::reports.accepted_list',[
+                'applicants'=>$applicants->get(),
+                'unit'=>District::find($request->unit)
+            ])
+                ->setPaper('a4')
+                ->setOption('footer-left',url('/'))
+                ->setOption('footer-right',Carbon::now()->format('d-M-Y H:i:s'))
+                ->setOrientation('landscape');
+            return $pdf->download();
+            /*return view('recruitment::reports.accepted_list',[
+                'applicants'=>$applicants->get(),
+                'unit'=>District::find($request->unit)
+            ]);*/
+        }
+        return view('recruitment::reports.applicant_accepted_report');
     }
 
     public function exportData(Request $request){

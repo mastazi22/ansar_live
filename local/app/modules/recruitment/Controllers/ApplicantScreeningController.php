@@ -537,25 +537,49 @@ class ApplicantScreeningController extends Controller
             return response()->json(['status'=>'success','message'=>'Applicants rejected successfully']);
         }
     }
-    public function confirmAcepted(Request $request){
-        if($request->exists('applicant_id')&&$request->applicant_id){
-            DB::beginTransaction();
-            try{
-                $applicant = JobAppliciant::where('applicant_id',$request->applicant_id)->first();
-                if($applicant){
-                    $applicant->update(['status'=>'accepted']);
-                    $applicant->accepted()->create([
-                        'action_user_id'=>auth()->user()->id
-                    ]);
-                }
-                DB::commit();
-            }catch(\Exception $e){
-                DB::rollback();
-                return response()->json(['status'=>'error','message'=>$e->getMessage()]);
+    public function confirmAccepted(Request $request){
+        $rules = [
+            'unit'=>'required|regex:/^[0-9]+$/',
+            'circular'=>'required|regex:/^[0-9]+$/',
+        ];
+        $this->validate($request,$rules);
+        DB::beginTransaction();
+        try{
+            $accepted = JobAppliciant::whereHas('accepted',function($q){
+
+            })->where('status','accepted')->where('unit_id',$request->unit)->count();
+            $quota = JobApplicantQuota::where('district_id',$request->unit)->first();
+            $applicant_male = JobApplicantMarks::with(['applicant'=>function($q){
+                $q->with('accepted');
+            }])->whereHas('applicant',function($q) use($request){
+
+                $q->whereHas('selectedApplicant',function(){
+
+                })->where('status','selected')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit);
+            })->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'))->orderBy('total_mark','desc');
+            if($quota){
+                if(intval($quota->male)-$accepted>0)$applicants = $applicant_male->limit(intval($quota->male)-$accepted)->get();
+                else $applicants = [];
             }
-            return response()->json(['status'=>'success','message'=>'Applicant accepted successfully']);
+            else $applicants = [];
+            if(count($applicants)){
+                foreach ($applicants as $applicant) {
+                    $applicant->applicant->update(['status' => 'accepted']);
+                    if(!$applicant->applicant->accepted) {
+                        $applicant->applicant->accepted()->create([
+                            'action_user_id' => auth()->user()->id
+                        ]);
+                    }
+                }
+            }else{
+                throw new \Exception('No applicants within quota available');
+            }
+            DB::commit();
+        }catch(\Exception $e){
+            DB::rollback();
+            return response()->json(['status'=>'error','message'=>$e->getMessage()]);
         }
-        return response()->json(['status'=>'error','message'=>"invalid applicant id"]);
+        return response()->json(['status'=>'success','message'=>'Applicant accepted successfully']);
     }
 
     public function loadImage(Request $request){
@@ -595,16 +619,18 @@ class ApplicantScreeningController extends Controller
     public function loadApplicantByQuota(Request $request)
     {
 
+        DB::enableQueryLog();
         $rules = [
             'unit'=>'required|regex:/^[0-9]+$/',
             'circular'=>'required|regex:/^[0-9]+$/',
         ];
         $this->validate($request,$rules);
         $quota = JobApplicantQuota::where('district_id',$request->unit)->first();
+        $accepted = JobAppliciant::whereHas('accepted',function($q){
+
+        })->where('status','accepted')->where('unit_id',$request->unit)->count();
         $applicant_male = JobApplicantMarks::with(['applicant'=>function($q){
-            $q->with(['district','appliciantEducationInfo'=>function($qq){
-                $qq->with('educationInfo');
-            }]);
+            $q->with(['district','division','thana']);
         }])->whereHas('applicant',function($q) use($request){
 
             $q->whereHas('selectedApplicant',function(){
@@ -612,9 +638,13 @@ class ApplicantScreeningController extends Controller
             })->where('status','selected')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit);
         })->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'))->orderBy('total_mark','desc');
         if($quota){
-            $applicant_male->limit($quota->male);
+            if(intval($quota->male)-$accepted>0)$applicant_male->limit(intval($quota->male)-$accepted);
+            else return view('recruitment::applicant.data_accepted',['applicants'=>[]]);
         }
-        return response()->json(['applicants'=>$applicant_male->get(),'unit'=>District::find($request->unit)]);
+        else return view('recruitment::applicant.data_accepted',['applicants'=>[]]);
+       // $a = $applicant_male->get();
+       // return DB::getQueryLog();
+        return view('recruitment::applicant.data_accepted',['applicants'=>$applicant_male->get()]);
 
     }
 

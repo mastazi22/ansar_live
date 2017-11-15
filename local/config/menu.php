@@ -405,7 +405,11 @@ return [
                 "View Applicant Status Report"=>[
                     "route"=>"report.applicants.status",
                     "icon"=>"fa-file-excel-o"
-                ]
+                ],
+                "Download Accepted Applicant Report"=>[
+                    "route"=>"report.applicants.applicat_accepted_list",
+                    "icon"=>"fa-file-pdf-o"
+                ],
 
             ]
         ],

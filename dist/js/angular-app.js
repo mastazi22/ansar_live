@@ -936,6 +936,10 @@ GlobalApp.directive('formSubmit', function (notificationService, $timeout) {
                             notificationService.notify('error', "You are not authorize to perform this action");
 
                         }
+                        else if (response.status == 422) {
+                            notificationService.notify('error', "Invalid request");
+
+                        }
                         else notificationService.notify('error', "An unknown error occur. Error code: " + response.status);
                         $timeout(function () {
                             scope.$apply();

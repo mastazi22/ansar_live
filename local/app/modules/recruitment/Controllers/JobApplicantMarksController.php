@@ -66,7 +66,11 @@ class JobApplicantMarksController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            'applicant_id'=>'required'
+            'applicant_id'=>'required',
+            'written'=>'required|numeric',
+            'edu_training'=>'required|numeric',
+            'physical'=>'required|numeric',
+            'viva'=>'required|numeric',
         ];
         $this->validate($request,$rules);
         DB::beginTransaction();

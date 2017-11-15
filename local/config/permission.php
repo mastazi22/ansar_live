@@ -122,6 +122,8 @@ return [
         "recruitment.marks.edit,recruitment.marks.update",
         "recruitment.marks.index",
         "report.applicants.status,report.applicants.status_export",
-        "recruitment.marks.destroy"
+        "recruitment.marks.destroy",
+        "recruitment.applicant.confirm_accepted,recruitment.applicant.final_list,recruitment.applicant.final_list_load",
+        "report.applicants.applicat_accepted_list"
     ]
 ];

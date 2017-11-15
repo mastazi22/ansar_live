@@ -568,6 +568,10 @@
         "name": "Edit Applicant"
       },
       {
+        "value": "recruitment.applicant.confirm_accepted,recruitment.applicant.final_list,recruitment.applicant.final_list_load",
+        "name": " Final Accepted Applicant"
+      },
+      {
         "value": "recruitment.quota.index,recruitment.quota.edit,recruitment.quota.update",
         "name": "Applicant Quota"
       },
@@ -606,6 +610,10 @@
           {
             "value": "report.applicants.status,report.applicants.status_export",
             "name": "Applicant Status Wise Report"
+          },
+          {
+            "value": "report.applicants.applicat_accepted_list",
+            "name": " Download Accepted Applicant Report"
           }
         ]
       }
