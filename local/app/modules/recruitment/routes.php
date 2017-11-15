@@ -61,11 +61,12 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
        $data = \Maatwebsite\Excel\Facades\Excel::load(storage_path('vulll.xls'),function (){
 
        })->get() ;
-       return $data;
+//       return $data;
        foreach ($data as $d){
            $jj = \App\modules\recruitment\Models\JobApplicantMarks::where('applicant_id',$d['applicant_id']);
            if(!$jj->exists()){
                 $p = $d;
+                unset($p['']);
                \App\modules\recruitment\Models\JobApplicantMarks::create($p);
            }
        }
