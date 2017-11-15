@@ -4,6 +4,13 @@
 </head>
 <body>
 <style>
+    @font-face{
+        font-family: syamrupali;
+        src: url('{{asset('dist/fonts/Siyamrupali.ttf')}}');
+    }
+    *{
+        font-family: syamrupali !important;
+    }
     table {
         border-collapse: collapse;
     }

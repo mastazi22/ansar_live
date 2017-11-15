@@ -627,7 +627,7 @@ class ApplicantScreeningController extends Controller
         $quota = JobApplicantQuota::where('district_id',$request->unit)->first();
         $accepted = JobAppliciant::whereHas('accepted',function($q){
 
-        })->where('status','accepted')->where('unit_id',$request->unit)->count();
+        })->where('status','accepted')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit)->count();
         $applicant_male = JobApplicantMarks::with(['applicant'=>function($q){
             $q->with(['district','division','thana']);
         }])->whereHas('applicant',function($q) use($request){
