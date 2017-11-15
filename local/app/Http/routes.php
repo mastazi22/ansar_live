@@ -56,6 +56,9 @@ Route::group(['middleware' => 'auth'], function () {
        Route::get('/user_registration', ['as' => 'create_user', 'uses' => 'UserController@userRegistration']);
        Route::get('/edit_user_permission/{id}', ['as' => 'edit_user_permission', 'uses' => 'UserController@editUserPermission']);
    });
-
+    Route::get('test',function (){
+       $pdf = \Barryvdh\Snappy\Facades\SnappyPdf::loadView('welcome');
+       return $pdf->download();
+    });
     //end user route
 });
