@@ -13,7 +13,6 @@ use App\modules\recruitment\Models\JobCircular;
 use App\modules\recruitment\Models\JobSelectedApplicant;
 use App\modules\recruitment\Models\JobSettings;
 use Carbon\Carbon;
-use function foo\func;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
