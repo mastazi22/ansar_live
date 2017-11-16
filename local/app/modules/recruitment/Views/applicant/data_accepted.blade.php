@@ -1,5 +1,15 @@
 <?php $i = 1; ?>
 <div class="table-responsive">
+    <caption class="text-center" >
+        <form action="{{URL::route('recruitment.applicant.final_list_load')}}" method="post" target="_blank" class="text-center">
+            {!! csrf_field() !!}
+            <input type="hidden" ng-repeat="(k,v) in param" name="[[k]]" value="[[v]]">
+            <input type="hidden" value="excel" name="export">
+            <button type="submit" class="btn btn-primary" style="margin-bottom: 10px">
+                <i class="fa fa-file-excel-o"></i>&nbsp;Export data
+            </button>
+        </form>
+    </caption>
     <table class="table table-bordered">
         <tr>
             <th>#</th>
@@ -19,7 +29,7 @@
         @if(count($applicants))
             @foreach($applicants as $a)
                 <tr>
-                    <td>{{$i++}}</td>
+                    <td>{{($i++).''}}</td>
                     <td>{{$a->applicant->applicant_name_bng}}</td>
                     <td>{{$a->applicant->gender}}</td>
                     <td>{{$a->applicant->date_of_birth}}</td>

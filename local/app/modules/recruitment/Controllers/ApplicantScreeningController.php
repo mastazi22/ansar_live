@@ -636,14 +636,22 @@ class ApplicantScreeningController extends Controller
 
             })->where('status','selected')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit);
         })->select(DB::raw('DISTINCT *,(written+viva+physical+edu_training) as total_mark'))->havingRaw('total_mark>0')->orderBy('total_mark','desc');
+        $applicants=[];
         if($quota){
-            if(intval($quota->male)-$accepted>0)$applicant_male->limit(intval($quota->male)-$accepted);
-            else return view('recruitment::applicant.data_accepted',['applicants'=>[]]);
+            if(intval($quota->male)-$accepted>0)$applicants = $applicant_male->limit(intval($quota->male)-$accepted)->get();
+//            else return view('recruitment::applicant.data_accepted',['applicants'=>[]]);
         }
-        else return view('recruitment::applicant.data_accepted',['applicants'=>[]]);
+//        else return view('recruitment::applicant.data_accepted',['applicants'=>[]]);
        // $a = $applicant_male->get();
        // return DB::getQueryLog();
-        return view('recruitment::applicant.data_accepted',['applicants'=>$applicant_male->get()]);
+        if($request->exists('export')&&$request->export=='excel'){
+            Excel::create('accepted_list',function ($excel) use($applicants){
+                $excel->sheet('sheet1',function ($sheet) use($applicants){
+                    $sheet->loadView('recruitment::applicant.data_accepted',['applicants'=>$applicants]);
+                });
+            })->download('xls');
+        }
+        else return view('recruitment::applicant.data_accepted',['applicants'=>$applicants]);
 
     }
 
