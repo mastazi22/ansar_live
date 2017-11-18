@@ -128,7 +128,6 @@ class JobApplicantMarksController extends Controller
     public function update(Request $request, $id)
     {
         $rules = [
-            'applicant_id'=>'required',
             'written'=>'required|numeric',
             'edu_training'=>'required|numeric',
             'physical'=>'required|numeric',
