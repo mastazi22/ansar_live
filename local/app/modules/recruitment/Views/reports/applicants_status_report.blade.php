@@ -11,6 +11,7 @@
                 'applied':'Applied',
                 'selected':'Selected',
                 'pending':'Pending',
+                'accepted':'Accepted',
             }
             $scope.param = {};
 

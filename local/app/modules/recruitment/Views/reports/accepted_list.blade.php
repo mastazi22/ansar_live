@@ -6,7 +6,7 @@
 <style>
     @font-face{
         font-family: syamrupali;
-        src: url('{{asset('dist/fonts/Siyamrupali.ttf')}}');
+        src: url('{{asset('dist/fonts/vrindab.ttf')}}');
     }
     *{
         font-family: syamrupali !important;
