@@ -54,6 +54,6 @@
 </div>
 @if(count($applicants))
     <div class="text-center" style="margin-top: 10px">
-        <button class="btn btn-primary" ng-click="confirmSelectionAsAccepted()">Confirm Applicants as Accepted</button>
+        <button class="btn btn-primary" confirm callback="confirmSelectionAsAccepted()" message="Are u sure?">Confirm Applicants as Accepted</button>
     </div>
 @endif

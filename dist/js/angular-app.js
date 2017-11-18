@@ -204,7 +204,7 @@ GlobalApp.directive('confirm', function () {
                 message: scope.message,
                 ok_button_text: 'Confirm',
                 cancel_button_text: 'Cancel',
-                event: scope.event,
+                event: scope.event||'click',
                 ok_callback: function (element) {
                     scope.callback(scope.data)
                 },

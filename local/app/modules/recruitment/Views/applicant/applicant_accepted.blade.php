@@ -55,6 +55,25 @@
                 }
             }
         })
+        GlobalApp.directive('confirmDialog', function () {
+            return {
+                restrict: 'A',
+                link: function (scope, elem, attr) {
+                    $(element).confirmDialog({
+                        message: scope.message||"Are u sure?",
+                        ok_button_text: 'Confirm',
+                        cancel_button_text: 'Cancel',
+                        event: 'click',
+                        ok_callback: function (element) {
+                            scope.confirmSelectionAsAccepted()
+                        },
+                        cancel_callback: function (element) {
+                        }
+                    })
+
+                }
+            }
+        })
     </script>
     <section class="content" ng-controller="applicantSearch">
         <div class="box box-solid">
