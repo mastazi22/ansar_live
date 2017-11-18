@@ -75,12 +75,14 @@
                             </select>
                         </div>
                         <filter-template
-                                show-item="['unit']"
+                                show-item="['range','unit']"
                                 type="single"
                                 data="param"
-                                start-load="unit"
+                                start-load="range"
+
                                 unit-field-disabled="!param.circular"
-                                field-width="{unit:'col-sm-12'}"
+                                range-field-disabled="!param.circular"
+                                field-width="{unit:'col-sm-12',range:'col-sm-12'}"
                         >
                         </filter-template>
                         <div class="form-group">
