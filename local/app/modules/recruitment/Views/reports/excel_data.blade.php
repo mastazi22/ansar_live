@@ -13,6 +13,9 @@
         @if(Auth::user()->type==11)
             <th>Mobile no</th>
         @endif
+        @if(isset($status)&&$status=='accepted')
+            <th>Total mark</th>
+        @endif
         <th>Status</th>
 
     </tr>
@@ -32,6 +35,9 @@
                 <td>{{$a->weight}} kg</td>
                 @if(Auth::user()->type==11)
                     <td>{{$a->mobile_no_self}}</td>
+                @endif
+                @if(isset($status)&&$status=='accepted')
+                    <td>{{$a->marks->written+$a->marks->viva+$a->marks->physical+$a->marks->edu_training}}</td>
                 @endif
                 <td>{{$a->status}}</td>
             </tr>

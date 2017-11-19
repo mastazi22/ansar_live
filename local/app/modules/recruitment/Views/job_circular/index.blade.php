@@ -90,7 +90,8 @@
                                 <th>Job Circular Category</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
-                                <th>Status</th>
+                                <th>Application Status</th>
+                                <th>Circular Status</th>
                                 <th>Action</th>
                             </tr>
                             <tr ng-repeat="jc in jobCirculars">
@@ -100,6 +101,7 @@
                                 <td>[[jc.start_date|dateformat:"DD-MMM-YYYY"]]</td>
                                 <td>[[jc.end_date|dateformat:"DD-MMM-YYYY"]]</td>
                                 <td>[[jc.status|ucfirst]]</td>
+                                <td>[[jc.circular_status|ucfirst]]</td>
                                 <td>
                                     <a href="{{URL::to('/recruitment/circular')}}/[[jc.id]]/edit" class="btn btn-primary btn-sm">
                                         <i class="fa fa-edit"></i>&nbsp;Edit

@@ -69,6 +69,7 @@ class JobCircularController extends Controller
             $request['applicatn_range'] = implode(',',$request->applicatn_range);
             $request['payment_status'] = !$request->payment_status?'off':$request->payment_status;
             $request['application_status'] = !$request->application_status?'off':$request->application_status;
+            $request['circular_status'] = !$request->circular_status?'shutdown':$request->circular_status;
             $c = JobCategory::find($request->job_category_id)->circular()->create($request->except(['job_category_id', 'constraint']));
             $c->constraint()->create(['constraint' => $request->constraint]);
             DB::commit();
@@ -134,6 +135,7 @@ class JobCircularController extends Controller
             $request['applicatn_range'] = implode(',',$request->applicatn_range);
             $request['payment_status'] = !$request->payment_status?'off':$request->payment_status;
             $request['application_status'] = !$request->application_status?'off':$request->application_status;
+            $request['circular_status'] = !$request->circular_status?'shutdown':$request->circular_status;
             $c = JobCircular::find($id);
             $c->update($request->except('constraint'));
             if ($c->constraint) $c->constraint()->update(['constraint' => $request->constraint]);

@@ -35,6 +35,14 @@
         @endif
     </div>
     <div class="form-group">
+        {!! Form::label('test','Circular Status : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
+        <input type="checkbox" value="running" name="circular_status"
+               @if((isset($data)&&$data->circular_status=='running')||Request::old('circular_status')=='running')checked
+               @endif id="circular_status" class="switch-checkbox">
+        <label for="circular_status" class=""></label>
+
+    </div>
+    <div class="form-group">
         {!! Form::label('test','Status : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
         <input type="checkbox" value="active" name="status"
                @if((isset($data)&&$data->status=='active')||Request::old('status')=='active')checked
