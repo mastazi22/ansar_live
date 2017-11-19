@@ -410,6 +410,10 @@ return [
                     "route"=>"report.applicants.applicat_accepted_list",
                     "icon"=>"fa-file-pdf-o"
                 ],
+                "Download Applicant Marks Report"=>[
+                    "route"=>"report.applicants.applicat_marks_list",
+                    "icon"=>"fa-file-excel-o"
+                ],
 
             ]
         ],

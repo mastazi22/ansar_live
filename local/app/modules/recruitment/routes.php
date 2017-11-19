@@ -52,6 +52,7 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
 
     Route::any('/reports/applicat_status',['as'=>'report.applicants.status','uses'=>'ApplicantReportsController@applicantStatusReport']);
     Route::any('/reports/applicat_accepted_list',['as'=>'report.applicants.applicat_accepted_list','uses'=>'ApplicantReportsController@applicantAcceptedListReport']);
+    Route::any('/reports/applicat_marks_list',['as'=>'report.applicants.applicat_marks_list','uses'=>'ApplicantReportsController@applicantMarksReport']);
     Route::post('/reports/applicat_status/export',['as'=>'report.applicants.status_export','uses'=>'ApplicantReportsController@exportData']);
 
 
