@@ -19,7 +19,7 @@
         <tr>
             <td>{{($i++).''}}</td>
             <td>{{$a->applicant_name_bng}}</td>
-            <td>{{$unit->unit_name_bng}}</td>
+            <td>{{$a->district->unit_name_bng}}</td>
             <td>
                 {{$a->marks->physical}}
             </td>
@@ -32,7 +32,7 @@
         </tr>
     @empty
         <tr>
-            <td colspan="7" style="background: yellow">কোন তথ্য পাওয়া যাই নি</td>
+            <td colspan="8" style="background: yellow">কোন তথ্য পাওয়া যাই নি</td>
         </tr>
     @endforelse
 </table>

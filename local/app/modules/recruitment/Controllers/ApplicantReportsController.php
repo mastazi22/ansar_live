@@ -87,21 +87,25 @@ class ApplicantReportsController extends Controller
 
         if(strcasecmp($request->method(),'post')==0){
             $rules = [
-                'unit'=>'required|regex:/^[0-9]+$/',
                 'circular'=>'required|regex:/^[0-9]+$/',
             ];
             $this->validate($request,$rules);
             $applicants = JobAppliciant::with(['marks'=>function($q){
                 $q->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'));
-            }])->whereHas('marks',function ($q){
+            },'district'])->whereHas('marks',function ($q){
 
-            })->where('job_circular_id',$request->circular)->where('unit_id',$request->unit)->get();
-            $unit = District::find($request->unit);
-            $excel = Excel::create('applicant_marks',function ($excel) use($applicants,$unit){
-                $excel->sheet('sheet1',function ($sheet) use($applicants,$unit){
+            })->where('job_circular_id',$request->circular);
+            if($request->exists('unit')&&$request->unit!='all'){
+                $applicants->where('unit_id',$request->unit);
+            }
+            if($request->exists('range')&&$request->range!='all'){
+                $applicants->where('division_id',$request->range);
+            }
+            $applicants = $applicants->orderBy('unit_id')->get();
+            $excel = Excel::create('applicant_marks',function ($excel) use($applicants){
+                $excel->sheet('sheet1',function ($sheet) use($applicants){
                     $sheet->loadView('recruitment::reports.marks_list',[
-                        'applicants'=>$applicants,
-                        'unit'=>$unit
+                        'applicants'=>$applicants
                     ]);
                 });
             });

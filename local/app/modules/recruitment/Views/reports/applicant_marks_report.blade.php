@@ -59,7 +59,7 @@
                             </div>
                             <filter-template
                                     show-item="['range','unit']"
-                                    type="single"
+                                    type="all"
                                     data="param"
                                     start-load="range"
                                     field-name="{unit:'unit'}"
@@ -69,7 +69,7 @@
                             >
                             </filter-template>
                             <div class="form-group">
-                                <button type="submit" class="btn btn-primary btn-block">
+                                <button type="submit" ng-disabled="!param.circular" class="btn btn-primary btn-block">
                                     Download applicants mark
                                 </button>
                             </div>
