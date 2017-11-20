@@ -18,7 +18,7 @@
     table td, table th {
         border: 1px solid #000000;
         text-align: center;
-        font-size: 12px !important;
+        font-size: 11px !important;
     }
 
     /*.inner-table tr:first-child th,.inner-table tr:first-child td{
