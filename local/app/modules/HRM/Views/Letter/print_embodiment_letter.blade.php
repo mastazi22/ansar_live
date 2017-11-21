@@ -9,7 +9,11 @@
                                         স্বারক নং-{{$mem->memorandum_id}}
                                     </span>
                                     <span class="pull-right">
-                                        তারিখঃ{{LanguageConverter::engToBng(date('d/m/Y',strtotime($mem->created_at)))}} খ্রিঃ
+                                        @if($mem->created_at)
+                                            তারিখঃ{{LanguageConverter::engToBng(\Carbon\Carbon::parse($mem->created_at)->parse('d/m/Y'))}} খ্রিঃ
+                                        @else
+                                            তারিখঃ{{LanguageConverter::engToBng(\Carbon\Carbon::now()->parse('d/m/Y'))}} খ্রিঃ
+                                        @endif
                                     </span>
         </div>
     </div>
