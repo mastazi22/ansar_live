@@ -19,47 +19,27 @@ use Illuminate\Support\Facades\Response;
 
 trait ExportDataToExcel
 {
-    public function exportData($data,$type=''){
-        DB::beginTransaction();
-        try {
-
-            $data = collect($data)->chunk(100)->toArray();
-            $counter = 0;
-            $export_job = Auth::user()->exportJob()->create([
-                'total_file' => (int)ceil(count($data) / (float)20),
-                'file_completed' => 0,
-                'download_url'=>'',
-                'notification_url'=>"ws://".Request::getHost().":8090"
+    public function exportData($data,$view,$type=''){
+        $export_job = Auth::user()->exportJob()->create([
+            'total_file' => count($data),
+            'file_completed' => 0,
+            'download_url'=>'',
+            'notification_url'=>""
+        ]);
+        $export_job->download_url =url()->route('download_file',$export_job);
+        $export_job->delete_url =url()->route('delete_file',$export_job);
+        $export_job->save();
+        $status = [];
+        for($i=0;$i<count($data);$i++){
+            array_push($status,[
+                'data_export_job_id'=>$export_job->id,
+                'file_name'=>$i+1,
+                'payload'=>gzcompress(serialize(['view'=>$view,'data'=>['type'=>$type,'ansars'=>$data[$i],'index'=>($i*2000+1)]])),
+                'created_at'=>Carbon::now(),
+                'updated_at'=>Carbon::now(),
             ]);
-            $export_job->download_url =url()->route('download_file',$export_job);
-            $export_job->delete_url =url()->route('delete_file',$export_job);
-            $export_job->save();
-            $per_file = 0;
-            $total = count($data);
-            foreach ($data as $d) {
-                if ($counter % 20 == 0) {
-                    $file_name = \Illuminate\Support\Str::random(8) . Carbon::now()->timestamp;
-                    $status = $export_job->exportStatus()->create([
-                        'file_name' => $file_name,
-                        'user_id' => Auth::user()->id,
-                        'status' => 'pending',
-                        'total_part' => $total - $per_file >= 20 ? 20 : $total - $per_file,
-                        'counter' => 0
-                    ]);
-                    $per_file += 20;
-                }
-                $counter++;
-                if (isset($status)) {
-                    $this->dispatch(new ExportData($d, $status, $type));
-                }
-
-            }
-            DB::commit();
-        }catch(\Exception $e){
-            DB::rollback();
-            return Response::json(['status' => false,'type'=>'export', 'message' => "OPS!!! An error occur while exporting. Please try again later"]);
         }
-        return Response::json(['status' => true,'type'=>'export', 'message' => "Export request submit successfully. You will be notified when export complete"]);
-
+        $export_job->exportStatus()->insert($status);
+        return Response::json($export_job);
     }
 }

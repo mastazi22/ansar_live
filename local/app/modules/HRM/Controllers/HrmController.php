@@ -338,13 +338,14 @@ class HrmController extends Controller
 
         }
         if ($request->exists('export')) {
-            return $this->exportData($data['ansars'], $type);
+            $data = collect($data['ansars'])->chunk(2000)->toArray();
+            return $this->exportData($data,'HRM::export.ansar_view_excel',$type);
+
         }
         return Response::json($data);
     }
 
-    public
-    function getRecentAnsarList(Request $request)
+    public function getRecentAnsarList(Request $request)
     {
         $type = Input::get('type');
         $limit = Input::get('limit');
@@ -419,15 +420,13 @@ class HrmController extends Controller
         return Response::json($data);
     }
 
-    public
-    function showAnsarForServiceEnded($count)
+    public function showAnsarForServiceEnded($count)
     {
         $pages = ceil($count / 10);
         return View::make('HRM::Dashboard.ansar_service_ended_list')->with(['total' => $count, 'pages' => $pages, 'item_per_page' => 10]);
     }
 
-    public
-    function serviceEndedInfoDetails(Request $request)
+    public function serviceEndedInfoDetails(Request $request)
     {
         $limit = Input::get('limit');
         $offset = Input::get('offset');
@@ -454,20 +453,19 @@ class HrmController extends Controller
         }
         $data =  CustomQuery::ansarListForServiceEnded($offset, $limit, $unit, $thana, $division, $interval, $q);
         if($request->exists('export')){
-            return $this->exportData($data['ansars'],'3_year_over_list');
+            $data = collect($data['ansars'])->chunk(2000)->toArray();
+            return $this->exportData($data,'HRM::export.selected_service_ended_ansar_list');
         }
         return Response::json($data);
     }
 
-    public
-    function showAnsarForReachedFifty($count)
+    public function showAnsarForReachedFifty($count)
     {
         $pages = ceil($count / 10);
         return View::make('HRM::Dashboard.ansar_fifty_age_list')->with(['total' => $count, 'pages' => $pages, 'item_per_page' => 10]);
     }
 
-    public
-    function ansarReachedFiftyDetails(Request $request)
+    public function ansarReachedFiftyDetails(Request $request)
     {
         $limit = Input::get('limit');
         $offset = Input::get('offset');
@@ -490,7 +488,8 @@ class HrmController extends Controller
         }
         $data =  CustomQuery::ansarListWithFiftyYears($offset, $limit, $unit, $thana, $division, $q);
         if($request->exists('export')){
-            return $this->exportData($data['ansars'],'3_year_over_list');
+            $data = collect($data['ansars'])->chunk(2000)->toArray();
+            return $this->exportData($data,'HRM::export.ansar_fifty_age_report');
         }
 
         return Response::json($data);

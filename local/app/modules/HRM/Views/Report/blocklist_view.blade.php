@@ -67,6 +67,52 @@
                     $scope.loadPagination();
                 })
             }
+            $scope.exportData = function (type) {
+                var page = $scope.exportPage;
+                if(type=='page')$scope.export_page = true;
+                else $scope.export_all = true;
+                $http({
+                    url: '{{URL::route('blocklisted_ansar_info')}}',
+                    method: 'get',
+                    params: {
+                        offset: type=='all'?-1:(page == undefined ? 0 : page.offset),
+                        limit: type=='all'?-1:(page == undefined ? $scope.itemPerPage : page.limit),
+                        unit:$scope.param.unit,
+                        thana:$scope.param.thana,
+                        division:$scope.param.range,
+                        q:$scope.q,
+                        export:type
+                    }
+                }).then(function (res) {
+                    $scope.export_data = res.data;
+                    $scope.generating = true;
+                    generateReport();
+                    $scope.export_page =  $scope.export_all = false;
+                },function (res) {
+                    $scope.export_page =  $scope.export_all = false;
+                })
+            }
+            $scope.file_count = 1;
+            function generateReport(){
+                $http({
+                    url: '{{URL::to('HRM/generate/file')}}/'+$scope.export_data.id,
+                    method: 'post',
+                }).then(function (res) {
+                    if($scope.export_data.total_file>$scope.file_count){
+                        setTimeout(generateReport,1000);
+                        if(res.data.status) $scope.file_count++;
+                    }
+                    else{
+                        $scope.generating = false;
+                        $scope.file_count = 1;
+                        window.open($scope.export_data.download_url,'_blank')
+                    }
+                },function (res) {
+                    if($scope.export_data.file_count>$scope.file_count){
+                        setTimeout(generateReport,1000)
+                    }
+                })
+            }
             $scope.filterMiddlePage = function (value, index, array) {
                 var minPage = $scope.currentPage-3<0?0:($scope.currentPage>array.length-4?array.length-8:$scope.currentPage-3);
                 var maxPage = minPage+7;
@@ -107,6 +153,12 @@
                         <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
                     </span>
                 </div>
+                <div class="overlay" ng-if="generating">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                        <span>[[(file_count)+'/'+export_data.total_file]]</span>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="pull-right">
                             <span class="control-label" style="padding: 5px 8px">
@@ -131,10 +183,19 @@
                             on-load="loadPage()"
                     ></filter-template>
                     <div id="print-blocklisted-ansar-report">
-                        <h3 style="text-align: center" id="report-header">[[report.ansar.ansar_title]]([[total]])&nbsp;&nbsp;
-                            <a href="#" title="print" id="print-report">
-                                <span class="glyphicon glyphicon-print"></span>
-                            </a></h3>
+                        <h3 id="report-header">[[report.ansar.ansar_title]]([[total]])&nbsp;&nbsp;
+                            <div class="btn-group btn-group-sm pull-right print-hide">
+                                <button id="print-report" class="btn btn-default"><i
+                                            class="fa fa-print"></i>&nbsp;Print
+                                </button>
+                                <button id="export-report" ng-disabled="export_page||export_all" ng-click="exportData('page')" class="btn btn-default ">
+                                    <i ng-show="!export_page" class="fa fa-file-excel-o"></i><i ng-show="export_page" class="fa fa-spinner fa-pulse"></i>&nbsp;Export this page
+                                </button>
+                                <button  ng-disabled="export_page||export_all" ng-click="exportData('all')" id="export-report-all" class="btn btn-default">
+                                    <i ng-show="!export_all" class="fa fa-file-excel-o"></i><i ng-show="export_all" class="fa fa-spinner fa-pulse"></i>&nbsp;Export all
+                                </button>
+                            </div>
+                        </h3>
                         <div class="table-responsive">
                             <table class="table table-bordered">
                                 <caption class="print-hide">

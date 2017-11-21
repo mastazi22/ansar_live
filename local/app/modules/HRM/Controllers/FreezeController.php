@@ -271,7 +271,7 @@ class FreezeController extends Controller
                     $m = new MemorandumModel;
                     $m->memorandum_id = $request->memorandum_transfer;
                     $m->save();
-                    $frezeInfo = FreezingInfoModel::where('ansar_id', $ansarid)->first();
+                    $frezeInfo = FreezingInfoModel::with('embodiment')->where('ansar_id', $ansarid)->first();
                     $updateEmbodiment = $frezeInfo->embodiment;
                     $date = Carbon::now();
                     $date_differ = $date->diffInDays(Carbon::parse($frezeInfo->freez_date), true);

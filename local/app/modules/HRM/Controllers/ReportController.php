@@ -2,6 +2,7 @@
 
 namespace App\modules\HRM\Controllers;
 
+use App\Helper\ExportDataToExcel;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\modules\HRM\Models\ActionUserLog;
@@ -24,9 +25,11 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Intervention\Image\Facades\Image;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
+    use ExportDataToExcel;
     //
     function reportGuardSearchView()
     {
@@ -74,7 +77,11 @@ class ReportController extends Controller
                 ->where('tbl_kpi_info.thana_id', '=', $request->thana)
                 ->where('tbl_kpi_info.division_id', '=', $request->division)
                 ->select('tbl_kpi_info.kpi_name', 'tbl_kpi_info.kpi_address', 'tbl_kpi_detail_info.total_ansar_given', 'tbl_units.unit_name_bng', 'tbl_thana.thana_name_bng')->first();
-            return Response::json(['ansars' => $ansar, 'guard' => $guards]);
+            $data = ['ansars' => $ansar, 'guard' => $guards];
+            if(Input::exists('export')){
+                return $this->exportData(collect($data['ansars'])->chunk(2000)->toArray(),'HRM::export.ansar_in_guard');
+            }
+            return Response::json($data);
         }
     }
 
@@ -225,7 +232,11 @@ class ReportController extends Controller
         if (!is_null($from) && !is_null($to) && !is_null($unit) && !is_null($thana)) {
                 $from_date = Carbon::parse($from)->format('Y-m-d');
                 $to_date = Carbon::parse($to)->format('Y-m-d');
-                return CustomQuery::disembodedAnsarListforReport($offset, $limit, $from_date, $to_date,$division, $unit, $thana);
+                $data = CustomQuery::disembodedAnsarListforReport($offset, $limit, $from_date, $to_date,$division, $unit, $thana);
+                if(Input::exists('export')){
+                    return $this->exportData(collect($data['ansars'])->chunk(2000)->toArray(),'HRM::export.disembodied_report');
+                }
+                return response()->json($data);
         }
         
 
@@ -258,7 +269,13 @@ class ReportController extends Controller
             //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         }
-        return CustomQuery::getBlocklistedAnsar($offset, $limit,$division, $unit, $thana,$request->q);
+        $data = CustomQuery::getBlocklistedAnsar($offset, $limit,$division, $unit, $thana,$request->q);
+//        return $data;
+        if(Input::exists('export')){
+
+            return $this->exportData(collect($data['ansars'])->chunk(2000)->toArray(),'HRM::export.blocklist_report');
+        }
+        return response()->json($data);
     }
 
     public function blackListView()
@@ -286,7 +303,11 @@ class ReportController extends Controller
             //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         }
-        return CustomQuery::getBlacklistedAnsar($offset, $limit,$division, $unit, $thana,$request->q);
+        $data = CustomQuery::getBlacklistedAnsar($offset, $limit,$division, $unit, $thana,$request->q);
+        if(Input::exists('export')){
+            return $this->exportData(collect($data['ansars'])->chunk(2000)->toArray(),'HRM::export.blacklist_report');
+        }
+        return response()->json($data);
     }
 
     public function getAnserTransferHistory(Request $request)
@@ -358,7 +379,11 @@ class ReportController extends Controller
             if (!is_null($from) && !is_null($to) && !is_null($unit) && !is_null($thana)) {
                 $from_date = Carbon::parse($from)->format('Y-m-d');
                 $to_date = Carbon::parse($to)->format('Y-m-d');
-                return CustomQuery::embodedAnsarListforReport($offset, $limit, $from_date, $to_date,$division, $unit, $thana);
+                $data =  CustomQuery::embodedAnsarListforReport($offset, $limit, $from_date, $to_date,$division, $unit, $thana);
+                if(Input::exists('export')){
+                    return $this->exportData(collect($data['ansars'])->chunk(2000)->toArray(),'HRM::export.embodiment_report');
+                }
+                return response()->json($data);
             }
         }
     }
@@ -396,7 +421,11 @@ class ReportController extends Controller
             //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         }
-        return CustomQuery::threeYearsOverAnsarList($offset, $limit,$division, $unit, $ansar_rank, $ansar_sex);
+        $data =  CustomQuery::threeYearsOverAnsarList($offset, $limit,$division, $unit, $ansar_rank, $ansar_sex);
+        if(Input::exists('export')){
+            return $this->exportData(collect($data['ansars'])->chunk(2000)->toArray(),'HRM::export.three_years_over_list_view');
+        }
+        return response()->json($data);
     }
 
     public function anserTransferHistory()
@@ -528,6 +557,7 @@ class ReportController extends Controller
 
     public function getOfferedAnsar()
     {
+//        return Input::all();
         $unit = Input::get('unit');
         $division = Input::get('division');
         $past = Input::get('report_past');
@@ -602,6 +632,20 @@ class ReportController extends Controller
             ->where('tbl_units.division_id', $division)
             ->where('tbl_sms_send_log.reply_type', 'No')
             ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.action_date as reject_date')->get();
+        if(Input::exists('export')&&Input::get('export')=='true'){
+            $e = Excel::create('offer_report',function ($excel) use($offer_not_respond,$offer_received,$offer_reject){
+               $excel->sheet('offer_not_respond',function ($sheet) use ($offer_not_respond){
+                   $sheet->loadView('HRM::export.offer_not_respond',['index'=>1,'ansars'=>$offer_not_respond]);
+               });
+               $excel->sheet('offer_received',function ($sheet) use ($offer_received){
+                   $sheet->loadView('HRM::export.offer_accepted',['index'=>1,'ansars'=>$offer_received]);
+               });
+               $excel->sheet('offer_rejected',function ($sheet) use ($offer_reject){
+                   $sheet->loadView('HRM::export.offer_rejected',['index'=>1,'ansars'=>$offer_reject]);
+               });
+            })->store('xls',storage_path());
+            return response()->json(['status'=>true,'url'=>url()->route('download_file_by_name',['file'=>base64_encode(storage_path('offer_report.xls'))])]);
+        }
         $r =  Response::json(['onr' => $offer_not_respond, 'or' => $offer_received, 'orj' => $offer_reject]);
 //        return DB::getQueryLog();
         return $r;

@@ -27,7 +27,9 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 
 
         Route::get('download/file/{dataJob}',['as'=>'download_file','uses'=>'DownloadController@downloadFile']);
+        Route::get('download/file/name/{file}',['as'=>'download_file_by_name','uses'=>'DownloadController@downloadFileByName']);
         Route::get('delete/file/{dataJob}',['as'=>'delete_file','uses'=>'DownloadController@deleteFiles']);
+        Route::post('generate/file/{dataJob}',['as'=>'generate_file','uses'=>'DownloadController@generatingFile']);
 
 
         Route::get('view_image/{type}/{file}',['as'=>'view_image','uses'=>'FormSubmitHandler@getImage']);

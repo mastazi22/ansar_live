@@ -8,7 +8,7 @@ class DataExportStatus extends Model
 {
     //
     protected $table = 'tbl_data_export_status';
-    protected $fillable = ['status','file_name','user_id','total_part','counter'];
+    protected $fillable = ['status','file_name','payload','data_export_job_id'];
     public $connection = 'hrm';
 
     public function exportJob(){

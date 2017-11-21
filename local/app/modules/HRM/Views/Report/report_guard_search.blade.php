@@ -38,6 +38,49 @@
                     //alert($(".table").html())
                 })
             }
+            $scope.exportData = function (type) {
+                $scope.allLoading = true;
+                $http({
+                    url: '{{URL::route('guard_list')}}',
+                    method: 'get',
+                    params: {
+                        kpi_id: $scope.param.kpi,
+                        unit: $scope.param.unit,
+                        thana: $scope.param.thana,
+                        division: $scope.param.range,
+                        export:type
+                    }
+                }).then(function (res) {
+                    $scope.allLoading = false;
+                    $scope.export_data = res.data;
+                    $scope.generating = true;
+                    generateReport();
+
+                },function (res) {
+                    $scope.allLoading = false;
+                })
+            }
+            $scope.file_count = 1;
+            function generateReport(){
+                $http({
+                    url: '{{URL::to('HRM/generate/file')}}/'+$scope.export_data.id,
+                    method: 'post',
+                }).then(function (res) {
+                    if($scope.export_data.total_file>$scope.file_count){
+                        setTimeout(generateReport,1000);
+                        if(res.data.status) $scope.file_count++;
+                    }
+                    else{
+                        $scope.generating = false;
+                        $scope.file_count = 1;
+                        window.open($scope.export_data.download_url,'_blank')
+                    }
+                },function (res) {
+                    if($scope.export_data.file_count>$scope.file_count){
+                        setTimeout(generateReport,1000)
+                    }
+                })
+            }
             $scope.loadReportData = function (reportName, type) {
                 $scope.allLoading = true;
                 $http({
@@ -83,6 +126,12 @@
                         <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
                     </span>
                 </div>
+                <div class="overlay" ng-if="generating">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                        <span>[[(file_count)+'/'+export_data.total_file]]</span>
+                    </span>
+                </div>
                 <div class="box-body">
                     <div class="pull-right">
                             <span class="control-label" style="padding: 5px 8px">
@@ -109,7 +158,11 @@
                         <h3 style="text-align: center" id="report-header">[[report.report_header]]&nbsp;&nbsp;
                             <a href="#" title="print" id="print-report">
                                 <span class="glyphicon glyphicon-print"></span>
-                            </a></h3>
+                            </a>
+                            <a href="#" title="export" ng-click="exportData('all')">
+                                <i class="fa fa-file-excel-o"></i>
+                            </a>
+                        </h3>
 
                         <div class="report-heading">
                             <div class="report-heading-body">

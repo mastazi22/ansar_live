@@ -30,7 +30,7 @@
             $scope.reportType = 'eng';
             $scope.errorFind = 0;
             $scope.allLoading = false;
-            $scope.loadAnsar = function () {
+            $scope.loadAnsar = function (t) {
                 $scope.allLoading = true;
                 var data = {};
                 if ($scope.selectedDate == 0) {
@@ -49,16 +49,22 @@
                         type: 0
                     }
                 }
+                data['export'] = t||false
                 $http({
                     method: 'get',
                     url: '{{URL::route('get_offered_ansar')}}',
                     params: data
                 }).then(function (response) {
+                    $scope.allLoading = false;
+                    if(response.data.status){
+                        window.open(response.data.url,'_blank');
+                        return;
+                    }
                     $scope.errorFind = 0;
                     $scope.onr = response.data.onr
                     $scope.or = response.data.or
                     $scope.orj = response.data.orj
-                    $scope.allLoading = false;
+
                 },function(response){
                     $scope.errorFind = 1;
                     $scope.onr = []
@@ -154,9 +160,10 @@
                         <div class="col-sm-4 col-sm-offset-8">
 
                             <div class="form-control" style="padding: 0;border:none;">
-                                <button class="btn btn-primary pull-right" ng-click="loadAnsar()"><i
-                                            class="fa fa-download"></i>&nbsp;View Offer Report
-                                </button>
+                                <button class="btn btn-primary pull-right" ng-click="loadAnsar(false)"><i
+                                            class="fa fa-eye"></i>&nbsp;View Offer Report</button>
+                                <button class="btn btn-primary pull-right" ng-click="loadAnsar(true)"><i
+                                            class="fa fa-download"></i>&nbsp;Download Offer Report</button>
                             </div>
                         </div>
                     </div>

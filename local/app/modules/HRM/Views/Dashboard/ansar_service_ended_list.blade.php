@@ -89,9 +89,33 @@
                         export:type
                     }
                 }).then(function (res) {
+                    $scope.export_data = res.data
+                    $scope.generating = true;
                     $scope.export_page =  $scope.export_all = false;
+                    generateReport();
                 },function (res) {
                     $scope.export_page =  $scope.export_all = false;
+                })
+            }
+            $scope.file_count = 1;
+            function generateReport(){
+                $http({
+                    url: '{{URL::to('HRM/generate/file')}}/'+$scope.export_data.id,
+                    method: 'post',
+                }).then(function (res) {
+                    if($scope.export_data.total_file>$scope.file_count){
+                        setTimeout(generateReport,1000);
+                        if(res.data.status) $scope.file_count++;
+                    }
+                    else{
+                        $scope.generating = false;
+                        $scope.file_count = 1;
+                        window.open($scope.export_data.download_url,'_blank')
+                    }
+                },function (res) {
+                    if($scope.export_data.file_count>$scope.file_count){
+                        setTimeout(generateReport,1000)
+                    }
                 })
             }
             $scope.filterMiddlePage = function (value, index, array) {
@@ -119,6 +143,12 @@
                         <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
                     </span>
                 </div>
+                <div class="overlay" ng-if="generating">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                        <span>[[(file_count)+'/'+export_data.total_file]]</span>
+                    </span>
+                </div>
                 <div class="box-body">
                     <filter-template
                             show-item="['range','unit','thana']"
@@ -136,12 +166,12 @@
                             custom-change="loadPage()"
                             field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',custom:'col-sm-3'}"
                     ></filter-template>
-                    {{--<div class="row">
+                    <div class="row">
                         <div class="col-sm-12" style="margin-bottom: 5px">
                             <div class="btn-group btn-group-sm pull-right">
-                                --}}{{--<button id="print-report" class="btn btn-default"><i--}}{{--
-                                --}}{{--class="fa fa-print"></i>&nbsp;Print--}}{{--
-                                --}}{{--</button>--}}{{--
+                                <button id="print-report" class="btn btn-default"><i
+                                class="fa fa-print"></i>&nbsp;Print
+                                </button>
                                 <button id="export-report" ng-disabled="export_page||export_all" ng-click="exportData('page')" class="btn btn-default ">
                                     <i ng-show="!export_page" class="fa fa-file-excel-o"></i><i ng-show="export_page" class="fa fa-spinner fa-pulse"></i>&nbsp;Export this page
                                 </button>
@@ -150,7 +180,7 @@
                                 </button>
                             </div>
                         </div>
-                    </div>--}}
+                    </div>
                      <div class="row">
                         <div class="col-md-8">
                             <h4 class="text text-bold">Total Ansars :PC([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])&nbsp;APC([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])&nbsp;Ansar([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</h4>
