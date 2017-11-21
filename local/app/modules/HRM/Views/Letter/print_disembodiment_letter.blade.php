@@ -12,9 +12,9 @@
                                     </span>
                                     <span class="pull-right">
                                         @if($mem->created_at)
-                                            তারিখঃ{{LanguageConverter::engToBng(\Carbon\Carbon::parse($mem->created_at)->parse('d/m/Y'))}} খ্রিঃ
+                                            তারিখঃ{{LanguageConverter::engToBng(\Carbon\Carbon::parse($mem->created_at)->format('d/m/Y'))}} খ্রিঃ
                                         @else
-                                             তারিখঃ{{LanguageConverter::engToBng(\Carbon\Carbon::now()->parse('d/m/Y'))}} খ্রিঃ
+                                             তারিখঃ{{LanguageConverter::engToBng(\Carbon\Carbon::now()->format('d/m/Y'))}} খ্রিঃ
                                         @endif
                                     </span>
         </div>
