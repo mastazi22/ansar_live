@@ -96,7 +96,7 @@ class DownloadController extends Controller
 
         $path = storage_path('export_file/'.$dataJob->id);
         if(!File::exists($path)){
-            File::makeDirectory($path,777,true);
+            File::makeDirectory($path,0777,true);
         }
         $status = $dataJob->exportStatus()->where('status','pending')->first();
         $data = unserialize(gzuncompress($status->payload));
