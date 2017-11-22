@@ -3,7 +3,6 @@
 namespace App\modules\HRM\Controllers;
 
 use App\modules\HRM\Models\ExportDataJob;
-use function foo\func;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
