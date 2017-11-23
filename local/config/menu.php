@@ -200,10 +200,10 @@ return [
                     "route" => "disembodiment_report_view",
                     "icon" => "fa-file-pdf-o",
                 ],
-                "View Unfrozen Ansar Report" => [
+                /*"View Unfrozen Ansar Report" => [
                     "route" => "unfrozen_report",
                     "icon" => "fa-file-pdf-o",
-                ],
+                ],*/
                 "Blocklist Information" => [
                     "route" => "blocklist_view",
                     "icon" => "fa-file-pdf-o",
