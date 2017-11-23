@@ -170,6 +170,127 @@ class ApplicantScreeningController extends Controller
         }
         return abort(401);
     }
+    public function loadApplicantsByStatus(Request $request)
+    {
+        if($request->ajax()&&strcasecmp($request->method(),'post')==0){
+            $rules = [
+                'circular' => ['required','regex:/^([0-9]+)|(all)$/'],
+                'status' => ['required','regex:/^(applied|selected|accepted)$/'],
+                'limit'=>'regex:/^[0-9]+$/'
+            ];
+            $this->validate($request, $rules);
+            $query = JobAppliciant::with(['division','district','thana'])->whereHas('circular', function ($q) use ($request) {
+                $q->where('circular_status', 'running');
+                if ($request->exists('circular') && $request->circular != 'all') {
+                    $q->where('id', $request->circular);
+                }
+            })->where('status', $request->status);
+            if($request->q){
+                $query->where(function($q) use($request){
+                    $q->orWhere('national_id_no','like','%'.$request->q.'%');
+                    $q->orWhere('applicant_id','like','%'.$request->q.'%');
+                    $q->orWhere('mobile_no_self','like','%'.$request->q.'%');
+                    $q->orWhere('applicant_name_bng','like','%'.$request->q.'%');
+                    $q->orWhere('applicant_name_eng','like','%'.$request->q.'%');
+                });
+            }
+            if(auth()->user()->type==66){
+                $query->where('job_applicant.division_id',auth()->user()->division_id);
+            }
+            if(auth()->user()->type==22){
+                $query->where('job_applicant.unit_id',auth()->user()->district_id);
+            }
+            return view('recruitment::applicant.part_applicant_info',[
+                'applicants'=>$query->paginate($request->limit?$request->limit:50),
+                'status'=>$request->status
+            ]);
+
+
+        }
+        return view('recruitment::applicant.applicant_edit_info');
+    }
+    public function loadApplicantsForRevert(Request $request)
+    {
+        if($request->ajax()&&strcasecmp($request->method(),'post')==0){
+            $rules = [
+                'circular' => ['required','regex:/^([0-9]+)|(all)$/'],
+                'status' => ['required','regex:/^(applied|selected|accepted)$/'],
+                'limit'=>'regex:/^[0-9]+$/'
+            ];
+            $this->validate($request, $rules);
+            $query = JobAppliciant::with(['division','district','thana'])->whereHas('circular', function ($q) use ($request) {
+                $q->where('circular_status', 'running');
+                if ($request->exists('circular') && $request->circular != 'all') {
+                    $q->where('id', $request->circular);
+                }
+            })->where('status', $request->status);
+            if($request->q){
+                $query->where(function($q) use($request){
+                    $q->orWhere('national_id_no','like','%'.$request->q.'%');
+                    $q->orWhere('applicant_id','like','%'.$request->q.'%');
+                    $q->orWhere('mobile_no_self','like','%'.$request->q.'%');
+                    $q->orWhere('applicant_name_bng','like','%'.$request->q.'%');
+                    $q->orWhere('applicant_name_eng','like','%'.$request->q.'%');
+                });
+            }
+            if(auth()->user()->type==66){
+                $query->where('job_applicant.division_id',auth()->user()->division_id);
+            }
+            if(auth()->user()->type==22){
+                $query->where('job_applicant.unit_id',auth()->user()->district_id);
+            }
+            return view('recruitment::applicant.part_applicant_status_revert',[
+                'applicants'=>$query->paginate($request->limit?$request->limit:50),
+                'status'=>$request->status
+            ]);
+
+
+        }
+        return view('recruitment::applicant.applicant_status_revert');
+    }
+    public function revertApplicantStatus(Request $request)
+    {
+        if($request->ajax()){
+
+            $status = ['applied','selected','accepted'];
+            $rules = [
+                'applicant_id'=>['required'],
+                'status' => ['required','regex:/^(applied|selected|accepted)$/']
+            ];
+            $this->validate($request,$rules);
+            DB::beginTransaction();
+            try{
+                $applicant = JobAppliciant::where('applicant_id',$request->applicant_id)->first();
+                if(!$applicant){
+                    throw new \Exception("Invalid applicant");
+                }
+                if($applicant->status==$request->status){
+                    throw new \Exception("Applicant can`t change to same status");
+                }
+                $change_index = array_search($request->status,$status);
+                $index = array_search($applicant->status,$status);
+                if($change_index>=$index){
+                    throw new \Exception("Applicant can`t revert to ".$request->status);
+                }
+                if($applicant->status=='selected'){
+                    $applicant->selectedApplicant->delete();
+                    if($applicant->marks)$applicant->marks->delete();
+                }
+                else if($applicant->status=='accepted'){
+                    $applicant->accepted->delete();
+                }
+                $applicant->status = $request->status;
+                $applicant->save();
+                DB::commit();
+
+            }catch(\Exception $e){
+                DB::rollback();
+                return response()->json(['status'=>'error','message'=>$e->getMessage()]);
+            }
+            return response()->json(['status'=>'success','message'=>'Status change successfully']);
+        }
+        abort(401);
+    }
     public function loadSelectedApplicant(Request $request)
     {
         if($request->ajax()){

@@ -372,6 +372,11 @@
                     }
                 })
             }
+            $scope.isEditable = function (s) {
+
+                if($scope.isAdmin!=11&&($scope.fields==undefined||$scope.fields.indexOf(s)<0)) return false;
+                return true;
+            }
         });
         GlobalApp.directive('compileHtml', function ($compile) {
             return {

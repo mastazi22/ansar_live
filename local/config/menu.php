@@ -200,6 +200,10 @@ return [
                     "route" => "disembodiment_report_view",
                     "icon" => "fa-file-pdf-o",
                 ],
+                "View Unfrozen Ansar Report" => [
+                    "route" => "unfrozen_report",
+                    "icon" => "fa-file-pdf-o",
+                ],
                 "Blocklist Information" => [
                     "route" => "blocklist_view",
                     "icon" => "fa-file-pdf-o",
@@ -381,6 +385,14 @@ return [
                 ],
                 "Search Applicant"=>[
                     "route"=>"recruitment.applicant.search",
+                    "icon"=>"fa-circle"
+                ],
+                "Edit Applicant"=>[
+                    "route"=>"recruitment.applicant.info",
+                    "icon"=>"fa-circle"
+                ],
+                "Revert Applicant Status"=>[
+                    "route"=>"recruitment.applicant.revert",
                     "icon"=>"fa-circle"
                 ],
                 "Applicant Mark Entry"=>[

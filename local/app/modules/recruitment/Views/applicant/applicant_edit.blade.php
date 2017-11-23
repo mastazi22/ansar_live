@@ -143,7 +143,7 @@
                             </div>
                             <div class="box-body">
                                 {{--Start Ansar Name (English) Field --}}
-                                <div class="form group col-md-12" ng-if="fields.indexOf('applicant_name_eng')>=0"
+                                <div class="form group col-md-12" ng-if="isEditable('applicant_name_eng')>=0"
                                      ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.ansar_name_eng[0]}">
 
                                     <label class="control-label col-sm-2" for="email"><sup
@@ -161,7 +161,7 @@
                                 {{--End Ansar Name (English) Field --}}
                                 {{--Start Ansar Name (Bangla) Field --}}
                                 <div class="form-horizontal col-md-12 "
-                                     ng-if="fields.indexOf('applicant_name_bng')>=0"
+                                     ng-if="isEditable('applicant_name_bng')>=0"
                                      ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.ansar_name_bng[0]}">
                                     <label class="control-label col-sm-2" for="email"><sup
                                                 style="color: #ff0709;font-size: 1em">*</sup>নাম:</label>
@@ -177,7 +177,7 @@
                                 </div>
                                 {{--End Ansar Name (Bangla) Field --}}
                                 {{--Start Ansar Father Name (Bangla) Field --}}
-                                <div class="form group col-md-12 " ng-if="fields.indexOf('father_name_bng')>=0"
+                                <div class="form group col-md-12 " ng-if="isEditable('father_name_bng')>=0"
                                      ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.father_name_bng[0]}">
                                     <label class="control-label col-sm-2" for="email"><sup
                                                 style="color: #ff0709;font-size: 1em">*</sup>পিতার
@@ -194,7 +194,7 @@
                                 </div>
                                 {{--End Ansar Father Name (Bangla) Field --}}
                                 {{--Start Ansar Mother Name (Bangla) Field --}}
-                                <div class="form group col-md-12 " ng-if="fields.indexOf('mother_name_bng')>=0"
+                                <div class="form group col-md-12 " ng-if="isEditable('mother_name_bng')>=0"
                                      ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.mother_name_bng[0]}">
                                     <label class="control-label col-sm-2" for="email"><sup
                                                 style="color: #ff0709;font-size: 1em">*</sup>মাতার
@@ -212,7 +212,7 @@
                                 </div>
                                 {{--End Ansar Mother Name (Bangla) Field --}}
                                 {{--Start Ansar Date of Birth Field --}}
-                                <div class="form group col-md-12 " ng-if="fields.indexOf('date_of_birth')>=0"
+                                <div class="form group col-md-12 " ng-if="isEditable('date_of_birth')>=0"
                                      ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.date_of_birth[0]}">
                                     <label class="control-label col-sm-2" for="email"><sup
                                                 style="color: #ff0709;font-size: 1em">*</sup>Date of
@@ -229,7 +229,7 @@
                                 </div>
                                 {{--End Ansar Date of Birth Field --}}
                                 {{--Start Ansar Married Status Field --}}
-                                <div class="form-horizontal col-md-12 " ng-if="fields.indexOf('marital_status')>=0"
+                                <div class="form-horizontal col-md-12 " ng-if="isEditable('marital_status')>=0"
                                      ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.marital_status[0]}">
 
                                     <label class="control-label col-sm-2" for="email"><sup
@@ -254,7 +254,7 @@
                                 </div>
                                 {{--End Ansar Married Status Field --}}
                                 {{--Start Ansar National Id Field --}}
-                                <div class="form group col-md-12 " ng-if="fields.indexOf('national_id_no')>=0"
+                                <div class="form group col-md-12 " ng-if="isEditable('national_id_no')>=0"
                                      ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.national_id_no[0]}">
                                     <label class="control-label col-sm-2" for="email"><sup
                                                 style="color: #ff0709;font-size: 1em">*</sup>National Id no</label>
@@ -281,7 +281,7 @@
                             <div class="box-body">
 
                                 <div class="form-horizontal col-md-12"
-                                     ng-if="fields.indexOf('village_name_bng')>=0">
+                                     ng-if="isEditable('village_name_bng')>=0">
                                     <label class="control-label col-sm-2" for="email">গ্রাম/বাড়ি নং:</label>
                                     <div class="col-sm-10">
                                         <input class="form-control  " id="village_name_bng"
@@ -291,7 +291,7 @@
 
                                 </div>
                                 <div class="form-horizontal col-md-12"
-                                     ng-if="fields.indexOf('post_office_name_bng')>=0">
+                                     ng-if="isEditable('post_office_name_bng')>=0">
                                     <label class="control-label col-sm-2" for="email">ডাকঘর:</label>
 
                                     <div class="col-sm-10">
@@ -301,7 +301,7 @@
                                     </div>
 
                                 </div>
-                                <div class="form group col-md-12" ng-if="fields.indexOf('union_name_bng')>=0">
+                                <div class="form group col-md-12" ng-if="isEditable('union_name_bng')>=0">
                                     <label class="control-label col-sm-2" for="email">ইউনিয়ন
                                         নাম/ওয়ার্ড:</label>
                                     <div class="col-sm-10">
@@ -310,7 +310,7 @@
                                                placeholder="ইউনিয়ন নাম">
                                     </div>
                                 </div>
-                                <div class="form-horizontal col-md-12 " ng-if="fields.indexOf('division_id')>=0"
+                                <div class="form-horizontal col-md-12 " ng-if="isEditable('division_id')>=0"
                                      ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.division_name_eng[0]}">
                                     <label class="control-label col-sm-2" for="email"><sup
                                                 style="color: #ff0709;font-size: 1em">*</sup>বিভাগ</label>
@@ -329,7 +329,7 @@
                                     </div>
 
                                 </div>
-                                <div class="form-horizontal col-md-12 " ng-if="fields.indexOf('unit_id')>=0"
+                                <div class="form-horizontal col-md-12 " ng-if="isEditable('unit_id')>=0"
                                      ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.unit_name_eng[0]}">
                                     <label class="control-label col-sm-2" for="email"><sup
                                                 style="color: #ff0709;font-size: 1em">*</sup>জেলা</label>
@@ -347,7 +347,7 @@
                                     </div>
 
                                 </div>
-                                <div class="form-horizontal col-md-12 " ng-if="fields.indexOf('thana_id')>=0"
+                                <div class="form-horizontal col-md-12 " ng-if="isEditable('thana_id')>=0"
                                      ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.thana_id[0]}">
                                     <label class="control-label col-sm-2" for="email"><sup
                                                 style="color: #ff0709;font-size: 1em">*</sup>থানা</label>
@@ -376,7 +376,7 @@
                         </div>
                         <div class="box box-info">
                             <div class="box-body">
-                                <div class="form-horizontal col-md-12 " ng-if="fields.indexOf('height_feet')>=0"
+                                <div class="form-horizontal col-md-12 " ng-if="isEditable('height_feet')>=0"
                                      ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.height_feet[0]}">
                                     <label class="control-label col-sm-2" for="email"><sup
                                                 style="color: #ff0709;font-size: 1em">*</sup>Height</label>
@@ -395,7 +395,7 @@
                                               ng-show="formSubmitResult.error.height_inch[0]">[[ formSubmitResult.error.height_inch[0] ]]</span>
                                     </div>
                                 </div>
-                                <div class="form-horizontal col-md-12" ng-if="fields.indexOf('weight')>=0">
+                                <div class="form-horizontal col-md-12" ng-if="isEditable('weight')>=0">
                                     <label class="control-label col-sm-2" for="email">Weight</label>
 
                                     <div class="col-sm-10">
@@ -404,19 +404,19 @@
                                     </div>
                                 </div>
                                 <div class="form-horizontal col-md-12"
-                                     ng-if="fields.indexOf('chest_normal')>=0||fields.indexOf('chest_extended')>=0">
+                                     ng-if="isEditable('chest_normal')>=0||isEditable('chest_extended')>=0">
                                     <label for="" class="control-label col-sm-2">
 
                                     </label>
                                     <div class="col-sm-10">
                                         <div class="row">
-                                            <div class="col-sm-6" ng-if="fields.indexOf('chest_normal')>=0">
+                                            <div class="col-sm-6" ng-if="isEditable('chest_normal')>=0">
                                                 <label for="" class="control-label">Chest normal</label>
                                                 <input type="text" class="form-control"
                                                        placeholder="chest normal"
                                                        ng-model="formData.chest_normal">
                                             </div>
-                                            <div class="col-sm-6" ng-if="fields.indexOf('chest_extended')>=0">
+                                            <div class="col-sm-6" ng-if="isEditable('chest_extended')>=0">
                                                 <label for="" class="control-label">Chest extended</label>
                                                 <input type="text" class="form-control"
                                                        placeholder="chest extended"
@@ -426,7 +426,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-horizontal col-md-12 " ng-if="fields.indexOf('gender')>=0"
+                                <div class="form-horizontal col-md-12 " ng-if="isEditable('gender')>=0"
                                      ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.gender[0]}">
                                     <label class="control-label col-sm-2" for="email"><sup
                                                 style="color: #ff0709;font-size: 1em">*</sup>Gender</label>
@@ -446,7 +446,7 @@
                         </div>
                     </fieldset>
 
-                    <fieldset ng-if="fields.indexOf('education')>=0">
+                    <fieldset ng-if="isEditable('education')>=0">
                         <div class="level-title-session-entry">
                             <h5 style="text-align: center;">শিক্ষাগত যোগ্যতার তথ্য</h5>
                         </div>
@@ -513,7 +513,7 @@
                         </div>
                         <div class="box box-info">
                             <div class="box-body">
-                                <div class="form-horizontal col-md-12 " ng-if="fields.indexOf('mobile_no_self')>=0"
+                                <div class="form-horizontal col-md-12 " ng-if="isEditable('mobile_no_self')>=0"
                                      ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.mobile_no_self[0]}">
                                     <label class="control-label col-sm-2" for="email"><sup
                                                 style="color: #ff0709;font-size: 1em">*</sup>Mobile
@@ -534,7 +534,7 @@
 
                                     </div>
                                 </div>
-                                <div class="form-horizontal col-md-12" ng-if="fields.indexOf('training_info')>=0">
+                                <div class="form-horizontal col-md-12" ng-if="isEditable('training_info')>=0">
                                     <label class="control-label col-sm-2" for="email">Training info</label>
 
                                     <div class="col-sm-10">
@@ -543,7 +543,7 @@
                                                placeholder="Training info">
                                     </div>
                                 </div>
-                                <div class="form-horizontal col-md-12" ng-if="fields.indexOf('connection_name')>=0">
+                                <div class="form-horizontal col-md-12" ng-if="isEditable('connection_name')>=0">
                                     <label class="control-label col-sm-2" for="email">Reference name</label>
 
                                     <div class="col-sm-10">
@@ -553,7 +553,7 @@
                                     </div>
                                 </div>
                                 <div class="form-horizontal col-md-12"
-                                     ng-if="fields.indexOf('connection_relation')>=0">
+                                     ng-if="isEditable('connection_relation')>=0">
                                     <label class="control-label col-sm-2" for="email">Relation with
                                         reference</label>
 
@@ -565,7 +565,7 @@
                                     </div>
                                 </div>
                                 <div class="form-horizontal col-md-12"
-                                     ng-if="fields.indexOf('connection_address')>=0">
+                                     ng-if="isEditable('connection_address')>=0">
                                     <label class="control-label col-sm-2" for="email">Reference address</label>
 
                                     <div class="col-sm-10">
@@ -577,7 +577,7 @@
                                     </div>
                                 </div>
                                 <div class="form-horizontal col-md-12"
-                                     ng-if="fields.indexOf('connection_mobile_no')>=0">
+                                     ng-if="isEditable('connection_mobile_no')>=0">
                                     <label class="control-label col-sm-2" for="email">Reference mobile no</label>
 
                                     <div class="col-sm-10">

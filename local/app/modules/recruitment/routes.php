@@ -20,6 +20,9 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
     Route::post('/applicant/confirm_accepted',['as'=>'recruitment.applicant.confirm_accepted','uses'=>'ApplicantScreeningController@confirmAccepted']);
     Route::get('/applicant/search',['as'=>'recruitment.applicant.search','uses'=>'ApplicantScreeningController@searchApplicant']);
     Route::post('/applicant/search',['as'=>'recruitment.applicant.search_result','uses'=>'ApplicantScreeningController@loadApplicants']);
+    Route::any('/applicant/info',['as'=>'recruitment.applicant.info','uses'=>'ApplicantScreeningController@loadApplicantsByStatus']);
+    Route::any('/applicant/revert',['as'=>'recruitment.applicant.revert','uses'=>'ApplicantScreeningController@loadApplicantsForRevert']);
+    Route::post('/applicant/revert_status',['as'=>'recruitment.applicant.revert_status','uses'=>'ApplicantScreeningController@revertApplicantStatus']);
     Route::post('/applicant/detail/selected_applicant',['as'=>'recruitment.applicant.selected_applicant','uses'=>'ApplicantScreeningController@loadSelectedApplicant']);
     Route::get('/applicant/editfield',['as'=>'recruitment.applicant.editfield','uses'=>'ApplicantScreeningController@applicantEditField']);
     Route::post('/applicant/editfield',['as'=>'recruitment.applicant.editfieldstore','uses'=>'ApplicantScreeningController@saveApplicantEditField']);
