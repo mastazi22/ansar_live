@@ -335,7 +335,7 @@ class Kernel extends ConsoleKernel
         $schedule->call(function(){
 
         })->twiceDaily(0,12)->name("ansar_retirement")->withoutOverlapping();
-        $schedule->call(function () {
+        /*$schedule->call(function () {
             Log::info("called : send_sms_to_selected_applicant");
             $messID        = uniqid('SB_');
             $messageID     = $messID;
@@ -373,7 +373,7 @@ class Kernel extends ConsoleKernel
                 }
             }
 
-        })->everyMinute()->name("send_sms_to_selected_applicant")->withoutOverlapping();
+        })->everyMinute()->name("send_sms_to_selected_applicant")->withoutOverlapping();*/
         $schedule->call(function () {
             Log::info("called : send_sms_to_accepted_applicant");
             $messID        = uniqid('SB_');
