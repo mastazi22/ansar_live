@@ -194,11 +194,14 @@ class ApplicantScreeningController extends Controller
                     $q->orWhere('applicant_name_eng','like','%'.$request->q.'%');
                 });
             }
-            if(auth()->user()->type==66){
-                $query->where('job_applicant.division_id',auth()->user()->division_id);
+            if($request->range!='all'){
+                $query->where('division_id',$request->range);
             }
-            if(auth()->user()->type==22){
-                $query->where('job_applicant.unit_id',auth()->user()->district_id);
+            if($request->unit!='all'){
+                $query->where('unit_id',$request->unit);
+            }
+            if($request->thana!='all'){
+                $query->where('thana_id',$request->thana);
             }
             return view('recruitment::applicant.part_applicant_info',[
                 'applicants'=>$query->paginate($request->limit?$request->limit:50),
@@ -233,11 +236,14 @@ class ApplicantScreeningController extends Controller
                     $q->orWhere('applicant_name_eng','like','%'.$request->q.'%');
                 });
             }
-            if(auth()->user()->type==66){
-                $query->where('job_applicant.division_id',auth()->user()->division_id);
+            if($request->range!='all'){
+                $query->where('division_id',$request->range);
             }
-            if(auth()->user()->type==22){
-                $query->where('job_applicant.unit_id',auth()->user()->district_id);
+            if($request->unit!='all'){
+                $query->where('unit_id',$request->unit);
+            }
+            if($request->thana!='all'){
+                $query->where('thana_id',$request->thana);
             }
             return view('recruitment::applicant.part_applicant_status_revert',[
                 'applicants'=>$query->paginate($request->limit?$request->limit:50),
@@ -278,6 +284,7 @@ class ApplicantScreeningController extends Controller
                 }
                 else if($applicant->status=='accepted'){
                     $applicant->accepted->delete();
+                    if($applicant->marks&&$request->status=='applied')$applicant->marks->delete();
                 }
                 $applicant->status = $request->status;
                 $applicant->save();

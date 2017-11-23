@@ -116,6 +116,21 @@
                         </div>
                     </div>
                 </div>
+                <filter-template
+                        show-item="['range','unit','thana']"
+                        type="all"
+                        data="param"
+                        start-load="range"
+                        field-name="{unit:'unit'}"
+                        range-change="loadApplicant()"
+                        unit-change="loadApplicant()"
+                        thana-change="loadApplicant()"
+                        unit-field-disabled="!(param.circular&&param.status)"
+                        range-field-disabled="!(param.circular&&param.status)"
+                        thana-field-disabled="!(param.circular&&param.status)"
+                        field-width="{unit:'col-sm-4',range:'col-sm-4',thana:'col-sm-4'}"
+                >
+                </filter-template>
                 <div ng-bind-html="applicants" compile-html>
 
                 </div>
