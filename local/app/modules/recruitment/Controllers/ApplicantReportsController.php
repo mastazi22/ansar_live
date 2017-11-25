@@ -52,7 +52,7 @@ class ApplicantReportsController extends Controller
             $applicants = JobApplicantMarks::with(['applicant'=>function($q){
                 $q->with(['appliciantEducationInfo'=>function($q){
                     $q->with('educationInfo');
-                },'district']);
+                },'district','thana']);
             }])->whereHas('applicant',function($q) use($request){
 
                 $q->whereHas('accepted',function(){

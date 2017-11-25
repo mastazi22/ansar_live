@@ -72,7 +72,8 @@
                     <tr>
                         <td>{{$a->applicant->village_name_bng}}</td>
                         <td>{{$a->applicant->post_office_name_bng}}</td>
-                        <td>{{$a->applicant->union_name_bng}}</td>
+                        {{--<td>{{$a->applicant->union_name_bng}}</td>--}}
+                        <td>{{$a->applicant->thana->thana_name_bng}}</td>
                         <td>{{$a->applicant->district->unit_name_bng}}</td>
                     </tr>
                 </table>
