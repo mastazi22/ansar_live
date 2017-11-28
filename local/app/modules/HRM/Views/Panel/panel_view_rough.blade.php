@@ -365,7 +365,7 @@
                                                 <div class="col-sm-4">
                                                     <div class="form-group">
                                                         <label class="control-label">Panel Date</label>
-                                                        {!! Form::text('panel_date', $value = null, $attributes = array('class' => 'form-control','date-picker', 'id' => 'panel_date', 'ng_model' => 'submitEntryPanelData.panel_date','placeholder'=>'Panel Date', 'required')) !!}
+                                                        {!! Form::text('panel_date', $value = null, $attributes = array('class' => 'form-control','date-picker'=>'moment().format("DD-MMM-YYYY")', 'id' => 'panel_date', 'ng_model' => 'submitEntryPanelData.panel_date','placeholder'=>'Panel Date', 'required')) !!}
                                                         <p ng-if="add_to_panel_error.panel_date!=undefined" class="text text-danger">[[add_to_panel_error.panel_date[0] ]]</p>
                                                     </div>
                                                 </div>
