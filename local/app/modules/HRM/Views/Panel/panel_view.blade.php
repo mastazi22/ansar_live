@@ -241,7 +241,7 @@
                                                 <label class="control-label">Panel Date <span class="text-danger"
                                                                                               ng-show="panelForm.panel_date.$touched && panelForm.panel_date.$error.required"> Date is required.</span></label>
                                                 &nbsp;&nbsp;&nbsp;</label>
-                                                {!! Form::text('panel_date', $value = null, $attributes = array('class' => 'form-control', 'id' => 'panel_date', 'ng_model' => 'panel_date', 'required','date-picker'=>'')) !!}
+                                                {!! Form::text('panel_date', $value = null, $attributes = array('class' => 'form-control', 'id' => 'panel_date', 'ng_model' => 'panel_date', 'required','date-picker'=>'moment()')) !!}
                                             </div>
                                         </div>
                                     </div>
