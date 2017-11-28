@@ -42,10 +42,9 @@
                     })
                     $scope.loadingPage[i] = false;
                 }
-                if ($scope.numOfPage > 0)$scope.loadPage($scope.pages[0]);
-                else $scope.loadPage({pageNum: 0, offset: 0, limit: $scope.itemPerPage, view: 'view'});
             }
             $scope.loadPage = function (page, $event) {
+
                 if ($event != undefined)  $event.preventDefault();
                 $scope.currentPage = page==undefined?0:page.pageNum;
                 $scope.loadingPage[$scope.currentPage]=true;
@@ -68,38 +67,12 @@
                     $scope.queue.shift();
                     $scope.total = response.data.total;
                     $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
-                    if($scope.queue.length>1) $scope.loadPage();
+                    if($scope.queue.length>1) {
+
+                        $scope.loadPage();
+                    }
                     $scope.loadPagination();
                     $scope.loadingPage[$scope.currentPage] = false;
-                })
-            }
-            $scope.loadTotal = function () {
-                $scope.allLoading = true;
-                //alert($scope.selectedDivision)
-                $http({
-
-                    url: '{{URL::route('inactive_kpi_list')}}',
-                    method: 'get',
-                    params: {
-                        division: $scope.params.range,
-                        unit: $scope.params.unit,
-                        thana: $scope.params.thana,
-                        view: 'count'
-                    }
-                }).then(function (response) {
-                    $scope.errorFound = 0;
-                    $scope.total = response.data.total;
-                    $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
-                    $scope.loadPagination();
-                    $scope.allLoading = false;
-                    //alert($scope.total)
-                }, function (response) {
-                    $scope.errorFound = 1;
-                    $scope.total = 0;
-                    $scope.kpis = [];
-                    $scope.errorMessage = $sce.trustAsHtml("<tr class='warning'><td colspan='" + $('.table').find('tr').find('th').length + "'>" + response.data + "</td></tr>");
-                    $scope.pages = [];
-                    $scope.allLoading = false;
                 })
             }
             $scope.filterMiddlePage = function (value, index, array) {
@@ -121,7 +94,7 @@
                     $scope.verifying[parseInt(i)] = false;
                     if (response.data.status) {
                         notificationService.notify('success', response.data.message)
-                        $scope.loadTotal();
+                        $scope.loadPage();
                     }
                     else {
                         notificationService.notify('error', response.data.message)
@@ -148,7 +121,7 @@
                     if (response.data.status) {
                         $("#withdraw-cancel").modal('hide')
                         notificationService.notify('success', response.data.message)
-                        $scope.loadTotal();
+                        $scope.loadPage();
                     }
                     else {
                         notificationService.notify('error', response.data.message)
@@ -177,7 +150,7 @@
                     if (response.data.status) {
                         $("#withdraw-date-update").modal('hide')
                         notificationService.notify('success', response.data.message)
-                        $scope.loadTotal();
+                        $scope.loadPage();
                     }
                     else {
                         notificationService.notify('error', response.data.message)
@@ -205,9 +178,9 @@
                     <filter-template
                             show-item="['range','unit','thana']"
                             type="all"
-                            range-change="loadTotal()"
-                            unit-change="loadTotal()"
-                            thana-change="loadTotal()"
+                            range-change="loadPage()"
+                            unit-change="loadPage()"
+                            thana-change="loadPage()"
                             start-load="range"
                             field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
                             data = "params"
@@ -388,8 +361,6 @@
             cancel_callback: function (element) {
             }
         })
-        $("#date-picker").datepicker({                dateFormat:'dd-M-yy'            })({
-            defaultValue:false
-        })
+        $("#date-picker").datepicker({                dateFormat:'dd-M-yy'            })
     </script>
 @stop
