@@ -963,7 +963,7 @@ class FormSubmitHandler extends Controller
         if (Auth::user()->type == 55) {
             $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.user_id', Auth::user()->id);
         }
-        foreach ($request->except('page') as $key => $value) {
+        foreach ($request->except(['page','action_user_id']) as $key => $value) {
             $value = (object)($value);
 //            return $value;
             if ($key == 'smart_card_no') {
