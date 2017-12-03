@@ -266,6 +266,7 @@ class OfferController extends Controller
                         'offered_date' => $received_ansar->sms_send_datetime,
                         'offered_district' => $received_ansar->offered_district,
                         'action_user_id' => auth()->user()->id,
+                        'action_date' => Carbon::now(),
                         'reply_type' => 'Yes',
                     ]));
                     $received_ansar->delete();
