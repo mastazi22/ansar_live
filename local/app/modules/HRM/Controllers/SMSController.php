@@ -36,11 +36,9 @@ class SMSController extends Controller
         if (strcasecmp($body_part[0], 'ans') == 0) {
             Log::info("SMS NO" . $sender_no);
             if (count($body_part) > 1) {
-                switch ($body_part[1]) {
-                    case 'YES':
+                switch (strtolower($body_part[1])) {
                     case 'yes':
                         return $this->changeAnsarOfferStatus($sender_no, 'YES');
-                    case 'NO':
                     case 'no':
                         return $this->changeAnsarOfferStatus($sender_no, 'NO');
                     default:
@@ -72,6 +70,7 @@ class SMSController extends Controller
 
     function changeAnsarOfferStatus($phone, $type)
     {
+        //return "System in maintenance mode";
         if (strcasecmp(substr($phone, 0, 2), '88') == 0) {
             $phone = substr($phone, 2);
         } else if (strcasecmp(substr($phone, 0, 3), '+88') == 0) {
