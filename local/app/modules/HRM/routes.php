@@ -282,6 +282,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::post('/unblocklist_entry', ['as'=>'unblocklist_entry','uses'=>'BlockBlackController@unblockListEntry']);
         //TRANSFER
         Route::get('/transfer_process', ['as' => 'transfer_process', 'uses' => 'EmbodimentController@transferProcessView']);
+        Route::any('/disembodiment_ansar_correction', ['as' => 'transfer_process', 'uses' => 'EmbodimentController@transferProcessView']);
         Route::get('/single_embodied_ansar_detail/{id}', ['as' => 'single_embodied_ansar_detail', 'uses' => 'EmbodimentController@getSingleEmbodiedAnsarInfo']);
         Route::get('/multiple_kpi_transfer_process', ['as' => 'multiple_kpi_transfer_process', 'uses' => 'EmbodimentController@multipleKpiTransferView']);
         Route::post('/search_kpi_by_ansar', ['as' => 'search_kpi_by_ansar', 'uses' => 'EmbodimentController@getEmbodiedAnsarInfo']);
@@ -317,6 +318,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/guard_report', ['as' => 'guard_report', 'uses' => 'ReportController@reportGuardSearchView']);
         Route::get('offer_report',['as'=>'offer_report','uses'=>'ReportController@offerReportView']);
         Route::get('get_offered_ansar',['as'=>'get_offered_ansar','uses'=>'ReportController@getOfferedAnsar']);
+        Route::any('unfrozen_report',['as'=>'unfrozen_report','uses'=>'ReportController@unfrozenAnsarReport']);
         //END REPORT ROUTE
 //Start EmbodimentnewEmbodimentView
         Route::get('/new_embodiment', ['as' => 'go_to_new_embodiment_page', 'uses' => 'EmbodimentController@newEmbodimentView']);
@@ -418,19 +420,18 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
 //End KPI
         Route::post('upload_original_info',['as'=>'upload_original_info','uses'=>'GeneralSettingsController@uploadOriginalInfo']);
         Route::get('upload_original_info',['as'=>'upload_original_info_view','uses'=>'GeneralSettingsController@uploadOriginalInfoView']);
-        Route::get('test',function(){
+        Route::get('test/{id}',function($id){
 
-            $s = "<th>SL. No</th>
-        <th>Ansar ID</th>
-        <th>Name</th>
-        <th>Rank</th>
-        <th>Current KPI Name</th>
-        <th>KPI Unit</th>
-        <th>KPI Thana</th>
-        <th>Joining Date</th>
-        <th>Service Ended Date</th>";
-            $data = preg_split('/<th>|<\/th>/',$s);
-            return array_values(array_filter($data,function ($value){return trim($value);}));
+            DB::enableQueryLog();
+            $global_Position = DB::table('tbl_ansar_status_info')
+                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
+                ->where('pannel_status', 1)->where('block_list_status', 0)->select('tbl_panel_info.ansar_id','tbl_panel_info.panel_date');
+
+//            return $global_Position;
+            $g = DB::table(DB::raw("(".$global_Position->toSql().") x,(select @a:=0) a"))->mergeBindings($global_Position)->select(DB::raw('x.*,@a:=@a+1 as gp'))->orderBy('x.panel_date');
+            $gg = DB::table(DB::raw("(".$g->toSql().") x"))->mergeBindings($g)->where('ansar_id',$id)->get();
+            return $g->get();
 
         });
     });
