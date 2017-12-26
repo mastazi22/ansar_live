@@ -236,10 +236,10 @@ class OfferController extends Controller
                         'rest_status' => 1,
                     ]);
                 } else {
-                    $panel_log = $ansar->panelLog()->first();
+                    $panel_log = $ansar->panelLog()->orderBy('panel_date','desc')->first();
                     $ansar->panel()->save(new PanelModel([
                         'memorandum_id' => $panel_log->old_memorandum_id,
-                        'panel_date' => Carbon::now(),
+                        'panel_date' => $panel_log->panel_date,
                         'come_from' => 'OfferCancel',
                         'ansar_merit_list' => 1,
                         'action_user_id' => auth()->user()->id,
