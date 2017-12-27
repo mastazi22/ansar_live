@@ -199,37 +199,41 @@ class SMSController extends Controller
     {
         $mobile_part = preg_split('/^\+?(88)?/',$mobile_no);
         $mobile_no = $mobile_part[count($mobile_part)-1];
-        $ansar = AnsarStatusInfo::where('ansar_id', $id)->where('mobile_no_self',$mobile_no)->first();
-        if (!$ansar) {
-            return "No Ansar Found With This mobile no :".$mobile_no." Please send sms from the register mobile no in Ansar";
-        }
-        switch (1) {
-            case $ansar->block_list_status:
-                return "Your Status Is BLOCK";
-            case $ansar->black_list_status:
-                return "Your Status Is BLACKED";
-            case $ansar->free_status:
-                return "Your Status Is FREE";
-            case $ansar->pannel_status:
-                $position = $this->getPanelPosition($id);
+        $a = PersonalInfo::where('ansar_id', $id)->where('mobile_no_self',$mobile_no)->first();
+        if($a){
+            $ansar = AnsarStatusInfo::where('ansar_id', $id)->first();
+            if (!$ansar) {
+                return "No Ansar Found With This mobile no :".$mobile_no." Please send sms from the register mobile no in Ansar";
+            }
+            switch (1) {
+                case $ansar->block_list_status:
+                    return "Your Status Is BLOCK";
+                case $ansar->black_list_status:
+                    return "Your Status Is BLACKED";
+                case $ansar->free_status:
+                    return "Your Status Is FREE";
+                case $ansar->pannel_status:
+                    $position = $this->getPanelPosition($id);
 
-                return "Your Status Is PANEL. ".$position;
-            case $ansar->offer_sms_status:
-                return "Your Status Is OFFERED";
-            case $ansar->embodied_status:
-                return "Your Status Is EMBODIED";
-            case $ansar->freezing_status:
-                return "Your Status Is FREEZE";
-            case $ansar->early_retierment_status:
-                return "Your Status Is EARLY RETIERMENT";
-            case $ansar->rest_status:
-                return "Your Status Is REST";
-            case $ansar->retierment_status:
-                return "Your Status Is RETIERMENT";
-            default:
-                return "Your Status Is NOT VERIFIED";
+                    return "Your Status Is PANEL. ".$position;
+                case $ansar->offer_sms_status:
+                    return "Your Status Is OFFERED";
+                case $ansar->embodied_status:
+                    return "Your Status Is EMBODIED";
+                case $ansar->freezing_status:
+                    return "Your Status Is FREEZE";
+                case $ansar->early_retierment_status:
+                    return "Your Status Is EARLY RETIERMENT";
+                case $ansar->rest_status:
+                    return "Your Status Is REST";
+                case $ansar->retierment_status:
+                    return "Your Status Is RETIERMENT";
+                default:
+                    return "Your Status Is NOT VERIFIED";
 
+            }
         }
+        return "No Ansar Found With This mobile no :".$mobile_no." Please send sms from the register mobile no in Ansar";
     }
 
     function getAnsarDetail($id)
