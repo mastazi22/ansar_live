@@ -14,6 +14,7 @@
         <th>Birth Date</th>
         <th>Home District</th>
         <th>Thana</th>
+        <th>Mobile no</th>
         <th>Panel Date</th>
         <th>Panel Id</th>
 
@@ -27,6 +28,7 @@
             <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
+            <td>{{$ansar->mobile_no_self}}</td>
             <td>{{\Carbon\Carbon::parse($ansar->panel_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->memorandum_id}}</td>
         </tr>
@@ -44,6 +46,7 @@
         <th>Birth Date</th>
         <th>Home District</th>
         <th>Thana</th>
+        <th>Mobile no</th>
         <th>Kpi Name</th>
         <th>Embodiment Date</th>
         <th>Embodiment Id</th>
@@ -58,6 +61,7 @@
             <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
+            <td>{{$ansar->mobile_no_self}}</td>
             <td>{{$ansar->kpi_name}}</td>
             <td>{{\Carbon\Carbon::parse($ansar->joining_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->memorandum_id}}</td>
@@ -108,6 +112,7 @@
         <th>Birth Date</th>
         <th>Home District</th>
         <th>Thana</th>
+        <th>Mobile no</th>
         <th>Offer District</th>
         <th>Offer Date</th>
 
@@ -121,6 +126,7 @@
             <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
+            <td>{{$ansar->mobile_no_self}}</td>
             <td>{{\Carbon\Carbon::parse($ansar->sms_send_datetime)->format('d-M-Y h:i:s')}}</td>
         </tr>
     @empty
@@ -137,6 +143,7 @@
         <th>Birth Date</th>
         <th>Home District</th>
         <th>Thana</th>
+        <th>Mobile no</th>
         <th>Rest Date</th>
 
     </tr>
@@ -149,6 +156,7 @@
             <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
+            <td>{{$ansar->mobile_no_self}}</td>
             <td>{{\Carbon\Carbon::parse($ansar->rest_date)->format('d-M-Y')}}</td>
         </tr>
     @empty
@@ -165,6 +173,7 @@
         <th>Birth Date</th>
         <th>Home District</th>
         <th>Thana</th>
+        <th>Mobile no</th>
         <th>Freeze Reason</th>
         <th>Freeze Date</th>
 
@@ -178,6 +187,7 @@
             <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
+            <td>{{$ansar->mobile_no_self}}</td>
             <td>{{$ansar->freez_reason}}</td>
             <td>{{\Carbon\Carbon::parse($ansar->freez_date)->format('d-M-Y')}}</td>
         </tr>
@@ -195,6 +205,7 @@
         <th>Birth Date</th>
         <th>Home District</th>
         <th>Thana</th>
+        <th>Mobile no</th>
         <th>Block Reason</th>
         <th>Block Date</th>
 
@@ -208,6 +219,7 @@
             <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
+            <td>{{$ansar->mobile_no_self}}</td>
             <td>{{$ansar->comment_for_block}}</td>
             <td>{{\Carbon\Carbon::parse($ansar->date_for_block)->format('d-M-Y')}}</td>
         </tr>
@@ -256,6 +268,7 @@
         <th>Birth Date</th>
         <th>Home District</th>
         <th>Thana</th>
+        <th>Mobile no</th>
 
     </tr>
     @forelse($ansars as $ansar)
@@ -267,6 +280,7 @@
             <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
+            <td>{{$ansar->mobile_no_self}}</td>
         </tr>
     @empty
         <tr>
