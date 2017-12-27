@@ -2,6 +2,7 @@
 
 namespace App\modules\HRM\Controllers;
 
+use App\Helper\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\modules\HRM\Models\AnsarStatusInfo;
@@ -52,10 +53,10 @@ class SMSController extends Controller
                 switch ($body_part[0]) {
                     case 'S':
                     case 's':
-                        return $this->getAnsarStatus((int)$body_part[1]);
+                        return $this->getAnsarStatus((int)$body_part[1],$sender_no);
                     case 'E':
                     case 'e':
-                        return $this->getAnsarDetail((int)$body_part[1]);
+                        return $this->getAnsarDetail((int)$body_part[1],$sender_no);
                     default:
                         return "Invalid SMS Format";
                 }
@@ -194,11 +195,13 @@ class SMSController extends Controller
         $as->rest->delete();
     }
 
-    function getAnsarStatus($id)
+    function getAnsarStatus($id,$mobile_no)
     {
-        $ansar = AnsarStatusInfo::where('ansar_id', $id)->first();
+        $mobile_part = preg_split('/^\+?(88)?/',$mobile_no);
+        $mobile_no = $mobile_part[count($mobile_part)-1];
+        $ansar = AnsarStatusInfo::where('ansar_id', $id)->where('mobile_no_self',$mobile_no)->first();
         if (!$ansar) {
-            return "No Ansar Found With This ID: " . $id;
+            return "No Ansar Found With This mobile no :".$mobile_no." Please send sms from the register mobile no in Ansar";
         }
         switch (1) {
             case $ansar->block_list_status:
@@ -208,7 +211,9 @@ class SMSController extends Controller
             case $ansar->free_status:
                 return "Your Status Is FREE";
             case $ansar->pannel_status:
-                return "Your Status Is PANEL";
+                $position = $this->getPanelPosition($id);
+
+                return "Your Status Is PANEL. ".$position;
             case $ansar->offer_sms_status:
                 return "Your Status Is OFFERED";
             case $ansar->embodied_status:
@@ -247,27 +252,38 @@ class SMSController extends Controller
 
         }
     }
-//    function getSMSStatus()
-//    {
-//
-//        $offer = OfferSMS::where('message_id', Input::get('SmsSid'))->first();
-//        Log::info(Input::get('SmsSid'));
-//        switch (Input::get('MessageStatus')) {
-//            case 'delivered':
-//            case 'Delivered':
-//                $offer->sms_status = 'Delivered';
-//                break;
-//            case 'failed':
-//            case 'Failed':
-//                $offer->sms_status = 'Failed';
-//                break;
-//            case 'sent':
-//            case 'Sent':
-//                $offer->sms_status = 'Send';
-//                break;
-//            default:
-//                $offer->sms_status = 'Queue';
-//        }
-//        $offer->save();
-//    }
+    function getPanelPosition($id)
+    {
+
+        $ansar_retirement_age = Helper::getAnsarRetirementAge() - 3;
+        $pc_apc_retirement_age = Helper::getPcApcRetirementAge() - 3;
+        $ansar = \App\modules\HRM\Models\PersonalInfo::with('designation')->where('ansar_id', $id)->first();
+        if ($ansar) {
+            $status = true;
+            $age = Carbon::parse($ansar->data_of_birth)->diffInYears(Carbon::now());
+            if (strtolower($ansar->designation->code) == 'pc' || strtolower($ansar->designation->code) == 'apc') {
+                $query = DB::table('tbl_ansar_status_info')
+                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                    ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
+                    ->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<' . $pc_apc_retirement_age)
+                    ->where('pannel_status', 1)->where('block_list_status', 0)->select('tbl_panel_info.ansar_id', 'tbl_panel_info.panel_date','tbl_panel_info.id');
+
+            } else {
+                $query = DB::table('tbl_ansar_status_info')
+                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                    ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
+                    ->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<' . $ansar_retirement_age)
+                    ->where('pannel_status', 1)->where('block_list_status', 0)->select('tbl_panel_info.ansar_id', 'tbl_panel_info.panel_date','tbl_panel_info.id');
+            }
+            $g = DB::table(DB::raw("(" . $query->toSql() . ") x,(select @a:=0) a"))->mergeBindings($query)->select(DB::raw('x.*,@a:=@a+1 as gp'))->orderBy('x.panel_date');
+            $gg = DB::table(DB::raw("(" . $g->toSql() . ") x"))->mergeBindings($g)->where('ansar_id', $id)->first();
+            $division_id = $ansar->division_id;
+            $query->where('tbl_ansar_parsonal_info.division_id', $division_id);
+            $r = DB::table(DB::raw("(" . $query->toSql() . ") x,(select @a:=0) a"))->mergeBindings($query)->select(DB::raw('x.*,@a:=@a+1 as gp'))->orderBy('x.panel_date')->orderBy('x.id');
+            $rr = DB::table(DB::raw("(" . $r->toSql() . ") x"))->mergeBindings($r)->where('ansar_id', $id)->first();
+//                    return $r->get();
+            if($gg&&$rr) return 'Global position : ' . $gg->gp . " Regional position : " . $rr->gp;
+            else return '';
+        }
+    }
 }
