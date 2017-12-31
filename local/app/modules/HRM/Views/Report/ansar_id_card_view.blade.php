@@ -40,6 +40,15 @@
             }
 
         })
+        $(document).ready(function () {
+            $(window).keypress(function (event) {
+                var key = event.which||event.keyCode;
+                if(key==13) {
+                    event.preventDefault();
+                    return false;
+                }
+            })
+        })
     </script>
     <div ng-controller="printIdController">
         {{--<div class="breadcrumbplace">--}}
@@ -102,12 +111,14 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Card Type</th>
+                                        <th>Rank</th>
                                         <th>Issue Date</th>
                                         <th>Expire Date</th>
                                     </tr>
                                     <tr ng-repeat="id in idCard">
                                         <td>[[$index+1]]</td>
                                         <td>[[id.type]]</td>
+                                        <td>[[id.rank]]</td>
                                         <td>[[id.issue_date]]</td>
                                         <td>[[id.expire_date]]</td>
                                     </tr>

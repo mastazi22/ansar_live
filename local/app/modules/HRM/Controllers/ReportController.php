@@ -171,6 +171,7 @@ class ReportController extends Controller
             $id_card->issue_date = Carbon::parse( $issue_date)->format("Y-m-d");
             $id_card->expire_date = Carbon::parse( $expire_date)->format("Y-m-d");
             $id_card->type = strtoupper($type);
+            $id_card->rank = $ansar->rank;
             $id_card->status = 1;
             if (!$id_card->saveOrFail()) {
                 return View::make('HRM::Report.no_ansar_found')->with('id', $id);
@@ -238,7 +239,7 @@ class ReportController extends Controller
                 }
                 return response()->json($data);
         }
-        
+
 
     }
 
@@ -649,6 +650,67 @@ class ReportController extends Controller
         $r =  Response::json(['onr' => $offer_not_respond, 'or' => $offer_received, 'orj' => $offer_reject]);
 //        return DB::getQueryLog();
         return $r;
+    }
+    public function unfrozenAnsarReport(Request $request)
+    {
+        if(strcasecmp($request->method(),'post')==0){
+            $unit = Input::get('unit');
+            $division = Input::get('division');
+            $past = Input::get('report_past');
+            $type = Input::get('type');
+            $rules = [
+                'report_past' => 'numeric',
+                'type' => 'numeric',
+            ];
+            $valid = Validator::make(Input::all(), $rules);
+            if ($valid->fails()) {
+                return response("Invalid request(400)", 400);
+            }
+            $c_date = Carbon::now();
+            switch ($type) {
+                case 0:
+                case 1:
+                    $c_date = $c_date->subDays($past);
+                    break;
+                case 2:
+                    $c_date = $c_date->subMonths($past);
+                    break;
+                case 3:
+                    $c_date = $c_date->subYears($past);
+                    break;
+            }
+//        DB::enableQueryLog();
+            $unfrozen_ansars = DB::table('tbl_ansar_parsonal_info')
+                ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+                ->join('tbl_ansar_status_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_ansar_status_info.ansar_id')
+                ->join('tbl_freezing_info_log', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info_log.ansar_id')
+                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                ->where('tbl_freezing_info_log.freez_date', '>=', $c_date);
+            if($request->exists('range')&&$request->range!='all'){
+                $unfrozen_ansars->where('tbl_units.division_id', $request->range);
+            }
+            if($request->exists('unit')&&$request->unit!='all'){
+                $unfrozen_ansars->where('tbl_units.id', $request->unit);
+            }
+                /*->where('tbl_units.id', $unit)
+                ->where('tbl_units.division_id', $division)*/
+            $unfrozen_ansars  = $unfrozen_ansars->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code','tbl_units.unit_name_bng as unit',
+                    'tbl_freezing_info_log.freez_date as freeze_date','tbl_freezing_info_log.move_frm_freez_date as unfreeze_date','tbl_ansar_status_info.*')
+                ->get();
+
+            if(Input::exists('export')&&Input::get('export')=='true'){
+                Excel::create('unfrozen_ansar_report',function ($excel) use($unfrozen_ansars){
+                    $excel->sheet('sheet1',function ($sheet) use ($unfrozen_ansars){
+                        $sheet->loadView('HRM::export.unfrozen_ansar',['index'=>1,'ansars'=>$unfrozen_ansars]);
+                    });
+                })->store('xls',storage_path());
+                return response()->json(['status'=>true,'url'=>url()->route('download_file_by_name',['file'=>base64_encode(storage_path('unfrozen_ansar_report.xls'))])]);
+            }
+            $r =  Response::json($unfrozen_ansars);
+//        return DB::getQueryLog();
+            return $r;
+        }
+        return view('HRM::Report.unfrozen_report');
     }
 
     public function rejectedOfferListView()
