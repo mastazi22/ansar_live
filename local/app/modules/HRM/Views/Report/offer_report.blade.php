@@ -189,6 +189,7 @@
                                                 <th>Ansar ID</th>
                                                 <th>Name</th>
                                                 <th>Rank</th>
+                                                <th>Offered District</th>
                                                 <th>Offered Date</th>
                                             </tr>
                                             <tr ng-if="onr.length<=0&&errorFind==0">
@@ -200,6 +201,7 @@
                                                 <td>[[a.ansar_id]]</td>
                                                 <td>[[a.ansar_name_eng]]</td>
                                                 <td>[[a.code]]</td>
+                                                <td>[[a.unit_name_bng]]</td>
                                                 <td>[[a.sms_send_datetime|dateformat:'DD-MMM-YYYY']]</td>
                                             </tr>
                                         </table>
