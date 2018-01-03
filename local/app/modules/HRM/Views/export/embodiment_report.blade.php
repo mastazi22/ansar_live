@@ -20,8 +20,9 @@
             <td>{{$a->rank}}</td>
             <td>{{$a->kpi}}</td>
             <td>{{$a->unit}}</td>
-            <td>{{$a->unit_name_bng}}</td>
+
             <td>{{$a->division_name_bng}}</td>
+            <td>{{$a->unit_name_bng}}</td>
             <td>{{\Carbon\Carbon::parse($a->r_date)->format('d-M-Y')}}</td>
             <td>{{\Carbon\Carbon::parse($a->j_date)->format('d-M-Y')}}</td>
             <td>{{\Carbon\Carbon::parse($a->se_date)->format('d-M-Y')}}</td>
