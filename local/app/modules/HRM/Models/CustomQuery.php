@@ -1180,6 +1180,7 @@ class CustomQuery
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
             ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
+            ->join('tbl_division', 'tbl_division.id', '=', 'tbl_kpi_info.division_id')
             ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
             ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
             ->whereBetween('tbl_embodiment.joining_date', array($from_date, $to_date));
@@ -1194,7 +1195,7 @@ class CustomQuery
         }
         $total = clone $ansarQuery;
         $ansars = $ansarQuery->distinct()->select('tbl_embodiment.ansar_id as id','tbl_ansar_parsonal_info.mobile_no_self', 'tbl_embodiment.reporting_date as r_date', 'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank',
-            'pu.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi')->skip($offset)->limit($limit)->get();
+            'pu.unit_name_bng as unit', 'tbl_kpi_info.kpi_name as kpi','tbl_units.unit_name_bng','tbl_division.division_name_bng')->skip($offset)->limit($limit)->get();
         //return DB::getQueryLog();
         return ['total' => $total->distinct()->count(), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars];
     }

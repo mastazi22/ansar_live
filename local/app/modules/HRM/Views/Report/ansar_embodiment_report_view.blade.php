@@ -252,11 +252,11 @@
                                 <tr>
                                     <th>[[report.ansar.sl_no]]</th>
                                     <th>[[report.ansar.id]]</th>
-                                    <th>[[report.ansar.rank]]</th>
                                     <th>[[report.ansar.name]]</th>
+                                    <th>[[report.ansar.rank]]</th>
                                     <th>[[report.ansar.kpi_name]]</th>
-                                    <th>[[report.ansar.district]]</th>
-                                    <th>[[report.ansar.reporting_date]]</th>
+                                    <th>KPI Range</th>
+                                    <th>KPI Unit</th>
                                     <th>[[report.ansar.joining_date]]</th>
                                     <th>[[report.ansar.service_ended_date]]</th>
                                 </tr>
@@ -266,8 +266,8 @@
                                     <td>[[a.name]]</td>
                                     <td>[[a.rank]]</td>
                                     <td>[[a.kpi]]</td>
-                                    <td>[[a.unit]]</td>
-                                    <td>[[a.r_date|dateformat:'DD-MMM-YYYY']]</td>
+                                    <td>[[a.division_name_bng]]</td>
+                                    <td>[[a.unit_name_bng]]</td>
                                     <td>[[a.j_date|dateformat:'DD-MMM-YYYY']]</td>
                                     <td>[[a.se_date|dateformat:'DD-MMM-YYYY']]</td>
                                 </tr>
