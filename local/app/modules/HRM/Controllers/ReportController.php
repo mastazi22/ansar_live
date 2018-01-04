@@ -373,7 +373,7 @@ class ReportController extends Controller
         $valid = Validator::make(Input::all(), $rules);
 
         if ($valid->fails()) {
-            return print_r($valid->messages());
+//            return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         } else {
             if (!is_null($from) && !is_null($to) && !is_null($unit) && !is_null($thana)) {
