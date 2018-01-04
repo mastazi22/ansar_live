@@ -1038,7 +1038,6 @@ class EmbodimentController extends Controller
         return $data;
     }
 
-
     //disembodied ansar over 3 years
     public function disembodiedAnsarOver3Year()
     {
@@ -1084,6 +1083,20 @@ class EmbodimentController extends Controller
             $embodiment_log_update->comment = "NO COMMENT";
             $embodiment_log_update->action_user_id = 0;
             $embodiment_log_update->save();
+        }
+    }
+
+    public function loadDisembodiedAnsar(Request $request){
+        if($request->ajax()){
+            if(strcasecmp($request->method(),'post')==0){
+
+            }else{
+                abort(403);
+            }
+        }else if(strcasecmp($request->method(),'get')==0){
+            return view('HRM::Embodiment.disembodied_ansar_correction');
+        }else{
+            abort(403);
         }
     }
 }
