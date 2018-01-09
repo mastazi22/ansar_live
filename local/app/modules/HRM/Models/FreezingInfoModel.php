@@ -3,6 +3,7 @@
 namespace App\modules\HRM\Models;
 
 use App\modules\HRM\Controllers\FreezeController;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class FreezingInfoModel extends Model
@@ -18,6 +19,9 @@ class FreezingInfoModel extends Model
     }
     function embodiment(){
         return $this->belongsTo(EmbodimentModel::class,'ansar_id','ansar_id');
+    }
+    function freezedAnsarEmbodiment(){
+        return $this->hasOne(FreezedAnsarEmbodimentDetail::class,'ansar_id','ansar_id');
     }
     function log(){
         return $this->hasMany(FreezingInfoLog::class,'ansar_id','ansar_id');

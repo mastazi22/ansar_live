@@ -48,6 +48,9 @@ class EmbodimentModel extends Model
     function transfer(){
         return $this->hasMany(TransferAnsar::class,'embodiment_id','id');
     }
+    function freeze(){
+        return $this->hasOne(FreezingInfoModel::class,'ansar_id','amsar_id');
+    }
 //    function transfer(){
 //        return $this->hasMany('App\models\TransferAnsar','embodiment_id');
 //    }

@@ -51,7 +51,7 @@
                 },
                 {
                     value: 'reembodied',
-                    text: 'Transfer'
+                    text: 'Re-Embodied'
                 },
                 {
                     value: 'disembodied',

@@ -50,6 +50,18 @@
                                     <input  class="form-control" id="freeze_date" placeholder="Enter the date" name="freeze_date" value="{{Input::old('freeze_date')}}">
                                 </div>
                             </div>
+                            <div class="form-group" @if($errors->has('freeze_reason')) has-error @endif>
+                                @if($errors->has('freeze_reason'))<span style="color:red">{{$errors->first('freeze_reason')}}</span>@endif
+                                <label class="control-label col-sm-3" for="freeze_reason">Freeze Reason:</label>
+                                <div class="col-sm-9">
+                                    <select name="freeze_reason" class="form-control">
+                                        <option value="">Select a reason</option>
+                                        <option value="Disciplinary Actions">Disciplinary Actions</option>
+                                        <option value=" Pre deployment"> Pre deployment</option>
+                                        <option value="Leave without pay">Leave without pay</option>
+                                    </select>
+                                </div>
+                            </div>
                             <div class="form-group @if($errors->has('memorandum_id')) has-error @endif" >
                                 @if($errors->has('memorandum_id'))<span style="color:red">{{$errors->first('memorandum_id')}}</span>@endif
                                 <label class="control-label col-sm-3" for="freeze_date">স্বারক নংঃ</label>

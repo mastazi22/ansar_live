@@ -111,6 +111,18 @@
                                 {!! $errors->first('memorandum_id','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <div class="form-group">
+
+                                <label class="control-label" for="freeze_reason">Freeze Reason:</label>
+
+                                    <select name="freeze_reason" class="form-control">
+                                        <option value="">Select a reason</option>
+                                        <option value="Disciplinary Actions">Disciplinary Actions</option>
+                                        <option value="Pre deployment"> Pre deployment</option>
+                                        <option value="Leave without pay">Leave without pay</option>
+                                    </select>
+                                @if($errors->has('freeze_reason'))<span style="color:red">{{$errors->first('freeze_reason')}}</span>@endif
+                            </div>
+                            <div class="form-group">
                                 <label for="freeze_date" class="control-label">Freeze Date</label>
                                 <input type="text" name="freeze_date" id="freeze_date" class="form-control"
                                        ng-model="freeze_date">
