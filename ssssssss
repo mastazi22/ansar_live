@@ -1,0 +1,12 @@
+{
+block_list_status:a.block_list_status
+black_list_status:a.black_list_status
+free_status:a.free_status
+pannel_status:a.pannel_status
+embodied_status:a.embodied_status
+offer_sms_status:a.offer_sms_status
+freezing_status:a.freezing_status
+rest_status:a.rest_status
+retierment_status:a.retierment_status
+early_retierment_status:a.early_retierment_status
+}
