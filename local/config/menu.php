@@ -115,7 +115,7 @@ return [
                     "route" => "#",
                     "icon" => "fa-dashboard",
                     "children" => [
-                        "Freeze For Different Action" => [
+                        "Freeze For Different Reasons" => [
                             "route" => "freeze_view",
                             "icon" => "fa-dashboard",
                         ],

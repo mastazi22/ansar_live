@@ -3,7 +3,7 @@
 {{--Time: 2:17 PM--}}
 
 @extends('template.master')
-@section('title','Freeze for Different Action')
+@section('title','Freeze For Different Reasons')
 @section('breadcrumb')
     {!! Breadcrumbs::render('freeze') !!}
 @endsection
@@ -131,6 +131,7 @@
                             <div class="form-group">
                                 <label for="freeze_comment" class="control-label">Comment for Freezing the Ansar</label>
                                 {!! Form::textarea('freeze_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'freeze_comment', 'size' => '30x4', 'placeholder' => "Write any Comment", 'ng-model' => 'freeze_comment')) !!}
+                                {!! $errors->first('freeze_comment','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <button id="confirm-freeze" type="submit" class="btn btn-primary">Freeze</button>
                         </div>

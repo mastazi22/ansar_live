@@ -72,6 +72,7 @@ class FreezeController extends Controller
             'freeze_date' => 'required',
             'memorandum_id' => 'required',
             'freeze_reason' => 'required',
+            'freeze_comment' => 'required',
         ];
         $this->validate($request, $rules);
         $ansar_id = $request->input('ansar_id');
