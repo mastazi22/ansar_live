@@ -115,7 +115,7 @@ return [
                     "route" => "#",
                     "icon" => "fa-dashboard",
                     "children" => [
-                        "Freeze For Disciplinary Action" => [
+                        "Freeze For Different Action" => [
                             "route" => "freeze_view",
                             "icon" => "fa-dashboard",
                         ],
@@ -200,10 +200,10 @@ return [
                     "route" => "disembodiment_report_view",
                     "icon" => "fa-file-pdf-o",
                 ],
-                /*"View Unfrozen Ansar Report" => [
+                "View Unfrozen Ansar Report" => [
                     "route" => "unfrozen_report",
                     "icon" => "fa-file-pdf-o",
-                ],*/
+                ],
                 "Blocklist Information" => [
                     "route" => "blocklist_view",
                     "icon" => "fa-file-pdf-o",
@@ -447,6 +447,11 @@ return [
                 ],
 
             ]
+        ],
+
+        "Move Applicant to HRM" => [
+            "route" => "recruitment.move_to_hrm",
+            "icon" => "fa-circle"
         ],
 
     ]
