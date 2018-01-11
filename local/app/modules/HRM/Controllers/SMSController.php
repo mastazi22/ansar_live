@@ -214,7 +214,7 @@ class SMSController extends Controller
                     return "Your Status Is FREE";
                 case $ansar->pannel_status:
                     $position = $this->getPanelPosition($id);
-
+//                    return $position;
                     return "Your Status Is PANEL. ".$position;
                 case $ansar->offer_sms_status:
                     return "Your Status Is OFFERED";
@@ -269,6 +269,7 @@ class SMSController extends Controller
                 $query = DB::table('tbl_ansar_status_info')
                     ->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                     ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
+                    ->where('tbl_ansar_parsonal_info.designation_id',$ansar->designation->id)
                     ->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<' . $pc_apc_retirement_age)
                     ->where('pannel_status', 1)->where('block_list_status', 0)->select('tbl_panel_info.ansar_id', 'tbl_panel_info.panel_date','tbl_panel_info.id');
 
@@ -277,9 +278,12 @@ class SMSController extends Controller
                     ->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                     ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
                     ->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<' . $ansar_retirement_age)
+                    ->where('tbl_ansar_parsonal_info.designation_id',$ansar->designation->id)
                     ->where('pannel_status', 1)->where('block_list_status', 0)->select('tbl_panel_info.ansar_id', 'tbl_panel_info.panel_date','tbl_panel_info.id');
             }
-            $g = DB::table(DB::raw("(" . $query->toSql() . ") x,(select @a:=0) a"))->mergeBindings($query)->select(DB::raw('x.*,@a:=@a+1 as gp'))->orderBy('x.panel_date');
+            $query->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"');
+            $g = DB::table(DB::raw("(" . $query->toSql() . ") x,(select @a:=0) a"))->mergeBindings($query)->select(DB::raw('x.*,@a:=@a+1 as gp'))->orderBy('x.panel_date')->orderBy('x.id');
+//            return $g->get();
             $gg = DB::table(DB::raw("(" . $g->toSql() . ") x"))->mergeBindings($g)->where('ansar_id', $id)->first();
             $division_id = $ansar->division_id;
             $query->where('tbl_ansar_parsonal_info.division_id', $division_id);
@@ -287,7 +291,7 @@ class SMSController extends Controller
             $rr = DB::table(DB::raw("(" . $r->toSql() . ") x"))->mergeBindings($r)->where('ansar_id', $id)->first();
 //                    return $r->get();
             if($gg&&$rr) return 'Global position : ' . $gg->gp . " Regional position : " . $rr->gp;
-            else return '';
+            else return 'Your panel position not found. May be tou are over aged or invalid mobile no';
         }
     }
 }

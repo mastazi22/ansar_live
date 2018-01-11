@@ -58,6 +58,8 @@
                         thana: $scope.param.thana == undefined ? 'all' : $scope.param.thana,
                         division: $scope.param.range == undefined ? 'all' : $scope.param.range,
                         gender: $scope.param.gender == undefined ? 'all' : $scope.param.gender,
+                        filter_mobile_no: $scope.param.filter_mobile_no == undefined ? 0 : $scope.param.filter_mobile_no,
+                        filter_age: $scope.param.filter_age == undefined ? 0 : $scope.param.filter_age,
                         q: $scope.q,
                         rank: $scope.rank,
                     }
@@ -91,6 +93,8 @@
                         thana: $scope.param.thana == undefined ? 'all' : $scope.param.thana,
                         division: $scope.param.range == undefined ? 'all' : $scope.param.range,
                         gender: $scope.param.gender == undefined ? 'all' : $scope.param.gender,
+                        filter_mobile_no: $scope.param.filter_mobile_no == undefined ? 0 : $scope.param.filter_mobile_no,
+                        filter_age: $scope.param.filter_age == undefined ? 0 : $scope.param.filter_age,
                         q: $scope.q,
                         rank: $scope.rank,
                         export:type
@@ -194,6 +198,18 @@
                                 start-load="range"
                                 field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',gender:'col-sm-3'}"
                         ></filter-template>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="">
+                                        <input ng-change="loadPage()" ng-model="param.filter_mobile_no" ng-true-value="1" ng-false-value="0" style="vertical-align: top;" type="checkbox">&nbsp;Filter mobile number
+                                    </label>
+                                    <label for="" style="margin-left: 10px">
+                                        <input  ng-change="loadPage()" ng-model="param.filter_age" ng-true-value="1" ng-false-value="0" style="vertical-align: top;" type="checkbox">&nbsp;Filter age
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                             @else
                                 <filter-template
                                         show-item="['range','unit','thana']"
