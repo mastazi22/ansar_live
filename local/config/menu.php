@@ -449,7 +449,7 @@ return [
             ]
         ],
 
-        "Move Applicant to HRM" => [
+        "Download form for HRM" => [
             "route" => "recruitment.move_to_hrm",
             "icon" => "fa-circle"
         ],

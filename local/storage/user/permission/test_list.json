@@ -584,6 +584,10 @@
         "name": "Applicant editable fields"
       },
       {
+        "value": "recruitment.move_to_hrm,recruitment.applicant_edit_for_hrm",
+        "name": "Download form for HRM"
+      },
+      {
         "text": "Applicant Marks",
         "actions": [
           {

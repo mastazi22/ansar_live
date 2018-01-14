@@ -12,6 +12,7 @@ use App\modules\recruitment\Models\JobAppliciant;
 use App\modules\recruitment\Models\JobCircular;
 use App\modules\recruitment\Models\JobSelectedApplicant;
 use App\modules\recruitment\Models\JobSettings;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -781,6 +782,48 @@ class ApplicantScreeningController extends Controller
         }
         else return view('recruitment::applicant.data_accepted',['applicants'=>$applicants]);
 
+    }
+
+
+    public function moveApplicantToHRM(Request $request){
+        if(strcasecmp($request->method(),'post')==0){
+            if($request->ajax()){
+                $applicants= JobAppliciant::with(['division','district','thana'])
+                    ->where('status','accepted');
+                if($request->range&&$request->range!='all'){
+                    $applicants->where('division_id',$request->range);
+                }
+                if($request->unit&&$request->unit!='all'){
+                    $applicants->where('unit_id',$request->unit);
+                }
+                if($request->thana&&$request->thana!='all'){
+                    $applicants->where('thana_id',$request->thana);
+                }
+                if($request->q){
+                    $applicants->where(function ($q)use ($request){
+                        $q->where('applicant_name_eng','LIKE','%'.$request->q.'%');
+                        $q->orWhere('applicant_name_bng','LIKE','%'.$request->q.'%');
+                        $q->orWhere('mobile_no_self',$request->q);
+                        $q->orWhere('national_id_no',$request->q);
+                    });
+                }
+                $limit = $request->limit?$request->limit:50;
+                return view('recruitment::applicant.part_hrm_applicant_info',['applicants'=>$applicants->paginate($limit)]);
+            }
+            else{
+                abort(401);
+            }
+        }
+        return view('recruitment::applicant.move_applicant_to_hrm');
+    }
+    public function applicantEditForHRM($id){
+        $applicant = JobAppliciant::with(['division','district','thana','appliciantEducationInfo'=>function($q){
+            $q->with('educationInfo');
+        }])->where('applicant_id',$id)->first();
+        $pdf = SnappyPdf::loadView('recruitment::hrm.hrm_form_download',['ansarAllDetails'=>$applicant])
+        ->setOption('encoding','UTF-8');
+        return $pdf->download();
+        return view('recruitment::hrm.hrm_form_download',['ansarAllDetails'=>$applicant]);
     }
 
 }

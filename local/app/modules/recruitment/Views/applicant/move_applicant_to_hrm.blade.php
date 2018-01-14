@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','Move Applicant to HRM')
+@section('title','Download form for HRM')
 @section('breadcrumb')
     {!! Breadcrumbs::render('recruitment.applicant.search') !!}
 @endsection
