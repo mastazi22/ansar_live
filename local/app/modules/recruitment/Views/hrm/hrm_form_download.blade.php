@@ -424,6 +424,10 @@
         font-family: syamrupali;
         src: url('{{asset('dist/fonts/vrindab.ttf')}}');
     }
+    table td{
+        font-size: 12px !important;
+        font-weight: normal !important;
+    }
     *{
         font-family: syamrupali;
     }
