@@ -260,7 +260,7 @@
         <tbody>
         <tr>
             <td><b>Education Qualification</b></td>
-            <td><b>Institute Name</b></td>
+            <td style="width: 40% !important;"><b>Institute Name</b></td>
             <td><b>Passing Year</b></td>
             <td><b>Division/Grade</b></td>
         </tr>
@@ -269,7 +269,7 @@
 
             <tr>
                 <td>{{ $singleeducation->educationInfo->education_deg_eng  }}</td>
-                <td>{{ $singleeducation->institute_name_eng }}</td>
+                <td style="width: 40% !important;">{{ $singleeducation->institute_name_eng }}</td>
                 <td>{{ $singleeducation->passing_year or LanguageConverter::engToBng($singleeducation->passing_year)}}</td>
                 <td>{{ $singleeducation->gade_divission }}</td>
             </tr>
@@ -314,7 +314,7 @@
         <tbody>
         <tr>
             <td><b>Rank</b></td>
-            <td><b>Institute Name</b></td>
+            <td style="width: 40% !important;"><b>Institute Name</b></td>
             <td><b>Training Starting Date</b></td>
             <td><b>Training Ending Date</b></td>
             <td><b>Certificate No.</b></td>
@@ -322,9 +322,9 @@
         @for ($i=0;$i<3;$i++)
             <tr>
                 <td>@if($i==0) Ansar @else &nbsp; @endif</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td style="width: 40% !important;">&nbsp;</td>
+                <td>@if($i==0)26-11-2017 @else &nbsp; @endif</td>
+                <td>@if($i==0)01-02-2018 @else &nbsp; @endif</td>
                 <td>&nbsp;</td>
             </tr>
         @endfor
@@ -335,7 +335,7 @@
         <tbody>
         <tr>
             <td class="bng-class"><b>পদবী</b></td>
-            <td class="bng-class"><b>প্রতিষ্ঠান </b></td>
+            <td class="bng-class" style="width: 40% !important;"><b>প্রতিষ্ঠান </b></td>
             <td class="bng-class"><b>প্রশিক্ষন শুরুর তারিখ </b></td>
             <td class="bng-class"><b>প্রশিক্ষন শেষের তারিখ </b></td>
             <td class="bng-class"><b>সনদ নং </b></td>
@@ -343,9 +343,9 @@
         @for ($i=0;$i<3;$i++)
             <tr>
                 <td>@if($i==0) আনসার @else &nbsp; @endif</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td style="width: 40% !important;">&nbsp;</td>
+                <td>@if($i==0)২৬-১১-২০১৭ @else &nbsp; @endif</td>
+                <td>@if($i==0)০১-০২-২০১৮ @else &nbsp; @endif</td>
                 <td>&nbsp;</td>
             </tr>
         @endfor
@@ -355,14 +355,14 @@
         <caption>Nominee Information</caption>
         <tbody>
         <tr>
-            <td><b>Name</b></td>
+            <td style="width: 40% !important;"><b>Name</b></td>
             <td><b>Relation</b></td>
             <td><b>Percentage</b></td>
             <td><b>Mobile No.</b></td>
         </tr>
         @for ($i=0;$i<3;$i++)
             <tr>
-                <td>&nbsp;</td>
+                <td style="width: 40% !important;">&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
@@ -376,14 +376,14 @@
         </caption>
         <tbody>
         <tr>
-            <td class="bng-class"><b>নাম</b></td>
+            <td class="bng-class" style="width: 40% !important;"><b>নাম</b></td>
             <td class="bng-class"><b>সম্পর্ক</b></td>
             <td class="bng-class"><b>অংশ(%)</b></td>
             <td class="bng-class"><b>মোবাইল নং</b></td>
         </tr>
         @for ($i=0;$i<3;$i++)
             <tr>
-                <td>&nbsp;</td>
+                <td style="width: 40% !important;">&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
@@ -428,6 +428,7 @@
         font-size: 12px !important;
         font-weight: normal !important;
     }*/
+
     .bng-class,.bng-class>*{
         font-family: syamrupali;
     }
