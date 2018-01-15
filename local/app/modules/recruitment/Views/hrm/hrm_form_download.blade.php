@@ -508,7 +508,7 @@
         min-height:15px;
     }
     .profile-image{
-        width: 100px !important;
+        width: 150px !important;
         min-height: 100px !important;
     }
     @media print{
