@@ -11,14 +11,14 @@
          alt="">
     <table class="entry-table" style="width: 100%">
         <tr>
-            <td>আইডি কার্ড নম্বর<span class="pull-right">:</span></td>
+            <td class="bng-class">আইডি কার্ড নম্বর<span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->ansar_id}}</div>
             </td>
         </tr>
     </table>
     <table class="entry-table" style="width: 100%">
-        <caption style="text-align: center;font-size: 1em;font-weight: bold">বাক্তিগত ও পারিবারিক তথ্য</caption>
+        <caption style="text-align: center;font-size: 1em;font-weight: bold"  class="bng-class">বাক্তিগত ও পারিবারিক তথ্য</caption>
         <tr>
             <td>*Name<span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
@@ -26,15 +26,15 @@
             </td>
         </tr>
         <tr>
-            <td>*নাম<span class="pull-right">:</span></td>
+            <td  class="bng-class">*নাম<span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->applicant_name_bng}}</div>
             </td>
         </tr>
         <tr>
-            <td>*বর্তমান পদবী <span class="pull-right">:</span></td>
+            <td  class="bng-class">*বর্তমান পদবী <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
-                <div style="padding:5px;font-size:14px;border:1px solid #ababab">আনসার</div>
+                <div style="padding:5px;font-size:14px;border:1px solid #ababab"  class="bng-class">আনসার</div>
             </td>
         </tr>
         <tr>
@@ -44,9 +44,9 @@
             </td>
         </tr>
         <tr>
-            <td>*পিতার নাম <span class="pull-right">:</span></td>
+            <td  class="bng-class">*পিতার নাম <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
-                <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->father_name_bng}}</div>
+                <div style="padding:5px;font-size:14px;border:1px solid #ababab"  class="bng-class">{{$ansarAllDetails->father_name_bng}}</div>
             </td>
         </tr>
         <tr>
@@ -56,9 +56,9 @@
             </td>
         </tr>
         <tr>
-            <td>*মাতার নাম <span class="pull-right">:</span></td>
+            <td  class="bng-class">*মাতার নাম <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
-                <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->mother_name_bng}}</div>
+                <div style="padding:5px;font-size:14px;border:1px solid #ababab" class="bng-class">{{$ansarAllDetails->mother_name_bng}}</div>
             </td>
         </tr>
         <tr>
@@ -80,7 +80,7 @@
             </td>
         </tr>
         <tr>
-            <td>*স্ত্রী/স্বামীর নাম <span class="pull-right">:</span></td>
+            <td class="bng-class">*স্ত্রী/স্বামীর নাম <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab">&nbsp;</div>
             </td>
@@ -98,13 +98,13 @@
             </td>
         </tr>
         <tr>
-            <td>দীর্ঘ মেয়াদি অসুখ <span class="pull-right">:</span></td>
+            <td class="bng-class">দীর্ঘ মেয়াদি অসুখ <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab">&nbsp;</div>
             </td>
         </tr>
         <tr>
-            <td>নির্দিষ্ট দক্ষতা <span class="pull-right">:</span></td>
+            <td class="bng-class">নির্দিষ্ট দক্ষতা <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab">&nbsp;</div>
             </td>
@@ -116,14 +116,14 @@
             </td>
         </tr>
         <tr>
-            <td>ফৌজদারি মামলা<span class="pull-right">:</span></td>
+            <td class="bng-class">ফৌজদারি মামলা<span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab">&nbsp;</div>
             </td>
         </tr>
     </table>
     <table class="entry-table" style="width: 100%">
-        <caption style="text-align: center;font-size: 1em;font-weight: bold">স্থায়ী ঠিকানা</caption>
+        <caption style="text-align: center;font-size: 1em;font-weight: bold" class="bng-class">স্থায়ী ঠিকানা</caption>
         <tr>
             <td>Village/House No<span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
@@ -131,7 +131,7 @@
             </td>
         </tr>
         <tr>
-            <td>গ্রাম/বাড়ি নং<span class="pull-right">:</span></td>
+            <td class="bng-class">গ্রাম/বাড়ি নং<span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->village_name_bng}}
                     &nbsp;</div>
@@ -150,7 +150,7 @@
             </td>
         </tr>
         <tr>
-            <td>ডাকঘর <span class="pull-right">:</span></td>
+            <td class="bng-class">ডাকঘর <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->post_office_name_bng}}&nbsp;</div>
             </td>
@@ -162,35 +162,35 @@
             </td>
         </tr>
         <tr>
-            <td>ইউনিয়ন নাম/ওয়ার্ড <span class="pull-right">:</span></td>
+            <td class="bng-class">ইউনিয়ন নাম/ওয়ার্ড <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->union_name_bng}} &nbsp;</div>
             </td>
         </tr>
         <tr>
-            <td>*বিভাগ <span class="pull-right">:</span></td>
+            <td class="bng-class">*বিভাগ <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
-                <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->division->division_name_bng}}
+                <div style="padding:5px;font-size:14px;border:1px solid #ababab" class="bng-class">{{$ansarAllDetails->division->division_name_bng}}
                     &nbsp;</div>
             </td>
         </tr>
         <tr>
-            <td>*জেলা <span class="pull-right">:</span></td>
+            <td class="bng-class">*জেলা <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
-                <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->district->unit_name_bng}}</div>
+                <div style="padding:5px;font-size:14px;border:1px solid #ababab" class="bng-class">{{$ansarAllDetails->district->unit_name_bng}}</div>
             </td>
         </tr>
         <tr>
-            <td>*থানা <span class="pull-right">:</span></td>
+            <td class="bng-class">*থানা <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
-                <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->thana->thana_name_bng}}</div>
+                <div style="padding:5px;font-size:14px;border:1px solid #ababab" class="bng-class">{{$ansarAllDetails->thana->thana_name_bng}}</div>
             </td>
         </tr>
     </table>
     <table class="physical-table" style="width: 100%">
         <caption style="text-align: center;font-size: 1em;font-weight: bold">শারীরিক যোগ্যতার তথ্য</caption>
         <tr>
-            <td>*Height(উচ্চতা)<span class="pull-right">:</span></td>
+            <td>*Height<span class="bng-class">(উচ্চতা)</span><span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:0 5px;font-size:14px;border:1px solid #ababab">
                     <span style="padding: 5px 20px">{{$ansarAllDetails->hight_feet}}</span>
@@ -201,7 +201,7 @@
             </td>
         </tr>
         <tr>
-            <td>*রক্তের গ্রুপ<span class="pull-right">:</span></td>
+            <td class="bng-class">*রক্তের গ্রুপ<span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab">&nbsp;</div>
             </td>
@@ -214,7 +214,7 @@
             </td>
         </tr>
         <tr>
-            <td>চোখের রং <span class="pull-right">:</span></td>
+            <td class="bng-class">চোখের রং <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab">
                     &nbsp;</div>
@@ -228,7 +228,7 @@
             </td>
         </tr>
         <tr>
-            <td>গায়ের রং<span class="pull-right">:</span></td>
+            <td class="bng-class">গায়ের রং<span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab">
                     &nbsp;</div>
@@ -248,7 +248,7 @@
             </td>
         </tr>
         <tr>
-            <td>সনাক্তকরন চিহ্ন<span class="pull-right">:</span></td>
+            <td class="bng-class">সনাক্তকরন চিহ্ন<span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab">
                     &nbsp;</div>
@@ -283,22 +283,22 @@
         </tbody>
     </table>
     <table class="entry-table border-table">
-        <caption>শিক্ষাগত যোগ্যতার তথ্য*</caption>
+        <caption class="bng-class">শিক্ষাগত যোগ্যতার তথ্য*</caption>
         <tbody>
         <tr>
-            <td><b>শিক্ষাগত যোগ্যতা</b></td>
-            <td><b>শিক্ষা প্রতিষ্ঠানের নাম</b></td>
-            <td><b>পাসের সাল</b></td>
-            <td><b>বিভাগ / শ্রেণী</b></td>
+            <td class="bng-class"><b>শিক্ষাগত যোগ্যতা</b></td>
+            <td class="bng-class"><b>শিক্ষা প্রতিষ্ঠানের নাম</b></td>
+            <td class="bng-class"><b>পাসের সাল</b></td>
+            <td class="bng-class"><b>বিভাগ / শ্রেণী</b></td>
         </tr>
 
         @foreach($ansarAllDetails->appliciantEducationInfo as $singleeducation)
 
             <tr>
-                <td>{{ $singleeducation->educationInfo->education_deg_bng  }}</td>
-                <td>{{ $singleeducation->institute_name }}</td>
-                <td>{{ LanguageConverter::engToBng($singleeducation->passing_year)}}</td>
-                <td>{{ $singleeducation->gade_divission }}</td>
+                <td class="bng-class">{{ $singleeducation->educationInfo->education_deg_bng  }}</td>
+                <td class="bng-class">{{ $singleeducation->institute_name }}</td>
+                <td class="bng-class">{{ LanguageConverter::engToBng($singleeducation->passing_year)}}</td>
+                <td class="bng-class">{{ $singleeducation->gade_divission }}</td>
             </tr>
         @endforeach
         <tr>
@@ -331,14 +331,14 @@
         </tbody>
     </table>
     <table class="entry-table border-table">
-        <caption>প্রশিক্ষন সংক্রান্ত তথ্য্</caption>
+        <caption class="bng-class">প্রশিক্ষন সংক্রান্ত তথ্য্</caption>
         <tbody>
         <tr>
-            <td><b>পদবী</b></td>
-            <td><b>প্রতিষ্ঠান </b></td>
-            <td><b>প্রশিক্ষন শুরুর তারিখ </b></td>
-            <td><b>প্রশিক্ষন শেষের তারিখ </b></td>
-            <td><b>সনদ নং </b></td>
+            <td class="bng-class"><b>পদবী</b></td>
+            <td class="bng-class"><b>প্রতিষ্ঠান </b></td>
+            <td class="bng-class"><b>প্রশিক্ষন শুরুর তারিখ </b></td>
+            <td class="bng-class"><b>প্রশিক্ষন শেষের তারিখ </b></td>
+            <td class="bng-class"><b>সনদ নং </b></td>
         </tr>
         @for ($i=0;$i<3;$i++)
             <tr>
@@ -371,15 +371,15 @@
         </tbody>
     </table>
     <table class="entry-table border-table">
-        <caption>
+        <caption class="bng-class">
             উত্তরাধিকারীর তথ্য
         </caption>
         <tbody>
         <tr>
-            <td><b>নাম</b></td>
-            <td><b>সম্পর্ক</b></td>
-            <td><b>অংশ(%)</b></td>
-            <td><b>মোবাইল নং</b></td>
+            <td class="bng-class"><b>নাম</b></td>
+            <td class="bng-class"><b>সম্পর্ক</b></td>
+            <td class="bng-class"><b>অংশ(%)</b></td>
+            <td class="bng-class"><b>মোবাইল নং</b></td>
         </tr>
         @for ($i=0;$i<3;$i++)
             <tr>
@@ -396,7 +396,7 @@
     <table class="entry-table other-table">
         <caption>অন্যান্য তথ্য</caption>
         <tr>
-            <td>Mobile No. (Self) নিজ* <span class="pull-right">:</span></td>
+            <td>Mobile No. (Self) <span  class="bng-class">নিজ*</span> <span class="pull-right">:</span></td>
             <td><div style="font-size:14px;">{{$ansarAllDetails->mobile_no_self}}</div></td>
         </tr>
         <tr>
@@ -410,8 +410,8 @@
     </table>
     <table class="entry-table border-table image-table">
         <tr>
-            <td>তথ্য প্রদানকারীরস্বাক্ষর</td>
-            <td>বাম হাতের বৃদ্ধা আঙ্গুলের ছাপ</td>
+            <td class="bng-class">তথ্য প্রদানকারীরস্বাক্ষর</td>
+            <td class="bng-class">বাম হাতের বৃদ্ধা আঙ্গুলের ছাপ</td>
         </tr>
         <tr>
             <td >&nbsp;</td>
@@ -422,15 +422,15 @@
 <style>
     @font-face{
         font-family: syamrupali;
-        src: url('{{asset('dist/fonts/vrindab.ttf')}}');
+        src: url('{{asset('dist/fonts/Siyamrupali.ttf')}}');
     }
     table td{
         font-size: 12px !important;
         font-weight: normal !important;
     }
-    /**{
+    .bng-class,.bng-class>*{
         font-family: syamrupali;
-    }*/
+    }
     .entry-table {
         border: none !important;
         page-break-after: auto !important;
