@@ -428,9 +428,9 @@
         font-size: 12px !important;
         font-weight: normal !important;
     }
-    *{
+    /**{
         font-family: syamrupali;
-    }
+    }*/
     .entry-table {
         border: none !important;
         page-break-after: auto !important;
