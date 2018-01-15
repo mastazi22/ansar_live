@@ -513,8 +513,8 @@
     }
     @media print{
         .profile-image{
-            width: 100px !important;
-            height: 100px !important;
+            width: 150px !important;
+            height: 170px !important;
         }
     }
 
