@@ -7,7 +7,7 @@
 
 <div class="container-fluid">
     <img class="pull-right profile-image"
-         src="{{action('UserController@getImage',['file'=>$ansarAllDetails->profile_pic])}}"
+         src="{{$ansarAllDetails->profile_pic}}"
          alt="">
     <table class="entry-table" style="width: 100%">
         <tr>
