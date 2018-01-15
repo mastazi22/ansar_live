@@ -821,9 +821,10 @@ class ApplicantScreeningController extends Controller
             $q->with('educationInfo');
         }])->where('applicant_id',$id)->first();
         $pdf = SnappyPdf::loadView('recruitment::hrm.hrm_form_download',['ansarAllDetails'=>$applicant])
-        ->setOption('encoding','UTF-8');
-//        return $pdf->download();
-        return view('recruitment::hrm.hrm_form_download',['ansarAllDetails'=>$applicant]);
+        ->setOption('encoding','UTF-8')
+        ->setOption('zoom',0.79);
+        return $pdf->download();
+//        return view('recruitment::hrm.hrm_form_download',['ansarAllDetails'=>$applicant]);
     }
 
 }

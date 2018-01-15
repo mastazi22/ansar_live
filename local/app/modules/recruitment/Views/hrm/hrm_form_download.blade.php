@@ -424,10 +424,10 @@
         font-family: syamrupali;
         src: url('{{asset('dist/fonts/Siyamrupali.ttf')}}');
     }
-    table td{
+    /*table td{
         font-size: 12px !important;
         font-weight: normal !important;
-    }
+    }*/
     .bng-class,.bng-class>*{
         font-family: syamrupali;
     }
