@@ -193,9 +193,9 @@
             <td>*Height<span class="bng-class">(উচ্চতা)</span><span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:0 5px;font-size:14px;border:1px solid #ababab">
-                    <span style="padding: 5px 20px">{{$ansarAllDetails->hight_feet}}</span>
+                    <span style="padding: 5px 20px">{{$ansarAllDetails->height_feet}}</span>
                     <span style="padding: 0 5px;border: 1px solid #ababab;border-top: none;border-bottom: none">ফিট</span>
-                    <span style="padding: 5px 20px">{{$ansarAllDetails->hight_inch}}</span>
+                    <span style="padding: 5px 20px">{{$ansarAllDetails->height_inch}}</span>
                     <span style="padding: 0 5px;border: 1px solid #ababab;border-top: none;border-bottom: none">ইঞ্চি</span>
                 </div>
             </td>
@@ -322,10 +322,10 @@
         @for ($i=0;$i<3;$i++)
             <tr>
                 <td>@if($i==0) Ansar @else &nbsp; @endif</td>
-                <td style="width: 40% !important;">&nbsp;</td>
+                <td style="width: 40% !important;">@if($i==0)Bangladesh Ansar & VDP Academy @else &nbsp; @endif</td>
                 <td>@if($i==0)26-11-2017 @else &nbsp; @endif</td>
                 <td>@if($i==0)01-02-2018 @else &nbsp; @endif</td>
-                <td>&nbsp;</td>
+                <td style="width:30% !important;">&nbsp;</td>
             </tr>
         @endfor
         </tbody>
@@ -343,10 +343,10 @@
         @for ($i=0;$i<3;$i++)
             <tr>
                 <td>@if($i==0) আনসার @else &nbsp; @endif</td>
-                <td style="width: 40% !important;">&nbsp;</td>
+                <td style="width: 40% !important;">@if($i==0)বাংলাদেশ আনসার ও ভিডিপি একাডেমী @else &nbsp; @endif</td>
                 <td>@if($i==0)২৬-১১-২০১৭ @else &nbsp; @endif</td>
                 <td>@if($i==0)০১-০২-২০১৮ @else &nbsp; @endif</td>
-                <td>&nbsp;</td>
+                <td style="width:30% !important;">&nbsp;</td>
             </tr>
         @endfor
         </tbody>
