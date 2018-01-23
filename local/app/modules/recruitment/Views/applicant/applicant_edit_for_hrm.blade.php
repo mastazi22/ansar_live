@@ -1,7 +1,7 @@
 <script>
 
 
-    GlobalApp.controller('fullEntryFormController', function ($scope, $q, $http, httpService, notificationService) {
+   /* GlobalApp.controller('fullEntryFormController', function ($scope, $q, $http, httpService, notificationService) {
         $scope.isAdmin = parseInt('{{Auth::user()->type}}')
         $scope.formData = {};
         $scope.fields = [];
@@ -103,7 +103,7 @@
                 }
             })
         }
-    });
+    });*/
 </script>
 
 <div id="entryform" ng-controller="fullEntryFormController" d-picker ng-init="loadApplicantDetail()">
@@ -138,7 +138,7 @@
 
                                     <div class="col-sm-10">
                                         <input type="text" class="form-control " name="ansar_name_eng"
-                                               ng-model="formData.applicant_name_eng"
+                                               ng-model="formData.ansar_name_eng"
                                                placeholder="Enter your name"/>
                                         <span style="color:red"
                                               ng-show="formSubmitResult.error.applicant_name_eng[0]">[[ formSubmitResult.error.applicant_name_eng[0] ]]</span>
@@ -155,8 +155,7 @@
 
                                     <div class="col-sm-10">
                                         <input type="text" class="form-control" id="ansar_name_bng"
-                                               name="formData.applicant_name_bng"
-                                               ng-model="formData.applicant_name_bng"
+                                               ng-model="formData.ansar_name_bng"
                                                placeholder="আপনার নাম লিখুন"/>
                                         <span style="color:red"
                                               ng-show="formSubmitResult.error.applicant_name_bng[0]">[[ formSubmitResult.error.applicant_name_bng[0] ]]</span>
@@ -260,11 +259,10 @@
 
                                     <div class="col-sm-10">
                                         <input class="form-control picker " id="date_of_birth"
-                                               name="date_of_birth" ng-model="formData.date_of_birth" date-picker=""
-                                               placeholder="Date of birth"
-                                               value="{{Request::old('data_of_birth')}}">
+                                               name="date_of_birth" ng-model="formData.data_of_birth" date-picker=""
+                                               placeholder="Date of birth">
                                         <span style="color:red"
-                                              ng-show="formSubmitResult.error.date_of_birth[0]">[[ formSubmitResult.error.date_of_birth[0] ]]</span>
+                                              ng-show="formSubmitResult.error.data_of_birth[0]">[[ formSubmitResult.error.date_of_birth[0] ]]</span>
                                     </div>
                                 </div>
                                 {{--End Ansar Date of Birth Field --}}
@@ -357,8 +355,8 @@
                                     <label class="control-label col-sm-2" for="email">নির্দিষ্ট দক্ষতা</label>
 
                                     <div class="col-sm-10 ">
-                                        <select name="particular_skill" ng-model="formData.skill.particular_skill"
-                                                ng-change="own_particular_skill=formData.skill.particular_skill==1?true:false" class="form-control" id="sell">
+                                        <select name="particular_skill" ng-model="formData.skill_id"
+                                                ng-change="own_particular_skill=formData.skill_id==1?true:false" class="form-control" id="sell">
                                             <option value="">--দক্ষতা নির্বাচন করুন--</option>
                                             <option ng-repeat="x in skills" value="[[x.id]]">
                                                 [[x.skill_name_bng]]
@@ -371,9 +369,7 @@
                                     <label class="control-label col-sm-2" for="email">দক্ষতা:</label>
 
                                     <div class="col-sm-10">
-                                        <input class="form-control" id="own_particular_skill"
-                                               name="own_particular_skill" ng-model="formData.skill.my_skill" type="text"
-                                               required placeholder="আপনার দক্ষতা লিখুন">
+                                        <input class="form-control" ng-model="formData.own_particular_skill" type="text" placeholder="আপনার দক্ষতা লিখুন">
                                     </div>
                                 </div>
 
@@ -525,56 +521,72 @@
                                                 style="color: #ff0709;font-size: 1em">*</sup>Height</label>
                                     <div class="col-sm-5">
                                         <input class="form-control  " id="hight_feet" name="hight_feet"
-                                               ng-model="formData.height_feet" type="text" placeholder=" FEET">
+                                               ng-model="formData.hight_feet" type="text" placeholder=" FEET">
                                         <span style="color:red"
                                               ng-show="formSubmitResult.error.height_feet[0]">[[ formSubmitResult.error.hight_feet[0] ]]</span>
                                     </div>
+
                                     <div class="col-sm-5">
                                         <input class="form-control  " id="hight_inch" name="hight_inch"
-                                               ng-model="formData.height_inch"
-                                               ng-change="formData.height_inch=formData.height_inch>=12?11:formData.height_inch"
+                                               ng-model="formData.hight_inch"
+                                               ng-change="formData.hight_inch=formData.hight_inch>=12?11:formData.hight_inch"
                                                type="text" placeholder=" INCHES">
                                         <span style="color:red"
-                                              ng-show="formSubmitResult.error.height_inch[0]">[[ formSubmitResult.error.height_inch[0] ]]</span>
+                                              ng-show="formSubmitResult.error.hight_inch[0]">[[ formSubmitResult.error.hight_inch[0] ]]</span>
                                     </div>
                                 </div>
-                                <div class="form-horizontal col-md-12" ng-if="isEditable('weight')>=0">
-                                    <label class="control-label col-sm-2" for="email">Weight</label>
+                                <div class="form-horizontal col-md-12 "
+                                     ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.blood_group_name_bng[0]}">
+
+                                    <label class="control-label col-sm-2" for="email"><sup
+                                                style="color: #ff0709;font-size: 1em">*</sup>রক্তের
+                                        গ্রুপ:</label>
+
+                                    <div class="col-sm-10 ">
+                                        <select name="blood_group_name_bng" class="form-control" id="sell"
+                                                ng-model="formData.blood_group_id">
+                                            <option value="">--রক্তের গ্রুপ নির্বাচন করুন--</option>
+                                            <option ng-repeat="x in blood">[[ x.blood_group_name_bng ]]</option>
+                                        </select>
+                                        <span style="color:red"
+                                              ng-show="formSubmitResult.error.blood_group_name_bng[0]">[[ formSubmitResult.error.blood_group_name_bng[0] ]]</span>
+                                    </div>
+
+                                </div>
+                                <div class="form-horizontal col-md-12">
+                                    <label class="control-label col-sm-2" for="email">Eye color:</label>
+                                    <div class="col-sm-10">
+                                        <input class="form-control" ng-model="formData.eye_color" name="eye_color" type="text" placeholder="Eye color">
+                                    </div>
+                                </div>
+                                <div class="form-horizontal col-md-12">
+                                    <label class="control-label col-sm-2" for="email">চোখের রং:</label>
 
                                     <div class="col-sm-10">
-                                        <input class="form-control  " id="weight" name="weight"
-                                               ng-model="formData.weight" type="text" placeholder="weight">
+                                        <input class="form-control" ng-model="formData.eye_color_bng" type="text" placeholder="চোখের রং">
                                     </div>
                                 </div>
-                                <div class="form-horizontal col-md-12"
-                                     ng-if="isEditable('chest_normal')>=0||isEditable('chest_extended')>=0">
-                                    <label for="" class="control-label col-sm-2">
+                                <div class="form group col-md-12">
+                                    <label class="control-label col-sm-2" for="email">Skin color:</label>
 
-                                    </label>
                                     <div class="col-sm-10">
-                                        <div class="row">
-                                            <div class="col-sm-6" ng-if="isEditable('chest_normal')>=0">
-                                                <label for="" class="control-label">Chest normal</label>
-                                                <input type="text" class="form-control"
-                                                       placeholder="chest normal"
-                                                       ng-model="formData.chest_normal">
-                                            </div>
-                                            <div class="col-sm-6" ng-if="isEditable('chest_extended')>=0">
-                                                <label for="" class="control-label">Chest extended</label>
-                                                <input type="text" class="form-control"
-                                                       placeholder="chest extended"
-                                                       ng-model="formData.chest_extended">
-                                            </div>
-                                        </div>
+                                        <input class="form-control" ng-model="formData.skin_color" type="text" placeholder="Skin color">
                                     </div>
                                 </div>
+                                <div class="form group col-md-12">
+                                    <label class="control-label col-sm-2" for="skin_color_bng">গায়ের
+                                        রং:</label>
 
-                                <div class="form-horizontal col-md-12 " ng-if="isEditable('gender')>=0"
+                                    <div class="col-sm-10">
+                                        <input class="form-control" ng-model="formData.skin_color_bng" type="text" placeholder="গায়ের রং">
+                                    </div>
+                                </div>
+                                <div class="form-horizontal col-md-12 "
                                      ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.gender[0]}">
                                     <label class="control-label col-sm-2" for="email"><sup
                                                 style="color: #ff0709;font-size: 1em">*</sup>Gender</label>
                                     <div class="col-sm-10 ">
-                                        <select name="sex" ng-model="formData.gender" class="form-control"
+                                        <select name="sex" ng-model="formData.sex" class="form-control"
                                                 id="sell">
                                             <option value="">--Select an option--</option>
                                             <option value="Male">Male</option>
@@ -584,12 +596,26 @@
                                     </div>
 
                                 </div>
+                                <div class="form group col-md-12">
+                                    <label class="control-label col-sm-2" for="email">Identification
+                                        mark:</label>
+
+                                    <div class="col-sm-10">
+                                        <input class="form-control" ng-model="formData.identification_mark" type="text" placeholder="Identification mark">
+                                    </div>
+                                </div>
+                                <div class="form group col-md-12">
+                                    <label class="control-label col-sm-2" for="email">সনাক্তকরন চিহ্ন:</label>
+                                    <div class="col-sm-10">
+                                        <input class="form-control" ng-model="formData.identification_mark_bng" type="text" placeholder="সনাক্তকরন চিহ্ন">
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
                     </fieldset>
 
-                    <fieldset ng-if="isEditable('education')>=0">
+                    <fieldset >
                         <div class="level-title-session-entry">
                             <h5 style="text-align: center;">শিক্ষাগত যোগ্যতার তথ্য</h5>
                         </div>
@@ -649,6 +675,288 @@
                             </div>
                         </div>
                     </fieldset>
+                    <fieldset>
+                        <div class="level-title-session-entry">
+                            <h5 style="text-align: center;">Educational Information</h5>
+                        </div>
+                        <div class="box-info">
+                            <div class="box-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <tr>
+                                            <th>Name Of Degree</th>
+                                            <th>Institute Name</th>
+                                            <th>Passing year</th>
+                                            <th>Class</th>
+                                            <th>Action</th>
+                                        </tr>
+                                        <tr ng-repeat="row in formData.appliciant_education_info">
+                                            <td>
+                                                <select name="educationIdBng[]"
+                                                        ng-model="row.job_education_id">
+                                                    <option value="">--Select a option--</option>
+                                                    <option ng-repeat="r in ppp"
+                                                            value="[[r.id]]">[[r.education_deg_eng]]
+                                                    </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="text"
+                                                       placeholder=""
+                                                       ng-model="row.institute_name_eng">
+                                            </td>
+                                            <td>
+                                                <input type="text"
+                                                       placeholder=""
+                                                       ng-model="row.passing_year_eng">
+                                            </td>
+                                            <td>
+                                                <input type="text"
+                                                       placeholder=""
+                                                       ng-model="row.gade_divission_eng">
+                                            </td>
+                                            <td>
+                                                <a href=""
+                                                   ng-click="(formData.appliciant_education_info.length > 1)?eduDeleteRows($index):''"><i
+                                                            class="glyphicon glyphicon-trash"></i></a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style=" border-top:0px;background: #ffffff !important;">
+                                                <a href=""><p ng-click="addEducation()"
+                                                              style="cursor: hand;padding: .2em .5em;background-color: #5cb85c;display: inline-block;color:#ffffff">
+                                                        Add more</p></a>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+
+                        <div class="level-title-session-entry">
+                            <h5 style="text-align: center;">প্রশিক্ষন সংক্রান্ত তথ্য্</h5>
+                        </div>
+                        <div class="box-info">
+                            <div class="box-body">
+                                <div class=" table-responsive">
+                                    <table class="table">
+                                        <tr>
+                                            <th>পদবী</th>
+                                            <th>প্রতিষ্ঠান</th>
+                                            <th>Training start date</th>
+                                            <th>Training end date</th>
+                                            <th>সনদ নং</th>
+                                            <th>Action</th>
+                                        </tr>
+
+
+                                        <tr ng-repeat="row in formData.applicant_training_info">
+
+                                            <td>
+                                                <select ng-model="row.training_designation">
+                                                    <option value="">--Select a option--</option>
+                                                    <option ng-repeat="r in ranks" value="[[r.id]]">
+                                                        [[r.name_bng]]
+                                                    </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="text" ng-model="row.training_institute_name">
+                                            </td>
+                                            <td>
+                                                <input type="text" ng-model="row.training_start_date">
+                                            </td>
+                                            <td>
+                                                <input type="text"
+                                                       placeholder=""
+                                                       ng-model="row.training_end_date">
+                                            </td>
+                                            <td>
+                                                <input type="text" ng-model="row.trining_certificate_no">
+                                            </td>
+                                            <td>
+                                                <a href="" ng-click="(formData.applicant_training_info.length > 1)?deleteTrainingInfo($index):''">
+                                                    <i class="glyphicon glyphicon-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style=" border-top:0px;background: #ffffff;">
+                                                <a class="btn btn-info" ng-click="addTrainingInfo()" >Add more</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+
+                        <div class="level-title-session-entry">
+                            <h5 style="text-align: center;">Training Information</h5>
+                        </div>
+                        <div class="box-info">
+                            <div class="box-body">
+                                <div class=" table-responsive">
+                                    <table class="table">
+                                        <tr>
+                                            <th>Designation</th>
+                                            <th>Institute</th>
+                                            <th>Training start date</th>
+                                            <th>Training end date</th>
+                                            <th>Certificate No.</th>
+                                            <th>Action</th>
+                                        </tr>
+
+
+                                        <tr ng-repeat="row in formData.applicant_training_info">
+
+                                            <td>
+                                                <select ng-model="row.training_designation">
+                                                    <option value="">--Select a option--</option>
+                                                    <option ng-repeat="r in ranks" value="[[r.id]]">
+                                                        [[r.name_eng]]
+                                                    </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="text" ng-model="row.training_institute_name_eng">
+                                            </td>
+                                            <td>
+                                                <input type="text" ng-model="row.training_start_date_eng">
+                                            </td>
+                                            <td>
+                                                <input type="text"
+                                                       placeholder=""
+                                                       ng-model="row.training_end_date">
+                                            </td>
+                                            <td>
+                                                <input type="text" ng-model="row.trining_certificate_no_eng">
+                                            </td>
+                                            <td>
+                                                <a href="" ng-click="(formData.applicant_training_info.length > 1)?deleteTrainingInfo($index):''">
+                                                    <i class="glyphicon glyphicon-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style=" border-top:0px;background: #ffffff;">
+                                                <a class="btn btn-info" ng-click="addTrainingInfo($event)" >Add more</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+
+                        <div class="level-title-session-entry">
+                            <h5 style="text-align: center;">উত্তরাধিকারীর তথ্য</h5>
+                        </div>
+                        <div class="box-info">
+                            <div class="box-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <tr>
+                                            <th>নাম</th>
+                                            <th>সম্পর্ক</th>
+                                            <th>Percentage(%)</th>
+                                            <th>মোবাইল নং</th>
+                                            <th>Action</th>
+                                        </tr>
+
+                                        <tr ng-repeat="row in formData.applicant_nominee_info">
+
+                                            <td>
+                                                <input type="text" ng-model="row.name_of_nominee">
+                                            </td>
+                                            <td>
+                                                <input type="text" ng-model="row.relation_with_nominee">
+                                            </td>
+                                            <td>
+                                                <input type="text" ng-model="row.nominee_parcentage">
+                                            </td>
+                                            <td>
+                                                <input type="text" ng-model="row.nominee_contact_no">
+                                            </td>
+                                            <td>
+                                                <a href="" ng-click="(formData.applicant_nominee_info.length > 1)?deleteNomineeInfo($index):''">
+                                                    <i class="glyphicon glyphicon-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style=" border-top:0px;background: #ffffff;">
+                                                <a class="btn btn-info" ng-click="addNomineeInfo()" >Add more</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+
+                        <div class="level-title-session-entry">
+                            <h5 style="text-align: center;">Nominee Information</h5>
+                        </div>
+                        <div class="box-info">
+                            <div class="box-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Relation</th>
+                                            <th>Percentage(%)</th>
+                                            <th>Mobile No.</th>
+                                            <th>Action</th>
+                                        </tr>
+
+                                        <tr ng-repeat="row in formData.applicant_nominee_info">
+
+                                            <td>
+                                                <input type="text" ng-model="row.name_of_nominee">
+                                            </td>
+                                            <td>
+                                                <input type="text" ng-model="row.relation_with_nominee">
+                                            </td>
+                                            <td>
+                                                <input type="text" ng-model="row.nominee_parcentage">
+                                            </td>
+                                            <td>
+                                                <input type="text" ng-model="row.nominee_contact_no">
+                                            </td>
+                                            <td>
+                                                <a href="" ng-click="(formData.applicant_nominee_info.length > 1)?deleteNomineeInfo($index):''">
+                                                    <i class="glyphicon glyphicon-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style=" border-top:0px;background: #ffffff;">
+                                                <a class="btn btn-info" ng-click="addNomineeInfo()" >Add more</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
                     {{--Other Information Field--}}
                     <fieldset>
                         <div class="level-title-session-entry">
@@ -677,56 +985,55 @@
 
                                     </div>
                                 </div>
-                                <div class="form-horizontal col-md-12" ng-if="isEditable('training_info')>=0">
-                                    <label class="control-label col-sm-2" for="email">Training info</label>
+                                <div class="form-horizontal col-md-12">
+                                    <label class="control-label col-sm-2" for="email">Mobile
+                                        no(Request):</label>
 
                                     <div class="col-sm-10">
-                                        <input class="form-control  "
-                                               ng-model="formData.training_info" type="text"
-                                               placeholder="Training info">
+                                        <input class="form-control"
+                                               ng-model="formData.mobile_no_request" type="text"
+                                               placeholder="Mobile no(Request)">
+                                    </div>
+
+                                </div>
+                                <div class="form-horizontal col-md-12">
+                                    <label class="control-label col-sm-2" for="email">Land phone
+                                        no(self):</label>
+
+                                    <div class="col-sm-10">
+                                        <input class="form-control"
+                                               ng-model="formData.land_phone_self" type="text"
+                                               placeholder="Land phone no(self)">
                                     </div>
                                 </div>
-                                <div class="form-horizontal col-md-12" ng-if="isEditable('connection_name')>=0">
-                                    <label class="control-label col-sm-2" for="email">Reference name</label>
+                                <div class="form group col-md-12">
+                                    <label class="control-label col-sm-2" for="email">Land phone
+                                        no(request):</label>
 
                                     <div class="col-sm-10">
-                                        <input class="form-control  "
-                                               ng-model="formData.connection_name" type="text"
-                                               placeholder="Reference name">
+                                        <input class="form-control"
+                                               ng-model="formData.land_phone_request" type="text"
+                                               placeholder="Land phone no(request)">
                                     </div>
                                 </div>
-                                <div class="form-horizontal col-md-12"
-                                     ng-if="isEditable('connection_relation')>=0">
-                                    <label class="control-label col-sm-2" for="email">Relation with
-                                        reference</label>
+                                <div class="form-horizontal col-md-12 ">
+                                    <label class="control-label col-sm-2" for="email">Email(Self):</label>
 
                                     <div class="col-sm-10">
-                                        <select class="form-control  " ng-model="formData.connection_relation">
-                                            <option ng-repeat="(key,value) in relations" value="[[key]]">[[value]]
-                                            </option>
-                                        </select>
+                                        <input class="form-control" ng-model="formData.email_self"
+                                               type="text" placeholder="Email(Self)">
                                     </div>
+
+
                                 </div>
-                                <div class="form-horizontal col-md-12"
-                                     ng-if="isEditable('connection_address')>=0">
-                                    <label class="control-label col-sm-2" for="email">Reference address</label>
+                                <div class="form-horizontal col-md-12">
+                                    <label class="control-label col-sm-2"
+                                           for="email">Email(Request):</label>
 
                                     <div class="col-sm-10">
-                                            <textarea class="form-control" rows="10" cols="30"
-                                                      ng-model="formData.connection_address" type="text"
-                                                      placeholder="Reference address">
-
-                                            </textarea>
-                                    </div>
-                                </div>
-                                <div class="form-horizontal col-md-12"
-                                     ng-if="isEditable('connection_mobile_no')>=0">
-                                    <label class="control-label col-sm-2" for="email">Reference mobile no</label>
-
-                                    <div class="col-sm-10">
-                                        <input class="form-control  "
-                                               ng-model="formData.connection_mobile_no" type="text"
-                                               placeholder="Reference mobile no">
+                                        <input class="form-control" id="email_request"
+                                               ng-model="formData.email_request" type="text"
+                                               placeholder="Email(Request)">
                                     </div>
                                 </div>
                             </div>
@@ -737,7 +1044,7 @@
                         <div class="form-horizontal pull-right">
                             <button form-submit id="submit" type="submit" name="submit"
                                     class="btn btn-primary"
-                                    value="1">Update
+                                    value="1">Save data for HRM
                             </button>
                         </div>
                         {{--Form Submit Button--}}

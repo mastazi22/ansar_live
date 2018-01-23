@@ -36,7 +36,9 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
     Route::post('/applicant/mark_as_paid/{id}',['as'=>'recruitment.applicant.update_as_paid','uses'=>'ApplicantScreeningController@updateAsPaid']);
     Route::any('/applicant/update_as_paid_by_file',['as'=>'recruitment.applicant.update_as_paid_by_file','uses'=>'ApplicantScreeningController@updateAsPaidByFile']);
     Route::any('/applicant/move_to_hrm',['as'=>'recruitment.move_to_hrm','uses'=>'ApplicantScreeningController@moveApplicantToHRM']);
-    Route::any('/applicant/applicant_edit_for_hrm/{id}',['as'=>'recruitment.applicant_edit_for_hrm','uses'=>'ApplicantScreeningController@applicantEditForHRM']);
+    Route::any('/applicant/edit_for_hrm',['as'=>'recruitment.edit_for_hrm','uses'=>'ApplicantScreeningController@editApplicantForHRM']);
+    Route::any('/applicant/applicant_edit_for_hrm/{type}/{id}',['as'=>'recruitment.applicant_edit_for_hrm','uses'=>'ApplicantScreeningController@applicantEditForHRM']);
+    Route::post('/applicant/store_hrm_detail',['as'=>'recruitment.store_hrm_detail','uses'=>'ApplicantScreeningController@storeApplicantHRmDetail']);
 
     //settings
         //quota

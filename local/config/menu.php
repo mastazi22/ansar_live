@@ -453,6 +453,10 @@ return [
             "route" => "recruitment.move_to_hrm",
             "icon" => "fa-circle"
         ],
+        "Edit Applicants for HRM" => [
+            "route" => "recruitment.edit_for_hrm",
+            "icon" => "fa-circle"
+        ],
 
     ]
 ];

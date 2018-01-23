@@ -4,13 +4,14 @@
         <table class="table table-bordered table-condensed">
             <caption style="font-size: 20px;color:#111111">All Accepted applicants({{$applicants->total()}})
                 <div class="input-group" style="margin-top: 10px">
-                <input ng-keyup="$event.keyCode==13?loadApplicant():''" class="form-control" ng-model="param.q" type="text" placeholder="Search by national id,name,mobile_no or applicant id">
-                <span class="input-group-btn">
+                    <input ng-keyup="$event.keyCode==13?loadApplicant():''" class="form-control" ng-model="param.q"
+                           type="text" placeholder="Search by national id,name,mobile_no or applicant id">
+                    <span class="input-group-btn">
                     <button class="btn btn-primary" ng-click="loadApplicant()">
                         <i class="fa fa-search"></i>
                     </button>
                 </span>
-            </div>
+                </div>
             </caption>
             <tr>
                 <th>Sl. No</th>
@@ -35,15 +36,20 @@
                     <td>{{$a->district->unit_name_bng}}</td>
                     <td>{{$a->thana->thana_name_bng}}</td>
                     <td>{{$a->height_feet}} feet {{$a->height_inch}} inch</td>
-                    {{--<td>
-                        <button class="btn btn-primary btn-xs" ng-click="editApplicant('{{URL::route('recruitment.applicant_edit_for_hrm',['id'=>$a->applicant_id])}}')">
-                            <i class="fa fa-edit"></i>&nbsp;Edit
-                        </button>
-                    </td>--}}
-                    <td>
-                        <a target="_blank" href="{{URL::route('recruitment.applicant_edit_for_hrm',['id'=>$a->applicant_id])}}"
-                           class="btn btn-primary btn-xs"><i class="fa fa-download"></i>&nbsp;Download form</a>
-                    </td>
+                    @if($type=='edit')
+                        <td>
+                            <button class="btn btn-primary btn-xs"
+                                    ng-click="editApplicant('{{URL::route('recruitment.applicant_edit_for_hrm',['id'=>$a->applicant_id,'type'=>'edit'])}}')">
+                                <i class="fa fa-edit"></i>&nbsp;Edit
+                            </button>
+                        </td>
+                    @else
+                        <td>
+                            <a target="_blank"
+                               href="{{URL::route('recruitment.applicant_edit_for_hrm',['type'=>'download','id'=>$a->applicant_id])}}"
+                               class="btn btn-primary btn-xs"><i class="fa fa-download"></i>&nbsp;Download form</a>
+                        </td>
+                    @endif
                 </tr>
             @empty
                 <tr>

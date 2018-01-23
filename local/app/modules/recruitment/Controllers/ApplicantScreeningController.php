@@ -6,6 +6,7 @@ use App\Jobs\FeedbackSMS;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
 use App\modules\HRM\Models\Thana;
+use App\modules\recruitment\Models\JobApplicantHRMDetails;
 use App\modules\recruitment\Models\JobApplicantMarks;
 use App\modules\recruitment\Models\JobApplicantQuota;
 use App\modules\recruitment\Models\JobAppliciant;
@@ -21,6 +22,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Intervention\Image\Facades\Image;
 use Maatwebsite\Excel\Facades\Excel;
 use Psy\Exception\Exception;
@@ -808,7 +810,7 @@ class ApplicantScreeningController extends Controller
                     });
                 }
                 $limit = $request->limit?$request->limit:50;
-                return view('recruitment::applicant.part_hrm_applicant_info',['applicants'=>$applicants->paginate($limit)]);
+                return view('recruitment::applicant.part_hrm_applicant_info',['applicants'=>$applicants->paginate($limit),'type'=>'download']);
             }
             else{
                 abort(401);
@@ -816,15 +818,103 @@ class ApplicantScreeningController extends Controller
         }
         return view('recruitment::applicant.move_applicant_to_hrm');
     }
-    public function applicantEditForHRM($id){
+    public function editApplicantForHRM(Request $request){
+        if(strcasecmp($request->method(),'post')==0){
+            if($request->ajax()){
+                $applicants= JobAppliciant::with(['division','district','thana'])
+                    ->where('status','accepted');
+                if($request->range&&$request->range!='all'){
+                    $applicants->where('division_id',$request->range);
+                }
+                if($request->unit&&$request->unit!='all'){
+                    $applicants->where('unit_id',$request->unit);
+                }
+                if($request->thana&&$request->thana!='all'){
+                    $applicants->where('thana_id',$request->thana);
+                }
+                if($request->q){
+                    $applicants->where(function ($q)use ($request){
+                        $q->where('applicant_name_eng','LIKE','%'.$request->q.'%');
+                        $q->orWhere('applicant_name_bng','LIKE','%'.$request->q.'%');
+                        $q->orWhere('mobile_no_self',$request->q);
+                        $q->orWhere('national_id_no',$request->q);
+                    });
+                }
+                $limit = $request->limit?$request->limit:50;
+                return view('recruitment::applicant.part_hrm_applicant_info',['applicants'=>$applicants->paginate($limit),'type'=>'edit']);
+            }
+            else{
+                abort(401);
+            }
+        }
+        return view('recruitment::applicant.edit_applicant_to_hrm');
+    }
+    public function applicantEditForHRM($type,$id){
         $applicant = JobAppliciant::with(['division','district','thana','appliciantEducationInfo'=>function($q){
             $q->with('educationInfo');
         }])->where('applicant_id',$id)->first();
-        $pdf = SnappyPdf::loadView('recruitment::hrm.hrm_form_download',['ansarAllDetails'=>$applicant])
-        ->setOption('encoding','UTF-8')
-        ->setOption('zoom',0.73);
-        return $pdf->download();
+        if($type=='download') {
+            $pdf = SnappyPdf::loadView('recruitment::hrm.hrm_form_download', ['ansarAllDetails' => $applicant])
+                ->setOption('encoding', 'UTF-8')
+                ->setOption('zoom', 0.73);
+            return $pdf->download();
+        }else{
+            return response()->json(['view'=>view('recruitment::applicant.applicant_edit_for_hrm')->render(),'id'=>$id]);
+        }
 //        return view('recruitment::hrm.hrm_form_download',['ansarAllDetails'=>$applicant]);
+    }
+
+    public function storeApplicantHRmDetail(Request $request){
+        $rules = [
+            'applicant_id' => 'required',
+            'ansar_name_eng' => 'required',
+            'ansar_name_bng' => 'required',
+            'designation_id' => 'required',
+            'father_name_eng' => 'required',
+            'father_name_bng' => 'required',
+            'mother_name_eng' => 'required',
+            'mother_name_bng' => 'required',
+            'data_of_birth' => 'required',
+            'marital_status' => 'required',
+            'national_id_no' => 'required|numeric|regex:/^[0-9]{10,17}$/',
+            'division_id' => 'required',
+            'unit_id' => 'required',
+            'thana_id' => 'required',
+            'blood_group_id' => 'required',
+            'hight_feet' => 'required',
+            'sex' => 'required',
+            'mobile_no_self' => 'required|regex:/^(\+88)?0[0-9]{10}$/|unique:hrm.tbl_ansar_parsonal_info',
+        ];
+        $this->validate($request,$rules);
+        $columns = Schema::connection('recruitment')->getColumnListing('job_applicant_hrm_details');
+        $inputs = $request->all();
+        unset($columns['id']);
+        unset($inputs['id']);
+        unset($inputs['created_at']);
+        unset($columns['created_at']);
+        unset($inputs['updated_at']);
+        unset($columns['updated_at']);
+        $c = [];
+        foreach ($inputs as $key=>$value){
+            if(in_array($key,$columns)){
+                continue;
+            }
+            unset($inputs[$key]);
+        }
+        $inputs['applicant_nominee_info'] = json_encode($inputs['applicant_nominee_info']);
+        $inputs['applicant_training_info'] = json_encode($inputs['applicant_training_info']);
+        $inputs['appliciant_education_info'] = json_encode($inputs['appliciant_education_info']);
+        DB::beginTransaction();
+        try{
+            $applicant = JobAppliciant::where('applicant_id',$inputs['applicant_id'])->first();
+            if(!$applicant) throw new \Exception('Invalid applicant');
+            $applicant->hrmDetail()->save(new JobApplicantHRMDetails($inputs));
+            DB::commit();
+            return response()->json(['status'=>true,'message'=>'Data inserted successfully']);
+        }catch(\Exception $e){
+            DB::rollback();
+            return response()->json(['status'=>false,'message'=>$e->getMessage()]);
+        }
     }
 
 }

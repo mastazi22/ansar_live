@@ -42,7 +42,7 @@
             <section class="content">
                 <div class="box box-solid">
                     <div class="box-header">
-                        <p>Edit permission of : <strong>{{$user->user_name}}</strong></p>
+                        <p>Edit permission of : <strong>{{$user->user_name}}({{$user->usertype->type_name}})</strong></p>
                         <label class="control-label">
                             Grant All Permission &nbsp;
                             <div class="styled-checkbox">

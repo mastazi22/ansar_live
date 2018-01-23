@@ -57,4 +57,7 @@ class JobAppliciant extends Model
     public function marks(){
         return $this->hasOne(JobApplicantMarks::class,'applicant_id','applicant_id');
     }
+    public function hrmDetail(){
+        return $this->hasOne(JobApplicantHRMDetails::class,'applicant_id','applicant_id');
+    }
 }
