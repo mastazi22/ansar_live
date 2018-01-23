@@ -910,10 +910,10 @@ class ApplicantScreeningController extends Controller
             if(!$applicant) throw new \Exception('Invalid applicant');
             $applicant->hrmDetail()->save(new JobApplicantHRMDetails($inputs));
             DB::commit();
-            return response()->json(['status'=>true,'message'=>'Data inserted successfully']);
+            return response()->json(['status'=>'success','message'=>'Data inserted successfully']);
         }catch(\Exception $e){
             DB::rollback();
-            return response()->json(['status'=>false,'message'=>$e->getMessage()]);
+            return response()->json(['status'=>'error','message'=>$e->getMessage()]);
         }
     }
 
