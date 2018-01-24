@@ -218,22 +218,46 @@
             $scope.deleteNomineeInfo = function (index) {
                 if($scope.formData.applicant_nominee_info.length>1)$scope.formData.applicant_nominee_info.splice(index, 1);
             }
+            var readyP = false;
+            var readyS = false;
             $scope.updateData = function () {
+                checkData();
                 var files = document.getElementById("sig-file").files;
+                var profile_files = document.getElementById("pic-file").files;
                 if(files.length>0){
                     var r = new FileReader();
                     r.onloadend = function (e) {
                         $scope.formData['sign_pic'] = e.target.result;
-                        updateData();
+                        readyS = true;
                     }
                     r.readAsDataURL(files[0]);
                 }
                 else{
-                    updateData()
+                    readyS = true;
+                }
+                if(profile_files.length>0){
+                    var r = new FileReader();
+                    r.onloadend = function (e) {
+                        $scope.formData['profile_pic'] = e.target.result;
+                        readyP = true;
+                    }
+                    r.readAsDataURL(profile_files[0]);
+                }
+                else{
+                    readyP = true;
                 }
 
             }
+            function checkData() {
+                if(readyP&&readyS){
+                    readyP = readyS = false;
+                    updateData();
+                    return;
+                }
+                setTimeout(checkData,500);
+            }
             function updateData() {
+                console.log($scope.formData)
                 $scope.allLoading = true;
                 $http({
                     method: 'post',

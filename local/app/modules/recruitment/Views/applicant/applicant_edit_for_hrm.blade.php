@@ -1058,6 +1058,17 @@
                                     </div>
 
                                 </div>
+                                <div class="form-horizontal col-md-12 "
+                                     ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.blood_group_name_bng[0]}">
+
+                                    <label class="control-label col-sm-2" for="email"><sup
+                                                style="color: #ff0709;font-size: 1em">*</sup>Upload Photo</label>
+
+                                    <div class="col-sm-10 ">
+                                        <input type="file" class="form-control" id="pic-file">
+                                    </div>
+
+                                </div>
 
                             </div>
                         </div>

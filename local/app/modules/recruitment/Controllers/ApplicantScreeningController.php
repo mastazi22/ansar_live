@@ -910,7 +910,12 @@ class ApplicantScreeningController extends Controller
             if(!File::exists($file_path)) File::makeDirectory($file_path);
             if(isset($inputs['sign_pic'])){
                 $img = Image::make($inputs['sign_pic']);
-                $img->save($file_path.'/'.$inputs['applicant_id'].'.jpg');
+                $img->save($file_path.'/'.$inputs['applicant_id'].'_sign.jpg');
+                $inputs['sign_pic'] = $file_path.'/'.$inputs['applicant_id'].'.jpg';
+            }
+            if(isset($inputs['profile_pic'])){
+                $img = Image::make($inputs['profile_pic']);
+                $img->save($file_path.'/'.$inputs['applicant_id'].'_profile.jpg');
                 $inputs['sign_pic'] = $file_path.'/'.$inputs['applicant_id'].'.jpg';
             }
             $applicant = JobAppliciant::where('applicant_id',$inputs['applicant_id'])->where('status','accepted')->first();
