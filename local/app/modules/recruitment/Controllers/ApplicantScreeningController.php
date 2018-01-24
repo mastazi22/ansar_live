@@ -911,12 +911,12 @@ class ApplicantScreeningController extends Controller
             if(isset($inputs['sign_pic'])){
                 $img = Image::make($inputs['sign_pic']);
                 $img->save($file_path.'/'.$inputs['applicant_id'].'_sign.jpg');
-                $inputs['sign_pic'] = $file_path.'/'.$inputs['applicant_id'].'.jpg';
+                $inputs['sign_pic'] = $file_path.'/'.$inputs['applicant_id'].'_sign.jpg';
             }
             if(isset($inputs['profile_pic'])){
                 $img = Image::make($inputs['profile_pic']);
                 $img->save($file_path.'/'.$inputs['applicant_id'].'_profile.jpg');
-                $inputs['sign_pic'] = $file_path.'/'.$inputs['applicant_id'].'.jpg';
+                $inputs['profile_pic'] = $file_path.'/'.$inputs['applicant_id'].'_profile.jpg';
             }
             $applicant = JobAppliciant::where('applicant_id',$inputs['applicant_id'])->where('status','accepted')->first();
             if(!$applicant) throw new \Exception('Invalid applicant');
