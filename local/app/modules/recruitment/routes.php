@@ -40,6 +40,10 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
     Route::any('/applicant/applicant_edit_for_hrm/{type}/{id}',['as'=>'recruitment.applicant_edit_for_hrm','uses'=>'ApplicantScreeningController@applicantEditForHRM']);
     Route::post('/applicant/store_hrm_detail',['as'=>'recruitment.store_hrm_detail','uses'=>'ApplicantScreeningController@storeApplicantHRmDetail']);
 
+
+    Route::any('/applicant/hrm',['as'=>'recruitment.hrm.index','uses'=>'ApplicantHRMController@index']);
+    Route::get('/applicant/hrm/{type}/{circular_id}/{id}',['as'=>'recruitment.hrm.view_download','uses'=>'ApplicantHRMController@applicantEditForHRM']);
+
     //settings
         //quota
     Route::any('/settings/applicant_quota',['as'=>'recruitment.quota.index','uses'=>'JobApplicantQuotaController@index']);

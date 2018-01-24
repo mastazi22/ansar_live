@@ -40,7 +40,7 @@
                 $scope.allLoading = true;
                 $scope.param['limit'] = $scope.limitList;
                 $http({
-                    url:url||'{{URL::route('recruitment.move_to_hrm')}}',
+                    url:url||'{{URL::route('recruitment.hrm.index')}}',
                     method:'post',
                     data:$scope.param
                 }).then(function (response) {

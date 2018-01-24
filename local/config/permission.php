@@ -125,6 +125,7 @@ return [
         "recruitment.marks.destroy",
         "recruitment.applicant.confirm_accepted,recruitment.applicant.final_list,recruitment.applicant.final_list_load",
         "report.applicants.applicat_accepted_list",
-        "recruitment.move_to_hrm,recruitment.applicant_edit_for_hrm"
+        "recruitment.move_to_hrm,recruitment.applicant_edit_for_hrm",
+        "recruitment.edit_for_hrm,recruitment.store_hrm_detail"
     ]
 ];

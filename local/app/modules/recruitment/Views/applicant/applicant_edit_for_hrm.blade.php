@@ -169,7 +169,7 @@
                                     <label class="control-label col-sm-2" for="email"><sup style="color: #ff0709;font-size: 1em">*</sup>বর্তমান পদবী :</label>
 
                                     <div class="col-sm-10 ">
-                                        <select name="designation_id" ng-model="formData.designation_id"
+                                        <select  name="designation_id" ng-model="formData.designation_id"
                                                 class="form-control" id="sell">
                                             <option value="">--পদবী নির্বাচন করুন--</option>
                                             <option ng-repeat="r in ranks" value="[[r.id]]">
@@ -520,14 +520,14 @@
                                     <label class="control-label col-sm-2" for="email"><sup
                                                 style="color: #ff0709;font-size: 1em">*</sup>Height</label>
                                     <div class="col-sm-5">
-                                        <input class="form-control  " id="hight_feet" name="hight_feet"
+                                        <input disabled="disabled" class="form-control  " id="hight_feet" name="hight_feet"
                                                ng-model="formData.hight_feet" type="text" placeholder=" FEET">
                                         <span style="color:red"
                                               ng-show="formSubmitResult.error.height_feet[0]">[[ formSubmitResult.error.hight_feet[0] ]]</span>
                                     </div>
 
                                     <div class="col-sm-5">
-                                        <input class="form-control  " id="hight_inch" name="hight_inch"
+                                        <input disabled="disabled" class="form-control  " id="hight_inch" name="hight_inch"
                                                ng-model="formData.hight_inch"
                                                ng-change="formData.hight_inch=formData.hight_inch>=12?11:formData.hight_inch"
                                                type="text" placeholder=" INCHES">
@@ -546,7 +546,7 @@
                                         <select name="blood_group_name_bng" class="form-control" id="sell"
                                                 ng-model="formData.blood_group_id">
                                             <option value="">--রক্তের গ্রুপ নির্বাচন করুন--</option>
-                                            <option ng-repeat="x in blood">[[ x.blood_group_name_bng ]]</option>
+                                            <option ng-repeat="x in blood" value="[[x.id]]">[[ x.blood_group_name_bng ]]</option>
                                         </select>
                                         <span style="color:red"
                                               ng-show="formSubmitResult.error.blood_group_name_bng[0]">[[ formSubmitResult.error.blood_group_name_bng[0] ]]</span>
@@ -586,7 +586,7 @@
                                     <label class="control-label col-sm-2" for="email"><sup
                                                 style="color: #ff0709;font-size: 1em">*</sup>Gender</label>
                                     <div class="col-sm-10 ">
-                                        <select name="sex" ng-model="formData.sex" class="form-control"
+                                        <select disabled="disabled" name="sex" ng-model="formData.sex" class="form-control"
                                                 id="sell">
                                             <option value="">--Select an option--</option>
                                             <option value="Male">Male</option>
@@ -661,13 +661,13 @@
                                                             class="glyphicon glyphicon-trash"></i></a>
                                             </td>
                                         </tr>
-                                        <tr>
+                                        {{--<tr>
                                             <td style=" border-top:0px;background: #ffffff !important;">
                                                 <a href=""><p ng-click="addEducation()"
                                                               style="cursor: hand;padding: .2em .5em;background-color: #5cb85c;display: inline-block;color:#ffffff">
                                                         Add more</p></a>
                                             </td>
-                                        </tr>
+                                        </tr>--}}
                                     </table>
 
 
@@ -721,13 +721,13 @@
                                                             class="glyphicon glyphicon-trash"></i></a>
                                             </td>
                                         </tr>
-                                        <tr>
+                                        {{--<tr>
                                             <td style=" border-top:0px;background: #ffffff !important;">
                                                 <a href=""><p ng-click="addEducation()"
                                                               style="cursor: hand;padding: .2em .5em;background-color: #5cb85c;display: inline-block;color:#ffffff">
                                                         Add more</p></a>
                                             </td>
-                                        </tr>
+                                        </tr>--}}
                                     </table>
 
 
@@ -785,11 +785,11 @@
                                                 </a>
                                             </td>
                                         </tr>
-                                        <tr>
+                                        {{--<tr>
                                             <td style=" border-top:0px;background: #ffffff;">
                                                 <a class="btn btn-info" ng-click="addTrainingInfo()" >Add more</a>
                                             </td>
-                                        </tr>
+                                        </tr>--}}
                                     </table>
 
 
@@ -846,11 +846,11 @@
                                                 </a>
                                             </td>
                                         </tr>
-                                        <tr>
+                                        {{--<tr>
                                             <td style=" border-top:0px;background: #ffffff;">
                                                 <a class="btn btn-info" ng-click="addTrainingInfo($event)" >Add more</a>
                                             </td>
-                                        </tr>
+                                        </tr>--}}
                                     </table>
 
 
@@ -964,7 +964,7 @@
                         </div>
                         <div class="box box-info">
                             <div class="box-body">
-                                <div class="form-horizontal col-md-12 " ng-if="isEditable('mobile_no_self')>=0"
+                                <div class="form-horizontal col-md-12 "
                                      ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.mobile_no_self[0]}">
                                     <label class="control-label col-sm-2" for="email"><sup
                                                 style="color: #ff0709;font-size: 1em">*</sup>Mobile
@@ -973,7 +973,7 @@
                                     <div class="col-sm-10">
                                         <div class="input-group">
                                             <span class="input-group-addon">+88</span>
-                                            <input class="form-control  " id="mobile_no_self"
+                                            <input class="form-control  " id="mobile_no_self" disabled="disabled"
                                                    name="mobile_no_self" ng-model="formData.mobile_no_self"
                                                    ng-change="mobile_no_self=mobile_no_self.length>11?mobile_no_self.substring(0,11):mobile_no_self"
                                                    type="text" placeholder="Mobile no(Self)">

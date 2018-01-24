@@ -791,7 +791,7 @@ class ApplicantScreeningController extends Controller
         if(strcasecmp($request->method(),'post')==0){
             if($request->ajax()){
                 $applicants= JobAppliciant::with(['division','district','thana'])
-                    ->where('status','accepted');
+                    ->where('status','accepted')->where('job_circular_id',$request->circular);
                 if($request->range&&$request->range!='all'){
                     $applicants->where('division_id',$request->range);
                 }
@@ -822,7 +822,7 @@ class ApplicantScreeningController extends Controller
         if(strcasecmp($request->method(),'post')==0){
             if($request->ajax()){
                 $applicants= JobAppliciant::with(['division','district','thana'])
-                    ->where('status','accepted');
+                    ->where('status','accepted')->where('job_circular_id',$request->circular);
                 if($request->range&&$request->range!='all'){
                     $applicants->where('division_id',$request->range);
                 }
@@ -866,13 +866,11 @@ class ApplicantScreeningController extends Controller
 
     public function storeApplicantHRmDetail(Request $request){
         $rules = [
-            'applicant_id' => 'required',
+            'applicant_id' => 'required|unique:recruitment.job_applicant_hrm_details',
             'ansar_name_eng' => 'required',
             'ansar_name_bng' => 'required',
             'designation_id' => 'required',
-            'father_name_eng' => 'required',
             'father_name_bng' => 'required',
-            'mother_name_eng' => 'required',
             'mother_name_bng' => 'required',
             'data_of_birth' => 'required',
             'marital_status' => 'required',
@@ -904,9 +902,10 @@ class ApplicantScreeningController extends Controller
         $inputs['applicant_nominee_info'] = json_encode($inputs['applicant_nominee_info']);
         $inputs['applicant_training_info'] = json_encode($inputs['applicant_training_info']);
         $inputs['appliciant_education_info'] = json_encode($inputs['appliciant_education_info']);
+//        return $inputs;
         DB::beginTransaction();
         try{
-            $applicant = JobAppliciant::where('applicant_id',$inputs['applicant_id'])->first();
+            $applicant = JobAppliciant::where('applicant_id',$inputs['applicant_id'])->where('status','accepted')->first();
             if(!$applicant) throw new \Exception('Invalid applicant');
             $applicant->hrmDetail()->save(new JobApplicantHRMDetails($inputs));
             DB::commit();

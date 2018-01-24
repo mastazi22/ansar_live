@@ -125,6 +125,7 @@
                     $scope.formData = renameProperty($scope.formData,'applicant_name_eng','ansar_name_eng');
                     $scope.formData = renameProperty($scope.formData,'gender','sex');
                     $scope.formData = renameProperty($scope.formData,'date_of_birth','data_of_birth');
+                    $scope.formData['designation_id'] = '1'
 //                    console.log($scope.formData)
                     $scope.district = response[0].data.units;
                     $scope.thana = response[0].data.thanas;
@@ -184,7 +185,7 @@
                     $scope.formData['applicant_training_info'] = []
                 }
                 $scope.formData.applicant_training_info.push({
-                    training_designation: '',
+                    training_designation: '1',
                     training_designation_eng: '',
                     training_institute_name: '',
                     training_institute_name_eng: '',

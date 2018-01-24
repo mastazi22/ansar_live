@@ -588,6 +588,10 @@
         "name": "Download form for HRM"
       },
       {
+        "value": "recruitment.edit_for_hrm,recruitment.store_hrm_detail",
+        "name": "Edit Applicant for HRM"
+      },
+      {
         "text": "Applicant Marks",
         "actions": [
           {
