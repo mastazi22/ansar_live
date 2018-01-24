@@ -54,6 +54,7 @@ class CheckUserType
         'report.applicants.status'=>['range'=>'range','unit'=>'unit'],
         'recruitment.marks.index'=>['range'=>'range','unit'=>'unit'],
         'recruitment.move_to_hrm'=>['range'=>'range','unit'=>'unit'],
+        'recruitment.edit_for_hrm'=>['range'=>'range','unit'=>'unit'],
     ];
     public function handle($request, Closure $next)
     {

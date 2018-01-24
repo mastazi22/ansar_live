@@ -1039,6 +1039,29 @@
                             </div>
                         </div>
                     </fieldset>
+                    <fieldset>
+
+
+                        <div class="level-title-session-entry">
+                            <h5 style="text-align: center;">Upload photo</h5>
+                        </div>
+                        <div class="box box-info">
+                            <div class="box-body">
+                                <div class="form-horizontal col-md-12 "
+                                     ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.blood_group_name_bng[0]}">
+
+                                    <label class="control-label col-sm-2" for="email"><sup
+                                                style="color: #ff0709;font-size: 1em">*</sup>Upload Signature</label>
+
+                                    <div class="col-sm-10 ">
+                                        <input type="file" class="form-control" id="sig-file">
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </fieldset>
                     {{--Draft Save Button--}}
                     <div class="row" style="margin: 0 !important;">
                         <div class="form-horizontal pull-right">

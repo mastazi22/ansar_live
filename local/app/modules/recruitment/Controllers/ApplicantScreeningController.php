@@ -899,12 +899,20 @@ class ApplicantScreeningController extends Controller
             }
             unset($inputs[$key]);
         }
+
         $inputs['applicant_nominee_info'] = json_encode($inputs['applicant_nominee_info']);
         $inputs['applicant_training_info'] = json_encode($inputs['applicant_training_info']);
         $inputs['appliciant_education_info'] = json_encode($inputs['appliciant_education_info']);
 //        return $inputs;
         DB::beginTransaction();
         try{
+            $file_path = storage_path('rece');
+            if(!File::exists($file_path)) File::makeDirectory($file_path);
+            if(isset($inputs['sign_pic'])){
+                $img = Image::make($inputs['sign_pic']);
+                $img->save($file_path.'/'.$inputs['applicant_id'].'.jpg');
+                $inputs['sign_pic'] = $file_path.'/'.$inputs['applicant_id'].'.jpg';
+            }
             $applicant = JobAppliciant::where('applicant_id',$inputs['applicant_id'])->where('status','accepted')->first();
             if(!$applicant) throw new \Exception('Invalid applicant');
             $applicant->hrmDetail()->save(new JobApplicantHRMDetails($inputs));

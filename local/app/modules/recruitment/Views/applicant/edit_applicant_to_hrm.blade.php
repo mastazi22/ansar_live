@@ -219,7 +219,21 @@
                 if($scope.formData.applicant_nominee_info.length>1)$scope.formData.applicant_nominee_info.splice(index, 1);
             }
             $scope.updateData = function () {
-                console.log($scope.formData)
+                var files = document.getElementById("sig-file").files;
+                if(files.length>0){
+                    var r = new FileReader();
+                    r.onloadend = function (e) {
+                        $scope.formData['sign_pic'] = e.target.result;
+                        updateData();
+                    }
+                    r.readAsDataURL(files[0]);
+                }
+                else{
+                    updateData()
+                }
+
+            }
+            function updateData() {
                 $scope.allLoading = true;
                 $http({
                     method: 'post',
