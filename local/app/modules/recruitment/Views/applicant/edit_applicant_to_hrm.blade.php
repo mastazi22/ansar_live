@@ -130,11 +130,10 @@
                     $scope.thana = response[0].data.thanas;
                     $scope.division = response[1];
                     $scope.ppp = response[2];
-                    $scope.fields = response[3].data['field_value'].split(',');
-                    $scope.ranks = response[4];
-                    $scope.diseases = response[5];
-                    $scope.skills = response[6].data;
-                    $scope.blood = response[7];
+                    $scope.ranks = response[3];
+                    $scope.diseases = response[4];
+                    $scope.skills = response[5].data;
+                    $scope.blood = response[6];
                     $scope.disableDDT = false;
                     $scope.formData.division_id += '';
                     $scope.formData.unit_id += '';
