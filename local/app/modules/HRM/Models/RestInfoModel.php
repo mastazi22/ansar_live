@@ -31,4 +31,7 @@ class RestInfoModel extends Model
     public function status(){
         return $this->belongsTo(AnsarStatusInfo::class,'ansar_id','ansar_id');
     }
+    public function embodimentLog(){
+        return $this->hasOne(EmbodimentLogModel::class,'old_embodiment_id','old_embodiment_id');
+    }
 }

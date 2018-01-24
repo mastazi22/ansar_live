@@ -19,7 +19,7 @@ class AnsarStatusInfo extends Model
     const EARLY_RETIREMENT_STATUS = 'early_retierment_status';
     protected $connection = 'hrm';
     protected $table="tbl_ansar_status_info";
-    protected $guarded = [];
+    protected $guarded = ['id'];
     function ansar(){
         return $this->belongsTo('App\models\PersonalInfo','ansar_id','ansar_id');
     }

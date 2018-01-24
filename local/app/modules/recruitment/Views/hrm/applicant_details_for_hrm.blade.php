@@ -5,7 +5,7 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('applicantSearch', function ($scope, $http, $q, httpService, $sce,$rootScope) {
+        GlobalApp.controller('applicantSearch', function ($scope, $http, $q, httpService, $sce,notificationService) {
             var p = '50'
             $scope.categories = [];
             $scope.q = '';
@@ -49,6 +49,16 @@
                 }, function (response) {
                     $scope.applicants = $sce.trustAsHtml('loading error.....');
                     $scope.allLoading = false;
+                })
+            }
+            $scope.moveToHRM = function (url) {
+                $http({
+                    url:url,
+                    method:'post'
+                }).then(function (response) {
+                    notificationService.notify(response.data.status,response.data.message);
+                },function (response) {
+                    notificationService.notify('error',response.data);
                 })
             }
 

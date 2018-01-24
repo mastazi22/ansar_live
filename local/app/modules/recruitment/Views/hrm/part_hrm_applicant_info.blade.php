@@ -43,9 +43,7 @@
                         <a target="_blank"
                            href="{{URL::route('recruitment.hrm.view_download',['type'=>'view','circular_id'=>$a->job_circular_id,'id'=>$a->id])}}"
                            class="btn btn-primary btn-xs"><i class="fa fa-download"></i>&nbsp;View Details</a>
-                        <a target="_blank"
-                           href="{{URL::route('recruitment.applicant_edit_for_hrm',['type'=>'download','circular_id'=>$a->job_circular_id,'id'=>$a->id])}}"
-                           class="btn btn-primary btn-xs"><i class="fa fa-circle"></i>&nbsp;Move to HRM</a>
+                        <button ng-click="moveToHRM('{{URL::route('recruitment.hrm.move',['id'=>$a->id])}}')" class="btn btn-primary btn-xs"><i class="fa fa-circle"></i>&nbsp;Move to HRM</button>
                     </td>
 
                 </tr>

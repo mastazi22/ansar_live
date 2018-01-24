@@ -8,7 +8,7 @@ class TrainingInfo extends Model
 {
     protected $connection = 'hrm';
     protected $table = 'tbl_ansar_training_info';
-    protected $guarded = [];
+    protected $guarded = ['id'];
     public function personalinfo(){
         return $this->belongsTo('App\models\PersonalInfo','ansar_id');
     }

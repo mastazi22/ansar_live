@@ -43,6 +43,7 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
 
     Route::any('/applicant/hrm',['as'=>'recruitment.hrm.index','uses'=>'ApplicantHRMController@index']);
     Route::get('/applicant/hrm/{type}/{circular_id}/{id}',['as'=>'recruitment.hrm.view_download','uses'=>'ApplicantHRMController@applicantEditForHRM']);
+    Route::post('/applicant/hrm/move/{id}',['as'=>'recruitment.hrm.move','uses'=>'ApplicantHRMController@moveApplicantToHRM']);
 
     //settings
         //quota

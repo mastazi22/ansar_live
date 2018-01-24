@@ -8,6 +8,7 @@ class Edication extends Model
 {
     protected $connection = 'hrm';
     protected  $table= "tbl_ansar_education_info";
+    protected $guarded = ['id'];
     public function personalinfo(){
         return $this->belongsTo(PersonalInfo::class,'ansar_id');
     }

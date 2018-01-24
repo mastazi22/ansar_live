@@ -12,6 +12,7 @@ class PersonalInfo extends Model
 {
     protected $connection = 'hrm';
     protected $table = 'tbl_ansar_parsonal_info';
+    protected $guarded = ['id'];
 
     public function status()
     {
@@ -80,7 +81,11 @@ class PersonalInfo extends Model
 
     function freezing_info()
     {
-        return $this->hasOne(EmbodimentLogModel::class, 'ansar_id', 'ansar_id');
+        return $this->hasOne(FreezingInfoModel::class, 'ansar_id', 'ansar_id');
+    }
+    function freezing_info_log()
+    {
+        return $this->hasOne(FreezingInfoLog::class, 'ansar_id', 'ansar_id');
     }
 
     function offer_sms_info()
