@@ -110,7 +110,6 @@
                     $http({method: 'get', url: '{{URL::to('recruitment/applicant/detail')}}/'+$rootScope.applicant_id}),
                     httpService.range(),
                     httpService.education(),
-                    $http({method: 'get', url: '{{URL::route('recruitment.applicant.getfieldstore')}}'}),
                     httpService.rank(),
                     httpService.disease(),
                     httpService.skill(),
