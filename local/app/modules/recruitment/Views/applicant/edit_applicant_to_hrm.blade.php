@@ -63,6 +63,10 @@
             $scope.submitComplete = function () {
                 $("#edit-form").modal('hide');
             }
+            $rootScope.$on('refreshData',function () {
+//                alert(1)
+                $scope.loadApplicant();
+            })
 
 
         })
@@ -126,6 +130,7 @@
                     $scope.formData = renameProperty($scope.formData,'date_of_birth','data_of_birth');
                     $scope.formData['designation_id'] = '1'
 //                    console.log($scope.formData)
+                    delete $scope.formData['profile_pic']
                     $scope.district = response[0].data.units;
                     $scope.thana = response[0].data.thanas;
                     $scope.division = response[1];
