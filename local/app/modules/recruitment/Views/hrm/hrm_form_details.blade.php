@@ -394,7 +394,9 @@
             <td class="bng-class">বাম হাতের বৃদ্ধা আঙ্গুলের ছাপ</td>
         </tr>
         <tr>
-            <td >&nbsp;</td>
+            <td >
+                <img src="{{$ansarAllDetails->sign_pic}}" alt="">
+            </td>
             <td >&nbsp;</td>
         </tr>
     </table>
