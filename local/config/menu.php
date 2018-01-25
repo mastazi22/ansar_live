@@ -457,10 +457,10 @@ return [
             "route" => "recruitment.edit_for_hrm",
             "icon" => "fa-circle"
         ],
-        /*"View Applicants Detail for HRM" => [
+        "View Applicants Detail for HRM" => [
             "route" => "recruitment.hrm.index",
             "icon" => "fa-circle"
-        ],*/
+        ],
 
     ]
 ];

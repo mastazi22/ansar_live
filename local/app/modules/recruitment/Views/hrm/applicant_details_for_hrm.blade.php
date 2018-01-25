@@ -52,12 +52,16 @@
                 })
             }
             $scope.moveToHRM = function (url) {
+                $scope.allLoading = true;
                 $http({
                     url:url,
                     method:'post'
                 }).then(function (response) {
+                    $scope.allLoading = true;
                     notificationService.notify(response.data.status,response.data.message);
+                    $scope.loadApplicant();
                 },function (response) {
+                    $scope.allLoading = true;
                     notificationService.notify('error',response.data);
                 })
             }

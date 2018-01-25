@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Nominee extends Model
 {
     protected $table= 'tbl_amsar_nominee_info';
+    protected $connection='hrm';
+    protected $guarded=['id'];
     
     public function personalinfo(){
         return $this->belongsTo('App\models\PersonalInfo','ansar_id');

@@ -16,7 +16,7 @@ class PersonalInfo extends Model
 
     public function status()
     {
-      return $this->belongsTo(AnsarStatusInfo::class,'ansar_id','ansar_id');
+      return $this->hasOne(AnsarStatusInfo::class,'ansar_id','ansar_id');
     }
 
     public function blood()

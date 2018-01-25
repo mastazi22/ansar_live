@@ -37,12 +37,12 @@
                     <td>{{$a->thana->thana_name_bng}}</td>
                     <td>{{$a->hight_feet}} feet {{$a->hight_inch}} inch</td>
                     <td>
-                        <a target="_blank"
+                        <a target="_blank" title="download"
                            href="{{URL::route('recruitment.hrm.view_download',['type'=>'download','circular_id'=>$a->job_circular_id,'id'=>$a->id])}}"
-                           class="btn btn-primary btn-xs"><i class="fa fa-download"></i>&nbsp;Download form</a>
-                        <a target="_blank"
+                           class="btn btn-primary btn-xs"><i class="fa fa-download"></i></a>
+                        <a target="_blank" title="view"
                            href="{{URL::route('recruitment.hrm.view_download',['type'=>'view','circular_id'=>$a->job_circular_id,'id'=>$a->id])}}"
-                           class="btn btn-primary btn-xs"><i class="fa fa-download"></i>&nbsp;View Details</a>
+                           class="btn btn-primary btn-xs"><i class="fa fa-eye"></i></a>
                         <button ng-click="moveToHRM('{{URL::route('recruitment.hrm.move',['id'=>$a->id])}}')" class="btn btn-primary btn-xs"><i class="fa fa-circle"></i>&nbsp;Move to HRM</button>
                     </td>
 

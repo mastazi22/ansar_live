@@ -25,7 +25,8 @@ class ApplicantHRMController extends Controller
         if (strcasecmp($request->method(), 'post') == 0) {
             if ($request->ajax()) {
                 $applicants = JobApplicantHRMDetails::with(['division', 'district', 'thana'])
-                    ->where('job_circular_id', $request->circular);
+                    ->where('job_circular_id', $request->circular)
+                ->whereNull('ansar_id');
                 if ($request->range && $request->range != 'all') {
                     $applicants->where('division_id', $request->range);
                 }
