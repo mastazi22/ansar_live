@@ -822,6 +822,7 @@ class ApplicantScreeningController extends Controller
         if(strcasecmp($request->method(),'post')==0){
             if($request->ajax()){
                 $applicants= JobAppliciant::with(['division','district','thana'])
+                    ->doesnthave('hrmDetail')
                     ->where('status','accepted')->where('job_circular_id',$request->circular);
                 if($request->range&&$request->range!='all'){
                     $applicants->where('division_id',$request->range);
