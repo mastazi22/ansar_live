@@ -109,14 +109,14 @@ class ApplicantHRMController extends Controller
                 $sign_pic = storage_path('data' . DIRECTORY_SEPARATOR . 'signature');
                 if (!File::exists($profile_pic)) File::makeDirectory($profile_pic);
                 if (!File::exists($sign_pic)) File::makeDirectory($sign_pic);
-                if ($data['profile_pic']) {
+                if ($data['profile_pic']&&File::exists($data['profile_pic'])) {
                     if (!File::move($data['profile_pic'], $profile_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg')) {
                         throw new \Exception("Can`t move image. please try again later");
                     }
 
                 }
                 $data['profile_pic'] = 'data/photo/' . $ansar_id . '.jpg';
-                if ($data['sign_pic']) {
+                if ($data['sign_pic']&&File::exists($data['sign_pic'])) {
                     if (!File::move($data['sign_pic'], $sign_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg')) {
                         throw new \Exception("Can`t move image. please try again later");
                     }
@@ -156,6 +156,14 @@ class ApplicantHRMController extends Controller
             $this->rollbackFile($profile_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['profile_pic']);
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         } catch (\Throwable $e) {
+            Log::info($e->getMessage());
+            Log::info($e->getTraceAsString());
+            DB::connection('hrm')->rollback();
+            DB::rollback();
+            $this->rollbackFile($sign_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['sign_pic']);
+            $this->rollbackFile($profile_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['profile_pic']);
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }catch (\Exception $e) {
             Log::info($e->getMessage());
             Log::info($e->getTraceAsString());
             DB::connection('hrm')->rollback();
