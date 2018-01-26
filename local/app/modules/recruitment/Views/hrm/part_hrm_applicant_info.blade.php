@@ -3,6 +3,9 @@
     <div class="table-responsive">
         <table class="table table-bordered table-condensed">
             <caption style="font-size: 20px;color:#111111">Total applicants({{$applicants->total()}})
+                <button class="btn btn-xs btn-primary">
+                    Move this page to HRM
+                </button>
                 <div class="input-group" style="margin-top: 10px">
                     <input ng-keyup="$event.keyCode==13?loadApplicant():''" class="form-control" ng-model="param.q"
                            type="text" placeholder="Search by national id,name,mobile_no or applicant id">
