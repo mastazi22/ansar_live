@@ -132,7 +132,7 @@ class ApplicantHRMController extends Controller
                     $ansar_new->education()->save(new Edication((array)$education));
                 }
                 foreach ($nominee_info as $nominee) {
-                   $ansar_new->nominee()->save(new Nominee($nominee));
+                   $ansar_new->nominee()->save(new Nominee((array)$nominee));
                 }
                 $ansar_new->status()->save(new AnsarStatusInfo());
                 $ansar_new->save();
