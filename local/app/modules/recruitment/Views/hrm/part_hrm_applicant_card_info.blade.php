@@ -17,6 +17,7 @@
                 <th>Sl. No</th>
                 <th>Ansar ID</th>
                 <th>Ansar Name</th>
+                <th>Father Name</th>
                 <th>Gender</th>
                 <th>Rank</th>
                 <th>Blood Group</th>
@@ -31,6 +32,7 @@
                     <td>{{$i++}}</td>
                     <td>{{$a->ansar_id}}</td>
                     <td>{{$a->ansar_name_bng}}</td>
+                    <td>{{$a->father_name_bng}}</td>
                     <td>{{$a->sex}}</td>
                     <td>{{$a->designation->name_bng}}</td>
                     <td>{{$a->bloodGroup->blood_group_name_bng}}</td>
