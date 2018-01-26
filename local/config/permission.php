@@ -127,6 +127,7 @@ return [
         "report.applicants.applicat_accepted_list",
         "recruitment.move_to_hrm",
         "recruitment.edit_for_hrm,recruitment.store_hrm_detail",
-        "recruitment.hrm.index,recruitment.hrm.view_download,recruitment.hrm.move"
+        "recruitment.hrm.index,recruitment.hrm.view_download,recruitment.hrm.move",
+        "recruitment.hrm.card_print,print_card_id",
     ]
 ];

@@ -56,6 +56,7 @@ class CheckUserType
         'recruitment.move_to_hrm'=>['range'=>'range','unit'=>'unit'],
         'recruitment.edit_for_hrm'=>['range'=>'range','unit'=>'unit'],
         'recruitment.hrm.index'=>['range'=>'range','unit'=>'unit'],
+        'recruitment.hrm.card_print'=>['range'=>'range','unit'=>'unit'],
     ];
     public function handle($request, Closure $next)
     {

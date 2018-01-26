@@ -596,6 +596,10 @@
         "name": "View Applicant Detail for HRM"
       },
       {
+        "value": "recruitment.hrm.card_print,print_card_id",
+        "name": "Print Applicant ID Card for HRM"
+      },
+      {
         "text": "Applicant Marks",
         "actions": [
           {

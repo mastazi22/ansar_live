@@ -461,6 +461,10 @@ return [
             "route" => "recruitment.hrm.index",
             "icon" => "fa-circle"
         ],
+        "Print Applicants ID Card" => [
+            "route" => "recruitment.hrm.card_print",
+            "icon" => "fa-print"
+        ],
 
     ]
 ];

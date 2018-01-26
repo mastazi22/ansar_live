@@ -45,6 +45,8 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
     Route::get('/applicant/hrm/{type}/{circular_id}/{id}',['as'=>'recruitment.hrm.view_download','uses'=>'ApplicantHRMController@applicantEditForHRM']);
     Route::post('/applicant/hrm/move/{id}',['as'=>'recruitment.hrm.move','uses'=>'ApplicantHRMController@moveApplicantToHRM']);
 
+    Route::any('/applicant/hrm/card_print',['as'=>'recruitment.hrm.card_print','uses'=>'ApplicantHRMController@print_card']);
+
     //settings
         //quota
     Route::any('/settings/applicant_quota',['as'=>'recruitment.quota.index','uses'=>'JobApplicantQuotaController@index']);

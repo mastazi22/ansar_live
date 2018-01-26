@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','View Applicant Detail for HRM')
+@section('title','Print Applicant ID Card for HRM')
 @section('breadcrumb')
     {!! Breadcrumbs::render('recruitment.applicant.search') !!}
 @endsection
@@ -40,7 +40,7 @@
                 $scope.allLoading = true;
                 $scope.param['limit'] = $scope.limitList;
                 $http({
-                    url:url||'{{URL::route('recruitment.hrm.index')}}',
+                    url:url||'{{URL::route('recruitment.hrm.card_print')}}',
                     method:'post',
                     data:$scope.param
                 }).then(function (response) {

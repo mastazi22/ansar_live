@@ -50,6 +50,37 @@ class ApplicantHRMController extends Controller
         }
         return view('recruitment::hrm.applicant_details_for_hrm');
     }
+    public function print_card(Request $request)
+    {
+        if (strcasecmp($request->method(), 'post') == 0) {
+            if ($request->ajax()) {
+                $applicants = JobApplicantHRMDetails::with(['division', 'district', 'thana','designation','bloodGroup'])
+                    ->where('job_circular_id', $request->circular)
+                    ->whereNotNull('ansar_id');
+                if ($request->range && $request->range != 'all') {
+                    $applicants->where('division_id', $request->range);
+                }
+                if ($request->unit && $request->unit != 'all') {
+                    $applicants->where('unit_id', $request->unit);
+                }
+                if ($request->thana && $request->thana != 'all') {
+                    $applicants->where('thana_id', $request->thana);
+                }
+                if ($request->q) {
+                    $applicants->where(function ($q) use ($request) {
+                        $q->where('ansar_name_eng', 'LIKE', '%' . $request->q . '%');
+                        $q->orWhere('ansar_name_bng', 'LIKE', '%' . $request->q . '%');
+                        $q->orWhere('mobile_no_self', $request->q);
+                        $q->orWhere('national_id_no', $request->q);
+                    });
+                }
+                $limit = $request->limit ? $request->limit : 50;
+//                return $applicants->paginate($limit);
+                return view('recruitment::hrm.part_hrm_applicant_card_info', ['applicants' => $applicants->paginate($limit)]);
+            } else abort(403);
+        }
+        return view('recruitment::hrm.print_applicant_id_card_for_hrm');
+    }
 
     public function applicantEditForHRM($type, $circular_id, $id)
     {
