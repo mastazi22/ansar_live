@@ -52,7 +52,7 @@
                         {!! Form::close() !!}
                         {!! Form::open(['route'=>'print_card_id','style'=>'display:inline-block','target'=>'_blank']) !!}
                         {!! Form::hidden('ansar_id',intval($a->ansar_id)) !!}
-                        {!! Form::hidden('type','bng') !!}
+                        {!! Form::hidden('type','eng') !!}
                         {!! Form::hidden('issue_date',\Carbon\Carbon::now()->format('d-M-Y')) !!}
                         {!! Form::hidden('expire_date',\Carbon\Carbon::now()->addYears(10)->subDay()->format('d-M-Y')) !!}
                         <button type="submit" class="btn btn-primary btn-xs">
