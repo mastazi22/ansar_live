@@ -152,11 +152,35 @@ class ReportController extends Controller
             'numeric' => 'Ansar id must be numeric',
             'date_format' => 'Invalid date format',
         ];
+        $bng_data = ["title"=> "বাংলাদেশ আনসার ও গ্রাম প্রতিরক্ষা বাহিনী",
+            "id_no"=> "আইডি নং",
+            "name"=> "নাম",
+            "rank"=> "পদবী",
+            "bg"=> "রক্তের গ্রুপ",
+            "unit"=> "জেলা",
+            "id"=> "প্রদানের তারিখ",
+            "ed"=> "শেষের তারিখ",
+            "bs"=> "বাহকের স্বাক্ষর",
+            "is"=> "কর্তৃকারীর স্বাক্ষর",
+            "footer_title"=> "প্রদানকারী কর্তৃপক্ষ : বাংলাদেশ আনসার ও ভিডিপি"];
+        $eng_data = [
+            "title"=> "Bangladesh Ansar and Village Defence Party",
+            "name"=> "Name",
+            "id_no"=> "ID NO",
+            "rank"=> "Rank",
+            "bg"=> "Blood Group",
+            "unit"=> "District",
+            "id"=> "Issue Date",
+            "ed"=> "Expire Date",
+            "bs"=> "Bearer`s Sign",
+            "is"=> "Issuer`s Sign",
+            "footer_title"=> "Issuing Authority: Bangladesh Ansar & VDP"
+        ];
         $validation = Validator::make(Input::all(), $rules, $message);
         if ($validation->fails()) {
             return Response::json(['validation' => true, 'messages' => $validation->messages()]);
         }
-        $report_data = $this->getReportData($type, 'ansar_id_card');
+        $report_data = ${$type."_data"};
         $ansar = DB::table('tbl_ansar_parsonal_info')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
