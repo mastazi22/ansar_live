@@ -17,7 +17,7 @@
            var fs = 12;
            var font = window.getComputedStyle(document.getElementById('ansar_name'),null).getPropertyValue('font-family');
            while(getTextWidth(t.text(),"normal "+fs+"px "+font)>t.width()){
-               fs-=.5;
+               fs-=1;
                console.log(fs);
 
            }
