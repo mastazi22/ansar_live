@@ -22,7 +22,8 @@
     font-size: 9px;
 }
 #ansar-id-card-front, #ansar-id-card-back {
-    width: 500px;
+    width:85.6mm;
+    height:54.0mm;
     z-index: -2;
     position: relative;
 }
@@ -174,14 +175,28 @@
     border-bottom-right-radius: 5px;
     font-style: italic;
 }
+.card-body *{
+    font-size: 12px;
+    font-weight:normal !important;
+}
+.card-header-right-part h4,.card-header-right-part h5{
+    font-size: 13px !important;
+}
+.bangla-class .card-header-right-part h4,.card-header-right-part h5{
+    font-size: 12px !important;
+    margin-bottom: 0px !important;
+}
 @media print {
 
-
+    @page{
+        size:100mm 90mm !important;
+    }
     .card-footer-sing *{
         font-size: 10px !important;
     }
     #ansar-id-card-front{
-        width:100%;
+        width:85.6mm;
+        height:54.0mm;
         padding-left: 1mm !important;
         padding-right: 1mm !important;
         overflow: visible !important;
@@ -197,10 +212,10 @@
         font-size: 12px !important;
         margin-bottom: 0px !important;
     }
-    .card-body *{
+    /*.card-body *{
         font-size: 12px !important;
         font-weight:normal !important;
-    }
+    }*/
     .card-footer *{
         font-weight: normal; !important;
     }
