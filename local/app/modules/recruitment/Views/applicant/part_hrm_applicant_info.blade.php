@@ -29,6 +29,7 @@
                 <tr>
                     <td>{{$i++}}</td>
                     <td>{{$a->applicant_name_bng}}</td>
+                    <td>{{$a->father_name_bng}}</td>
                     <td>{{$a->national_id_no}}</td>
                     <td>{{$a->gender}}</td>
                     <td>{{$a->date_of_birth}}</td>
