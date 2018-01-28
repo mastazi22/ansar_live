@@ -16,6 +16,7 @@
             <tr>
                 <th>Sl. No</th>
                 <th>Applicant Name</th>
+                <th>Father Name</th>
                 <th>National ID No.</th>
                 <th>Gender</th>
                 <th>Birth Date</th>
