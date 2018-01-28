@@ -73,16 +73,16 @@ class ApplicantHRMController extends Controller
                         ->orWhere('unit_name_bng','LIKE',"%{$request->q}%")->first();
                     if($id&&(!$request->unit||$request->unit=='all')) {
                         $applicants->where(function ($q) use ($request, $id) {
-                            $q->where('applicant_name_eng', 'LIKE', '%' . $request->q . '%');
-                            $q->orWhere('applicant_name_bng', 'LIKE', '%' . $request->q . '%');
+                            $q->where('ansar_name_eng', 'LIKE', '%' . $request->q . '%');
+                            $q->orWhere('ansar_name_bng', 'LIKE', '%' . $request->q . '%');
                             $q->orWhere('mobile_no_self', $request->q);
                             $q->orWhere('national_id_no', $request->q);
                             $q->orWhere('unit_id', $id->id);
                         });
                     } else{
                         $applicants->where(function ($q) use ($request, $id) {
-                            $q->where('applicant_name_eng', 'LIKE', '%' . $request->q . '%');
-                            $q->orWhere('applicant_name_bng', 'LIKE', '%' . $request->q . '%');
+                            $q->where('ansar_name_eng', 'LIKE', '%' . $request->q . '%');
+                            $q->orWhere('ansar_name_bng', 'LIKE', '%' . $request->q . '%');
                             $q->orWhere('mobile_no_self', $request->q);
                             $q->orWhere('national_id_no', $request->q);
                         });
