@@ -5,6 +5,7 @@ namespace App\modules\recruitment\Controllers;
 use App\Http\Controllers\Controller;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\Designation;
+use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Edication;
 use App\modules\HRM\Models\Nominee;
 use App\modules\HRM\Models\PersonalInfo;
@@ -16,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class ApplicantHRMController extends Controller
 {
@@ -67,12 +69,24 @@ class ApplicantHRMController extends Controller
                     $applicants->where('thana_id', $request->thana);
                 }
                 if ($request->q) {
-                    $applicants->where(function ($q) use ($request) {
-                        $q->where('ansar_name_eng', 'LIKE', '%' . $request->q . '%');
-                        $q->orWhere('ansar_name_bng', 'LIKE', '%' . $request->q . '%');
-                        $q->orWhere('mobile_no_self', $request->q);
-                        $q->orWhere('national_id_no', $request->q);
-                    });
+                    $id = District::where('unit_name_eng','LIKE',"%{$request->q}%")
+                        ->orWhere('unit_name_bng','LIKE',"%{$request->q}%")->first();
+                    if($id&&(!$request->unit||$request->unit=='all')) {
+                        $applicants->where(function ($q) use ($request, $id) {
+                            $q->where('applicant_name_eng', 'LIKE', '%' . $request->q . '%');
+                            $q->orWhere('applicant_name_bng', 'LIKE', '%' . $request->q . '%');
+                            $q->orWhere('mobile_no_self', $request->q);
+                            $q->orWhere('national_id_no', $request->q);
+                            $q->orWhere('unit_id', $id->id);
+                        });
+                    } else{
+                        $applicants->where(function ($q) use ($request, $id) {
+                            $q->where('applicant_name_eng', 'LIKE', '%' . $request->q . '%');
+                            $q->orWhere('applicant_name_bng', 'LIKE', '%' . $request->q . '%');
+                            $q->orWhere('mobile_no_self', $request->q);
+                            $q->orWhere('national_id_no', $request->q);
+                        });
+                    }
                 }
                 $limit = $request->limit ? $request->limit : 50;
 //                return $applicants->paginate($limit);
@@ -114,6 +128,12 @@ class ApplicantHRMController extends Controller
             $applicant_hrm_details = JobApplicantHRMDetails::find($id);
             if ($applicant_hrm_details) {
                 $data = clone $applicant_hrm_details;
+                $valid = Validator::make($data,[
+                    'mobile_no_self'=>'required|regex:/^(\+88)?0[0-9]{10}$/|unique:hrm.tbl_ansar_parsonal_info'
+                ]);
+                if($valid->fails()){
+                    throw new \Exception("Mobile no already exists");
+                }
                 $ansar_id = intval(PersonalInfo::orderBy('ansar_id', 'desc')->first()->ansar_id) + 1;
                 $applicant_hrm_details['ansar_id'] = $data['ansar_id'] = $ansar_id;
                 $education_info = $data['appliciant_education_info'];
