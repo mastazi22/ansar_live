@@ -203,24 +203,24 @@ class ApplicantHRMController extends Controller
             Log::info($e->getTraceAsString());
             DB::connection('hrm')->rollback();
             DB::rollback();
-            $this->rollbackFile($sign_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['sign_pic']);
-            $this->rollbackFile($profile_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['profile_pic']);
+            if(isset($sign_pic))$this->rollbackFile($sign_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['sign_pic']);
+            if(isset($profile_pic))$this->rollbackFile($profile_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['profile_pic']);
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         } catch (\Throwable $e) {
             Log::info($e->getMessage());
             Log::info($e->getTraceAsString());
             DB::connection('hrm')->rollback();
             DB::rollback();
-            $this->rollbackFile($sign_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['sign_pic']);
-            $this->rollbackFile($profile_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['profile_pic']);
+            if(isset($sign_pic))$this->rollbackFile($sign_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['sign_pic']);
+            if(isset($profile_pic))$this->rollbackFile($profile_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['profile_pic']);
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }catch (\Exception $e) {
             Log::info($e->getMessage());
             Log::info($e->getTraceAsString());
             DB::connection('hrm')->rollback();
             DB::rollback();
-            $this->rollbackFile($sign_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['sign_pic']);
-            $this->rollbackFile($profile_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['profile_pic']);
+            if(isset($sign_pic))$this->rollbackFile($sign_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['sign_pic']);
+            if(isset($profile_pic))$this->rollbackFile($profile_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['profile_pic']);
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
