@@ -128,12 +128,6 @@ class ApplicantHRMController extends Controller
             $applicant_hrm_details = JobApplicantHRMDetails::find($id);
             if ($applicant_hrm_details) {
                 $data = clone $applicant_hrm_details;
-                $valid = Validator::make($data,[
-                    'mobile_no_self'=>'required|regex:/^(\+88)?0[0-9]{10}$/|unique:hrm.tbl_ansar_parsonal_info'
-                ]);
-                if($valid->fails()){
-                    throw new \Exception("Mobile no already exists");
-                }
                 $ansar_id = intval(PersonalInfo::orderBy('ansar_id', 'desc')->first()->ansar_id) + 1;
                 $applicant_hrm_details['ansar_id'] = $data['ansar_id'] = $ansar_id;
                 $education_info = $data['appliciant_education_info'];

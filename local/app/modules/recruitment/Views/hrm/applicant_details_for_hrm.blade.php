@@ -52,16 +52,17 @@
                 })
             }
             $scope.moveToHRM = function (url) {
+
                 $scope.allLoading = true;
                 $http({
                     url:url,
                     method:'post'
                 }).then(function (response) {
-                    $scope.allLoading = true;
+                    $scope.allLoading = false;
                     notificationService.notify(response.data.status,response.data.message);
                     $scope.loadApplicant();
                 },function (response) {
-                    $scope.allLoading = true;
+                    $scope.allLoading = false;
                     notificationService.notify('error',response.data);
                 })
             }
@@ -72,10 +73,14 @@
             return {
                 restrict: 'A',
                 link: function (scope, elem, attr) {
+                    var newscope;
                     scope.$watch('applicants', function (n) {
 
                         if (attr.ngBindHtml) {
-                            $compile(elem[0].children)(scope)
+                            if(newscope) newscope.$destroy();
+                            newscope = scope.$new();
+                            $compile(elem[0].children)(newscope);
+//                            newscope.$destroy();
                         }
                     })
 
