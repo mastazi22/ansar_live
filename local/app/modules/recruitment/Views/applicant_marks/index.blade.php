@@ -57,18 +57,14 @@
             return {
                 restrict:'A',
                 link:function (scope,elem,attr) {
-                    scope.$watch('applicants',function(n){
-
-                        if(attr.ngBindHtml) {
-                            $compile(elem[0].children)(scope)
+                    var newScope;
+                    scope.$watch('applicants', function (n) {
+                        if(newScope) newScope.$destroy();
+                        newScope = scope.$new();
+                        if (attr.ngBindHtml) {
+                            $compile(elem[0].children)(newScope)
                         }
                     })
-                    /*scope.$watch('markForm',function(n){
-
-                        if(attr.ngBindHtml) {
-                            $compile(elem[0].children)(scope)
-                        }
-                    })*/
 
                 }
             }

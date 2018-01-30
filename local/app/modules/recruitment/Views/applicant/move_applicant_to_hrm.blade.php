@@ -58,10 +58,12 @@
             return {
                 restrict: 'A',
                 link: function (scope, elem, attr) {
+                    var newScope;
                     scope.$watch('applicants', function (n) {
-
+                        if(newScope) newScope.$destroy();
+                        newScope = scope.$new();
                         if (attr.ngBindHtml) {
-                            $compile(elem[0].children)(scope)
+                            $compile(elem[0].children)(newScope)
                         }
                     })
 
