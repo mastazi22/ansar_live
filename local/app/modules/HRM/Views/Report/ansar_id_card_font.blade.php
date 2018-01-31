@@ -5,6 +5,7 @@
     <script src="{{asset('dist/js/jquery-1.11.1.js')}}"></script>
     <script>
        $(document).ready(function () {
+           alert(1);
            function getTextWidth(text, font) {
                // re-use canvas object for better performance
                var canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
