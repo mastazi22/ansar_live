@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="{{asset('dist/css/id-card.css')}}">
     <script src="{{asset('dist/js/jquery-1.11.1.js')}}"></script>
     <script>
-       $(window).load(function () {
+       $(document).ready(function () {
            function getTextWidth(text, font) {
                // re-use canvas object for better performance
                var canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
