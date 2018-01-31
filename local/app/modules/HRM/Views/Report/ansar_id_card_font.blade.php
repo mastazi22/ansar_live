@@ -5,7 +5,7 @@
     <script src="{{asset('dist/js/jquery-1.11.1.js')}}"></script>
     <script>
        $(document).ready(function () {
-           alert(1);
+//           alert(1);
            function getTextWidth(text, font) {
                // re-use canvas object for better performance
                var canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
@@ -16,13 +16,14 @@
            }
            var t = $("#ansar_name");
            var fs = 12;
+           var v = 0;
            var font = window.getComputedStyle(document.getElementById('ansar_name'),null).getPropertyValue('font-family');
-           while(getTextWidth(t.text(),"normal "+fs+"px "+font)>t.width()){
+           while((v=getTextWidth(t.text(),"normal "+fs+"px "+font))>t.width()){
                fs-=1;
                console.log(fs);
 
            }
-//           alert(t.text())
+           alert(v)
            t.css({fontSize:fs+"px"})
        })
     </script>
