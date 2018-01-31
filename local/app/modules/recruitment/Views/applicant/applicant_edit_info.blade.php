@@ -38,7 +38,9 @@
             $scope.loadApplicant = function (url) {
                 //alert($scope.limitList)
                 $scope.allLoading = true;
-                $scope.param['limit'] = $scope.limitList;
+                if($scope.param['limit']===undefined){
+                    $scope.param['limit'] = '50';
+                }
                 $http({
                     url:url||'{{URL::route('recruitment.applicant.info')}}',
                     method:'post',
@@ -183,9 +185,10 @@
                 link: function (scope, elem, attr) {
                     var newScope;
                     scope.$watch('applicants', function (n) {
-                        if(newScope) newScope.$destroy();
-                        newScope = scope.$new();
+
                         if (attr.ngBindHtml) {
+                            if(newScope) newScope.$destroy();
+                            newScope = scope.$new();
                             $compile(elem[0].children)(newScope)
                         }
                     })
@@ -199,9 +202,10 @@
                 link: function (scope, elem, attr) {
                     var newScope;
                     scope.$watch('detail', function (n) {
-                        if(newScope) newScope.$destroy();
-                        newScope = scope.$new();
+
                         if (attr.ngBindHtml) {
+                            if(newScope) newScope.$destroy();
+                            newScope = scope.$new();
                             $compile(elem[0].children)(newScope)
                         }
                     })

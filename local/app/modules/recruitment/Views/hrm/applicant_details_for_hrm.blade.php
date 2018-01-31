@@ -36,9 +36,10 @@
                 }
             })
             $scope.loadApplicant = function (url) {
-                //alert($scope.limitList)
+                if($scope.param.limit===undefined){
+                    $scope.param['limit'] = '50';
+                }
                 $scope.allLoading = true;
-                $scope.param['limit'] = $scope.limitList;
                 $http({
                     url:url||'{{URL::route('recruitment.hrm.index')}}',
                     method:'post',

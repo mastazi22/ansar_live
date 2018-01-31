@@ -31,9 +31,10 @@
                 link:function (scope,elem,attr) {
                     var newScope;
                     scope.$watch('applicants', function (n) {
-                        if(newScope) newScope.$destroy();
-                        newScope = scope.$new();
+
                         if (attr.ngBindHtml) {
+                            if(newScope) newScope.$destroy();
+                            newScope = scope.$new();
                             $compile(elem[0].children)(newScope)
                         }
                     })

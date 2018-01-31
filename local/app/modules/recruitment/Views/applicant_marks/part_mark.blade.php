@@ -4,7 +4,7 @@
         <table class="table table-bordered table-condensed">
             <caption style="font-size: 20px;color:#111111">All selected applicants({{$applicants->total()}})
                 <div class="input-group" style="margin-top: 10px">
-                    <input ng-keyup="$event.keyCode==13?loadApplicant():''" class="form-control" ng-model="q"
+                    <input ng-keyup="$event.keyCode==13?loadApplicant():''" class="form-control" ng-model="param.q"
                            type="text" placeholder="Search by id,mobile no or national id">
                     <span class="input-group-btn">
                     <button class="btn btn-primary" ng-click="loadApplicant()">
@@ -66,7 +66,7 @@
             <div class="col-sm-3">
                 <div class="form-group">
                     <label for="" class="control-label">Load limit</label>
-                    <select class="form-control" ng-model="limitList">
+                    <select class="form-control" ng-model="param.limit" ng-change="loadApplicant()">
                         <option value="50">50</option>
                         <option value="100">100</option>
                         <option value="150">150</option>

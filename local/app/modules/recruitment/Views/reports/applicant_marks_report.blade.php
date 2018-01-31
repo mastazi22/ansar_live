@@ -5,39 +5,15 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('applicantSearch', function ($scope, $http, $q, httpService, $sce,notificationService) {
+        GlobalApp.controller('applicantSearch', function ($scope, $http, $q, httpService) {
             $scope.circulars = [];
             $scope.param = {};
             httpService.circular({status: 'running'}).then(function (response) {
                 $scope.circulars = response.data;
             })
-            $scope.loadApplicant = function () {
-                $http({
-                    method:'post',
-                    url:'{{URL::route('recruitment.applicant.final_list_load')}}',
-                    data:angular.toJson($scope.param)
-                }).then(function (response) {
-                    $scope.applicants = response.data;
-                })
-            }
 
         })
-        GlobalApp.directive('compileHtml', function ($compile) {
-            return {
-                restrict: 'A',
-                link: function (scope, elem, attr) {
-                    var newScope;
-                    scope.$watch('applicants', function (n) {
-                        if(newScope) newScope.$destroy();
-                        newScope = scope.$new();
-                        if (attr.ngBindHtml) {
-                            $compile(elem[0].children)(newScope)
-                        }
-                    })
 
-                }
-            }
-        })
     </script>
     <section class="content" ng-controller="applicantSearch">
         <div class="box box-solid">

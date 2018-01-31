@@ -46,7 +46,7 @@
             $scope.allStatus = {'all': 'All', 'inactive': 'Inactive', 'active': 'Active'}
             $scope.circular = 'all';
             $scope.category = 'all';
-            $scope.limitList = '50';
+            $scope.param={};
             $scope.ansarSelection = 'overall';
             $scope.selectedList = [];
             $scope.filter = {
@@ -69,6 +69,9 @@
                 'Less then equal': '<='
             }
             var loadAll = function () {
+                if($scope.param['limit']===undefined){
+                    $scope.param['limit'] = '50'
+                }
                 $scope.circular = 'all';
                 $scope.category = 'all';
                 $scope.allLoading = true;
@@ -78,9 +81,9 @@
                     httpService.searchApplicant(undefined, {
                         category: $scope.category,
                         circular: $scope.circular,
-                        limit: $scope.limitList,
+                        limit: $scope.param['limit'],
                         filter: $scope.filter,
-                        q:$scope.q
+                        q:$scope.param.q
                     }),
                     $http.get("{{URL::to('HRM/getalleducation')}}")
                 ])
@@ -127,22 +130,13 @@
                 })
 
             }
-            $scope.$watch('limitList', function (n, o) {
-                if (n == null) {
-                    $scope.limitList = o;
-                }
-                else if (p != n && p != null) {
-                    p = n;
-                    $scope.loadApplicant();
-                }
-            })
             $scope.loadApplicant = function (url) {
                 //alert($scope.limitList)
                 $scope.allLoading = true;
                 httpService.searchApplicant(url, {
                     category: $scope.category,
                     circular: $scope.circular,
-                    limit: $scope.limitList,
+                    limit: $scope.param['limit']||'50',
                     filter: $scope.filter,
                     q:$scope.q
                 }).then(function (response) {

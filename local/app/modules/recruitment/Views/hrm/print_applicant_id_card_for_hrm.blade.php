@@ -14,7 +14,7 @@
             $scope.circulars = [];
             $scope.applicants = $sce.trustAsHtml('loading data....');
             $scope.allStatus = {'': '--Select a status', 'applied': 'Applied', 'selected': 'Selected','accepted':'Accepted'}
-            $scope.param = {};
+            $scope.param = {limit:'50'};
             $scope.limitList = '50';
 
             httpService.circular({status: 'running'}).then(function (response) {
@@ -36,9 +36,10 @@
                 }
             })
             $scope.loadApplicant = function (url) {
-                //alert($scope.limitList)
+                if($scope.param.limit===undefined){
+                    $scope.param['limit'] = '50';
+                }
                 $scope.allLoading = true;
-                $scope.param['limit'] = $scope.limitList;
                 $http({
                     url:url||'{{URL::route('recruitment.hrm.card_print')}}',
                     method:'post',
@@ -74,9 +75,10 @@
                 link: function (scope, elem, attr) {
                     var newScope;
                     scope.$watch('applicants', function (n) {
-                        if(newScope) newScope.$destroy();
-                        newScope = scope.$new();
+
                         if (attr.ngBindHtml) {
+                            if(newScope) newScope.$destroy();
+                            newScope = scope.$new();
                             $compile(elem[0].children)(newScope)
                         }
                     })

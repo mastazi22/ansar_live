@@ -43,9 +43,10 @@
                 link:function (scope,elem,attr) {
                     var newScope;
                     scope.$watch('applicants', function (n) {
-                        if(newScope) newScope.$destroy();
-                        newScope = scope.$new();
+
                         if (attr.ngBindHtml) {
+                            if(newScope) newScope.$destroy();
+                            newScope = scope.$new();
                             $compile(elem[0].children)(newScope)
                         }
                     })
@@ -111,21 +112,6 @@
                         field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4',custom:'col-sm-4'}"
                 >
                 </filter-template>
-                {{--<div class="row" style="margin-bottom: 20px">
-                    <div class="col-sm-6 col-sm-offset-6">
-                        <form action="{{URL::route('recruitment.applicant.list',['type'=>$type])}}" method="get">
-                            <div class="input-group">
-                                <input type="text" name="q" class="form-control"
-                                       placeholder="Search here by txID or mobile no">
-                                <span class="input-group-btn">
-                                            <button class="btn btn-primary">
-                                                <i class="fa fa-search"></i>
-                                            </button>
-                                        </span>
-                            </div>
-                        </form>
-                    </div>
-                </div>--}}
                 <div ng-bind-html="applicants" compile-html>
 
                 </div>

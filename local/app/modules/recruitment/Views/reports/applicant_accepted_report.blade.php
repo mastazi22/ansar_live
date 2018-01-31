@@ -22,22 +22,6 @@
             }
 
         })
-        GlobalApp.directive('compileHtml', function ($compile) {
-            return {
-                restrict: 'A',
-                link: function (scope, elem, attr) {
-                    var newScope;
-                    scope.$watch('applicants', function (n) {
-                        if(newScope) newScope.$destroy();
-                        newScope = scope.$new();
-                        if (attr.ngBindHtml) {
-                            $compile(elem[0].children)(newScope)
-                        }
-                    })
-
-                }
-            }
-        })
     </script>
     <section class="content" ng-controller="applicantSearch">
         <div class="box box-solid">

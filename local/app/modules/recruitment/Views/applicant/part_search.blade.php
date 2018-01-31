@@ -7,7 +7,7 @@
                 <button class="btn btn-primary btn-xs" ng-disabled="selectedList.length<=0" ng-click="confirmSelectionOrRejection()">Confirm selection</button>
                 <button class="btn btn-danger btn-xs" ng-disabled="selectedList.length<=0" ng-click="selectApplicants('rejection')">Reject selection</button>
             <div class="input-group" style="margin-top: 10px">
-                <input ng-keyup="$event.keyCode==13?loadApplicant():''" class="form-control" ng-model="q" type="text" placeholder="Search by national id">
+                <input ng-keyup="$event.keyCode==13?loadApplicant():''" class="form-control" ng-model="param.q" type="text" placeholder="Search by national id">
                 <span class="input-group-btn">
                     <button class="btn btn-primary" ng-click="loadApplicant()">
                         <i class="fa fa-search"></i>
@@ -61,7 +61,7 @@
             <div class="col-sm-3">
                 <div class="form-group">
                     <label for="" class="control-label">Load limit</label>
-                    <select class="form-control" ng-model="limitList">
+                    <select class="form-control"  ng-model="param.limit" ng-change="loadApplicant()">
                         <option value="50">50</option>
                         <option value="100">100</option>
                         <option value="150">150</option>

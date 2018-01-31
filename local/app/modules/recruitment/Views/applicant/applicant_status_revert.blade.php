@@ -24,19 +24,12 @@
                 $scope.circulars = [];
                 $scope.allLoading = false;
             })
-            $scope.$watch('limitList', function (n, o) {
-                if (n == null) {
-                    $scope.limitList = o;
-                }
-                else if (p != n && p != null) {
-                    p = n;
-                    $scope.loadApplicant();
-                }
-            })
             $scope.loadApplicant = function (url) {
                 //alert($scope.limitList)
                 $scope.allLoading = true;
-                $scope.param['limit'] = $scope.limitList;
+                 if($scope.param['limit']===undefined){
+                     $scope.param['limit'] = '50'
+                 }
                 $http({
                     url:url||'{{URL::route('recruitment.applicant.revert')}}',
                     method:'post',
@@ -72,9 +65,10 @@
                 link: function (scope, elem, attr) {
                     var newScope;
                     scope.$watch('applicants', function (n) {
-                        if(newScope) newScope.$destroy();
-                        newScope = scope.$new();
+
                         if (attr.ngBindHtml) {
+                            if(newScope) newScope.$destroy();
+                            newScope = scope.$new();
                             $compile(elem[0].children)(newScope)
                         }
                     })

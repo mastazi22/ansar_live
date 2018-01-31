@@ -36,9 +36,10 @@
                 }
             })
             $scope.loadApplicant = function (url) {
-                //alert($scope.limitList)
+                if($scope.param.limit===undefined){
+                    $scope.param['limit'] = '50';
+                }
                 $scope.allLoading = true;
-                $scope.param['limit'] = $scope.limitList;
                 $http({
                     url:url||'{{URL::route('recruitment.edit_for_hrm')}}',
                     method:'post',
@@ -294,9 +295,10 @@
                 link: function (scope, elem, attr) {
                     var newScope;
                     scope.$watch('applicants', function (n) {
-                        if(newScope) newScope.$destroy();
-                        newScope = scope.$new();
+
                         if (attr.ngBindHtml) {
+                            if(newScope) newScope.$destroy();
+                            newScope = scope.$new();
                             $compile(elem[0].children)(newScope)
                         }
                     })
@@ -308,10 +310,13 @@
             return {
                 restrict: 'A',
                 link: function (scope, elem, attr) {
+                    var newScope;
                     scope.$watch('detail', function (n) {
 
                         if (attr.ngBindHtml) {
-                            $compile(elem[0].children)(scope)
+                            if(newScope) newScope.$destroy();
+                            newScope = scope.$new();
+                            $compile(elem[0].children)(newScope)
                         }
                     })
 

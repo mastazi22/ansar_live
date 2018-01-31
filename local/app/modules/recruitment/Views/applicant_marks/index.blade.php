@@ -8,14 +8,16 @@
         GlobalApp.controller('ApplicantsListController',function ($scope, $http, $sce) {
             $scope.applicants = $sce.trustAsHtml("<h3 class='text text-center'>Data loading....</h3>")
             $scope.param = {};
-            $scope.limitList = p = '50';
+            $scope.param['limit'] = '50'
+//            $scope.limitList = p = '50';
             $scope.markForm = $sce.trustAsHtml('');
             $scope.q = '';
             var v = '<div class="text-center" style="margin-top: 20px"><i class="fa fa-spinner fa-pulse"></i></div>'
             $scope.allLoading = false;
             $scope.loadApplicant = function (url) {
-                $scope.param['limit'] = $scope.limitList;
-                $scope.param['q'] = $scope.q;
+                if($scope.param.limit===undefined){
+                    $scope.param['limit'] = '50'
+                }
                 var link = url || '{{URL::route('recruitment.marks.index')}}'
                 $scope.allLoading = true;
                 $http({
@@ -43,15 +45,6 @@
 
                 })
             }
-            $scope.$watch('limitList', function (n, o) {
-                if (n == null) {
-                    $scope.limitList = o;
-                }
-                else if (p != n && p != null) {
-                    p = n;
-                    $scope.loadApplicant();
-                }
-            })
         })
         GlobalApp.directive('compileHtml',function ($compile) {
             return {
@@ -59,9 +52,10 @@
                 link:function (scope,elem,attr) {
                     var newScope;
                     scope.$watch('applicants', function (n) {
-                        if(newScope) newScope.$destroy();
-                        newScope = scope.$new();
+
                         if (attr.ngBindHtml) {
+                            if(newScope) newScope.$destroy();
+                            newScope = scope.$new();
                             $compile(elem[0].children)(newScope)
                         }
                     })
@@ -73,9 +67,12 @@
             return {
                 restrict:'A',
                 link:function (scope,elem,attr) {
+                    var newScope;
                     scope.$watch('markForm',function(n){
 
                         if(attr.ngBindHtml) {
+                            if(newScope) newScope.$destroy();
+                            newScope = scope.$new();
                             $compile(elem[0].children)(scope)
                         }
                     })
