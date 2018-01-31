@@ -23,8 +23,8 @@
                console.log(fs);
 
            }
-//           alert(v+" "+t.width())
-           t.css({fontSize:fs+"px"})
+           alert(v+" "+t.width())
+//           t.css({fontSize:Math.floor(fs)+"px"})
        })
     </script>
 </head>
@@ -57,7 +57,7 @@
         </div>
         <div class="card-body-middle">
             <ul>
-                <li id="ansar_name">{{$ad->name}}</li>
+                <li id="ansar_name" style="white-space: nowrap !important;">{{$ad->name}}</li>
                 <li>{{$ad->rank}}</li>
                 <li>{{$ad->blood_group}}</li>
                 <li>{{$ad->unit_name}}</li>
