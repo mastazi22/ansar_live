@@ -865,7 +865,7 @@
                                     <div class="col-sm-10">
                                         <div class="input-group">
                                             <span class="input-group-addon">+88</span>
-                                            <input class="form-control  " id="mobile_no_self" disabled="disabled"
+                                            <input class="form-control  " id="mobile_no_self"
                                                    name="mobile_no_self" ng-model="formData.mobile_no_self"
                                                    ng-change="mobile_no_self=mobile_no_self.length>11?mobile_no_self.substring(0,11):mobile_no_self"
                                                    type="text" placeholder="Mobile no(Self)">
