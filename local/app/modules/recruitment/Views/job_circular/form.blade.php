@@ -280,11 +280,11 @@
                                         <label class="control-label">Female</label>
                                         <div class="row">
                                             <div class="col-sm-6">
-                                                <input type="text" ng-disabled="constraint.gender.male!='female'"
+                                                <input type="text" ng-disabled="constraint.gender.female!='female'"
                                                        ng-model="constraint.chest.female.min" class="form-control" placeholder="">
                                             </div>
                                             <div class="col-sm-6">
-                                                <input type="text" ng-disabled="constraint.gender.male!='female'"
+                                                <input type="text" ng-disabled="constraint.gender.female!='female'"
                                                        ng-model="constraint.chest.female.max" class="form-control" placeholder="">
                                             </div>
                                         </div>
