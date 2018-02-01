@@ -4,7 +4,8 @@
     <link rel="stylesheet" href="{{asset('dist/css/id-card.css')}}">
     <script src="{{asset('dist/js/jquery-1.11.1.js')}}"></script>
     <script>
-       $(window).load(function () {
+       $(document).ready(function () {
+//           alert(1);
            function getTextWidth(text, font) {
                // re-use canvas object for better performance
                var canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
@@ -15,14 +16,15 @@
            }
            var t = $("#ansar_name");
            var fs = 12;
+           var v = 0;
            var font = window.getComputedStyle(document.getElementById('ansar_name'),null).getPropertyValue('font-family');
-           while(getTextWidth(t.text(),"normal "+fs+"px "+font)>t.width()){
+           while((v=getTextWidth(t.text(),"normal "+fs+"px "+font))>=t.width()){
                fs-=1;
                console.log(fs);
 
            }
-//           alert(t.text())
-           t.css({fontSize:fs+"px"})
+           alert(v+" "+t.width())
+//           t.css({fontSize:Math.floor(fs)+"px"})
        })
     </script>
 </head>
@@ -55,7 +57,7 @@
         </div>
         <div class="card-body-middle">
             <ul>
-                <li id="ansar_name">{{$ad->name}}</li>
+                <li id="ansar_name" style="white-space: nowrap !important;">{{$ad->name}}</li>
                 <li>{{$ad->rank}}</li>
                 <li>{{$ad->blood_group}}</li>
                 <li>{{$ad->unit_name}}</li>
