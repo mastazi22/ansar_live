@@ -69,6 +69,8 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
     Route::any('/reports/applicat_marks_list',['as'=>'report.applicants.applicat_marks_list','uses'=>'ApplicantReportsController@applicantMarksReport']);
     Route::post('/reports/applicat_status/export',['as'=>'report.applicants.status_export','uses'=>'ApplicantReportsController@exportData']);
 
+//
+    Route::any('/setting/instruction',['as'=>'recruitment.instruction','uses'=>'RecruitmentController@aplicationInstruction']);
 
     //load image
     Route::get('/profile_image',['as'=>'profile_image','uses'=>'ApplicantScreeningController@loadImage']);

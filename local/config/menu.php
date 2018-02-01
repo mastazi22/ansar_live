@@ -445,6 +445,10 @@ return [
                     "route"=>"recruitment.applicant.editfield",
                     "icon"=>"fa-cog"
                 ],
+                "Application Instruction"=>[
+                    "route"=>"recruitment.instruction",
+                    "icon"=>"fa-cog"
+                ],
 
             ]
         ],
