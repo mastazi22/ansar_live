@@ -1089,7 +1089,41 @@ class EmbodimentController extends Controller
     public function loadDisembodiedAnsar(Request $request){
         if($request->ajax()){
             if(strcasecmp($request->method(),'post')==0){
-
+                DB::enablequeryLog();
+                $query = DB::table('tbl_ansar_parsonal_info')
+                    ->join('tbl_designations','tbl_designations.id','=','tbl_ansar_parsonal_info.designation_id')
+                    ->join('tbl_units','tbl_units.id','=','tbl_ansar_parsonal_info.unit_id')
+                    ->join('tbl_division','tbl_division.id','=','tbl_ansar_parsonal_info.division_id')
+                    ->join('tbl_rest_info','tbl_rest_info.ansar_id','=','tbl_ansar_parsonal_info.ansar_id')
+                    ->join('tbl_embodiment_log',function($join){
+                        $join->on('tbl_rest_info.ansar_id','=','tbl_embodiment_log.ansar_id');
+                        $join->on('tbl_rest_info.rest_date','=','tbl_embodiment_log.release_date');
+                    })
+                    ->join('tbl_kpi_info','tbl_kpi_info.id','=','tbl_embodiment_log.kpi_id')
+                    ->join('tbl_disembodiment_reason','tbl_rest_info.disembodiment_reason_id','=','tbl_disembodiment_reason.id')
+                    ->where('tbl_embodiment_log.old_embodiment_id','!=',0)
+                    ->where('tbl_rest_info.total_service_days','<',365*3);
+                if($request->range){
+                    $query->where('tbl_kpi_info.division_id',$request->range);
+                }
+                if($request->unit){
+                    $query->where('tbl_kpi_info.unit_id',$request->unit);
+                }
+                if($request->thana){
+                    $query->where('tbl_kpi_info.thana_id',$request->thana);
+                }
+                if($request->kpi){
+                    $query->where('tbl_kpi_info.id',$request->kpi);
+                }
+                if($request->reason){
+                    $query->where('tbl_disembodiment_reason.id',$request->reason);
+                }
+                $data = $query->select('tbl_ansar_parsonal_info.ansar_name_bng','tbl_ansar_parsonal_info.ansar_id',
+                    'tbl_designations.name_bng','tbl_division.division_name_bng','tbl_units.unit_name_bng',
+                    'tbl_kpi_info.kpi_name','tbl_rest_info.total_service_days','tbl_rest_info.rest_date',
+                    'tbl_disembodiment_reason.reason_in_bng')->get();
+//                return DB::getQueryLog();
+                return $data;
             }else{
                 abort(403);
             }

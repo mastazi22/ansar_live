@@ -342,6 +342,8 @@ Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserT
         Route::get('/download_all_bank_form', 'EmbodimentController@downloadAllBankForm');
         Route::get('/bank_recipt', ['as' => 'bank_recipt', 'uses' => 'EmbodimentController@bankRecipt']);
 
+        Route::any('/disembodied_period_correction', ['as' => 'disembodied_period_correction', 'uses' => 'EmbodimentController@loadDisembodiedAnsar']);
+
         Route::get('/disembodiment_date_correction_view', ['as' => 'disembodiment_date_correction_view', 'uses' => 'EmbodimentController@disembodimentDateCorrectionView']);
         Route::get('/embodiment_date_correction_view', ['as' => 'embodiment_date_correction_view', 'uses' => 'EmbodimentController@embodimentDateCorrectionView']);
         Route::get('/load_ansar_for_disembodiment_date_correction', ['as'=>'load_ansar_for_disembodiment_date_correction','uses'=>'EmbodimentController@loadAnsarForDisembodimentDateCorrection']);

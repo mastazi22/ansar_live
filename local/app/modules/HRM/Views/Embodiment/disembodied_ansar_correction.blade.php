@@ -1,15 +1,17 @@
 {{--Ansar Transfer Complete--}}
 
 @extends('template.master')
-@section('title','Transfer Ansars')
+@section('title','Disembodied period correction')
 @section('breadcrumb')
     {!! Breadcrumbs::render('transfer') !!}
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller("TransferController", function ($scope, $http, $timeout,$rootScope) {
+        GlobalApp.controller("DisembodiedPeriodCorrectionController", function ($scope, $http, $timeout,$rootScope) {
             $scope.reasons = [];
             $scope.params={};
+            $scope.reset={};
+            $scope.embodimentData={};
             $http({
                 method:'get',
                 url:'{{URL::route('load_disembodiment_reason')}}'
@@ -18,10 +20,30 @@
             },function (response) {
                 $scope.reasons = [];
             })
+            $scope.loadAnsar = function () {
+                $http({
+                    method:'post',
+                    url:window.location.href,
+                    data:$scope.params
+                }).then(function (response) {
+                    $scope.ansars = response.data;
+                },function (response) {
+                    $scope.ansars = [];
+                })
+            }
+            $scope.embodiedAnsar = function (id) {
+
+                $scope.embodimentData['ansar_id'] = id;
+                $("#embodied-option").modal('show')
+                $scope.reset.reset();
+            }
+            $scope.postEmbodimentData = function () {
+                console.log($scope.embodimentData)
+            }
         })
 
     </script>
-    <div notification-message ng-controller="TransferController">
+    <div notification-message ng-controller="DisembodiedPeriodCorrectionController">
 
         <section class="content">
             <div class="box box-solid">
@@ -38,13 +60,14 @@
                             start-load="range"
                             field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
                             data = "params"
+                            call-func="reset"
                     ></filter-template>
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label for="" class="control-label">Select Reason</label>
-                                <select ng-model="params.reason" class="form-control">
-                                    <option value="">--Select a Reason</option>
+                                <select ng-model="params.reason" class="form-control" ng-change="loadAnsar()">
+                                    <option value="">--Select a reason--</option>
                                     <option ng-repeat="r in reasons" value="[[r.id]]">[[r.reason_in_bng]]</option>
                                 </select>
                             </div>
@@ -65,14 +88,8 @@
                                 <th>Last Embodied KPI</th>
                                 <th>Total Service Days</th>
                                 <th>Disembodied Date</th>
+                                <th>Disembodied Reason</th>
                                 <th>Action</th>
-                                {{--<th>
-                                    <div class="styled-checkbox">
-                                        <input ng-disabled="ansars.length<=0" type="checkbox" id="all"
-                                               ng-change="changeSelectAll()" ng-model="selectAll">
-                                        <label for="all"></label>
-                                    </div>
-                                </th>--}}
                             </tr>
                             <tr class="warning" ng-if="ansars.length<=0">
                                 <td colspan="9">No Ansar Found to Transfer</td>
@@ -85,14 +102,13 @@
                                 <td>[[ansar.division_name_bng]]</td>
                                 <td>[[ansar.unit_name_bng]]</td>
                                 <td>[[ansar.kpi_name]]</td>
-                                <td>[[ansar.transfered_date|dateformat:'DD-MMM-YYYY']]</td>
+                                <td>[[(ansar.total_service_days/365).toFixed(1)]]&nbsp; years</td>
+                                <td>[[ansar.rest_date|dateformat:'DD-MMM-YYYY']]</td>
+                                <td>[[ansar.reason_in_bng]]</td>
                                 <td>
-                                    <div class="styled-checkbox">
-                                        <input type="checkbox" id="a_[[ansar.ansar_id]]"
-                                               ng-change="changeSelectAnsar($index)"
-                                               ng-model="selectAnsar[$index]">
-                                        <label for="a_[[ansar.ansar_id]]"></label>
-                                    </div>
+                                    <button class="btn btn-primary btn-xs" ng-click="embodiedAnsar(ansar.ansar_id)">
+                                        Re-embodied
+                                    </button>
                                 </td>
                             </tr>
                         </table>
@@ -110,12 +126,11 @@
                 </div>
 
             </div>
-            <div id="transfer-option" class="modal fade" role="dialog">
-                <div class="modal-dialog"
-                     style="width: 70% !important;margin: 0 auto !important;margin-top: 20px !important;">
+            <div id="embodied-option" class="modal fade" role="dialog">
+                <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <strong>Transfer Option</strong>
+                            <strong>Embodiment Option</strong>
                             <button type="button" class="close" data-dismiss="modal"
                                     ng-click="modalOpen = false">&times;</button>
                         </div>
@@ -126,74 +141,37 @@
                                             show-item="['range','unit','thana','kpi']"
                                             type="single"
                                             start-load="range"
-                                            kpi-disabled="params.kpi"
-                                            field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
-                                            data = "trans"
-                                            reset-all="[[resetValue]]"
+                                            layout-vertical="true"
+                                            data = "embodimentData"
                                     ></filter-template>
 
-                                    <div class="row">
-                                        <div class="col-sm-4">
-                                            <div class="form-group">
-                                                <label class="control-label">Memorandum no. & Date&nbsp;&nbsp;&nbsp;<span
-                                                            ng-show="isVerifying"><i class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span>
-                                                    <span class="text-danger"
-                                                          ng-if="isVerified">This id already taken</span></label>
+                                    <div class="form-group">
+                                        <label class="control-label">Memorandum no. & Date&nbsp;&nbsp;&nbsp;<span
+                                                    ng-show="isVerifying"><i class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span>
+                                            <span class="text-danger"
+                                                  ng-if="isVerified">This id already taken</span></label>
 
-                                                <div class="row">
-                                                    <div class="col-md-7" style="padding-right: 0"><input ng-blur="verifyMemorandumId()"
-                                                                                 ng-model="memorandumId"
-                                                                                 type="text" class="form-control"
-                                                                                 name="memorandum_id"
-                                                                                 placeholder="Enter memorandum id">
-                                                    </div>
-                                                    <div class="col-md-5">
-                                                        <input date-picker ng-model="memDate"
-                                                               type="text" class="form-control" name="mem_date"
-                                                               placeholder="Memorandum Date" required>
-                                                    </div>
-                                                </div>
+                                        <div class="row">
+                                            <div class="col-md-7" style="padding-right: 0"><input ng-blur="verifyMemorandumId()"
+                                                                                                  ng-model="embodimentData.memorandumId"
+                                                                                                  type="text" class="form-control"
+                                                                                                  name="memorandum_id"
+                                                                                                  placeholder="Enter memorandum id">
                                             </div>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <div class="form-group">
-                                                <label class="control-label">Joining date in transfered kpi.</label>
-                                                <input type="text" ng-model="joinDate" id="join_date_in_tk"
-                                                       class="form-control"
-                                                       name="memorandum_id">
+                                            <div class="col-md-5">
+                                                <input date-picker ng-model="memDate"
+                                                       type="text" class="form-control" name="mem_date"
+                                                       placeholder="Memorandum Date" required>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered" style="max-height: 200px">
-                                            <tr>
-                                                <th>SL. No</th>
-                                                <th>ID</th>
-                                                <th>Designation</th>
-                                                <th>Name</th>
-                                                <th>Division</th>
-                                                <th>District</th>
-                                                <th>KPI Name</th>
-                                                <th>Joining Date</th>
-                                            </tr>
-                                            <tr class="warning" ng-if="selectedAnsar.length<=0">
-                                                <td colspan="8">No Ansar Found to Transfer</td>
-                                            </tr>
-                                            <tr ng-repeat="ansar in selectedAnsar" ng-if="selectedAnsar.length>0">
-                                                <td>[[$index+1]]</td>
-                                                <td>[[ansar.ansar_id]]</td>
-                                                <td>[[ansar.name_bng]]</td>
-                                                <td>[[ansar.ansar_name_bng]]</td>
-                                                <td>[[ansar.division_name_bng]]</td>
-                                                <td>[[ansar.unit_name_bng]]</td>
-                                                <td>[[ansar.kpi_name]]</td>
-                                                <td>[[ansar.joining_date|dateformat:'DD-MMM-YYYY']]</td>
-                                            </tr>
-                                        </table>
+                                    <div class="form-group">
+                                        <label class="control-label">Joining date</label>
+                                        <input type="text" date-picker ng-model="embodimentData.joinDate" id="join_date_in_tk"
+                                               class="form-control"
+                                               name="memorandum_id">
                                     </div>
-                                    <button class="btn btn-primary pull-right" open-hide-modal
-                                            ng-disabled="selectedAnsar.length<=0||!memorandumId||!joinDate||!trans.kpi||isVerified||isVerifying"
-                                            ng-click="confirmTransferAnsar()">
+                                    <button class="btn btn-primary pull-right" ng-click="postEmbodimentData()">
                                         <i class="fa fa-check"></i>&nbsp;Confirm
                                     </button>
                                 </div>

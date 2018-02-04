@@ -107,6 +107,10 @@ return [
                             "route" => "embodiment_memorandum_id_correction_view",
                             "icon" => "fa-dashboard",
                         ],
+                        "Disembodiment period correction" => [
+                            "route" => "disembodied_period_correction",
+                            "icon" => "fa-dashboard",
+                        ],
 
                     ]
 

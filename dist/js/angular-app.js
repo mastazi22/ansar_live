@@ -499,7 +499,8 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
             customModel: '=?',
             customChange: '&',
             kpiType: '@',
-            resetAll: '@'
+            resetAll: '@',
+            callFunc:'=?'
         },
         controller: function ($scope, $rootScope, httpService) {
             $scope.selected = {
@@ -774,7 +775,16 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                 })
 
             })
-
+            if(scope.callFunc){
+                scope.callFunc['reset'] = function () {
+                    // alert(1);
+                    scope.selected.unit = scope.type == 'all' ? 'all' : ''
+                    scope.selected.thana = scope.type == 'all' ? 'all' : ''
+                    scope.selected.kpi = scope.type == 'all' ? 'all' : ''
+                    scope.selected.range = scope.type == 'all' ? 'all' : ''
+                    // scope.$digest();
+                }
+            }
             $(element).on('change', "#range", function () {
                 //alert('aSsas')
                 scope.selected.unit = scope.type == 'all' ? 'all' : ''
