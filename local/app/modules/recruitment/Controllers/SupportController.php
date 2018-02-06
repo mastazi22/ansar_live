@@ -5,7 +5,6 @@ namespace App\modules\recruitment\Controllers;
 use App\Jobs\FeedbackSMS;
 use App\modules\recruitment\Models\FeebBack;
 use App\modules\recruitment\Models\JobAppliciant;
-use http\Exception;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;

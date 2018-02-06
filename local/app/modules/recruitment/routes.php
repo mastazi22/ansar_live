@@ -72,6 +72,7 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
 //
     Route::any('/setting/instruction',['as'=>'recruitment.instruction','uses'=>'RecruitmentController@aplicationInstruction']);
 
+    Route::resource('exam-center','ApplicantExamCenter');
     //load image
     Route::get('/profile_image',['as'=>'profile_image','uses'=>'ApplicantScreeningController@loadImage']);
     Route::get('/test',function (){
