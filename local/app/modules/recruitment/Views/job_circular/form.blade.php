@@ -51,6 +51,14 @@
 
     </div>
     <div class="form-group">
+        {!! Form::label('test','Login Status : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
+        <input type="checkbox" value="on" name="login_status"
+               @if((isset($data)&&$data->login_status=='on')||Request::old('login_status')=='on')checked
+               @endif id="login_status" class="switch-checkbox">
+        <label for="login_status" class=""></label>
+
+    </div>
+    <div class="form-group">
         {!! Form::label('test','Payment Status : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
         <input type="checkbox" value="on" name="payment_status"
                @if((isset($data)&&$data->payment_status=='on')||Request::old('payment_status')=='on')checked
