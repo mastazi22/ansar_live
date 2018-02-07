@@ -4,6 +4,7 @@ namespace App\modules\recruitment\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\modules\HRM\Models\District;
+use App\modules\HRM\Models\Division;
 use App\modules\recruitment\Models\JobApplicantExamCenter;
 use App\modules\recruitment\Models\JobCircular;
 use Illuminate\Http\Request;
@@ -40,7 +41,9 @@ class ApplicantExamCenter extends Controller
     {
         $circulars = JobCircular::pluck('circular_name', 'id');
         $units = District::all();
-        return view('recruitment::exam_center.create', compact('circulars', 'units'));
+        $division = Division::all();
+        $division->prepend('--Select a division','');
+        return view('recruitment::exam_center.create', compact('circulars', 'units','division'));
     }
 
     /**
@@ -51,16 +54,7 @@ class ApplicantExamCenter extends Controller
      */
     public function store(Request $request)
     {
-        $rules = [
-            'job_circular_id' => 'required|numeric|exists:job_circular,id',
-            'selection_date' => 'required',
-            'selection_place' => 'required',
-            'selection_units' => 'required',
-            'written_viva_date' => 'required',
-            'written_viva_place' => 'required',
-            'written_viva_units' => 'required',
-        ];
-        $this->validate($request, $rules);
+        $this->validate($request, JobApplicantExamCenter::rules());
 
         DB::beginTransaction();
         try{
@@ -103,7 +97,9 @@ class ApplicantExamCenter extends Controller
         $data = JobApplicantExamCenter::find($id);
         $circulars = JobCircular::pluck('circular_name', 'id');
         $units = District::all();
-        return view('recruitment::exam_center.edit', compact('circulars', 'units','data'));
+        $division = Division::pluck('division_name_bng','id');
+        $division->prepend('--Select a division','');
+        return view('recruitment::exam_center.edit', compact('circulars', 'units','data','division'));
     }
 
     /**
@@ -115,16 +111,8 @@ class ApplicantExamCenter extends Controller
      */
     public function update(Request $request, $id)
     {
-        $rules = [
-            'job_circular_id' => 'required|numeric|exists:job_circular,id',
-            'selection_date' => 'required',
-            'selection_place' => 'required',
-            'selection_units' => 'required',
-            'written_viva_date' => 'required',
-            'written_viva_place' => 'required',
-            'written_viva_units' => 'required',
-        ];
-        $this->validate($request, $rules);
+
+        $this->validate($request, JobApplicantExamCenter::rules());
 
         DB::beginTransaction();
         try{

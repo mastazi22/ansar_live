@@ -21,11 +21,22 @@
     </div>
 
     <div class="form-group">
-        {!! Form::label('selection_date','Selection Date :',['class'=>'control-label']) !!}
-        {!! Form::text('selection_date',null,['class'=>'form-control','placeholder'=>'Enter Selection Date','date-picker'=>(isset($data)?"moment('{$data->selection_date}').format('DD-MMM-YYYY')":"moment('".\Carbon\Carbon::parse(Request::old('selection_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
-        @if(isset($errors)&&$errors->first('selection_date'))
-            <p class="text text-danger">{{$errors->first('selection_date')}}</p>
-        @endif
+        <div class="row">
+            <div class="col-sm-6">
+                {!! Form::label('selection_date','Selection Date :',['class'=>'control-label']) !!}
+                {!! Form::text('selection_date',null,['class'=>'form-control','placeholder'=>'Enter Selection Date','date-picker'=>(isset($data)?"moment('{$data->selection_date}').format('DD-MMM-YYYY')":"moment('".\Carbon\Carbon::parse(Request::old('selection_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
+                @if(isset($errors)&&$errors->first('selection_date'))
+                    <p class="text text-danger">{{$errors->first('selection_date')}}</p>
+                @endif
+            </div>
+            <div class="col-sm-6">
+                {!! Form::label('selection_time','Selection Time :',['class'=>'control-label']) !!}
+                {!! Form::text('selection_time',null,['class'=>'form-control time-set','placeholder'=>'HH:MM AM/PM']) !!}
+                @if(isset($errors)&&$errors->first('selection_time'))
+                    <p class="text text-danger">{{$errors->first('selection_time')}}</p>
+                @endif
+            </div>
+        </div>
     </div>
     <div class="form-group">
         {!! Form::label('written_viva_place','Written Viva Place :',['class'=>'control-label']) !!}
@@ -35,49 +46,42 @@
         @endif
     </div>
         <div class="form-group">
-            {!! Form::label('written_viva_date','Written Viva Date :',['class'=>'control-label']) !!}
-            {!! Form::text('written_viva_date',null,['class'=>'form-control','placeholder'=>'Enter Selection Date','date-picker'=>(isset($data)?"moment('{$data->written_viva_date}').format('DD-MMM-YYYY')":"moment('".\Carbon\Carbon::parse(Request::old('written_viva_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
-            @if(isset($errors)&&$errors->first('written_viva_date'))
-                <p class="text text-danger">{{$errors->first('written_viva_date')}}</p>
-            @endif
+            <div class="row">
+                <div class="col-sm-6">
+                    {!! Form::label('written_viva_date','Written Viva Date :',['class'=>'control-label']) !!}
+                    {!! Form::text('written_viva_date',null,['class'=>'form-control','placeholder'=>'Enter Selection Date','date-picker'=>(isset($data)?"moment('{$data->written_viva_date}').format('DD-MMM-YYYY')":"moment('".\Carbon\Carbon::parse(Request::old('written_viva_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
+                    @if(isset($errors)&&$errors->first('written_viva_date'))
+                        <p class="text text-danger">{{$errors->first('written_viva_date')}}</p>
+                    @endif
+                </div>
+                <div class="col-sm-6">
+                    {!! Form::label('written_viva_time','Written Viva Time :',['class'=>'control-label']) !!}
+                    {!! Form::text('written_viva_time',null,['class'=>'form-control','placeholder'=>'HH:MM AM/PM']) !!}
+                    @if(isset($errors)&&$errors->first('written_viva_time'))
+                        <p class="text text-danger">{{$errors->first('written_viva_time')}}</p>
+                    @endif
+                </div>
+            </div>
         </div>
         <div class="form-group">
-            {!! Form::label('Select applicant district','Selection Units',['class'=>'control-label']) !!}
+            {!! Form::label('Select applicant district','Select Unit',['class'=>'control-label']) !!}
             {!! Form::text('search_unit',null,['class'=>'form-control','placeholder'=>'Search Unit','style'=>'margin-bottom:10px']) !!}
             <div class="form-control" style="height: 200px;overflow: auto;">
                 <ul>
                     @foreach($units as $u)
                         <li style="list-style: none">
                             @if(isset($data))
-                                {!! Form::checkbox('selection_units[]',$u->id,in_array($u->unit_name_bng,explode(',',$data->selection_units)),['style'=>'vertical-align:sub','data-division-id'=>$u->division_id]) !!}
+                                {!! Form::checkbox('units[]',$u->id,in_array($u->unit_name_bng,explode(',',$data->units)),['style'=>'vertical-align:sub','data-division-id'=>$u->division_id]) !!}
                                 &nbsp;{{$u->unit_name_bng}}
                             @else
-                                {!! Form::checkbox('selection_units[]',$u->id,false,['style'=>'vertical-align:sub']) !!}
+                                {!! Form::checkbox('units[]',$u->id,false,['style'=>'vertical-align:sub']) !!}
                                 &nbsp;{{$u->unit_name_bng}}
                             @endif
                         </li>
                     @endforeach
                 </ul>
             </div>
-        </div>
-        <div class="form-group">
-            {!! Form::label('written_viva_units','Written Viva Units',['class'=>'control-label']) !!}
-            {!! Form::text('search_unit',null,['class'=>'form-control','placeholder'=>'Search Unit','style'=>'margin-bottom:10px']) !!}
-            <div class="form-control" style="height: 200px;overflow: auto;">
-                <ul>
-                    @foreach($units as $u)
-                        <li style="list-style: none">
-                            @if(isset($data))
-                                {!! Form::checkbox('written_viva_units[]',$u->id,in_array($u->unit_name_bng,explode(',',$data->selection_units)),['style'=>'vertical-align:sub']) !!}
-                                &nbsp;{{$u->unit_name_bng}}
-                            @else
-                                {!! Form::checkbox('written_viva_units[]',$u->id,false,['style'=>'vertical-align:sub']) !!}
-                                &nbsp;{{$u->unit_name_bng}}
-                            @endif
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
+            {{$errors->first('units','<p class="text text-danger">:message</p>')}}
         </div>
     @if(isset($data))
         <button type="submit" class="btn btn-primary pull-right">
@@ -106,5 +110,26 @@
                 }
             })
         })
+
     })
+    $.fn.selectRange = function(start, end) {
+//        alert(1)
+        if(end === undefined) {
+            end = start;
+        }
+        return this.each(function() {
+            if('selectionStart' in this) {
+                this.selectionStart = start;
+                this.selectionEnd = end;
+            } else if(this.setSelectionRange) {
+                this.setSelectionRange(start, end);
+            } else if(this.createTextRange) {
+                var range = this.createTextRange();
+                range.collapse(true);
+                range.moveEnd('character', end);
+                range.moveStart('character', start);
+                range.select();
+            }
+        });
+    };
 </script>

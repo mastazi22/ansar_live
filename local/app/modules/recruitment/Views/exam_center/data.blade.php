@@ -6,22 +6,20 @@
             <th>Job Circular Name</th>
             <th>Selection Date</th>
             <th>Selection Place</th>
-            <th>Selection Units</th>
             <th>Written Viva Date</th>
             <th>Written Viva Place</th>
-            <th>Written Viva Units</th>
+            <th>Units</th>
             <th style="width: 100px;">Action</th>
         </tr>
         @forelse($data as $d)
             <tr>
                 <td>{{$i++}}</td>
                 <td>{{$d->circular->circular_name}}</td>
-                <td>{{$d->selection_date}}</td>
+                <td>{{$d->selection_date.' '.$d->selection_time}}</td>
                 <td>{{$d->selection_place}}</td>
-                <td>{{$d->selection_units}}</td>
-                <td>{{$d->written_viva_date}}</td>
+                <td>{{$d->written_viva_date.' '.$d->written_viva_time}}</td>
                 <td>{{$d->written_viva_place}}</td>
-                <td>{{$d->written_viva_units}}</td>
+                <td>{{$d->units}}</td>
                 <td>
                     <a class="btn btn-primary btn-xs" href="{{URL::route('recruitment.exam-center.edit',['id'=>$d->id])}}">
                         <i class="fa fa-edit"></i>

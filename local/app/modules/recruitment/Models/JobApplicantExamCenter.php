@@ -16,28 +16,21 @@ class JobApplicantExamCenter extends Model
     public function circular(){
         return $this->belongsTo(JobCircular::class,'job_circular_id');
     }
-    public function getSelectionUnitsAttribute($value){
-        $ids = explode(',',$value);
-        $units = District::whereIn('id',$ids)->pluck('unit_name_bng');
-//        return $units;
-        return implode(',',collect($units)->toArray());
-    }
-    public function setSelectionUnitsAttribute($value){
-//        return $units;
-        $this->attributes['selection_units'] = implode(',',$value);
-    }
     public function setSelectionDateAttribute($value){
 //        return $units;
         $this->attributes['selection_date'] = Carbon::parse($value)->format('Y-m-d');
     }
-    public function getWrittenVivaUnitsAttribute($value){
+    public function getSelectionDateAttribute($value){
+        return Carbon::parse($value)->format('d-M-Y');
+    }
+    public function getUnitsAttribute($value){
         $ids = explode(',',$value);
         $units = District::whereIn('id',$ids)->pluck('unit_name_bng');
 //        return $units;
         return implode(',',collect($units)->toArray());
     }
-    public function setWrittenVivaUnitsAttribute($value){
-        $this->attributes['written_viva_units'] = implode(',',$value);
+    public function setUnitsAttribute($value){
+        $this->attributes['units'] = implode(',',$value);
     }
     public function setWrittenVivaDateAttribute($value){
         $this->attributes['written_viva_date'] = Carbon::parse($value)->format('Y-m-d');
@@ -45,7 +38,18 @@ class JobApplicantExamCenter extends Model
     public function getWrittenVivaDateAttribute($value){
         return Carbon::parse($value)->format('d-M-Y');
     }
-    public function getSelectionDateAttribute($value){
-        return Carbon::parse($value)->format('d-M-Y');
+
+    public static function rules(){
+        $rules = [
+            'job_circular_id' => 'required|numeric|exists:job_circular,id',
+            'selection_date' => 'required',
+            'selection_time' => ['required','regex:/^(0[0-9]|1[0-2]):([0-5][0-9])\s?(AM|PM)$/'],
+            'selection_place' => 'required',
+            'written_viva_date' => 'required',
+            'written_viva_time' => ['required','regex:/^(0[0-9]|1[0-2]):([0-5][0-9])\s?(AM|PM)$/'],
+            'written_viva_place' => 'required',
+            'units' => 'required',
+        ];
+        return $rules;
     }
 }
