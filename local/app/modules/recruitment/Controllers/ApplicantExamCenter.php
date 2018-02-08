@@ -58,8 +58,14 @@ class ApplicantExamCenter extends Controller
 
         DB::beginTransaction();
         try{
-            $input = $request->except(['search_unit']);
-            JobApplicantExamCenter::create($input);
+            $input = $request->except(['search_unit','units']);
+            $jec = JobApplicantExamCenter::where('job_circular_id',$request->job_circular_id)
+                ->whereHas('examUnits',function ($q) use($request){
+                    $q->whereIn('unit_id',$request->units);
+                })->exists();
+            if($jec) throw new \Exception('Exam center already exists under this circular and units');
+            $ec = JobApplicantExamCenter::create($input);
+            $ec->units()->attach($request->units);
             DB::commit();
             return redirect()->route('recruitment.exam-center.index')->with('session_success','Exam center created successfully');
         }catch(\Throwable $e){
@@ -116,9 +122,17 @@ class ApplicantExamCenter extends Controller
 
         DB::beginTransaction();
         try{
-            $input = $request->except(['search_unit']);
+            $input = $request->except(['search_unit','units']);
+            $jec = JobApplicantExamCenter::where('job_circular_id',$request->job_circular_id)
+                ->where('id','!=',$id)
+                ->whereHas('examUnits',function ($q) use($request){
+                    $q->whereIn('unit_id',$request->units);
+                })->exists();
+            if($jec) throw new \Exception('Exam center already exists under this circular and units');
             $exam_center = JobApplicantExamCenter::findOrFail($id);
             $exam_center->update($input);
+            $exam_center->units()->detach();
+            $exam_center->units()->attach($request->units);
             DB::commit();
             return redirect()->route('recruitment.exam-center.index')->with('session_success','Exam center Updated successfully');
         }catch(\Throwable $e){

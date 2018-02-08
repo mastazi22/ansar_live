@@ -16,6 +16,12 @@ class JobApplicantExamCenter extends Model
     public function circular(){
         return $this->belongsTo(JobCircular::class,'job_circular_id');
     }
+    public function units(){
+        return $this->belongsToMany(District::class,'ansar_recruitment.job_applicant_exam_center_units','exam_center_id','unit_id');
+    }
+    public function examUnits(){
+        return $this->hasMany(JobApplicantExamCenterUnits::class,'exam_center_id');
+    }
     public function setSelectionDateAttribute($value){
 //        return $units;
         $this->attributes['selection_date'] = Carbon::parse($value)->format('Y-m-d');
@@ -23,7 +29,7 @@ class JobApplicantExamCenter extends Model
     public function getSelectionDateAttribute($value){
         return Carbon::parse($value)->format('d-M-Y');
     }
-    public function getUnitsAttribute($value){
+    /*public function getUnitsAttribute($value){
         $ids = explode(',',$value);
         $units = District::whereIn('id',$ids)->pluck('unit_name_bng');
 //        return $units;
@@ -31,7 +37,7 @@ class JobApplicantExamCenter extends Model
     }
     public function setUnitsAttribute($value){
         $this->attributes['units'] = implode(',',$value);
-    }
+    }*/
     public function setWrittenVivaDateAttribute($value){
         $this->attributes['written_viva_date'] = Carbon::parse($value)->format('Y-m-d');
     }

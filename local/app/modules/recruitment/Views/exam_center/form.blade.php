@@ -71,7 +71,7 @@
                     @foreach($units as $u)
                         <li style="list-style: none">
                             @if(isset($data))
-                                {!! Form::checkbox('units[]',$u->id,in_array($u->unit_name_bng,explode(',',$data->units)),['style'=>'vertical-align:sub','data-division-id'=>$u->division_id]) !!}
+                                {!! Form::checkbox('units[]',$u->id,$data->units()->where('tbl_units.id',$u->id)->exists(),['style'=>'vertical-align:sub','data-division-id'=>$u->division_id]) !!}
                                 &nbsp;{{$u->unit_name_bng}}
                             @else
                                 {!! Form::checkbox('units[]',$u->id,false,['style'=>'vertical-align:sub']) !!}
