@@ -76,18 +76,14 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
     //load image
     Route::get('/profile_image',['as'=>'profile_image','uses'=>'ApplicantScreeningController@loadImage']);
     Route::get('/test',function (){
-       $data = \Maatwebsite\Excel\Facades\Excel::load(storage_path('vulll.xls'),function (){
-
-       })->get() ;
-//       return $data;
-       foreach ($data as $d){
-           $jj = \App\modules\recruitment\Models\JobApplicantMarks::where('applicant_id',$d['applicant_id']);
-           if(!$jj->exists()){
-                $p = $d;
-                unset($p['']);
-               \App\modules\recruitment\Models\JobApplicantMarks::create(collect($p)->toArray());
-           }
-       }
+        $applicants = \App\modules\recruitment\Models\JobAppliciant::where('job_circular_id',4)->get();
+        $array = [];
+        foreach ($applicants as $a){
+            $a['physical_point'] = $a->physicalPoint();
+            $a['edu_point'] = $a->educationPoint();
+            array_push($array,$a);
+        }
+        return $array;
     });
 
 

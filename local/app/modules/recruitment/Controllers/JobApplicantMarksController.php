@@ -41,6 +41,7 @@ class JobApplicantMarksController extends Controller
                    $q->orWhere('national_id_no',$request->q);
                 });
             }
+            $applicants->where('job_circular_id',$request->circular);
             $applicants->where('status','selected');
             return view('recruitment::applicant_marks.part_mark',['applicants'=>$applicants->paginate($request->limit?$request->limit:50)]);
         }
@@ -115,7 +116,7 @@ class JobApplicantMarksController extends Controller
             //return url()->route('recruitment.marks.update',['id'=>$mark->marks->id]);
             return view('recruitment::applicant_marks.form',['data'=>$mark->marks]);
         }
-        return view('recruitment::applicant_marks.form',['applicant_id'=>$id]);
+        return view('recruitment::applicant_marks.form',['applicant'=>$mark]);
     }
 
     /**

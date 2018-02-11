@@ -28,8 +28,8 @@
                 <tr>
                     <td>{{$i++}}</td>
                     <td>{{$a->applicant_name_bng}}</td>
-                    <td>{{$a->marks?($a->marks->physical?$a->marks->physical:'--'):'--'}}</td>
-                    <td>{{$a->marks?($a->marks->edu_training?$a->marks->edu_training:'--'):'--'}}</td>
+                    <td>{{$a->marks?($a->marks->physical?$a->marks->physical:$a->physicalPoint()):$a->physicalPoint()}}</td>
+                    <td>{{$a->marks?($a->marks->edu_training?$a->marks->edu_training:$a->educationTrainingPoint()):$a->educationTrainingPoint()}}</td>
                     <td>{{$a->marks?($a->marks->written?$a->marks->written:'--'):'--'}}</td>
 
 

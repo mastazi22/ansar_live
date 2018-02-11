@@ -60,4 +60,36 @@ class JobAppliciant extends Model
     public function hrmDetail(){
         return $this->hasOne(JobApplicantHRMDetails::class,'applicant_id','applicant_id');
     }
+    public function education(){
+        return $this->belongsToMany(JobEducationInfo::class,'job_appliciant_education_info','job_applicant_id','job_education_id');
+    }
+    public function physicalPoint(){
+        if($this->status!='selected'){
+            return $this->status;
+        }
+        $min_height = 64;
+        $max_height = 74;
+        $min_point = 5;
+        $max_point = 10;
+        $total_height = floatval($this->height_feet)*12+floatval($this->height_inch);
+        $delta_height = $max_height-$min_height;
+        $delta_point = $max_point-$min_point;
+        if($total_height>=$max_height) return $max_point;
+//        return $total_height;
+        return number_format(($delta_point/$delta_height)*(($total_height-$min_height))+$min_point,2);
+    }
+    public function educationTrainingPoint(){
+        $point_table = [
+          4=>10,
+          7=>8,
+          8=>6,
+          9=>4,
+          10=>2
+        ];
+        $order = 'desc';
+        $education_priority = $this->education()->orderBy('priority',$order)->first()['priority'];
+//        $point_table[$education_priority] = 0;
+        $training_point = $this->training_info=='VDP training'||$this->training_info=='TDP training'?5:0;
+        return (isset($point_table[$education_priority])?$point_table[$education_priority]:0)+$training_point;
+    }
 }

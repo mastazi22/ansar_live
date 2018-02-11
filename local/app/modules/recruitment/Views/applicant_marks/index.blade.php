@@ -5,7 +5,7 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('ApplicantsListController',function ($scope, $http, $sce) {
+        GlobalApp.controller('ApplicantsListController',function ($scope, $http, $sce,httpService) {
             $scope.applicants = $sce.trustAsHtml("<h3 class='text text-center'>Data loading....</h3>")
             $scope.param = {};
             $scope.param['limit'] = '50'
@@ -13,7 +13,14 @@
             $scope.markForm = $sce.trustAsHtml('');
             $scope.q = '';
             var v = '<div class="text-center" style="margin-top: 20px"><i class="fa fa-spinner fa-pulse"></i></div>'
-            $scope.allLoading = false;
+            $scope.allLoading = true;
+            httpService.circular({status:'running'}).then(function (circulars) {
+                $scope.circulars = circulars.data;
+                $scope.allLoading = false;
+            },function (error) {
+                $scope.allLoading = false;
+                $scope.circulars=[];
+            })
             $scope.loadApplicant = function (url) {
                 if($scope.param.limit===undefined){
                     $scope.param['limit'] = '50'
@@ -89,13 +96,26 @@
                     </span>
             </div>
             <div class="box-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="" class="control-label">Select a circular</label>
+                            <select ng-model="param.circular" ng-change="loadApplicant()" class="form-control">
+                                <option value="">--Select a circular--</option>
+                                <option ng-repeat="c in circulars" value="[[c.id]]">[[c.circular_name]]</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
                 <filter-template
                         show-item="['range','unit','thana']"
                         type="all"
                         range-change="loadApplicant()"
                         unit-change="loadApplicant()"
                         thana-change="loadApplicant()"
-                        on-load="loadApplicant()"
+                        range-field-disabled="!param.circular"
+                        unit-field-disabled="!param.circular"
+                        thana-field-disabled="!param.circular"
                         data="param"
                         start-load="range"
                         field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
