@@ -1,12 +1,58 @@
-{
-block_list_status:a.block_list_status
-black_list_status:a.black_list_status
-free_status:a.free_status
-pannel_status:a.pannel_status
-embodied_status:a.embodied_status
-offer_sms_status:a.offer_sms_status
-freezing_status:a.freezing_status
-rest_status:a.rest_status
-retierment_status:a.retierment_status
-early_retierment_status:a.early_retierment_status
-}
+<?php
+/**
+ * Export to PHP Array plugin for PHPMyAdmin
+ * @version 0.2b
+ */
+
+//
+// Database `db_amis`
+//
+
+// `db_amis`.`tbl_ansar_parsonal_info`
+$tbl_ansar_parsonal_info = array(
+  '77623',
+  '77621',
+  '77619',
+  '77617',
+  '77615',
+  '77612',
+  '77610',
+  '77608',
+  '77606',
+  '77604',
+  '77602',
+  '77600',
+  '77598',
+  '77596',
+  '77594',
+  '77578',
+  '77575',
+  '77573',
+  '77567',
+  '77557',
+  '77553',
+  '77548',
+  '77543',
+  '77539',
+  '77536',
+  '77518',
+  '77511',
+  '77498',
+  '77484',
+  '77472',
+  '77464',
+  '77462',
+  '77444',
+  '77317',
+  '77315',
+  '77313',
+  '77311',
+  '77309',
+  '77307',
+  '77305',
+  '77303',
+  '77301',
+  '77299',
+  '77284',
+  '77282'
+;
