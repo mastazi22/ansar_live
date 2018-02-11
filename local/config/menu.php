@@ -456,11 +456,7 @@ return [
                 "Application Instruction"=>[
                     "route"=>"recruitment.instruction",
                     "icon"=>"fa-cog"
-                ],
-                "Exam Center"=>[
-                    "route"=>"recruitment.exam-center.index",
-                    "icon"=>"fa-cog"
-                ],
+                ]
 
             ]
         ],
