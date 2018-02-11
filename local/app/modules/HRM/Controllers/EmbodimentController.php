@@ -5,19 +5,16 @@ namespace App\modules\HRM\Controllers;
 use App\Helper\Facades\GlobalParameterFacades;
 use App\Helper\SystemSettingHelper;
 use App\Http\Controllers\Controller;
-use App\Http\Requests;
+use App\Jobs\DisembodiedSMS;
 use App\Jobs\SendSms;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\CustomQuery;
-use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\EmbodimentLogModel;
 use App\modules\HRM\Models\EmbodimentModel;
 use App\modules\HRM\Models\KpiDetailsModel;
 use App\modules\HRM\Models\KpiGeneralModel;
 use App\modules\HRM\Models\MemorandumModel;
-use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\OfferSmsLog;
-use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\PersonalInfo;
 use App\modules\HRM\Models\RestInfoModel;
@@ -27,7 +24,6 @@ use App\modules\HRM\Models\Thana;
 use App\modules\HRM\Models\TransferAnsar;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
@@ -36,7 +32,6 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
-use Maatwebsite\Excel\Facades\Excel;
 use Psy\Exception\Exception;
 
 class EmbodimentController extends Controller
@@ -108,15 +103,15 @@ class EmbodimentController extends Controller
             ->select('panel_date', 'old_memorandum_id as memorandum_id', 'ansar_id');
         $ansarPanelInfo = collect(DB::table(DB::raw("(" . $q->toSql() . ") as t"))->mergeBindings($q)
             ->groupBy('t.ansar_id')
-            ->select('t.panel_date', 't.memorandum_id','t.ansar_id')->get());
+            ->select('t.panel_date', 't.memorandum_id', 't.ansar_id')->get());
         $apd = [];
-        foreach ($detail as $d){
-            $data = $ansarPanelInfo->where('ansar_id',$d->ansar_id)->first();
-            if($data) {
+        foreach ($detail as $d) {
+            $data = $ansarPanelInfo->where('ansar_id', $d->ansar_id)->first();
+            if ($data) {
                 $pi = (array)$d;
                 $pi['panel_date'] = $data->panel_date;
                 $pi['memorandum_id'] = $data->memorandum_id;
-                array_push($apd,$pi);
+                array_push($apd, $pi);
             }
         }
         return Response::json(['apd' => $apd]);
@@ -256,7 +251,7 @@ class EmbodimentController extends Controller
         $letter['type'] = 'EMBODIMENT';
         $letter['unit'] = $request->unit_id;
         $letter['status'] = true;
-        return Response::json(['status' => true, 'message' => 'Ansar is Embodied Successfully!','printData'=>$letter]);
+        return Response::json(['status' => true, 'message' => 'Ansar is Embodied Successfully!', 'printData' => $letter]);
 
     }
 
@@ -337,14 +332,14 @@ class EmbodimentController extends Controller
                 $result['fail']++;
             }
         }
-        if($result['success']>0) {
+        if ($result['success'] > 0) {
             $letter['option'] = 'memorandumNo';
             $letter['id'] = $memorandum_id;
             $letter['type'] = 'EMBODIMENT';
             $letter['unit'] = $request->unit_id;
             $letter['status'] = true;
         }
-        return Response::json(['status' => true, 'message' => "Success {$result['success']}, Failed {$result['fail']}",'letterData'=>$letter]);
+        return Response::json(['status' => true, 'message' => "Success {$result['success']}, Failed {$result['fail']}", 'letterData' => $letter]);
 
     }
 
@@ -403,7 +398,7 @@ class EmbodimentController extends Controller
                         $transfer->present_kpi_id = $kpi_id[0];
                         $transfer->transfered_kpi_id = $kpi_id[1];
                         $transfer->present_kpi_join_date = Carbon::parse($ansar['joining_date']);
-                        $transfer->transfered_kpi_join_date = Carbon::parse( $t_date)->format("Y-m-d");
+                        $transfer->transfered_kpi_join_date = Carbon::parse($t_date)->format("Y-m-d");
                         $transfer->action_by = Auth::user()->id;
                         $transfer->save();
 
@@ -561,7 +556,9 @@ class EmbodimentController extends Controller
                     $embodiment_log_update->save();
                     $embodiment_infos->delete();
                     AnsarStatusInfo::where('ansar_id', $ansar->ansarId)->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 1, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 0]);
-
+                    $mobile = trim(PersonalInfo::where('ansar_id', $ansar->ansarId)->first()->mobile_no_self);
+                    $reason = DB::table('tbl_disembodiment_reason')->where('id', $ansar->disReason)->first()->reason_in_eng;
+                    $this->dispatch(new DisembodiedSMS($disembodiment_date, $reason, '88' . $mobile));
                     array_push($user, ['ansar_id' => $ansar->ansarId, 'action_type' => 'DISEMBODIMENT', 'from_state' => 'EMBODIED', 'to_state' => 'REST', 'action_by' => auth()->user()->id]);
 
                 }
@@ -569,8 +566,13 @@ class EmbodimentController extends Controller
                 DB::commit();
             }
 
-        } catch
-        (\Exception $e) {
+        } catch (\Exception $e) {
+            DB::rollback();
+            return Response::json(['status' => false, 'message' => $e->getMessage()]);
+        } catch (\Throwable $e) {
+            DB::rollback();
+            return Response::json(['status' => false, 'message' => $e->getMessage()]);
+        }catch (\Error $e) {
             DB::rollback();
             return Response::json(['status' => false, 'message' => $e->getMessage()]);
         }
@@ -1086,50 +1088,51 @@ class EmbodimentController extends Controller
         }
     }
 
-    public function loadDisembodiedAnsar(Request $request){
-        if($request->ajax()){
-            if(strcasecmp($request->method(),'post')==0){
+    public function loadDisembodiedAnsar(Request $request)
+    {
+        if ($request->ajax()) {
+            if (strcasecmp($request->method(), 'post') == 0) {
                 DB::enablequeryLog();
                 $query = DB::table('tbl_ansar_parsonal_info')
-                    ->join('tbl_designations','tbl_designations.id','=','tbl_ansar_parsonal_info.designation_id')
-                    ->join('tbl_units','tbl_units.id','=','tbl_ansar_parsonal_info.unit_id')
-                    ->join('tbl_division','tbl_division.id','=','tbl_ansar_parsonal_info.division_id')
-                    ->join('tbl_rest_info','tbl_rest_info.ansar_id','=','tbl_ansar_parsonal_info.ansar_id')
-                    ->join('tbl_embodiment_log',function($join){
-                        $join->on('tbl_rest_info.ansar_id','=','tbl_embodiment_log.ansar_id');
-                        $join->on('tbl_rest_info.rest_date','=','tbl_embodiment_log.release_date');
+                    ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                    ->join('tbl_division', 'tbl_division.id', '=', 'tbl_ansar_parsonal_info.division_id')
+                    ->join('tbl_rest_info', 'tbl_rest_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                    ->join('tbl_embodiment_log', function ($join) {
+                        $join->on('tbl_rest_info.ansar_id', '=', 'tbl_embodiment_log.ansar_id');
+                        $join->on('tbl_rest_info.rest_date', '=', 'tbl_embodiment_log.release_date');
                     })
-                    ->join('tbl_kpi_info','tbl_kpi_info.id','=','tbl_embodiment_log.kpi_id')
-                    ->join('tbl_disembodiment_reason','tbl_rest_info.disembodiment_reason_id','=','tbl_disembodiment_reason.id')
-                    ->where('tbl_embodiment_log.old_embodiment_id','!=',0)
-                    ->where('tbl_rest_info.total_service_days','<',365*3);
-                if($request->range){
-                    $query->where('tbl_kpi_info.division_id',$request->range);
+                    ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment_log.kpi_id')
+                    ->join('tbl_disembodiment_reason', 'tbl_rest_info.disembodiment_reason_id', '=', 'tbl_disembodiment_reason.id')
+                    ->where('tbl_embodiment_log.old_embodiment_id', '!=', 0)
+                    ->where('tbl_rest_info.total_service_days', '<', 365 * 3);
+                if ($request->range) {
+                    $query->where('tbl_kpi_info.division_id', $request->range);
                 }
-                if($request->unit){
-                    $query->where('tbl_kpi_info.unit_id',$request->unit);
+                if ($request->unit) {
+                    $query->where('tbl_kpi_info.unit_id', $request->unit);
                 }
-                if($request->thana){
-                    $query->where('tbl_kpi_info.thana_id',$request->thana);
+                if ($request->thana) {
+                    $query->where('tbl_kpi_info.thana_id', $request->thana);
                 }
-                if($request->kpi){
-                    $query->where('tbl_kpi_info.id',$request->kpi);
+                if ($request->kpi) {
+                    $query->where('tbl_kpi_info.id', $request->kpi);
                 }
-                if($request->reason){
-                    $query->where('tbl_disembodiment_reason.id',$request->reason);
+                if ($request->reason) {
+                    $query->where('tbl_disembodiment_reason.id', $request->reason);
                 }
-                $data = $query->select('tbl_ansar_parsonal_info.ansar_name_bng','tbl_ansar_parsonal_info.ansar_id',
-                    'tbl_designations.name_bng','tbl_division.division_name_bng','tbl_units.unit_name_bng',
-                    'tbl_kpi_info.kpi_name','tbl_rest_info.total_service_days','tbl_rest_info.rest_date',
+                $data = $query->select('tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_ansar_parsonal_info.ansar_id',
+                    'tbl_designations.name_bng', 'tbl_division.division_name_bng', 'tbl_units.unit_name_bng',
+                    'tbl_kpi_info.kpi_name', 'tbl_rest_info.total_service_days', 'tbl_rest_info.rest_date',
                     'tbl_disembodiment_reason.reason_in_bng')->get();
 //                return DB::getQueryLog();
                 return $data;
-            }else{
+            } else {
                 abort(403);
             }
-        }else if(strcasecmp($request->method(),'get')==0){
+        } else if (strcasecmp($request->method(), 'get') == 0) {
             return view('HRM::Embodiment.disembodied_ansar_correction');
-        }else{
+        } else {
             abort(403);
         }
     }

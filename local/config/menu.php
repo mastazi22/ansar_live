@@ -449,6 +449,10 @@ return [
                     "route"=>"recruitment.applicant.editfield",
                     "icon"=>"fa-cog"
                 ],
+                "Exam Center"=>[
+                    "route"=>"recruitment.exam-center.index",
+                    "icon"=>"fa-cog"
+                ],
                 "Application Instruction"=>[
                     "route"=>"recruitment.instruction",
                     "icon"=>"fa-cog"
