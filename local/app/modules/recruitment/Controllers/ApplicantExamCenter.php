@@ -25,7 +25,7 @@ class ApplicantExamCenter extends Controller
             if ($request->circular) {
                 $data->where('job_circular_id', $request->circular);
             }
-            return $data->get();
+//            return $data->get();
             return view('recruitment::exam_center.data', ['data' => $data->get()]);
 
         }
