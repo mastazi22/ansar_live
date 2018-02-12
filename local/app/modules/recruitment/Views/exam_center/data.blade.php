@@ -20,9 +20,7 @@
                 <td>{{$d->written_viva_date.' '.$d->written_viva_time}}</td>
                 <td>{{$d->written_viva_place}}</td>
                 <td>
-                @foreach($d->units as $u)
-                    {{$u->unit_name_bng}},
-                    @endforeach
+                {{implode(',',$d->units()->pluck('unit_name_bng'))}}
                 </td>
                 <td>
                     <a class="btn btn-primary btn-xs" href="{{URL::route('recruitment.exam-center.edit',['id'=>$d->id])}}">
