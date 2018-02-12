@@ -21,11 +21,11 @@ class ApplicantExamCenter extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = JobApplicantExamCenter::with('circular');
+            $data = JobApplicantExamCenter::with(['circular','units']);
             if ($request->circular) {
                 $data->where('job_circular_id', $request->circular);
             }
-//            return $data->get();
+            return $data->get();
             return view('recruitment::exam_center.data', ['data' => $data->get()]);
 
         }
