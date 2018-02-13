@@ -26,7 +26,7 @@
             $scope.ThanaModel = '{{$kpi_info->thana_id}}';
             $scope.kpi_name = '{{$kpi_info->kpi_name}}';
             $scope.kpi_address = '{{$kpi_info->kpi_address}}';
-            $scope.kpi_contact_no ='{{$kpi_info->kpi_contact_no}}';
+            $scope.kpi_contact_no =`{{$kpi_info->kpi_contact_no}}`;
             $scope.total_ansar_request = '{{$kpi_info->details->total_ansar_request}}';
             $scope.total_ansar_given = '{{$kpi_info->details->total_ansar_given}}';
             $scope.with_weapon = '{{$kpi_info->details->with_weapon}}';
