@@ -1,4 +1,17 @@
-<div ng-controller="jobCircularConstraintController" @if(isset($data)&&$data->constraint) ng-init="initConstraint('{{ $data->constraint->constraint}}')" @endif>
+<style>
+    .item-selected {
+        display: inline-block;
+        padding: 5px 10px;
+        margin: 0 2px 6px 0;
+        box-shadow: 0px 0px 5px 0px #cccccc;
+        border-radius: 15px;
+        background: #49980e;
+        color: #ffffff;
+    }
+</style>
+
+<div ng-controller="jobCircularConstraintController"
+     @if(isset($data)&&$data->constraint) ng-init="initConstraint('{{ $data->constraint->constraint}}')" @endif>
 
     @if(isset($data))
         {!! Form::model($data,['route'=>['recruitment.exam-center.update',$data],'method'=>'patch']) !!}
@@ -45,44 +58,51 @@
             <p class="text text-danger">{{$errors->first('written_viva_place')}}</p>
         @endif
     </div>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-sm-6">
-                    {!! Form::label('written_viva_date','Written Viva Date :',['class'=>'control-label']) !!}
-                    {!! Form::text('written_viva_date',null,['class'=>'form-control','placeholder'=>'Enter Selection Date','date-picker'=>(isset($data)?$data->written_viva_date:"moment('".\Carbon\Carbon::parse(Request::old('written_viva_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
-                    @if(isset($errors)&&$errors->first('written_viva_date'))
-                        <p class="text text-danger">{{$errors->first('written_viva_date')}}</p>
-                    @endif
-                </div>
-                <div class="col-sm-6">
-                    {!! Form::label('written_viva_time','Written Viva Time :',['class'=>'control-label']) !!}
-                    {!! Form::text('written_viva_time',null,['class'=>'form-control','placeholder'=>'HH:MM AM/PM']) !!}
-                    @if(isset($errors)&&$errors->first('written_viva_time'))
-                        <p class="text text-danger">{{$errors->first('written_viva_time')}}</p>
-                    @endif
-                </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-6">
+                {!! Form::label('written_viva_date','Written Viva Date :',['class'=>'control-label']) !!}
+                {!! Form::text('written_viva_date',null,['class'=>'form-control','placeholder'=>'Enter Selection Date','date-picker'=>(isset($data)?$data->written_viva_date:"moment('".\Carbon\Carbon::parse(Request::old('written_viva_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
+                @if(isset($errors)&&$errors->first('written_viva_date'))
+                    <p class="text text-danger">{{$errors->first('written_viva_date')}}</p>
+                @endif
+            </div>
+            <div class="col-sm-6">
+                {!! Form::label('written_viva_time','Written Viva Time :',['class'=>'control-label']) !!}
+                {!! Form::text('written_viva_time',null,['class'=>'form-control','placeholder'=>'HH:MM AM/PM']) !!}
+                @if(isset($errors)&&$errors->first('written_viva_time'))
+                    <p class="text text-danger">{{$errors->first('written_viva_time')}}</p>
+                @endif
             </div>
         </div>
-        <div class="form-group">
-            {!! Form::label('Select applicant district','Select Unit',['class'=>'control-label']) !!}
-            {!! Form::text('search_unit',null,['class'=>'form-control','placeholder'=>'Search Unit','style'=>'margin-bottom:10px']) !!}
-            <div class="form-control" style="height: 200px;overflow: auto;">
-                <ul>
-                    @foreach($units as $u)
-                        <li style="list-style: none">
-                            @if(isset($data))
-                                {!! Form::checkbox('units[]',$u->id,$data->units()->where('tbl_units.id',$u->id)->exists(),['style'=>'vertical-align:sub','data-division-id'=>$u->division_id]) !!}
-                                &nbsp;{{$u->unit_name_bng}}
-                            @else
-                                {!! Form::checkbox('units[]',$u->id,false,['style'=>'vertical-align:sub']) !!}
-                                &nbsp;{{$u->unit_name_bng}}
-                            @endif
-                        </li>
-                    @endforeach
-                </ul>
+    </div>
+    <div class="form-group">
+        {!! Form::label('Select applicant district','Select Unit',['class'=>'control-label']) !!}
+        @if(isset($data))
+            <div id="selected-items">
+                @foreach($data->units()->get(['unit_name_bng','tbl_units.id']) as $u)
+                    <span data-name="{{$u->id}}" class="item-selected">{{$u->unit_name_bng}}</span>
+                @endforeach
             </div>
-            {{$errors->first('units','<p class="text text-danger">:message</p>')}}
+        @endif
+        {!! Form::text('search_unit',null,['class'=>'form-control','placeholder'=>'Search Unit','style'=>'margin-bottom:10px']) !!}
+        <div class="form-control" style="height: 200px;overflow: auto;">
+            <ul>
+                @foreach($units as $u)
+                    <li style="list-style: none">
+                        @if(isset($data))
+                            {!! Form::checkbox('units[]',$u->id,$data->units()->where('tbl_units.id',$u->id)->exists(),['style'=>'vertical-align:sub','data-division-id'=>$u->division_id]) !!}
+                            &nbsp;{{$u->unit_name_bng}}
+                        @else
+                            {!! Form::checkbox('units[]',$u->id,false,['style'=>'vertical-align:sub']) !!}
+                            &nbsp;{{$u->unit_name_bng}}
+                        @endif
+                    </li>
+                @endforeach
+            </ul>
         </div>
+        {{$errors->first('units','<p class="text text-danger">:message</p>')}}
+    </div>
     @if(isset($data))
         <button type="submit" class="btn btn-primary pull-right">
             <i class="fa fa-save"></i>&nbsp;Update Exam Center
@@ -96,34 +116,45 @@
 </div>
 <script>
     $(document).ready(function () {
-        $("input[name='search_unit']").on('input',function (event) {
+        $("input[name='search_unit']").on('input', function (event) {
             var value = $(this).val();
             var s = $(this).siblings('div').find('ul');
             s.children('li').each(function () {
                 var t = $(this).text().trim();
                 var i = t.indexOf(value);
-                if(t.indexOf(value)<=-1&&value){
-                    $(this).css('display','none')
+                if (t.indexOf(value) <= -1 && value) {
+                    $(this).css('display', 'none')
                 }
-                else{
-                    $(this).css('display','block')
+                else {
+                    $(this).css('display', 'block')
                 }
             })
         })
+        $("*[name='units[]']").on('change',function (evt) {
+            if($(this).is(':checked')){
+                var html = '<span class="item-selected" data-name="'+$(this).val()+'">'+$(this).parents('li').text().trim()+'</span>'
+                $("#selected-items").append(html);
+            }
+            else{
+                /*alert($('span[data-name="'+$(this).val()+'"]').html())
+                alert('span[data-name="'+$(this).val()+'"]')*/
+                $('span[data-name="'+$(this).val()+'"]').remove();
+            }
+        })
 
     })
-    $.fn.selectRange = function(start, end) {
+    $.fn.selectRange = function (start, end) {
 //        alert(1)
-        if(end === undefined) {
+        if (end === undefined) {
             end = start;
         }
-        return this.each(function() {
-            if('selectionStart' in this) {
+        return this.each(function () {
+            if ('selectionStart' in this) {
                 this.selectionStart = start;
                 this.selectionEnd = end;
-            } else if(this.setSelectionRange) {
+            } else if (this.setSelectionRange) {
                 this.setSelectionRange(start, end);
-            } else if(this.createTextRange) {
+            } else if (this.createTextRange) {
                 var range = this.createTextRange();
                 range.collapse(true);
                 range.moveEnd('character', end);
