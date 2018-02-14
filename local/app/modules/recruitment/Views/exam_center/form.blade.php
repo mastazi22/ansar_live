@@ -78,13 +78,15 @@
     </div>
     <div class="form-group">
         {!! Form::label('Select applicant district','Select Unit',['class'=>'control-label']) !!}
-        @if(isset($data))
-            <div id="selected-items">
+        <div id="selected-items">
+            @if(isset($data))
+
                 @foreach($data->units()->get(['unit_name_bng','tbl_units.id']) as $u)
                     <span data-name="{{$u->id}}" class="item-selected">{{$u->unit_name_bng}}</span>
                 @endforeach
-            </div>
-        @endif
+
+            @endif
+        </div>
         {!! Form::text('search_unit',null,['class'=>'form-control','placeholder'=>'Search Unit','style'=>'margin-bottom:10px']) !!}
         <div class="form-control" style="height: 200px;overflow: auto;">
             <ul>
@@ -130,15 +132,15 @@
                 }
             })
         })
-        $("*[name='units[]']").on('change',function (evt) {
-            if($(this).is(':checked')){
-                var html = '<span class="item-selected" data-name="'+$(this).val()+'">'+$(this).parents('li').text().trim()+'</span>'
+        $("*[name='units[]']").on('change', function (evt) {
+            if ($(this).is(':checked')) {
+                var html = '<span class="item-selected" data-name="' + $(this).val() + '">' + $(this).parents('li').text().trim() + '</span>'
                 $("#selected-items").append(html);
             }
-            else{
+            else {
                 /*alert($('span[data-name="'+$(this).val()+'"]').html())
-                alert('span[data-name="'+$(this).val()+'"]')*/
-                $('span[data-name="'+$(this).val()+'"]').remove();
+                 alert('span[data-name="'+$(this).val()+'"]')*/
+                $('span[data-name="' + $(this).val() + '"]').remove();
             }
         })
 
