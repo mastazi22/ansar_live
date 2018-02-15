@@ -143,7 +143,7 @@
                             <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]/Female"
                                    class="btn btn-link">[[a.appliciant_female_count]]</a></td>
                             <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]/initial"
-                                   class="btn btn-link">[[a.appliciant_initial_count+a.appliciant_not_paid_count]]</a>
+                                   class="btn btn-link">[[parseInt(a.appliciant_initial_count)+parseInt(a.appliciant_not_paid_count)]]</a>
                             </td>
                             <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]/paid" class="btn btn-link">[[a.appliciant_paid_not_apply_count]]</a>
                             </td>
