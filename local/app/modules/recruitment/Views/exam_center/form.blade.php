@@ -37,7 +37,7 @@
         <div class="row">
             <div class="col-sm-6">
                 {!! Form::label('selection_date','Selection Date :',['class'=>'control-label']) !!}
-                {!! Form::text('selection_date',null,['class'=>'form-control','placeholder'=>'Enter Selection Date','date-picker'=>(isset($data)?"moment('{$data->selection_date}').format('DD-MMM-YYYY')":"moment('".\Carbon\Carbon::parse(Request::old('selection_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
+                {!! Form::text('selection_date',null,['class'=>'form-control','placeholder'=>'Enter Selection Date','date-picker'=>(isset($data)?"moment('".\Carbon\Carbon::parse($data->selection_date)->format('Y-m-d')."').format('DD-MMM-YYYY')":"moment('".\Carbon\Carbon::parse(Request::old('selection_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
                 @if(isset($errors)&&$errors->first('selection_date'))
                     <p class="text text-danger">{{$errors->first('selection_date')}}</p>
                 @endif
@@ -62,7 +62,7 @@
         <div class="row">
             <div class="col-sm-6">
                 {!! Form::label('viva_date','Viva Date :',['class'=>'control-label']) !!}
-                {!! Form::text('viva_date',null,['class'=>'form-control','placeholder'=>'Enter Viva Date','date-picker'=>(isset($data)?"moment('{$data->viva_date}').format('DD-MMM-YYYY')":"moment('".\Carbon\Carbon::parse(Request::old('viva_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
+                {!! Form::text('viva_date',null,['class'=>'form-control','placeholder'=>'Enter Viva Date','date-picker'=>(isset($data)?"moment('".\Carbon\Carbon::parse($data->viva_date)->format('Y-m-d')."').format('DD-MMM-YYYY')":"moment('".\Carbon\Carbon::parse(Request::old('viva_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
                 @if(isset($errors)&&$errors->first('viva_date'))
                     <p class="text text-danger">{{$errors->first('viva_date')}}</p>
                 @endif
@@ -80,7 +80,7 @@
         <div class="row">
             <div class="col-sm-6">
                 {!! Form::label('written_date','Written Date :',['class'=>'control-label']) !!}
-                {!! Form::text('written_date',null,['class'=>'form-control','placeholder'=>'Enter Written Date','date-picker'=>(isset($data)?"moment('{$data->written_date}').format('DD-MMM-YYYY')":"moment('".\Carbon\Carbon::parse(Request::old('written_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
+                {!! Form::text('written_date',null,['class'=>'form-control','placeholder'=>'Enter Written Date','date-picker'=>(isset($data)?"moment('".\Carbon\Carbon::parse($data->written_date)->format('Y-m-d')."').format('DD-MMM-YYYY')":"moment('".\Carbon\Carbon::parse(Request::old('written_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
                 @if(isset($errors)&&$errors->first('written_date'))
                     <p class="text text-danger">{{$errors->first('written_date')}}</p>
                 @endif
