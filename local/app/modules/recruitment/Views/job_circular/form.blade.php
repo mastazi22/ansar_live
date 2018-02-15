@@ -1,4 +1,5 @@
-<div ng-controller="jobCircularConstraintController" @if(isset($data)&&$data->constraint) ng-init="initConstraint('{{ $data->constraint->constraint}}')" @endif>
+<div ng-controller="jobCircularConstraintController"
+     @if(isset($data)&&$data->constraint) ng-init="initConstraint('{{ $data->constraint->constraint}}')" @endif>
 
     @if(isset($data))
         {!! Form::model($data,['route'=>['recruitment.circular.update',$data],'method'=>'patch']) !!}
@@ -32,6 +33,14 @@
         {!! Form::text('end_date',null,['class'=>'form-control','placeholder'=>'Enter Start Date','date-picker'=>(isset($data)?"moment('{$data->end_date}').format('DD-MMM-YYYY')":"moment('".\Carbon\Carbon::parse(Request::old('end_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
         @if(isset($errors)&&$errors->first('end_date'))
             <p class="text text-danger">{{$errors->first('end_date')}}</p>
+        @endif
+    </div>
+
+    <div class="form-group">
+        {!! Form::label('pay_amount','Pay Amount :',['class'=>'control-label']) !!}
+        {!! Form::text('pay_amount',null,['class'=>'form-control','placeholder'=>'Pay Amount']) !!}
+        @if(isset($errors)&&$errors->first('pay_amount'))
+            <p class="text text-danger">{{$errors->first('pay_amount')}}</p>
         @endif
     </div>
     <div class="form-group">
@@ -74,42 +83,42 @@
         <label for="application_status" class=""></label>
 
     </div>
-        <div class="form-group">
-            {!! Form::label('Select applicant division','Select applicant division',['class'=>'control-label']) !!}
-            <div class="form-control" style="height: 200px;overflow: auto;">
-                <ul>
-                    @foreach($ranges as $r)
-                        <li style="list-style: none">
-                            @if(isset($data))
-                                {!! Form::checkbox('applicatn_range[]',$r->id,in_array($r->id,explode(',',$data->applicatn_range)),['style'=>'vertical-align:sub','class'=>'range-app']) !!}
-                                &nbsp;{{$r->division_name_bng}}
-                            @else
-                                {!! Form::checkbox('applicatn_range[]',$r->id,true,['style'=>'vertical-align:sub']) !!}
-                                &nbsp;{{$r->division_name_bng}}
-                            @endif
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
+    <div class="form-group">
+        {!! Form::label('Select applicant division','Select applicant division',['class'=>'control-label']) !!}
+        <div class="form-control" style="height: 200px;overflow: auto;">
+            <ul>
+                @foreach($ranges as $r)
+                    <li style="list-style: none">
+                        @if(isset($data))
+                            {!! Form::checkbox('applicatn_range[]',$r->id,in_array($r->id,explode(',',$data->applicatn_range)),['style'=>'vertical-align:sub','class'=>'range-app']) !!}
+                            &nbsp;{{$r->division_name_bng}}
+                        @else
+                            {!! Form::checkbox('applicatn_range[]',$r->id,true,['style'=>'vertical-align:sub']) !!}
+                            &nbsp;{{$r->division_name_bng}}
+                        @endif
+                    </li>
+                @endforeach
+            </ul>
         </div>
-        <div class="form-group">
-            {!! Form::label('Select applicant district','Select applicant district',['class'=>'control-label']) !!}
-            <div class="form-control" style="height: 200px;overflow: auto;">
-                <ul>
-                    @foreach($units as $u)
-                        <li style="list-style: none">
-                            @if(isset($data))
-                                {!! Form::checkbox('applicatn_units[]',$u->id,in_array($u->division_id,explode(',',$data->applicatn_range))&&in_array($u->id,explode(',',$data->applicatn_units)),['style'=>'vertical-align:sub','data-division-id'=>$u->division_id]) !!}
-                                &nbsp;{{$u->unit_name_bng}}
-                            @else
-                                {!! Form::checkbox('applicatn_units[]',$u->id,true,['style'=>'vertical-align:sub']) !!}
-                                &nbsp;{{$u->unit_name_bng}}
-                            @endif
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
+    </div>
+    <div class="form-group">
+        {!! Form::label('Select applicant district','Select applicant district',['class'=>'control-label']) !!}
+        <div class="form-control" style="height: 200px;overflow: auto;">
+            <ul>
+                @foreach($units as $u)
+                    <li style="list-style: none">
+                        @if(isset($data))
+                            {!! Form::checkbox('applicatn_units[]',$u->id,in_array($u->division_id,explode(',',$data->applicatn_range))&&in_array($u->id,explode(',',$data->applicatn_units)),['style'=>'vertical-align:sub','data-division-id'=>$u->division_id]) !!}
+                            &nbsp;{{$u->unit_name_bng}}
+                        @else
+                            {!! Form::checkbox('applicatn_units[]',$u->id,true,['style'=>'vertical-align:sub']) !!}
+                            &nbsp;{{$u->unit_name_bng}}
+                        @endif
+                    </li>
+                @endforeach
+            </ul>
         </div>
+    </div>
     <div class="form-group">
         {!! Form::label('test','Auto De-Activate Circular After End Date : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
         <input type="checkbox" value="1" name="auto_terminate"
@@ -169,12 +178,15 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="control-label">Min age</label>
-                                        <input type="text" placeholder="Min age" class="form-control" ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
+                                        <input type="text" placeholder="Min age" class="form-control"
+                                               ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
                                                ng-model="constraint.age.min">
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label">Min age date</label>
-                                        <input type="text" placeholder="Min age date" date-picker=""  class="form-control" ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
+                                        <input type="text" placeholder="Min age date" date-picker=""
+                                               class="form-control"
+                                               ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
                                                ng-model="constraint.age.minDate">
                                     </div>
                                 </div>
@@ -182,14 +194,17 @@
                                     <div class="form-group">
                                         <div class="form-group">
                                             <label class="control-label">Max age</label>
-                                            <input type="text" placeholder="Max age" class="form-control" ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
+                                            <input type="text" placeholder="Max age" class="form-control"
+                                                   ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
                                                    ng-model="constraint.age.max">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="form-group">
                                             <label class="control-label">Max age date</label>
-                                            <input type="text" placeholder="Max age date" date-picker=""  class="form-control" ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
+                                            <input type="text" placeholder="Max age date" date-picker=""
+                                                   class="form-control"
+                                                   ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
                                                    ng-model="constraint.age.maxDate">
                                         </div>
                                     </div>
@@ -274,11 +289,13 @@
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <input type="text" ng-disabled="constraint.gender.male!='male'"
-                                                       ng-model="constraint.chest.male.min" class="form-control" placeholder="">
+                                                       ng-model="constraint.chest.male.min" class="form-control"
+                                                       placeholder="">
                                             </div>
                                             <div class="col-sm-6">
                                                 <input type="text" ng-disabled="constraint.gender.male!='male'"
-                                                       ng-model="constraint.chest.male.max" class="form-control" placeholder="">
+                                                       ng-model="constraint.chest.male.max" class="form-control"
+                                                       placeholder="">
                                             </div>
                                         </div>
                                     </div>
@@ -289,11 +306,13 @@
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <input type="text" ng-disabled="constraint.gender.female!='female'"
-                                                       ng-model="constraint.chest.female.min" class="form-control" placeholder="">
+                                                       ng-model="constraint.chest.female.min" class="form-control"
+                                                       placeholder="">
                                             </div>
                                             <div class="col-sm-6">
                                                 <input type="text" ng-disabled="constraint.gender.female!='female'"
-                                                       ng-model="constraint.chest.female.max" class="form-control" placeholder="">
+                                                       ng-model="constraint.chest.female.max" class="form-control"
+                                                       placeholder="">
                                             </div>
                                         </div>
                                     </div>
@@ -311,7 +330,8 @@
                                                 ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
                                                 ng-model="constraint.education.min" class="form-control">
                                             <option value="">--Select a degree--</option>
-                                            <option ng-repeat="(key,value) in minEduList" value="[[key]]">[[value]]</option>
+                                            <option ng-repeat="(key,value) in minEduList" value="[[key]]">[[value]]
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
@@ -323,7 +343,8 @@
                                                 ng-model="constraint.education.max"
                                                 class="form-control">
                                             <option value="">--Select a degree--</option>
-                                            <option ng-repeat="(key,value) in minEduList" value="[[key]]">[[value]]</option>
+                                            <option ng-repeat="(key,value) in minEduList" value="[[key]]">[[value]]
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
@@ -334,7 +355,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Close</button>
-                    <button type="button" ng-click="onSave('constraint')" class="btn btn-primary pull-left" data-dismiss="modal">Save</button>
+                    <button type="button" ng-click="onSave('constraint')" class="btn btn-primary pull-left"
+                            data-dismiss="modal">Save
+                    </button>
                 </div>
             </div>
 
@@ -343,14 +366,14 @@
 </div>
 <script>
     $(document).ready(function () {
-        $(".range-app").on('change',function (event) {
+        $(".range-app").on('change', function (event) {
             var status = $(this).prop('checked');
             var v = $(this).val();
-            if(status){
-                $('*[data-division-id="'+v+'"]').prop('checked',true)
+            if (status) {
+                $('*[data-division-id="' + v + '"]').prop('checked', true)
             }
-            else{
-                $('*[data-division-id="'+v+'"]').prop('checked',false)
+            else {
+                $('*[data-division-id="' + v + '"]').prop('checked', false)
             }
         })
     })
