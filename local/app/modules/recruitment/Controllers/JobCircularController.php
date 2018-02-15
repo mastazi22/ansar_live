@@ -55,6 +55,7 @@ class JobCircularController extends Controller
         //
         $rules = [
             'circular_name' => 'required',
+            'pay_amount' => 'required',
             'job_category_id' => 'required|regex:/^[1-9]?[1-9]+$/',
             'start_date' => ['required', 'regex:/^[0-9]{2}-[A-Za-z]{3}-[0-9]{4}$/'],
             'end_date' => ['required', 'regex:/^[0-9]{2}-[A-Za-z]{3}-[0-9]{4}$/']
@@ -121,6 +122,7 @@ class JobCircularController extends Controller
     {
         $rules = [
             'circular_name' => 'required',
+            'pay_amount' => 'required',
             'job_category_id' => 'required|regex:/^[1-9]?[1-9]+$/',
             'start_date' => ['required', 'regex:/^[0-9]{2}-[A-Za-z]{3}-[0-9]{4}$/'],
             'end_date' => ['required', 'regex:/^[0-9]{2}-[A-Za-z]{3}-[0-9]{4}$/']
