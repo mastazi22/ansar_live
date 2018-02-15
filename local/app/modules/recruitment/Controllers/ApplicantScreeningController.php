@@ -59,6 +59,8 @@ class ApplicantScreeningController extends Controller
             }
             $summery = $cicular_summery->get();
             Log::info(DB::getQueryLog());
+            Log::info($summery);
+//            return "ssddsddds";
             return response()->json($summery);
         }
         return view('recruitment::applicant.index');

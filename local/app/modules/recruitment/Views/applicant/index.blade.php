@@ -13,7 +13,7 @@
             $scope.circular = 'all';
             $scope.category = 'all';
             $scope.status = 'running';
-            var ss = {'running':'active','shutdown':'inactive'};
+            var ss = {'running': 'active', 'shutdown': 'inactive'};
             var loadAll = function () {
                 $scope.circular = 'all';
                 $scope.category = 'all';
@@ -126,24 +126,29 @@
                             <th>Circular Name</th>
                             <th>Category Name</th>
                             <th>Total Applicant</th>
-                            <th>Total Initial Applicant</th>
-                            <th>Total Paid Applicant (Not Applied)</th>
                             <th>Total Male Applicant</th>
                             <th>Total Female Applicant</th>
-                            <th>Total Paid Applicant</th>
-                            <th>Total not Paid Applicant</th>
+                            <th>Total Not Paid Applicant</th>
+                            <th>Total Paid Applicant (Not Applied)</th>
+                            <th>Total Applied Applicant</th>
                         </tr>
                         <tr ng-repeat="a in circularSummery">
                             <td>[[$index+1]]</td>
                             <td>[[a.circular_name]]</td>
                             <td>[[a.category.category_name_eng]]</td>
-                            <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]" class="btn btn-link">[[a.appliciant_count]]</a></td>
-                            <td><a href="#" class="btn btn-link">[[a.appliciant_initial_count]]</a></td>
-                            <td><a href="#" class="btn btn-link">[[a.appliciant_paid_not_apply_count]]</a></td>
-                            <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]/Male" class="btn btn-link">[[a.appliciant_male_count]]</a></td>
-                            <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]/Female" class="btn btn-link">[[a.appliciant_female_count]]</a></td>
-                            <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]/applied" class="btn btn-link">[[a.appliciant_paid_count]]</a></td>
-                            <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]/pending" class="btn btn-link">[[a.appliciant_not_paid_count]]</a></td>
+                            <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]" class="btn btn-link">[[a.appliciant_count]]</a>
+                            </td>
+                            <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]/Male" class="btn btn-link">[[a.appliciant_male_count]]</a>
+                            </td>
+                            <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]/Female"
+                                   class="btn btn-link">[[a.appliciant_female_count]]</a></td>
+                            <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]/initial"
+                                   class="btn btn-link">[[a.appliciant_initial_count+a.appliciant_not_paid_count]]</a>
+                            </td>
+                            <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]/paid" class="btn btn-link">[[a.appliciant_paid_not_apply_count]]</a>
+                            </td>
+                            <td><a href="{{URL::to('recruitment/applicants/list')}}/[[a.id]]/applied"
+                                   class="btn btn-link">[[a.appliciant_paid_count]]</a></td>
                         </tr>
                         <tr ng-if="circularSummery.length<=0">
                             <td class="bg-warning" colspan="10">No data available</td>

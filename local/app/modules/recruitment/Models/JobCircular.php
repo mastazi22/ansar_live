@@ -33,46 +33,22 @@ class JobCircular extends Model
 
     public function appliciantPaid()
     {
-        return $this->hasMany(JobAppliciant::class, 'job_circular_id')
-            ->join('job_appliciant_payment_history', 'job_appliciant_payment_history.job_appliciant_id', '=', 'job_applicant.applicant_id')
-            ->where('job_applicant.status', 'applied')
-            ->where('job_appliciant_payment_history.bankTxStatus', 'SUCCESS');
+        return $this->hasMany(JobAppliciant::class, 'job_circular_id')->where('job_applicant.status', 'applied');
     }
 
     public function appliciantNotPaid()
     {
-        return $this->hasMany(JobAppliciant::class, 'job_circular_id')->where(function ($q) {
-            $q->whereHas('payment', function ($q) {
-                $q->whereNotNull('txID');
-                $q->where('bankTxStatus', 'FAIL');
-            });
-            $q->orWhere(function ($q) {
-                $q->where('status', 'pending');
-            });
-        });
+        return $this->hasMany(JobAppliciant::class, 'job_circular_id')->where('status', 'pending');
     }
 
     public function appliciantInitial()
     {
-        return $this->hasMany(JobAppliciant::class, 'job_circular_id')->where(function ($q) {
-            $q->whereHas('payment', function ($q) {
-                $q->whereNotNull('txID');
-            });
-            $q->where('status', 'initial');
-
-        });
+        return $this->hasMany(JobAppliciant::class, 'job_circular_id')->where('status', 'initial');
     }
 
     public function appliciantPaidNotApply()
     {
-        return $this->hasMany(JobAppliciant::class, 'job_circular_id')->where(function ($q) {
-            $q->whereHas('payment', function ($q) {
-                $q->whereNotNull('txID');
-                $q->where('bankTxStatus', 'SUCCESS');
-            });
-            $q->where('status', 'paid');
-
-        });
+        return $this->hasMany(JobAppliciant::class, 'job_circular_id')->where('status', 'paid');
     }
 
     public function constraint()
