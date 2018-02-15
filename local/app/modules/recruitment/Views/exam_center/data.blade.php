@@ -6,7 +6,8 @@
             <th>Job Circular Name</th>
             <th>Selection Date</th>
             <th>Selection Place</th>
-            <th>Written Viva Date</th>
+            <th>Written Date</th>
+            <th>Viva Date</th>
             <th>Written Viva Place</th>
             <th>Units</th>
             <th style="width: 100px;">Action</th>
@@ -17,7 +18,8 @@
                 <td>{{$d->circular->circular_name}}</td>
                 <td>{{$d->selection_date.' '.$d->selection_time}}</td>
                 <td>{{$d->selection_place}}</td>
-                <td>{{$d->written_viva_date.' '.$d->written_viva_time}}</td>
+                <td>{{$d->written_date.' '.$d->written_time}}</td>
+                <td>{{$d->viva_date.' '.$d->viva_time}}</td>
                 <td>{{$d->written_viva_place}}</td>
                 <td>
                 @foreach($d->units()->pluck('unit_name_bng') as $u)
