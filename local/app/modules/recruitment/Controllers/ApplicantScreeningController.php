@@ -382,24 +382,10 @@ class ApplicantScreeningController extends Controller
                         $q->where('txID', 'like', '%' . $request->q . '%');
                     })->orWhere('mobile_no_self', 'like', '%' . $request->q . '%');
                 });
-                if ($type == 'applied') {
-                    $applicants->whereHas('payment', function ($q) {
-                        $q->whereNotNull('txID');
-                        $q->where('bankTxStatus', 'SUCCESS');
-                    });
-                    $applicants->where('status','applied');
-                } else if ($type == 'Male' || $type == 'Female') {
+                if ($type == 'Male' || $type == 'Female') {
                     $applicants->where('gender', $type);
-                } else if ($type == 'pending') {
-                    $applicants->where(function ($q) {
-                        $q->whereHas('payment', function ($q) {
-                            $q->whereNotNull('txID');
-                            $q->where('bankTxStatus', 'FAIL');
-                        });
-                        $q->orWhere('status', 'pending');
-                    });
-                }else if ($type == 'selected') {
-                    $applicants->where('status', 'selected');
+                } else if ($type == 'pending'||$type == 'applied'||$type == 'initial'||$type == 'paid'||$type=='selected') {
+                    $applicants->where('status',$type);
                 }
                 if ($request->range && $request->range != 'all') {
                     $applicants->where('division_id', $request->range);
@@ -414,26 +400,10 @@ class ApplicantScreeningController extends Controller
                 $applicants = $applicants->paginate(50);
             } else {
                 $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment']);
-                if ($type == 'applied') {
-                    $applicants->whereHas('payment', function ($q) {
-                        $q->whereNotNull('txID');
-                        $q->where('bankTxStatus', 'SUCCESS');
-                    });
-                    $applicants->where('status','applied');
-                }
                 if ($type == 'Male' || $type == 'Female') {
                     $applicants->where('gender', $type);
-                } else if ($type == 'pending') {
-                    $applicants->where(function ($q) {
-                        $q->whereHas('payment', function ($q) {
-                            $q->whereNotNull('txID');
-                            $q->where('bankTxStatus', 'FAIL');
-                        });
-                        $q->orWhere('status', 'pending');
-                    });
-                }
-                else if ($type == 'selected') {
-                    $applicants->where('status', 'selected');
+                } else if ($type == 'pending'||$type == 'applied'||$type == 'initial'||$type == 'paid'||$type=='selected') {
+                    $applicants->where('status',$type);
                 }
                 if ($request->range && $request->range != 'all') {
                     $applicants->where('division_id', $request->range);
