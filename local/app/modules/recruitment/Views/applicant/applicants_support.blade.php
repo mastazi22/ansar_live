@@ -60,7 +60,7 @@
                 </div>--}}
                 <div class="row" style="margin-bottom: 20px">
                     <div class="col-sm-6 col-sm-offset-6">
-                        <form action="{{URL::route('recruitment.applicant.list',['type'=>$type])}}" method="get">
+                        <form action="{{URL::route('recruitment.applicant.list',['type'=>$type,'circular_id'=>4])}}" method="get">
                             <div class="input-group">
                                 <input type="text" name="q" class="form-control" placeholder="Search here by txID or mobile no">
                                 <span class="input-group-btn">
