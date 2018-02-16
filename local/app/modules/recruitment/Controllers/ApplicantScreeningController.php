@@ -358,7 +358,8 @@ class ApplicantScreeningController extends Controller
             }
             $applicants = $applicants->paginate(50);
         } else {
-            $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment']);
+            $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'])
+            ->where('job_circular_id',$circular_id);
             if ($type == 'applied') {
                 $applicants->whereHas('payment', function ($q) {
                     $q->whereNotNull('txID');
