@@ -334,11 +334,13 @@ class ApplicantScreeningController extends Controller
         return abort(401);
     }
 
-    public function applicantListSupport(Request $request, $type = null)
+    public function applicantListSupport(Request $request,$circular_id, $type = null)
     {
         DB::enableQueryLog();
         if ($request->q) {
-            $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'])->where(function ($query) use ($request) {
+            $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'])
+                ->where('job_circular_id',$circular_id)
+                ->where(function ($query) use ($request) {
                 $query->whereHas('payment', function ($q) use ($request) {
                     $q->where('txID', 'like', '%' . $request->q . '%');
                 })->orWhere('mobile_no_self', 'like', '%' . $request->q . '%');

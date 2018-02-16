@@ -30,7 +30,7 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
     Route::get('/applicant/final_list',['as'=>'recruitment.applicant.final_list','uses'=>'ApplicantScreeningController@acceptedApplicantView']);
     Route::post('/applicant/final_list/load',['as'=>'recruitment.applicant.final_list_load','uses'=>'ApplicantScreeningController@loadApplicantByQuota']);
 
-    Route::get('/applicant/list/{type?}',['as'=>'recruitment.applicant.list','uses'=>'ApplicantScreeningController@applicantListSupport']);
+    Route::get('/applicant/list/{circular_id}/{type?}',['as'=>'recruitment.applicant.list','uses'=>'ApplicantScreeningController@applicantListSupport']);
     Route::get('/applicants/list/{circular_id}/{type?}',['as'=>'recruitment.applicants.list','uses'=>'ApplicantScreeningController@applicantList']);
     Route::get('/applicant/mark_as_paid/{type}/{id}',['as'=>'recruitment.applicant.mark_as_paid','uses'=>'ApplicantScreeningController@markAsPaid']);
     Route::post('/applicant/mark_as_paid/{id}',['as'=>'recruitment.applicant.update_as_paid','uses'=>'ApplicantScreeningController@updateAsPaid']);
