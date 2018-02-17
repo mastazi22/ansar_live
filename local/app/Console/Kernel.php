@@ -91,7 +91,7 @@ class Kernel extends ConsoleKernel
                     }
                     DB::connection('hrm')->commit();
                 } catch (\Exception $e) {
-                    Log::info('OFFER SEND ERROR: ' . $e->getMessage());
+                    Log::info('OFFER SEND ERROR: ' . $e->getTraceAsString());
                     DB::connection('hrm')->rollback();
                 }
             }
