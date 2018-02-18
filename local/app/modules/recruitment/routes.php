@@ -32,7 +32,7 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
 
     Route::get('/applicant/list/{circular_id}/{type?}',['as'=>'recruitment.applicant.list','uses'=>'ApplicantScreeningController@applicantListSupport']);
     Route::get('/applicants/list/{circular_id}/{type?}',['as'=>'recruitment.applicants.list','uses'=>'ApplicantScreeningController@applicantList']);
-    Route::get('/applicant/mark_as_paid/{type}/{id}',['as'=>'recruitment.applicant.mark_as_paid','uses'=>'ApplicantScreeningController@markAsPaid']);
+    Route::get('/applicant/mark_as_paid/{type}/{id}/{circular_id}',['as'=>'recruitment.applicant.mark_as_paid','uses'=>'ApplicantScreeningController@markAsPaid']);
     Route::post('/applicant/mark_as_paid/{id}',['as'=>'recruitment.applicant.update_as_paid','uses'=>'ApplicantScreeningController@updateAsPaid']);
     Route::any('/applicant/update_as_paid_by_file',['as'=>'recruitment.applicant.update_as_paid_by_file','uses'=>'ApplicantScreeningController@updateAsPaidByFile']);
     Route::any('/applicant/move_to_hrm',['as'=>'recruitment.move_to_hrm','uses'=>'ApplicantScreeningController@moveApplicantToHRM']);
