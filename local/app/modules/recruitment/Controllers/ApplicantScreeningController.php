@@ -427,9 +427,9 @@ class ApplicantScreeningController extends Controller
         return view('recruitment::applicant.applicants', ['type' => $type, 'circular_id' => $circular_id]);
     }
 
-    public function markAsPaid($type,$id)
+    public function markAsPaid($type,$id,$circular_id)
     {
-        return view('recruitment::applicant.mark_as_paid', ['id' => $id,'type'=>$type]);
+        return view('recruitment::applicant.mark_as_paid', ['id' => $id,'type'=>$type,'circular_id'=>$circular_id]);
     }
 
     public function updateAsPaid(Request $request, $id)
@@ -444,7 +444,7 @@ class ApplicantScreeningController extends Controller
 //        return $request->all();
         DB::beginTransaction();
         try {
-            $applicant = JobAppliciant::where('applicant_id', $id)->first();
+            $applicant = JobAppliciant::where('applicant_id', $id)->where('job_circular_id',$request->job_circular_id)->first();
             $payment = $applicant->payment;
             if ($payment) {
                 $payment->returntxID = $payment->txID;
@@ -464,9 +464,9 @@ class ApplicantScreeningController extends Controller
                     $this->dispatch(new FeedbackSMS($message,$applicant->mobile_no_self));
                     }
 
-                return redirect()->route('recruitment.applicant.list', ['type' => $request->type])->with('success_message', 'updated successfully');
+                return redirect()->route('recruitment.applicant.list', ['type' => $request->type,'circular_id'=>$request->job_circular_id])->with('success_message', 'updated successfully');
             }
-            return redirect()->route('recruitment.applicant.list',['type' => $request->type])->with('error_message', 'This applicant has not pay yet');
+            return redirect()->route('recruitment.applicant.list',['type' => $request->type,'circular_id'=>$request->job_circular_id])->with('error_message', 'This applicant has not pay yet');
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->with('flash_error', $e->getMessage());

@@ -113,7 +113,7 @@
                             @if($type=='pending'||$type=='initial')
                                 <td>
 
-                                    <a class="btn btn-sm btn-primary" href="{{URL::route('recruitment.applicant.mark_as_paid',['id'=>$a->applicant_id,'type'=>$type])}}">Mark as paid</a>
+                                    <a class="btn btn-sm btn-primary" href="{{URL::route('recruitment.applicant.mark_as_paid',['id'=>$a->applicant_id,'type'=>$type,'circular_id'=>$a->job_circular_id])}}">Mark as paid</a>
                                 </td>
                             @elseif(!$type)
                                 <td>{{$a->status}}</td>
