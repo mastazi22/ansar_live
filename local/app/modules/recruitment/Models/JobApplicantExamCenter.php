@@ -65,7 +65,7 @@ class JobApplicantExamCenter extends Model
     public function getSelectionDateAttribute($value)
     {
         if($value)return Carbon::parse($value)->format('d-M-Y');
-        return 'n\a';
+        return '';
     }
 
     public function setWrittenDateAttribute($value)
@@ -77,7 +77,7 @@ class JobApplicantExamCenter extends Model
     public function getWrittenDateAttribute($value)
     {
         if($value)return Carbon::parse($value)->format('d-M-Y');
-        return 'n\a';
+        return '';
     }
 
     public function setVivaDateAttribute($value)
@@ -89,6 +89,6 @@ class JobApplicantExamCenter extends Model
     public function getVivaDateAttribute($value)
     {
         if($value)return Carbon::parse($value)->format('d-M-Y');
-        return 'n\a';
+        return '';
     }
 }
