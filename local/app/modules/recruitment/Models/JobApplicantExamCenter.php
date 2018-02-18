@@ -48,7 +48,8 @@ class JobApplicantExamCenter extends Model
     public function setSelectionDateAttribute($value)
     {
 //        return $units;
-        $this->attributes['selection_date'] = Carbon::parse($value)->format('Y-m-d');
+        if($value) $this->attributes['selection_date'] = Carbon::parse($value)->format('Y-m-d');
+        else $this->attributes['selection_date'] = null;
     }
 
     /*public function getUnitsAttribute($value){
@@ -63,26 +64,31 @@ class JobApplicantExamCenter extends Model
 
     public function getSelectionDateAttribute($value)
     {
-        return Carbon::parse($value)->format('d-M-Y');
+        if($value)return Carbon::parse($value)->format('d-M-Y');
+        return 'n\a';
     }
 
     public function setWrittenDateAttribute($value)
     {
-        $this->attributes['written_date'] = Carbon::parse($value)->format('Y-m-d');
+        if($value)$this->attributes['written_date'] = Carbon::parse($value)->format('Y-m-d');
+        else $this->attributes['written_date'] = null;
     }
 
     public function getWrittenDateAttribute($value)
     {
-        return Carbon::parse($value)->format('d-M-Y');
+        if($value)return Carbon::parse($value)->format('d-M-Y');
+        return 'n\a';
     }
 
     public function setVivaDateAttribute($value)
     {
-        $this->attributes['viva_date'] = Carbon::parse($value)->format('Y-m-d');
+        if($value)$this->attributes['viva_date'] = Carbon::parse($value)->format('Y-m-d');
+        else $this->attributes['viva_date'] = null;
     }
 
     public function getVivaDateAttribute($value)
     {
-        return Carbon::parse($value)->format('d-M-Y');
+        if($value)return Carbon::parse($value)->format('d-M-Y');
+        return 'n\a';
     }
 }
