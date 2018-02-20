@@ -26,6 +26,13 @@
                         {!! Form::hidden('type',$type) !!}
                         {!! Form::hidden('job_circular_id',$circular_id) !!}
                         <div class="form-group">
+                            {!! Form::label('txID','TxID :',['class'=>'control-label']) !!}
+                            {!! Form::text('txID',null,['class'=>'form-control']) !!}
+                            @if(isset($errors)&&$errors->first('txID'))
+                                <p class="text text-danger">{{$errors->first('txID')}}</p>
+                            @endif
+                        </div>
+                        <div class="form-group">
                             {!! Form::label('bankTxID','bankTxID :',['class'=>'control-label']) !!}
                             {!! Form::text('bankTxID',null,['class'=>'form-control']) !!}
                             @if(isset($errors)&&$errors->first('bankTxID'))

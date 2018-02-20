@@ -443,6 +443,7 @@ class ApplicantScreeningController extends Controller
     {
         $rules = [
             'bankTxID' => 'required',
+            'txID' => 'required',
             'paymentOption' => 'required',
             'type' => 'required'
 
@@ -454,7 +455,8 @@ class ApplicantScreeningController extends Controller
             $applicant = JobAppliciant::where('applicant_id', $id)->where('job_circular_id',$request->job_circular_id)->first();
             $payment = $applicant->payment;
             if ($payment) {
-                $payment->returntxID = $payment->txID;
+                $payment->returntxID = $request->txID;
+                $payment->txID = $request->txID;
                 $payment->bankTxID = $request->bankTxID;
                 $payment->bankTxStatus = 'SUCCESS';
                 $payment->txnAmount = 200;
@@ -464,7 +466,7 @@ class ApplicantScreeningController extends Controller
                 $payment->save();
                 $applicant->status = $request->type == 'initial' ? 'paid' : 'applied';
                 $applicant->save();
-                $ph = $payment->paymentHistory;
+                $ph = $payment->paymentHistory()->where('txID',$request->txID);
                 $ph->bankTxID = $request->bankTxID;
                 $ph->bankTxStatus = 'SUCCESS';
                 $ph->txnAmount = 200;
