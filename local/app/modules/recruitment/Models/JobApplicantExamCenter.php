@@ -17,13 +17,13 @@ class JobApplicantExamCenter extends Model
     {
         $rules = [
             'job_circular_id' => 'required|numeric|exists:job_circular,id',
-            'selection_date' => 'required',
-            'selection_time' => ['required', 'regex:/^(0[0-9]|1[0-2]):([0-5][0-9])\s?(AM|PM)$/'],
+//            'selection_date' => 'required',
+//            'selection_time' => ['required', 'regex:/^(0[0-9]|1[0-2]):([0-5][0-9])\s?(AM|PM)$/'],
             'selection_place' => 'required',
-            'written_date' => 'required',
-            'viva_date' => 'required',
-            'written_time' => ['required', 'regex:/^(0[0-9]|1[0-2]):([0-5][0-9])\s?(AM|PM)$/'],
-            'viva_time' => ['required', 'regex:/^(0[0-9]|1[0-2]):([0-5][0-9])\s?(AM|PM)$/'],
+//            'written_date' => 'required',
+//            'viva_date' => 'required',
+//            'written_time' => ['required', 'regex:/^(0[0-9]|1[0-2]):([0-5][0-9])\s?(AM|PM)$/'],
+//            'viva_time' => ['required', 'regex:/^(0[0-9]|1[0-2]):([0-5][0-9])\s?(AM|PM)$/'],
             'written_viva_place' => 'required',
             'units' => 'required',
         ];
@@ -48,7 +48,8 @@ class JobApplicantExamCenter extends Model
     public function setSelectionDateAttribute($value)
     {
 //        return $units;
-        $this->attributes['selection_date'] = Carbon::parse($value)->format('Y-m-d');
+        if($value) $this->attributes['selection_date'] = Carbon::parse($value)->format('Y-m-d');
+        else $this->attributes['selection_date'] = null;
     }
 
     /*public function getUnitsAttribute($value){
@@ -63,26 +64,31 @@ class JobApplicantExamCenter extends Model
 
     public function getSelectionDateAttribute($value)
     {
-        return Carbon::parse($value)->format('d-M-Y');
+        if($value)return Carbon::parse($value)->format('d-M-Y');
+        return '';
     }
 
     public function setWrittenDateAttribute($value)
     {
-        $this->attributes['written_date'] = Carbon::parse($value)->format('Y-m-d');
+        if($value)$this->attributes['written_date'] = Carbon::parse($value)->format('Y-m-d');
+        else $this->attributes['written_date'] = null;
     }
 
     public function getWrittenDateAttribute($value)
     {
-        return Carbon::parse($value)->format('d-M-Y');
+        if($value)return Carbon::parse($value)->format('d-M-Y');
+        return '';
     }
 
     public function setVivaDateAttribute($value)
     {
-        $this->attributes['viva_date'] = Carbon::parse($value)->format('Y-m-d');
+        if($value)$this->attributes['viva_date'] = Carbon::parse($value)->format('Y-m-d');
+        else $this->attributes['viva_date'] = null;
     }
 
     public function getVivaDateAttribute($value)
     {
-        return Carbon::parse($value)->format('d-M-Y');
+        if($value)return Carbon::parse($value)->format('d-M-Y');
+        return '';
     }
 }
