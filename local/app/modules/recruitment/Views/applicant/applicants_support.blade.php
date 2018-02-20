@@ -102,18 +102,19 @@
                                 <td>{{$a->applicant_name_bng}}</td>
                                 <td>{{$a->applicant_id}}</td>
                                 <td>{{$a->applicant_password}}</td>
-                                @if($a->payment)
-                                    @if($a->payment->paymentHistory)
-                                        @foreach($a->payment->paymentHistory as $p)
-                                            {{$p->txID}}<br>
-                                        @endforeach
+                                <td>
+                                    @if($a->payment)
+                                        @if($a->payment->paymentHistory)
+                                            @foreach($a->payment->paymentHistory as $p)
+                                                {{$p->txID}}<br>
+                                            @endforeach
+                                        @else
+                                            {{$a->payment?$a->payment->txID:'n\a'}}
+                                        @endif
                                     @else
-                                        <td>{{$a->payment?$a->payment->txID:'n\a'}}</td>
+                                        n/a
                                     @endif
-                                @else
-                                    n/a
-                                @endif
-
+                                </td>
                                 <td>{{$a->gender}}</td>
                                 <td>{{$a->date_of_birth}}</td>
                                 <td>{{$a->division?$a->division->division_name_bng:'n\a'}}</td>
