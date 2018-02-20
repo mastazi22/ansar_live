@@ -4,12 +4,12 @@ namespace App\modules\recruitment\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class JobAppliciantPaymentHistory extends Model
+class JobPaymentHistory extends Model
 {
-    protected $table = 'job_appliciant_payment_history';
+    protected $table = 'job_payment_history';
     protected $connection = 'recruitment';
     protected $guarded = ['id'];
     public function paymentHistory(){
-        return $this->belongsTo(JobPaymentHistory::class,'job_applicant_payment_id');
+        return $this->belongsTo(JobAppliciantPaymentHistory::class,'job_applicant_payment_id');
     }
 }

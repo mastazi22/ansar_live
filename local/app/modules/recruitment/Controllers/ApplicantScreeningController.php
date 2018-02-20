@@ -338,11 +338,16 @@ class ApplicantScreeningController extends Controller
     {
         DB::enableQueryLog();
         if ($request->q) {
-            $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'])
-                ->where('job_circular_id',$circular_id)
+            $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'=>function($p) use ($request){
+                $p->with(['paymentHistory'=>function($q) use ($request){
+                    $q->where('txID','like', '%' . $request->q . '%');
+                }]);
+            }])->where('job_circular_id',$circular_id)
                 ->where(function ($query) use ($request) {
                 $query->whereHas('payment', function ($q) use ($request) {
-                    $q->where('txID', 'like', '%' . $request->q . '%');
+                    $q->whereHas('paymentHistory',function ($qq) use($request){
+                        $qq->where('txID','like',"%{$request->q}%");
+                    });
                 })->orWhere('mobile_no_self', 'like', '%' . $request->q . '%');
             });
             if ($type == 'applied') {
@@ -358,7 +363,9 @@ class ApplicantScreeningController extends Controller
             }
             $applicants = $applicants->paginate(50);
         } else {
-            $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'])
+            $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'=>function($q){
+                $q->with('paymentHistory');
+            }])
             ->where('job_circular_id',$circular_id);
             if ($type == 'applied') {
                 $applicants->whereHas('payment', function ($q) {
@@ -457,6 +464,14 @@ class ApplicantScreeningController extends Controller
                 $payment->save();
                 $applicant->status = $request->type == 'initial' ? 'paid' : 'applied';
                 $applicant->save();
+                $ph = $payment->paymentHistory;
+                $ph->bankTxID = $request->bankTxID;
+                $ph->bankTxStatus = 'SUCCESS';
+                $ph->txnAmount = 200;
+                $ph->spCode = '000';
+                $ph->spCodeDes = 'ApprovedManual';
+                $ph->paymentOption = $request->paymentOption;
+                $ph->save();
                 DB::commit();
 //                return $applicant;
                 if ($request->type == 'initial') {
