@@ -10,6 +10,6 @@ class JobAppliciantPaymentHistory extends Model
     protected $connection = 'recruitment';
     protected $guarded = ['id'];
     public function paymentHistory(){
-        return $this->belongsTo(JobPaymentHistory::class,'job_applicant_payment_id');
+        return $this->hasMany(JobPaymentHistory::class,'job_applicant_payment_id');
     }
 }
