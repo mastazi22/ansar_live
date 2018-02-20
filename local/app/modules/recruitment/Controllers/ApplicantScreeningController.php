@@ -466,14 +466,16 @@ class ApplicantScreeningController extends Controller
                 $payment->save();
                 $applicant->status = $request->type == 'initial' ? 'paid' : 'applied';
                 $applicant->save();
-                $ph = $payment->paymentHistory()->where('txID',$request->txID);
-                $ph->bankTxID = $request->bankTxID;
-                $ph->bankTxStatus = 'SUCCESS';
-                $ph->txnAmount = 200;
-                $ph->spCode = '000';
-                $ph->spCodeDes = 'ApprovedManual';
-                $ph->paymentOption = $request->paymentOption;
-                $ph->save();
+                $ph = $payment->paymentHistory()->where('txID',$request->txID)->first();
+                if($ph){
+                    $ph->bankTxID = $request->bankTxID;
+                    $ph->bankTxStatus = 'SUCCESS';
+                    $ph->txnAmount = 200;
+                    $ph->spCode = '000';
+                    $ph->spCodeDes = 'ApprovedManual';
+                    $ph->paymentOption = $request->paymentOption;
+                    $ph->save();
+                }
                 DB::commit();
 //                return $applicant;
                 if ($request->type == 'initial') {
