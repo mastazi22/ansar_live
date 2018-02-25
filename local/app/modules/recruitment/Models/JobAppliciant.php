@@ -38,7 +38,10 @@ class JobAppliciant extends Model
         return $this->belongsTo(JobApplicantQuota::class,'unit_id','district_id');
     }
     public function getDateOfBirthAttribute($value){
-        return Carbon::parse($value)->format('d-M-Y');
+        if($value) {
+            return Carbon::parse($value)->format('d-M-Y');
+        }
+        return null;
     }
     public function getColumns(){
         return $this->getConnection()->getSchemaBuilder()->getColumnListing($this->getTable());
