@@ -12,7 +12,29 @@
             $scope.selectMessage = '';
             $scope.educations = [];
             $scope.circulars = [];
-            $scope.applicants = $sce.trustAsHtml('loading data....');
+            $scope.applicants = $sce.trustAsHtml(`<div class="table-responsive">
+                        <table class="table table-bordered table-condensed">
+                            <caption style="font-size: 20px;color:#111111">All applicants</caption>
+                            <tr>
+                                <th>Sl. No</th>
+                                <th>Applicant Name</th>
+                                <th>Gender</th>
+                                <th>Birth Date</th>
+                                <th>Division</th>
+                                <th>District</th>
+                                <th>Thana</th>
+                                <th>Height</th>
+                                <th>Chest</th>
+                                <th>Weight</th>
+                                <th>Action</th>
+                            </tr>
+                            <tr>
+                                <td colspan="11" class="bg-warning">No applicant available
+                                .Select <strong>Circular</strong> and <strong>status</strong> to load applicant
+                                </td>
+                            </tr>
+                        </table>
+                    </div>`);
             $scope.allStatus = {'': '--Select a status', 'applied': 'Applied', 'selected': 'Selected','accepted':'Accepted'}
             $scope.param = {};
             $scope.limitList = '50';
@@ -49,7 +71,30 @@
                     $scope.applicants = $sce.trustAsHtml(response.data);
                     $scope.allLoading = false;
                 }, function (response) {
-                    $scope.applicants = $sce.trustAsHtml('loading error.....');
+                    $scope.applicants = $sce.trustAsHtml(`<div class="table-responsive">
+                        <table class="table table-bordered table-condensed">
+                            <caption style="font-size: 20px;color:#111111">All applicants</caption>
+                            <tr>
+                                <th>Sl. No</th>
+                                <th>Applicant Name</th>
+                                <th>Gender</th>
+                                <th>Birth Date</th>
+                                <th>Division</th>
+                                <th>District</th>
+                                <th>Thana</th>
+                                <th>Height</th>
+                                <th>Chest</th>
+                                <th>Weight</th>
+                                <th>Action</th>
+                            </tr>
+                            <tr>
+                                <td colspan="11" class="bg-warning">
+                                An error occur while loading. try again later or
+                                <button class="btn btn-xs btn-primary" ng-click="loadApplicant()"><i class="fa fa-refresh"></i>&nbsp;Refresh now</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>`);
                     $scope.allLoading = false;
                 })
             }

@@ -69,8 +69,8 @@ class JobApplicantMarksController extends Controller
         $rules = [
             'applicant_id'=>'required',
             'written'=>'required|numeric',
-            'edu_training'=>'required|numeric',
-            'physical'=>'required|numeric',
+//            'edu_training'=>'required|numeric',
+//            'physical'=>'required|numeric',
             'viva'=>'required|numeric',
         ];
         $this->validate($request,$rules);
@@ -130,8 +130,8 @@ class JobApplicantMarksController extends Controller
     {
         $rules = [
             'written'=>'required|numeric',
-            'edu_training'=>'required|numeric',
-            'physical'=>'required|numeric',
+//            'edu_training'=>'required|numeric',
+//            'physical'=>'required|numeric',
             'viva'=>'required|numeric',
         ];
         $this->validate($request,$rules);

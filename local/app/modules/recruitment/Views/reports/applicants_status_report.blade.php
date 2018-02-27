@@ -6,7 +6,30 @@
 @section('content')
     <script>
         GlobalApp.controller('ApplicantsListController',function ($scope, $http, $sce,httpService) {
-            $scope.applicants = $sce.trustAsHtml("<h3 class='text text-center'>Data loading....</h3>")
+            $scope.applicants = $sce.trustAsHtml(`<div class="table-responsive">
+                        <table class="table table-bordered table-condensed">
+                            <caption style="font-size: 20px;color:#111111">All applicants</caption>
+                            <tr>
+                                <th>#</th>
+                                <th>Applicant Name</th>
+                                <th>Father Name</th>
+                                <th>Birth Date</th>
+                                <th>National ID No.</th>
+                                <th>Division</th>
+                                <th>District</th>
+                                <th>Thana</th>
+                                <th>Height</th>
+                                <th>Weight</th>
+                                <th>Mobile no</th>
+                                <th>Status</th>
+                            </tr>
+                            <tr>
+                                <td colspan="12" class="bg-warning">No applicant available
+                                .Select <strong>Job Circular</strong> and <strong>Applicant Status</strong> to load applicant
+                                </td>
+                            </tr>
+                        </table>
+                    </div>`)
             $scope.customData = {
                 'applied':'Applied',
                 'selected':'Selected',

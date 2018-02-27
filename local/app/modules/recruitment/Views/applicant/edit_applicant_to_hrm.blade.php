@@ -12,7 +12,29 @@
             $scope.selectMessage = '';
             $scope.educations = [];
             $scope.circulars = [];
-            $scope.applicants = $sce.trustAsHtml('loading data....');
+            $scope.applicants = $sce.trustAsHtml(`<div class="table-responsive">
+                        <table class="table table-bordered table-condensed">
+                            <caption style="font-size: 20px;color:#111111">All applicants</caption>
+                            <tr>
+                                <th>Sl. No</th>
+                                <th>Applicant Name</th>
+                                <th>Father Name</th>
+                                <th>National ID No.</th>
+                                <th>Gender</th>
+                                <th>Birth Date</th>
+                                <th>Division</th>
+                                <th>District</th>
+                                <th>Thana</th>
+                                <th>Height</th>
+                                <th>Action</th>
+                            </tr>
+                            <tr>
+                                <td colspan="11" class="bg-warning">No applicant available
+                                .Select <strong>Job Circular</strong> to load applicant
+                                </td>
+                            </tr>
+                        </table>
+                    </div>`);
             $scope.allStatus = {'': '--Select a status', 'applied': 'Applied', 'selected': 'Selected','accepted':'Accepted'}
             $scope.param = {};
             $scope.limitList = '50';

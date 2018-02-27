@@ -6,7 +6,26 @@
 @section('content')
     <script>
         GlobalApp.controller('ApplicantsListController',function ($scope, $http, $sce,httpService) {
-            $scope.applicants = $sce.trustAsHtml("<h3 class='text text-center'>Data loading....</h3>")
+            $scope.applicants = $sce.trustAsHtml(`<div class="table-responsive">
+                        <table class="table table-bordered table-condensed">
+                            <caption style="font-size: 20px;color:#111111">All applicants</caption>
+                            <tr>
+                                <th>Sl. No</th>
+                                <th>Applicant Name</th>
+                                <th>Physical Fitness</th>
+                                <th>Education &amp; Training</th>
+                                <th>Written</th>
+                                <th>Viva</th>
+                                <th>Total</th>
+                                <th>Action</th>
+                            </tr>
+                            <tr>
+                                <td colspan="8" class="bg-warning">No applicant available
+                                .Select <strong>Circular</strong> to load applicant
+                                </td>
+                            </tr>
+                        </table>
+                    </div>`)
             $scope.param = {};
             $scope.param['limit'] = '50'
 //            $scope.limitList = p = '50';

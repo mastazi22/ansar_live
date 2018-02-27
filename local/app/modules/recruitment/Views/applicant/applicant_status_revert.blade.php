@@ -5,15 +5,41 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('applicantSearch', function ($scope, $http, $q, httpService, $sce,notificationService) {
+        GlobalApp.controller('applicantSearch', function ($scope, $http, $q, httpService, $sce, notificationService) {
             var p = '50'
             $scope.categories = [];
             $scope.q = '';
             $scope.selectMessage = '';
             $scope.educations = [];
             $scope.circulars = [];
-            $scope.applicants = $sce.trustAsHtml('loading data....');
-            $scope.allStatus = {'': '--Select a status', 'applied': 'Applied', 'selected': 'Selected','accepted':'Accepted'}
+            $scope.applicants = $sce.trustAsHtml(`<div class="table-responsive">
+                        <table class="table table-bordered table-condensed">
+                            <caption style="font-size: 20px;color:#111111">All applicants</caption>
+                            <tr>
+                                <th>Sl. No</th>
+                                <th>Applicant Name</th>
+                                <th>Gender</th>
+                                <th>Birth Date</th>
+                                <th>Division</th>
+                                <th>District</th>
+                                <th>Thana</th>
+                                <th>Status</th>
+                                <th>Revert Status to</th>
+                                <th>Action</th>
+                            </tr>
+                            <tr>
+                                <td colspan="10" class="bg-warning">No applicant available
+                                .Select <strong>Circular</strong> and <strong>status</strong> to load applicant
+                                </td>
+                            </tr>
+                        </table>
+                    </div>`);
+            $scope.allStatus = {
+                '': '--Select a status',
+                'applied': 'Applied',
+                'selected': 'Selected',
+                'accepted': 'Accepted'
+            }
             $scope.param = {};
             $scope.limitList = '50';
 
@@ -27,13 +53,13 @@
             $scope.loadApplicant = function (url) {
                 //alert($scope.limitList)
                 $scope.allLoading = true;
-                 if($scope.param['limit']===undefined){
-                     $scope.param['limit'] = '50'
-                 }
+                if ($scope.param['limit'] === undefined) {
+                    $scope.param['limit'] = '50'
+                }
                 $http({
-                    url:url||'{{URL::route('recruitment.applicant.revert')}}',
-                    method:'post',
-                    data:$scope.param
+                    url: url || '{{URL::route('recruitment.applicant.revert')}}',
+                    method: 'post',
+                    data: $scope.param
                 }).then(function (response) {
                     $scope.applicants = $sce.trustAsHtml(response.data);
                     $scope.allLoading = false;
@@ -44,17 +70,17 @@
             }
             $scope.revertStatus = function (data) {
                 $scope.allLoading = true;
-               $http({
-                   url:'{{URL::route('recruitment.applicant.revert_status')}}',
-                   method:'post',
-                   data:data
-               }).then(function (res) {
-                   $scope.allLoading = false;
-                   notificationService.notify(res.data.status,res.data.message)
-               },function (res) {
-                   $scope.allLoading = false;
-                   notificationService.notify('error',res.statusText)
-               })
+                $http({
+                    url: '{{URL::route('recruitment.applicant.revert_status')}}',
+                    method: 'post',
+                    data: data
+                }).then(function (res) {
+                    $scope.allLoading = false;
+                    notificationService.notify(res.data.status, res.data.message)
+                }, function (res) {
+                    $scope.allLoading = false;
+                    notificationService.notify('error', res.statusText)
+                })
             }
 
 
@@ -67,7 +93,7 @@
                     scope.$watch('applicants', function (n) {
 
                         if (attr.ngBindHtml) {
-                            if(newScope) newScope.$destroy();
+                            if (newScope) newScope.$destroy();
                             newScope = scope.$new();
                             $compile(elem[0].children)(newScope)
                         }
@@ -108,7 +134,9 @@
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label for="" class="control-label " style="display: block;">&nbsp;</label>
-                            <button ng-disabled="!(param.status&&param.circular)" class="btn btn-primary" ng-click="loadApplicant()">Load Applicant</button>
+                            <button ng-disabled="!(param.status&&param.circular)" class="btn btn-primary"
+                                    ng-click="loadApplicant()">Load Applicant
+                            </button>
                         </div>
                     </div>
                 </div>

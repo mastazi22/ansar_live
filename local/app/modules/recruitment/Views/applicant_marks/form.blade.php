@@ -6,11 +6,13 @@
 @endif
 <div class="form-group">
     {!! Form::label('physical','Physical Fitness Exam',['class'=>'control-label']) !!}<sup style="color:red;font-size: 20px;top: 0;">*</sup>
-    {!! Form::text('physical',isset($data)?$data->physical:$applicant->physicalPoint(),['class'=>'form-control','placeholder'=>'Enter physical exam number']) !!}
+    <div class="form-control">{{isset($data)?$data->physical:$applicant->physicalPoint()}}</div>
+    {!! Form::hidden('physical',isset($data)?$data->physical:$applicant->physicalPoint(),['class'=>'form-control','placeholder'=>'Enter physical exam number']) !!}
 </div>
 <div class="form-group">
     {!! Form::label('edu_training','Education & Training',['class'=>'control-label']) !!}<sup style="color:red;font-size: 20px;top: 0;">*</sup>
-    {!! Form::text('edu_training',isset($data)?$data->edu_training:$applicant->educationTrainingPoint(),['class'=>'form-control','placeholder'=>'Enter education & training mark']) !!}
+    <div class="form-control">{{isset($data)?$data->edu_training:$applicant->educationTrainingPoint()}}</div>
+    {!! Form::hidden('edu_training',isset($data)?$data->edu_training:$applicant->educationTrainingPoint(),['class'=>'form-control','placeholder'=>'Enter education & training mark']) !!}
 </div>
 
 <div class="form-group">
