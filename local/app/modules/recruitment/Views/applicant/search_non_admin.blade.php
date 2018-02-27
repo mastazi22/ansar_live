@@ -49,24 +49,6 @@
             $scope.limitList = '50';
             $scope.ansarSelection = 'overall';
             $scope.selectedList = [];
-            $scope.filter = {
-                height: {value: false, feet: '', inch: '', comparator: '='},
-                chest_normal: {value: false, data: '', comparator: '='},
-                chest_extended: {value: false, data: '', comparator: '='},
-                weight: {value: false, data: '', comparator: '='},
-                age: {value: false, data: '', comparator: '='},
-                training: {value: false},
-                reference: {value: false,data:'', comparator: '='},
-                gender: {value: false, data: 'Male', comparator: '='},
-                education: {value: false, data: [], comparator: '='}
-            }
-            $scope.comparisonOperator = {
-                'Greater then': '>',
-                'Less then': '<',
-                'Equal': '=',
-                'Greater then equal': '>=',
-                'Less then equal': '<='
-            }
             var loadAll = function () {
                 $scope.circular = 'all';
                 $scope.category = 'all';
@@ -117,7 +99,6 @@
                 httpService.searchApplicant(url, {
                     category: $scope.category,
                     circular: $scope.circular,
-                    filter: $scope.filter,
                     q:$scope.q
                 }).then(function (response) {
                     $scope.applicants = $sce.trustAsHtml(response.data);
@@ -374,8 +355,10 @@
             }
             $scope.isEditable = function (s) {
 
-                if($scope.isAdmin!=11&&($scope.fields==undefined||$scope.fields.indexOf(s)<0)) return false;
-                return true;
+//                console.log(s+" : "+($scope.isAdmin!=11&&($scope.fields==undefined||$scope.fields.indexOf(s)<0)))
+//                console.log($scope.fields)
+                if($scope.isAdmin!=11&&($scope.fields==undefined||$scope.fields.indexOf(s)<0)) return -1;
+                return 1;
             }
         });
         GlobalApp.directive('compileHtml', function ($compile) {
@@ -450,20 +433,9 @@
                         </div>
                     </div>--}}
                 </div>
-                <div class="filters">
-                    <span class="label label-success" ng-repeat="(k,v) in filter" ng-if="v.value&&v.data">
-                        [[k+" "+v.comparator+" "+v.data]]<a href="#" ng-click="removeFilter(k)">&times</a>
-                    </span>
-                    <span class="label label-success" ng-repeat="(k,v) in filter" ng-if="v.value&&!v.data&&k=='height'">
-                        [[k+" "+v.comparator+" feet: "+v.feet+", inch: "+v.inch]]<a href="#" ng-click="removeFilter(k)">&times</a>
-                    </span>
-                    <span class="label label-success" ng-repeat="(k,v) in filter" ng-if="v.value&&!v.data&&k!='height'">
-                        [[k]]<a href="#" ng-click="removeFilter(k)">&times</a>
-                    </span>
-                </div>
                 <h3 class="text-center">Search applicant by National ID</h3>
                 <div class="input-group" style="margin-top: 10px">
-                    <input ng-keyup="$event.keyCode==13?loadApplicant():''" class="form-control" ng-model="q" type="text" placeholder="Search by national id">
+                    <input ng-keyup="$event.keyCode==13?loadApplicant():''" class="form-control" ng-model="q" type="text" placeholder="Search by national id,applicant id or date of birth">
                     <span class="input-group-btn">
                     <button class="btn btn-primary" ng-click="loadApplicant()">
                         <i class="fa fa-search"></i>

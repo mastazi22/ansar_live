@@ -261,12 +261,6 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-sm-4">
-                        <label for="" class="control-label" style="display: block">&nbsp;</label>
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filter-list">
-                            Filter
-                        </button>
-                    </div>
                     {{--<div class="col-sm-4">
                         <div class="form-group">
                             <label for="" class="control-label">Ansar Selection</label>
@@ -279,23 +273,12 @@
                         </div>
                     </div>--}}
                 </div>
-                <div class="filters">
-                    <span class="label label-success" ng-repeat="(k,v) in filter" ng-if="v.value&&v.data">
-                        [[k+" "+v.comparator+" "+v.data]]<a href="#" ng-click="removeFilter(k)">&times</a>
-                    </span>
-                    <span class="label label-success" ng-repeat="(k,v) in filter" ng-if="v.value&&!v.data&&k=='height'">
-                        [[k+" "+v.comparator+" feet: "+v.feet+", inch: "+v.inch]]<a href="#" ng-click="removeFilter(k)">&times</a>
-                    </span>
-                    <span class="label label-success" ng-repeat="(k,v) in filter" ng-if="v.value&&!v.data&&k!='height'">
-                        [[k]]<a href="#" ng-click="removeFilter(k)">&times</a>
-                    </span>
-                </div>
                 <div ng-bind-html="applicants" compile-html>
 
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="filter-list">
+        {{--<div class="modal fade" id="filter-list">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -465,7 +448,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>--}}
         <div class="modal fade" id="chooser">
             <div class="modal-dialog">
                 <div class="modal-content">

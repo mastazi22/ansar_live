@@ -84,7 +84,7 @@ class ApplicantScreeningController extends Controller
                 'limit'=>'regex:/^[0-9]+$/'
             ];
             if(auth()->user()->type==66||auth()->user()->type==22){
-                $rules['q']='required|regex:/^[0-9]+$/';
+                $rules['q']='required';
             }
             $this->validate($request, $rules);
             $query = JobAppliciant::whereHas('circular', function ($q) use ($request) {
@@ -103,61 +103,13 @@ class ApplicantScreeningController extends Controller
             $query->join('db_amis.tbl_units as uu','uu.id','=','job_applicant.unit_id');
             $query->join('db_amis.tbl_thana as tt','tt.id','=','job_applicant.thana_id');
             if($request->q){
-                $query->where('national_id_no',$request->q);
-            }
-            if($request->filter){
-                foreach ($request->filter as $key=>$value){
-                    if($value['value']){
-                        if($key=='height'){
-                            $height = ($value['feet']?floatval($value['feet']):0)*12+($value['feet']?floatval($value['inch']):0);
-                            $query->whereRaw('(height_feet*12+height_inch)'.$value['comparator'].$height);
-                        }
-                        else if($key=='age' && $value['data']){
-                            $query->whereRaw('DATEDIFF(NOW(),date_of_birth)/365'.$value['comparator'].$value['data'] );
-                        }
-                        else if($key=='training'){
-                            $query->whereNotNull('training_info');
-                        }
-                        else if($key=='reference'&&$value['data']){
-                            $query->whereNotNull('connection_relation');
-                            $query->where('connection_relation',$value['data']);
-                        }
-                        else if($key=='education'){
-                            if(count($value['data'])){
-                                $query->whereHas('appliciantEducationInfo',function ($q) use ($value){
-                                    $q->where(function ($qq) use ($value){
-                                        foreach ($value['data'] as $v){
-                                            if($value['comparator']=='>') {
-                                                $qq->where('job_education_id',$value['comparator'],$v);
-                                            }
-                                            else if($value['comparator']=='<') {
-                                                $qq->where('job_education_id',$value['comparator'],$v);
-                                            }
-                                            else{
-                                                $qq->orWhere('job_education_id',$value['comparator'],$v);
-                                            }
-                                        }
-
-                                    });
-
-
-                                });
-                            }
-
-                        }
-                        else if(isset($value['data'])&&$value['data']&&$key!='applicant_quota'){
-                            $query->where($key,$value['comparator'],$value['data']);
-                        }
+                $query->where(function($q)use($request){
+                    $q->where('national_id_no','like',"%{$request->q}%");
+                    $q->orWhere('applicant_id','like',"%{$request->q}%");
+                    if(strtotime($request->q)){
+                        $q->orwhere('date_of_birth',Carbon::parse($request->q)->format('Y-m-d'));
                     }
-                }
-                /*if($request->filter['applicant_quota']['value']){
-                    $query->join('job_applicant_quota','job_applicant_quota.district_id','=','job_applicant.unit_id');
-
-                    $query->selectRaw("job_applicant.*,dd.division_name_bng,uu.unit_name_bng,tt.thana_name_bng,job_applicant_quota.male as male_count,job_applicant_quota.female as female_count,@unit:= IF(@current_unit=job_applicant.`unit_id`,@unit+1,1) AS unit_limit,
-@current_unit:=job_applicant_quota.district_id AS districtt")->orderBy('job_applicant_quota.district_id');
-                    $q = clone $query;
-                    $query = DB::table(DB::raw('('.$q->toSql().') x'))->mergeBindings($q->getQuery())->selectRaw('*')->whereRaw('unit_limit<=male_count');
-                }*/
+                });
             }
 //            return response()->json($query->paginate(50));
             if(auth()->user()->type==66){
