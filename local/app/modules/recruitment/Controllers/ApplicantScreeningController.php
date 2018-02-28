@@ -293,13 +293,7 @@ class ApplicantScreeningController extends Controller
             $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'=>function($p) use ($request){
                 $p->with(['paymentHistory']);
             }])->where('job_circular_id',$circular_id)
-                ->where(function ($query) use ($request) {
-                $query->whereHas('payment', function ($q) use ($request) {
-                    $q->whereHas('paymentHistory',function ($qq) use($request){
-                        $qq->where('txID','like',"%{$request->q}%");
-                    });
-                })->orWhere('mobile_no_self', 'like', '%' . $request->q . '%');
-            });
+                ->where('mobile_no_self', 'like', '%' . $request->q . '%');
             if ($type == 'Male' || $type == 'Female') {
                 $applicants->where('gender', $type);
             } else if ($type) {
@@ -310,7 +304,8 @@ class ApplicantScreeningController extends Controller
             $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'=>function($q){
                 $q->with('paymentHistory');
             }])
-            ->where('job_circular_id',$circular_id); if ($type == 'Male' || $type == 'Female') {
+            ->where('job_circular_id',$circular_id);
+            if ($type == 'Male' || $type == 'Female') {
                 $applicants->where('gender', $type);
             } else if ($type) {
                 $applicants->where('status', $type);
