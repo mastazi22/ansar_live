@@ -76,7 +76,7 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
     //load image
     Route::get('/profile_image',['as'=>'profile_image','uses'=>'ApplicantScreeningController@loadImage']);
     Route::get('/test',function (){
-        $applicants = \App\modules\recruitment\Models\JobAppliciant::where('job_circular_id',4)->where('status','applied')->select('profile_pic')->get();
+        $applicants = \App\modules\recruitment\Models\JobAppliciant::where('job_circular_id',4)->where('status','applied')->select('profile_pic','mobile_no_self')->get();
         $array = ['exists'=>0,'not_exists'=>0];
         foreach ($applicants as $a){
             $f = \Illuminate\Support\Facades\File::exists($a->profile_pic);

@@ -77,7 +77,7 @@
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <tr>
-                            <th>Applicant Name</th>
+                            <th style="se">Applicant Name</th>
                             <th>Applicant ID</th>
 
                             <th>Applicant Password</th>
