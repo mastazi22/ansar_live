@@ -300,13 +300,7 @@ class ApplicantScreeningController extends Controller
                     });
                 })->orWhere('mobile_no_self', 'like', '%' . $request->q . '%');
             });
-            if ($type == 'applied') {
-                $applicants->whereHas('payment', function ($q) {
-                    $q->whereNotNull('txID');
-                    $q->where('bankTxStatus', 'SUCCESS');
-                });
-                $applicants->where('status', $type);
-            } else if ($type == 'Male' || $type == 'Female') {
+            if ($type == 'Male' || $type == 'Female') {
                 $applicants->where('gender', $type);
             } else if ($type) {
                 $applicants->where('status', $type);
@@ -316,12 +310,7 @@ class ApplicantScreeningController extends Controller
             $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'=>function($q){
                 $q->with('paymentHistory');
             }])
-            ->where('job_circular_id',$circular_id);
-            if ($type == 'applied') {
-                $applicants->whereHas('payment', function ($q) {
-                    $q->whereNotNull('txID');
-                });
-            } else if ($type == 'Male' || $type == 'Female') {
+            ->where('job_circular_id',$circular_id); if ($type == 'Male' || $type == 'Female') {
                 $applicants->where('gender', $type);
             } else if ($type) {
                 $applicants->where('status', $type);
