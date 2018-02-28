@@ -76,12 +76,12 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
     //load image
     Route::get('/profile_image',['as'=>'profile_image','uses'=>'ApplicantScreeningController@loadImage']);
     Route::get('/test',function (){
-        $applicants = \App\modules\recruitment\Models\JobAppliciant::where('job_circular_id',4)->get();
-        $array = [];
+        $applicants = \App\modules\recruitment\Models\JobAppliciant::where('job_circular_id',4)->where('status','applied')->select('profile_pic')->get();
+        $array = ['exists'=>0,'not_exists'=>0];
         foreach ($applicants as $a){
-            $a['physical_point'] = $a->physicalPoint();
-            $a['edu_point'] = $a->educationPoint();
-            array_push($array,$a);
+            $f = \Illuminate\Support\Facades\File::exists($a->profile_pic);
+            if($f)$array['exists']++;
+            else $array['not_exists']++;
         }
         return $array;
     });
