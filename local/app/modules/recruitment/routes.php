@@ -77,11 +77,11 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
     Route::get('/profile_image',['as'=>'profile_image','uses'=>'ApplicantScreeningController@loadImage']);
     Route::get('/test',function (){
         $applicants = \App\modules\recruitment\Models\JobAppliciant::where('job_circular_id',4)->where('status','applied')->select('profile_pic','mobile_no_self')->get();
-        $array = ['exists'=>0,'not_exists'=>0];
+        $array = ['exists'=>0,'not_exists'=>[]];
         foreach ($applicants as $a){
             $f = \Illuminate\Support\Facades\File::exists($a->profile_pic);
             if($f)$array['exists']++;
-            else $array['not_exists']++;
+            else array_push($array['not_exists'],$a);
         }
         return $array;
     });
