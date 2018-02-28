@@ -291,9 +291,7 @@ class ApplicantScreeningController extends Controller
         DB::enableQueryLog();
         if ($request->q) {
             $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'=>function($p) use ($request){
-                $p->with(['paymentHistory'=>function($q) use ($request){
-                    $q->where('txID','like', '%' . $request->q . '%');
-                }]);
+                $p->with(['paymentHistory']);
             }])->where('job_circular_id',$circular_id)
                 ->where(function ($query) use ($request) {
                 $query->whereHas('payment', function ($q) use ($request) {
