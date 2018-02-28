@@ -404,8 +404,7 @@
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label for="" class="control-label">Job Category</label>
-                            <select name="" ng-model="category" id="" class="form-control"
-                                    ng-change="loadCircular(category)">
+                            <select name="" ng-model="category" id="" class="form-control">
                                 <option value="all">All</option>
                                 <option ng-repeat="c in categories" value="[[c.id]]">[[c.category_name_eng]]</option>
                             </select>
@@ -414,7 +413,7 @@
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label for="" class="control-label">Job Circular</label>
-                            <select name="" ng-model="circular" id="" ng-change="applyFilter()"
+                            <select name="" ng-model="circular" id=""
                                     class="form-control">
                                 <option value="all">All</option>
                                 <option ng-repeat="c in circulars" value="[[c.id]]">[[c.circular_name]]</option>
