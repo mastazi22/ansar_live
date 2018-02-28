@@ -294,6 +294,7 @@
                     $scope.formData.division_id += '';
                     $scope.formData.unit_id += '';
                     $scope.formData.thana_id += '';
+                    $scope.formData['training_info'] = $scope.formData.training_info?'No training':$scope.formData.training_info;
                     $scope.formData.appliciant_education_info.forEach(function (d, i) {
 
                         $scope.formData.appliciant_education_info[i].job_education_id += '';
@@ -355,8 +356,8 @@
             }
             $scope.isEditable = function (s) {
 
-//                console.log(s+" : "+($scope.isAdmin!=11&&($scope.fields==undefined||$scope.fields.indexOf(s)<0)))
-//                console.log($scope.fields)
+                console.log(s+" : "+($scope.isAdmin!=11&&($scope.fields==undefined||$scope.fields.indexOf(s)<0)))
+                console.log($scope.fields)
                 if($scope.isAdmin!=11&&($scope.fields==undefined||$scope.fields.indexOf(s)<0)) return -1;
                 return 1;
             }

@@ -430,9 +430,13 @@
                                     <label class="control-label col-sm-2" for="email">Training info</label>
 
                                     <div class="col-sm-10">
-                                        <input class="form-control  "
-                                               ng-model="formData.training_info" type="text"
-                                               placeholder="Training info">
+                                        <select class="form-control  "
+                                               ng-model="formData.training_info" type="text">
+                                            <option value="">--প্রশিক্ষন নির্বাচন করুন--</option>
+                                            <option value="No training">No training</option>
+                                            <option value="VDP training">VDP training</option>
+                                            <option value="TDP training">TDP training</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-horizontal col-md-12" ng-if="isEditable('connection_name')>=0">
