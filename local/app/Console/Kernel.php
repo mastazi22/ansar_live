@@ -16,6 +16,7 @@ use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\RestInfoModel;
 use App\modules\HRM\Models\SmsReceiveInfoModel;
 use App\modules\recruitment\Models\JobAcceptedApplicant;
+use App\modules\recruitment\Models\JobCircular;
 use App\modules\recruitment\Models\JobSelectedApplicant;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
@@ -335,45 +336,22 @@ class Kernel extends ConsoleKernel
         $schedule->call(function(){
 
         })->twiceDaily(0,12)->name("ansar_retirement")->withoutOverlapping();
-        /*$schedule->call(function () {
-            Log::info("called : send_sms_to_selected_applicant");
-            $messID        = uniqid('SB_');
-            $messageID     = $messID;
-            $apiUser       = 'join_ans_vdp';
-            $apiPass       = 'shurjoSM123';
-
-            $applicants = JobSelectedApplicant::with('applicant')->where('message_status','pending')->where('sms_status','on')->limit(10)->get();
-            foreach ($applicants as $a) {
-
-
-                if($a->applicant){
-                    $sms_data = http_build_query(
-                        array(
-                            'API_USER' => $apiUser,
-                            'API_PASSWORD' => $apiPass,
-                            'MOBILE' => $a->applicant->mobile_no_self,
-                            'MESSAGE' => $a->message,
-                            'MESSAGE_ID' => $messageID
-                        )
-                    );
-
-                    $ch = curl_init();
-                    $url = "https://shurjobarta.shurjorajjo.com.bd/barta_api/api.php";
-                    curl_setopt($ch, CURLOPT_URL, $url);
-                    curl_setopt($ch, CURLOPT_POST, 1);                //0 for a get request
-                    curl_setopt($ch, CURLOPT_POSTFIELDS, $sms_data);
-                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
-                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-                    $response = curl_exec($ch);
-                    curl_close($ch);
-                    var_dump($response);
-                    $a->message_status = 'send';
-                    $a->save();
+        $schedule->call(function () {
+            Log::info("called : disable circular");
+            DB::connection('recruitment')->beginTransaction();
+            try{
+                $circulars = JobCircular::where('status','active')->where('end_date','<=',Carbon::now()->format('Y-m-d'))->get();
+                foreach ($circulars as $circular){
+                    $circular->status = 'inactive';
+                    $circular->payment_status = 'off';
+                    $circular->save();
+                    DB::connection('recruitment')->commit();
                 }
+            }catch(\Exception $e){
+                DB::connection('recruitment')->rollback();
             }
 
-        })->everyMinute()->name("send_sms_to_selected_applicant")->withoutOverlapping();*/
+        })->dailyAt("00:00")->name("disable_circular")->withoutOverlapping();
         $schedule->call(function () {
             Log::info("called : send_sms_to_accepted_applicant");
             $messID        = uniqid('SB_');
