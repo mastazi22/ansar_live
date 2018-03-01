@@ -96,7 +96,7 @@ class Kernel extends ConsoleKernel
                 }
             }
 
-        })->everyMinute()->name("send_offer_sms")->withoutOverlapping();
+        })->everyMinute()->name("send_offer_sms_2")->withoutOverlapping();
         $schedule->call(function () {
             Log::info("called : send_failed_offer");
 //            //return;
