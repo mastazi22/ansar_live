@@ -13,6 +13,7 @@ use App\modules\recruitment\Models\JobAppliciant;
 use App\modules\recruitment\Models\JobCircular;
 use App\modules\recruitment\Models\JobSelectedApplicant;
 use App\modules\recruitment\Models\JobSettings;
+use App\modules\recruitment\Models\SmsQueue;
 use Barryvdh\Snappy\Facades\SnappyPdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -410,12 +411,22 @@ class ApplicantScreeningController extends Controller
                     $ph->paymentOption = $request->paymentOption;
                     $ph->save();
                 }
-                DB::commit();
-//                return $applicant;
+
                 if ($request->type == 'initial') {
                     $message = "Your id:" . $applicant->applicant_id . " and password:" . $applicant->applicant_password;
-                    $this->dispatch(new FeedbackSMS($message,$applicant->mobile_no_self));
-                    }
+                    $payload = json_encode([
+                        'to'=>$applicant->mobile_no_self,
+                        'body'=>$message
+                    ]);
+                    SmsQueue::create([
+                        'payload'=>$payload,
+                        'try'=>0
+                    ]);
+                }
+
+                DB::commit();
+//                return $applicant;
+
 
                 return redirect()->route('recruitment.applicant.list', ['type' => $request->type,'circular_id'=>$request->job_circular_id])->with('success_message', 'updated successfully');
             }
