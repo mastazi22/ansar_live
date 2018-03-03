@@ -100,6 +100,9 @@ class ApplicantScreeningController extends Controller
                     }
                 });
             })->where('status', 'applied');
+            if($request->already_selected&&count($request->already_selected)>0){
+                $query->whereNotIn('applicant_id',$request->already_selected);
+            }
             $query->join('db_amis.tbl_division as dd','dd.id','=','job_applicant.division_id');
             $query->join('db_amis.tbl_units as uu','uu.id','=','job_applicant.unit_id');
             $query->join('db_amis.tbl_thana as tt','tt.id','=','job_applicant.thana_id');
@@ -123,7 +126,11 @@ class ApplicantScreeningController extends Controller
                 return response()->json($query->pluck('job_applicant.applicant_id'));
             }
             if(auth()->user()->type==11)return view('recruitment::applicant.part_search',['applicants'=>$query->paginate($request->limit?$request->limit:50)]);
-            else return view('recruitment::applicant.applicant_info',['applicants'=>$query->first()]);
+            else {
+                $data = $query->get();
+//                return $data->count();
+                return view('recruitment::applicant.applicant_info',['applicants'=>($data->count()>1?$data:$data[0])]);
+            }
 
         }
         return abort(401);
@@ -614,6 +621,8 @@ class ApplicantScreeningController extends Controller
         $this->validate($request,$rules);
         DB::beginTransaction();
         try{
+            /*$circular = JobCircular::with('constraint')->find($request->circular);
+            $constraint= json_decode($circular->constraint->constraint);*/
             $accepted = JobAppliciant::whereHas('accepted',function($q){
 
             })->where('status','accepted')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit)->count();
@@ -643,6 +652,42 @@ class ApplicantScreeningController extends Controller
             }else{
                 throw new \Exception('No applicants within quota available');
             }
+            DB::commit();
+        }catch(\Exception $e){
+            DB::rollback();
+            return response()->json(['status'=>'error','message'=>$e->getMessage()]);
+        }
+        return response()->json(['status'=>'success','message'=>'Applicant accepted successfully']);
+    }
+    public function confirmAcceptedIfBncandidate(Request $request){
+        $rules = [
+            'applicant_id'=>'required|regex:/^[A-Z0-9]+$/'
+        ];
+        $this->validate($request,$rules);
+        DB::beginTransaction();
+        try{
+            $applicant = JobAppliciant::where('applicant_id',$request->applicant_id)->first();
+            if($applicant){
+                $accepted = JobAppliciant::whereHas('accepted',function($q){
+
+                })->where('status','accepted')->where('job_circular_id',$applicant->job_circular_id)->where('unit_id',$applicant->unit_id)->count();
+                $quota = JobApplicantQuota::where('district_id',$applicant->unit_id)->first();
+                if($quota){
+                    if(intval($quota->{strtolower($applicant->gender)})-$accepted>0){
+                        $applicant->status = 'accepted';
+                        $applicant->marks()->create([
+                            'is_bn_candidate'=>1
+                        ]);
+                        $applicant->accepted()->create([
+                            'action_user_id'=>$request->action_user_id
+                        ]);
+                        $applicant->save();
+                    }
+                    else throw new \Exception("Quota not available");
+                }
+                else throw new \Exception("Quota not available");
+
+            } else throw new \Exception("invalid application");
             DB::commit();
         }catch(\Exception $e){
             DB::rollback();
