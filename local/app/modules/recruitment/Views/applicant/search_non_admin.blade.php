@@ -99,7 +99,8 @@
                 httpService.searchApplicant(url, {
                     category: $scope.category,
                     circular: $scope.circular,
-                    q:$scope.q
+                    q:$scope.q,
+                    already_selected:$scope.selectedList
                 }).then(function (response) {
                     $scope.applicants = $sce.trustAsHtml(response.data);
                     $scope.allLoading = false;
@@ -160,9 +161,7 @@
                     method:'post',
                     data:{
                         applicants:$scope.selectedList,
-                        type:type,
-                        sub_type:subType,
-                        message:$scope.selectMessage
+                        type:'selection',
                     }
                 }).then(function (response) {
                     $scope.allLoading = false;
@@ -180,9 +179,7 @@
                     method:'post',
                     data:{
                         applicants:[id],
-                        type:'rejection',
-                        sub_type:1,
-                        message:$scope.selectMessage
+                        type:'rejection'
                     }
                 }).then(function (response) {
                     $scope.applicants = $sce.trustAsHtml('<h4 class="text-center">No Applicant available</h4>');
@@ -204,7 +201,7 @@
                     ok_callback: function (element) {
                         $scope.allLoading = true;
                         $http({
-                            url:'{{URL::route('recruitment.applicant.confirm_accepted')}}',
+                            url:'{{URL::route('recruitment.applicant.confirm_accepted_if_bn_candidate')}}',
                             method:'post',
                             data:{
                                 applicant_id:id
@@ -433,7 +430,7 @@
                         </div>
                     </div>--}}
                 </div>
-                <h3 class="text-center">Search applicant by National ID</h3>
+                <h3 class="text-center">Search applicant</h3>
                 <div class="input-group" style="margin-top: 10px">
                     <input ng-keyup="$event.keyCode==13?loadApplicant():''" class="form-control" ng-model="q" type="text" placeholder="Search by national id,applicant id or date of birth">
                     <span class="input-group-btn">
