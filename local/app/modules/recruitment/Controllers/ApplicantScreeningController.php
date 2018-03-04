@@ -80,6 +80,7 @@ class ApplicantScreeningController extends Controller
     public function loadApplicants(Request $request)
     {
         if($request->ajax()){
+//            return $request->all();
             $rules = [
                 'category' => ['regex:/^([0-9]+)|(all)$/'],
                 'circular' => ['regex:/^([0-9]+)|(all)$/'],
@@ -125,6 +126,7 @@ class ApplicantScreeningController extends Controller
             $query->join('db_amis.tbl_units as uu','uu.id','=','job_applicant.unit_id');
             $query->join('db_amis.tbl_thana as tt','tt.id','=','job_applicant.thana_id');
             if($request->q){
+//                return $request->all();
                 $query->where(function($q)use($request){
                     $q->where('national_id_no','like',"%{$request->q}%");
                     $q->orWhere('applicant_id','like',"%{$request->q}%");
