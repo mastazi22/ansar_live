@@ -107,7 +107,7 @@ class ApplicantScreeningController extends Controller
                 }
             }
 //            return $units;
-            $query = JobAppliciant::whereHas('circular', function ($q) use ($request) {
+            $query = JobAppliciant::with('appliciantEducationInfo')->whereHas('circular', function ($q) use ($request) {
                 $q->where('circular_status', 'running');
                 if ($request->exists('circular') && $request->circular != 'all') {
                     $q->where('id', $request->circular);
@@ -147,6 +147,9 @@ class ApplicantScreeningController extends Controller
             if($request->select_all){
                 return response()->json($query->pluck('job_applicant.applicant_id'));
             }
+            $query->select('job_applicant.*','dd.division_name_bng','uu.unit_name_bng','tt.thana_name_bng');
+//            $data = $query->get();
+//            return DB::getQueryLog();
             if(auth()->user()->type==11)return view('recruitment::applicant.part_search',['applicants'=>$query->paginate($request->limit?$request->limit:50)]);
             else {
                 $data = $query->get();
