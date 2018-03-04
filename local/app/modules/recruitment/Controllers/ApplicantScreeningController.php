@@ -70,40 +70,40 @@ class ApplicantScreeningController extends Controller
 
     public function searchApplicant()
     {
-        if(auth()->user()->type==11) {
+        if (auth()->user()->type == 11) {
             return view('recruitment::applicant.search');
-        }else{
+        } else {
             return view('recruitment::applicant.search_non_admin');
         }
     }
 
     public function loadApplicants(Request $request)
     {
-        if($request->ajax()){
+        if ($request->ajax()) {
 //            return $request->all();
             $rules = [
                 'category' => ['regex:/^([0-9]+)|(all)$/'],
                 'circular' => ['regex:/^([0-9]+)|(all)$/'],
-                'limit'=>'regex:/^[0-9]+$/'
+                'limit' => 'regex:/^[0-9]+$/'
             ];
-            if(auth()->user()->type==66||auth()->user()->type==22){
-                $rules['q']='required';
+            if (auth()->user()->type == 66 || auth()->user()->type == 22) {
+                $rules['q'] = 'required';
             }
             $this->validate($request, $rules);
             DB::enableQueryLog();
-            $selection_unit = JobApplicantExamCenter::with(['units'=>function($q){
+            $selection_unit = JobApplicantExamCenter::with(['units' => function ($q) {
                 $q->select('tbl_units.id');
             }])
-                ->where('selection_date',Carbon::now()->format('Y-m-d'));
+                ->where('selection_date', Carbon::now()->subHour()->format('Y-m-d'));
             if ($request->exists('circular') && $request->circular != 'all') {
                 $selection_unit->where('job_circular_id', $request->circular);
             }
 
             $selection_unit = $selection_unit->get();
             $units = [];
-            if(count($selection_unit)>0){
-                foreach ($selection_unit as $u){
-                    $units = array_merge($units,$u->units()->pluck('tbl_units.id')->toArray());
+            if (count($selection_unit) > 0) {
+                foreach ($selection_unit as $u) {
+                    $units = array_merge($units, $u->units()->pluck('tbl_units.id')->toArray());
                 }
             }
 //            return $units;
@@ -119,178 +119,181 @@ class ApplicantScreeningController extends Controller
                     }
                 });
             })->where('status', 'applied');
-            if($request->already_selected&&count($request->already_selected)>0){
-                $query->whereNotIn('applicant_id',$request->already_selected);
+            if ($request->already_selected && count($request->already_selected) > 0) {
+                $query->whereNotIn('applicant_id', $request->already_selected);
             }
-            $query->join('db_amis.tbl_division as dd','dd.id','=','job_applicant.division_id');
-            $query->join('db_amis.tbl_units as uu','uu.id','=','job_applicant.unit_id');
-            $query->join('db_amis.tbl_thana as tt','tt.id','=','job_applicant.thana_id');
-            if($request->q){
+            $query->join('db_amis.tbl_division as dd', 'dd.id', '=', 'job_applicant.division_id');
+            $query->join('db_amis.tbl_units as uu', 'uu.id', '=', 'job_applicant.unit_id');
+            $query->join('db_amis.tbl_thana as tt', 'tt.id', '=', 'job_applicant.thana_id');
+            if ($request->q) {
 //                return $request->all();
-                $query->where(function($q)use($request){
-                    $q->where('national_id_no','like',"%{$request->q}%");
-                    $q->orWhere('applicant_id','like',"%{$request->q}%");
-                    if(strtotime($request->q)){
-                        $q->orwhere('date_of_birth',Carbon::parse($request->q)->format('Y-m-d'));
+                $query->where(function ($q) use ($request) {
+                    $q->where('national_id_no', 'like', "%{$request->q}%");
+                    $q->orWhere('applicant_id', 'like', "%{$request->q}%");
+                    if (strtotime($request->q)) {
+                        $q->orwhere('date_of_birth', Carbon::parse($request->q)->format('Y-m-d'));
                     }
                 });
             }
 //            return response()->json($query->paginate(50));
-            if(auth()->user()->type==66){
-                $query->where('job_applicant.division_id',auth()->user()->division_id);
-                $query->whereIn('job_applicant.unit_id',$units);
+            if (auth()->user()->type == 66) {
+                $query->where('job_applicant.division_id', auth()->user()->division_id);
+//                $query->whereIn('job_applicant.unit_id',$units);
             }
-            if(auth()->user()->type==22){
-                $query->where('job_applicant.unit_id',auth()->user()->district_id);
-                $query->whereIn('job_applicant.unit_id',$units);
+            if (auth()->user()->type == 22) {
+                $query->where('job_applicant.unit_id', auth()->user()->district_id);
+//                $query->whereIn('job_applicant.unit_id',$units);
             }
-            if($request->select_all){
+            if ($request->select_all) {
                 return response()->json($query->pluck('job_applicant.applicant_id'));
             }
-            $query->select('job_applicant.*','dd.division_name_bng','uu.unit_name_bng','tt.thana_name_bng');
+            $query->select('job_applicant.*', 'dd.division_name_bng', 'uu.unit_name_bng', 'tt.thana_name_bng');
 //            $data = $query->get();
 //            return DB::getQueryLog();
-            if(auth()->user()->type==11)return view('recruitment::applicant.part_search',['applicants'=>$query->paginate($request->limit?$request->limit:50)]);
+            if (auth()->user()->type == 11) return view('recruitment::applicant.part_search', ['applicants' => $query->paginate($request->limit ? $request->limit : 50)]);
             else {
                 $data = $query->get();
 //                return $data->count();
-                return view('recruitment::applicant.applicant_info',['applicants'=>($data->count()>1?$data:($data->count()>0?$data[0]:''))]);
+                return view('recruitment::applicant.applicant_info', ['applicants' => ($data->count() > 1 ? $data : ($data->count() > 0 ? $data[0] : ''))]);
             }
 
         }
         return abort(401);
     }
+
     public function loadApplicantsByStatus(Request $request)
     {
-        if($request->ajax()&&strcasecmp($request->method(),'post')==0){
+        if ($request->ajax() && strcasecmp($request->method(), 'post') == 0) {
             $rules = [
-                'circular' => ['required','regex:/^([0-9]+)|(all)$/'],
-                'status' => ['required','regex:/^(applied|selected|accepted)$/'],
-                'limit'=>'regex:/^[0-9]+$/'
+                'circular' => ['required', 'regex:/^([0-9]+)|(all)$/'],
+                'status' => ['required', 'regex:/^(applied|selected|accepted)$/'],
+                'limit' => 'regex:/^[0-9]+$/'
             ];
             $this->validate($request, $rules);
-            $query = JobAppliciant::with(['division','district','thana'])->whereHas('circular', function ($q) use ($request) {
+            $query = JobAppliciant::with(['division', 'district', 'thana'])->whereHas('circular', function ($q) use ($request) {
                 $q->where('circular_status', 'running');
                 if ($request->exists('circular') && $request->circular != 'all') {
                     $q->where('id', $request->circular);
                 }
             })->where('status', $request->status);
-            if($request->q){
-                $query->where(function($q) use($request){
-                    $q->orWhere('national_id_no','like','%'.$request->q.'%');
-                    $q->orWhere('applicant_id','like','%'.$request->q.'%');
-                    $q->orWhere('mobile_no_self','like','%'.$request->q.'%');
-                    $q->orWhere('applicant_name_bng','like','%'.$request->q.'%');
-                    $q->orWhere('applicant_name_eng','like','%'.$request->q.'%');
+            if ($request->q) {
+                $query->where(function ($q) use ($request) {
+                    $q->orWhere('national_id_no', 'like', '%' . $request->q . '%');
+                    $q->orWhere('applicant_id', 'like', '%' . $request->q . '%');
+                    $q->orWhere('mobile_no_self', 'like', '%' . $request->q . '%');
+                    $q->orWhere('applicant_name_bng', 'like', '%' . $request->q . '%');
+                    $q->orWhere('applicant_name_eng', 'like', '%' . $request->q . '%');
                 });
             }
-            if($request->range!='all'){
-                $query->where('division_id',$request->range);
+            if ($request->range != 'all') {
+                $query->where('division_id', $request->range);
             }
-            if($request->unit!='all'){
-                $query->where('unit_id',$request->unit);
+            if ($request->unit != 'all') {
+                $query->where('unit_id', $request->unit);
             }
-            if($request->thana!='all'){
-                $query->where('thana_id',$request->thana);
+            if ($request->thana != 'all') {
+                $query->where('thana_id', $request->thana);
             }
-            return view('recruitment::applicant.part_applicant_info',[
-                'applicants'=>$query->paginate($request->limit?$request->limit:50),
-                'status'=>$request->status
+            return view('recruitment::applicant.part_applicant_info', [
+                'applicants' => $query->paginate($request->limit ? $request->limit : 50),
+                'status' => $request->status
             ]);
 
 
         }
         return view('recruitment::applicant.applicant_edit_info');
     }
+
     public function loadApplicantsForRevert(Request $request)
     {
-        if($request->ajax()&&strcasecmp($request->method(),'post')==0){
+        if ($request->ajax() && strcasecmp($request->method(), 'post') == 0) {
             $rules = [
-                'circular' => ['required','regex:/^([0-9]+)|(all)$/'],
-                'status' => ['required','regex:/^(applied|selected|accepted)$/'],
-                'limit'=>'regex:/^[0-9]+$/'
+                'circular' => ['required', 'regex:/^([0-9]+)|(all)$/'],
+                'status' => ['required', 'regex:/^(applied|selected|accepted)$/'],
+                'limit' => 'regex:/^[0-9]+$/'
             ];
             $this->validate($request, $rules);
-            $query = JobAppliciant::with(['division','district','thana'])->whereHas('circular', function ($q) use ($request) {
+            $query = JobAppliciant::with(['division', 'district', 'thana'])->whereHas('circular', function ($q) use ($request) {
                 $q->where('circular_status', 'running');
                 if ($request->exists('circular') && $request->circular != 'all') {
                     $q->where('id', $request->circular);
                 }
             })->where('status', $request->status);
-            if($request->q){
-                $query->where(function($q) use($request){
-                    $q->orWhere('national_id_no','like','%'.$request->q.'%');
-                    $q->orWhere('applicant_id','like','%'.$request->q.'%');
-                    $q->orWhere('mobile_no_self','like','%'.$request->q.'%');
-                    $q->orWhere('applicant_name_bng','like','%'.$request->q.'%');
-                    $q->orWhere('applicant_name_eng','like','%'.$request->q.'%');
+            if ($request->q) {
+                $query->where(function ($q) use ($request) {
+                    $q->orWhere('national_id_no', 'like', '%' . $request->q . '%');
+                    $q->orWhere('applicant_id', 'like', '%' . $request->q . '%');
+                    $q->orWhere('mobile_no_self', 'like', '%' . $request->q . '%');
+                    $q->orWhere('applicant_name_bng', 'like', '%' . $request->q . '%');
+                    $q->orWhere('applicant_name_eng', 'like', '%' . $request->q . '%');
                 });
             }
-            if($request->range!='all'){
-                $query->where('division_id',$request->range);
+            if ($request->range != 'all') {
+                $query->where('division_id', $request->range);
             }
-            if($request->unit!='all'){
-                $query->where('unit_id',$request->unit);
+            if ($request->unit != 'all') {
+                $query->where('unit_id', $request->unit);
             }
-            if($request->thana!='all'){
-                $query->where('thana_id',$request->thana);
+            if ($request->thana != 'all') {
+                $query->where('thana_id', $request->thana);
             }
-            return view('recruitment::applicant.part_applicant_status_revert',[
-                'applicants'=>$query->paginate($request->limit?$request->limit:50),
-                'status'=>$request->status
+            return view('recruitment::applicant.part_applicant_status_revert', [
+                'applicants' => $query->paginate($request->limit ? $request->limit : 50),
+                'status' => $request->status
             ]);
 
 
         }
         return view('recruitment::applicant.applicant_status_revert');
     }
+
     public function revertApplicantStatus(Request $request)
     {
-        if($request->ajax()){
+        if ($request->ajax()) {
 
-            $status = ['applied','selected','accepted'];
+            $status = ['applied', 'selected', 'accepted'];
             $rules = [
-                'applicant_id'=>['required'],
-                'status' => ['required','regex:/^(applied|selected|accepted)$/']
+                'applicant_id' => ['required'],
+                'status' => ['required', 'regex:/^(applied|selected|accepted)$/']
             ];
-            $this->validate($request,$rules);
+            $this->validate($request, $rules);
             DB::beginTransaction();
-            try{
-                $applicant = JobAppliciant::where('applicant_id',$request->applicant_id)->first();
-                if(!$applicant){
+            try {
+                $applicant = JobAppliciant::where('applicant_id', $request->applicant_id)->first();
+                if (!$applicant) {
                     throw new \Exception("Invalid applicant");
                 }
-                if($applicant->status==$request->status){
+                if ($applicant->status == $request->status) {
                     throw new \Exception("Applicant can`t change to same status");
                 }
-                $change_index = array_search($request->status,$status);
-                $index = array_search($applicant->status,$status);
-                if($change_index>=$index){
-                    throw new \Exception("Applicant can`t revert to ".$request->status);
+                $change_index = array_search($request->status, $status);
+                $index = array_search($applicant->status, $status);
+                if ($change_index >= $index) {
+                    throw new \Exception("Applicant can`t revert to " . $request->status);
                 }
-                if($applicant->status=='selected'){
+                if ($applicant->status == 'selected') {
                     $applicant->selectedApplicant->delete();
-                    if($applicant->marks)$applicant->marks->delete();
-                }
-                else if($applicant->status=='accepted'){
+                    if ($applicant->marks) $applicant->marks->delete();
+                } else if ($applicant->status == 'accepted') {
                     $applicant->accepted->delete();
-                    if($applicant->marks&&$request->status=='applied')$applicant->marks->delete();
+                    if ($applicant->marks && $request->status == 'applied') $applicant->marks->delete();
                 }
                 $applicant->status = $request->status;
                 $applicant->save();
                 DB::commit();
 
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 DB::rollback();
-                return response()->json(['status'=>'error','message'=>$e->getMessage()]);
+                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
             }
-            return response()->json(['status'=>'success','message'=>'Status change successfully']);
+            return response()->json(['status' => 'success', 'message' => 'Status change successfully']);
         }
         abort(401);
     }
+
     public function loadSelectedApplicant(Request $request)
     {
-        if($request->ajax()){
+        if ($request->ajax()) {
             $query = JobAppliciant::whereHas('circular', function ($q) use ($request) {
                 $q->where('circular_status', 'running');
                 if ($request->exists('circular') && $request->circular != 'all') {
@@ -303,29 +306,29 @@ class ApplicantScreeningController extends Controller
                     }
                 });
             })->where('status', 'applied');
-            $query->join('db_amis.tbl_division as dd','dd.id','=','job_applicant.division_id');
-            $query->join('db_amis.tbl_units as uu','uu.id','=','job_applicant.unit_id');
-            $query->join('db_amis.tbl_thana as tt','tt.id','=','job_applicant.thana_id');
-            if(auth()->user()->type==66){
-                $query->where('job_applicant.division_id',auth()->user()->division_id);
+            $query->join('db_amis.tbl_division as dd', 'dd.id', '=', 'job_applicant.division_id');
+            $query->join('db_amis.tbl_units as uu', 'uu.id', '=', 'job_applicant.unit_id');
+            $query->join('db_amis.tbl_thana as tt', 'tt.id', '=', 'job_applicant.thana_id');
+            if (auth()->user()->type == 66) {
+                $query->where('job_applicant.division_id', auth()->user()->division_id);
             }
-            if(auth()->user()->type==22){
-                $query->where('job_applicant.unit_id',auth()->user()->district_id);
+            if (auth()->user()->type == 22) {
+                $query->where('job_applicant.unit_id', auth()->user()->district_id);
             }
-            $query->where('job_applicant.applicant_id',$request->applicant_id);
+            $query->where('job_applicant.applicant_id', $request->applicant_id);
             return $query->first();
 
         }
         return abort(401);
     }
 
-    public function applicantListSupport(Request $request,$circular_id, $type = null)
+    public function applicantListSupport(Request $request, $circular_id, $type = null)
     {
         DB::enableQueryLog();
         if ($request->q) {
-            $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'=>function($p) use ($request){
+            $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment' => function ($p) use ($request) {
                 $p->with(['paymentHistory']);
-            }])->where('job_circular_id',$circular_id)
+            }])->where('job_circular_id', $circular_id)
                 ->where('mobile_no_self', 'like', '%' . $request->q . '%');
             if ($type == 'Male' || $type == 'Female') {
                 $applicants->where('gender', $type);
@@ -334,10 +337,10 @@ class ApplicantScreeningController extends Controller
             }
             $applicants = $applicants->paginate(50);
         } else {
-            $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'=>function($q){
+            $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment' => function ($q) {
                 $q->with('paymentHistory');
             }])
-            ->where('job_circular_id',$circular_id);
+                ->where('job_circular_id', $circular_id);
             if ($type == 'Male' || $type == 'Female') {
                 $applicants->where('gender', $type);
             } else if ($type) {
@@ -361,8 +364,8 @@ class ApplicantScreeningController extends Controller
                 });
                 if ($type == 'Male' || $type == 'Female') {
                     $applicants->where('gender', $type);
-                } else if ($type == 'pending'||$type == 'applied'||$type == 'initial'||$type == 'paid'||$type=='selected') {
-                    $applicants->where('status',$type);
+                } else if ($type == 'pending' || $type == 'applied' || $type == 'initial' || $type == 'paid' || $type == 'selected') {
+                    $applicants->where('status', $type);
                 }
                 if ($request->range && $request->range != 'all') {
                     $applicants->where('division_id', $request->range);
@@ -379,8 +382,8 @@ class ApplicantScreeningController extends Controller
                 $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment']);
                 if ($type == 'Male' || $type == 'Female') {
                     $applicants->where('gender', $type);
-                } else if ($type == 'pending'||$type == 'applied'||$type == 'initial'||$type == 'paid'||$type=='selected') {
-                    $applicants->where('status',$type);
+                } else if ($type == 'pending' || $type == 'applied' || $type == 'initial' || $type == 'paid' || $type == 'selected') {
+                    $applicants->where('status', $type);
                 }
                 if ($request->range && $request->range != 'all') {
                     $applicants->where('division_id', $request->range);
@@ -401,9 +404,9 @@ class ApplicantScreeningController extends Controller
         return view('recruitment::applicant.applicants', ['type' => $type, 'circular_id' => $circular_id]);
     }
 
-    public function markAsPaid($type,$id,$circular_id)
+    public function markAsPaid($type, $id, $circular_id)
     {
-        return view('recruitment::applicant.mark_as_paid', ['id' => $id,'type'=>$type,'circular_id'=>$circular_id]);
+        return view('recruitment::applicant.mark_as_paid', ['id' => $id, 'type' => $type, 'circular_id' => $circular_id]);
     }
 
     public function updateAsPaid(Request $request, $id)
@@ -419,7 +422,7 @@ class ApplicantScreeningController extends Controller
 //        return $request->all();
         DB::beginTransaction();
         try {
-            $applicant = JobAppliciant::where('applicant_id', $id)->where('job_circular_id',$request->job_circular_id)->first();
+            $applicant = JobAppliciant::where('applicant_id', $id)->where('job_circular_id', $request->job_circular_id)->first();
             $payment = $applicant->payment;
             if ($payment) {
                 $payment->returntxID = $request->txID;
@@ -433,8 +436,8 @@ class ApplicantScreeningController extends Controller
                 $payment->save();
                 $applicant->status = $request->type == 'initial' ? 'paid' : 'applied';
                 $applicant->save();
-                $ph = $payment->paymentHistory()->where('txID',$request->txID)->first();
-                if($ph){
+                $ph = $payment->paymentHistory()->where('txID', $request->txID)->first();
+                if ($ph) {
                     $ph->bankTxID = $request->bankTxID;
                     $ph->bankTxStatus = 'SUCCESS';
                     $ph->txnAmount = 200;
@@ -447,12 +450,12 @@ class ApplicantScreeningController extends Controller
                 if ($request->type == 'initial') {
                     $message = "Your id:" . $applicant->applicant_id . " and password:" . $applicant->applicant_password;
                     $payload = json_encode([
-                        'to'=>$applicant->mobile_no_self,
-                        'body'=>$message
+                        'to' => $applicant->mobile_no_self,
+                        'body' => $message
                     ]);
                     SmsQueue::create([
-                        'payload'=>$payload,
-                        'try'=>0
+                        'payload' => $payload,
+                        'try' => 0
                     ]);
                 }
 
@@ -460,9 +463,9 @@ class ApplicantScreeningController extends Controller
 //                return $applicant;
 
 
-                return redirect()->route('recruitment.applicant.list', ['type' => $request->type,'circular_id'=>$request->job_circular_id])->with('success_message', 'updated successfully');
+                return redirect()->route('recruitment.applicant.list', ['type' => $request->type, 'circular_id' => $request->job_circular_id])->with('success_message', 'updated successfully');
             }
-            return redirect()->route('recruitment.applicant.list',['type' => $request->type,'circular_id'=>$request->job_circular_id])->with('error_message', 'This applicant has not pay yet');
+            return redirect()->route('recruitment.applicant.list', ['type' => $request->type, 'circular_id' => $request->job_circular_id])->with('error_message', 'This applicant has not pay yet');
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->with('flash_error', $e->getMessage());
@@ -529,22 +532,27 @@ class ApplicantScreeningController extends Controller
         }
     }
 
-    public function getApplicantData($id){
+    public function getApplicantData($id)
+    {
         try {
-            $data = JobAppliciant::with('appliciantEducationInfo')->where('applicant_id',$id);
+            $data = JobAppliciant::with('appliciantEducationInfo')->where('applicant_id', $id);
             $data = $data->first();
-            if($data) return ['data'=>$data,'units'=>District::where('division_id',$data->division_id)->get(),'thanas'=>Thana::where('unit_id',$data->unit_id)->get()];
+            if ($data) return ['data' => $data, 'units' => District::where('division_id', $data->division_id)->get(), 'thanas' => Thana::where('unit_id', $data->unit_id)->get()];
             throw new \Exception('error');
-        }catch (\Exception $e){
-            return response()->json(['message'=>'Not found'])->setStatusCode(404);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Not found'])->setStatusCode(404);
         }
 
     }
-    public function applicantDetailView($id){
-        return response()->json(['view'=>view('recruitment::applicant.applicant_edit')->render(),'id'=>$id]);
+
+    public function applicantDetailView($id)
+    {
+        return response()->json(['view' => view('recruitment::applicant.applicant_edit')->render(), 'id' => $id]);
 
     }
-    public function updateApplicantData(Request $request){
+
+    public function updateApplicantData(Request $request)
+    {
         $rules = [
             'applicant_name_eng' => 'required',
             'applicant_name_bng' => 'required',
@@ -559,12 +567,12 @@ class ApplicantScreeningController extends Controller
             'height_feet' => 'required|numeric',
             'height_inch' => 'required|numeric',
             'gender' => 'required',
-            'mobile_no_self' => 'required|regex:/^(\+?88)?0[0-9]{10}$/|unique:job_applicant,mobile_no_self,'.$request->id,
+            'mobile_no_self' => 'required|regex:/^(\+?88)?0[0-9]{10}$/|unique:job_applicant,mobile_no_self,' . $request->id,
             'connection_mobile_no' => 'regex:/^(\+?88)?0[0-9]{10}$/',
         ];
-        $this->validate($request,$rules);
+        $this->validate($request, $rules);
         DB::beginTransaction();
-        try{
+        try {
             $educations = $request->appliciant_education_info;
             $new_data = serialize($request->all());
             unset($request['appliciant_education_info']);
@@ -574,7 +582,7 @@ class ApplicantScreeningController extends Controller
             $request['date_of_birth'] = Carbon::parse($request->date_of_birth)->format('Y-m-d');
             $data = $request->except('action_user_id');
 
-            for($i=0;$i<count($educations);$i++){
+            for ($i = 0; $i < count($educations); $i++) {
                 unset($educations[$i]['id']);
                 unset($educations[$i]['created_at']);
                 unset($educations[$i]['updated_at']);
@@ -589,139 +597,142 @@ class ApplicantScreeningController extends Controller
             $applicant->appliciantEducationInfo()->delete();
             $applicant->appliciantEducationInfo()->insert($educations);
             $applicant->editHistory()->create([
-                'new_data'=>$new_data,
-                'previous_data'=>$current_data,
-                'action_user_id'=>auth()->user()->id
+                'new_data' => $new_data,
+                'previous_data' => $current_data,
+                'action_user_id' => auth()->user()->id
             ]);
             DB::commit();
-            return response()->json(['status'=>'success','message'=>'info updated successfully']);
-        }catch(\Exception $e){
+            return response()->json(['status' => 'success', 'message' => 'info updated successfully']);
+        } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['status'=>'error','message'=>$e->getMessage()]);
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
-    public function confirmSelectionOrRejection(Request $request){
-        if($request->type==='selection'){
+
+    public function confirmSelectionOrRejection(Request $request)
+    {
+        if ($request->type === 'selection') {
             DB::beginTransaction();
-            try{
-                foreach ($request->applicants as $applicant_id){
-                    $applicant = JobAppliciant::where('applicant_id',$applicant_id)->first();
-                    if($applicant){
-                        $applicant->update(['status'=>'selected']);
+            try {
+                foreach ($request->applicants as $applicant_id) {
+                    $applicant = JobAppliciant::where('applicant_id', $applicant_id)->first();
+                    if ($applicant) {
+                        $applicant->update(['status' => 'selected']);
                         $applicant->selectedApplicant()->create([
-                            'action_user_id'=>auth()->user()->id,
-                            'message'=>$request->message
+                            'action_user_id' => auth()->user()->id,
+                            'message' => $request->message
                         ]);
                     }
                 }
                 DB::commit();
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 DB::rollback();
-                return response()->json(['status'=>'error','message'=>$e->getMessage()]);
+                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
             }
-            return response()->json(['status'=>'success','message'=>'Applicants selected successfully']);
-        }
-        else if($request->type==='rejection'){
+            return response()->json(['status' => 'success', 'message' => 'Applicants selected successfully']);
+        } else if ($request->type === 'rejection') {
             DB::beginTransaction();
-            try{
-                foreach ($request->applicants as $applicant_id){
-                    $applicant = JobAppliciant::where('applicant_id',$applicant_id)->first();
-                    if($applicant){
-                        $applicant->update(['status'=>'rejected']);
+            try {
+                foreach ($request->applicants as $applicant_id) {
+                    $applicant = JobAppliciant::where('applicant_id', $applicant_id)->first();
+                    if ($applicant) {
+                        $applicant->update(['status' => 'rejected']);
                     }
                 }
                 DB::commit();
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 DB::rollback();
-                return response()->json(['status'=>'error','message'=>$e->getMessage()]);
+                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
             }
-            return response()->json(['status'=>'success','message'=>'Applicants rejected successfully']);
+            return response()->json(['status' => 'success', 'message' => 'Applicants rejected successfully']);
         }
     }
-    public function confirmAccepted(Request $request){
+
+    public function confirmAccepted(Request $request)
+    {
         $rules = [
-            'unit'=>'required|regex:/^[0-9]+$/',
-            'circular'=>'required|regex:/^[0-9]+$/',
+            'unit' => 'required|regex:/^[0-9]+$/',
+            'circular' => 'required|regex:/^[0-9]+$/',
         ];
-        $this->validate($request,$rules);
+        $this->validate($request, $rules);
         DB::beginTransaction();
-        try{
+        try {
             /*$circular = JobCircular::with('constraint')->find($request->circular);
             $constraint= json_decode($circular->constraint->constraint);*/
-            $accepted = JobAppliciant::whereHas('accepted',function($q){
+            $accepted = JobAppliciant::whereHas('accepted', function ($q) {
 
-            })->where('status','accepted')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit)->count();
-            $quota = JobApplicantQuota::where('district_id',$request->unit)->first();
-            $applicant_male = JobApplicantMarks::with(['applicant'=>function($q){
+            })->where('status', 'accepted')->where('job_circular_id', $request->circular)->where('unit_id', $request->unit)->count();
+            $quota = JobApplicantQuota::where('district_id', $request->unit)->first();
+            $applicant_male = JobApplicantMarks::with(['applicant' => function ($q) {
                 $q->with('accepted');
-            }])->whereHas('applicant',function($q) use($request){
+            }])->whereHas('applicant', function ($q) use ($request) {
 
-                $q->whereHas('selectedApplicant',function(){
+                $q->whereHas('selectedApplicant', function () {
 
-                })->where('status','selected')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit);
-            })->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'))->havingRaw('total_mark>0')->orderBy('total_mark','desc');
-            if($quota){
-                if(intval($quota->male)-$accepted>0)$applicants = $applicant_male->limit(intval($quota->male)-$accepted)->get();
+                })->where('status', 'selected')->where('job_circular_id', $request->circular)->where('unit_id', $request->unit);
+            })->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'))->havingRaw('total_mark>0')->orderBy('total_mark', 'desc');
+            if ($quota) {
+                if (intval($quota->male) - $accepted > 0) $applicants = $applicant_male->limit(intval($quota->male) - $accepted)->get();
                 else $applicants = [];
-            }
-            else $applicants = [];
-            if(count($applicants)){
+            } else $applicants = [];
+            if (count($applicants)) {
                 foreach ($applicants as $applicant) {
                     $applicant->applicant->update(['status' => 'accepted']);
-                    if(!$applicant->applicant->accepted) {
+                    if (!$applicant->applicant->accepted) {
                         $applicant->applicant->accepted()->create([
                             'action_user_id' => auth()->user()->id
                         ]);
                     }
                 }
-            }else{
+            } else {
                 throw new \Exception('No applicants within quota available');
             }
             DB::commit();
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['status'=>'error','message'=>$e->getMessage()]);
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
-        return response()->json(['status'=>'success','message'=>'Applicant accepted successfully']);
+        return response()->json(['status' => 'success', 'message' => 'Applicant accepted successfully']);
     }
-    public function confirmAcceptedIfBncandidate(Request $request){
-        $rules = [
-            'applicant_id'=>'required|regex:/^[A-Z0-9]+$/'
-        ];
-        $this->validate($request,$rules);
-        DB::beginTransaction();
-        try{
-            $applicant = JobAppliciant::where('applicant_id',$request->applicant_id)->first();
-            if($applicant){
-                $accepted = JobAppliciant::whereHas('accepted',function($q){
 
-                })->where('status','accepted')->where('job_circular_id',$applicant->job_circular_id)->where('unit_id',$applicant->unit_id)->count();
-                $quota = JobApplicantQuota::where('district_id',$applicant->unit_id)->first();
-                if($quota){
-                    if(intval($quota->{strtolower($applicant->gender)})-$accepted>0){
+    public function confirmAcceptedIfBncandidate(Request $request)
+    {
+        $rules = [
+            'applicant_id' => 'required|regex:/^[A-Z0-9]+$/'
+        ];
+        $this->validate($request, $rules);
+        DB::beginTransaction();
+        try {
+            $applicant = JobAppliciant::where('applicant_id', $request->applicant_id)->first();
+            if ($applicant) {
+                $accepted = JobAppliciant::whereHas('accepted', function ($q) {
+
+                })->where('status', 'accepted')->where('job_circular_id', $applicant->job_circular_id)->where('unit_id', $applicant->unit_id)->count();
+                $quota = JobApplicantQuota::where('district_id', $applicant->unit_id)->first();
+                if ($quota) {
+                    if (intval($quota->{strtolower($applicant->gender)}) - $accepted > 0) {
                         $applicant->status = 'accepted';
                         $applicant->marks()->create([
-                            'is_bn_candidate'=>1
+                            'is_bn_candidate' => 1
                         ]);
                         $applicant->accepted()->create([
-                            'action_user_id'=>$request->action_user_id
+                            'action_user_id' => $request->action_user_id
                         ]);
                         $applicant->save();
-                    }
-                    else throw new \Exception("Quota not available");
-                }
-                else throw new \Exception("Quota not available");
+                    } else throw new \Exception("Quota not available");
+                } else throw new \Exception("Quota not available");
 
             } else throw new \Exception("invalid application");
             DB::commit();
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['status'=>'error','message'=>$e->getMessage()]);
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
-        return response()->json(['status'=>'success','message'=>'Applicant accepted successfully']);
+        return response()->json(['status' => 'success', 'message' => 'Applicant accepted successfully']);
     }
 
-    public function loadImage(Request $request){
+    public function loadImage(Request $request)
+    {
         $image = base64_decode($request->file);
         if (!$request->exists('file')) return Image::make(public_path('dist/img/nimage.png'))->response();
         if (is_null($image) || !File::exists($image) || File::isDirectory($image)) {
@@ -730,151 +741,161 @@ class ApplicantScreeningController extends Controller
         //return $image;
         return Image::make($image)->response();
     }
-    public function applicantEditField(Request $request){
+
+    public function applicantEditField(Request $request)
+    {
         return view('recruitment::applicant.applicant_edit_field');
     }
-    public function saveApplicantEditField(Request $request){
+
+    public function saveApplicantEditField(Request $request)
+    {
         $fields = array_filter($request->fields);
-        $js = JobSettings::where('field_type','applicants_field')->first();
-        if($js){
-            $js->update(['field_value'=>implode(',',$fields)]);
-        }
-        else{
+        $js = JobSettings::where('field_type', 'applicants_field')->first();
+        if ($js) {
+            $js->update(['field_value' => implode(',', $fields)]);
+        } else {
             JobSettings::create([
-                'field_type'=>'applicants_field',
-                'field_value'=>implode(',',$fields)
+                'field_type' => 'applicants_field',
+                'field_value' => implode(',', $fields)
             ]);
         }
-        return response()->json(['status'=>'success','message'=>'operation complete successfully']);
+        return response()->json(['status' => 'success', 'message' => 'operation complete successfully']);
     }
-    public function loadApplicantEditField(){
-        $js = JobSettings::where('field_type','applicants_field')->first();
+
+    public function loadApplicantEditField()
+    {
+        $js = JobSettings::where('field_type', 'applicants_field')->first();
         return $js;
     }
+
     public function acceptedApplicantView()
     {
         return view('recruitment::applicant.applicant_accepted');
     }
+
     public function loadApplicantByQuota(Request $request)
     {
 
         DB::enableQueryLog();
         $rules = [
-            'unit'=>'required|regex:/^[0-9]+$/',
-            'circular'=>'required|regex:/^[0-9]+$/',
+            'unit' => 'required|regex:/^[0-9]+$/',
+            'circular' => 'required|regex:/^[0-9]+$/',
         ];
-        $this->validate($request,$rules);
-        $quota = JobApplicantQuota::where('district_id',$request->unit)->first();
-        $accepted = JobAppliciant::whereHas('accepted',function($q){
+        $this->validate($request, $rules);
+        $quota = JobApplicantQuota::where('district_id', $request->unit)->first();
+        $accepted = JobAppliciant::whereHas('accepted', function ($q) {
 
-        })->where('status','accepted')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit)->count();
-        $applicant_male = JobApplicantMarks::with(['applicant'=>function($q){
-            $q->with(['district','division','thana']);
-        }])->whereHas('applicant',function($q) use($request){
+        })->where('status', 'accepted')->where('job_circular_id', $request->circular)->where('unit_id', $request->unit)->count();
+        $applicant_male = JobApplicantMarks::with(['applicant' => function ($q) {
+            $q->with(['district', 'division', 'thana']);
+        }])->whereHas('applicant', function ($q) use ($request) {
 
-            $q->whereHas('selectedApplicant',function(){
+            $q->whereHas('selectedApplicant', function () {
 
-            })->where('status','selected')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit);
-        })->select(DB::raw('DISTINCT *,(written+viva+physical+edu_training) as total_mark'))->havingRaw('total_mark>0')->orderBy('total_mark','desc');
-        $applicants=[];
-        if($quota){
-            if(intval($quota->male)-$accepted>0)$applicants = $applicant_male->limit(intval($quota->male)-$accepted)->get();
+            })->where('status', 'selected')->where('job_circular_id', $request->circular)->where('unit_id', $request->unit);
+        })->select(DB::raw('DISTINCT *,(written+viva+physical+edu_training) as total_mark'))->havingRaw('total_mark>0')->orderBy('total_mark', 'desc');
+        $applicants = [];
+        if ($quota) {
+            if (intval($quota->male) - $accepted > 0) $applicants = $applicant_male->limit(intval($quota->male) - $accepted)->get();
 //            else return view('recruitment::applicant.data_accepted',['applicants'=>[]]);
         }
 //        else return view('recruitment::applicant.data_accepted',['applicants'=>[]]);
-       // $a = $applicant_male->get();
-       // return DB::getQueryLog();
-        if($request->exists('export')&&$request->export=='excel'){
-            Excel::create('accepted_list',function ($excel) use($applicants){
-                $excel->sheet('sheet1',function ($sheet) use($applicants){
-                    $sheet->loadView('recruitment::applicant.data_accepted',['applicants'=>$applicants]);
+        // $a = $applicant_male->get();
+        // return DB::getQueryLog();
+        if ($request->exists('export') && $request->export == 'excel') {
+            Excel::create('accepted_list', function ($excel) use ($applicants) {
+                $excel->sheet('sheet1', function ($sheet) use ($applicants) {
+                    $sheet->loadView('recruitment::applicant.data_accepted', ['applicants' => $applicants]);
                 });
             })->download('xls');
-        }
-        else return view('recruitment::applicant.data_accepted',['applicants'=>$applicants]);
+        } else return view('recruitment::applicant.data_accepted', ['applicants' => $applicants]);
 
     }
 
 
-    public function moveApplicantToHRM(Request $request){
-        if(strcasecmp($request->method(),'post')==0){
-            if($request->ajax()){
-                $applicants= JobAppliciant::with(['division','district','thana'])
-                    ->where('status','accepted')->where('job_circular_id',$request->circular);
-                if($request->range&&$request->range!='all'){
-                    $applicants->where('division_id',$request->range);
+    public function moveApplicantToHRM(Request $request)
+    {
+        if (strcasecmp($request->method(), 'post') == 0) {
+            if ($request->ajax()) {
+                $applicants = JobAppliciant::with(['division', 'district', 'thana'])
+                    ->where('status', 'accepted')->where('job_circular_id', $request->circular);
+                if ($request->range && $request->range != 'all') {
+                    $applicants->where('division_id', $request->range);
                 }
-                if($request->unit&&$request->unit!='all'){
-                    $applicants->where('unit_id',$request->unit);
+                if ($request->unit && $request->unit != 'all') {
+                    $applicants->where('unit_id', $request->unit);
                 }
-                if($request->thana&&$request->thana!='all'){
-                    $applicants->where('thana_id',$request->thana);
+                if ($request->thana && $request->thana != 'all') {
+                    $applicants->where('thana_id', $request->thana);
                 }
-                if($request->q){
-                    $applicants->where(function ($q)use ($request){
-                        $q->where('applicant_name_eng','LIKE','%'.$request->q.'%');
-                        $q->orWhere('applicant_name_bng','LIKE','%'.$request->q.'%');
-                        $q->orWhere('mobile_no_self',$request->q);
-                        $q->orWhere('national_id_no',$request->q);
+                if ($request->q) {
+                    $applicants->where(function ($q) use ($request) {
+                        $q->where('applicant_name_eng', 'LIKE', '%' . $request->q . '%');
+                        $q->orWhere('applicant_name_bng', 'LIKE', '%' . $request->q . '%');
+                        $q->orWhere('mobile_no_self', $request->q);
+                        $q->orWhere('national_id_no', $request->q);
                     });
                 }
-                $limit = $request->limit?$request->limit:50;
-                return view('recruitment::applicant.part_hrm_applicant_info',['applicants'=>$applicants->paginate($limit),'type'=>'download']);
-            }
-            else{
+                $limit = $request->limit ? $request->limit : 50;
+                return view('recruitment::applicant.part_hrm_applicant_info', ['applicants' => $applicants->paginate($limit), 'type' => 'download']);
+            } else {
                 abort(401);
             }
         }
         return view('recruitment::applicant.move_applicant_to_hrm');
     }
-    public function editApplicantForHRM(Request $request){
-        if(strcasecmp($request->method(),'post')==0){
-            if($request->ajax()){
-                $applicants= JobAppliciant::with(['division','district','thana'])
+
+    public function editApplicantForHRM(Request $request)
+    {
+        if (strcasecmp($request->method(), 'post') == 0) {
+            if ($request->ajax()) {
+                $applicants = JobAppliciant::with(['division', 'district', 'thana'])
                     ->doesnthave('hrmDetail')
-                    ->where('status','accepted')->where('job_circular_id',$request->circular);
-                if($request->range&&$request->range!='all'){
-                    $applicants->where('division_id',$request->range);
+                    ->where('status', 'accepted')->where('job_circular_id', $request->circular);
+                if ($request->range && $request->range != 'all') {
+                    $applicants->where('division_id', $request->range);
                 }
-                if($request->unit&&$request->unit!='all'){
-                    $applicants->where('unit_id',$request->unit);
+                if ($request->unit && $request->unit != 'all') {
+                    $applicants->where('unit_id', $request->unit);
                 }
-                if($request->thana&&$request->thana!='all'){
-                    $applicants->where('thana_id',$request->thana);
+                if ($request->thana && $request->thana != 'all') {
+                    $applicants->where('thana_id', $request->thana);
                 }
-                if($request->q){
-                    $applicants->where(function ($q)use ($request){
-                        $q->where('applicant_name_eng','LIKE','%'.$request->q.'%');
-                        $q->orWhere('applicant_name_bng','LIKE','%'.$request->q.'%');
-                        $q->orWhere('mobile_no_self',$request->q);
-                        $q->orWhere('national_id_no',$request->q);
+                if ($request->q) {
+                    $applicants->where(function ($q) use ($request) {
+                        $q->where('applicant_name_eng', 'LIKE', '%' . $request->q . '%');
+                        $q->orWhere('applicant_name_bng', 'LIKE', '%' . $request->q . '%');
+                        $q->orWhere('mobile_no_self', $request->q);
+                        $q->orWhere('national_id_no', $request->q);
                     });
                 }
-                $limit = $request->limit?$request->limit:50;
-                return view('recruitment::applicant.part_hrm_applicant_info',['applicants'=>$applicants->paginate($limit),'type'=>'edit']);
-            }
-            else{
+                $limit = $request->limit ? $request->limit : 50;
+                return view('recruitment::applicant.part_hrm_applicant_info', ['applicants' => $applicants->paginate($limit), 'type' => 'edit']);
+            } else {
                 abort(401);
             }
         }
         return view('recruitment::applicant.edit_applicant_to_hrm');
     }
-    public function applicantEditForHRM($type,$id){
-        $applicant = JobAppliciant::with(['division','district','thana','appliciantEducationInfo'=>function($q){
+
+    public function applicantEditForHRM($type, $id)
+    {
+        $applicant = JobAppliciant::with(['division', 'district', 'thana', 'appliciantEducationInfo' => function ($q) {
             $q->with('educationInfo');
-        }])->where('applicant_id',$id)->first();
-        if($type=='download') {
+        }])->where('applicant_id', $id)->first();
+        if ($type == 'download') {
             $pdf = SnappyPdf::loadView('recruitment::hrm.hrm_form_download', ['ansarAllDetails' => $applicant])
                 ->setOption('encoding', 'UTF-8')
                 ->setOption('zoom', 0.73);
             return $pdf->download();
-        }else{
-            return response()->json(['view'=>view('recruitment::applicant.applicant_edit_for_hrm')->render(),'id'=>$id]);
+        } else {
+            return response()->json(['view' => view('recruitment::applicant.applicant_edit_for_hrm')->render(), 'id' => $id]);
         }
 //        return view('recruitment::hrm.hrm_form_download',['ansarAllDetails'=>$applicant]);
     }
 
-    public function storeApplicantHRmDetail(Request $request){
+    public function storeApplicantHRmDetail(Request $request)
+    {
         $rules = [
             'applicant_id' => 'required|unique:recruitment.job_applicant_hrm_details',
             'ansar_name_eng' => 'required',
@@ -893,7 +914,7 @@ class ApplicantScreeningController extends Controller
             'sex' => 'required',
             'mobile_no_self' => 'required|regex:/^(\+88)?0[0-9]{10}$/|unique:hrm.tbl_ansar_parsonal_info',
         ];
-        $this->validate($request,$rules);
+        $this->validate($request, $rules);
         $columns = Schema::connection('recruitment')->getColumnListing('job_applicant_hrm_details');
         $inputs = $request->all();
         unset($columns['id']);
@@ -903,8 +924,8 @@ class ApplicantScreeningController extends Controller
         unset($inputs['updated_at']);
         unset($columns['updated_at']);
         $c = [];
-        foreach ($inputs as $key=>$value){
-            if(in_array($key,$columns)){
+        foreach ($inputs as $key => $value) {
+            if (in_array($key, $columns)) {
                 continue;
             }
             unset($inputs[$key]);
@@ -915,27 +936,27 @@ class ApplicantScreeningController extends Controller
         $inputs['appliciant_education_info'] = json_encode($inputs['appliciant_education_info']);
 //        return $inputs;
         DB::beginTransaction();
-        try{
+        try {
             $file_path = storage_path('rece');
-            if(!File::exists($file_path)) File::makeDirectory($file_path);
-            if(isset($inputs['sign_pic'])){
+            if (!File::exists($file_path)) File::makeDirectory($file_path);
+            if (isset($inputs['sign_pic'])) {
                 $img = Image::make($inputs['sign_pic']);
-                $img->save($file_path.'/'.$inputs['applicant_id'].'_sign.jpg');
-                $inputs['sign_pic'] = $file_path.'/'.$inputs['applicant_id'].'_sign.jpg';
+                $img->save($file_path . '/' . $inputs['applicant_id'] . '_sign.jpg');
+                $inputs['sign_pic'] = $file_path . '/' . $inputs['applicant_id'] . '_sign.jpg';
             }
-            if(isset($inputs['profile_pic'])){
+            if (isset($inputs['profile_pic'])) {
                 $img = Image::make($inputs['profile_pic']);
-                $img->save($file_path.'/'.$inputs['applicant_id'].'_profile.jpg');
-                $inputs['profile_pic'] = $file_path.'/'.$inputs['applicant_id'].'_profile.jpg';
+                $img->save($file_path . '/' . $inputs['applicant_id'] . '_profile.jpg');
+                $inputs['profile_pic'] = $file_path . '/' . $inputs['applicant_id'] . '_profile.jpg';
             }
-            $applicant = JobAppliciant::where('applicant_id',$inputs['applicant_id'])->where('status','accepted')->first();
-            if(!$applicant) throw new \Exception('Invalid applicant');
+            $applicant = JobAppliciant::where('applicant_id', $inputs['applicant_id'])->where('status', 'accepted')->first();
+            if (!$applicant) throw new \Exception('Invalid applicant');
             $applicant->hrmDetail()->save(new JobApplicantHRMDetails($inputs));
             DB::commit();
-            return response()->json(['status'=>'success','message'=>'Data inserted successfully']);
-        }catch(\Exception $e){
+            return response()->json(['status' => 'success', 'message' => 'Data inserted successfully']);
+        } catch (\Exception $e) {
             DB::rollback();
-            return response()->json(['status'=>'error','message'=>$e->getMessage()]);
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
 
