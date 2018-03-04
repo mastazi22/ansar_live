@@ -2,6 +2,7 @@
     <tr>
         <th style="width: 10px">SL No.</th>
         <th>Applicant Name</th>
+        <th>Applicant ID</th>
         <th>Father Name</th>
         <th>Birth Date</th>
         <th>National ID No.</th>
@@ -25,6 +26,7 @@
             <tr>
                 <td style="width: 10px">{{($index++).''}}</td>
                 <td>{{$a->applicant_name_bng}}</td>
+                <td>{{$a->applicant_id}}</td>
                 <td>{{$a->father_name_bng}}</td>
                 <td>{{$a->date_of_birth}}</td>
                 <td>{{$a->national_id_no}}</td>

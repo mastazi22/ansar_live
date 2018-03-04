@@ -6,6 +6,7 @@ use App\Jobs\FeedbackSMS;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
 use App\modules\HRM\Models\Thana;
+use App\modules\recruitment\Models\JobApplicantExamCenter;
 use App\modules\recruitment\Models\JobApplicantHRMDetails;
 use App\modules\recruitment\Models\JobApplicantMarks;
 use App\modules\recruitment\Models\JobApplicantQuota;
@@ -88,6 +89,16 @@ class ApplicantScreeningController extends Controller
                 $rules['q']='required';
             }
             $this->validate($request, $rules);
+            DB::enableQueryLog();
+            $selection_unit = JobApplicantExamCenter::with(['units'=>function($q){
+                $q->select('tbl_units.id');
+            }])
+                ->where('selection_date',Carbon::now()->format('Y-m-d'));
+            if ($request->exists('circular') && $request->circular != 'all') {
+                $selection_unit->where('job_circular_id', $request->circular);
+            }
+
+            $units = $selection_unit->first();
             $query = JobAppliciant::whereHas('circular', function ($q) use ($request) {
                 $q->where('circular_status', 'running');
                 if ($request->exists('circular') && $request->circular != 'all') {
@@ -118,6 +129,7 @@ class ApplicantScreeningController extends Controller
 //            return response()->json($query->paginate(50));
             if(auth()->user()->type==66){
                 $query->where('job_applicant.division_id',auth()->user()->division_id);
+                $query->whereIn('job_applicant.unit_id',[61,62]);
             }
             if(auth()->user()->type==22){
                 $query->where('job_applicant.unit_id',auth()->user()->district_id);

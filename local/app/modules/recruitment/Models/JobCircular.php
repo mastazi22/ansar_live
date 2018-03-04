@@ -20,6 +20,9 @@ class JobCircular extends Model
     {
         return $this->hasMany(JobAppliciant::class, 'job_circular_id');
     }
+    public function examCenter(){
+        return $this->hasMany(JobApplicantExamCenter::class,'job_circular_id');
+    }
 
     public function appliciantMale()
     {
