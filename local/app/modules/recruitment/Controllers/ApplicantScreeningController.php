@@ -98,7 +98,14 @@ class ApplicantScreeningController extends Controller
                 $selection_unit->where('job_circular_id', $request->circular);
             }
 
-            $units = $selection_unit->first();
+            $selection_unit = $selection_unit->get();
+            $units = [];
+            if(count($selection_unit)>0){
+                foreach ($selection_unit as $u){
+                    $units = array_merge($units,$u->units()->pluck('tbl_units.id')->toArray());
+                }
+            }
+//            return $units;
             $query = JobAppliciant::whereHas('circular', function ($q) use ($request) {
                 $q->where('circular_status', 'running');
                 if ($request->exists('circular') && $request->circular != 'all') {
@@ -129,10 +136,11 @@ class ApplicantScreeningController extends Controller
 //            return response()->json($query->paginate(50));
             if(auth()->user()->type==66){
                 $query->where('job_applicant.division_id',auth()->user()->division_id);
-                $query->whereIn('job_applicant.unit_id',[61,62]);
+                $query->whereIn('job_applicant.unit_id',$units);
             }
             if(auth()->user()->type==22){
                 $query->where('job_applicant.unit_id',auth()->user()->district_id);
+                $query->whereIn('job_applicant.unit_id',$units);
             }
             if($request->select_all){
                 return response()->json($query->pluck('job_applicant.applicant_id'));
@@ -141,7 +149,7 @@ class ApplicantScreeningController extends Controller
             else {
                 $data = $query->get();
 //                return $data->count();
-                return view('recruitment::applicant.applicant_info',['applicants'=>($data->count()>1?$data:$data[0])]);
+                return view('recruitment::applicant.applicant_info',['applicants'=>($data->count()>1?$data:($data->count()>0?$data[0]:''))]);
             }
 
         }
