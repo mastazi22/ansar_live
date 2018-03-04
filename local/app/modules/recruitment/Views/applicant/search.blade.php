@@ -114,7 +114,7 @@
                         circular: $scope.circular,
                         limit: $scope.limitList,
                         filter: $scope.filter,
-                        q:$scope.q
+                        q:$scope.param.q
                     })
                 ]).then(function (response) {
                     $scope.circular = 'all';
@@ -138,7 +138,7 @@
                     circular: $scope.circular,
                     limit: $scope.param['limit']||'50',
                     filter: $scope.filter,
-                    q:$scope.q
+                    q:$scope.param.q
                 }).then(function (response) {
                     $scope.applicants = $sce.trustAsHtml(response.data);
                     $scope.allLoading = false;
@@ -156,7 +156,7 @@
                     limit: $scope.limitList,
                     filter: $scope.filter,
                     select_all: true,
-                    q:$scope.q
+                    q:$scope.param.q
                 }).then(function (response) {
                     console.log(response.data)
                     $scope.allLoading = false;
