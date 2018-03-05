@@ -3,7 +3,8 @@
 
     <table class="table table-bordered" style="overflow: hidden">
         <caption><span style="font-size: 20px;">Total Applicant({{$applicants->total()}})</span>
-            <form action="{{URL::route('report.applicants.status_export')}}" method="post" target="_blank" style="display: inline">
+            <form action="{{URL::route('report.applicants.status_export')}}" method="post" target="_blank"
+                  style="display: inline">
                 {!! csrf_field() !!}
                 <input type="hidden" ng-repeat="(k,v) in param" name="[[k]]" value="[[v]]">
                 <button class="btn btn-primary btn-xs">
@@ -57,7 +58,13 @@
                         <td>{{$a->mobile_no_self}}</td>
                     @endif
                     @if(isset($status)&&$status=='accepted')
-                        <td>{{$a->marks->written+$a->marks->viva+$a->marks->physical+$a->marks->edu_training}}</td>
+                        @if($a->marks->is_bn_candidate)
+                            <td>
+                                <strong>Bn Candidate</strong>
+                            </td>
+                        @else
+                            <td>{{$a->marks->written+$a->marks->viva+$a->marks->physical+$a->marks->edu_training}}</td>
+                        @endif
                     @endif
                     <td>{{$a->status}}</td>
                 </tr>
@@ -73,7 +80,8 @@
     </table>
 </div>
 @if(count($applicants))
-    <form action="{{URL::route('report.applicants.status_export')}}" method="post" target="_blank" style="display: inline">
+    <form action="{{URL::route('report.applicants.status_export')}}" method="post" target="_blank"
+          style="display: inline">
         {!! csrf_field() !!}
         <input type="hidden" ng-repeat="(k,v) in param" name="[[k]]" value="[[v]]">
         <button class="btn btn-primary btn-xs">
