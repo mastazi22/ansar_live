@@ -10,6 +10,7 @@ use App\models\UserPermission;
 use App\models\UserProfile;
 use App\models\UserType;
 use App\modules\HRM\Models\CustomQuery;
+use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\ForgetPasswordRequest;
 use App\modules\HRM\Models\PersonalInfo;
 use Carbon\Carbon;
@@ -202,7 +203,15 @@ class UserController extends Controller
 
     function editUser($id)
     {
-        return View::make('User.edit_user')->with('id', $id);
+        $user= User::find($id);
+        if(!$user) abort(404);
+        if($user->type==22){
+            $units = District::where('id','!=',0)->pluck('unit_name_bng','id');
+            $units = $units->prepend('--Select a unit--','');
+//            return $units;
+            return View::make('User.edit_user')->with(['id'=>$id,'user'=>$user,'units'=>$units]);
+        }
+        return View::make('User.edit_user')->with(['id'=>$id,'user'=>$user]);
     }
 
     function changeUserName()
@@ -217,6 +226,25 @@ class UserController extends Controller
         } else {
             $user = User::find($id);
             $user->user_name = Input::get('user_name');
+            if ($user->save()) {
+                return Response::json(['submit' => true]);
+            } else {
+                return Response::json(['submit' => false]);
+            }
+        }
+    }
+    function changeUserDistrict()
+    {
+        $id = Input::get('user_id');
+        $rules = [
+            'rec_district_id' => 'required'
+        ];
+        $valid = Validator::make(Input::all(), $rules);
+        if ($valid->fails()) {
+            return Response::json(['validation' => true]);
+        } else {
+            $user = User::find($id);
+            $user->rec_district_id = Input::get('rec_district_id');
             if ($user->save()) {
                 return Response::json(['submit' => true]);
             } else {
@@ -564,7 +592,7 @@ class UserController extends Controller
                 $e = $kpi->embodiment->pluck('ansar_id')->toArray();
                 $d = array_merge($d, $e);
             }
-            $v = User::with(['district', 'division', 'usertype', 'userPermission'])->find($user->id);
+            $v = User::with(['district','recDistrict', 'division', 'usertype', 'userPermission'])->find($user->id);
             $v['embodiment'] = $d;
             return $v;
         });

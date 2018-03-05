@@ -685,10 +685,12 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
             }
             if ($scope.showItem.indexOf('rank') > -1) $scope.loadRank();
             $rootScope.$watch('user', function (n, o) {
+                var p = window.location.pathname.split('/');
                 if (!n) return;
                 if ($rootScope.user.usertype.type_name == 'DC') {
                     $scope.selected.range = $rootScope.user.district.division_id
-                    $scope.selected.unit = $rootScope.user.district.id
+                    if(p.length>1&&p[1]==='recruitment'&&$rootScope.user.rec_district)$scope.selected.unit = $rootScope.user.rec_district.id
+                    else $scope.selected.unit = $rootScope.user.district.id
                     $scope.loadThana(undefined, $rootScope.user.district.id)
                 }
                 else if ($rootScope.user.usertype.type_name == 'RC') {

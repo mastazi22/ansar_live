@@ -39,6 +39,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/action_log/{id?}', 'UserController@viewActionLog');
     Route::post('/change_user_name', ['as' => 'edit_user_name', 'uses' => 'UserController@changeUserName']);
     Route::post('/change_user_password', ['as' => 'edit_user_password', 'uses' => 'UserController@changeUserPassword']);
+    Route::post('/change_user_unit', ['as' => 'edit_user_unit', 'uses' => 'UserController@changeUserDistrict']);
     Route::post('change_user_image', 'UserController@changeUserImage');
     Route::post('/verify_memorandum_id', 'UserController@verifyMemorandumId');
     Route::get('user_data','UserController@getUserData');
