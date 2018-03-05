@@ -70,19 +70,19 @@
                 console.log($scope.param.units)
             }
             $scope.changeDivision = function (id,d_id,i) {
-                if(+$scope.param.units[i]===id){
+                if(+$scope.param.units[i]===+id){
                     $scope.divisions.forEach(function (d,i) {
-                        if(d.id===d_id){
+                        if(+d.id===+d_id){
                             $scope.param.divisions[i] = d.id+''
                         }
                     })
                 } else{
                     var f = $scope.units.find(function (u,i) {
-                        return u.division_id===d_id&&$scope.param.units[i];
+                        return +u.division_id===+d_id&&$scope.param.units[i];
                     })
                     if(f===undefined){
                         $scope.divisions.forEach(function (d,i) {
-                            if(d.id===d_id){
+                            if(+d.id===+d_id){
                                 $scope.param.divisions[i] = false;
                             }
                         })
@@ -91,76 +91,6 @@
                 console.log($scope.param.units)
             }
         });
-        GlobalApp.directive('divisionSelect',function () {
-            return{
-                restrict:'A',
-                link:function (scope, elem, attrs) {
-                    $(elem).on('change',function () {
-                        var v = $(this).val();
-                        if($(this).prop('checked')){
-                            $("*[data-division='"+v+"']").prop('checked',true);
-                            scope.units.forEach(function (vb,i) {
-//                                console.log(vb.division_id+" "+v+" "+(vb.division_id==v));
-                                if(vb.division_id==v) {
-
-                                    console.log(i);
-                                    scope.param['units'][i] = vb.id;
-                                }
-                            })
-                        }
-                        else{
-
-                            $("*[data-division='"+v+"']").prop('checked',false);
-                            scope.units.forEach(function (vb,i) {
-                                if(vb.division_id==v) {
-                                    scope.param['units'][i] = '';
-                                }
-                            })
-                        }
-                    })
-
-
-                }
-            }
-        })
-        GlobalApp.directive('unitSelect',function () {
-            return{
-                restrict:'A',
-                link:function (scope, elem, attrs) {
-                    $(elem).on('change',function () {
-                        var v = $(this).val();
-                        var vv = $(this).attr('data-division');
-                        if($(this).prop('checked')){
-                            $(".division[value='"+vv+"']").prop('checked',true);
-                            scope.divisions.forEach(function (vb,i) {
-//                                console.log(vb.division_id+" "+v+" "+(vb.division_id==v));
-                                if(vb.id==vv) {
-
-                                    console.log(i);
-                                    scope.param['divisions'][i] = vb.id;
-                                }
-                            })
-                        }
-                        else{
-
-                            if($("*[data-division='"+vv+"']:checked").length<=0) {
-                                $(".division[value='"+vv+"']").prop('checked',false);
-                                scope.divisions.forEach(function (vb,i) {
-//                                console.log(vb.division_id+" "+v+" "+(vb.division_id==v));
-                                    if(vb.id==vv) {
-
-                                        console.log(i);
-                                        scope.param['divisions'][i] = '';
-                                    }
-                                })
-                            }
-                        }
-                    })
-
-
-                }
-            }
-        })
     </script>
     <section class="content" ng-controller="SMSController">
         <div class="box box-info">
