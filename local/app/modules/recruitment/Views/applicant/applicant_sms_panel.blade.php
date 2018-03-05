@@ -52,9 +52,11 @@
                 })
             }
             $scope.changeUnits = function (id,i) {
+		console.log(+$scope.param.divisions[i]+" "+id+" "+(+$scope.param.divisions[i]===id))
                 if(+$scope.param.divisions[i]===id){
                     $scope.units.forEach(function (u,i) {
-                        if(u.division_id===id){
+			console.log((+u.division_id===+id)+" "+u.division_id+" "+id)
+                        if(+u.division_id===+id){
                             $scope.param.units[i] = u.id+''
                         }
                     })
