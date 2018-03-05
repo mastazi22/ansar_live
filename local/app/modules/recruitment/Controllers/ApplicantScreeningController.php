@@ -137,11 +137,11 @@ class ApplicantScreeningController extends Controller
             }
 //            return response()->json($query->paginate(50));
             if (auth()->user()->type == 66) {
-                $query->where('job_applicant.division_id', auth()->user()->division_id);
+                $query->where('job_applicant.division_id', $request->range);
 //                $query->whereIn('job_applicant.unit_id',$units);
             }
             if (auth()->user()->type == 22) {
-                $query->where('job_applicant.unit_id', auth()->user()->district_id);
+                $query->where('job_applicant.unit_id', $request->unit);
 //                $query->whereIn('job_applicant.unit_id',$units);
             }
             if ($request->select_all) {

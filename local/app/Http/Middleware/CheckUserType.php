@@ -20,6 +20,7 @@ class CheckUserType
     private $urls =[
         'district_name'=>['id'=>'range'],
         'division_name'=>['id'=>'range'],
+        'thana_name'=>['id'=>'unit'],
         'get_ansar_list'=>['division'=>'range','unit'=>'unit'],
         'get_recent_ansar_list'=>['division'=>'range','unit'=>'unit'],
         'getnotverifiedansar'=>['division'=>'range','unit'=>'unit'],
@@ -57,6 +58,7 @@ class CheckUserType
         'recruitment.edit_for_hrm'=>['range'=>'range','unit'=>'unit'],
         'recruitment.hrm.index'=>['range'=>'range','unit'=>'unit'],
         'recruitment.hrm.card_print'=>['range'=>'range','unit'=>'unit'],
+        'recruitment.applicant.search_result'=>['range'=>'range','unit'=>'unit'],
     ];
     public function handle($request, Closure $next)
     {
@@ -64,13 +66,15 @@ class CheckUserType
         $route = $request->route();
         if(is_null($route)) return $next($request);
         $routeName = $route->getName();
+        $routePrefix = $route->getPrefix();
         $input = $request->input();
         foreach($this->urls as $url=>$params){
             if(!strcasecmp($url,$routeName)){
                 foreach($params as $key=>$type){
                     if($type=='unit'){
                         if($user->type==22){
-                            $input[$key] = $user->district->id;
+                            if($routePrefix==='recruitment'&&$user->recDistrict) $input[$key] = $user->recDistrict->id;
+                            else $input[$key] = $user->district->id;
                         }
                         else if($user->type==66){
                             $units = District::where('division_id',$user->division_id)->pluck('id');
@@ -84,7 +88,8 @@ class CheckUserType
                     }
                     else if($type=='range'){
                         if($user->type==22){
-                            $input[$key] = $user->district->division_id;
+                            if($routePrefix==='recruitment'&&$user->recDistrict) $input[$key] = $user->recDistrict->division_id;
+                            else $input[$key] = $user->district->division_id;
                         }
                         else if($user->type==66){
                             $input[$key] = $user->division_id;

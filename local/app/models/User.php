@@ -89,6 +89,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function district(){
         return $this->belongsTo(District::class, 'district_id');
     }
+    public function recDistrict(){
+        return $this->belongsTo(District::class, 'rec_district_id');
+    }
     public function division(){
         return $this->belongsTo(Division::class, 'division_id');
     }

@@ -51,6 +51,43 @@
                     notificationService.notify('error',response.statusText);
                 })
             }
+            $scope.changeUnits = function (id,i) {
+                if(+$scope.param.divisions[i]===id){
+                    $scope.units.forEach(function (u,i) {
+                        if(u.division_id===id){
+                            $scope.param.units[i] = u.id+''
+                        }
+                    })
+                } else{
+                    $scope.units.forEach(function (u,i) {
+                        if(u.division_id===id){
+                            $scope.param.units[i] = false;
+                        }
+                    })
+                }
+                console.log($scope.param.units)
+            }
+            $scope.changeDivision = function (id,d_id,i) {
+                if(+$scope.param.units[i]===id){
+                    $scope.divisions.forEach(function (d,i) {
+                        if(d.id===d_id){
+                            $scope.param.divisions[i] = d.id+''
+                        }
+                    })
+                } else{
+                    var f = $scope.units.find(function (u,i) {
+                        return u.division_id===d_id&&$scope.param.units[i];
+                    })
+                    if(f===undefined){
+                        $scope.divisions.forEach(function (d,i) {
+                            if(d.id===d_id){
+                                $scope.param.divisions[i] = false;
+                            }
+                        })
+                    }
+                }
+                console.log($scope.param.units)
+            }
         });
         GlobalApp.directive('divisionSelect',function () {
             return{
@@ -158,7 +195,7 @@
                             </label>
                             <div style="height: 200px;width: 100%;border: 1px solid #ababab;overflow-y: scroll;overflow-x:hidden;padding: 5px 10px">
                                 <label style="display: block" ng-repeat="d in divisions">
-                                    <input division-select value="[[d.id]]" class="division" type="checkbox"  ng-true-value="'[[d.id]]'" ng-model="param.divisions[$index]">&nbsp;[[d.division_name_bng]]
+                                    <input class="division" type="checkbox"  ng-true-value="'[[d.id]]'" ng-model="param.divisions[$index]" ng-change="changeUnits(d.id,$index)">&nbsp;[[d.division_name_bng]]
                                 </label>
                             </div>
                         </div>
@@ -169,7 +206,7 @@
                             <div style="height: 200px;width: 100%;border: 1px solid #ababab;overflow-y: scroll;overflow-x:hidden;padding: 5px 10px">
 
                                 <label ng-repeat="d in units" style="display: block">
-                                    <input unit-select value="[[d.id]]" class="unit" type="checkbox" data-division="[[d.division_id]]" ng-true-value="'[[d.id]]'" ng-model="param.units[$index]">&nbsp;[[d.unit_name_bng]]
+                                    <input class="unit" type="checkbox" data-division="[[d.division_id]]" ng-true-value="'[[d.id]]'" ng-change="changeDivision(d.id,d.division_id,$index)" ng-model="param.units[$index]">&nbsp;[[d.unit_name_bng]]
                                 </label>
                             </div>
                         </div>
