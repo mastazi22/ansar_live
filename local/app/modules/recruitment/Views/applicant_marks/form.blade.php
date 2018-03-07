@@ -18,14 +18,14 @@
 <div class="form-group">
     {!! Form::label('written','Written Exam',['class'=>'control-label']) !!}<sup style="color:red;font-size: 20px;top: 0;">*</sup>
     <div class="input-group">
-        {!! Form::text('written',null,['class'=>'form-control','placeholder'=>'Enter written exam number']) !!}
+        {!! Form::text('written',null,['class'=>'form-control','placeholder'=>'Enter written exam number','oninput'=>"validateInput(this,".($mark_distribution?$mark_distribution->written:10000).")"]) !!}
         <span class="input-group-addon">out of <strong>{{$mark_distribution?$mark_distribution->written:'Not Defined'}}</strong></span>
     </div>
 </div>
 <div class="form-group">
     {!! Form::label('viva','Viva Exam',['class'=>'control-label']) !!}<sup style="color:red;font-size: 20px;top: 0;">*</sup>
     <div class="input-group">
-        {!! Form::text('viva',null,['class'=>'form-control','placeholder'=>'Enter viva exam number']) !!}
+        {!! Form::text('viva',null,['class'=>'form-control','placeholder'=>'Enter viva exam number','oninput'=>"validateInput(this,".($mark_distribution?$mark_distribution->viva:10000).")"]) !!}
         <span class="input-group-addon">out of <strong>{{$mark_distribution?$mark_distribution->viva:'Not Defined'}}</strong></span>
     </div>
 </div>
@@ -35,3 +35,13 @@
     </div>
 </div>
 {!! Form::close() !!}
+<script>
+    function validateInput(elem,maxValue) {
+        var v = +elem.value;
+        if(isNaN(v)){
+            elem.value=0;
+            return;
+        }
+        elem.value = v>maxValue?maxValue:v;
+    }
+</script>
