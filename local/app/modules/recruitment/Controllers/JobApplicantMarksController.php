@@ -110,13 +110,15 @@ class JobApplicantMarksController extends Controller
     public function edit($id)
     {
         //
-        $mark = JobAppliciant::with('marks')->where('applicant_id',$id)->first();
+        $mark = JobAppliciant::with(['marks','circular'=>function($q){
+            $q->with('markDistribution');
+        }])->where('applicant_id',$id)->first();
 //        return $mark;
         if($mark->marks){
             //return url()->route('recruitment.marks.update',['id'=>$mark->marks->id]);
-            return view('recruitment::applicant_marks.form',['data'=>$mark->marks]);
+            return view('recruitment::applicant_marks.form',['data'=>$mark->marks,'mark_distribution'=>$mark->circular->markDistribution]);
         }
-        return view('recruitment::applicant_marks.form',['applicant'=>$mark]);
+        return view('recruitment::applicant_marks.form',['applicant'=>$mark,'mark_distribution'=>$mark->circular->markDistribution]);
     }
 
     /**

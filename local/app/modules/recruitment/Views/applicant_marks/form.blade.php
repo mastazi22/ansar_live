@@ -6,12 +6,12 @@
 @endif
 <div class="form-group">
     {!! Form::label('physical','Physical Fitness Exam',['class'=>'control-label']) !!}<sup style="color:red;font-size: 20px;top: 0;">*</sup>
-    <div class="form-control">{{isset($data)?$data->physical:$applicant->physicalPoint()}} out of 10</div>
+    <div class="form-control">{{isset($data)?$data->physical:$applicant->physicalPoint()}} out of <strong>{{$mark_distribution?$mark_distribution->physical:'Not Defined'}}</strong></div>
     {!! Form::hidden('physical',isset($data)?$data->physical:$applicant->physicalPoint(),['class'=>'form-control','placeholder'=>'Enter physical exam number']) !!}
 </div>
 <div class="form-group">
     {!! Form::label('edu_training','Education & Training',['class'=>'control-label']) !!}<sup style="color:red;font-size: 20px;top: 0;">*</sup>
-    <div class="form-control">{{isset($data)?$data->edu_training:$applicant->educationTrainingPoint()}} out of 15</div>
+    <div class="form-control">{{isset($data)?$data->edu_training:$applicant->educationTrainingPoint()}} out of <strong>{{$mark_distribution?$mark_distribution->edu_training:'Not Defined'}}</strong></div>
     {!! Form::hidden('edu_training',isset($data)?$data->edu_training:$applicant->educationTrainingPoint(),['class'=>'form-control','placeholder'=>'Enter education & training mark']) !!}
 </div>
 
@@ -19,14 +19,14 @@
     {!! Form::label('written','Written Exam',['class'=>'control-label']) !!}<sup style="color:red;font-size: 20px;top: 0;">*</sup>
     <div class="input-group">
         {!! Form::text('written',null,['class'=>'form-control','placeholder'=>'Enter written exam number']) !!}
-        <span class="input-group-addon">out of 50</span>
+        <span class="input-group-addon">out of <strong>{{$mark_distribution?$mark_distribution->written:'Not Defined'}}</strong></span>
     </div>
 </div>
 <div class="form-group">
     {!! Form::label('viva','Viva Exam',['class'=>'control-label']) !!}<sup style="color:red;font-size: 20px;top: 0;">*</sup>
     <div class="input-group">
         {!! Form::text('viva',null,['class'=>'form-control','placeholder'=>'Enter viva exam number']) !!}
-        <span class="input-group-addon">out of 25</span>
+        <span class="input-group-addon">out of <strong>{{$mark_distribution?$mark_distribution->viva:'Not Defined'}}</strong></span>
     </div>
 </div>
 <div class="row">

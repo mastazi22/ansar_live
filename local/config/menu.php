@@ -456,6 +456,10 @@ return [
                 "Application Instruction"=>[
                     "route"=>"recruitment.instruction",
                     "icon"=>"fa-cog"
+                ],
+                "Mark Distribution"=>[
+                    "route"=>"recruitment.mark_distribution.index",
+                    "icon"=>"fa-cog"
                 ]
 
             ]
