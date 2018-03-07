@@ -76,7 +76,7 @@ class JobCircularMarkDistributionController extends Controller
     public function edit($id)
     {
         $data = JobCircularMarkDistribution::find($id);
-        $circular = JobCircular::pluck('circular_name','id');
+        $circulars = JobCircular::pluck('circular_name','id');
         return view('recruitment::job_circular_mark_distribution.edit',compact('circulars','data'));
     }
 
