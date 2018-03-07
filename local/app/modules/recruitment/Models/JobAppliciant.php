@@ -72,8 +72,8 @@ class JobAppliciant extends Model
         }
         $min_height = 64;
         $max_height = 74;
-        $min_point = 5;
-        $max_point = 10;
+        $min_point = 15;
+        $max_point = 30;
         $total_height = floatval($this->height_feet)*12+floatval($this->height_inch);
         $delta_height = $max_height-$min_height;
         $delta_point = $max_point-$min_point;
