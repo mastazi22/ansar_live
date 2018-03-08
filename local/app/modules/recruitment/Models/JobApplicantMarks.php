@@ -51,6 +51,6 @@ class JobApplicantMarks extends Model
             $written_convert = floatval($value);
             $written = floatval($value);
         }
-        return (floatval($value)*$written)/$written_convert;
+        return round((floatval($value)*$written)/$written_convert,2);
     }
 }
