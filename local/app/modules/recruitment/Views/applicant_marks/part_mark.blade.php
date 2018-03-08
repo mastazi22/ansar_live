@@ -30,7 +30,7 @@
                     <td>{{$a->applicant_name_bng}}</td>
                     <td>{{$a->marks?($a->marks->physical?$a->marks->physical:$a->physicalPoint()):$a->physicalPoint()}}</td>
                     <td>{{$a->marks?($a->marks->edu_training?$a->marks->edu_training:$a->educationTrainingPoint()):$a->educationTrainingPoint()}}</td>
-                    <td>{{$a->marks?($a->marks->written?round($a->marks->written,2):'--'):'--'}}</td>
+                    <td>{{$a->marks?($a->marks->written?round($a->marks->convertedWrittenMark(),2):'--'):'--'}}</td>
 
 
                     <td>{{$a->marks?($a->marks->viva?$a->marks->viva:'--'):'--'}}</td>
