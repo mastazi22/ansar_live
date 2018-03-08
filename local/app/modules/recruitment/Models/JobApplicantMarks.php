@@ -33,9 +33,11 @@ class JobApplicantMarks extends Model
         $mark_distribution = $applicant->circular->markDistribution;
         if($mark_distribution){
             $written = $mark_distribution->written;
+            $written_convert = $mark_distribution->convert_written_mark;
         } else{
+            $written_convert = floatval($value);
             $written = floatval($value);
         }
-        $this->attributes['written'] = (floatval($value)*$written)/35;
+        $this->attributes['written'] = (floatval($value)*$written_convert)/$written;
     }
 }
