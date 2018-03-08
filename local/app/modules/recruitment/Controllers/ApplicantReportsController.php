@@ -92,7 +92,7 @@ class ApplicantReportsController extends Controller
             $this->validate($request,$rules);
             $applicants = JobAppliciant::with(['marks'=>function($q){
                 $q->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'));
-            },'district'])->whereHas('marks',function ($q){
+            },'district','circular.markDistribution'])->whereHas('marks',function ($q){
 
             })->where('job_circular_id',$request->circular);
             if($request->exists('unit')&&$request->unit!='all'){
@@ -102,6 +102,7 @@ class ApplicantReportsController extends Controller
                 $applicants->where('division_id',$request->range);
             }
             $applicants = $applicants->orderBy('unit_id')->get();
+//            return $applicants;
             $excel = Excel::create('applicant_marks',function ($excel) use($applicants){
                 $excel->sheet('sheet1',function ($sheet) use($applicants){
                     $sheet->loadView('recruitment::reports.marks_list',[

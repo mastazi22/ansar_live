@@ -29,7 +29,7 @@
 
 
                 <td>{{$a->marks->edu_training}}</td>
-                <td>{{round($a->marks->written,2)}}(out of 40) and {{round(($a->marks->written*35)/40,2)}}(out of 35)
+                <td>{{round($a->marks->written,2)}}(out of {{$a->circular->markDistribution->convert_written_mark}}) and {{round(($a->marks->written*35)/40,2)}}(out of {{$a->circular->markDistribution->written}})
                 </td>
                 <td>{{$a->marks->viva}}</td>
                 <td>{{$a->marks->total_mark}}</td>
