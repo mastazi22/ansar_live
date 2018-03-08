@@ -36,6 +36,6 @@ class JobApplicantMarks extends Model
         } else{
             $written = floatval($value);
         }
-        $this->attributes['written'] = round((floatval($value)*$written)/35,2);
+        $this->attributes['written'] = (floatval($value)*$written)/35;
     }
 }
