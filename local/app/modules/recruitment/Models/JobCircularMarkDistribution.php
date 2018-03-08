@@ -32,4 +32,11 @@ class JobCircularMarkDistribution extends Model
             ];
         }
     }
+    public function setConvertWrittenMarkAttribute($value){
+        if(!$value){
+            $this->attributes['convert_written_mark'] = $this->written;
+        } else{
+            $this->attributes['convert_written_mark'] = $value;
+        }
+    }
 }

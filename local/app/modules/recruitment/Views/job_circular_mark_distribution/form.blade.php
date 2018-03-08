@@ -33,6 +33,13 @@
         @endif
     </div>
     <div class="form-group">
+        {!! Form::label('convert_written_mark','Convert Written Mark To:',['class'=>'control-label']) !!}
+        {!! Form::text('convert_written_mark',null,['class'=>'form-control','placeholder'=>'Enter conversion  mark']) !!}
+        @if(isset($errors)&&$errors->first('convert_written_mark'))
+            <p class="text text-danger">{{$errors->first('convert_written_mark')}}</p>
+        @endif
+    </div>
+    <div class="form-group">
         {!! Form::label('viva','Viva Mark :',['class'=>'control-label']) !!}
         {!! Form::text('viva',null,['class'=>'form-control','placeholder'=>'Enter viva mark']) !!}
         @if(isset($errors)&&$errors->first('viva'))
