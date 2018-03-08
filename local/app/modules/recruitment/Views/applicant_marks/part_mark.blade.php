@@ -30,11 +30,11 @@
                     <td>{{$a->applicant_name_bng}}</td>
                     <td>{{$a->marks?($a->marks->physical?$a->marks->physical:$a->physicalPoint()):$a->physicalPoint()}}</td>
                     <td>{{$a->marks?($a->marks->edu_training?$a->marks->edu_training:$a->educationTrainingPoint()):$a->educationTrainingPoint()}}</td>
-                    <td>{{$a->marks?($a->marks->written?$a->marks->written:'--'):'--'}}</td>
+                    <td>{{$a->marks?($a->marks->written?round($a->marks->written,2):'--'):'--'}}</td>
 
 
                     <td>{{$a->marks?($a->marks->viva?$a->marks->viva:'--'):'--'}}</td>
-                    <td>{{$a->marks?($a->marks->total?$a->marks->total:'--'):'--'}}</td>
+                    <td>{{$a->marks?($a->marks->total?round($a->marks->total,2):'--'):'--'}}</td>
                     @if($a->marks)
                         <td>
                             <button ng-click="editMark('{{$a->applicant_id}}')" class="btn btn-primary btn-xs">
