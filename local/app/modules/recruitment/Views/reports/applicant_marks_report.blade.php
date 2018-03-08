@@ -40,7 +40,7 @@
                                     type="all"
                                     data="param"
                                     start-load="range"
-                                    field-name="{unit:'unit'}"
+                                    field-name="{unit:'unit',range:'range'}"
                                     unit-field-disabled="!param.circular"
                                     range-field-disabled="!param.circular"
                                     field-width="{unit:'col-sm-12',range:'col-sm-12'}"
