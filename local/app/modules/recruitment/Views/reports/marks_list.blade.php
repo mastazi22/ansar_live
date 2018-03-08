@@ -26,7 +26,7 @@
 
 
             <td>{{$a->marks->edu_training}}</td>
-            <td>{{$a->marks->written}}</td>
+            <td>{{$a->marks->written}}(out of 40) and {{($a->marks->written*35/40)}}</td>
             <td>{{$a->marks->viva}}</td>
             <td>{{$a->marks->total_mark}}</td>
         </tr>

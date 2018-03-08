@@ -30,6 +30,12 @@ class JobApplicantMarks extends Model
     public function setWrittenAttribute($value)
     {
         $applicant = $this->applicant?$this->applicant:$this->applicant()->where('applicant_id', $this->applicant_id)->first();
-        $this->attributes['written'] = (floatval($value)*40)/35;
+        $mark_distribution = $applicant->circular->markDistribution;
+        if($mark_distribution){
+            $written = $mark_distribution->written;
+        } else{
+            $written = floatval($value);
+        }
+        $this->attributes['written'] = round((floatval($value)*$written)/35,2);
     }
 }
