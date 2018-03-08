@@ -27,4 +27,9 @@ class JobApplicantMarks extends Model
         $applicant = $this->applicant?$this->applicant:$this->applicant()->where('applicant_id', $this->applicant_id)->first();
         $this->attributes['edu_training'] = $applicant->educationTrainingPoint();
     }
+    public function setWrittenAttribute($value)
+    {
+        $applicant = $this->applicant?$this->applicant:$this->applicant()->where('applicant_id', $this->applicant_id)->first();
+        $this->attributes['written'] = (floatval($value)*40)/35;
+    }
 }
