@@ -37,11 +37,7 @@
 {!! Form::close() !!}
 <script>
     function validateInput(elem,maxValue) {
-        var v = +elem.value;
-        if(isNaN(v)){
-            elem.value=0;
-            return;
-        }
+        var v = elem.value;
         elem.value = v>maxValue?maxValue:v;
     }
 </script>
