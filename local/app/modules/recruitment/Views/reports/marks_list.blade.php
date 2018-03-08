@@ -20,15 +20,20 @@
             <td>{{($i++).''}}</td>
             <td>{{$a->applicant_name_bng}}</td>
             <td>{{$a->district->unit_name_bng}}</td>
-            <td>
-                {{$a->marks->physical}}
-            </td>
+            @if($a->marks->is_bn_candidate)
+                <td colspan="5" style="text-align: center;font-weight: bold">Bn Candidate</td>
+            @else
+                <td>
+                    {{$a->marks->physical}}
+                </td>
 
 
-            <td>{{$a->marks->edu_training}}</td>
-            <td>{{round($a->marks->written,2)}}(out of 40) and {{round(($a->marks->written*35)/40,2)}}(out of 35)</td>
-            <td>{{$a->marks->viva}}</td>
-            <td>{{$a->marks->total_mark}}</td>
+                <td>{{$a->marks->edu_training}}</td>
+                <td>{{round($a->marks->written,2)}}(out of 40) and {{round(($a->marks->written*35)/40,2)}}(out of 35)
+                </td>
+                <td>{{$a->marks->viva}}</td>
+                <td>{{$a->marks->total_mark}}</td>
+            @endif
         </tr>
     @empty
         <tr>
