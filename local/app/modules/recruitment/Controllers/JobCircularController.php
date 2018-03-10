@@ -13,6 +13,8 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Response;
+use function React\Promise\resolve;
 
 class JobCircularController extends Controller
 {
@@ -163,6 +165,15 @@ class JobCircularController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function constraint($id){
+        try{
+            $circular = JobCircular::findOrFail($id);
+            $constraint  = $circular->constraint->constraint;
+            return $constraint;
+        }catch(\Exception $e){
+            return Response::json(['message'=>'invalid circular'],404);
+        }
     }
 
     private function searchData($request)

@@ -84,12 +84,13 @@ class ApplicantReportsController extends Controller
         return view('recruitment::reports.applicant_accepted_report');
     }
     public function applicantMarksReport(Request $request){
-
+//        return $request->all();
         if(strcasecmp($request->method(),'post')==0){
             $rules = [
                 'circular'=>'required|regex:/^[0-9]+$/',
             ];
             $this->validate($request,$rules);
+//            DB::enableQueryLog();
             $applicants = JobAppliciant::with(['marks'=>function($q){
                 $q->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'));
             },'district','circular.markDistribution'])->whereHas('marks',function ($q){
@@ -103,6 +104,7 @@ class ApplicantReportsController extends Controller
             }
             $applicants = $applicants->orderBy('unit_id')->get();
 //            return $applicants;
+//            return DB::getQueryLog();
             $excel = Excel::create('applicant_marks',function ($excel) use($applicants){
                 $excel->sheet('sheet1',function ($sheet) use($applicants){
                     $sheet->loadView('recruitment::reports.marks_list',[

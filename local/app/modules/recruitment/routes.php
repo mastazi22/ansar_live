@@ -8,6 +8,7 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
     //job category route
     Route::resource('category','JobCategoryController',['except'=>['destroy','show']]);
     Route::resource('circular','JobCircularController',['except'=>['destroy','show']]);
+    Route::get('circular/constraint/{id}',['as'=>'recruitment.circular.constraint','uses'=>'JobCircularController@constraint']);
     Route::resource('marks','JobApplicantMarksController',['except'=>['show']]);
     //applicant management
     Route::any('/applicant',['as'=>'recruitment.applicant.index','uses'=>'ApplicantScreeningController@index']);
@@ -54,10 +55,7 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
     Route::any('/settings/applicant_quota/edit',['as'=>'recruitment.quota.edit','uses'=>'JobApplicantQuotaController@edit']);
     Route::post('/settings/applicant_quota/update',['as'=>'recruitment.quota.update','uses'=>'JobApplicantQuotaController@update']);
         //point table
-    Route::get('/settings/applicant_point',['as'=>'recruitment.point.index','uses'=>'PointTableController@index']);
-    Route::post('/settings/applicant_point/fields',['as'=>'recruitment.point.fields','uses'=>'PointTableController@getPointsField']);
-    Route::post('/settings/applicant_point/store',['as'=>'recruitment.point.store','uses'=>'PointTableController@store']);
-    Route::post('/settings/applicant_point/delete/{id}',['as'=>'recruitment.point.delete','uses'=>'PointTableController@delete']);
+    Route::resource('marks_rules','ApplicantMarksRuleController');
 
     //support
     Route::any('/supports/feedback',['as'=>'supports.feedback','uses'=>'SupportController@problemReport']);
@@ -78,14 +76,12 @@ Route::group(['prefix'=>'recruitment','middleware'=>['auth','manageDatabase','ch
     //load image
     Route::get('/profile_image',['as'=>'profile_image','uses'=>'ApplicantScreeningController@loadImage']);
     Route::get('/test',function (){
-        $applicants = \App\modules\recruitment\Models\JobAppliciant::where('job_circular_id',4)->where('status','applied')->select('profile_pic','mobile_no_self')->get();
-        $array = ['exists'=>0,'not_exists'=>[]];
-        foreach ($applicants as $a){
-            $f = \Illuminate\Support\Facades\File::exists($a->profile_pic);
-            if($f)$array['exists']++;
-            else array_push($array['not_exists'],$a);
+        $a = [];
+        for($i=0;$i<36;$i+=.5){
+            $c = ($i*40)/35;
+            $a[$i.' '] = $c;
         }
-        return $array;
+        return $a;
     });
 
 

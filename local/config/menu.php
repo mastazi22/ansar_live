@@ -441,8 +441,8 @@ return [
                     "route"=>"recruitment.quota.index",
                     "icon"=>"fa-cog"
                 ],
-                "Applicant point"=>[
-                    "route"=>"recruitment.point.index",
+                "Applicant Marks Rules"=>[
+                    "route"=>"recruitment.marks_rules.index",
                     "icon"=>"fa-cog"
                 ],
                 "Applicant editable field"=>[

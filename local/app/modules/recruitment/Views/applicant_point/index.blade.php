@@ -1,79 +1,9 @@
 @extends('template.master')
-@section('title','Applicant Point')
+@section('title','Applicant Mark Rules')
 @section('breadcrumb')
     {!! Breadcrumbs::render('recruitment.point.index') !!}
 @endsection
 @section('content')
-    <script>
-        GlobalApp.controller('applicantQuota', function ($scope, $http, $q, httpService,notificationService) {
-            $scope.pointFields = [];
-            $scope.rows = [];
-            $http({
-                url:'{{URL::route('recruitment.point.fields')}}',
-                method:'post'
-            }).then(function (response) {
-                $scope.pointFields = response.data;
-            })
-            $http({
-                url:'{{URL::route('recruitment.point.index')}}',
-                method:'get'
-            }).then(function (response) {
-                $scope.rows = response.data;
-            })
-            $scope.addNewPoint = function () {
-                $scope.rows.push({
-                    id:'',
-                    field_name:'',
-                    min_value:'',
-                    min_point:'',
-                    per_unit_point:'',
-                    type:0
-                });
-            }
-            $scope.savePoint = function (i) {
-                $scope.allLoading = true
-                $http({
-                    method:'post',
-                    url:'{{URL::route('recruitment.point.store')}}',
-                    data:$scope.rows[i]
-                }).then(function (response) {
-                    $scope.allLoading = false;
-                    if(response.data.status){
-                        $scope.rows[i] = response.data.data;
-                        console.log($scope.rows);
-                        notificationService.notify('success',response.data.message)
-                    }
-                    else{
-                        notificationService.notify('error',response.data.message)
-                    }
-                },function (response) {
-                    $scope.allLoading = false;
-                })
-            }
-            $scope.deletePoint = function (i) {
-                $scope.allLoading = true
-                $http({
-                    method:'post',
-                    url:'{{URL::to('/recruitment/settings/applicant_point/delete')}}/'+$scope.rows[i].id,
-                    data:$scope.rows[i]
-                }).then(function (response) {
-                    $scope.allLoading = false;
-                    if(response.data.status){
-                        $scope.rows.splice(i,1);
-                        notificationService.notify('success',response.data.message)
-                    }
-                    else{
-                        notificationService.notify('error',response.data.message)
-                    }
-                },function (response) {
-                    $scope.allLoading = false;
-                })
-            }
-            $scope.removePoint = function (i) {
-                $scope.rows.splice(i,1);
-            }
-        })
-    </script>
     <section class="content" ng-controller="applicantQuota">
         <div class="box box-solid">
             <div class="overlay" ng-if="allLoading">
@@ -83,44 +13,30 @@
             </div>
             <div class="box-body">
                 <table class="table table-bordered table-condensed">
-                    <caption style="font-size: 20px">Point table&nbsp;<button ng-click="addNewPoint()" class="btn btn-primary btn-xs">Add new field</button></caption>
+                    <caption style="font-size: 20px">Mark Rules<a href="{{URL::route('recruitment.marks_rules.create')}}" class="btn btn-primary btn-xs pull-right">Add new field</a></caption>
                     <tr>
-                        <th>Field name</th>
-                        <th>Min value</th>
-                        <th>Min point</th>
-                        <th>Next per unit point</th>
+                        <th>SL. No</th>
+                        <th>Circular name</th>
+                        <th>Rule name</th>
+                        <th>Rule for</th>
+                        <th>Rules</th>
                         <th>Action</th>
                     </tr>
-                    <tr ng-repeat="row in rows">
-                        <td>
-                            <select class="form-control" name="field_name" id="" ng-model="row.field_name">
-                                <option value="">--Select a field--</option>
-                                <option ng-repeat="p in pointFields" value="[[p]]">[[p]]</option>
-                            </select>
-                        </td>
-                        <td>
-                            <input type="text" class="form-control" ng-model="row.min_value" placeholder="Min value">
-                        </td>
-                        <td>
-                            <input type="text" class="form-control" ng-model="row.min_point" placeholder="Min point">
-                        </td>
-                        <td>
-                            <input type="text" class="form-control" ng-model="row.per_unit_point" placeholder="Per unit point">
-                        </td>
-                        <td>
-                            <div ng-if="!row.id">
-                                <button class="btn btn-primary" ng-click="savePoint($index)">Save</button>
-                                <button class="btn btn-danger" ng-click="removePoint($index)">Remove</button>
-                            </div>
-                            <div ng-if="row.id">
-                                <button class="btn btn-primary">update</button>
-                                <button class="btn btn-danger"  ng-click="deletePoint($index)">Delete</button>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr ng-if="rows.length<=0">
-                        <td colspan="5" class="bg-warning">No point list available</td>
-                    </tr>
+                    <?php $i=1;?>
+                    @forelse($points as $point)
+                        <td>{{$i++}}</td>
+                        <td>{{$point->circular->circular_name}}</td>
+                        <td>{{$point->rule_name}}</td>
+                        <td>{{$point->point_for}}</td>
+                        <td>{{$point->rules}}</td>
+                        <td></td>
+                        @empty
+                        <tr>
+                            <td colspan="6" class="bg-warning">
+                                No Point Rule available.
+                            </td>
+                        </tr>
+                    @endforelse
                 </table>
             </div>
         </div>

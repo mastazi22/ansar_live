@@ -13,10 +13,8 @@ class PointTableController extends Controller
 {
     //
     public function index(Request $request){
-        if($request->ajax()){
-            return response()->json(JobApplicantPoints::all());
-        }
-        return view('recruitment::applicant_point.index');
+        $points = JobApplicantPoints::with('circular')->get();
+        return view('recruitment::applicant_point.index',compact('points'));
     }
     public function getPointsField(Request $request){
         if($request->ajax()){
@@ -28,15 +26,15 @@ class PointTableController extends Controller
     public function store(Request $request){
 
         $rules = [
-            'min_value'=>'required',
-            'min_point'=>'required',
-            'per_unit_point'=>'required',
-            'field_name'=>'required'
+            'job_circular_id'=>'required',
+            'rule_name'=>'required',
+            'point_for'=>'required',
+            'rules'=>'required'
         ];
         $this->validate($request,$rules);
         DB::beginTransaction();
         try{
-            $p = JobApplicantPoints::create($request->except(['_token','type','action_user_id']));
+            $p = JobApplicantPoints::create($request->all());
             DB::commit();
             return response()->json(['status'=>true,'message'=>'point added successfully','data'=>$p]);
         }catch(\Exception $e){
