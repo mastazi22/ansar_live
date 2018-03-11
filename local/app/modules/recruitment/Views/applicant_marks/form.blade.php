@@ -5,13 +5,17 @@
     {!! Form::hidden('applicant_id',$applicant->applicant_id) !!}
 @endif
 <div class="form-group">
+    @if(auth()->user()->type==11)
     {!! Form::label('physical','Physical Fitness Exam',['class'=>'control-label']) !!}<sup style="color:red;font-size: 20px;top: 0;">*</sup>
     <div class="form-control">{{isset($data)?$data->physical:$applicant->physicalPoint()}} out of <strong>{{$mark_distribution?$mark_distribution->physical:'Not Defined'}}</strong></div>
+    @endif
     {!! Form::hidden('physical',isset($data)?$data->physical:$applicant->physicalPoint(),['class'=>'form-control','placeholder'=>'Enter physical exam number']) !!}
 </div>
 <div class="form-group">
+    @if(auth()->user()->type==11)
     {!! Form::label('edu_training','Education & Training',['class'=>'control-label']) !!}<sup style="color:red;font-size: 20px;top: 0;">*</sup>
     <div class="form-control">{{isset($data)?$data->edu_training:$applicant->educationTrainingPoint()}} out of <strong>{{$mark_distribution?$mark_distribution->edu_training:'Not Defined'}}</strong></div>
+    @endif
     {!! Form::hidden('edu_training',isset($data)?$data->edu_training:$applicant->educationTrainingPoint(),['class'=>'form-control','placeholder'=>'Enter education & training mark']) !!}
 </div>
 
