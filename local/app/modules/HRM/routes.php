@@ -22,8 +22,8 @@ Route::group(['prefix'=>'HRM','middleware'=>'manageDatabase','namespace'=>'\App\
 //    Route::get('/panel_list/{sex}/{designation}',['as'=>'panel_list','uses'=>'PanelController@getPanelListBySexAndDesignation']);
     Route::get('/central_panel_list',['as'=>'central_panel_list','uses'=>'PanelController@getCentralPanelList']);
 });
-Route::group(['prefix'=>'HRM','middleware'=>['auth','manageDatabase','checkUserType','permission'] ],function(){
-    Route::group(['namespace'=>'\App\modules\HRM\Controllers'],function(){
+Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
+    Route::group(['namespace'=>'\App\modules\HRM\Controllers','middleware'=>['auth','manageDatabase','checkUserType','permission']],function(){
 
 
         Route::get('download/file/{dataJob}',['as'=>'download_file','uses'=>'DownloadController@downloadFile']);

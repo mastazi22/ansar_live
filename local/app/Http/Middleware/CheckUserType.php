@@ -7,6 +7,7 @@ use App\modules\HRM\Models\Division;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Session;
 
 class CheckUserType
 {
@@ -67,13 +68,17 @@ class CheckUserType
         if(is_null($route)) return $next($request);
         $routeName = $route->getName();
         $routePrefix = $route->getPrefix();
+//        return Session::get('module');
         $input = $request->input();
         foreach($this->urls as $url=>$params){
             if(!strcasecmp($url,$routeName)){
                 foreach($params as $key=>$type){
                     if($type=='unit'){
                         if($user->type==22){
-                            if($routePrefix==='recruitment'&&$user->recDistrict) $input[$key] = $user->recDistrict->id;
+                            if(Session::has('module')&&Session::get('module')==='recruitment'&&$user->recDistrict) {
+                                $input[$key] = $user->recDistrict->id;
+//                                return $input;
+                            }
                             else $input[$key] = $user->district->id;
                         }
                         else if($user->type==66){
@@ -88,7 +93,7 @@ class CheckUserType
                     }
                     else if($type=='range'){
                         if($user->type==22){
-                            if($routePrefix==='recruitment'&&$user->recDistrict) $input[$key] = $user->recDistrict->division_id;
+                            if(Session::has('module')&&Session::get('module')==='recruitment'&&$user->recDistrict) $input[$key] = $user->recDistrict->division_id;
                             else $input[$key] = $user->district->division_id;
                         }
                         else if($user->type==66){

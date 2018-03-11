@@ -28,8 +28,14 @@
                 <tr>
                     <td>{{$i++}}</td>
                     <td>{{$a->applicant_name_bng}}</td>
-                    <td>{{$a->marks?($a->marks->physical?$a->marks->physical:$a->physicalPoint()):$a->physicalPoint()}}</td>
-                    <td>{{$a->marks?($a->marks->edu_training?$a->marks->edu_training:$a->educationTrainingPoint()):$a->educationTrainingPoint()}}</td>
+                    @if(auth()->user()->type==11)
+                        <td>{{$a->marks?($a->marks->physical?$a->marks->physical:$a->physicalPoint()):$a->physicalPoint()}}</td>
+                        <td>{{$a->marks?($a->marks->edu_training?$a->marks->edu_training:$a->educationTrainingPoint()):$a->educationTrainingPoint()}}</td>
+                    @else
+                        <td>--</td>
+                        <td>--</td>
+                    @endif
+
                     <td>{{$a->marks?($a->marks->written?round($a->marks->convertedWrittenMark(),2):'--'):'--'}}</td>
 
 
