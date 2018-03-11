@@ -60,6 +60,7 @@ class CheckUserType
         'recruitment.hrm.index'=>['range'=>'range','unit'=>'unit'],
         'recruitment.hrm.card_print'=>['range'=>'range','unit'=>'unit'],
         'recruitment.applicant.search_result'=>['range'=>'range','unit'=>'unit'],
+        'recruitment.applicant.selected_applicant'=>['range'=>'range','unit'=>'unit'],
     ];
     public function handle($request, Closure $next)
     {

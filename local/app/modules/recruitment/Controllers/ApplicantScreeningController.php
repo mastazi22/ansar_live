@@ -313,7 +313,7 @@ class ApplicantScreeningController extends Controller
                 $query->where('job_applicant.division_id', auth()->user()->division_id);
             }
             if (auth()->user()->type == 22) {
-                $query->where('job_applicant.unit_id', auth()->user()->district_id);
+                $query->where('job_applicant.unit_id', $request->unit);
             }
             $query->where('job_applicant.applicant_id', $request->applicant_id);
             return $query->first();
