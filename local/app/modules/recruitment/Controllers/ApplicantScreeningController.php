@@ -612,16 +612,24 @@ class ApplicantScreeningController extends Controller
     public function confirmSelectionOrRejection(Request $request)
     {
         if ($request->type === 'selection') {
+            $result = ['success'=>0,'fail'=>0];
             DB::beginTransaction();
             try {
                 foreach ($request->applicants as $applicant_id) {
-                    $applicant = JobAppliciant::where('applicant_id', $applicant_id)->first();
+                    $applicant = JobAppliciant::where('applicant_id', $applicant_id)
+                        ->whereDoesntHave('selectedApplicant',function ($q) use($applicant_id){
+                            $q->where('applicant_id',$applicant_id);
+                        })->first();
                     if ($applicant) {
                         $applicant->update(['status' => 'selected']);
                         $applicant->selectedApplicant()->create([
                             'action_user_id' => auth()->user()->id,
                             'message' => $request->message
                         ]);
+                        $result['success']++;
+                    }
+                    else{
+                        $result['fail']++;
                     }
                 }
                 DB::commit();
@@ -629,7 +637,7 @@ class ApplicantScreeningController extends Controller
                 DB::rollback();
                 return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
             }
-            return response()->json(['status' => 'success', 'message' => 'Applicants selected successfully']);
+            return response()->json(['status' => 'success', 'message' => "{$result['success']} Applicants selected successfully,{$result['fail']} can`t be selected or already selected"]);
         } else if ($request->type === 'rejection') {
             DB::beginTransaction();
             try {
