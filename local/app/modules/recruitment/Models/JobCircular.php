@@ -62,4 +62,8 @@ class JobCircular extends Model
     {
         return $this->hasOne(JobCircularMarkDistribution::class, 'job_circular_id');
     }
+    public function point()
+    {
+        return $this->hasOne(JobApplicantPoints::class, 'job_circular_id');
+    }
 }

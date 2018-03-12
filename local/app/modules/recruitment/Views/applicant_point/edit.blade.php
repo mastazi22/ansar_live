@@ -1,10 +1,19 @@
-<form action="">
-    <div class="form-group">
-        <label for="male_count" class="control-label">Male</label>
-        <input type="text" class="form-control" id="male_count" name="male" ng-model="male">
-    </div>
-    <div class="form-group">
-        <label for="female_count" class="control-label">Male</label>
-        <input type="text" class="form-control" id="female_count" name="female" ng-model="male">
-    </div>
-</form>
+@extends('template.master')
+@section('title','Edit Applicant Mark Rules')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('recruitment.point.index') !!}
+@endsection
+@section('content')
+
+    <section class="content" >
+        <div class="box box-solid">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-sm-6 col-centered">
+                        @include('recruitment::applicant_point.form',compact('data','circulars','rules_name','rules_for'))
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+@endsection

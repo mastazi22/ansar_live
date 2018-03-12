@@ -96,6 +96,7 @@ class JobCircularMarkDistributionController extends Controller
             $mark_distribution->update($request->all());
             DB::commit();
         }catch(\Exception $e){
+            DB::rollback();
             return redirect()->route('recruitment.mark_distribution.index')->with('session_error',$e->getMessage());
         }
         return redirect()->route('recruitment.mark_distribution.index')->with('session_success','Mark distribution updated successfully');

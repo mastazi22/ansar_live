@@ -8,7 +8,7 @@ class JobApplicantPoints extends Model
 {
     //
     protected $table = 'job_applicant_points';
-    protected $guarded = ['id', 'job_circular_id'];
+    protected $guarded = ['id'];
     protected $connection = 'recruitment';
 
     public function circular()
@@ -34,5 +34,20 @@ class JobApplicantPoints extends Model
             'physical' => 'Physical',
             'edu_training' => 'Education & Training'
         ];
+    }
+    public function getRulesAttribute($value){
+        return json_decode($value);
+    }
+    public function getEducationRules(){
+        $er = json_decode(json_encode($this->rules),true);
+        $values = array_values($er);
+        $p = collect($values)->pluck('priority');
+        $educations = JobEducationInfo::select(DB::raw('GROUP_CONCAT(education_deg_bng) as education_name'),'priority','id')
+            ->groupBy('priority')->whereIn('priority',$p)->get();
+        $data = [];
+        $i=0;
+        foreach ($educations as $e){
+            array_push($data,['education_name'=>$e->education_name,'point'=>$values[$i++]['point']]);
+        }
     }
 }

@@ -70,10 +70,11 @@ class JobAppliciant extends Model
         if($this->status!='selected'){
             return $this->status;
         }
-        $min_height = 64;
-        $max_height = 74;
-        $min_point = 15;
-        $max_point = 30;
+        $rules = $this->circular->point()->where('point_for','physical')->where('rule_name','height')->first()->rules;
+        $min_height = floatval($rules->min_height_feet)*12+floatval($rules->min_height_inch);
+        $max_height = floatval($rules->max_height_feet)*12+floatval($rules->max_height_inch);
+        $min_point = floatval($rules->min_point);
+        $max_point = floatval($rules->max_point);
         $total_height = floatval($this->height_feet)*12+floatval($this->height_inch);
         $delta_height = $max_height-$min_height;
         $delta_point = $max_point-$min_point;

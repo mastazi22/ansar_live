@@ -49,7 +49,58 @@ class ApplicantMarksRuleController extends Controller
     public function store(Request $request)
     {
         //
-        return $request->all();
+       $rules=[
+           'job_circular_id'=>'required',
+           'point_for'=>'required',
+           'rule_name'=>'required',
+       ];
+       $this->validate($request,$rules);
+       if($request->rule_name==='education'){
+           $rules['edu_point.*.priority']='required';
+           $rules['edu_point.*.point']='required';
+           $rules['edu_p_count']='required';
+       }
+       if($request->rule_name==='height'){
+           $rules['min_height_feet']='required';
+           $rules['min_height_inch']='required';
+           $rules['min_point']='required';
+           $rules['max_height_feet']='required';
+           $rules['max_height_inch']='required';
+           $rules['max_point']='required';
+       }
+       if($request->rule_name==='training'){
+           $rules['training_point']='required';
+       }
+       $this->validate($request,$rules);
+       $data = [];
+        if($request->rule_name==='education'){
+            $data['job_circular_id'] = $request->job_circular_id;
+            $data['point_for'] = $request->point_for;
+            $data['rule_name'] = $request->rule_name;
+            $data['rules'] = json_encode($request->only(['edu_point','edu_p_count']));
+
+        }
+        if($request->rule_name==='height'){
+            $data['job_circular_id'] = $request->job_circular_id;
+            $data['point_for'] = $request->point_for;
+            $data['rule_name'] = $request->rule_name;
+            $data['rules'] = json_encode($request->only(['min_height_feet','min_height_inch','min_point','max_height_feet','max_height_inch','max_point']));
+        }
+        if($request->rule_name==='training'){
+            $data['job_circular_id'] = $request->job_circular_id;
+            $data['point_for'] = $request->point_for;
+            $data['rule_name'] = $request->rule_name;
+            $data['rules'] = json_encode($request->only(['training_point']));
+        }
+        DB::beginTransaction();
+        try{
+            JobApplicantPoints::create($data);
+            DB::commit();
+        }catch(\Exception $e){
+            DB::rollback();
+            return redirect()->route('recruitment.marks_rules.index')->with('session_error',$e->getMessage());
+        }
+        return redirect()->route('recruitment.marks_rules.index')->with('session_success','Rules added  successfully');
     }
 
     /**
@@ -72,6 +123,15 @@ class ApplicantMarksRuleController extends Controller
     public function edit($id)
     {
         //
+        $data = JobApplicantPoints::find($id);
+        return  $data->merge($data->rules);
+        $rules_name = JobApplicantPoints::rulesName();
+        $rules_for = JobApplicantPoints::rulesFor();
+        $circulars = JobCircular::pluck('circular_name','id')->prepend('--Select a circular','');
+        $educations = JobEducationInfo::select(DB::raw('GROUP_CONCAT(education_deg_bng) as education_name'),'priority','id')
+            ->groupBy('priority')->get();
+//        return $education;
+        return view('recruitment::applicant_point.edit',compact('data','circulars','rules_name','rules_for','educations'));
     }
 
     /**

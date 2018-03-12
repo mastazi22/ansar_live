@@ -101,7 +101,7 @@
                 </tr>
                 <?php $i=0;$j=0?>
                 @foreach($educations as $education)
-                    <tr id="e_{{$education->id}}}">
+                    <tr class="edu_c" data-id="{{$education->id}}">
                         <td>{{++$i}}</td>
                         <td><strong>{{$education->education_name}}</strong></td>
                         <td><strong>{{$education->priority}}</strong></td>
@@ -171,6 +171,7 @@
             }
             var id = `#${v}_rules`;
             $(id).show();
+            modifyRule();
         })
         $("select[name='job_circular_id']").on('change',function (evt) {
             var v = $(this).val();
@@ -186,10 +187,21 @@
                     }catch(exp){
                         constraint = response;
                     }
+                    modifyRule();
                     console.log(constraint)
                 },
                 error:function (res) {
                     console.log(res)
+                }
+            })
+        }
+        function modifyRule(){
+            var t = $(".edu_c");
+            var e = constraint.education;
+            t.each(function (obj) {
+                var a = +$(this).attr("data-id");
+                if(a<+e.min||a>+e.max){
+                    $(this).remove();
                 }
             })
         }
