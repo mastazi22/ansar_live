@@ -112,7 +112,7 @@
             @if($a->is_bn_candidate)
                 <td><strong>Bn Candidate</strong></td>
             @else
-                <td>{{$a->total_mark}}</td>
+                <td>{{round($a->total_mark,2)}}</td>
             @endif
         </tr>
     @empty
