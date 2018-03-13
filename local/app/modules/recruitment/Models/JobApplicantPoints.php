@@ -3,6 +3,7 @@
 namespace App\modules\recruitment\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class JobApplicantPoints extends Model
 {
@@ -40,14 +41,37 @@ class JobApplicantPoints extends Model
     }
     public function getEducationRules(){
         $er = json_decode(json_encode($this->rules),true);
-        $values = array_values($er);
+        $values = array_values($er['edu_point']);
+//        return json_encode($values);
         $p = collect($values)->pluck('priority');
+//        return $p;
         $educations = JobEducationInfo::select(DB::raw('GROUP_CONCAT(education_deg_bng) as education_name'),'priority','id')
             ->groupBy('priority')->whereIn('priority',$p)->get();
         $data = [];
         $i=0;
+        $view ="<table width='100%'>
+        <tr>
+            <th style='padding: 0 10px'>Eduction deg.</th>
+            <th style='padding: 0 10px'>points</th>
+        </tr>";
         foreach ($educations as $e){
-            array_push($data,['education_name'=>$e->education_name,'point'=>$values[$i++]['point']]);
+            $column = "<tr><td style='padding: 0 10px'>{$e->education_name}</td><td style='padding: 0 10px'>{$values[$i++]['point']}</td></tr>";
+            $view.=$column;
         }
+        $view.="</table>";
+        return $view;
+
+    }
+    public function getHeightRules(){
+        $er = $this->rules;
+        $view = "<div><strong>Minimum Height : </strong>{$er->min_height_feet}'{$er->min_height_inch}''</div>";
+        $view .= "<div><strong>Minimum Point : </strong>{$er->min_point}</div>";
+        $view .= "<div><strong>Maximum Height : </strong>{$er->max_height_feet}'{$er->max_height_inch}''</div>";
+        $view .= "<div><strong>Maximum Point : </strong>{$er->max_point}</div>";
+        return $view;
+    }
+    public function getTrainingRules(){
+        $view = "<div><strong>For VDP or TDP Training point : </strong>{$this->rules->training_point}</div>";
+        return $view;
     }
 }

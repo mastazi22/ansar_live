@@ -569,7 +569,7 @@
       },
       {
         "value": "recruitment.applicant.confirm_accepted,recruitment.applicant.final_list,recruitment.applicant.final_list_load",
-        "name": " Final Accepted Applicant"
+        "name": " Final Accept of Applicants"
       },
       {
         "value": "recruitment.quota.index,recruitment.quota.edit,recruitment.quota.update",

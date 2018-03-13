@@ -124,7 +124,7 @@ class ApplicantMarksRuleController extends Controller
     {
         //
         $data = JobApplicantPoints::find($id);
-        return  $data->merge($data->rules);
+        $data = collect($data)->merge($data->rules);
         $rules_name = JobApplicantPoints::rulesName();
         $rules_for = JobApplicantPoints::rulesFor();
         $circulars = JobCircular::pluck('circular_name','id')->prepend('--Select a circular','');

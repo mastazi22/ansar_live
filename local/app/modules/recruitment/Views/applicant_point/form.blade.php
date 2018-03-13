@@ -1,6 +1,6 @@
 <div>
     @if(isset($data))
-        {!! Form::model($data,['route'=>['recruitment.marks_rules.update',$data],'method'=>'patch']) !!}
+        {!! Form::model($data,['route'=>['recruitment.marks_rules.update',$data['id']],'method'=>'patch']) !!}
     @else
         {!! Form::open(['route'=>'recruitment.marks_rules.store']) !!}
     @endif
@@ -118,13 +118,13 @@
         <div class="form-group">
             <h4>Choose a option</h4>
             <div class="radio">
-                <label><input type="radio" name="edu_p_count" value="1">Point count only ascending priority</label>
+                <label>{!! Form::radio('edu_p_count',1,isset($data)&&isset($data['edu_p_count'])?intval($data['edu_p_count'])==1:false) !!}Point count only ascending priority</label>
             </div>
             <div class="radio">
-                <label><input type="radio" name="edu_p_count" value="2">Point count only descending priority</label>
+                <label>{!! Form::radio('edu_p_count',2,isset($data)&&isset($data['edu_p_count'])?intval($data['edu_p_count'])==2:false) !!}Point count only descending priority</label>
             </div>
             <div class="radio">
-                <label><input type="radio" name="edu_p_count" value="3">Sum all education point</label>
+                <label>{!! Form::radio('edu_p_count',3,isset($data)&&isset($data['edu_p_count'])?intval($data['edu_p_count'])==3:false) !!}Sum all education point</label>
             </div>
         </div>
     </div>
