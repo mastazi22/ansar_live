@@ -122,6 +122,18 @@
                             </div>
                         </div>
                     </div>
+                    <filter-template
+                            show-item="['range','unit']"
+                            type="all"
+                            range-change="loadExamCenter()"
+                            unit-change="loadExamCenter()"
+                            range-field-disabled="!params.circular"
+                            unit-field-disabled="!params.circular"
+                            data="params"
+                            start-load="range"
+                            field-width="{range:'col-sm-4',unit:'col-sm-4'}"
+                    >
+                    </filter-template>
                     <h4 class="text text-bold">All Exam Center</h4>
                     <div ng-bind-html="examCenters" compile-html>
                         <div class="table-responsive">

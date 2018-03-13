@@ -4,13 +4,15 @@
 </head>
 <body>
 <style>
-    @font-face{
+    @font-face {
         font-family: syamrupali;
         src: url('{{asset('dist/fonts/vrindab.ttf')}}');
     }
-    *{
+
+    * {
         font-family: syamrupali !important;
     }
+
     table {
         border-collapse: collapse;
     }
@@ -34,7 +36,8 @@
     .inner-table tr th:last-child, .inner-table tr td:last-child {
         border-right: none !important;
     }
-    tr,td{
+
+    tr, td {
         page-break-inside: avoid !important;
     }
 </style>
@@ -106,7 +109,11 @@
                     @endforelse
                 </table>
             </td>
-            <td>{{$a->total_mark}}</td>
+            @if($a->is_bn_candidate)
+                <td><strong>Bn Candidate</strong></td>
+            @else
+                <td>{{$a->total_mark}}</td>
+            @endif
         </tr>
     @empty
         <tr>
