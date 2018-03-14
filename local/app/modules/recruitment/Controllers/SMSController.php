@@ -54,7 +54,7 @@ class SMSController extends Controller
 
             DB::beginTransaction();
             try {
-                DB::statement("call update_sms_status(:message,:circular_id,:divisions,:units,:a_status)",[
+                DB::statement("call send_sms_to_applicant(:message,:circular_id,:divisions,:units,:a_status)",[
                     'message'=>$request->message,
                     'circular_id'=>$request->circular,
                     'divisions'=>count($divisions)>0?implode(',',$divisions):'',
