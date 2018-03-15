@@ -13,6 +13,7 @@ use App\modules\HRM\Models\BlockListModel;
 use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\EmbodimentLogModel;
 use App\modules\HRM\Models\EmbodimentModel;
+use App\modules\HRM\Models\FreezedAnsarEmbodimentDetail;
 use App\modules\HRM\Models\FreezingInfoModel;
 use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\PanelModel;
@@ -549,6 +550,7 @@ class BlockBlackController extends Controller
                     $freeze_info->saveLog('Blacklist', $modified_black_date, $black_comment);
                     $freeze_info->delete();
                     $embodiment_info = EmbodimentModel::where('ansar_id', $ansar_id)->first();
+                    if(!$embodiment_info) $embodiment_info = FreezedAnsarEmbodimentDetail::where('ansar_id', $ansar_id)->first();
                     $embodiment_info->saveLog('Blacklist', $modified_black_date, $black_comment);
                     $embodiment_info->delete();
                     $ansar_status->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 1, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 0]);
