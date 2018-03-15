@@ -81,7 +81,7 @@
         <tr>
             <th colspan="8" style="text-align: center;padding: 20px 0;font-weight: normal;font-size: 18px">গণপ্রজাতন্ত্রী বাংলাদেশ সরকার<br>
                 জেলা কমান্ড্যন্ট এর কার্যালয়<br>
-                আনসার ও ভিডিপি, গাজীপুর
+                আনসার ও ভিডিপি, {{$unit->unit_name_bng}}
             </th>
         </tr>
         <tr style="">
@@ -323,14 +323,14 @@
 
 
 
-                <span class="footer">{{LanguageConverter::engToBng($form)}}</span>তারিখ হইতে <span class="footer">{{LanguageConverter::engToBng($to)}}</span> তারিখ পর্যন্ত অঙ্গিভুতকালিন পিসি/এপিসি ও আনসারদের/মহিলা আনসারদের বেতন ভাতাদি ও আনুসাঙ্গিক এর টাকা সহ মোট টাকা <span class="footer" style="width: 400px">{{LanguageConverter::engToBng($st3+$st4+$st5+$st6+$st7+$st8+$st9)}}</span> ডিডি’র/পে অর্ডার এর মাধ্যমে জেলা কমান্ড্যন্ট,আনসার ও ভিডিপি ,গাজীপুর এর বরাবরে <span class="footer">{{LanguageConverter::engToBng($p_date)}}</span>তারিখের মধ্যে জমা দেওয়ার জন্য অনুরোধ করা হ’ল।
+                <span class="footer">{{LanguageConverter::engToBng($form)}}</span>তারিখ হইতে <span class="footer">{{LanguageConverter::engToBng($to)}}</span> তারিখ পর্যন্ত অঙ্গিভুতকালিন পিসি/এপিসি ও আনসারদের/মহিলা আনসারদের বেতন ভাতাদি ও আনুসাঙ্গিক এর টাকা সহ মোট টাকা <span class="footer" style="width: 400px">{{LanguageConverter::engToBng($st3+$st4+$st5+$st6+$st7+$st8+$st9)}}</span> ডিডি’র/পে অর্ডার এর মাধ্যমে জেলা কমান্ড্যন্ট,আনসার ও ভিডিপি ,{{$unit->unit_name_bng}} এর বরাবরে <span class="footer">{{LanguageConverter::engToBng($p_date)}}</span>তারিখের মধ্যে জমা দেওয়ার জন্য অনুরোধ করা হ’ল।
             </td>
         </tr>
         <tr>
             <td colspan="3"></td>
             <td  style="text-align: center;line-height: 30px;width: 1px">
                 <span style="font-weight: bold;">জেলা কমান্ড্যন্ট</span><br>
-                আনসার ও ভিডিপি ,গাজীপুর
+                আনসার ও ভিডিপি ,{{$unit->unit_name_bng}}
             </td>
         </tr>
     </table>

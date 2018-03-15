@@ -50,30 +50,16 @@
                               method="post">
 
                             {!! csrf_field() !!}
-                            @if(isset($units))
-                                <div class="form-group">
-                                    <label for="unit_list">Select District</label>
-                                    <select class="form-control" id="unit_list" name="unit">
-                                        <option value="">--Select a unit--</option>
-                                        @foreach($units as $unit)
-                                            <option value="{{$unit->id}}">{{$unit->unit_name_bng}}</option>
-                                        @endforeach
-                                    </select>
+                            <filter-template
+                                    show-item="['kpi','unit','thana']"
+                                    type="single"
+                                    data="param"
+                                    start-load="unit"
+                                    layout-vertical="1"
+                                    field-name="{unit:'unit',kpi:'kpi'}"
 
-                                </div>
-                            @endif
-                            <div class="form-group" ng-class="{'has-error':errors.kpi!=undefined}">
-                                <label for="kpi_list">Select KPI</label>
-                                <select class="form-control" name="kpi" id="kpi_list">
-                                    <option value="">--Select a kpi--</option>
-                                    @if(isset($kpis))
-                                        @foreach($kpis as $kpi)
-                                            <option value="{{$kpi->id}}">{{$kpi->kpi_name}}</option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                                <p ng-if="errors.kpi!=undefined" class="text text-danger">[[errors.kpi[0] ]]</p>
-                            </div>
+                            >
+                            </filter-template>
                             <div class="form-group" ng-class="{'has-error':errors.mem_id!=undefined}">
                                 <label for="memid">Memorandum no.</label>
                                 <input class="form-control" id="memid" name="mem_id" type="text" placeholder="Enter memorandum no">

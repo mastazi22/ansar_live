@@ -68,6 +68,24 @@ class SMSController extends Controller
             }
             return response()->json(['status' => 'success', 'message' => 'Message send successfully']);
         }
+        else if ($request->status == 'app') {
+
+            DB::beginTransaction();
+            try {
+                DB::statement("call send_sms_to_applicant(:message,:circular_id,:divisions,:units,:a_status)",[
+                    'message'=>$request->message,
+                    'circular_id'=>$request->circular,
+                    'divisions'=>count($divisions)>0?implode(',',$divisions):'',
+                    'units'=>count($units)>0?implode(',',$units):'',
+                    'a_status'=>'applied'
+                ]);
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollback();
+                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+            }
+            return response()->json(['status' => 'success', 'message' => 'Message send successfully']);
+        }
         return response()->json(['status' => 'error', 'message' => 'invalid request']);
 
     }

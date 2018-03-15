@@ -41,6 +41,7 @@ class SDController extends Controller
     }
     public function generateDemandSheet(Request $request){
         $rules = [
+            'unit'=>'required',
             'kpi'=>'required',
             'form_date'=>'required|date_format:d-M-Y',
             'to_date'=>'required|date_format:d-M-Y|after:form_date',
@@ -60,6 +61,7 @@ class SDController extends Controller
         $total_ansars = DB::connection('hrm')->table('tbl_kpi_info')->join('tbl_embodiment','tbl_embodiment.kpi_id','=','tbl_kpi_info.id')->join('tbl_ansar_parsonal_info','tbl_embodiment.ansar_id','=','tbl_ansar_parsonal_info.ansar_id')->where('tbl_kpi_info.id',$request->get('kpi'))->groupBy('tbl_ansar_parsonal_info.designation_id')->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as count'),'tbl_ansar_parsonal_info.designation_id')->get();
         $with_weapon = KpiDetailsModel::where('kpi_id',$request->get('kpi'))->pluck('with_weapon');
         $address = KpiGeneralModel::find($request->get('kpi'))->address;
+        $unit = District::find($request->unit);
         $total_pc = 0;
         $total_apc = 0;
         $total_ansar = 0;
@@ -83,7 +85,7 @@ class SDController extends Controller
         $path = storage_path('DemandSheet/'.$request->get('kpi'));
         $file_name = bcrypt(Carbon::now()->timestamp).'.pdf';
         if(!File::exists($path)) File::makeDirectory($path,0775,true);
-        SnappyPdf::loadView('SD::Demand.test',['mem_no'=>$request->get('mem_id'),'address'=>$address,'total_pc'=>$total_pc,'total_apc'=>$total_apc,'total_ansar'=>$total_ansar,'to'=>$to,'form'=>$form,'p_date'=>$payment_date,'total_day'=>$total_days,'st1'=>$st1,'st2'=>$st2,'st3'=>$st3,'st4'=>$st4,'st5'=>$st5,'st6'=>$st6,'st7'=>$st7,'st8'=>$st8,'st9'=>$st9])->save($path.'/'.$file_name);
+        SnappyPdf::loadView('SD::Demand.test',['mem_no'=>$request->get('mem_id'),'address'=>$address,'total_pc'=>$total_pc,'total_apc'=>$total_apc,'total_ansar'=>$total_ansar,'to'=>$to,'form'=>$form,'p_date'=>$payment_date,'total_day'=>$total_days,'st1'=>$st1,'st2'=>$st2,'st3'=>$st3,'st4'=>$st4,'st5'=>$st5,'st6'=>$st6,'st7'=>$st7,'st8'=>$st8,'st9'=>$st9,'unit'=>$unit])->save($path.'/'.$file_name);
         $demandlog = new DemandLog();
         $mem = new MemorandumModel();
         $demandlog->kpi_id = $request->get('kpi');
