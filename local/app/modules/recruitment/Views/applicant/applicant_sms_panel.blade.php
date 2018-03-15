@@ -119,7 +119,7 @@
                                 <option value="">--Select a status--</option>
                                 <option value="sel">Selected</option>
                                 <option value="acc">Accepted</option>
-                                <option value="app">applied</option>
+                                <option value="app">Applied</option>
                             </select>
                         </div>
                         <div class="form-group">
