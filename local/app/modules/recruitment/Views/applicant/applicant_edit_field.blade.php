@@ -39,15 +39,10 @@
             $scope.exFields = ''
             $scope.allLoading = true;
             $q.all([
-                $http({method: 'get', url: '{{URL::route('recruitment.applicant.getfieldstore')}}'}),
-                $http({
-                    url:'{{URL::route('recruitment.point.fields')}}',
-                    method:'post'
-                })
+                $http({method: 'get', url: '{{URL::route('recruitment.applicant.getfieldstore')}}'})
 
             ]).then(function (response) {
                 $scope.allLoading = false;
-                $scope.pointFields = response[1].data;
                 $scope.exFields = response[0].data.field_value.split(',')
                 var keys = Object.keys($scope.mapping)
                 $scope.rows = new Array(keys.length);
