@@ -74,6 +74,7 @@ Route::group(['prefix'=>'recruitment','middleware'=>['recruitment'],'namespace'=
 
        Route::resource('exam-center','ApplicantExamCenter');
        Route::resource('mark_distribution','JobCircularMarkDistributionController');
+       Route::resource('training','JobApplicantTrainingDateController');
        //load image
        Route::get('/profile_image',['as'=>'profile_image','uses'=>'ApplicantScreeningController@loadImage']);
        Route::get('/test',function (){

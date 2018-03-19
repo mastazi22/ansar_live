@@ -460,6 +460,10 @@ return [
                 "Mark Distribution"=>[
                     "route"=>"recruitment.mark_distribution.index",
                     "icon"=>"fa-cog"
+                ],
+                "HRM Training Date"=>[
+                    "route"=>"recruitment.training.index",
+                    "icon"=>"fa-cog"
                 ]
 
             ]

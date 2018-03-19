@@ -323,8 +323,8 @@
             <tr>
                 <td>@if($i==0) Ansar @else &nbsp; @endif</td>
                 <td style="width: 40% !important;">@if($i==0)Bangladesh Ansar & VDP Academy @else &nbsp; @endif</td>
-                <td>@if($i==0)26-11-2017 @else &nbsp; @endif</td>
-                <td>@if($i==0)01-02-2018 @else &nbsp; @endif</td>
+                <td>@if($i==0){{$ansarAllDetails->circular->trainingDate?\Carbon\Carbon::parse($ansarAllDetails->circular->trainingDate->start_date)->format('d-m-Y'):'--'}} @else &nbsp; @endif</td>
+                <td>@if($i==0){{$ansarAllDetails->circular->trainingDate?\Carbon\Carbon::parse($ansarAllDetails->circular->trainingDate->end_date)->format('d-m-Y'):'--'}} @else &nbsp; @endif</td>
                 <td style="width:30% !important;">&nbsp;</td>
             </tr>
         @endfor
@@ -344,8 +344,8 @@
             <tr>
                 <td>@if($i==0) আনসার @else &nbsp; @endif</td>
                 <td style="width: 40% !important;">@if($i==0)বাংলাদেশ আনসার ও ভিডিপি একাডেমী @else &nbsp; @endif</td>
-                <td>@if($i==0)২৬-১১-২০১৭ @else &nbsp; @endif</td>
-                <td>@if($i==0)০১-০২-২০১৮ @else &nbsp; @endif</td>
+                <td>@if($i==0){{LanguageConverter::engToBng($ansarAllDetails->circular->trainingDate?\Carbon\Carbon::parse($ansarAllDetails->circular->trainingDate->start_date)->format('d-m-Y'):'--')}} @else &nbsp; @endif</td>
+                <td>@if($i==0){{LanguageConverter::engToBng($ansarAllDetails->circular->trainingDate?\Carbon\Carbon::parse($ansarAllDetails->circular->trainingDate->end_date)->format('d-m-Y'):'--')}} @else &nbsp; @endif</td>
                 <td style="width:30% !important;">&nbsp;</td>
             </tr>
         @endfor

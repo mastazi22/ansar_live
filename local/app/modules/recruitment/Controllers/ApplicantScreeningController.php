@@ -888,7 +888,7 @@ class ApplicantScreeningController extends Controller
 
     public function applicantEditForHRM($type, $id)
     {
-        $applicant = JobAppliciant::with(['division', 'district', 'thana', 'appliciantEducationInfo' => function ($q) {
+        $applicant = JobAppliciant::with(['division', 'district', 'thana','circular.trainingDate' ,'appliciantEducationInfo' => function ($q) {
             $q->with('educationInfo');
         }])->where('applicant_id', $id)->first();
         if ($type == 'download') {
