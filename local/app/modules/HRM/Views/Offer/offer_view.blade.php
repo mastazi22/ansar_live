@@ -137,6 +137,12 @@
                             $scope.alerts.push(response.data);
                             $scope.buttonText = "Send Offer"
                             notificationService.notify(response.data.type,response.data.message)
+                            $scope.kpiPCMale = 0;
+                            $scope.kpiPCFemale = 0;
+                            $scope.kpiAPCMale = 0;
+                            $scope.kpiAPCFemale = 0;
+                            $scope.kpiAnsarMale = 0;
+                            $scope.kpiAnsarFemale = 0;
                             $scope.getOfferCount();
                         },
                         function (response) {
