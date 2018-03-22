@@ -173,20 +173,25 @@
                             </div>
                         </fieldset>
                         <fieldset>
-                            <legend>Age</legend>
+                            <legend>
+                                <input type="checkbox" ng-model="constraint.age.selected" ng-true-value="'1'"
+                                           ng-false-value="''" name="age-select" value="1" id="age-select"
+                                           class="box-checkbox">
+                                <label for="age-select">Age</label>
+                            </legend>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="control-label">Min age</label>
                                         <input type="text" placeholder="Min age" class="form-control"
-                                               ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
+                                               ng-disabled="constraint.age.selected!='1'||(constraint.gender.male!='male'&&constraint.gender.female!='female')"
                                                ng-model="constraint.age.min">
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label">Min age date</label>
                                         <input type="text" placeholder="Min age date" date-picker=""
                                                class="form-control"
-                                               ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
+                                               ng-disabled="constraint.age.selected!='1'||(constraint.gender.male!='male'&&constraint.gender.female!='female')"
                                                ng-model="constraint.age.minDate">
                                     </div>
                                 </div>
@@ -195,7 +200,7 @@
                                         <div class="form-group">
                                             <label class="control-label">Max age</label>
                                             <input type="text" placeholder="Max age" class="form-control"
-                                                   ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
+                                                   ng-disabled="constraint.age.selected!='1'||(constraint.gender.male!='male'&&constraint.gender.female!='female')"
                                                    ng-model="constraint.age.max">
                                         </div>
                                     </div>
@@ -204,7 +209,7 @@
                                             <label class="control-label">Max age date</label>
                                             <input type="text" placeholder="Max age date" date-picker=""
                                                    class="form-control"
-                                                   ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
+                                                   ng-disabled="constraint.age.selected!='1'||(constraint.gender.male!='male'&&constraint.gender.female!='female')"
                                                    ng-model="constraint.age.maxDate">
                                         </div>
                                     </div>

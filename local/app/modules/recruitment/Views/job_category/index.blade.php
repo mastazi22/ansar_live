@@ -8,7 +8,7 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('JobCategoryController',function ($scope, $http) {
+        GlobalApp.controller('JobCategoryController',function ($scope, $http,$filter) {
 
             $scope.jobCategories = [];
             $scope.queue = [];
@@ -46,6 +46,12 @@
 
             }
             $scope.loadJobCategories()
+            $scope.categoryType = function (v) {
+                if(!v) return '';
+                v = v.split('_');
+                if(v.length===1) return $filter('ucfirst')(v[0]);
+                else return $filter('ucfirst')(v[0])+" "+$filter('ucfirst')(v[1]);
+            }
 
         })
     </script>
@@ -89,6 +95,7 @@
                                 <th>Job Category Title</th>
                                 <th>Job Category Description</th>
                                 <th>Job Category Status</th>
+                                <th>Job Category Type</th>
                                 <th>Action</th>
                             </tr>
                             <tr ng-repeat="jc in jobCategories">
@@ -96,6 +103,7 @@
                                 <td>[[jc.category_name_bng?jc.category_name_bng:jc.category_name_eng]]</td>
                                 <td>[[jc.category_description]]</td>
                                 <td>[[jc.status|ucfirst]]</td>
+                                <td>[[categoryType(jc.category_type)]]</td>
                                 <td>
                                     <a href="{{URL::to('/recruitment/category')}}/[[jc.id]]/edit" class="btn btn-primary btn-sm">
                                         <i class="fa fa-edit"></i>&nbsp;Edit

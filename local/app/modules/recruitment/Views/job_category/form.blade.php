@@ -26,6 +26,10 @@
     {!! Form::text('category_rank',null,['class'=>'form-control','placeholder'=>'Enter category rank']) !!}
 </div>
 <div class="form-group">
+    {!! Form::label('category_type','Job Category Type :',['class'=>'control-label']) !!}
+    {!! Form::select('category_type',[''=>'--Select a type--','new_training'=>'New Training','apc_training'=>'APC Training','pc_training'=>'PC Training','other'=>'other'],null,['class'=>'form-control']) !!}
+</div>
+<div class="form-group">
     {!! Form::label('test','Status : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
     <input type="checkbox" value="active" name="status" @if(isset($data)&&$data->status=='active')checked
            @endif id="status" class="switch-checkbox">
