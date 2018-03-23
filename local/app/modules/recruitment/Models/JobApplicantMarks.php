@@ -74,6 +74,6 @@ class JobApplicantMarks extends Model
             $written_pass_mark = (floatval($mark_distribution->convert_written_mark)*30)/100;
             $viva_pass_mark = (floatval($mark_distribution->viva)*30)/100;
         }
-        return $this->written<$written_pass_mark||$this->viva<$viva_pass_mark;
+        return $this->convertedWrittenMark()<$written_pass_mark||$this->viva<$viva_pass_mark;
     }
 }
