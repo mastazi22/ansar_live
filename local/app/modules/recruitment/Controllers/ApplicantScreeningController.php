@@ -12,6 +12,7 @@ use App\modules\recruitment\Models\JobApplicantMarks;
 use App\modules\recruitment\Models\JobApplicantQuota;
 use App\modules\recruitment\Models\JobAppliciant;
 use App\modules\recruitment\Models\JobCircular;
+use App\modules\recruitment\Models\JobCircularMarkDistribution;
 use App\modules\recruitment\Models\JobSelectedApplicant;
 use App\modules\recruitment\Models\JobSettings;
 use App\modules\recruitment\Models\SmsQueue;
@@ -667,6 +668,13 @@ class ApplicantScreeningController extends Controller
         try {
             /*$circular = JobCircular::with('constraint')->find($request->circular);
             $constraint= json_decode($circular->constraint->constraint);*/
+            $written_pass_mark = 0;
+            $viva_pass_mark = 0;
+            $mark_distribution = JobCircularMarkDistribution::where('job_circular_id',$request->circular)->first();
+            if($mark_distribution){
+                $written_pass_mark = (floatval($mark_distribution->convert_written_mark)*30)/100;
+                $viva_pass_mark = (floatval($mark_distribution->viva)*30)/100;
+            }
             $accepted = JobAppliciant::whereHas('accepted', function ($q) {
 
             })->where('status', 'accepted')->where('job_circular_id', $request->circular)->where('unit_id', $request->unit)->count();
@@ -679,6 +687,7 @@ class ApplicantScreeningController extends Controller
 
                 })->where('status', 'selected')->where('job_circular_id', $request->circular)->where('unit_id', $request->unit);
             })->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'))->havingRaw('total_mark>0')->orderBy('total_mark', 'desc');
+            $applicant_male->where('written','>=',$written_pass_mark)->where('viva','>=',$viva_pass_mark);
             if ($quota) {
                 if (intval($quota->male) - $accepted > 0) $applicants = $applicant_male->limit(intval($quota->male) - $accepted)->get();
                 else $applicants = [];
@@ -790,6 +799,13 @@ class ApplicantScreeningController extends Controller
             'circular' => 'required|regex:/^[0-9]+$/',
         ];
         $this->validate($request, $rules);
+        $written_pass_mark = 0;
+        $viva_pass_mark = 0;
+        $mark_distribution = JobCircularMarkDistribution::where('job_circular_id',$request->circular)->first();
+        if($mark_distribution){
+            $written_pass_mark = (floatval($mark_distribution->convert_written_mark)*30)/100;
+            $viva_pass_mark = (floatval($mark_distribution->viva)*30)/100;
+        }
         $quota = JobApplicantQuota::where('district_id', $request->unit)->first();
         $accepted = JobAppliciant::whereHas('accepted', function ($q) {
 
@@ -802,6 +818,7 @@ class ApplicantScreeningController extends Controller
 
             })->where('status', 'selected')->where('job_circular_id', $request->circular)->where('unit_id', $request->unit);
         })->select(DB::raw('DISTINCT *,(written+viva+physical+edu_training) as total_mark'))->havingRaw('total_mark>0')->orderBy('total_mark', 'desc');
+        $applicant_male->where('written','>=',$written_pass_mark)->where('viva','>=',$viva_pass_mark);
         $applicants = [];
         if ($quota) {
             if (intval($quota->male) - $accepted > 0) $applicants = $applicant_male->limit(intval($quota->male) - $accepted)->get();

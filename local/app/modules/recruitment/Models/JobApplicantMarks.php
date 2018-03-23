@@ -65,4 +65,15 @@ class JobApplicantMarks extends Model
         }
         return round((floatval($this->written)*$written_convert)/$written,2);
     }
+    public function fail(){
+        $applicant = $this->applicant?$this->applicant:$this->applicant()->where('applicant_id', $this->applicant_id)->first();
+        $mark_distribution = $applicant->circular->markDistribution;
+        $written_pass_mark = 0;
+        $viva_pass_mark = 0;
+        if($mark_distribution){
+            $written_pass_mark = (floatval($mark_distribution->convert_written_mark)*30)/100;
+            $viva_pass_mark = (floatval($mark_distribution->viva)*30)/100;
+        }
+        return $this->written<$written_pass_mark||$this->viva<$viva_pass_mark;
+    }
 }
