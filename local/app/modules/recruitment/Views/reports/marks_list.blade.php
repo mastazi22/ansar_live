@@ -6,7 +6,7 @@
 <?php $i = 1 ?>
 <style>
     .fail td {
-        background: red;
+        background: #ff000b;
         color: #FFFFFF;
     }
 </style>
