@@ -40,11 +40,31 @@
         @endif
     </div>
     <div class="form-group">
+        {!! Form::label('written_pass_mark','Written Qualifying Mark :',['class'=>'control-label']) !!}
+        <div class="input-group">
+            {!! Form::text('written_pass_mark',null,['class'=>'form-control','placeholder'=>'Enter qualifying mark']) !!}
+            <span class="input-group-addon">%</span>
+            @if(isset($errors)&&$errors->first('written_pass_mark'))
+                <p class="text text-danger">{{$errors->first('written_pass_mark')}}</p>
+            @endif
+        </div>
+    </div>
+    <div class="form-group">
         {!! Form::label('viva','Viva Mark :',['class'=>'control-label']) !!}
         {!! Form::text('viva',null,['class'=>'form-control','placeholder'=>'Enter viva mark']) !!}
         @if(isset($errors)&&$errors->first('viva'))
             <p class="text text-danger">{{$errors->first('viva')}}</p>
         @endif
+    </div>
+    <div class="form-group">
+        {!! Form::label('viva_pass_mark','Viva Qualifying Mark :',['class'=>'control-label']) !!}
+        <div class="input-group">
+            {!! Form::text('viva_pass_mark',null,['class'=>'form-control','placeholder'=>'Enter qualifying mark']) !!}
+            <span class="input-group-addon">%</span>
+            @if(isset($errors)&&$errors->first('viva_pass_mark'))
+                <p class="text text-danger">{{$errors->first('viva_pass_mark')}}</p>
+            @endif
+        </div>
     </div>
     @if(isset($data))
         <button type="submit" class="btn btn-primary pull-right">

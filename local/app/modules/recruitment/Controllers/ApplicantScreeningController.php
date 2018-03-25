@@ -672,8 +672,8 @@ class ApplicantScreeningController extends Controller
             $viva_pass_mark = 0;
             $mark_distribution = JobCircularMarkDistribution::where('job_circular_id',$request->circular)->first();
             if($mark_distribution){
-                $written_pass_mark = (floatval($mark_distribution->convert_written_mark)*30)/100;
-                $viva_pass_mark = (floatval($mark_distribution->viva)*30)/100;
+                $written_pass_mark = (floatval($mark_distribution->convert_written_mark)*floatval($mark_distribution->written_pass_mark))/100;
+                $viva_pass_mark = (floatval($mark_distribution->viva)*floatval($mark_distribution->viva_pass_mark))/100;
             }
             $accepted = JobAppliciant::whereHas('accepted', function ($q) {
 
@@ -803,8 +803,8 @@ class ApplicantScreeningController extends Controller
         $viva_pass_mark = 0;
         $mark_distribution = JobCircularMarkDistribution::where('job_circular_id',$request->circular)->first();
         if($mark_distribution){
-            $written_pass_mark = (floatval($mark_distribution->convert_written_mark)*30)/100;
-            $viva_pass_mark = (floatval($mark_distribution->viva)*30)/100;
+            $written_pass_mark = (floatval($mark_distribution->convert_written_mark)*floatval($mark_distribution->written_pass_mark))/100;
+            $viva_pass_mark = (floatval($mark_distribution->viva)*floatval($mark_distribution->viva_pass_mark))/100;
         }
         $quota = JobApplicantQuota::where('district_id', $request->unit)->first();
         $accepted = JobAppliciant::whereHas('accepted', function ($q) {
