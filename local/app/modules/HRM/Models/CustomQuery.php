@@ -1025,8 +1025,8 @@ class CustomQuery
         $total1 = clone $pcApcQuery;
         $total2->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
         $total1->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
-        $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'tbl_ansar_parsonal_info.sex', 'tbl_division.division_name_bng as division', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana',DB::raw("TIMESTAMPDIFF(YEAR,data_of_birth,NOW()) as age"));
-        $pcApcQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'tbl_ansar_parsonal_info.sex', 'tbl_division.division_name_bng as division', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana',DB::raw("TIMESTAMPDIFF(YEAR,data_of_birth,NOW()) as age"));
+        $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'tbl_ansar_parsonal_info.sex', 'tbl_division.division_name_bng as division', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', DB::raw("TIMESTAMPDIFF(YEAR,data_of_birth,NOW()) as age"));
+        $pcApcQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'tbl_ansar_parsonal_info.sex', 'tbl_division.division_name_bng as division', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', DB::raw("TIMESTAMPDIFF(YEAR,data_of_birth,NOW()) as age"));
         $query = $ansarQuery->unionAll($pcApcQuery);
 //        return $total2->unionAll($total1)->get();
         $total = DB::table(DB::raw("({$total2->unionAll($total1)->toSql()}) x"))->mergeBindings($total2)->select(DB::raw('SUM(t) as t,code'))->groupBy('code')->get();
@@ -1206,12 +1206,16 @@ class CustomQuery
     {
         $ansarQuery = DB::table('tbl_embodiment')
             ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+            ->join('tbl_ansar_status_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_ansar_status_info.ansar_id')
             ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
             ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
             ->join('tbl_units as ku', 'ku.id', '=', 'tbl_kpi_info.unit_id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
             ->where('tbl_embodiment.service_ended_date', '<', Carbon::now())
-            ->where('tbl_embodiment.emboded_status', '=', 'Emboded');
+            ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
+            ->where('tbl_ansar_status_info.embodied_status', "=", 1)
+            ->where('tbl_ansar_status_info.block_list_status', "=", 0)
+            ->where('tbl_ansar_status_info.black_list_status', "=", 0);
         if ($unit != 'all') {
             $ansarQuery = $ansarQuery->where('tbl_kpi_info.unit_id', '=', $unit);
         }

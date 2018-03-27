@@ -426,7 +426,7 @@ class ReportController extends Controller
 //            $unit = Auth::user()->district_id;
 //        } else {
         $unit = Input::get('unit');
-        $division = Input::get('range');
+        $division = Input::get('division');
         $thana = Input::get('thana');
 //        }
         $ansar_rank = Input::get('ansar_rank');
