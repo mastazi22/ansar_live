@@ -995,7 +995,10 @@ class CustomQuery
             ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
             ->where(DB::raw("TIMESTAMPDIFF(YEAR,data_of_birth,NOW())"), ">=", 47)
-            ->where('tbl_designations.id', "=", 1);
+            ->where('tbl_designations.id', "=", 1)
+            ->where('tbl_ansar_status_info.embodied_status', "=", 0)
+            ->where('tbl_ansar_status_info.block_list_status', "=", 0)
+            ->where('tbl_ansar_status_info.black_list_status', "=", 0);
         $pcApcQuery = DB::table('tbl_ansar_parsonal_info')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
             ->join('tbl_division', 'tbl_division.id', '=', 'tbl_ansar_parsonal_info.division_id')
@@ -1003,7 +1006,10 @@ class CustomQuery
             ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
             ->where(DB::raw("TIMESTAMPDIFF(YEAR,data_of_birth,NOW())"), ">=", 52)
-            ->whereIn('tbl_designations.id', [2, 3]);
+            ->whereIn('tbl_designations.id', [2, 3])
+            ->where('tbl_ansar_status_info.embodied_status', "=", 0)
+            ->where('tbl_ansar_status_info.block_list_status', "=", 0)
+            ->where('tbl_ansar_status_info.black_list_status', "=", 0);
         if ($division && $division != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.division_id', '=', $division);
             $pcApcQuery->where('tbl_ansar_parsonal_info.division_id', '=', $division);
