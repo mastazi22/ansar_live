@@ -426,7 +426,8 @@ class ReportController extends Controller
 //            $unit = Auth::user()->district_id;
 //        } else {
         $unit = Input::get('unit');
-        $division = Input::get('division');
+        $division = Input::get('range');
+        $thana = Input::get('thana');
 //        }
         $ansar_rank = Input::get('ansar_rank');
         $ansar_sex = Input::get('ansar_sex');
@@ -450,6 +451,41 @@ class ReportController extends Controller
             return $this->exportData(collect($data['ansars'])->chunk(2000)->toArray(),'HRM::export.three_years_over_list_view');
         }
         return response()->json($data);
+    }
+    public function ansarOverAgedInfo(Request $request)
+    {
+        if($request->ajax()){
+            $limit = Input::get('limit');
+            $offset = Input::get('offset');
+//        if ((Auth::user()->type) == 22) {
+//            $unit = Auth::user()->district_id;
+//        } else {
+            $unit = Input::get('unit');
+            $division = Input::get('range');
+            $thana = Input::get('thana');
+//        }
+            $ansar_rank = Input::get('ansar_rank');
+            $ansar_sex = Input::get('ansar_sex');
+            //$thana = Input::get('thana');
+            $view = Input::get('view');
+            $rules = [
+                'limit' => 'numeric',
+                'offset' => 'numeric',
+                'unit' => 'required',
+            ];
+            $valid = Validator::make(Input::all(), $rules);
+
+            if ($valid->fails()) {
+                //return print_r($valid->messages());
+                return response("Invalid Request(400)", 400);
+            }
+            $data =  CustomQuery::ansarListOveraged($offset, $limit, $unit, $thana, $division);
+            if(Input::exists('export')){
+                return $this->exportData(collect($data['ansars'])->chunk(2000)->toArray(),'HRM::export.ansar_over_age_report');
+            }
+            return response()->json($data);
+        }
+        return view('HRM::Report.ansar_over_age_report');
     }
 
     public function anserTransferHistory()
