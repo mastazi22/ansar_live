@@ -19,6 +19,10 @@ class ModuleServiceProvider extends ServiceProvider
                 include __DIR__.'/'.$module.'/routes.php';
 //                echo $module;
             }
+            if(file_exists(__DIR__.'/'.$module.'/api.php')){
+                include __DIR__.'/'.$module.'/api.php';
+//                echo $module;
+            }
             if(is_dir(__DIR__.'/'.$module.'/Views')){
                 $this->loadViewsFrom(__DIR__.'/'.$module.'/Views',$module);
             }

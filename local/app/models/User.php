@@ -109,7 +109,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $kpis = $this->kpi();
         $e = [];
         foreach($kpis as $kpi){
-            array_push($kpi->embodiment->pluck('ansar_id'));
+            array_push($e,$kpi->embodiment->pluck('ansar_id'));
         }
         return json_encode($e);
     }

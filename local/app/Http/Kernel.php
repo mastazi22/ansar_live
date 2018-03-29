@@ -56,5 +56,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'recruitment' => \App\Http\Middleware\RecurimentMiddleware::class,
         'hrm' => \App\Http\Middleware\HRMMiddleware::class,
+        'auth.api' => \App\Http\Middleware\ApiAuthenticationValidate::class,
     ];
 }

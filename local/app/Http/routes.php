@@ -16,6 +16,7 @@ Route::get('/log_in', ['as'=>'login','uses'=>'UserController@login']);
 Route::get('/forget_password_request', ['as'=>'forget_password_request','uses'=>'UserController@forgetPasswordRequest']);
 Route::post('/forget_password_request_handle', ['as'=>'forget_password_request_handle','uses'=>'UserController@handleForgetRequest']);
 Route::post('/check_login', 'UserController@handleLogin');
+Route::post('/api/login','ApiUserController@login');
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', ['as'=>'home','uses'=>function () {
         return view('template.index');

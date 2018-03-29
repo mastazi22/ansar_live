@@ -13,6 +13,8 @@ class VerifyCsrfToken extends BaseVerifier
      */
     protected $except = [
         //
-        'HRM/receive_sms'
+        'HRM/receive_sms',
+        '*/api/*',
+        'api/*',
     ];
 }
