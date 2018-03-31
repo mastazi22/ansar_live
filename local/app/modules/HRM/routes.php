@@ -199,6 +199,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
         Route::get('unit/all-units',['as'=>'all-units','uses'=>'UnitController@allUnit']);
         Route::resource('unit','UnitController');
         Route::resource('range','DivisionController');
+        Route::resource('union','UnionController');
 
         //END GENERAL SETTING
         //REPORT
