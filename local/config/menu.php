@@ -490,5 +490,11 @@ return [
             "icon" => "fa-print"
         ],
 
+    ],
+    "avurp"=>[
+        'Data Entry'=>[
+            'route'=>'AVURP.info.create',
+            'icon'=>'fa-cog'
+        ]
     ]
 ];

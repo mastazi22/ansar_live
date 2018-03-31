@@ -1,7 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: arafat
- * Date: 3/29/2018
- * Time: 9:15 PM
- */
+Route::group(['prefix'=>'AVURP','namespace'=>'\App\modules\AVURP\Controllers','middleware'=>['auth']],function(){
+    Route::resource('info','AnsarVDPInfoController');
+});

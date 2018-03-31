@@ -195,12 +195,8 @@
         @include('template.menu')
     @elseif(is_null(request()->route())||empty(request()->route()->getPrefix()))
         @include('template.menu')
-    @elseif(strcasecmp(request()->route()->getPrefix(),'SD')==0)
-        @include('SD::menu')
-    @elseif(strcasecmp(request()->route()->getPrefix(),'HRM')==0)
-        @include('HRM::menu')
-    @elseif(strcasecmp(request()->route()->getPrefix(),'recruitment')==0)
-        @include('recruitment::menu')
+    @else
+        @include(request()->route()->getPrefix().'::menu')
     @endif
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
