@@ -100,14 +100,14 @@ class AnsarVDPInfoController extends Controller
         DB::connection('avurp')->beginTransaction();
         try{
 
-            $division_code = Division::find($request->division_id)->division_code;
-            $unit_code = District::find($request->unit_id)->unit_code;
-            $thana_code = Thana::find($request->thana_id)->thana_code;
-            $union_code = Unions::find($request->union_id)->code;
+            $division_code = sprintf("%02d",Division::find($request->division_id)->division_code);
+            $unit_code = sprintf("%02d",District::find($request->unit_id)->unit_code);
+            $thana_code = sprintf("%02d",Thana::find($request->thana_id)->thana_code);
+            $union_code = sprintf("%02d",Unions::find($request->union_id)->code);
             $gender_code = $request->gender=='Male'?1:2;
             $word_code = '0'.$request->union_word_id;
             $count = VDPAnsarInfo::where($request->only(['division_id','thana_id','unit_id','union_id','union_word_id']))->count()+1;
-            $count = $count<10?'0'.$count:$count;
+            $count = sprintf("%03d",$count);
             $geo_id = $division_code.$unit_code.$thana_code.$union_code.$gender_code.$word_code.$count;
             if($request->hasFile('profile_pic')){
                 $file = $request->file('profile_pic');
