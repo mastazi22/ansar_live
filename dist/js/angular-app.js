@@ -333,6 +333,28 @@ GlobalApp.factory('httpService', function ($http) {
             })
 
         },
+        union: function (division, unit,thana) {
+            var http = '';
+            //if (id == undefined) {
+            //    http = $http({
+            //        method: 'get',
+            //        url: '/' + prefix + 'HRM/ThanaName'
+            //    })
+            //}
+            //else {
+            http = $http({
+                method: 'get',
+                url: '/' + prefix + 'HRM/union/showall',
+                params: {unit_id: unit, division_id: division,thana_id:thana}
+            })
+            //}
+            return http.then(function (response) {
+                return response.data
+            }, function (response) {
+                return response
+            })
+
+        },
         kpi: function (d, u, id, type) {
             return $http({
                 url: '/' + prefix + "HRM/KPIName",

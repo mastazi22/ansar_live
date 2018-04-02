@@ -5,6 +5,8 @@ namespace App\modules\AVURP\Models;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
 use App\modules\HRM\Models\Thana;
+use App\modules\HRM\Models\Unions;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class VDPAnsarInfo extends Model
@@ -25,5 +27,14 @@ class VDPAnsarInfo extends Model
     }
     public function thana(){
         return $this->belongsTo(Thana::class,'thana_id');
+    }
+    public function union(){
+        return $this->belongsTo(Unions::class,'union_id');
+    }
+    public function setDateOfBirthAttribute($value){
+        $this->attributes['date_of_birth'] = Carbon::parse($value)->format('Y-m-d');
+    }
+    public function getDateOfBirthAttribute($value){
+        return Carbon::parse($value)->format('d-M-Y');
     }
 }

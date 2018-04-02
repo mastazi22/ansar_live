@@ -126,4 +126,20 @@ class UnionController extends Controller
     {
         //
     }
+    public function showAll(Request $request)
+    {
+        //
+        $range_id = $request->division_id?$request->division_id:'';
+        $unit_id = $request->unit_id?$request->unit_id:'';
+        $thana_id = $request->thana_id;
+        $unions = Unions::where('thana_id',$thana_id);
+        if($range_id&&$range_id!='all'){
+            $unions->where('division_id',$range_id);
+        }
+        if($unit_id&&$unit_id!='all'){
+            $unions->where('unit_id',$unit_id);
+        }
+        return response()->json($unions->get());
+    }
+
 }

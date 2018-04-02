@@ -492,8 +492,8 @@ return [
 
     ],
     "avurp"=>[
-        'Data Entry'=>[
-            'route'=>'AVURP.info.create',
+        'Entry List'=>[
+            'route'=>'AVURP.info.index',
             'icon'=>'fa-cog'
         ]
     ]

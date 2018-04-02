@@ -5,8 +5,10 @@
     }
 </style>
 <script>
-    GlobalApp.controller('InfoController',function ($scope, $http, httpService,$q) {
-        $scope.info = {};
+    var formData = new FormData();
+    GlobalApp.controller('InfoController',function ($scope, $http, httpService,$q,notificationService) {
+
+        $scope.info = {urL:'',form:{}};
         $scope.errors = {};
         $scope.info.url = '{{$url}}'
         $scope.educationDegrees = [1];
@@ -47,29 +49,69 @@
             $scope.educations = response[2];
         })
         $scope.loadUnit= function (rangeId) {
+            $scope.units = $scope.thanas = $scope.unions = [];
             httpService.unit(rangeId).then(function (response) {
                 $scope.units = response;
             })
         }
         $scope.loadThana= function (rangeId,unitId) {
+            $scope.thanas = $scope.unions = [];
             httpService.thana(rangeId,unitId).then(function (response) {
                 $scope.thanas = response;
             })
         }
+        $scope.loadUnion = function (rangeId,unitId,thanaId) {
+            $scope.unions = [];
+            httpService.union(rangeId,unitId,thanaId).then(function (response) {
+                $scope.unions = response;
+            })
+        }
         $scope.submitForm = function (event) {
             event.preventDefault();
+            var data = new FormData();
+            console.log($scope.info.form)
+            Object.keys($scope.info.form).forEach(function (key) {
+                console.log();
+                if(key === 'educationInfo') {
+                    for(var i = 0;i<Object.keys($scope.info.form[key]).length;i++)
+                    {
+                        Object.keys($scope.info.form[key][i]).forEach(function (k) {
+                            data.append(`${key}[${i}][${k}]`,$scope.info.form[key][i][k]);
+                        })
+                    }
+
+                }
+                else  data.append(key,$scope.info.form[key]);
+            })
+//            console.log(data.getAll('educationInfo'))
             $http({
                 method:'post',
                 url:$scope.info.url,
-                data:angular.toJson($scope.info.form)
+                data:data,
+                headers:{
+                    'content-type':undefined
+                }
             }).then(function (response) {
-                console.log(response.data);
+//                console.log(response.data)
+                window.location.href = '{{URL::route('AVURP.info.index')}}'
             },function (response) {
                 if(response.status===422) {
                     $scope.errors = response.data;
                 }
-                console.log(response.data)
+                else{
+                    notificationService.notify("error",response.data.message)
+                }
             })
+        }
+    })
+    GlobalApp.directive('fileParse',function () {
+        return {
+            restrict:'A',
+            link:function (scope, elem, attrs) {
+                $(elem).on('change',function () {
+                    scope.info.form['profile_pic'] = elem[0].files[0];
+                })
+            }
         }
     })
 </script>
@@ -106,7 +148,7 @@
                     <span class="pull-right">:</span>
                 </label>
                 <div class="col-sm-8">
-                    <select class="form-control" ng-model="info.form.thana_id" id="thana_id">
+                    <select class="form-control" ng-model="info.form.thana_id" id="thana_id" ng-change="loadUnion(info.form.division_id,info.form.unit_id,info.form.thana_id)">
                         <option value="">--উপজেলা নির্বাচন করুন--</option>
                         <option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]</option>
                     </select>
@@ -147,12 +189,12 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="post_office" class="control-label col-sm-4">ডাকঘর<sup class="text-red">*</sup>
+                <label for="post_office_name" class="control-label col-sm-4">ডাকঘর<sup class="text-red">*</sup>
                     <span class="pull-right">:</span>
                 </label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" placeholder="ডাকঘর" ng-model="info.form.post_office" id="post_office">
-                    <p ng-if="errors.post_office&&errors.post_office.length>0" class="text text-danger">[[errors.post_office[0] ]]</p>
+                    <input type="text" class="form-control" placeholder="ডাকঘর" ng-model="info.form.post_office_name" id="post_office_name">
+                    <p ng-if="errors.post_office_name&&errors.post_office_name.length>0" class="text text-danger">[[errors.post_office_name[0] ]]</p>
                 </div>
             </div>
         </fieldset>
@@ -252,11 +294,11 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="ansar_id" class="control-label col-sm-4">স্মার্টকার্ড আইডি
+                <label for="smart_card_id" class="control-label col-sm-4">স্মার্টকার্ড আইডি
                     <span class="pull-right">:</span>
                 </label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" ng-keypress="validateKey(47,56,$event)" placeholder="স্মার্টকার্ড আইডি" ng-model="info.form.ansar_id" id="ansar_id">
+                    <input type="text" class="form-control" ng-keypress="validateKey(47,56,$event)" placeholder="স্মার্টকার্ড আইডি" ng-model="info.form.smart_card_id" id="smart_card_id">
 
                 </div>
             </div>
@@ -415,6 +457,15 @@
                         <option ng-repeat="r in ranks" value="[[r.value]]">[[r.text]]</option>
                     </select>
                     <p ng-if="errors.training_info&&errors.training_info.length>0" class="text text-danger">[[errors.training_info[0] ]]</p>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>ছবি সুমুহ</legend>
+            <div class="form-group">
+                <label for="profile_pic" class="control-label col-sm-4">প্রোফাইল পিকচার<span class="pull-right">:</span></label>
+                <div class="col-sm-8">
+                    <input type="file" file-parse>
                 </div>
             </div>
         </fieldset>
