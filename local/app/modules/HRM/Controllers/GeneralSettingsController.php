@@ -291,7 +291,7 @@ class GeneralSettingsController extends Controller
         } else {
             DB::beginTransaction();
             try {
-                $thana_info = Thana::find($id)->update($request->all());
+                $thana_info = Thana::find($id)->update($request->except(['action_user_id']));
                 DB::statement("call update_thana(:did,:uid,:tid)",['did'=>$request->division_id,'uid'=>$request->unit_id,'tid'=>$request->id]);
                 DB::commit();
                 //Event::fire(new ActionUserEvent(['ansar_id' => $kpi_general->id, 'action_type' => 'ADD KPI', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]));
