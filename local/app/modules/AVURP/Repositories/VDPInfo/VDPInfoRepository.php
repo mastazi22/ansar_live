@@ -90,7 +90,7 @@ class VDPInfoRepository implements VDPInfoInterface
 
     /**
      * @param array $param
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|static[]
      */
     public function getInfos($param = [],$paginate=30)
     {
@@ -107,7 +107,10 @@ class VDPInfoRepository implements VDPInfoInterface
         if($thana!='all'){
             $vdp_infos->where('thana_id',$thana);
         }
-        return $vdp_infos->paginate($paginate);
+        if($paginate>0) {
+            return $vdp_infos->paginate($paginate);
+        }
+        return $vdp_infos->get();
     }
 
     /**
