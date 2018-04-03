@@ -210,6 +210,7 @@ return [
         Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+        \App\Providers\RepositoryProvider::class,
     ],
 
     /*

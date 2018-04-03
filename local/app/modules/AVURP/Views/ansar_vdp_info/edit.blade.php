@@ -1,7 +1,19 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: shuvo
- * Date: 3/31/2018
- * Time: 10:25 AM
- */
+@extends('template.master')
+@section('title','Edit Entry')
+@section('breadcrumb')
+    {!! Breadcrumbs::render('recruitment') !!}
+@endsection
+@section('content')
+    <section class="content">
+        <div class="box box-solid">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-sm-10 col-sm-offset-1">
+                        @include('AVURP::ansar_vdp_info.form',['url'=>URL::route('AVURP.info.update',['id'=>$id]),'id'=>$id])
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+@endsection

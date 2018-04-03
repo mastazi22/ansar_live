@@ -2,6 +2,7 @@
 
 namespace App\modules\AVURP\Models;
 
+use App\modules\HRM\Models\Blood;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
 use App\modules\HRM\Models\Thana;
@@ -30,6 +31,9 @@ class VDPAnsarInfo extends Model
     }
     public function union(){
         return $this->belongsTo(Unions::class,'union_id');
+    }
+    public function bloodGroup(){
+        return $this->belongsTo(Blood::class,'blood_group_id');
     }
     public function setDateOfBirthAttribute($value){
         $this->attributes['date_of_birth'] = Carbon::parse($value)->format('Y-m-d');
