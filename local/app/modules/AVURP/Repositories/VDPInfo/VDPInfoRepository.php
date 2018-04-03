@@ -94,9 +94,9 @@ class VDPInfoRepository implements VDPInfoInterface
      */
     public function getInfos($param = [],$paginate=30)
     {
-        $range = $param['range']?$param['range']:'all';
-        $unit = $param['unit']?$param['unit']:'all';
-        $thana = $param['unit']?$param['unit']:'all';
+        $range = isset($param['range'])&&$param['range']?$param['range']:'all';
+        $unit = isset($param['unit'])&&$param['unit']?$param['unit']:'all';
+        $thana = isset($param['thana'])&&$param['thana']?$param['thana']:'all';
         $vdp_infos = $this->info->with(['division','unit','thana','union']);
         if($range!='all'){
             $vdp_infos->where('division_id',$range);

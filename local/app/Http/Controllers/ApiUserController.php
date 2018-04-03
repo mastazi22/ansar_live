@@ -25,9 +25,15 @@ class ApiUserController extends Controller
             if(!$token=JWTAuth::attempt($request->only(['user_name','password']))){
                 return response()->json(['message'=>'Invalid user name or password'],401);
             }
+            $user = JWTAuth::toUser($token);
+            if($user->status!=1){
+                JWTAuth::invalidate($token);
+                return response()->json(['message'=>'User is BLOCKED'],401);
+            }
         }catch (JWTException $e){
             return response()->json(['message'=>$e->getMessage()],500);
         }
-        return response()->json(compact('token'));
+
+        return response()->json(compact('token','user'));
     }
 }

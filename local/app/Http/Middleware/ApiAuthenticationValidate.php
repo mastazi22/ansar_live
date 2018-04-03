@@ -24,7 +24,10 @@ class ApiAuthenticationValidate
             if (! $user = JWTAuth::parseToken()->authenticate()) {
                 return response()->json(['message'=>'Invalid User'], 401);
             }
-
+            if($user->status!=1){
+                JWTAuth::invalidate(JWTAuth::getToken());
+                return response()->json(['message'=>'User is BLOCKED'],401);
+            }
         } catch (TokenExpiredException $e) {
 
             return response()->json(['message'=>'token expired'], 401);
