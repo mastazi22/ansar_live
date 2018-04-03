@@ -43,7 +43,7 @@
             httpService.bloodGroup(),
             httpService.education()
             @if(isset($id))
-            , $http.get("{{URL::route('AVURP.info.show',['id'=>$id])}}")
+            , $http.get("{{URL::route('AVURP.info.edit',['id'=>$id])}}")
             @endif
 
         ]).then(function (response) {

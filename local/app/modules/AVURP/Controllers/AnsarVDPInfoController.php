@@ -91,8 +91,12 @@ class AnsarVDPInfoController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request,$id)
     {
+        if($request->ajax()){
+
+            return response()->json($this->infoRepository->getInfoForEdit($id));
+        }
         return view('AVURP::ansar_vdp_info.edit', compact('id'));
     }
 
@@ -106,7 +110,7 @@ class AnsarVDPInfoController extends Controller
     public function update(VDPInfoRequest $request, $id)
     {
 
-        $response = $this->infoRepository->update($request);
+        $response = $this->infoRepository->update($request,$id);
         if (!$response['status']) {
             return response()->json($response['data'], 500);
         }

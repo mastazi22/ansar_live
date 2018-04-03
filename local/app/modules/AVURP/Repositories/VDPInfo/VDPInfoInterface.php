@@ -24,13 +24,19 @@ interface VDPInfoInterface
      * @param Request $input
      * @return mixed
      */
-    public function update($input);
+    public function update($input,$id);
 
     /**
      * @param $id
      * @return VDPAnsarInfo
      */
     public function getInfo($id);
+
+    /**
+     * @param $id
+     * @return VDPAnsarInfo
+     */
+    public function getInfoForEdit($id);
 
     /**
      * @param array $param

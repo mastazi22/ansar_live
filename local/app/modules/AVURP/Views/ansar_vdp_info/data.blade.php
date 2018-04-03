@@ -43,6 +43,9 @@
                         <a href="{{URL::route('AVURP.info.show',$info->id)}}" class="btn btn-xs btn-primary">
                             <i class="fa fa-eye"></i>&nbsp;View
                         </a>
+                        <a href="{{URL::route('AVURP.info.edit',$info->id)}}" class="btn btn-xs btn-primary">
+                            <i class="fa fa-edit"></i>&nbsp;Edit
+                        </a>
                     </td>
                 </tr>
             @endforeach
