@@ -16,6 +16,7 @@ use App\modules\HRM\Models\Nominee;
 use App\modules\HRM\Models\PersonalInfo;
 use App\modules\HRM\Models\Thana;
 use App\modules\HRM\Models\TrainingInfo;
+use App\modules\HRM\Repositories\data\DataInterface;
 use Carbon\Carbon;
 use Hash;
 use Illuminate\Contracts\Pagination;
@@ -35,6 +36,15 @@ use Mockery\Exception;
 
 class FormSubmitHandler extends Controller
 {
+    private $dataRepo;
+
+    /**
+     * FormSubmitHandler constructor.
+     */
+    public function __construct(DataInterface $dataRepo)
+    {
+        $this->dataRepo = $dataRepo;
+    }
 
     public function handleLogin(Request $request)
     {
@@ -436,38 +446,20 @@ class FormSubmitHandler extends Controller
 
     public function DivisionName(Request $request)
     {
-        if ($request->id) {
-            $division = Division::where('id', $request->id)->orderBy('sort_by', 'asc')->get();
-        } else $division = Division::where('id', '!=', 0)->orderBy('sort_by', 'asc')->get();
-        return Response::json($division);
+
+        return Response::json($this->dataRepo->getDivisions($request->id));
     }
 
     public function DistrictName(Request $request)
     {
-        if (Input::exists('id')) {
-            $id = $request->input('id');
-            if ($id == 'all') {
-                $districts = District::where('id', '!=', 0)->get();
-            } else $districts = District::where('division_id', '=', $id)->get();
-        } else {
-            $districts = District::where('id', '!=', 0)->get();
-        }
-        return Response::json($districts);
+        return Response::json($this->dataRepo->getUnits($request->id));
     }
 
     public function ThanaName(Request $request)
     {
-        $query = [];
-        $id = $request->input('id');
-        if ($request->exists('division_id') && $request->get('division_id') != 'all') {
-            $query['division_id'] = $request->get('division_id');
-        }
-        if ($request->exists('id') && $request->get('id') != 'all') {
-            $query['unit_id'] = $request->get('id');
-        }
-        $thana = Thana::where($query)->get();
 
-        return Response::json($thana);
+
+        return Response::json($this->dataRepo->getThanas($request->division_id,$request->id));
     }
 
     public function testregistration(Request $request)

@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\modules\AVURP\Repositories\VDPInfo\VDPInfoInterface;
 use App\modules\AVURP\Repositories\VDPInfo\VDPInfoRepository;
+use App\modules\HRM\Repositories\data\DataInterface;
+use App\modules\HRM\Repositories\data\DataRepository;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryProvider extends ServiceProvider
@@ -29,6 +31,10 @@ class RepositoryProvider extends ServiceProvider
         $this->app->bind(
             VDPInfoInterface::class,
             VDPInfoRepository::class
+        );
+        $this->app->bind(
+            DataInterface::class,
+            DataRepository::class
         );
     }
 }

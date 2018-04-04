@@ -11,6 +11,7 @@
         $scope.errors = {};
         $scope.info.url = '{{$url}}'
         $scope.educationDegrees = [1];
+        $scope.allLoading = true
         $scope.genders = [
             {
                 value: 'Male',
@@ -67,6 +68,7 @@
                 $scope.loadThana($scope.info.form['division_id'], $scope.info.form['unit_id']);
                 $scope.loadUnion($scope.info.form['division_id'], $scope.info.form['unit_id'],$scope.info.form['thana_id']);
             @endif
+                $scope.allLoading = false
         })
         $scope.loadUnit = function (rangeId) {
             $scope.units = $scope.thanas = $scope.unions = [];
@@ -87,6 +89,7 @@
             })
         }
         $scope.submitForm = function (event) {
+            $scope.allLoading = true;
             event.preventDefault();
             var data = new FormData();
             console.log($scope.info.form)
@@ -114,6 +117,7 @@
 //                console.log(response.data)
                 window.location.href = '{{URL::route('AVURP.info.index')}}'
             }, function (response) {
+                $scope.allLoading = false
                 if (response.status === 422) {
                     $scope.errors = response.data;
                 }
@@ -135,6 +139,11 @@
     })
 </script>
 <div ng-controller="InfoController">
+    <div class="overlay" style="z-index:100;position: absolute;width: 100%;height: 100%;" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+    </div>
     <form class="form-horizontal" ng-submit="submitForm($event)">
         <fieldset>
             <legend>জিও কোড ভিত্তিক আইডির জন্য তথ্য</legend>
