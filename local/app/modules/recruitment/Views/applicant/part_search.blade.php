@@ -47,6 +47,7 @@
                     <td>
                         <button ng-if="selectedList.indexOf('{{$a->applicant_id}}')<0" class="btn btn-primary btn-xs" ng-click="addToSelection('{{$a->applicant_id}}')"><i class="fa fa-plus"></i>&nbsp; Add To Selection </button>
                         <button ng-if="selectedList.indexOf('{{$a->applicant_id}}')>=0" class="btn btn-danger btn-xs" ng-click="removeToSelection('{{$a->applicant_id}}')"><i class="fa fa-minus"></i>&nbsp; Remove Selection </button>
+                        <button class="btn btn-xs btn-primary" ng-click="acceptedAsSpecial('{{$a->applicant_id}}')">Accepted as special</button>
                     </td>
                 </tr>
             @empty

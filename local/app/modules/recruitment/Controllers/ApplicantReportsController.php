@@ -58,7 +58,7 @@ class ApplicantReportsController extends Controller
                 $q->whereHas('accepted',function(){
 
                 })->where('status','accepted')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit);
-            })->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'))->orderBy('is_bn_candidate','desc')->orderBy('total_mark','desc');
+            })->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'))->orderBy('is_bn_candidate','desc')->orderBy('specialized','desc')->orderBy('total_mark','desc');
             /*$applicants = JobAppliciant::with(['appliciantEducationInfo'=>function($q){
                 $q->with('educationInfo');
             },'district','marks'=>function($qq){

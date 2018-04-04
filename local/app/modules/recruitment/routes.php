@@ -21,6 +21,7 @@ Route::group(['prefix'=>'recruitment','middleware'=>['recruitment'],'namespace'=
        Route::post('/applicant/confirm_selection_or_rejection',['as'=>'recruitment.applicant.confirm_selection_or_rejection','uses'=>'ApplicantScreeningController@confirmSelectionOrRejection']);
        Route::post('/applicant/confirm_accepted',['as'=>'recruitment.applicant.confirm_accepted','uses'=>'ApplicantScreeningController@confirmAccepted']);
        Route::post('/applicant/confirm_accepted_bn_candidate',['as'=>'recruitment.applicant.confirm_accepted_if_bn_candidate','uses'=>'ApplicantScreeningController@confirmAcceptedIfBncandidate']);
+       Route::post('/applicant/confirm_accepted_special_candidate',['as'=>'recruitment.applicant.confirm_accepted_special_candidate','uses'=>'ApplicantScreeningController@confirmAcceptedIfSpecialCandidate']);
        Route::get('/applicant/search',['as'=>'recruitment.applicant.search','uses'=>'ApplicantScreeningController@searchApplicant']);
        Route::post('/applicant/search',['as'=>'recruitment.applicant.search_result','uses'=>'ApplicantScreeningController@loadApplicants']);
        Route::any('/applicant/info',['as'=>'recruitment.applicant.info','uses'=>'ApplicantScreeningController@loadApplicantsByStatus']);

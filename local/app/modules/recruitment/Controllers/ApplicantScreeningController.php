@@ -747,6 +747,41 @@ class ApplicantScreeningController extends Controller
         }
         return response()->json(['status' => 'success', 'message' => 'Applicant accepted successfully']);
     }
+    public function confirmAcceptedIfSpecialCandidate(Request $request)
+    {
+        $rules = [
+            'applicant_id' => 'required|regex:/^[A-Z0-9]+$/'
+        ];
+        $this->validate($request, $rules);
+        DB::beginTransaction();
+        try {
+            $applicant = JobAppliciant::where('applicant_id', $request->applicant_id)->first();
+            if ($applicant) {
+                $accepted = JobAppliciant::whereHas('accepted', function ($q) {
+
+                })->where('status', 'accepted')->where('job_circular_id', $applicant->job_circular_id)->where('unit_id', $applicant->unit_id)->count();
+                $quota = JobApplicantQuota::where('district_id', $applicant->unit_id)->first();
+                if ($quota) {
+                    if (intval($quota->{strtolower($applicant->gender)}) - $accepted > 0) {
+                        $applicant->status = 'accepted';
+                        $applicant->marks()->create([
+                            'specialized' => 1
+                        ]);
+                        $applicant->accepted()->create([
+                            'action_user_id' => $request->action_user_id
+                        ]);
+                        $applicant->save();
+                    } else throw new \Exception("Quota not available");
+                } else throw new \Exception("Quota not available");
+
+            } else throw new \Exception("invalid application");
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+        return response()->json(['status' => 'success', 'message' => 'Applicant accepted successfully']);
+    }
 
     public function loadImage(Request $request)
     {

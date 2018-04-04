@@ -111,6 +111,8 @@
             </td>
             @if($a->is_bn_candidate)
                 <td><strong>Bn Candidate</strong></td>
+            @elseif($a->specialized)
+                <td><strong>Special Candidate</strong></td>
             @else
                 <td>{{round($a->total_mark,2)}}</td>
             @endif

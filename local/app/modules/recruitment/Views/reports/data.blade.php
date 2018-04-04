@@ -62,6 +62,8 @@
                             <td>
                                 <strong>Bn Candidate</strong>
                             </td>
+                        @elseif($a->marks->specialized)
+                            <td><strong>Special Candidate</strong></td>
                         @else
                             <td>{{$a->marks->written+$a->marks->viva+$a->marks->physical+$a->marks->edu_training}}</td>
                         @endif

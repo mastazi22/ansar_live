@@ -208,6 +208,24 @@
                     $scope.allLoading = false;
                 })
             }
+            $scope.acceptedAsSpecial = function (id) {
+                $scope.allLoading = true;
+                $http({
+                    method:'post',
+                    data:{applicant_id:id},
+                    url:'{{URL::route("recruitment.applicant.confirm_accepted_special_candidate")}}'
+                }).then(function (response) {
+                    var res = response.data;
+                    if(res.status=="success"){
+                        $scope.loadApplicant();
+                    }
+                    notificationService.notify(res.status,res.message)
+                    $scope.allLoading = false;
+                },function (response) {
+                    notificationService.notify("error",`unkonown error. code ${response.status}`);
+                    $scope.allLoading = false;
+                })
+            }
             $scope.$watch('selectMessage',function (newVal) {
                 $scope.selectMessage = newVal.length>160?newVal.substr(0,160):newVal;
             })
