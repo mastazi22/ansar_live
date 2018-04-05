@@ -35,9 +35,10 @@ class VDPInfoRepository implements VDPInfoInterface
 
     /**
      * @param VDPInfoRequest $request
+     * @param string $user_id
      * @return mixed
      */
-    public function create($request)
+    public function create($request,$user_id='')
     {
         DB::connection('avurp')->beginTransaction();
         try{
@@ -81,18 +82,25 @@ class VDPInfoRepository implements VDPInfoInterface
 
     /**
      * @param $id
-     * @return VDPAnsarInfo
+     * @param string $user_id
+     * @return mixed
      */
-    public function getInfo($id)
+    public function getInfo($id,$user_id='')
     {
-        return $this->info->with(['division','unit','thana','union','education','education.education','bloodGroup'])->find($id);
+        $info = $this->info->with(['division','unit','thana','union','education','education.education','bloodGroup'])->where('id',$id);
+        if($user_id){
+            $info = $info->where('action_user_id',$user_id);
+        }
+        return $info->first();
     }
 
     /**
      * @param array $param
+     * @param int $paginate
+     * @param string $user_id
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function getInfos($param = [],$paginate=30)
+    public function getInfos($param = [],$paginate=30,$user_id='')
     {
         $range = isset($param['range'])&&$param['range']?$param['range']:'all';
         $unit = isset($param['unit'])&&$param['unit']?$param['unit']:'all';
@@ -116,10 +124,11 @@ class VDPInfoRepository implements VDPInfoInterface
     /**
      * @param Request $request
      * @param $id
+     * @param string $user_id
      * @return mixed
      * @internal param Request $input
      */
-    public function update($request,$id)
+    public function update($request,$id,$user_id='')
     {
         DB::connection('avurp')->beginTransaction();
         try{
@@ -165,10 +174,15 @@ class VDPInfoRepository implements VDPInfoInterface
 
     /**
      * @param $id
-     * @return VDPAnsarInfo
+     * @param string $user_id
+     * @return mixed
      */
-    public function getInfoForEdit($id)
+    public function getInfoForEdit($id,$user_id='')
     {
-        return $this->info->with('education')->find($id);
+        $info = $this->info->with('education')->where('id',$id);
+        if($user_id){
+            $info = $info->where('action_user_id',$user_id);
+        }
+        return $info->first();
     }
 }

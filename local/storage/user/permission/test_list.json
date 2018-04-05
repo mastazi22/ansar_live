@@ -634,5 +634,35 @@
         ]
       }
     ]
+  },
+  {
+    "root": "AVURP",
+    "children": [
+      {
+        "value": "AVURP",
+        "name": "Dashboard"
+      },
+      {
+        "text": "Entry List",
+        "actions": [
+          {
+            "value": "AVURP.info.index",
+            "name": "View info(All)"
+          },
+          {
+            "value": "AVURP.info.view",
+            "name": "View info(Single)"
+          },
+          {
+            "value": "AVURP.info.create,AVURP.info.store",
+            "name": "Create"
+          },
+          {
+            "value": "AVURP.info.edit,AVURP.info.update",
+            "name": "Edit"
+          }
+        ]
+      }
+    ]
   }
 ]

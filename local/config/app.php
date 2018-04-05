@@ -131,7 +131,7 @@ return [
         ['name'=>'HRM','route'=>'HRM'],
         ['name'=>'SD','route'=>'#'],
         ['name'=>'ADAPS','route'=>'#'],
-        ['name'=>'AVURP','route'=>'#'],
+        ['name'=>'AVURP','route'=>'AVURP'],
         ['name'=>strtoupper('recruitment'),'route'=>'recruitment'],
     ],
     'offer'=>[

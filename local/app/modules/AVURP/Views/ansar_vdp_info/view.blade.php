@@ -1,7 +1,7 @@
 @extends('template.master')
 @section('title','View Entry Detail')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('recruitment') !!}
+    {!! Breadcrumbs::render('entry.list.view') !!}
 @endsection
 @section('content')
     <style>

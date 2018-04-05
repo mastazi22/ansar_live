@@ -31,8 +31,10 @@ class AnsarVDPInfoController extends Controller
     {
         if ($request->ajax()) {
             $limit = $request->limit ? $request->limit : 30;
-
-            $vdp_infos = $this->infoRepository->getInfos($request->only(['range', 'unit', 'thana']), $limit);
+            if(auth()->user()->usertype->type_name=="Dataentry") {
+                $vdp_infos =  $this->infoRepository->getInfos($request->only(['range', 'unit', 'thana']), $limit,$request->action_user_id);
+            }
+            else $vdp_infos = $this->infoRepository->getInfos($request->only(['range', 'unit', 'thana']), $limit);
             return view('AVURP::ansar_vdp_info.data', compact('vdp_infos'));
         }
         return view('AVURP::ansar_vdp_info.index');
@@ -76,27 +78,34 @@ class AnsarVDPInfoController extends Controller
      */
     public function show(Request $request,$id)
     {
-        $info = $this->infoRepository->getInfo($id);
+        if(auth()->user()->usertype->type_name=="Dataentry") {
+            $info = $this->infoRepository->getInfo($id,$request->action_user_id);
+        }
+        else $info = $this->infoRepository->getInfo($id);
         if($request->ajax()){
-
             return response()->json($info);
         }
-
+        if(!$info) return abort(404);
         return view('AVURP::ansar_vdp_info.view', compact('info'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
+     * @param Request $request
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function edit(Request $request,$id)
     {
-        if($request->ajax()){
-
-            return response()->json($this->infoRepository->getInfoForEdit($id));
+        if(auth()->user()->usertype->type_name=="Dataentry") {
+            $info = $this->infoRepository->getInfoForEdit($id,$request->action_user_id);
         }
+        else $info = $this->infoRepository->getInfoForEdit($id);
+        if($request->ajax()){
+            return response()->json($info);
+        }
+        if(!$info) return abort(404);
         return view('AVURP::ansar_vdp_info.edit', compact('id'));
     }
 

@@ -4,7 +4,7 @@
 
         <ul class="sidebar-menu">
             <li>
-                <a href="{{URL::to('/recruitment')}}">
+                <a href="{{URL::to('/AVURP')}}">
                     <i class="fa fa-dashboard"></i>
                     <span>Dashboard</span>
                 </a>

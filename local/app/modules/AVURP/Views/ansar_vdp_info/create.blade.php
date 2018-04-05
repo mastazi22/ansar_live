@@ -1,7 +1,7 @@
 @extends('template.master')
 @section('title','Add New Entry')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('recruitment') !!}
+    {!! Breadcrumbs::render('entry.list.entry') !!}
 @endsection
 @section('content')
     <section class="content">

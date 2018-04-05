@@ -129,5 +129,10 @@ return [
         "recruitment.edit_for_hrm,recruitment.store_hrm_detail",
         "recruitment.hrm.index,recruitment.hrm.view_download,recruitment.hrm.move",
         "recruitment.hrm.card_print,print_card_id",
+        "AVURP",
+        "AVURP.info.index",
+        "AVURP.info.view",
+        "AVURP.info.create,AVURP.info.store",
+        "AVURP.info.edit,AVURP.info.update",
     ]
 ];
