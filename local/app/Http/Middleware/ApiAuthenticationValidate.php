@@ -41,6 +41,9 @@ class ApiAuthenticationValidate
             return response()->json(['message'=>'token absent'], 401);
 
         }
+        $input = $request->input();
+        $input['action_user_id'] = $user->id;
+        $request->replace($input);
         return $next($request);
     }
 }

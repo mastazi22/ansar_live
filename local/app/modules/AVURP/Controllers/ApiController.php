@@ -25,28 +25,32 @@ class ApiController extends Controller
     public function index(Request $request)
     {
         $limit = $request->limit?$request->limit:-1;
-        return response()->json($this->infoRepository->getInfos($request->all(), $limit));
+        return response()->json($this->infoRepository->getInfos($request->all(), $limit,$request->action_user_id));
     }
 
-    public function show($id)
+    public function show(Request $request,$id)
     {
-        return response()->json($this->infoRepository->getInfo($id));
+        $info = $this->infoRepository->getInfo($id,$request->action_user_id);
+        if(!$info) return response()->json(['message'=>'Not found'],404);
+        return response()->json($info);
     }
 
-    public function edit($id)
+    public function edit(Request $request,$id)
     {
-        return response()->json($this->infoRepository->getInfoForEdit($id));
+        $info = $this->infoRepository->getInfoForEdit($id,$request->action_user_id);
+        if(!$info) return response()->json(['message'=>'Not found'],404);
+        return response()->json();
     }
 
     public function store(VDPInfoRequest $request)
     {
-        $response = $this->infoRepository->create($request);
+        $response = $this->infoRepository->create($request,$request->action_user_id);
         return response()->json($response);
 
     }
     public function update(VDPInfoRequest $request,$id)
     {
-        $response = $this->infoRepository->update($request,$id);
+        $response = $this->infoRepository->update($request,$id,$request->action_user_id);
         return response()->json($response);
 
     }

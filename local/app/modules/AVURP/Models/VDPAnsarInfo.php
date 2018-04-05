@@ -2,6 +2,7 @@
 
 namespace App\modules\AVURP\Models;
 
+use App\models\User;
 use App\modules\HRM\Models\Blood;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
@@ -40,5 +41,14 @@ class VDPAnsarInfo extends Model
     }
     public function getDateOfBirthAttribute($value){
         return Carbon::parse($value)->format('d-M-Y');
+    }
+    public function scopeUserQuery($query,$id){
+        if($id){
+            $user = User::find($id);
+            if($user->usertype->type_name=="Dataentry"){
+                return $query->where('action_user_id',$id);
+            }
+        }
+        return $query;
     }
 }

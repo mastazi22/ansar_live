@@ -87,10 +87,7 @@ class VDPInfoRepository implements VDPInfoInterface
      */
     public function getInfo($id,$user_id='')
     {
-        $info = $this->info->with(['division','unit','thana','union','education','education.education','bloodGroup'])->where('id',$id);
-        if($user_id){
-            $info = $info->where('action_user_id',$user_id);
-        }
+        $info = $this->info->with(['division','unit','thana','union','education','education.education','bloodGroup'])->where('id',$id)->userQuery($user_id);
         return $info->first();
     }
 
@@ -115,6 +112,7 @@ class VDPInfoRepository implements VDPInfoInterface
         if($thana!='all'){
             $vdp_infos->where('thana_id',$thana);
         }
+        $vdp_infos->userQuery($user_id);
         if($paginate>0) {
             return $vdp_infos->paginate($paginate);
         }
@@ -179,10 +177,7 @@ class VDPInfoRepository implements VDPInfoInterface
      */
     public function getInfoForEdit($id,$user_id='')
     {
-        $info = $this->info->with('education')->where('id',$id);
-        if($user_id){
-            $info = $info->where('action_user_id',$user_id);
-        }
+        $info = $this->info->with('education')->userQuery($user_id);
         return $info->first();
     }
 }

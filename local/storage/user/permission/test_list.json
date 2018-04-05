@@ -531,6 +531,10 @@
         "name": "Load Thana Name"
       },
       {
+        "value": "HRM.union.showall",
+        "name": "Load Unions"
+      },
+      {
         "value": "kpi_name",
         "name": "Load KPI"
       },
