@@ -668,5 +668,31 @@
         ]
       }
     ]
+  },
+  {
+    "root": "API",
+    "children": [
+      {
+        "text": "HRM",
+        "actions": [
+          {
+            "value": "HRM.api.division",
+            "name": "Division List"
+          },
+          {
+            "value": "HRM.api.unit",
+            "name": "Unit List"
+          },
+          {
+            "value": "HRM.api.thana",
+            "name": "Thana List"
+          },
+          {
+            "value": "HRM.api.union",
+            "name": "Union List"
+          }
+        ]
+      }
+    ]
   }
 ]

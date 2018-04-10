@@ -22,14 +22,16 @@ class CheckUserPermission
         if(UserPermissionFacades::isPermissionExists($request->route()->getName())) {
             if ($user->userPermission->permission_type == 0) {
                 if (is_null($user->userPermission->permission_list)) {
-                    if ($request->ajax()) return response("Unauthorized(401)", 401);
-                    if (!$request->ajax()) return abort(401);
+                    if ($request->is('api/*')||$request->is('*/api/*')) return response()->json(['message'=>'insufficient permission'], 401);
+                    else if ($request->ajax()) return response("Unauthorized(401)", 401);
+                    else return abort(401);
                 } else {
                     $permission = json_decode($user->userPermission->permission_list);
 //                    return UserPermissionFacades::isUserMenuExists($request->route()->getName(), $permission)?"YES":"NO";
                     if (!is_null($request->route()->getName()) && !UserPermissionFacades::isUserMenuExists($request->route()->getName(), $permission)) {
-                        if ($request->ajax()) return response("Unauthorized(401)", 401);
-                        if (!$request->ajax()) return response()->view('errors.401');
+                        if ($request->is('api/*')||$request->is('*/api/*')) return response()->json(['message'=>'insufficient permission'], 401);
+                        else if ($request->ajax()) return response("Unauthorized(401)", 401);
+                        else return response()->view('errors.401');
                     }
                 }
             }

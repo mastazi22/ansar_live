@@ -134,5 +134,9 @@ return [
         "AVURP.info.view",
         "AVURP.info.create,AVURP.info.store",
         "AVURP.info.edit,AVURP.info.update",
+        "HRM.api.division",
+        "HRM.api.unit",
+        "HRM.api.thana",
+        "HRM.api.union",
     ]
 ];
