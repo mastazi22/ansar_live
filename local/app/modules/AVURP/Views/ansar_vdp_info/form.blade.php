@@ -2,6 +2,12 @@
     .control-label {
         text-align: left !important;
     }
+    p.text-danger{
+        margin-bottom: 5px !important;
+    }
+    table{
+        margin-bottom: 5px !important;
+    }
 </style>
 <script>
     var formData = new FormData();
@@ -9,8 +15,10 @@
 
         $scope.info = {urL: '', form: {}};
         $scope.errors = {};
+        $scope.subTraining = [];
         $scope.info.url = '{{$url}}'
         $scope.educationDegrees = [1];
+        $scope.training_info = [1];
         $scope.allLoading = true
         $scope.genders = [
             {
@@ -42,7 +50,8 @@
         $q.all([
             httpService.range(),
             httpService.bloodGroup(),
-            httpService.education()
+            httpService.education(),
+            httpService.mainTraining()
             @if(isset($id))
             , $http.get("{{URL::route('AVURP.info.edit',['id'=>$id])}}")
             @endif
@@ -51,22 +60,23 @@
             $scope.divisions = response[0];
             $scope.bloodGroups = response[1];
             $scope.educations = response[2];
+            $scope.mainTraining = response[3];
             @if(isset($id))
-                $scope.info.form = response[3].data;
-                $scope.info.form['_method'] = 'patch';
-                $scope.info.form['educationInfo'] = $scope.info.form['education'];
-                delete $scope.info.form['education'];
-                $scope.info.form['division_id']+='';
-                $scope.info.form['unit_id']+='';
-                $scope.info.form['thana_id']+='';
-                $scope.info.form['union_id']+='';
-                $scope.info.form['educationInfo'].forEach(function (v,index) {
-                    $scope.info.form['educationInfo'][index].education_id+='';
-                })
-                $scope.info.form['blood_group_id']+='';
-                $scope.loadUnit($scope.info.form['division_id']);
-                $scope.loadThana($scope.info.form['division_id'], $scope.info.form['unit_id']);
-                $scope.loadUnion($scope.info.form['division_id'], $scope.info.form['unit_id'],$scope.info.form['thana_id']);
+                $scope.info.form = response[4].data;
+            $scope.info.form['_method'] = 'patch';
+            $scope.info.form['educationInfo'] = $scope.info.form['education'];
+            delete $scope.info.form['education'];
+            $scope.info.form['division_id'] += '';
+            $scope.info.form['unit_id'] += '';
+            $scope.info.form['thana_id'] += '';
+            $scope.info.form['union_id'] += '';
+            $scope.info.form['educationInfo'].forEach(function (v, index) {
+                $scope.info.form['educationInfo'][index].education_id += '';
+            })
+            $scope.info.form['blood_group_id'] += '';
+            $scope.loadUnit($scope.info.form['division_id']);
+            $scope.loadThana($scope.info.form['division_id'], $scope.info.form['unit_id']);
+            $scope.loadUnion($scope.info.form['division_id'], $scope.info.form['unit_id'], $scope.info.form['thana_id']);
             @endif
                 $scope.allLoading = false
         })
@@ -88,6 +98,34 @@
                 $scope.unions = response;
             })
         }
+        $scope.loadSubTraining = function (id, index) {
+            if($scope.subTraining[index]!==undefined&&$scope.info.form.training_info[$index]!==undefined){
+                $scope.info.form.training_info[$index].sub_training_id = '';
+                $scope.subTraining[index] = {}
+            }
+            httpService.subTraining(id).then(function (data) {
+                $scope.subTraining[index] = data;
+            })
+        }
+        $scope.removeTraining = function (index) {
+            var l = $scope.training_info.length;
+            if (l > 1) {
+                console.log($scope.info.form.training_info instanceof Object)
+                console.log($scope.info.form.training_info!==undefined)
+//                console.log($scope.info.form.training_info instanceof Array)
+                $scope.training_info.splice(index, 1)
+                if ($scope.info.form.training_info &&
+                    $scope.info.form.training_info instanceof Object  &&
+                    $scope.info.form.training_info[index]) {
+                    delete $scope.info.form.training_info[index]
+                }
+                if ($scope.subTraining &&
+                    $scope.subTraining.constructor instanceof Array &&
+                    $scope.subTraining[index]) {
+                    $scope.subTraining.splice(index, 1)
+                }
+            }
+        }
         $scope.submitForm = function (event) {
             $scope.allLoading = true;
             event.preventDefault();
@@ -95,7 +133,7 @@
             console.log($scope.info.form)
             Object.keys($scope.info.form).forEach(function (key) {
                 console.log();
-                if (key === 'educationInfo') {
+                if (key === 'educationInfo'||key==='training_info') {
                     for (var i = 0; i < Object.keys($scope.info.form[key]).length; i++) {
                         Object.keys($scope.info.form[key][i]).forEach(function (k) {
                             data.append(`${key}[${i}][${k}]`, $scope.info.form[key][i][k]);
@@ -322,8 +360,10 @@
                 <div class="col-sm-8">
                     <select class="form-control" ng-model="info.form.marital_status" id="marital_status">
                         <option value="">বৈবাহিক অবস্থা নির্বাচন করুন</option>
-                        <option value="Married">Married</option>
-                        <option value="Unmarried">Unmarried</option>
+                        <option value="Married">বিবাহিত</option>
+                        <option value="Unmarried">অবিবাহিত</option>
+                        <option value="Widow">বিধবা</option>
+                        <option value="Divorced">তালাকপ্রাপ্ত</option>
                     </select>
                     <p ng-if="errors.matital_status&&errors.matital_status.length>0" class="text text-danger">
                         [[errors.matital_status[0] ]]</p>
@@ -399,12 +439,22 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="email_or_fb_id" class="control-label col-sm-4">ইমেইল/ফেসবুক আইডি
+                <label for="email_id" class="control-label col-sm-4">ইমেইল
                     <span class="pull-right">:</span>
                 </label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" placeholder="ইমেইল/ফেসবুক আইডি"
-                           ng-model="info.form.email_or_fb_id" id="email_or_fb_id">
+                    <input type="text" class="form-control" placeholder="ইমেইল"
+                           ng-model="info.form.email_id" id="email_id">
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="fb_id" class="control-label col-sm-4">ফেসবুক আইডি
+                    <span class="pull-right">:</span>
+                </label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" placeholder="ফেসবুক আইডি"
+                           ng-model="info.form.fb_id" id="fb_id">
 
                 </div>
             </div>
@@ -477,74 +527,146 @@
                 শিক্ষাগত যোগ্যতার ও প্রশিক্ষনের তথ্য
             </legend>
             <div class="form-group">
-                <label for="" class="control-label col-sm-2">শিক্ষাগত যোগ্যতা<sup class="text-red">*</sup></label>
-                <div class="col-sm-10">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-condensed">
-                            <tr>
-                                <th>শিক্ষাগত যোগ্যতা</th>
-                                <th>শিক্ষা প্রতিষ্ঠানের নাম</th>
-                                <th>পাশ করার সাল</th>
-                                <th>বিভাগ / শ্রেণী</th>
-                                <th>Action</th>
-                            </tr>
-                            <tr ng-repeat="e in educationDegrees">
-                                <td>
-                                    <select name="" id="" ng-model="info.form.educationInfo[$index].education_id">
-                                        <option value="">--নির্বাচন করুন--</option>
-                                        <option ng-repeat="deg in educations" value="[[deg.id]]">
-                                            [[deg.education_deg_bng]]
-                                        </option>
-                                    </select>
-                                    <p ng-if="errors['educationInfo.'+$index+'.education_id']&&errors['educationInfo.'+$index+'.education_id'].length>0"
-                                       class="text text-danger">[[errors['educationInfo.'+$index+'.education_id'][0]
-                                        ]]</p>
-                                </td>
-                                <td>
-                                    <input type="text" ng-model="info.form.educationInfo[$index].institute_name"
-                                           placeholder="প্রতিষ্ঠানের নাম">
-                                    <p ng-if="errors['educationInfo.'+$index+'.institute_name']&&errors['educationInfo.'+$index+'.institute_name'].length>0"
-                                       class="text text-danger">[[errors['educationInfo.'+$index+'.institute_name'][0]
-                                        ]]</p>
-                                </td>
-                                <td>
-                                    <input type="text" ng-model="info.form.educationInfo[$index].passing_year"
-                                           placeholder="পাশের সাল">
-                                </td>
-                                <td>
-                                    <input type="text" ng-model="info.form.educationInfo[$index].gade_divission"
-                                           placeholder="গ্রেড/বিভাগ">
-                                </td>
-                                <td>
-                                    <a class="btn btn-danger btn-xs"
-                                       ng-click="educationDegrees.length>1?educationDegrees.splice($index):''">
-                                        <i class="fa fa-minus"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        </table>
-                        <p ng-if="errors.educationInfo&&errors.educationInfo.length>0" class="text text-danger">
-                            [[errors.educationInfo[0] ]]</p>
-                    </div>
+                <div class="row">
+                    <label for="" class="control-label col-sm-4">শিক্ষাগত যোগ্যতা<sup class="text-red">*</sup>
+                        <span class="pull-right">:</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-condensed">
+                                <tr>
+                                    <th>শিক্ষাগত যোগ্যতা</th>
+                                    <th>শিক্ষা প্রতিষ্ঠানের নাম</th>
+                                    <th>পাশ করার সাল</th>
+                                    <th>বিভাগ / শ্রেণী</th>
+                                    <th>Action</th>
+                                </tr>
+                                <tr ng-repeat="e in educationDegrees">
+                                    <td>
+                                        <select name="" id="" ng-model="info.form.educationInfo[$index].education_id">
+                                            <option value="">--নির্বাচন করুন--</option>
+                                            <option ng-repeat="deg in educations" value="[[deg.id]]">
+                                                [[deg.education_deg_bng]]
+                                            </option>
+                                        </select>
+                                        <p ng-if="errors['educationInfo.'+$index+'.education_id']&&errors['educationInfo.'+$index+'.education_id'].length>0"
+                                           class="text text-danger">[[errors['educationInfo.'+$index+'.education_id'][0]
+                                            ]]</p>
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="info.form.educationInfo[$index].institute_name"
+                                               placeholder="প্রতিষ্ঠানের নাম">
+                                        <p ng-if="errors['educationInfo.'+$index+'.institute_name']&&errors['educationInfo.'+$index+'.institute_name'].length>0"
+                                           class="text text-danger">
+                                            [[errors['educationInfo.'+$index+'.institute_name'][0]
+                                            ]]</p>
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="info.form.educationInfo[$index].passing_year"
+                                               placeholder="পাশের সাল">
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="info.form.educationInfo[$index].gade_divission"
+                                               placeholder="গ্রেড/বিভাগ">
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-danger btn-xs"
+                                           ng-click="educationDegrees.length>1?educationDegrees.splice($index):''">
+                                            <i class="fa fa-minus"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p ng-if="errors.educationInfo&&errors.educationInfo.length>0" class="text text-danger">
+                                [[errors.educationInfo[0] ]]</p>
+                        </div>
 
-                    <a class="btn btn-primary pull-right btn-xs"
-                       ng-click="educationDegrees.push(educationDegrees.length+1)">
-                        <i class="fa fa-plus"></i>&nbsp;Add More
-                    </a>
+                        <a class="btn btn-primary pull-right btn-xs"
+                           ng-click="educationDegrees.push(educationDegrees.length+1)">
+                            <i class="fa fa-plus"></i>&nbsp;Add More
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="form-group">
-                <label for="training_info" class="control-label col-sm-4">প্রশিক্ষণ<sup class="text-red">*</sup>
-                    <span class="pull-right">:</span>
-                </label>
-                <div class="col-sm-8">
-                    <select id="training_info" ng-model="info.form.training_info" class="form-control">
-                        <option value="">--প্রশিক্ষণ নির্বাচন করুন</option>
-                        <option ng-repeat="r in ranks" value="[[r.value]]">[[r.text]]</option>
-                    </select>
-                    <p ng-if="errors.training_info&&errors.training_info.length>0" class="text text-danger">
-                        [[errors.training_info[0] ]]</p>
+                <div class="row">
+                    <label for="training_info" class="control-label col-sm-4">প্রশিক্ষণ<sup class="text-red">*</sup>
+                        <span class="pull-right">:</span>
+                    </label>
                 </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-condensed">
+                                <tr>
+                                    <th>প্রধান প্রশিক্ষণ নাম</th>
+                                    <th>উপ প্রশিক্ষণ নাম</th>
+                                    <th>প্রতিষ্ঠানের নাম</th>
+                                    <th>সনদ পত্র নং</th>
+                                    <th>প্রশিক্ষণ শুরুর তারিখ</th>
+                                    <th>প্রশিক্ষণ শেষের তারিখ</th>
+                                    <th>Action</th>
+                                </tr>
+                                <tr ng-repeat="t in training_info">
+                                    <td>
+                                        <select ng-model="info.form.training_info[$index].training_id"
+                                                ng-change="loadSubTraining(info.form.training_info[$index].training_id,$index)">
+                                            <option value="">--নির্বাচন করুন--</option>
+                                            <option ng-repeat="mt in mainTraining" value="[[mt.id]]">
+                                                [[mt.training_name_bng]]
+                                            </option>
+                                        </select>
+                                        <p ng-if="errors['training_info.'+$index+'.training_id']&&errors['training_info.'+$index+'.training_id'].length>0"
+                                           class="text text-danger">[[errors['training_info.'+$index+'.training_id'][0]
+                                            ]]</p>
+                                    </td>
+                                    <td>
+                                        <select ng-model="info.form.training_info[$index].sub_training_id">
+                                            <option value="">--নির্বাচন করুন--</option>
+                                            <option ng-repeat="st in subTraining[$index]" value="[[st.id]]">
+                                                [[st.training_name_bng]]
+                                            </option>
+                                        </select>
+                                        <p ng-if="errors['training_info.'+$index+'.sub_training_id']&&errors['training_info.'+$index+'.sub_training_id'].length>0"
+                                           class="text text-danger">[[errors['training_info.'+$index+'.sub_training_id'][0]
+                                            ]]</p>
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="info.form.training_info[$index].institute_name"
+                                               placeholder="প্রতিষ্ঠানের নাম">
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="info.form.training_info[$index].certificate_no"
+                                               placeholder="সনদ পত্র নং">
+                                    </td>
+                                    <td>
+                                        <input type="text"
+                                               ng-model="info.form.training_info[$index].training_start_date"
+                                               placeholder="প্রশিক্ষণ শুরুর তারিখ">
+                                    </td>
+                                    <td>
+                                        <input type="text" ng-model="info.form.training_info[$index].training_end_date"
+                                               placeholder="প্রশিক্ষণ শেষের তারিখ">
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-danger btn-xs" ng-click="removeTraining($index)">
+                                            <i class="fa fa-minus"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <p ng-if="errors.training_info&&errors.training_info.length>0" class="text text-danger">
+                            [[errors.training_info[0] ]]</p>
+                        <a class="btn btn-primary pull-right btn-xs"
+                           ng-click="training_info.push(training_info.length+1)">
+                            <i class="fa fa-plus"></i>&nbsp;Add More
+                        </a>
+                    </div>
+                </div>
+
             </div>
         </fieldset>
         <fieldset>

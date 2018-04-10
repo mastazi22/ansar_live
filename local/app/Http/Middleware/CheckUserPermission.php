@@ -19,7 +19,7 @@ class CheckUserPermission
         $user = auth()->user();
         if($request->route()->getPrefix()=='SD'&&!($user->type==11||$user->type==33)) return response()->view('errors.401');
 //        return UserPermissionFacades::isPermissionExists($request->route()->getName())?"YES":"NO";
-        if(UserPermissionFacades::isPermissionExists($request->route()->getName())) {
+        if($request->route()&& UserPermissionFacades::isPermissionExists($request->route()->getName())) {
             if ($user->userPermission->permission_type == 0) {
                 if (is_null($user->userPermission->permission_list)) {
                     if ($request->is('api/*')||$request->is('*/api/*')) return response()->json(['message'=>'insufficient permission'], 401);

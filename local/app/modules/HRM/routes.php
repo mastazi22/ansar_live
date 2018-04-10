@@ -201,6 +201,10 @@ Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
         Route::resource('range','DivisionController');
         Route::get('union/showall',['as'=>'HRM.union.showall','uses'=>'UnionController@showAll']);
         Route::resource('union','UnionController');
+        Route::get('main_training/all',['as'=>'HRM.main_training.all','uses'=>'MainTrainingInfoController@getAllTraining']);
+        Route::resource('main_training','MainTrainingInfoController');
+        Route::get('sub_training/all/{id}',['as'=>'HRM.main_training.all','uses'=>'SubTrainingInfoController@getAllTraining']);
+        Route::resource('sub_training','SubTrainingInfoController');
 
         //END GENERAL SETTING
         //REPORT

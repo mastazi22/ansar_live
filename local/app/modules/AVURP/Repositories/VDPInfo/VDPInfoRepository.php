@@ -59,13 +59,17 @@ class VDPInfoRepository implements VDPInfoInterface
                 $image_name = $geo_id.'.'.$file->clientExtension();
                 Image::make($file)->save($path.'/'.$image_name);
             }
-            $data = $request->except('educationInfo');
+            $data = $request->except(['educationInfo','training_info']);
             $data['geo_id'] = $geo_id;
             if(isset($path)&&isset($image_name)) $data['profile_pic'] = $path.'/'.$image_name;
             else  $data['profile_pic']='';
             $info = $this->info->create($data);
+            $info->status()->create(['verification_status'=>0]);
             foreach ($request->educationInfo as $education){
                 $info->education()->create($education);
+            }
+            foreach ($request->training_info as $training){
+                $info->training_info()->create($training);
             }
             DB::connection('avurp')->commit();
         }catch(\Exception $e){
@@ -87,7 +91,7 @@ class VDPInfoRepository implements VDPInfoInterface
      */
     public function getInfo($id,$user_id='')
     {
-        $info = $this->info->with(['division','unit','thana','union','education','education.education','bloodGroup'])->where('id',$id)->userQuery($user_id);
+        $info = $this->info->with(['division','unit','thana','union','education','education.education','bloodGroup','training_info'])->where('id',$id)->userQuery($user_id);
         return $info->first();
     }
 
@@ -177,7 +181,7 @@ class VDPInfoRepository implements VDPInfoInterface
      */
     public function getInfoForEdit($id,$user_id='')
     {
-        $info = $this->info->with('education')->userQuery($user_id);
+        $info = $this->info->with(['education','training_info'])->userQuery($user_id);
         return $info->first();
     }
 }

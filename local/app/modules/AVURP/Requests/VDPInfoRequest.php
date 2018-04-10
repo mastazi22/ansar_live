@@ -60,6 +60,9 @@ class VDPInfoRequest extends Request
                     'training_info'=>'required',
                     'educationInfo.*.education_id'=>'required',
                     'educationInfo.*.institute_name'=>'required',
+                    'training_info.*.training_id'=>'required',
+                    'training_info.*.sub_training_id'=>'required',
+
                 ];
             case 'PATCH':
                 return [
@@ -88,6 +91,8 @@ class VDPInfoRequest extends Request
                     'training_info'=>'required',
                     'educationInfo.*.education_id'=>'required',
                     'educationInfo.*.institute_name'=>'required',
+                    'training_info.*.training_id'=>'required',
+                    'training_info.*.sub_training_id'=>'required',
                 ];
         }
     }
@@ -99,7 +104,9 @@ class VDPInfoRequest extends Request
     {
         return [
             'educationInfo.*.education_id.required'=>'This field required',
-            'educationInfo.*.institute_name.required'=>'This field required'
+            'educationInfo.*.institute_name.required'=>'This field required',
+            'training_info.*.training_id.required'=>'This field required',
+            'training_info.*.sub_training_id.required'=>'This field required',
         ];
     }
 

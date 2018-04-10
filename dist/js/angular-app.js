@@ -376,6 +376,26 @@ GlobalApp.factory('httpService', function ($http) {
                 return response
             })
         },
+        mainTraining: function () {
+            return $http({
+                url: '/' + prefix + 'HRM/main_training/all',
+                method: 'get'
+            }).then(function (response) {
+                return response.data;
+            }, function (response) {
+                return response
+            })
+        },
+        subTraining: function (id) {
+            return $http({
+                url: '/' + prefix + 'HRM/sub_training/all/'+id,
+                method: 'get'
+            }).then(function (response) {
+                return response.data;
+            }, function (response) {
+                return response
+            })
+        },
         disease: function () {
             return $http.get('/' + prefix + 'HRM/getDiseaseName').then(function (response) {
                 return response.data;

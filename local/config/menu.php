@@ -362,6 +362,18 @@ return [
                     "route" => "thana_view",
                     "icon" => "fa-cog",
                 ],
+                "Union Setting" => [
+                    "route" => "HRM.union.index",
+                    "icon" => "fa-cog",
+                ],
+                "Main Training Setting" => [
+                    "route" => "HRM.main_training.index",
+                    "icon" => "fa-cog",
+                ],
+                "Sub Training Setting" => [
+                    "route" => "HRM.sub_training.index",
+                    "icon" => "fa-cog",
+                ],
                 "Disease Information" => [
                     "route" => "disease_view",
                     "icon" => "fa-cog",

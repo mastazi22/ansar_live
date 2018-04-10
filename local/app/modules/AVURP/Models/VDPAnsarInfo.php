@@ -18,8 +18,14 @@ class VDPAnsarInfo extends Model
     protected $connection = "avurp";
     protected $guarded = ['id'];
 
+    public function status(){
+        return $this->hasOne(VDPAnsarStatusInfo::class,'vdp_ansar_info_id');
+    }
     public function education(){
         return $this->hasMany(VDPAnsarEducationInfo::class,'vdp_ansar_id');
+    }
+    public function training_info(){
+        return $this->hasMany(VDPAnsarTrainingInfo::class,'vdp_ansar_info_id');
     }
     public function division(){
         return $this->belongsTo(Division::class,'division_id');
