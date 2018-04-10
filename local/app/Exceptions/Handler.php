@@ -51,9 +51,9 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        if(!Auth::check()&&!App::isDownForMaintenance()){
+        /*if(!Auth::check()&&!App::isDownForMaintenance()){
             return Redirect::route('login');
-        }
+        }*/
         return parent::render($request, $e);
     }
 }
