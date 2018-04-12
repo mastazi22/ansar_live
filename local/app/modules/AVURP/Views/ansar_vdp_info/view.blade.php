@@ -212,7 +212,7 @@
                                 </label>
                                 <div class="col-sm-8">
                                     <div class="form-control">
-                                        {{$info->smart_card_no}}
+                                        {{$info->smart_card_id}}
                                     </div>
                                 </div>
                             </div>
@@ -251,12 +251,22 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-sm-4">ইমেইল/ফেসবুক আইডি
+                                <label class="control-label col-sm-4">ইমেইল আইডি
                                     <span class="pull-right">:</span>
                                 </label>
                                 <div class="col-sm-8">
                                     <div class="form-control">
-                                        {{$info->email_or_fb_id}}
+                                        {{$info->email_id}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-4">ফেসবুক আইডি
+                                    <span class="pull-right">:</span>
+                                </label>
+                                <div class="col-sm-8">
+                                    <div class="form-control">
+                                        {{$info->fb_id}}
                                     </div>
                                 </div>
                             </div>
@@ -334,13 +344,30 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="control-label col-sm-4">প্রশিক্ষণ
+                                <label class="control-label">প্রশিক্ষণ
                                     <span class="pull-right">:</span>
                                 </label>
-                                <div class="col-sm-8">
-                                    <div class="form-control">
-                                        {{$info->training_info}}
-                                    </div>
+                                <div class="table-reaponsive">
+                                    <table class="table table-bordered table-condensed">
+                                        <tr>
+                                            <th>প্রধান প্রশিক্ষণ নাম</th>
+                                            <th>উপ প্রশিক্ষণ নাম</th>
+                                            <th>প্রতিষ্ঠানের নাম</th>
+                                            <th>সনদ পত্র নং</th>
+                                            <th>প্রশিক্ষণ শুরুর তারিখ</th>
+                                            <th>প্রশিক্ষণ শেষের তারিখ</th>
+                                        </tr>
+                                        @foreach($info->training_info as $t)
+                                            <tr>
+                                                <td>{{$t->main_training->training_name_bng}}</td>
+                                                <td>{{$t->sub_training->training_name_bng}}</td>
+                                                <td>{{$t->institute_name}}</td>
+                                                <td>{{$t->certificate_no}}</td>
+                                                <td>{{$t->training_start_date}}</td>
+                                                <td>{{$t->training_end_date}}</td>
+                                            </tr>
+                                        @endforeach
+                                    </table>
                                 </div>
                             </div>
                         </fieldset>

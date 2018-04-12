@@ -73,6 +73,14 @@
             $scope.info.form['educationInfo'].forEach(function (v, index) {
                 $scope.info.form['educationInfo'][index].education_id += '';
             })
+            $scope.info.form['training_info'].forEach(function (v, index) {
+                $scope.info.form['training_info'][index].training_id += '';
+                $scope.info.form['training_info'][index].sub_training_id += '';
+                $scope.subTraining[index] = $scope.info.form['training_info'][index].main_training.sub_training
+                delete  $scope.info.form['training_info'][index].main_training;
+            })
+            $scope.educationDegrees = new Array($scope.info.form['educationInfo'].length)
+            $scope.training_info = new Array($scope.info.form['training_info'].length)
             $scope.info.form['blood_group_id'] += '';
             $scope.loadUnit($scope.info.form['division_id']);
             $scope.loadThana($scope.info.form['division_id'], $scope.info.form['unit_id']);
@@ -110,9 +118,6 @@
         $scope.removeTraining = function (index) {
             var l = $scope.training_info.length;
             if (l > 1) {
-                console.log($scope.info.form.training_info instanceof Object)
-                console.log($scope.info.form.training_info!==undefined)
-//                console.log($scope.info.form.training_info instanceof Array)
                 $scope.training_info.splice(index, 1)
                 if ($scope.info.form.training_info &&
                     $scope.info.form.training_info instanceof Object  &&
@@ -123,6 +128,17 @@
                     $scope.subTraining.constructor instanceof Array &&
                     $scope.subTraining[index]) {
                     $scope.subTraining.splice(index, 1)
+                }
+            }
+        }
+        $scope.removeEducation = function (index) {
+            var l = $scope.educationDegrees.length;
+            if (l > 1) {
+                $scope.educationDegrees.splice(index, 1)
+                if ($scope.info.form.educationInfo &&
+                    $scope.info.form.educationInfo instanceof Object  &&
+                    $scope.info.form.educationInfo[index]) {
+                    delete $scope.info.form.educationInfo[index]
                 }
             }
         }
@@ -340,7 +356,7 @@
                 </label>
                 <div class="col-sm-8">
                     <input type="text" date-picker class="form-control" ng-model="info.form.date_of_birth"
-                           id="date_of_birth">
+                           id="date_of_birth" date-picker-big="[[info.form.date_of_birth]]">
                     <p ng-if="errors.date_of_birth&&errors.date_of_birth.length>0" class="text text-danger">
                         [[errors.date_of_birth[0] ]]</p>
                 </div>
@@ -543,7 +559,7 @@
                                     <th>বিভাগ / শ্রেণী</th>
                                     <th>Action</th>
                                 </tr>
-                                <tr ng-repeat="e in educationDegrees">
+                                <tr ng-repeat="e in educationDegrees track by $index">
                                     <td>
                                         <select name="" id="" ng-model="info.form.educationInfo[$index].education_id">
                                             <option value="">--নির্বাচন করুন--</option>
@@ -573,7 +589,7 @@
                                     </td>
                                     <td>
                                         <a class="btn btn-danger btn-xs"
-                                           ng-click="educationDegrees.length>1?educationDegrees.splice($index):''">
+                                           ng-click="removeEducation($index)">
                                             <i class="fa fa-minus"></i>
                                         </a>
                                     </td>
@@ -609,7 +625,7 @@
                                     <th>প্রশিক্ষণ শেষের তারিখ</th>
                                     <th>Action</th>
                                 </tr>
-                                <tr ng-repeat="t in training_info">
+                                <tr ng-repeat="t in training_info track by $index">
                                     <td>
                                         <select ng-model="info.form.training_info[$index].training_id"
                                                 ng-change="loadSubTraining(info.form.training_info[$index].training_id,$index)">
@@ -643,11 +659,14 @@
                                     </td>
                                     <td>
                                         <input type="text"
+                                               date-picker-big="[[info.form.training_info[$index].training_start_date]]"
                                                ng-model="info.form.training_info[$index].training_start_date"
                                                placeholder="প্রশিক্ষণ শুরুর তারিখ">
                                     </td>
                                     <td>
-                                        <input type="text" ng-model="info.form.training_info[$index].training_end_date"
+                                        <input type="text"
+                                               date-picker-big="[[info.form.training_info[$index].training_end_date]]"
+                                               ng-model="info.form.training_info[$index].training_end_date"
                                                placeholder="প্রশিক্ষণ শেষের তারিখ">
                                     </td>
                                     <td>

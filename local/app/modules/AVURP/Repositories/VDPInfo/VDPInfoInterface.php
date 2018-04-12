@@ -50,4 +50,11 @@ interface VDPInfoInterface
      * @return array VDPAnsarInfo
      */
     public function getInfos($param=[],$paginate=30,$user_id='');
+
+    /**
+     * @param id $
+     * @return mixed
+     */
+    public function verifyVDP($id);
+    public function approveVDP($id);
 }

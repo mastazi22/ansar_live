@@ -235,6 +235,29 @@ GlobalApp.directive('datePicker', function () {
         }
     }
 })
+GlobalApp.directive('datePickerBig', function () {
+    return {
+        restrict: 'AC',
+        link: function (scope, element, attrs) {
+            //alert(scope.event)
+            var data = attrs.datePickerBig
+            var format = attrs.dateFormat||'DD-MMM-YYYY';
+            console.log(data)
+            if (data) {
+                data = moment(data)
+
+            } else{
+                data = moment();
+            }
+            // console.log(data)
+            $(element).datePicker({
+                dateFormat:format,
+                defaultValue:data
+            })
+
+        }
+    }
+})
 GlobalApp.directive('modal', function () {
     return {
         restrict: 'A',

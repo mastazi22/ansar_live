@@ -19,6 +19,7 @@
             <th>Thana</th>
             <th>Union</th>
             <th>Ward</th>
+            <th>Status</th>
             <th>Action</th>
 
         </tr>
@@ -36,6 +37,19 @@
                     <td>{{$info->thana->thana_name_bng}}</td>
                     <td>{{$info->union->union_name_bng}}</td>
                     <td>{{$info->union_word_id}}</td>
+                    @if($info->status=='new')
+                        <td>
+                            <span class="label label-danger">Unverified</span>
+                        </td>
+                    @elseif($info->status=='verified')
+                        <td>
+                            <span class="label label-info">Verified</span>
+                        </td>
+                    @else
+                        <td>
+                            <span class="label label-success">Approved</span>
+                        </td>
+                    @endif
                     <td>
                         {{--<a href="{{URL::route('AVURP.info.edit',$info->id)}}" class="btn btn-xs btn-primary">
                             <i class="fa fa-edit"></i>&nbsp;Edit

@@ -18,11 +18,13 @@ use App\modules\HRM\Models\Thana;
 use App\modules\HRM\Models\Unions;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Intervention\Image\Facades\Image;
 
 class VDPInfoRepository implements VDPInfoInterface
 {
     public $info;
+
     /**
      * VDPInfoRepository constructor.
      * @param VDPAnsarInfo $info
@@ -38,50 +40,55 @@ class VDPInfoRepository implements VDPInfoInterface
      * @param string $user_id
      * @return mixed
      */
-    public function create($request,$user_id='')
+    public function create($request, $user_id = '')
     {
         DB::connection('avurp')->beginTransaction();
-        try{
+        try {
 
-            $division_code = sprintf("%02d",Division::find($request->division_id)->division_code);
-            $unit_code = sprintf("%02d",District::find($request->unit_id)->unit_code);
-            $thana_code = sprintf("%02d",Thana::find($request->thana_id)->thana_code);
-            $union_code = sprintf("%02d",Unions::find($request->union_id)->code);
-            $gender_code = $request->gender=='Male'?1:2;
-            $word_code = '0'.$request->union_word_id;
-            $count = $this->info->where($request->only(['division_id','thana_id','unit_id','union_id','union_word_id']))->count()+1;
-            $count = sprintf("%03d",$count);
-            $geo_id = $division_code.$unit_code.$thana_code.$union_code.$gender_code.$word_code.$count;
-            if($request->hasFile('profile_pic')){
+            $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', 'union_id', 'union_word_id','gender']))->count();
+            if($count>=32){
+                throw new \Exception("32 {$request->gender} already register in this ward");
+            }
+
+            $division_code = sprintf("%02d", Division::find($request->division_id)->division_code);
+            $unit_code = sprintf("%02d", District::find($request->unit_id)->unit_code);
+            $thana_code = sprintf("%02d", Thana::find($request->thana_id)->thana_code);
+            $union_code = sprintf("%02d", Unions::find($request->union_id)->code);
+            $gender_code = $request->gender == 'Male' ? 1 : 2;
+            $word_code = '0' . $request->union_word_id;
+            $count += ($request->gender == 'Male' ? 1 : 33);
+            $count = sprintf("%02d", $count);
+            $geo_id = $division_code . $unit_code . $thana_code . $union_code . $gender_code . $word_code . $count;
+            if ($request->hasFile('profile_pic')) {
                 $file = $request->file('profile_pic');
                 $path = storage_path('avurp/profile_pic');
-                if(!File::exists($path)) File::makeDirectory($path,777,true);
-                $image_name = $geo_id.'.'.$file->clientExtension();
-                Image::make($file)->save($path.'/'.$image_name);
+                if (!File::exists($path)) File::makeDirectory($path, 777, true);
+                $image_name = $geo_id . '.' . $file->clientExtension();
+                Image::make($file)->save($path . '/' . $image_name);
             }
-            $data = $request->except(['educationInfo','training_info']);
+            $data = $request->except(['educationInfo', 'training_info','status']);
             $data['geo_id'] = $geo_id;
-            if(isset($path)&&isset($image_name)) $data['profile_pic'] = $path.'/'.$image_name;
-            else  $data['profile_pic']='';
+            if (isset($path) && isset($image_name)) $data['profile_pic'] = $path . '/' . $image_name;
+            else  $data['profile_pic'] = '';
             $info = $this->info->create($data);
-            $info->status()->create(['verification_status'=>0]);
-            foreach ($request->educationInfo as $education){
+            $info->status()->create([]);
+            foreach ($request->educationInfo as $education) {
                 $info->education()->create($education);
             }
-            foreach ($request->training_info as $training){
+            foreach ($request->training_info as $training) {
                 $info->training_info()->create($training);
             }
             DB::connection('avurp')->commit();
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::connection('avurp')->rollback();
-            if(isset($path)&&isset($image_name)){
-                if(File::exists($path.'/'.$image_name)){
-                    File::delete($path.'/'.$image_name);
+            if (isset($path) && isset($image_name)) {
+                if (File::exists($path . '/' . $image_name)) {
+                    File::delete($path . '/' . $image_name);
                 }
             }
-            return ['data'=>['message'=>$e->getMessage()],'status'=>false];
+            return ['data' => ['message' => $e->getMessage()], 'status' => false];
         }
-        return ['data'=>['message'=>"data updated successfully"],'status'=>true];
+        return ['data' => ['message' => "data updated successfully"], 'status' => true];
     }
 
     /**
@@ -89,9 +96,9 @@ class VDPInfoRepository implements VDPInfoInterface
      * @param string $user_id
      * @return mixed
      */
-    public function getInfo($id,$user_id='')
+    public function getInfo($id, $user_id = '')
     {
-        $info = $this->info->with(['division','unit','thana','union','education','education.education','bloodGroup','training_info'])->where('id',$id)->userQuery($user_id);
+        $info = $this->info->with(['division', 'unit', 'thana', 'union', 'education', 'education.education', 'bloodGroup', 'training_info'])->where('id', $id)->userQuery($user_id);
         return $info->first();
     }
 
@@ -101,23 +108,23 @@ class VDPInfoRepository implements VDPInfoInterface
      * @param string $user_id
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function getInfos($param = [],$paginate=30,$user_id='')
+    public function getInfos($param = [], $paginate = 30, $user_id = '')
     {
-        $range = isset($param['range'])&&$param['range']?$param['range']:'all';
-        $unit = isset($param['unit'])&&$param['unit']?$param['unit']:'all';
-        $thana = isset($param['thana'])&&$param['thana']?$param['thana']:'all';
-        $vdp_infos = $this->info->with(['division','unit','thana','union']);
-        if($range!='all'){
-            $vdp_infos->where('division_id',$range);
+        $range = isset($param['range']) && $param['range'] ? $param['range'] : 'all';
+        $unit = isset($param['unit']) && $param['unit'] ? $param['unit'] : 'all';
+        $thana = isset($param['thana']) && $param['thana'] ? $param['thana'] : 'all';
+        $vdp_infos = $this->info->with(['division', 'unit', 'thana', 'union']);
+        if ($range != 'all') {
+            $vdp_infos->where('division_id', $range);
         }
-        if($unit!='all'){
-            $vdp_infos->where('unit_id',$unit);
+        if ($unit != 'all') {
+            $vdp_infos->where('unit_id', $unit);
         }
-        if($thana!='all'){
-            $vdp_infos->where('thana_id',$thana);
+        if ($thana != 'all') {
+            $vdp_infos->where('thana_id', $thana);
         }
         $vdp_infos->userQuery($user_id);
-        if($paginate>0) {
+        if ($paginate > 0) {
             return $vdp_infos->paginate($paginate);
         }
         return $vdp_infos->get();
@@ -130,48 +137,65 @@ class VDPInfoRepository implements VDPInfoInterface
      * @return mixed
      * @internal param Request $input
      */
-    public function update($request,$id,$user_id='')
+    public function update($request, $id, $user_id = '')
     {
         DB::connection('avurp')->beginTransaction();
-        try{
+        try {
+            $info = $this->info->findOrFail($id);
+            $division_code = sprintf("%02d", Division::find($request->division_id)->division_code);
+            $unit_code = sprintf("%02d", District::find($request->unit_id)->unit_code);
+            $thana_code = sprintf("%02d", Thana::find($request->thana_id)->thana_code);
+            $union_code = sprintf("%02d", Unions::find($request->union_id)->code);
+            $gender_code = $request->gender == 'Male' ? 1 : 2;
+            $word_code = '0' . $request->union_word_id;
+            $geo_id = $division_code . $unit_code . $thana_code . $union_code . $gender_code . $word_code;
+            $e_geo_id = substr($info->geo_id, 0, 11);
+            if ($geo_id == $e_geo_id) {
+                $geo_id = $info->geo_id;
+            } else {
+                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', 'union_id', 'union_word_id', 'gender']))->count();
 
-            $division_code = sprintf("%02d",Division::find($request->division_id)->division_code);
-            $unit_code = sprintf("%02d",District::find($request->unit_id)->unit_code);
-            $thana_code = sprintf("%02d",Thana::find($request->thana_id)->thana_code);
-            $union_code = sprintf("%02d",Unions::find($request->union_id)->code);
-            $gender_code = $request->gender=='Male'?1:2;
-            $word_code = '0'.$request->union_word_id;
-            $count = $this->info->where($request->only(['division_id','thana_id','unit_id','union_id','union_word_id']))->count()+1;
-            $count = sprintf("%03d",$count);
-            $geo_id = $division_code.$unit_code.$thana_code.$union_code.$gender_code.$word_code.$count;
-            if($request->hasFile('profile_pic')){
+                if ($count >= 32) {
+                    throw new \Exception("32 {$request->gender} already register in this ward");
+                }
+                $count += ($request->gender == 'Male' ? 1 : 33);
+                $count = sprintf("%02d", $count);
+                $geo_id .= $count;
+            }
+
+            if ($request->hasFile('profile_pic')) {
                 $file = $request->file('profile_pic');
                 $path = storage_path('avurp/profile_pic');
-                if(!File::exists($path)) File::makeDirectory($path,777,true);
-                $image_name = $geo_id.'.'.$file->clientExtension();
-                Image::make($file)->save($path.'/'.$image_name);
+                if (!File::exists($path)) File::makeDirectory($path, 777, true);
+                $image_name = $geo_id . '.' . $file->clientExtension();
+                Image::make($file)->save($path . '/' . $image_name);
             }
-            $data = $request->except('educationInfo');
+            $data = $request->except(['training_info','educationInfo','status']);
             $data['geo_id'] = $geo_id;
-            if(isset($path)&&isset($image_name)) $data['profile_pic'] = $path.'/'.$image_name;
-            else if($request->hasFile('profile_pic')) $data['profile_pic']='';
-            $info = $this->info->find($id);
+            if (isset($path) && isset($image_name)) $data['profile_pic'] = $path . '/' . $image_name;
+            else if ($request->hasFile('profile_pic')) $data['profile_pic'] = '';
+
             $info->update($data);
             $info->education()->delete();
-            foreach ($request->educationInfo as $education){
+            $info->training_info()->delete();
+            foreach ($request->educationInfo as $education) {
                 $info->education()->create($education);
             }
+            foreach ($request->training_info as $training) {
+                $info->training_info()->create($training);
+            }
             DB::connection('avurp')->commit();
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::connection('avurp')->rollback();
-            if(isset($path)&&isset($image_name)){
-                if(File::exists($path.'/'.$image_name)){
-                    File::delete($path.'/'.$image_name);
+            if (isset($path) && isset($image_name)) {
+                if (File::exists($path . '/' . $image_name)) {
+                    File::delete($path . '/' . $image_name);
                 }
             }
-            return ['data'=>['message'=>$e->getMessage()],'status'=>false];
+            Log::info($e->getTraceAsString());
+            return ['data' => ['message' => $e->getMessage()], 'status' => false];
         }
-        return ['data'=>['message'=>"data updated successfully"],'status'=>true];
+        return ['data' => ['message' => "data updated successfully"], 'status' => true];
     }
 
     /**
@@ -179,9 +203,49 @@ class VDPInfoRepository implements VDPInfoInterface
      * @param string $user_id
      * @return mixed
      */
-    public function getInfoForEdit($id,$user_id='')
+    public function getInfoForEdit($id, $user_id = '')
     {
-        $info = $this->info->with(['education','training_info'])->userQuery($user_id);
+        $info = $this->info->with(['education', 'training_info', 'training_info.main_training.subTraining'])->userQuery($user_id);
         return $info->first();
+    }
+
+    /**
+     * @param id $
+     * @return mixed
+     */
+    public function verifyVDP($id)
+    {
+        $type = auth()->user()->usertype->type_code;
+        if($type==55||$type==22||$type==66||$type==11){
+            DB::connection('avurp')->beginTransaction();
+            try{
+                $info = $this->info->findOrFail($id);
+                $info->update(['status'=>'verified']);
+                DB::connection('avurp')->commit();
+            }catch(\Exception $e){
+                DB::connection('avurp')->rollback();
+                return ['data' => ['message' => $e->getMessage()], 'status' => false];
+            }
+            return ['data' => ['message' => "VDP verified successfully"], 'status' => true];
+        }
+        return ['data' => ['message' => "You don`t have access to perform this action"], 'status' => false];
+    }
+
+    public function approveVDP($id)
+    {
+        $type = auth()->user()->usertype->type_code;
+        if($type==22||$type==66||$type==11){
+            DB::connection('avurp')->beginTransaction();
+            try{
+                $info = $this->info->findOrFail($id);
+                $info->update(['status'=>'approved']);
+                DB::connection('avurp')->commit();
+            }catch(\Exception $e){
+                DB::connection('avurp')->rollback();
+                return ['data' => ['message' => $e->getMessage()], 'status' => false];
+            }
+            return ['data' => ['message' => "VDP approved successfully"], 'status' => true];
+        }
+        return ['data' => ['message' => "You don`t have access to perform this action"], 'status' => false];
     }
 }

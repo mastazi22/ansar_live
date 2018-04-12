@@ -137,4 +137,20 @@ class AnsarVDPInfoController extends Controller
     {
         //
     }
+    public function verifyVDP($id)
+    {
+        $response = $this->infoRepository->verifyVDP($id);
+        if (!$response['status']) {
+            return redirect()->back()->with('error_message',$response['data']['message']);
+        }
+        return redirect()->back()->with('success_message',$response['data']['message']);
+    }
+    public function approveVDP($id)
+    {
+        $response = $this->infoRepository->approveVDP($id);
+        if (!$response['status']) {
+            return redirect()->back()->with('error_message',$response['data']['message']);
+        }
+        return redirect()->back()->with('success_message',$response['data']['message']);
+    }
 }
