@@ -100,7 +100,7 @@ class SubTrainingInfoController extends Controller
         $this->validate($request,$rules);
         DB::connection('hrm')->beginTransaction();
         try{
-            $t = MainTrainingInfo::find($id);
+            $t = SubTrainingInfo::find($id);
             if(!$t) throw new \Exception("No training found");
             $t->update($request->all());
             DB::connection('hrm')->commit();
