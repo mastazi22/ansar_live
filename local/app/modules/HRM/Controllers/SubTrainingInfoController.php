@@ -80,7 +80,7 @@ class SubTrainingInfoController extends Controller
         $data = SubTrainingInfo::find($id);
         $main_training = MainTrainingInfo::pluck('training_name_bng','id');
         $main_training->prepend('--Select main training--','');
-        return view('HRM::sub_training.edit',compact('data','main_training'));
+        return view('HRM::sub_training_info.edit',compact('data','main_training'));
     }
 
     /**
