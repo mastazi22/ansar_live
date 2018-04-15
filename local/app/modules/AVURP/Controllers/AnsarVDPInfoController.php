@@ -141,16 +141,16 @@ class AnsarVDPInfoController extends Controller
     {
         $response = $this->infoRepository->verifyVDP($id);
         if (!$response['status']) {
-            return redirect()->back()->with('error_message',$response['data']['message']);
+            return redirect()->route('AVURP.info.index')->with('error_message',$response['data']['message']);
         }
-        return redirect()->back()->with('success_message',$response['data']['message']);
+        return redirect()->route('AVURP.info.index')->with('success_message',$response['data']['message']);
     }
     public function approveVDP($id)
     {
         $response = $this->infoRepository->approveVDP($id);
         if (!$response['status']) {
-            return redirect()->back()->with('error_message',$response['data']['message']);
+            return redirect()->route('AVURP.info.index')->with('error_message',$response['data']['message']);
         }
-        return redirect()->back()->with('success_message',$response['data']['message']);
+        return redirect()->route('AVURP.info.index')->with('success_message',$response['data']['message']);
     }
 }
