@@ -48,7 +48,7 @@
             @endif
         </ul>
         <ul class="pull-right" style="width: 33% !important;">
-            <li>তারিখঃ{{LanguageConverter::engToBng(date('d/m/Y',strtotime($mem->created_at)))}}  খ্রিঃ</li>
+            <li>তারিখঃ{{LanguageConverter::engToBng(\Carbon\Carbon::parse($mem->created_at)->format('d/m/Y'))}}  খ্রিঃ</li>
             <li>&nbsp;</li>
             <li>সদয় অবগতির জন্য<br>&nbsp;</li>
             <li class="ppp">"&nbsp;<br>"&nbsp;</li>
