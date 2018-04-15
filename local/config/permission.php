@@ -138,5 +138,8 @@ return [
         "HRM.api.unit",
         "HRM.api.thana",
         "HRM.api.union",
+        "HRM.AVURP.info.verify",
+        "HRM.AVURP.info.approve",
+        "HRM.AVURP.info.verify_approve",
     ]
 ];

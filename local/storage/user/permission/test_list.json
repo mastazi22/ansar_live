@@ -664,6 +664,18 @@
           {
             "value": "AVURP.info.edit,AVURP.info.update",
             "name": "Edit"
+          },
+          {
+            "value": "AVURP.info.verify",
+            "name": "Verify VDP"
+          },
+          {
+            "value": "AVURP.info.approve",
+            "name": "Approve VDP"
+          },
+          {
+            "value": "AVURP.info.verify_approve",
+            "name": "Verify & Approve VDP"
           }
         ]
       }
