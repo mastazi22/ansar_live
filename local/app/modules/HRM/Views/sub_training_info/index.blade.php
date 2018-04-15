@@ -5,12 +5,12 @@
     {!! Breadcrumbs::render('range.index') !!}
 @endsection
 @section('content')
-    @if(Session::has('success'))
+    @if(Session::has('success_messsage'))
         <div class="alert alert-success">
             <i class="fa fa-check"></i>&nbsp;{{Session::get('success_message')}}
         </div>
         @endif
-    @if(Session::has('error'))
+    @if(Session::has('error_messsage'))
         <div class="alert alert-danger">
             <i class="fa fa-remove"></i>&nbsp;{{Session::get('error_message')}}
         </div>
