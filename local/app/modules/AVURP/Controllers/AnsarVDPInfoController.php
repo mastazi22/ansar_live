@@ -9,6 +9,7 @@ use App\modules\AVURP\Requests\VDPInfoRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
+use Intervention\Image\Facades\Image;
 
 class AnsarVDPInfoController extends Controller
 {
