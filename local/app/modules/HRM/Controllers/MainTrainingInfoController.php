@@ -51,9 +51,9 @@ class MainTrainingInfoController extends Controller
             DB::connection('hrm')->commit();
         }catch(\Exception $e){
             DB::connection('hrm')->rollback();
-            return redirect()->back()->with('error_messsage',$e->getMessage());
+            return redirect()->back()->with('error_message',$e->getMessage());
         }
-        return redirect()->route('HRM.main_training.index')->with('success_messsage','Information insert complete');
+        return redirect()->route('HRM.main_training.index')->with('success_message','Information insert complete');
     }
 
     /**
@@ -101,9 +101,9 @@ class MainTrainingInfoController extends Controller
             DB::connection('hrm')->commit();
         }catch(\Exception $e){
             DB::connection('hrm')->rollback();
-            return redirect()->back()->with('error_messsage',$e->getMessage());
+            return redirect()->back()->with('error_message',$e->getMessage());
         }
-        return redirect()->route('HRM.main_training.index')->with('success_messsage','Information update complete');
+        return redirect()->route('HRM.main_training.index')->with('success_message','Information update complete');
     }
 
     /**

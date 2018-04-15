@@ -50,12 +50,12 @@ class SubTrainingInfoController extends Controller
             DB::connection('hrm')->commit();
         }catch(\Exception $e){
             DB::connection('hrm')->rollback();
-            return redirect()->back()->with('error_messsage',$e->getMessage());
+            return redirect()->back()->with('error_message',$e->getMessage());
         }catch(\Throwable $e){
             DB::connection('hrm')->rollback();
-            return redirect()->back()->with('error_messsage',$e->getMessage());
+            return redirect()->back()->with('error_message',$e->getMessage());
         }
-        return redirect()->route('HRM.sub_training.index')->with('success_messsage','Information insert complete');
+        return redirect()->route('HRM.sub_training.index')->with('success_message','Information insert complete');
     }
 
     /**
@@ -106,9 +106,9 @@ class SubTrainingInfoController extends Controller
             DB::connection('hrm')->commit();
         }catch(\Exception $e){
             DB::connection('hrm')->rollback();
-            return redirect()->back()->with('error_messsage',$e->getMessage());
+            return redirect()->back()->with('error_message',$e->getMessage());
         }
-        return redirect()->route('HRM.sub_training.index')->with('success_messsage','Information update complete');
+        return redirect()->route('HRM.sub_training.index')->with('success_message','Information update complete');
     }
 
     /**
