@@ -43,7 +43,7 @@
                         </td>
                     @elseif($info->status=='verified')
                         <td>
-                            <span class="label label-info">Verified</span>
+                            <span class="label label-warning">Verified</span>
                         </td>
                     @else
                         <td>
