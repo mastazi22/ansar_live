@@ -26,23 +26,34 @@ class ApiController extends Controller
 
     public function division(Request $request)
     {
-
-        return response()->json($this->dataRepo->getDivisions($request->id));
+        $divisions = collect($this->dataRepo->getDivisions($request->id))
+            ->pluck('id', 'division_name_bng')
+            ->prepend('', 'বিভাগ নির্বাচন করুন');
+        return response()->json($divisions);
     }
 
     public function unit(Request $request)
     {
-        return response()->json($this->dataRepo->getUnits($request->range_id,$request->id));
+        $units = collect($this->dataRepo->getUnits($request->range_id, $request->id))
+            ->pluck('id', 'unit_name_bng')
+            ->prepend('', 'জেলা নির্বাচন করুন');
+        return response()->json($units);
     }
 
     public function thana(Request $request)
     {
-        return response()->json($this->dataRepo->getThanas($request->range_id,$request->unit_id,$request->id));
+        $thanas = collect($this->dataRepo->getThanas($request->range_id, $request->unit_id, $request->id))
+            ->pluck('id', 'thana_name_bng')
+            ->prepend('', 'থানা নির্বাচন করুন');
+        return response()->json($thanas);
     }
 
     public function union(Request $request)
     {
-        return response()->json($this->dataRepo->getUnions($request->range_id,$request->unit_id,$request->thana_id,$request->id));
+        $units = collect($this->dataRepo->getUnions($request->range_id, $request->unit_id, $request->thana_id, $request->id))
+            ->pluck('id', 'union_name_bng')
+            ->prepend('', 'ইউনিয়ন নির্বাচন করুন');
+        return response()->json($this->dataRepo->getUnions($request->range_id, $request->unit_id, $request->thana_id, $request->id));
 
     }
     public function main_training()
