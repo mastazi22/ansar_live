@@ -41,7 +41,7 @@ class MainTrainingInfoController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            'training_name_eng'=>'required',
+//            'training_name_eng'=>'required',
             'training_name_bng'=>'required',
         ];
         $this->validate($request,$rules);
@@ -89,7 +89,7 @@ class MainTrainingInfoController extends Controller
     public function update(Request $request, $id)
     {
         $rules = [
-            'training_name_eng'=>'required',
+//            'training_name_eng'=>'required',
             'training_name_bng'=>'required',
         ];
         $this->validate($request,$rules);

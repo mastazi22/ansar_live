@@ -40,7 +40,7 @@ class SubTrainingInfoController extends Controller
     {
         $rules = [
             'main_training_info_id'=>'required',
-            'training_name_eng'=>'required',
+//            'training_name_eng'=>'required',
             'training_name_bng'=>'required',
         ];
         $this->validate($request,$rules);
@@ -80,7 +80,7 @@ class SubTrainingInfoController extends Controller
         $data = SubTrainingInfo::find($id);
         $main_training = MainTrainingInfo::pluck('training_name_bng','id');
         $main_training->prepend('--Select main training--','');
-        return view('HRM::sub_training_info_info.edit',compact('data','main_training'));
+        return view('HRM::sub_training.edit',compact('data','main_training'));
     }
 
     /**
@@ -93,7 +93,8 @@ class SubTrainingInfoController extends Controller
     public function update(Request $request, $id)
     {
         $rules = [
-            'training_name_eng'=>'required',
+            'main_training_info_id'=>'required',
+//            'training_name_eng'=>'required',
             'training_name_bng'=>'required',
         ];
         $this->validate($request,$rules);
