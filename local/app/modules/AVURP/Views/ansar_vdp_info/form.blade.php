@@ -85,6 +85,9 @@
             $scope.loadUnit($scope.info.form['division_id']);
             $scope.loadThana($scope.info.form['division_id'], $scope.info.form['unit_id']);
             $scope.loadUnion($scope.info.form['division_id'], $scope.info.form['unit_id'], $scope.info.form['thana_id']);
+            Object.keys($scope.info.form).forEach(function (key) {
+                if(!$scope.info.form[key]) delete $scope.info.form[key];
+            })
             @endif
                 $scope.allLoading = false
         })
@@ -107,8 +110,8 @@
             })
         }
         $scope.loadSubTraining = function (id, index) {
-            if($scope.subTraining[index]!==undefined&&$scope.info.form.training_info[$index]!==undefined){
-                $scope.info.form.training_info[$index].sub_training_id = '';
+            if($scope.subTraining[index]!==undefined&&$scope.info.form.training_info[index]!==undefined){
+                $scope.info.form.training_info[index].sub_training_id = '';
                 $scope.subTraining[index] = {}
             }
             httpService.subTraining(id).then(function (data) {

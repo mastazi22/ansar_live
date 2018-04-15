@@ -5,7 +5,7 @@
 @endsection
 @section('content')
     <style>
-        .form-control{
+        .form-control {
             margin-bottom: 10px;
         }
     </style>
@@ -20,7 +20,8 @@
                         <div class="row">
                             <div class="col-sm-2 col-sm-offset-10">
 
-                                <img src="{!! Image::make($info->profile_pic)->encode('data-url') !!}" alt="" class="img-responsive img-thumbnail pull-right" style="margin-bottom: 10px">
+                                <img src="{!! Image::make($info->profile_pic)->encode('data-url') !!}" alt=""
+                                     class="img-responsive img-thumbnail pull-right" style="margin-bottom: 10px">
                             </div>
                         </div>
                         <div class="row">
@@ -338,9 +339,9 @@
                                                     <td>{{$e->passing_year}}</td>
                                                     <td>{{$e->gade_divission}}</td>
                                                 </tr>
-                                                @endforeach
+                                            @endforeach
                                         </table>
-                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -372,6 +373,22 @@
                             </div>
                         </fieldset>
                     </div>
+                </div>
+                <div style="display: flex;justify-content: center;align-items: center">
+                    @if((Auth::user()->type==22||Auth::user()->type==55||Auth::user()->type==11)&&$info->status=='new')
+                        {!! Form::open(['route'=>['AVURP.info.verify',$info->id],'style'=>'align-self:center;margin-left:10px']) !!}
+                        <button class="btn btn-primary">
+                            <i class="fa fa-check"></i>&nbsp;Verify
+                        </button>
+                        {!! Form::close() !!}
+                    @endif
+                    @if((Auth::user()->type==22||Auth::user()->type==11)&&($info->status=='verified'||$info->status=='new'))
+                        {!! Form::open(['route'=>['AVURP.info.approve',$info->id],'style'=>'align-self:center;margin-left:10px']) !!}
+                        <button class="btn btn-primary">
+                            <i class="fa fa-check"></i>&nbsp;Verify & Approved
+                        </button>
+                        {!! Form::close() !!}
+                    @endif
                 </div>
             </div>
         </div>

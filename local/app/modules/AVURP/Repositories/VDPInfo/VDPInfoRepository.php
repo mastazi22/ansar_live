@@ -220,6 +220,7 @@ class VDPInfoRepository implements VDPInfoInterface
             DB::connection('avurp')->beginTransaction();
             try{
                 $info = $this->info->findOrFail($id);
+                if($info->status!='new') throw new \Exception("He/She is already {$info->status}");
                 $info->update(['status'=>'verified']);
                 DB::connection('avurp')->commit();
             }catch(\Exception $e){
@@ -238,6 +239,7 @@ class VDPInfoRepository implements VDPInfoInterface
             DB::connection('avurp')->beginTransaction();
             try{
                 $info = $this->info->findOrFail($id);
+                if($info->status!='verified') throw new \Exception("His/Her status is  {$info->status}");
                 $info->update(['status'=>'approved']);
                 DB::connection('avurp')->commit();
             }catch(\Exception $e){
