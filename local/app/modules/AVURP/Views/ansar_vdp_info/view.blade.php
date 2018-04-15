@@ -382,13 +382,21 @@
                         </button>
                         {!! Form::close() !!}
                     @endif
-                    @if((Auth::user()->type==22||Auth::user()->type==11)&&($info->status=='verified'||$info->status=='new'))
-                        {!! Form::open(['route'=>['AVURP.info.approve',$info->id],'style'=>'align-self:center;margin-left:10px']) !!}
+                        @if((Auth::user()->type==22||Auth::user()->type==11)&&($info->status=='verified'))
+                            {!! Form::open(['route'=>['AVURP.info.approve',$info->id],'style'=>'align-self:center;margin-left:10px']) !!}
+                            <button class="btn btn-primary">
+                                <i class="fa fa-check"></i>&nbsp;Approved
+                            </button>
+                            {!! Form::close() !!}
+                        @endif
+                    @if((Auth::user()->type==22||Auth::user()->type==11)&&$info->status=='new')
+                        {!! Form::open(['route'=>['AVURP.info.verify_approve',$info->id],'style'=>'align-self:center;margin-left:10px']) !!}
                         <button class="btn btn-primary">
                             <i class="fa fa-check"></i>&nbsp;Verify & Approved
                         </button>
                         {!! Form::close() !!}
                     @endif
+
                 </div>
             </div>
         </div>

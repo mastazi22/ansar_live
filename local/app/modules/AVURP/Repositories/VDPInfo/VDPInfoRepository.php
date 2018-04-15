@@ -250,4 +250,22 @@ class VDPInfoRepository implements VDPInfoInterface
         }
         return ['data' => ['message' => "You don`t have access to perform this action"], 'status' => false];
     }
+    public function verifyAndApproveVDP($id)
+    {
+        $type = auth()->user()->usertype->type_code;
+        if($type==22||$type==66||$type==11){
+            DB::connection('avurp')->beginTransaction();
+            try{
+                $info = $this->info->findOrFail($id);
+                if($info->status!='new') throw new \Exception("He/She is already {$info->status}");
+                $info->update(['status'=>'approved']);
+                DB::connection('avurp')->commit();
+            }catch(\Exception $e){
+                DB::connection('avurp')->rollback();
+                return ['data' => ['message' => $e->getMessage()], 'status' => false];
+            }
+            return ['data' => ['message' => "VDP approved successfully"], 'status' => true];
+        }
+        return ['data' => ['message' => "You don`t have access to perform this action"], 'status' => false];
+    }
 }

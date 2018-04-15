@@ -57,4 +57,5 @@ interface VDPInfoInterface
      */
     public function verifyVDP($id);
     public function approveVDP($id);
+    public function verifyAndApproveVDP($id);
 }

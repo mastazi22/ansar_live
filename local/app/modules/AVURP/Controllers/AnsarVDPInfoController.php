@@ -156,6 +156,14 @@ class AnsarVDPInfoController extends Controller
         }
         return redirect()->route('AVURP.info.index')->with('success_message',$response['data']['message']);
     }
+    public function verifyAndApproveVDP($id)
+    {
+        $response = $this->infoRepository->verifyAndApproveVDP($id);
+        if (!$response['status']) {
+            return redirect()->route('AVURP.info.index')->with('error_message',$response['data']['message']);
+        }
+        return redirect()->route('AVURP.info.index')->with('success_message',$response['data']['message']);
+    }
     public function loadImage($id){
         $info  = VDPAnsarInfo::find($id);
         if($info&&$info->profile_pic){
