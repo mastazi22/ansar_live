@@ -375,21 +375,21 @@
                     </div>
                 </div>
                 <div style="display: flex;justify-content: center;align-items: center">
-                    @if((Auth::user()->type==22||Auth::user()->type==55||Auth::user()->type==11)&&$info->status=='new')
+                    @if((Auth::user()->type==22||Auth::user()->type==55||Auth::user()->type==11)&&UserPermission::userPermissionExists('AVURP.info.verify')&&$info->status=='new')
                         {!! Form::open(['route'=>['AVURP.info.verify',$info->id],'style'=>'align-self:center;margin-left:10px']) !!}
                         <button class="btn btn-primary">
                             <i class="fa fa-check"></i>&nbsp;Verify
                         </button>
                         {!! Form::close() !!}
                     @endif
-                        @if((Auth::user()->type==22||Auth::user()->type==11)&&($info->status=='verified'))
+                        @if((Auth::user()->type==22||Auth::user()->type==11)&&UserPermission::userPermissionExists('AVURP.info.approve')&&($info->status=='verified'))
                             {!! Form::open(['route'=>['AVURP.info.approve',$info->id],'style'=>'align-self:center;margin-left:10px']) !!}
                             <button class="btn btn-primary">
                                 <i class="fa fa-check"></i>&nbsp;Approved
                             </button>
                             {!! Form::close() !!}
                         @endif
-                    @if((Auth::user()->type==22||Auth::user()->type==11)&&$info->status=='new')
+                    @if((Auth::user()->type==22||Auth::user()->type==11)&&UserPermission::userPermissionExists('AVURP.info.verify_approve')&&$info->status=='new')
                         {!! Form::open(['route'=>['AVURP.info.verify_approve',$info->id],'style'=>'align-self:center;margin-left:10px']) !!}
                         <button class="btn btn-primary">
                             <i class="fa fa-check"></i>&nbsp;Verify & Approved
