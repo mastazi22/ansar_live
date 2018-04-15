@@ -61,6 +61,10 @@ class CheckUserType
         'recruitment.hrm.card_print'=>['range'=>'range','unit'=>'unit'],
         'recruitment.applicant.search_result'=>['range'=>'range','unit'=>'unit'],
         'recruitment.applicant.selected_applicant'=>['range'=>'range','unit'=>'unit'],
+        'HRM.api.union'=>['range_id'=>'range','unit_id'=>'unit'],
+        'HRM.api.thana'=>['range_id'=>'range','unit_id'=>'unit'],
+        'HRM.api.unit'=>['range_id'=>'range','id'=>'unit'],
+        'HRM.api.division'=>['id'=>'range'],
     ];
     public function handle($request, Closure $next)
     {
