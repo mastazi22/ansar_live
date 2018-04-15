@@ -384,8 +384,8 @@
                         <option value="Widow">বিধবা</option>
                         <option value="Divorced">তালাকপ্রাপ্ত</option>
                     </select>
-                    <p ng-if="errors.matital_status&&errors.matital_status.length>0" class="text text-danger">
-                        [[errors.matital_status[0] ]]</p>
+                    <p ng-if="errors.marital_status&&errors.marital_status.length>0" class="text text-danger">
+                        [[errors.marital_status[0] ]]</p>
                 </div>
             </div>
             <div class="form-group">
