@@ -68,7 +68,7 @@ class VDPInfoRepository implements VDPInfoInterface
             }
             $data = $request->except(['educationInfo', 'training_info','status']);
             $data['geo_id'] = $geo_id;
-            if (isset($path) && isset($image_name)) $data['profile_pic'] = $path . '/' . $image_name;
+            if (isset($path) && isset($image_name)) $data['profile_pic'] = $image_name;
             else  $data['profile_pic'] = '';
             $info = $this->info->create($data);
             $info->status()->create([]);

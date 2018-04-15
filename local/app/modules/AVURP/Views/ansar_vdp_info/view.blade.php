@@ -20,7 +20,7 @@
                         <div class="row">
                             <div class="col-sm-2 col-sm-offset-10">
 
-                                <img src="{!! Image::make($info->profile_pic)->encode('data-url') !!}" alt=""
+                                <img src="{!!URL::route('AVURP.info.image',['id'=>$info->id]) !!}" alt=""
                                      class="img-responsive img-thumbnail pull-right" style="margin-bottom: 10px">
                             </div>
                         </div>

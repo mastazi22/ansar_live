@@ -3,9 +3,11 @@
 namespace App\modules\AVURP\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\modules\AVURP\Models\VDPAnsarInfo;
 use App\modules\AVURP\Repositories\VDPInfo\VDPInfoRepository;
 use App\modules\AVURP\Requests\VDPInfoRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
 
 class AnsarVDPInfoController extends Controller
@@ -152,5 +154,17 @@ class AnsarVDPInfoController extends Controller
             return redirect()->route('AVURP.info.index')->with('error_message',$response['data']['message']);
         }
         return redirect()->route('AVURP.info.index')->with('success_message',$response['data']['message']);
+    }
+    public function loadImage($id){
+        $info  = VDPAnsarInfo::find($id);
+        if($info&&$info->profile_pic){
+            $image = storage_path('avurp/profile_pic').'/'.$info->profile_pic;
+            if (!File::exists($image)||File::isDirectory($image)) $image = public_path('dist/img/nimage.png');
+            //return $image;
+
+        } else{
+            $image = public_path('dist/img/nimage.png');
+        }
+        return Image::make($image)->response();
     }
 }
