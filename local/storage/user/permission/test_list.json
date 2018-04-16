@@ -713,16 +713,20 @@
             "name": "All VDP Info"
           },
           {
-            "value": "HRM.api.unit",
-            "name": "Unit List"
+            "value": "AVURP.api.store",
+            "name": "Create New VDP"
           },
           {
-            "value": "HRM.api.thana",
-            "name": "Thana List"
+            "value": "AVURP.api.show",
+            "name": "View VDP Details"
           },
           {
-            "value": "HRM.api.union",
-            "name": "Union List"
+            "value": "AVURP.api.edit",
+            "name": "Edit VDP Details"
+          },
+          {
+            "value": "AVURP.api.update",
+            "name": "Update VDP Details"
           }
         ]
       }

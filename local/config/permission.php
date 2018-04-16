@@ -142,5 +142,9 @@ return [
         "HRM.AVURP.info.approve",
         "HRM.AVURP.info.verify_approve",
         "AVURP.api.index",
+        "AVURP.api.store",
+        "AVURP.api.edit",
+        "AVURP.api.show",
+        "AVURP.api.update",
     ]
 ];
