@@ -704,6 +704,27 @@
             "name": "Union List"
           }
         ]
+      },
+      {
+        "text": "AVURP",
+        "actions": [
+          {
+            "value": "AVURP.api.index",
+            "name": "All VDP Info"
+          },
+          {
+            "value": "HRM.api.unit",
+            "name": "Unit List"
+          },
+          {
+            "value": "HRM.api.thana",
+            "name": "Thana List"
+          },
+          {
+            "value": "HRM.api.union",
+            "name": "Union List"
+          }
+        ]
       }
     ]
   }

@@ -241,18 +241,14 @@ GlobalApp.directive('datePickerBig', function () {
         link: function (scope, element, attrs) {
             //alert(scope.event)
             var data = attrs.datePickerBig
-            var format = attrs.dateFormat||'DD-MMM-YYYY';
+            var format = attrs.dateFormat||'dd-M-yy';
             console.log(data)
-            if (data) {
-                data = moment(data)
-
-            } else{
-                data = moment();
-            }
             // console.log(data)
-            $(element).datePicker({
+            $(element).datepicker({
                 dateFormat:format,
-                defaultValue:data
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "-90:+00"
             })
 
         }

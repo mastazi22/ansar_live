@@ -65,6 +65,7 @@ class CheckUserType
         'HRM.api.thana'=>['range_id'=>'range','unit_id'=>'unit'],
         'HRM.api.unit'=>['range_id'=>'range','id'=>'unit'],
         'HRM.api.division'=>['id'=>'range'],
+        'AVURP.api.index'=>['range'=>'range','unit'=>'unit'],
     ];
     public function handle($request, Closure $next)
     {
@@ -91,6 +92,9 @@ class CheckUserType
                             if(isset($input[$key])&&$input[$key]!='all'&&$input[$key]&&!in_array($input[$key],$units->toArray())){
                                 if($request->ajax()){
                                     return response("Unauthorized",401);
+                                }
+                                else if($request->is('*/api')||$request->is('api/')){
+                                    return response()->json(['message'=>'Unauthorized access'],401);
                                 }
                                 else abort(401);
                             }

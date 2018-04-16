@@ -141,5 +141,6 @@ return [
         "HRM.AVURP.info.verify",
         "HRM.AVURP.info.approve",
         "HRM.AVURP.info.verify_approve",
+        "AVURP.api.index",
     ]
 ];
