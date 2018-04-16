@@ -474,7 +474,7 @@ class FormSubmitHandler extends Controller
 
     public function getBloodName()
     {
-        $bloodName = Blood:: all();
+        $bloodName = $this->dataRepo->getBloodGroup();
         return Response::json($bloodName);
     }
 

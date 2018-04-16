@@ -9,6 +9,8 @@
 namespace App\modules\HRM\Repositories\data;
 
 
+use App\modules\HRM\Models\AllEducationName;
+use App\modules\HRM\Models\Blood;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
 use App\modules\HRM\Models\Thana;
@@ -20,19 +22,25 @@ class DataRepository implements DataInterface
     public $unit;
     public $thana;
     public $union;
+    public $bloodGroup;
+    public $educationList;
+
     /**
      * DataRepository constructor.
      * @param Division $division
      * @param District $unit
      * @param Thana $thana
      * @param Unions $union
+     * @param Blood $bloodGroup
      */
-    public function __construct(Division $division,District $unit,Thana $thana,Unions $union)
+    public function __construct(Division $division,District $unit,Thana $thana,Unions $union,Blood $bloodGroup,AllEducationName $educationList)
     {
         $this->division = $division;
         $this->unit = $unit;
         $this->thana = $thana;
         $this->union = $union;
+        $this->bloodGroup = $bloodGroup;
+        $this->educationList = $educationList;
     }
 
 
@@ -109,5 +117,12 @@ class DataRepository implements DataInterface
             $unions = $unions->where('id', '=', $id);
         }
         return $unions = $unions->where('id', '!=', 0)->get();
+    }
+
+    public function getBloodGroup(){
+        return $this->bloodGroup->all();
+    }
+    public function getEducationList(){
+        return $this->educationList->where('id','!=',0)->get();
     }
 }

@@ -62,6 +62,20 @@ class ApiController extends Controller
         return response()->json($data);
 
     }
+    public function bloodGroup()
+    {
+        $data = $this->dataRepo->getBloodGroup()->pluck('blood_group_name_bng','id');
+        $data = $data->prepend('রক্তের গ্রুপ নির্বাচন করুন','');
+        return response()->json($data);
+
+    }
+    public function educationList()
+    {
+        $data = collect($this->dataRepo->getEducationList())->pluck('education_deg_bng','id');
+        $data = $data->prepend('নির্বাচন করুন','');
+        return response()->json($data);
+
+    }
     public function sub_training(Request $request)
     {
 

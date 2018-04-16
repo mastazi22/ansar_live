@@ -41,4 +41,14 @@ interface DataInterface
      */
     public function getUnions($range_id='', $unit_id='', $thana_id='',$id='');
 
+    /**
+     * @return mixed
+     */
+    public function getBloodGroup();
+
+    /**
+     * @return mixed
+     */
+    public function getEducationList();
+
 }
