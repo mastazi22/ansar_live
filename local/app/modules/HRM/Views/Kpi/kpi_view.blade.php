@@ -38,6 +38,7 @@
             }
             $scope.loadPage = function (page, $event) {
                 if ($event != undefined)  $event.preventDefault();
+                $scope.exportPage = page;
                 $scope.currentPage = page==undefined?0:page.pageNum;
                 $scope.loadingPage[$scope.currentPage]=true;
                 $http({
@@ -70,6 +71,52 @@
                     return true;
                 }
             }
+            $scope.exportData = function (type) {
+                var page = $scope.exportPage;
+                if(type=='page')$scope.export_page = true;
+                else $scope.export_all = true;
+                $http({
+                    url: '{{URL::route('kpi_view_details')}}',
+                    method: 'get',
+                    params: {
+                        offset: type=='all'?-1:(page == undefined ? 0 : page.offset),
+                        limit: type=='all'?-1:(page == undefined ? $scope.itemPerPage : page.limit),
+                        division: $scope.params.range,
+                        unit: $scope.params.unit,
+                        thana: $scope.params.thana,
+                        q: $scope.q,
+                        export:type
+                    }
+                }).then(function (res) {
+                    $scope.export_data = res.data;
+                    $scope.generating = true;
+                    generateReport();
+                    $scope.export_page =  $scope.export_all = false;
+                },function (res) {
+                    $scope.export_page =  $scope.export_all = false;
+                })
+            }
+            $scope.file_count = 1;
+            function generateReport(){
+                $http({
+                    url: '{{URL::to('HRM/generate/file')}}/'+$scope.export_data.id,
+                    method: 'post',
+                }).then(function (res) {
+                    if($scope.export_data.total_file>$scope.file_count){
+                        setTimeout(generateReport,1000);
+                        if(res.data.status) $scope.file_count++;
+                    }
+                    else{
+                        $scope.generating = false;
+                        $scope.file_count = 1;
+                        window.open($scope.export_data.download_url,'_blank')
+                    }
+                },function (res) {
+                    if($scope.export_data.file_count>$scope.file_count){
+                        setTimeout(generateReport,1000)
+                    }
+                })
+            }
         })
     </script>
     <div ng-controller="KpiViewController">
@@ -86,6 +133,12 @@
                 <div class="overlay" ng-if="allLoading">
                     <span class="fa">
                         <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+                </div>
+                <div class="overlay" ng-if="generating">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                        <span>[[(file_count)+'/'+export_data.total_file]]</span>
                     </span>
                 </div>
                 <div class="box-body">
@@ -107,6 +160,18 @@
                         <div class="col-md-8"><h4>Total KPI: [[total.toLocaleString()]]</h4></div>
                         <div class="col-md-4">
                             <database-search q="q" queue="queue" on-change="loadPage()" place-holder="Search by KPI name"></database-search>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="pull-right" style="padding-bottom: 10px">
+                                <button id="export-report" ng-disabled="export_page||export_all" ng-click="exportData('page')" class="btn btn-default ">
+                                    <i ng-show="!export_page" class="fa fa-file-excel-o"></i><i ng-show="export_page" class="fa fa-spinner fa-pulse"></i>&nbsp;Export this page
+                                </button>
+                                <button  ng-disabled="export_page||export_all" ng-click="exportData('all')" id="export-report-all" class="btn btn-default">
+                                    <i ng-show="!export_all" class="fa fa-file-excel-o"></i><i ng-show="export_all" class="fa fa-spinner fa-pulse"></i>&nbsp;Export all
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="table-responsive">

@@ -36,7 +36,8 @@ class CustomQuery
             ->where('tbl_panel_info.locked', 0)
             ->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"')
             ->where('tbl_ansar_status_info.pannel_status', 1)
-            ->where('tbl_ansar_status_info.block_list_status', 0);
+            ->where('tbl_ansar_status_info.block_list_status', 0)
+            ->where('tbl_ansar_status_info.offer_block_status', 0);
         if ($user->type == 22) {
             if (in_array($exclude_district, Config::get('app.offer'))) {
                 $d = Config::get('app.exclude_district');
@@ -988,13 +989,15 @@ class CustomQuery
 
     public static function ansarListOveraged($offset, $limit, $unit, $thana, $division)
     {
+        $ansar_retirement_age = Helper::getAnsarRetirementAge() - 3;
+        $pc_apc_retirement_age = Helper::getPcApcRetirementAge() - 3;
         $ansarQuery = DB::table('tbl_ansar_parsonal_info')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
             ->join('tbl_division', 'tbl_division.id', '=', 'tbl_ansar_parsonal_info.division_id')
             ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
             ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->where(DB::raw("TIMESTAMPDIFF(YEAR,data_of_birth,NOW())"), ">=", 47)
+            ->where(DB::raw("TIMESTAMPDIFF(DAY,data_of_birth,NOW())/365"), ">", $ansar_retirement_age)
             ->where('tbl_designations.id', "=", 1)
             ->where('tbl_ansar_status_info.embodied_status', "=", 0)
             ->where('tbl_ansar_status_info.black_list_status', "=", 0);
@@ -1004,7 +1007,7 @@ class CustomQuery
             ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
             ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->where(DB::raw("TIMESTAMPDIFF(YEAR,data_of_birth,NOW())"), ">=", 52)
+            ->where(DB::raw("TIMESTAMPDIFF(DAY,data_of_birth,NOW())/365"), ">", $pc_apc_retirement_age)
             ->whereIn('tbl_designations.id', [2, 3])
             ->where('tbl_ansar_status_info.embodied_status', "=", 0)
             ->where('tbl_ansar_status_info.black_list_status', "=", 0);
@@ -1025,8 +1028,8 @@ class CustomQuery
         $total1 = clone $pcApcQuery;
         $total2->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
         $total1->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
-        $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'tbl_ansar_parsonal_info.sex', 'tbl_division.division_name_bng as division', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', DB::raw("TIMESTAMPDIFF(YEAR,data_of_birth,NOW()) as age"));
-        $pcApcQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'tbl_ansar_parsonal_info.sex', 'tbl_division.division_name_bng as division', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', DB::raw("TIMESTAMPDIFF(YEAR,data_of_birth,NOW()) as age"));
+        $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'tbl_ansar_parsonal_info.sex', 'tbl_division.division_name_bng as division', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', DB::raw("TIMESTAMPDIFF(DAY,data_of_birth,NOW())/365 as age"));
+        $pcApcQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'tbl_ansar_parsonal_info.sex', 'tbl_division.division_name_bng as division', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', DB::raw("TIMESTAMPDIFF(DAY,data_of_birth,NOW())/365 as age"));
         $query = $ansarQuery->unionAll($pcApcQuery);
 //        return $total2->unionAll($total1)->get();
         $total = DB::table(DB::raw("({$total2->unionAll($total1)->toSql()}) x"))->mergeBindings($total2)->select(DB::raw('SUM(t) as t,code'))->groupBy('code')->get();
@@ -1326,7 +1329,7 @@ class CustomQuery
         $kpis = $kpiQuery->select('tbl_kpi_info.id', 'tbl_kpi_info.status_of_kpi', 'tbl_kpi_info.kpi_name as kpi_bng', 'tbl_kpi_info.kpi_name_eng as kpi_eng', 'tbl_kpi_info.kpi_address as address', 'tbl_kpi_info.kpi_contact_no as contact', 'tbl_division.division_name_eng as division_eng', 'tbl_division.division_name_bng as division_bng', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana', 'tbl_kpi_detail_info.total_ansar_request', DB::raw('COUNT(tbl_embodiment.ansar_id) as total_embodied'))->groupBy('tbl_kpi_info.id')->orderBy('tbl_kpi_info.id', 'asc')->skip($offset)->limit($limit)->get();
 //        return View::make('kpi.selected_kpi_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'kpis' => $kpis]);
 //        return DB::getQueryLog();
-        return Response::json(['total' => $total->distinct()->count('tbl_kpi_info.id'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'kpis' => $kpis]);
+        return ['total' => $total->distinct()->count('tbl_kpi_info.id'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'kpis' => $kpis];
 
     }
 

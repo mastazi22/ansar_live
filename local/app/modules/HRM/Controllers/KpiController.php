@@ -2,6 +2,7 @@
 
 namespace App\modules\HRM\Controllers;
 
+use App\Helper\ExportDataToExcel;
 use App\Http\Controllers\Controller;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\CustomQuery;
@@ -24,6 +25,7 @@ use Illuminate\Support\Facades\Validator;
 
 class KpiController extends Controller
 {
+    use ExportDataToExcel;
     public function kpiIndex()
     {
         return view('HRM::Kpi.kpi_entry');
@@ -34,7 +36,7 @@ class KpiController extends Controller
         return view('HRM::Kpi.kpi_view');
     }
 
-    public function kpiViewDetails()
+    public function kpiViewDetails(Request $request)
     {
         $limit = Input::get('limit');
         $offset = Input::get('offset');
@@ -53,7 +55,13 @@ class KpiController extends Controller
         if ($validation->fails()) {
             return response('Invalid Request (400)', 400);
         }
-        return CustomQuery::kpiInfo($offset, $limit, $division, $unit, $thana,$q);
+        $data = CustomQuery::kpiInfo($offset, $limit, $division, $unit, $thana,$q);
+        if ($request->exists('export')) {
+            $data = collect($data['kpis'])->chunk(2000)->toArray();
+            return $this->exportData($data,'HRM::export.kpi_export_view');
+
+        }
+        return Response::json($data);
     }
     public function inactiveKpiList()
     {
