@@ -3,13 +3,13 @@
 {{--Time: 1:22 PM--}}
 
 @extends('template.master')
-@section('title','Entry of Unit Information')
+@section('title','Entry of Union Information')
 @section('breadcrumb')
     {!! Breadcrumbs::render('unit_information_entry') !!}
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('UnionEntryController', function ($scope,$http,httpService) {
+        GlobalApp.controller('UnionEntryController', function ($scope,$http,httpService,notificationService) {
             $scope.data = {};
             httpService.range().then(function (response) {
              $scope.divisions = response;
@@ -31,6 +31,8 @@
                     data:angular.toJson($scope.data)
                 }).then(function (response) {
                     window.location.href = '{{URL::route('HRM.union.index')}}'
+                },function (response) {
+                    notificationService.notify('error',response.data.message)
                 })
             }
         })

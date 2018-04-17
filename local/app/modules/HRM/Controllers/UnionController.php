@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class UnionController extends Controller
@@ -109,9 +110,17 @@ class UnionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request,$id)
     {
-        //
+        if($request->ajax()){
+            try{
+                $union = Unions::findOrFail($id);
+            }catch(\Exception $e){
+                return response()->json(['message'=>$e->getMessage()],500);
+            }
+            return $union;
+        }
+        return view('HRM::unions.edit',compact('id'));
     }
 
     /**
@@ -123,7 +132,30 @@ class UnionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $rules = [
+            'union_name_eng'=>'required',
+            'union_name_bng'=>'required',
+            'code'=>'required',
+            'division_id'=>'required',
+            'unit_id'=>'required',
+            'thana_id'=>'required',
+        ];
+        $this->validate($request,$rules);
+        DB::beginTransaction();
+        DB::connection('avurp')->beginTransaction();
+        try{
+            $union = Unions::findOrFail($id);
+            $union->update($request->all());
+            DB::connection('avurp')->table('avurp_vdp_ansar_info')->where('union_id',$id)->update($request->only(['division_id','unit_id','thana_id']));
+            DB::commit();
+        }catch(\Exception $e){
+            DB::rollback();
+            DB::connection('avurp')->rollback();
+            Log::info($e->getTraceAsString());
+            return response()->json(['message'=>$e->getMessage()],500);
+        }
+        Session::flash('success_message','Union added successfully');
+        return response()->json([]);
     }
 
     /**

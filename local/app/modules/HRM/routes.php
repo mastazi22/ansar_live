@@ -431,18 +431,20 @@ Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
         Route::get('upload_original_info',['as'=>'upload_original_info_view','uses'=>'GeneralSettingsController@uploadOriginalInfoView']);
         Route::get('test',function(){
 
-            /*$datas = \Maatwebsite\Excel\Facades\Excel::load(storage_path('union_list.xlsx'),function ($reader){
+            $datas = \Maatwebsite\Excel\Facades\Excel::load(storage_path('union_list.xlsx'),function ($reader){
 
             })->get();
             $insertData = [];
             $errorData = [];
             foreach ($datas as $data){
                 foreach ($data as $d){
-                    $division_id = \App\modules\HRM\Models\Division::where('division_code',$d['division_code'])->first();
-                    $unit_id = \App\modules\HRM\Models\District::where('unit_code',$d['unit_code'])->first();
-                    $thana_id = \App\modules\HRM\Models\Thana::where('thana_code',$d['thana_code'])->first();
+                    $division_id = \App\modules\HRM\Models\Division::where('division_code',intval($d['division_code']))->first();
+
+
                     $division_id=$division_id?$division_id->id:0;
+                    $unit_id = \App\modules\HRM\Models\District::where('unit_code',intval($d['unit_code']))->where('division_id',$division_id)->first();
                     $unit_id=$unit_id?$unit_id->id:0;
+                    $thana_id = \App\modules\HRM\Models\Thana::where('thana_code',intval($d['thana_code']))->where('division_id',$division_id)->where('unit_id',$unit_id)->first();
                     $thana_id=$thana_id?$thana_id->id:0;
                     $code = $d['union_code'];
                     $union_name_eng = $d['union_name_eng'];
@@ -451,12 +453,15 @@ Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
                         array_push($errorData,$d);
                         continue;
                     }
+                    elseif (\App\modules\HRM\Models\Unions::where(compact('division_id','unit_id','thana_id'))->exists()){
+                        continue;
+                    }
                     array_push($insertData,compact('division_id','unit_id','thana_id','union_name_bng','union_name_eng','code'));
                 }
 
             }
             \App\modules\HRM\Models\Unions::insert($insertData);
-            return $errorData;*/
+            return $errorData;
         });
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
