@@ -50,10 +50,11 @@ class DataRepository implements DataInterface
      */
     public function getDivisions($id='')
     {
+        $division =  $this->division;
         if($id&&$id!='all'){
-            $this->division->where('id', '=', $id);
+            $division = $division->where('id', '=', $id);
         }
-        return $this->division->where('id', '!=', 0)->orderBy('sort_by', 'asc')->get();
+        return $division->where('id', '!=', 0)->orderBy('sort_by', 'asc')->get();
     }
 
     /**

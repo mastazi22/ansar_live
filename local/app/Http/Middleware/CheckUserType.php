@@ -19,7 +19,7 @@ class CheckUserType
      * @return mixed
      */
     private $urls =[
-        'district_name'=>['id'=>'range'],
+        'district_name'=>['id'=>'range','unit_id'=>'unit'],
         'division_name'=>['id'=>'range'],
         'thana_name'=>['id'=>'unit'],
         'get_ansar_list'=>['division'=>'range','unit'=>'unit'],
@@ -66,6 +66,7 @@ class CheckUserType
         'HRM.api.unit'=>['range_id'=>'range','id'=>'unit'],
         'HRM.api.division'=>['id'=>'range'],
         'AVURP.api.index'=>['range'=>'range','unit'=>'unit'],
+        'HRM.union.showall'=>['division_id'=>'range','unit_id'=>'unit'],
     ];
     public function handle($request, Closure $next)
     {

@@ -429,19 +429,34 @@ Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
 //End KPI
         Route::post('upload_original_info',['as'=>'upload_original_info','uses'=>'GeneralSettingsController@uploadOriginalInfo']);
         Route::get('upload_original_info',['as'=>'upload_original_info_view','uses'=>'GeneralSettingsController@uploadOriginalInfoView']);
-        Route::get('test/{id}',function($id){
+        Route::get('test',function(){
 
-            DB::enableQueryLog();
-            $global_Position = DB::table('tbl_ansar_status_info')
-                ->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-                ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
-                ->where('pannel_status', 1)->where('block_list_status', 0)->select('tbl_panel_info.ansar_id','tbl_panel_info.panel_date');
+            /*$datas = \Maatwebsite\Excel\Facades\Excel::load(storage_path('union_list.xlsx'),function ($reader){
 
-//            return $global_Position;
-            $g = DB::table(DB::raw("(".$global_Position->toSql().") x,(select @a:=0) a"))->mergeBindings($global_Position)->select(DB::raw('x.*,@a:=@a+1 as gp'))->orderBy('x.panel_date');
-            $gg = DB::table(DB::raw("(".$g->toSql().") x"))->mergeBindings($g)->where('ansar_id',$id)->get();
-            return $g->get();
+            })->get();
+            $insertData = [];
+            $errorData = [];
+            foreach ($datas as $data){
+                foreach ($data as $d){
+                    $division_id = \App\modules\HRM\Models\Division::where('division_code',$d['division_code'])->first();
+                    $unit_id = \App\modules\HRM\Models\District::where('unit_code',$d['unit_code'])->first();
+                    $thana_id = \App\modules\HRM\Models\Thana::where('thana_code',$d['thana_code'])->first();
+                    $division_id=$division_id?$division_id->id:0;
+                    $unit_id=$unit_id?$unit_id->id:0;
+                    $thana_id=$thana_id?$thana_id->id:0;
+                    $code = $d['union_code'];
+                    $union_name_eng = $d['union_name_eng'];
+                    $union_name_bng = $d['union_name_bng'];
+                    if(!$unit_id||!$division_id||!$thana_id){
+                        array_push($errorData,$d);
+                        continue;
+                    }
+                    array_push($insertData,compact('division_id','unit_id','thana_id','union_name_bng','union_name_eng','code'));
+                }
 
+            }
+            \App\modules\HRM\Models\Unions::insert($insertData);
+            return $errorData;*/
         });
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');

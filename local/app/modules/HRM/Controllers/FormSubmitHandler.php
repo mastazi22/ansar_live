@@ -452,7 +452,8 @@ class FormSubmitHandler extends Controller
 
     public function DistrictName(Request $request)
     {
-        return Response::json($this->dataRepo->getUnits($request->id));
+//        return $request->all();
+        return Response::json($this->dataRepo->getUnits($request->id,$request->unit_id));
     }
 
     public function ThanaName(Request $request)

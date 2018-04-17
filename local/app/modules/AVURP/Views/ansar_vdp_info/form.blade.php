@@ -359,7 +359,7 @@
                 </label>
                 <div class="col-sm-8">
                     <input type="text" date-picker class="form-control" ng-model="info.form.date_of_birth"
-                           id="date_of_birth" date-picker-big="[[info.form.date_of_birth]]">
+                           id="date_of_birth" date-picker-big="[[info.form.date_of_birth]]" placeholder="জন্ম তারিখ">
                     <p ng-if="errors.date_of_birth&&errors.date_of_birth.length>0" class="text text-danger">
                         [[errors.date_of_birth[0] ]]</p>
                 </div>
