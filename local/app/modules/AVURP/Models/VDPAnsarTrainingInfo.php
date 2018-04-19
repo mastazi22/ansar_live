@@ -22,7 +22,7 @@ class VDPAnsarTrainingInfo extends Model
         return $this->belongsTo(SubTrainingInfo::class,'sub_training_id');
     }
     public function setTrainingStartDateAttribute($value){
-        if($value) {
+        if(!is_null($value)&&$value&&$value!='null') {
             $this->attributes['training_start_date'] = Carbon::parse($value)->format('Y-m-d');
         }
         else{
@@ -30,7 +30,7 @@ class VDPAnsarTrainingInfo extends Model
         }
     }
     public function setTrainingEndDateAttribute($value){
-        if($value) {
+        if(!is_null($value)&&$value&&$value!='null') {
             $this->attributes['training_end_date'] = Carbon::parse($value)->format('Y-m-d');
         }
         else{

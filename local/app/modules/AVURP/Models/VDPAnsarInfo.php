@@ -43,10 +43,13 @@ class VDPAnsarInfo extends Model
         return $this->belongsTo(Blood::class,'blood_group_id');
     }
     public function setDateOfBirthAttribute($value){
-        $this->attributes['date_of_birth'] = Carbon::parse($value)->format('Y-m-d');
+        $this->attributes['date_of_birth'] = $value?Carbon::parse($value)->format('Y-m-d'):'';
     }
     public function getDateOfBirthAttribute($value){
-        return Carbon::parse($value)->format('d-M-Y');
+        if($value){
+            return Carbon::parse($value)->format('d-M-Y');
+        }
+        return '';
     }
     public function scopeUserQuery($query,$id){
         if($id){

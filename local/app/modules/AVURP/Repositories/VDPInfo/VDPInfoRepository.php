@@ -86,6 +86,7 @@ class VDPInfoRepository implements VDPInfoInterface
                     File::delete($path . '/' . $image_name);
                 }
             }
+            Log::info($e->getTraceAsString());
             return ['data' => ['message' => $e->getMessage()], 'status' => false];
         }
         return ['data' => ['message' => "data created successfully"], 'status' => true];
