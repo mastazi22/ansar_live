@@ -217,7 +217,7 @@ class VDPInfoRepository implements VDPInfoInterface
     public function verifyVDP($id)
     {
         $type = auth()->user()->usertype->type_code;
-        if($type==55||$type==22||$type==66||$type==11){
+        if($type==44||$type==22||$type==66||$type==11){
             DB::connection('avurp')->beginTransaction();
             try{
                 $info = $this->info->findOrFail($id);
