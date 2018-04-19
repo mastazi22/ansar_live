@@ -58,7 +58,7 @@ class ApiController extends Controller
     }
     public function main_training()
     {
-        $data = MainTrainingInfo::all();
+        $data = MainTrainingInfo::all()->pluck('training_name_bng','id')->prepend('নির্বাচন করুন','');
         return response()->json($data);
 
     }
@@ -82,7 +82,7 @@ class ApiController extends Controller
         if(!$request->has('id')) $data = [];
         else {
             $data = MainTrainingInfo::find($request->id);
-            if($data) $data = $data->subTraining;
+            if($data) $data = collect($data->subTraining)->pluck('training_name_bng','id')->prepend('নির্বাচন করুন','');
             else $data = [];
         }
         return response()->json($data);

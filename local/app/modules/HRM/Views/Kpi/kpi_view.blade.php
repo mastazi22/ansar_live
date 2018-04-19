@@ -185,7 +185,9 @@
                                 <th>KPI Address</th>
                                 <th>KPI Contact No.</th>
                                 <th>Total Ansar Request</th>
+                                <th>Total Ansar Given</th>
                                 <th>Total Embodied Ansar</th>
+                                <th>Percent</th>
                                 <th>Deficiency</th>
                                 <th>Surplus</th>
                                 <th>Action</th>
@@ -220,7 +222,9 @@
                                     [[a.contact]]
                                 </td>
                                 <td>[[a.total_ansar_request]]</td>
+                                <td>[[a.total_ansar_given]]</td>
                                 <td>[[a.total_embodied]]</td>
+                                <td>[[(a.total_embodied*100)/a.total_ansar_given]]</td>
                                 <td>[[a.total_ansar_request-a.total_embodied>0?((a.total_ansar_request-a.total_embodied)):0]]</td>
                                 <td>[[a.total_ansar_request-a.total_embodied<0?(-(a.total_ansar_request-a.total_embodied)):0]]</td>
                                 <td>
