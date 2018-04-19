@@ -171,7 +171,7 @@ class VDPInfoRepository implements VDPInfoInterface
                 $image_name = $geo_id . '.' . $file->clientExtension();
                 Image::make($file)->save($path . '/' . $image_name);
             }
-            $data = $request->except(['training_info','educationInfo','status']);
+            $data = $request->except(['training_info','educationInfo','status','action_user_id']);
             $data['geo_id'] = $geo_id;
             if (isset($path) && isset($image_name)) $data['profile_pic'] = $path . '/' . $image_name;
             else if ($request->hasFile('profile_pic')) $data['profile_pic'] = '';
