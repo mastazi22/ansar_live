@@ -43,7 +43,7 @@ class VDPInfoRequest extends Request
                     'date_of_birth'=>'required',
                     'marital_status'=>'required',
                     'national_id_no'=>'required',
-                    'mobile_no_self'=>'required|unique:avurp.avurp_vdp_ansar_info',
+                    'mobile_no_self'=>'required|unique:avurp.avurp_vdp_ansar_info,mobile_no_self',
                     'height_feet'=>'required',
                     'height_inch'=>'required',
                     'blood_group_id'=>'required',

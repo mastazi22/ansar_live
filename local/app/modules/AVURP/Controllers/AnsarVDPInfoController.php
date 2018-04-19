@@ -89,6 +89,7 @@ class AnsarVDPInfoController extends Controller
             return response()->json($info);
         }
         if(!$info) return abort(404);
+
         return view('AVURP::ansar_vdp_info.view', compact('info'));
     }
 
@@ -106,6 +107,7 @@ class AnsarVDPInfoController extends Controller
         }
         else $info = $this->infoRepository->getInfoForEdit($id);
         if($request->ajax()){
+//            return $id;
             return response()->json($info);
         }
         if(!$info) return abort(404);
