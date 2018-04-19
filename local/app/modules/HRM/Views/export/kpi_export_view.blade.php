@@ -40,7 +40,7 @@
             <td>{{$kpi->total_ansar_request}}</td>
             <td>{{$kpi->total_ansar_given}}</td>
             <td>{{$kpi->total_embodied}}</td>
-            <td>{{($kpi->total_embodied*100)/$kpi->total_ansar_given}}</td>
+            <td>{{$kpi->total_ansar_given>0?($kpi->total_embodied*100)/$kpi->total_ansar_given:'infinity'}}</td>
             <td>{{$kpi->total_ansar_request-$kpi->total_embodied>0?(($kpi->total_ansar_request-$kpi->total_embodied)):0}}</td>
             <td>{{$kpi->total_ansar_request-$kpi->total_embodied<0?(-($kpi->total_ansar_request-$kpi->total_embodied)):0}}</td>
         </tr>
