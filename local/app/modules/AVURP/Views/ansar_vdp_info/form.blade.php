@@ -691,7 +691,7 @@
             </div>
         </fieldset>
         <fieldset>
-            <legend>ছবি সুমুহ</legend>
+            <legend>ছবি সমূহ</legend>
             <div class="form-group">
                 <label for="profile_pic" class="control-label col-sm-4">প্রোফাইল পিকচার<span class="pull-right">:</span></label>
                 <div class="col-sm-8">
