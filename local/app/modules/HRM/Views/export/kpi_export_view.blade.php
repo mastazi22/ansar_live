@@ -8,7 +8,9 @@
         <th>KPI Address</th>
         <th>KPI Contact No.</th>
         <th>Total Ansar Request</th>
+        <th>Total Given Ansar</th>
         <th>Total Embodied Ansar</th>
+        <th>Percent</th>
         <th>Deficiency</th>
         <th>Surplus</th>
     </tr>
@@ -36,7 +38,9 @@
                 {{$kpi->contact}}
             </td>
             <td>{{$kpi->total_ansar_request}}</td>
+            <td>{{$kpi->total_ansar_given}}</td>
             <td>{{$kpi->total_embodied}}</td>
+            <td>{{($kpi->total_embodied*100)/$kpi->total_ansar_given}}</td>
             <td>{{$kpi->total_ansar_request-$kpi->total_embodied>0?(($kpi->total_ansar_request-$kpi->total_embodied)):0}}</td>
             <td>{{$kpi->total_ansar_request-$kpi->total_embodied<0?(-($kpi->total_ansar_request-$kpi->total_embodied)):0}}</td>
         </tr>
