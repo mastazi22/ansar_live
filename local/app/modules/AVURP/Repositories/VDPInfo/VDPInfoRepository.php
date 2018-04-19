@@ -88,7 +88,7 @@ class VDPInfoRepository implements VDPInfoInterface
             }
             return ['data' => ['message' => $e->getMessage()], 'status' => false];
         }
-        return ['data' => ['message' => "data updated successfully"], 'status' => true];
+        return ['data' => ['message' => "data created successfully"], 'status' => true];
     }
 
     /**

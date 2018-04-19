@@ -27,14 +27,14 @@ class NotificationManager implements MessageComponentInterface
      */
     function __construct()
     {
-        $this->connections = new Collection();
+        $this->connections = new \SplObjectStorage();
     }
 
     function onOpen(ConnectionInterface $conn)
     {
         // TODO: Implement onOpen() method.
-        if(!$this->connections->search($conn)) $this->connections->put($conn->resourceId,$conn);
-        Log::info("connection open....".$conn->resourceId." total connection ".$this->connections->count());
+        $this->connections->attach($conn);
+        Log::info("connection open....".$conn->resourceId." total connection ".$this->connections->count()." connected use id...".count($this->users));
     }
 
     /**
@@ -45,7 +45,12 @@ class NotificationManager implements MessageComponentInterface
     function onClose(ConnectionInterface $conn)
     {
         // TODO: Implement onClose() method.
-        if($this->connections->search($conn->resourceId))$this->connections->forget($conn->resourceId);
+        $this->connections->detach($conn);
+        if(isset($this->users[$conn->resourceId])){
+            Log::info("unset user....".$this->users[$conn->resourceId]);
+            unset($this->users[$conn->resourceId]);
+
+        }
         Log::info("connection close....".$conn->resourceId);
     }
 
@@ -72,37 +77,27 @@ class NotificationManager implements MessageComponentInterface
     {
         // TODO: Implement onMessage() method.
         Log::info($msg);
-        try{
-
-            $data = json_decode($msg,true);
-
-            $key = 'user';
-            if(isset($data[$key])) {
-                if($data[$key]=='server'){
-                    foreach ($this->users as $k=>$v){
-                        if($data['to']==$v){
-                            $conn = $this->connections->get($k);
-                            Log::info($conn?$conn->resourceId:'nnnnn');
-                            $this->connections->get($k)->send($data['message']);
+        $message = json_decode($msg,true);
+        switch ($message['type']){
+            case 'init':
+                $this->users[$from->resourceId] = $message['data']['user_id'];
+                break;
+            case 'notification':
+                $to = $message['data']['to'];
+                $m = $message['data']['message'];
+                Log::info($to);
+                foreach ($to as $t){
+                    if(!($id = array_search($t,$this->users))){
+                        continue;
+                    }
+                    Log::info($id);
+                    foreach ($this->connections as $connection){
+                        if($connection->resourceId==$id){
+                            $connection->send($m);
                         }
                     }
-                    $this->connections->forget($from->resourceId);
-                    $from->close();
                 }
-                else {
-                    if(isset($this->uid[$data['uid']])){
-                        $conn = $this->connections->get($this->uid[$data['uid']]);
-                        if($conn) $conn->close();
-                        $this->connections->forget($this->uid[$data['uid']]);
-                        unset($this->users[$this->uid[$data['uid']]]);
-                    }
-                    $this->users[$from->resourceId] = $data[$key];
-                    $this->uid[$data['uid']] = $from->resourceId;
-                }
-            }
 
-        }catch (\Exception $e){
-            Log::info($e->getMessage());
         }
     }
 }

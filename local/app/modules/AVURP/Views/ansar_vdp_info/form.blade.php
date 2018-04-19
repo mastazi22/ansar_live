@@ -11,8 +11,7 @@
 </style>
 <script>
     var formData = new FormData();
-    GlobalApp.controller('InfoController', function ($scope, $http, httpService, $q, notificationService) {
-
+    GlobalApp.controller('InfoController', function ($scope, $http, httpService, $q, notificationService,$rootScope) {
         $scope.info = {urL: '', form: {}};
         $scope.errors = {};
         $scope.subTraining = [];
@@ -171,7 +170,7 @@
                     'content-type': undefined
                 }
             }).then(function (response) {
-//                console.log(response.data)
+//                if($rootScope.ws) $rootScope.ws.send(JSON.stringify({type:'notification',data:{to:[1],message:response.data.message}}))
                 window.location.href = '{{URL::route('AVURP.info.index')}}'
             }, function (response) {
                 $scope.allLoading = false

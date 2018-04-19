@@ -82,21 +82,16 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
 
 }).run(function ($rootScope, $http, $window) {
 
-    var ws;
+    $rootScope.ws = '';
     $rootScope.user = ''
     $http.get('/' + prefix + 'user_data').then(function (response) {
         $rootScope.user = response.data;
-        /*ws = openSocketConnection($rootScope.user.id);
+       /* $rootScope.ws = openSocketConnection();
         var p = setInterval(function () {
-            console.log(ws)
-            if(ws.readyState===3) clearInterval(p)
-            if(ws.readyState===1&&ws.bufferedAmount===0){
-                var uid = $cookies.get('uid')
-                if(!uid){
-                    uid = 'id'+(new Date()).getTime();
-                    $cookies.put('uid',uid);
-                }
-                ws.send(JSON.stringify({'user': $rootScope.user.id,'uid':uid}))
+            console.log($rootScope.ws)
+            if($rootScope.ws.readyState===3) clearInterval(p)
+            if($rootScope.ws.readyState===1&&$rootScope.ws.bufferedAmount===0){
+                $rootScope.ws.send(JSON.stringify({type:'init',data:{'user_id': $rootScope.user.id}}))
                 clearInterval(p)
             }
         },500)*/
@@ -105,13 +100,12 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
     $rootScope.dateConvert = function (date) {
         return (moment(date).locale('bn').format('DD-MMMM-YYYY'));
     }
-    /*var windowElement = angular.element($window);
-    windowElement.on('beforeunload', function (event) {
+   /*window.onbeforeunload = function (e) {
+       $rootScope.ws.onclose = function () {}; // disable onclose handler first
+       $rootScope.ws.close();
+   }*/
 
-        if (ws) ws.close();
-    });*/
-
-    /*function openSocketConnection() {
+    function openSocketConnection() {
         var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
         ws.onopen = function (event) {
             console.log(event)
@@ -121,6 +115,7 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
             console.log(event)
         }
         ws.onmessage = function (event) {
+            console.log(event)
             noty({
                 text: event.data,
                 layout:'bottomRight',
@@ -133,7 +128,7 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
         }
         return ws;
 
-    }*/
+    }
 });
 GlobalApp.filter('num', function () {
     return function (input,defaultValue) {
