@@ -88,6 +88,7 @@ class OfferController extends Controller
 
     function sendOfferSMS(Request $request)
     {
+        return response(collect(['status' => 'error', 'message' => "Offer has been suspended"]), 400, ['Content-Type' => 'application/json']);
         $rules = [];
         $rules['pc_male'] = 'required|numeric|regex:/^[0-9]+$/|min:0';
         $rules['pc_female'] = 'required|numeric|regex:/^[0-9]+$/|min:0';
