@@ -208,7 +208,7 @@
         {{--</div>--}}
         <section class="content">
             <div class="alert alert-warning">
-                <i class="fa fa-warning"></i>&nbsp; Offer has been suspended. It will be activated on Sunday again
+                <i class="fa fa-warning"></i>&nbsp; Offer option has been temporarily  suspended. It will be activated on next Sunday again
             </div>
             @if($isFreeze)
                 <h3 style="text-align: center">You have <span class="text-warning">{{$isFreeze}}</span> freezed ansar in
