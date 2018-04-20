@@ -13,6 +13,7 @@ class AnsarStatusInfo extends Model
     const REST_STATUS = 'rest';
     const FREEZE_STATUS = 'freeze';
     const BLOCK_STATUS = 'Block';
+    const OFFER_BLOCK_STATUS = 'Block for offer';
     const BLACK_STATUS = 'Black';
     const NOT_VERIFIED_STATUS = 'Not Verified';
     const RETIREMENT_STATUS = 'disembodied';
@@ -46,6 +47,7 @@ class AnsarStatusInfo extends Model
             if($this->freezing_status) array_push($status,self::FREEZE_STATUS);
             if($this->rest_status) array_push($status,self::REST_STATUS);
             if($this->retierment_status) array_push($status,self::RETIREMENT_STATUS);
+            if($this->offer_block_status) array_push($status,self::OFFER_BLOCK_STATUS);
             if($this->early_retierment_status) array_push($status,self::EARLY_RETIREMENT_STATUS);
             if(!$this->block_list_status&&!$this->black_list_status&&!$this->free_status&&!$this->pannel_status&&!$this->embodied_status&&!$this->offer_sms_status&&!$this->freezing_status&&!$this->rest_status&&!$this->retierment_status&&!$this->early_retierment_status) array_push($status,self::NOT_VERIFIED_STATUS);
 
