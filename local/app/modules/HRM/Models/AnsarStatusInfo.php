@@ -17,6 +17,7 @@ class AnsarStatusInfo extends Model
     const NOT_VERIFIED_STATUS = 'Not Verified';
     const RETIREMENT_STATUS = 'disembodied';
     const EARLY_RETIREMENT_STATUS = 'early_retierment_status';
+    const OFFER_BLOCK_STATUS = 'offer_block_status';
     protected $connection = 'hrm';
     protected $table="tbl_ansar_status_info";
     protected $guarded = ['id'];
