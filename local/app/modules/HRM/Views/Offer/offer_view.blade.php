@@ -207,9 +207,9 @@
         {{--{!! Breadcrumbs::render('offer_information') !!}--}}
         {{--</div>--}}
         <section class="content">
-            <div class="alert alert-warning">
+            {{--<div class="alert alert-warning">
                 <i class="fa fa-warning"></i>&nbsp; Offer option has been temporarily  suspended. It will be activated on next Sunday again
-            </div>
+            </div>--}}
             @if($isFreeze)
                 <h3 style="text-align: center">You have <span class="text-warning">{{$isFreeze}}</span> freezed ansar in
                     your district.Unfreeze them then you are eligible to send offer
