@@ -1534,7 +1534,7 @@ class DGController extends Controller
             if (!$a && !preg_match('/^(\+88)?0[0-9]{10}/', $a->mobile_no_self)) throw new Exception("Invalid mobile number");
             $a->offer_sms_info()->save(new OfferSMS([
                 'sms_send_datetime' => Carbon::parse($request->offer_date)->format('Y-m-d'),
-                'sms_end_datetime' => Carbon::parse($request->offer_date)->addHours(48),
+                'sms_end_datetime' => Carbon::parse($request->offer_date)->addHours(24),
                 'district_id' => $request->unit_id,
                 'action_user_id' => auth()->user()->id,
                 'come_from' => $status[0]

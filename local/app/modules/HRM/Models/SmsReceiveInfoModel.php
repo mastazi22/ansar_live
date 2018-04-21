@@ -40,6 +40,7 @@ class SmsReceiveInfoModel extends Model
             $count->increment('count');
         }
         else  {
+            $count = new OfferCount;
             $count->count = 1;
             $count->save();
         }

@@ -64,6 +64,7 @@ class OfferQueue extends Job implements ShouldQueue
                 $offer = new OfferSMS([
                     'sms_send_datetime' => Carbon::now(),
                     'sms_end_datetime' => Carbon::now()->addHours(24),
+//                    'sms_end_datetime' => Carbon::now()->addMinute(),
                     'district_id' => $district_id,
                     'come_from' => 'Panel',
                     'action_user_id' => $user->id

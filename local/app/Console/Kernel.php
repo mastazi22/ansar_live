@@ -65,9 +65,9 @@ class Kernel extends ConsoleKernel
                     $count = $offer->getOfferCount();
                     $dis = $offer->district->unit_name_eng;
                     if ($count == 2) {
-                        $body = 'WARNING!!!!. You (ID:' . $offer->ansar_id . ') are offered for ' . $dis . ' as Rank ' . $a->designation->name_eng . ' Please type (ans YES/ans NO) and send to 6969 within 48 hours. Otherwise your offer will be cancelled - DC ' . strtoupper($dis);
+                        $body = 'WARNING!!!!. You (ID:' . $offer->ansar_id . ') are offered for ' . $dis . ' as Rank ' . $a->designation->name_eng . ' Please type (ans YES/ans NO) and send to 6969 within 24 hours. Otherwise your offer will be cancelled - DC ' . strtoupper($dis);
                     } else {
-                        $body = 'You (ID:' . $offer->ansar_id . ') are offered for ' . $dis . ' as Rank ' . $a->designation->name_eng . ' Please type (ans YES/ans NO) and send to 6969 within 48 hours. Otherwise your offer will be cancelled - DC ' . strtoupper($dis);
+                        $body = 'You (ID:' . $offer->ansar_id . ') are offered for ' . $dis . ' as Rank ' . $a->designation->name_eng . ' Please type (ans YES/ans NO) and send to 6969 within 24 hours. Otherwise your offer will be cancelled - DC ' . strtoupper($dis);
                     }
                     //Log::info($a);
 //                    break;
