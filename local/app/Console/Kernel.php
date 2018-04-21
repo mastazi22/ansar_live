@@ -10,14 +10,12 @@ use App\modules\HRM\Models\KpiDetailsModel;
 use App\modules\HRM\Models\KpiGeneralModel;
 use App\modules\HRM\Models\OfferCancel;
 use App\modules\HRM\Models\OfferSMS;
-use App\modules\HRM\Models\OfferSmsLog;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\RestInfoModel;
 use App\modules\HRM\Models\SmsReceiveInfoModel;
 use App\modules\recruitment\Models\JobAcceptedApplicant;
 use App\modules\recruitment\Models\JobCircular;
-use App\modules\recruitment\Models\JobSelectedApplicant;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -40,8 +38,8 @@ class Kernel extends ConsoleKernel
     /**
      * Kernel constructor.
      *
-
-    /**
+     *
+     * /**
      * Define the application's command schedule.
      *
      * @param  \Illuminate\Console\Scheduling\Schedule $schedule
@@ -53,21 +51,27 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             Log::info("called : send_offer");
 //            //return;
-            $user = env('SSL_USER_ID','ansarapi');
-            $pass = env('SSL_PASSWORD','x83A7Z96');
-            $sid = env('SSL_SID','ANSARVDP');
+            $user = env('SSL_USER_ID', 'ansarapi');
+            $pass = env('SSL_PASSWORD', 'x83A7Z96');
+            $sid = env('SSL_SID', 'ANSARVDP');
             $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
-            $offered_ansar = OfferSMS::with(['ansar','district'])->where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
+            $offered_ansar = OfferSMS::with(['ansar', 'district'])->where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
 //            Log::info($offered_ansar);
             foreach ($offered_ansar as $offer) {
                 DB::connection('hrm')->beginTransaction();
                 try {
 
                     $a = $offer->ansar;
+                    $count = $offer->getOfferCount();
+                    $dis = $offer->district->unit_name_eng;
+                    if ($count == 2) {
+                        $body = 'WARNING!!!!. You (ID:' . $offer->ansar_id . ') are offered for ' . $dis . ' as Rank ' . $a->designation->name_eng . ' Please type (ans YES/ans NO) and send to 6969 within 48 hours. Otherwise your offer will be cancelled - DC ' . strtoupper($dis);
+                    } else {
+                        $body = 'You (ID:' . $offer->ansar_id . ') are offered for ' . $dis . ' as Rank ' . $a->designation->name_eng . ' Please type (ans YES/ans NO) and send to 6969 within 48 hours. Otherwise your offer will be cancelled - DC ' . strtoupper($dis);
+                    }
                     //Log::info($a);
 //                    break;
-                    $dis = $offer->district->unit_name_eng;
-                    $body = 'You (ID:' . $offer->ansar_id . ') are offered for ' . $dis . ' as Rank ' . $a->designation->name_eng . ' Please type (ans YES/ans NO) and send to 6969 within 48 hours. Otherwise your offer will be cancelled - DC ' . strtoupper($dis);
+
                     $phone = '88' . trim($a->mobile_no_self);
                     $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
                     $crl = curl_init();
@@ -81,9 +85,9 @@ class Kernel extends ConsoleKernel
                     $response = curl_exec($crl);
                     curl_close($crl);
                     $r = Parser::xml($response);
-                    Log::info("SERVER RESPONSE : ".json_encode($r));
+                    Log::info("SERVER RESPONSE : " . json_encode($r));
                     $offer->sms_try += 1;
-                    if (isset($r['PARAMETER']) && strcasecmp($r['PARAMETER'], 'OK') == 0&&isset($r['SMSINFO']['MSISDN'])&&strcasecmp($r['SMSINFO']['MSISDN'],'88' . trim($a->mobile_no_self))==0) {
+                    if (isset($r['PARAMETER']) && strcasecmp($r['PARAMETER'], 'OK') == 0 && isset($r['SMSINFO']['MSISDN']) && strcasecmp($r['SMSINFO']['MSISDN'], '88' . trim($a->mobile_no_self)) == 0) {
                         $offer->sms_status = 'Send';
                         $offer->save();
                     } else {
@@ -101,11 +105,11 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             Log::info("called : send_failed_offer");
 //            //return;
-            $user = env('SSL_USER_ID','ansarapi');
-            $pass = env('SSL_PASSWORD','x83A7Z96');
-            $sid = env('SSL_SID','ANSARVDP');
+            $user = env('SSL_USER_ID', 'ansarapi');
+            $pass = env('SSL_PASSWORD', 'x83A7Z96');
+            $sid = env('SSL_SID', 'ANSARVDP');
             $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
-            $offered_ansar = OfferSMS::with(['ansar','district'])->where('sms_status', 'Failed')->take(10)->get();
+            $offered_ansar = OfferSMS::with(['ansar', 'district'])->where('sms_status', 'Failed')->take(10)->get();
 //            Log::info($offered_ansar);
             foreach ($offered_ansar as $offer) {
                 DB::connection('hrm')->beginTransaction();
@@ -129,9 +133,9 @@ class Kernel extends ConsoleKernel
                     $response = curl_exec($crl);
                     curl_close($crl);
                     $r = Parser::xml($response);
-                    Log::info("SERVER RESPONSE : ".json_encode($r));
+                    Log::info("SERVER RESPONSE : " . json_encode($r));
                     $offer->sms_try += 1;
-                    if (isset($r['PARAMETER']) && strcasecmp($r['PARAMETER'], 'OK') == 0&&isset($r['SMSINFO']['MSISDN'])&&strcasecmp($r['SMSINFO']['MSISDN'],'88' . trim($a->mobile_no_self))==0) {
+                    if (isset($r['PARAMETER']) && strcasecmp($r['PARAMETER'], 'OK') == 0 && isset($r['SMSINFO']['MSISDN']) && strcasecmp($r['SMSINFO']['MSISDN'], '88' . trim($a->mobile_no_self)) == 0) {
                         $offer->sms_status = 'Send';
                         $offer->save();
                     } else {
@@ -148,9 +152,9 @@ class Kernel extends ConsoleKernel
         })->everyMinute()->name("send_failed_offer")->withoutOverlapping();
         $schedule->call(function () {
             Log::info("called : offer_cancel");
-            $user = env('SSL_USER_ID','ansarapi');
-            $pass = env('SSL_PASSWORD','x83A7Z96');
-            $sid = env('SSL_SID','ANSARVDP');
+            $user = env('SSL_USER_ID', 'ansarapi');
+            $pass = env('SSL_PASSWORD', 'x83A7Z96');
+            $sid = env('SSL_SID', 'ANSARVDP');
             $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
             $offered_cancel = OfferCancel::where('sms_status', 0)->take(10)->get();
             foreach ($offered_cancel as $offer) {
@@ -182,30 +186,44 @@ class Kernel extends ConsoleKernel
                 Log::info("CALLED START: OFFER NO REPLY" . $ansar->ansar_id);
                 DB::beginTransaction();
                 try {
-                    switch($ansar->come_from){
-                        case 'Panel':
-                            $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
-                            $ansar->saveLog('No Reply');
-                            $ansar->status()->update([
-                                'offer_sms_status' => 0,
-                                'pannel_status' => 1,
-                            ]);
-                            $ansar->panel()->save(new PanelModel([
-                                'memorandum_id' => isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
-                                'panel_date' => Carbon::now(),
-                                'come_from' => 'Offer',
-                                'ansar_merit_list' => 1,
-                            ]));
-                            $ansar->delete();
-                            break;
-                        case 'rest':
-                            $ansar->saveLog('No Reply');
-                            $ansar->status()->update([
-                                'rest_status' => 1,
-                                'offer_sms_status' => 0,
-                            ]);
-                            $ansar->delete();
-                            break;
+                    $count = $ansar->getOfferCount();
+                    if ($count >= 2) {
+                        $ansar->deleteCount();
+                        $ansar->blockAnsarOffer();
+                        $ansar->saveLog('No Reply');
+                        $ansar->status()->update([
+                            'offer_sms_status' => 0,
+                            'offer_block_status' => 1,
+                        ]);
+                        $ansar->delete();
+                    } else {
+                        $ansar->saveCount();
+
+                        switch ($ansar->come_from) {
+                            case 'Panel':
+                                $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
+                                $ansar->saveLog('No Reply');
+                                $ansar->status()->update([
+                                    'offer_sms_status' => 0,
+                                    'pannel_status' => 1,
+                                ]);
+                                $ansar->panel()->save(new PanelModel([
+                                    'memorandum_id' => isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
+                                    'panel_date' => Carbon::now(),
+                                    'come_from' => 'Offer',
+                                    'ansar_merit_list' => 1,
+                                ]));
+                                $ansar->delete();
+                                break;
+                            case 'rest':
+                                $ansar->saveLog('No Reply');
+                                $ansar->status()->update([
+                                    'rest_status' => 1,
+                                    'offer_sms_status' => 0,
+                                ]);
+                                $ansar->delete();
+                                break;
+                        }
                     }
                     DB::commit();
                 } catch (\Exception $e) {
@@ -219,22 +237,34 @@ class Kernel extends ConsoleKernel
             $offeredAnsars = SmsReceiveInfoModel::all();
             $now = Carbon::now();
             foreach ($offeredAnsars as $ansar) {
-                if($now->diffInDays(Carbon::parse($ansar->sms_received_datetime)) >=7){
+                if ($now->diffInDays(Carbon::parse($ansar->sms_received_datetime)) >= 7) {
                     Log::info("CALLED START: OFFER ACCEPTED" . $ansar->ansar_id);
                     DB::beginTransaction();
                     try {
-                        $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
-                        $ansar->saveLog();
-                        $ansar->status()->update([
-                            'offer_sms_status' => 0,
-                            'pannel_status' => 1,
-                        ]);
-                        $ansar->panel()->save(new PanelModel([
-                            'memorandum_id' => isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
-                            'panel_date' => Carbon::now(),
-                            'come_from' => 'Offer',
-                            'ansar_merit_list' => 1,
-                        ]));
+                        $count = $ansar->getOfferCount();
+                        if ($count >= 2) {
+                            $ansar->deleteCount();
+                            $ansar->blockAnsarOffer();
+                            $ansar->saveLog();
+                            $ansar->status()->update([
+                                'offer_sms_status' => 0,
+                                'offer_block_status' => 1,
+                            ]);
+                        } else {
+                            $ansar->saveCount();
+                            $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
+                            $ansar->saveLog();
+                            $ansar->status()->update([
+                                'offer_sms_status' => 0,
+                                'pannel_status' => 1,
+                            ]);
+                            $ansar->panel()->save(new PanelModel([
+                                'memorandum_id' => isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
+                                'panel_date' => Carbon::now(),
+                                'come_from' => 'Offer',
+                                'ansar_merit_list' => 1,
+                            ]));
+                        }
                         $ansar->delete();
                         DB::commit();
                     } catch (\Exception $e) {
@@ -270,102 +300,102 @@ class Kernel extends ConsoleKernel
             }
         })->dailyAt("00:00")->name('withdraw_kpi')->withoutOverlapping();
         $schedule->call(function () {
-            $rest_ansars = RestInfoModel::whereDate('active_date','<=',Carbon::today()->toDateString())->whereIn('disembodiment_reason_id',[1,2,8])->get();
+            $rest_ansars = RestInfoModel::whereDate('active_date', '<=', Carbon::today()->toDateString())->whereIn('disembodiment_reason_id', [1, 2, 8])->get();
             Log::info("REST to PANEl : CALLED");
 
-            foreach($rest_ansars as $ansar){
+            foreach ($rest_ansars as $ansar) {
 
-                if(!in_array(AnsarStatusInfo::REST_STATUS,$ansar->status->getStatus())||in_array(AnsarStatusInfo::BLOCK_STATUS,$ansar->status->getStatus())||in_array(AnsarStatusInfo::BLACK_STATUS,$ansar->status->getStatus())) continue;
+                if (!in_array(AnsarStatusInfo::REST_STATUS, $ansar->status->getStatus()) || in_array(AnsarStatusInfo::BLOCK_STATUS, $ansar->status->getStatus()) || in_array(AnsarStatusInfo::BLACK_STATUS, $ansar->status->getStatus())) continue;
                 DB::beginTransaction();
-                try{
-                    $panel_log = PanelInfoLogModel::where('ansar_id',$ansar->ansar_id)->orderBy('id','desc')->first();
+                try {
+                    $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->orderBy('id', 'desc')->first();
                     PanelModel::create([
-                        'ansar_id'=>$ansar->ansar_id,
-                        'come_from'=>'Rest',
-                        'panel_date'=>Carbon::today(),
-                        'memorandum_id'=>isset($panel_log->old_memorandum_id)?$panel_log->old_memorandum_id:'N\A',
-                        'ansar_merit_list'=>isset($panel_log->merit_list)?$panel_log->merit_list:'N\A',
-                        'action_user_id'=>'0',
+                        'ansar_id' => $ansar->ansar_id,
+                        'come_from' => 'Rest',
+                        'panel_date' => Carbon::today(),
+                        'memorandum_id' => isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
+                        'ansar_merit_list' => isset($panel_log->merit_list) ? $panel_log->merit_list : 'N\A',
+                        'action_user_id' => '0',
                     ]);
                     $ansar->status->update([
-                        'pannel_status'=>1,
-                        'rest_status'=>0,
+                        'pannel_status' => 1,
+                        'rest_status' => 0,
                     ]);
                     $ansar->saveLog('Panel');
                     $ansar->delete();
                     DB::commit();
-                    Log::info("REST to PANEl :".$ansar->ansar_id);
-                }catch(\Exception $e){
+                    Log::info("REST to PANEl :" . $ansar->ansar_id);
+                } catch (\Exception $e) {
                     DB::rollBack();
-                    Log::info("REST to PANEl FAILED:".$ansar->ansar_id);
+                    Log::info("REST to PANEl FAILED:" . $ansar->ansar_id);
                 }
             }
-        })->twiceDaily(0,12)->name('rest_to_panel')->withoutOverlapping();
+        })->twiceDaily(0, 12)->name('rest_to_panel')->withoutOverlapping();
         $schedule->call(function () {
-            $rest_ansars = RestInfoModel::whereRaw('FLOOR(DATEDIFF(rest_date,NOW())/365)>=1')->where('disembodiment_reason_id',5)->get();
+            $rest_ansars = RestInfoModel::whereRaw('FLOOR(DATEDIFF(rest_date,NOW())/365)>=1')->where('disembodiment_reason_id', 5)->get();
             Log::info("REST to PANEl DICIPLINARY : CALLED");
 
-            foreach($rest_ansars as $ansar){
+            foreach ($rest_ansars as $ansar) {
 
-                if(!in_array(AnsarStatusInfo::REST_STATUS,$ansar->status->getStatus())||in_array(AnsarStatusInfo::BLOCK_STATUS,$ansar->status->getStatus())||in_array(AnsarStatusInfo::BLACK_STATUS,$ansar->status->getStatus())) continue;
+                if (!in_array(AnsarStatusInfo::REST_STATUS, $ansar->status->getStatus()) || in_array(AnsarStatusInfo::BLOCK_STATUS, $ansar->status->getStatus()) || in_array(AnsarStatusInfo::BLACK_STATUS, $ansar->status->getStatus())) continue;
                 DB::beginTransaction();
-                try{
-                    $panel_log = PanelInfoLogModel::where('ansar_id',$ansar->ansar_id)->orderBy('id','desc')->first();
+                try {
+                    $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->orderBy('id', 'desc')->first();
                     PanelModel::create([
-                        'ansar_id'=>$ansar->ansar_id,
-                        'come_from'=>'Rest',
-                        'panel_date'=>Carbon::today(),
-                        'memorandum_id'=>isset($panel_log->old_memorandum_id)?$panel_log->old_memorandum_id:'N\A',
-                        'ansar_merit_list'=>isset($panel_log->merit_list)?$panel_log->merit_list:'N\A',
-                        'action_user_id'=>'0',
+                        'ansar_id' => $ansar->ansar_id,
+                        'come_from' => 'Rest',
+                        'panel_date' => Carbon::today(),
+                        'memorandum_id' => isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
+                        'ansar_merit_list' => isset($panel_log->merit_list) ? $panel_log->merit_list : 'N\A',
+                        'action_user_id' => '0',
                     ]);
                     $ansar->status->update([
-                        'pannel_status'=>1,
-                        'rest_status'=>0,
+                        'pannel_status' => 1,
+                        'rest_status' => 0,
                     ]);
                     $ansar->saveLog('Panel');
                     $ansar->delete();
                     DB::commit();
-                    Log::info("REST to PANEl :".$ansar->ansar_id);
-                }catch(\Exception $e){
+                    Log::info("REST to PANEl :" . $ansar->ansar_id);
+                } catch (\Exception $e) {
                     DB::rollBack();
-                    Log::info("REST to PANEl FAILED:".$ansar->ansar_id);
+                    Log::info("REST to PANEl FAILED:" . $ansar->ansar_id);
                 }
             }
-        })->twiceDaily(0,12)->name('rest_to_panel_disciplaney_action')->withoutOverlapping();
-        $schedule->call(function(){
+        })->twiceDaily(0, 12)->name('rest_to_panel_disciplaney_action')->withoutOverlapping();
+        $schedule->call(function () {
 
-        })->twiceDaily(0,12)->name("ansar_retirement")->withoutOverlapping();
+        })->twiceDaily(0, 12)->name("ansar_retirement")->withoutOverlapping();
         $schedule->call(function () {
             Log::info("called : disable circular");
             DB::connection('recruitment')->beginTransaction();
-            try{
-                $circulars = JobCircular::where('status','active')->where('end_date','<=',Carbon::now()->format('Y-m-d'))->get();
-                foreach ($circulars as $circular){
+            try {
+                $circulars = JobCircular::where('status', 'active')->where('end_date', '<=', Carbon::now()->format('Y-m-d'))->get();
+                foreach ($circulars as $circular) {
                     $circular->status = 'inactive';
                     $circular->payment_status = 'off';
                     $circular->save();
                     DB::connection('recruitment')->commit();
                 }
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 DB::connection('recruitment')->rollback();
             }
 
         })->dailyAt("00:00")->name("disable_circular")->withoutOverlapping();
         $schedule->call(function () {
             Log::info("called : send_sms_to_accepted_applicant");
-            $messID        = uniqid('SB_');
-            $messageID     = $messID;
-            $apiUser       = 'join_ans_vdp';
-            $apiPass       = 'shurjoSM123';
+            $messID = uniqid('SB_');
+            $messageID = $messID;
+            $apiUser = 'join_ans_vdp';
+            $apiPass = 'shurjoSM123';
 
             $applicants = JobAcceptedApplicant::with('applicant')->whereHas('applicant', function ($q) {
-                    $q->where('status','accepted');
-                })->where('message_status','pending')->where('sms_status','on')->limit(10)->get();
+                $q->where('status', 'accepted');
+            })->where('message_status', 'pending')->where('sms_status', 'on')->limit(10)->get();
             foreach ($applicants as $a) {
 
 
-                if($a->applicant){
+                if ($a->applicant) {
                     $sms_data = http_build_query(
                         array(
                             'API_USER' => $apiUser,

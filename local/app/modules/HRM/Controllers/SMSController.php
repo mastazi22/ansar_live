@@ -121,36 +121,42 @@ class SMSController extends Controller
                     try {
                         $offered_ansar = OfferSMS::whereIn('ansar_id', $ansar)->first();
                         if ($offered_ansar) {
-                            $status_info = AnsarStatusInfo::where('ansar_id', $offered_ansar->ansar_id)->first();
-                            $offer_log = new OfferSmsLog;
-                            switch ($offered_ansar->come_from) {
-                                case 'Panel':
-                                    $panel_log = PanelInfoLogModel::where('ansar_id', $offered_ansar->ansar_id)->select('old_memorandum_id')->first();
-                                    $panel_info = new PanelModel;
-                                    $panel_info->ansar_id = $offered_ansar->ansar_id;
-                                    $panel_info->panel_date = Carbon::now();
-                                    $panel_info->come_from = 'Offer';
-                                    $panel_info->ansar_merit_list = 1;
-                                    $panel_info->memorandum_id = $panel_log->old_memorandum_id;
-                                    $panel_info->save();
-                                    $status_info->offer_sms_status = 0;
-                                    $status_info->pannel_status = 1;
-                                    $status_info->save();
-                                    break;
-                                case 'rest':
-                                    $status_info->offer_sms_status = 0;
-                                    $status_info->rest_status = 1;
-                                    $status_info->save();
-                                    break;
+                            $count = $offered_ansar->getOfferCount();
+                            if($count>=2){
+                                $offered_ansar->deleteCount();
+                                $offered_ansar->blockAnsarOffer();
+                                $offered_ansar->saveLog();
+                                $offered_ansar->status()->update([
+                                    'offer_sms_status' => 0,
+                                    'offer_block_status' => 1,
+                                ]);
+                            }else{
+                                $offered_ansar->saveCount();
+                                switch ($offered_ansar->come_from) {
+                                    case 'Panel':
+                                        $panel_log = PanelInfoLogModel::where('ansar_id', $offered_ansar->ansar_id)->select('old_memorandum_id')->first();
+                                        $panel_info = new PanelModel;
+                                        $panel_info->ansar_id = $offered_ansar->ansar_id;
+                                        $panel_info->panel_date = Carbon::now();
+                                        $panel_info->come_from = 'Offer';
+                                        $panel_info->ansar_merit_list = 1;
+                                        $panel_info->memorandum_id = $panel_log->old_memorandum_id;
+                                        $panel_info->save();
+                                        $offered_ansar->status()->update([
+                                            'offer_sms_status' => 0,
+                                            'pannel_status' => 1,
+                                        ]);
+                                        break;
+                                    case 'rest':
+                                        $offered_ansar->status()->update([
+                                            'offer_sms_status' => 0,
+                                            'rest_status' => 1,
+                                        ]);
+                                        break;
 
+                                }
                             }
-                            $offer_log->offered_date = $offered_ansar->sms_send_datetime;
-                            $offer_log->ansar_id = $offered_ansar->ansar_id;
-                            $offer_log->reply_type = 'No';
-                            $offer_log->offered_district = $offered_ansar->district_id;
-                            $offer_log->action_user_id = $offered_ansar->action_user_id;
-                            $offer_log->action_date = $action_date;
-                            $offer_log->save();
+                            $offered_ansar->saveLog('No');
                             $offered_ansar->delete();
                             DB::commit();
                             return "Your offer is cancelled";

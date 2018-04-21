@@ -29,4 +29,32 @@ class SmsReceiveInfoModel extends Model
     public function panel(){
         return $this->hasOne(PanelModel::class,'ansar_id','ansar_id');
     }
+    public function getOfferCount(){
+        $count = OfferCount::where('ansar_id',$this->ansar_id)->first();
+        if(!$count) return 0;
+        return intval($count->count);
+    }
+    public function saveCount(){
+        $count = OfferCount::where('ansar_id',$this->ansar_id)->first();
+        if($count) {
+            $count->increment('count');
+        }
+        else  {
+            $count->count = 1;
+            $count->save();
+        }
+    }
+    public function blockAnsarOffer(){
+        $oba = new OfferBlockedAnsar;
+        $oba->ansar_id = $this->ansar_id;
+        $oba->last_offer_unit = $this->offered_district;
+        $oba->save();
+    }
+    public function deleteCount(){
+        $count = OfferCount::where('ansar_id',$this->ansar_id)->first();
+        if($count) {
+            $count->delete();
+        }
+    }
 }
+
