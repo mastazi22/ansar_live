@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\NotificationServer;
+use App\Helper\SMSTrait;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\EmbodimentModel;
 use App\modules\HRM\Models\FreezingInfoModel;
@@ -25,6 +26,7 @@ use Nathanmac\Utilities\Parser\Facades\Parser;
 
 class Kernel extends ConsoleKernel
 {
+    use SMSTrait;
     /**
      * The Artisan commands provided by your application.
      *
@@ -51,10 +53,10 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             Log::info("called : send_offer");
 //            //return;
-            $user = env('SSL_USER_ID', 'ansarapi');
+            /*$user = env('SSL_USER_ID', 'ansarapi');
             $pass = env('SSL_PASSWORD', 'x83A7Z96');
             $sid = env('SSL_SID', 'ANSARVDP');
-            $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
+            $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";*/
             $offered_ansar = OfferSMS::with(['ansar', 'district'])->where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
 //            Log::info($offered_ansar);
             foreach ($offered_ansar as $offer) {
@@ -64,16 +66,13 @@ class Kernel extends ConsoleKernel
                     $a = $offer->ansar;
                     $count = $offer->getOfferCount();
                     $dis = $offer->district->unit_name_eng;
-                    if ($count == 2) {
-                        $body = 'WARNING!!!!. You (ID:' . $offer->ansar_id . ') are offered for ' . $dis . ' as Rank ' . $a->designation->name_eng . ' Please type (ans YES/ans NO) and send to 6969 within 24 hours. Otherwise your offer will be cancelled - DC ' . strtoupper($dis);
-                    } else {
-                        $body = 'You (ID:' . $offer->ansar_id . ') are offered for ' . $dis . ' as Rank ' . $a->designation->name_eng . ' Please type (ans YES/ans NO) and send to 6969 within 24 hours. Otherwise your offer will be cancelled - DC ' . strtoupper($dis);
-                    }
+                    $dc = strtoupper($dis);
+                    $body = "Apni (ID:{$offer->ansar_id}, {$a->designation->name_eng}) aaj {$dis} theke offer peyesen. Please type (ans YES ) and send korun 6969 number e 24 ghontar moddhey . Otherwise  offer ti cancel hoie jabe-DC {$dc}";
                     //Log::info($a);
 //                    break;
 
                     $phone = '88' . trim($a->mobile_no_self);
-                    $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
+                    /*$param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
                     $crl = curl_init();
                     curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, FALSE);
                     curl_setopt($crl, CURLOPT_SSL_VERIFYHOST, 2);
@@ -81,9 +80,10 @@ class Kernel extends ConsoleKernel
                     curl_setopt($crl, CURLOPT_HEADER, 0);
                     curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
                     curl_setopt($crl, CURLOPT_POST, 1);
-                    curl_setopt($crl, CURLOPT_POSTFIELDS, $param);
-                    $response = curl_exec($crl);
-                    curl_close($crl);
+                    curl_setopt($crl, CURLOPT_POSTFIELDS, $param);*/
+//                    $response = curl_exec($crl);
+                    $response = $this->sendSMS($phone,$body);
+//                    curl_close($crl);
                     $r = Parser::xml($response);
                     Log::info("SERVER RESPONSE : " . json_encode($r));
                     $offer->sms_try += 1;
@@ -93,6 +93,9 @@ class Kernel extends ConsoleKernel
                     } else {
                         $offer->sms_status = 'Failed';
                         $offer->save();
+                    }
+                    if($count==2){
+                        $this->sendSMS($phone,"Et apnaer 3rd offer. Ei offer YES na korle agami 6 mas  ar offer passen na. Sotorko houn");
                     }
                     DB::connection('hrm')->commit();
                 } catch (\Exception $e) {
