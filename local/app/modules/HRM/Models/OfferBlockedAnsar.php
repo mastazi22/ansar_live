@@ -15,4 +15,8 @@ class OfferBlockedAnsar extends Model
     {
         return $this->belongsTo(PersonalInfo::class, 'ansar_id');
     }
+    public function unit()
+    {
+        return $this->belongsTo(District::class, 'last_offer_unit');
+    }
 }

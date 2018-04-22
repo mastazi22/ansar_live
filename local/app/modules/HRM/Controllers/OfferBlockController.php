@@ -2,6 +2,7 @@
 
 namespace App\modules\HRM\Controllers;
 
+use App\modules\HRM\Models\OfferBlockedAnsar;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -12,11 +13,17 @@ class OfferBlockController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if($request->ajax()){
+            $offer_blocked = OfferBlockedAnsar::with(['personalinfo','unit']);
+            if($request->ansar_id){
+                $offer_blocked->where('ansar_id',$request->ansar_id);
+            }
+        }
     }
 
     /**

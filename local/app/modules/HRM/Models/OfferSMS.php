@@ -64,6 +64,7 @@ class OfferSMS extends Model
         $oba = new OfferBlockedAnsar;
         $oba->ansar_id = $this->ansar_id;
         $oba->last_offer_unit = $this->district_id;
+        $oba->blocked_date = Carbon::now()->format('Y-m-d');
         $oba->save();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\modules\HRM\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class SmsReceiveInfoModel extends Model
@@ -49,6 +50,7 @@ class SmsReceiveInfoModel extends Model
         $oba = new OfferBlockedAnsar;
         $oba->ansar_id = $this->ansar_id;
         $oba->last_offer_unit = $this->offered_district;
+        $oba->blocked_date = Carbon::now()->format('Y-m-d');
         $oba->save();
     }
     public function deleteCount(){

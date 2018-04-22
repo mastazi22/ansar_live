@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\models\UserCreationRequest;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Illuminate\Support\Facades\DB;
 
 class UserCreationRequestController extends Controller
 {
@@ -15,7 +17,8 @@ class UserCreationRequestController extends Controller
      */
     public function index()
     {
-        //
+        $user_create_requests = UserCreationRequest::where('action_user_id',auth()->user()->id)->get();
+        return view('user_create_request.index',compact('user_create_requests'));
     }
 
     /**
@@ -25,7 +28,7 @@ class UserCreationRequestController extends Controller
      */
     public function create()
     {
-        //
+        return view('user_create_request.create');
     }
 
     /**
@@ -36,7 +39,26 @@ class UserCreationRequestController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $rules = [
+            'first_name'=>'required',
+            'last_name'=>'required',
+            'email'=>'required',
+            'mobile_no'=>'required',
+            'user_type'=>'required',
+        ];
+        $this->validate($request,$rules);
+        $inputs = $request->all();
+        $inputs['user_parent_id'] = auth()->user()->id;
+        DB::beginTransaction();
+        try{
+            UserCreationRequest::create($inputs);
+            DB::commit();
+        }catch(\Exception $e){
+            DB::rollback();
+            return redirect()->route('user_create_request.index')->with('error_message',$e->getMessage());
+
+        }
+        return redirect()->route('user_create_request.index')->with('success_message','Request created successfully');
     }
 
     /**

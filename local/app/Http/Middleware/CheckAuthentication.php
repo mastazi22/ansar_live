@@ -20,6 +20,7 @@ class CheckAuthentication
      */
     public function handle($request, Closure $next)
     {
+//        return $request->url();
         if (auth()->guest()) {
             Session::put('redirect_url',$request->url());
             If($request->ajax()){

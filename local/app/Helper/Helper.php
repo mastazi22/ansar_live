@@ -13,6 +13,7 @@ use App\Helper\Facades\GlobalParameterFacades;
 use App\modules\HRM\Models\OfferQuota;
 use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\SmsReceiveInfoModel;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -78,5 +79,21 @@ class Helper
             default:
                 return $ansar_retirement_age;
         }
+    }
+
+    /**
+     * @param $from_date
+     * @param $days
+     * @return Carbon
+     */
+    public static function getLastWorkingDay($from_date,$days){
+        $date = Carbon::parse($from_date);
+        for ($i=1;$i<=$days;$i++){
+            $date->addDays(1);
+            if($date->isFriday()||$date->isSaturday()){
+                $days++;
+            }
+        }
+        return $date;
     }
 }

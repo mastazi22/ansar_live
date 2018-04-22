@@ -431,7 +431,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
         Route::get('upload_original_info',['as'=>'upload_original_info_view','uses'=>'GeneralSettingsController@uploadOriginalInfoView']);
         Route::get('test',function(){
 
-            $datas = \Maatwebsite\Excel\Facades\Excel::load(storage_path('union_list.xlsx'),function ($reader){
+            /*$datas = \Maatwebsite\Excel\Facades\Excel::load(storage_path('union_list.xlsx'),function ($reader){
 
             })->get();
             $insertData = [];
@@ -461,7 +461,8 @@ Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
 
             }
             \App\modules\HRM\Models\Unions::insert($insertData);
-            return $errorData;
+            return $errorData;*/
+            return \App\Helper\Helper::getLastWorkingDay('22-04-2018',7);
         });
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');

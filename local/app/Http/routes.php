@@ -62,6 +62,6 @@ Route::group(['middleware' => 'auth'], function () {
        $pdf = \Barryvdh\Snappy\Facades\SnappyPdf::loadView('welcome');
        return $pdf->download();
     });
-    Route::resource('user_create_request','UserCreationRequest');
+    Route::resource('user_create_request','UserCreationRequestController');
     //end user route
 });
