@@ -143,7 +143,7 @@ class UserCreationRequestController extends Controller
             DB::connection('hrm')->rollback();
             return redirect()->back()->with('error',$e->getMessage());
         }
-        return redirect()->back()->with('success',"User approved complete");
+        return redirect()->to("/edit_user_permission/{$user->id}")->with('success',"User approved complete");
     }
     public function cancelUser($id){
         DB::connection('hrm')->beginTransaction();
