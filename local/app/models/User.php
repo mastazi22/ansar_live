@@ -36,7 +36,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @var array
      */
-    protected $fillable = ['name', 'email', 'password'];
+    protected $fillable = ['user_name', 'email', 'password','type','user_parent_id'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -115,5 +115,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
     public function exportJob(){
         return $this->hasOne(ExportDataJob::class,'user_id');
+    }
+    public function userParent(){
+        return $this->belongsTo(User::class,'user_parent_id');
     }
 }

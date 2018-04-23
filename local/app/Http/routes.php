@@ -57,11 +57,18 @@ Route::group(['middleware' => 'auth'], function () {
        Route::post('/unblock_user', ['as' => 'unblock_user', 'uses' => 'UserController@unBlockUser']);
        Route::get('/user_registration', ['as' => 'create_user', 'uses' => 'UserController@userRegistration']);
        Route::get('/edit_user_permission/{id}', ['as' => 'edit_user_permission', 'uses' => 'UserController@editUserPermission']);
+       Route::get('/all_user_request_notification', function () {
+           return view('all_user_request_notification');
+       });
+       Route::post('/approved_user_request/{id}','UserCreationRequestController@approveUser');
+       Route::post('/cancel_user_request/{id}','UserCreationRequestController@cancelUser');
    });
     Route::get('test',function (){
        $pdf = \Barryvdh\Snappy\Facades\SnappyPdf::loadView('welcome');
        return $pdf->download();
     });
-    Route::resource('user_create_request','UserCreationRequestController');
+    Route::group(['middleware'=>['dc']],function (){
+        Route::resource('user_create_request','UserCreationRequestController');
+    });
     //end user route
 });

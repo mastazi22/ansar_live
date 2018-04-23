@@ -44,7 +44,15 @@
                     </a>
                 </li>
             @endif
+            @if(auth()->user()->type==22)
 
+                <li>
+                    <a href="{{URL::route('user_create_request.index')}}">
+                        <i class="fa fa-user"></i>
+                        <span>Manage User</span>
+                    </a>
+                </li>
+            @endif
             {{--<li>--}}
                 {{--<a href="pages/calendar.html">--}}
                     {{--<i class="fa fa-calendar"></i> <span>Calendar</span>--}}

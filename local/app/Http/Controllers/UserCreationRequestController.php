@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Helper\SMSTrait;
 use App\models\UserCreationRequest;
+use App\models\User;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UserCreationRequestController extends Controller
 {
+    use SMSTrait;
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +21,7 @@ class UserCreationRequestController extends Controller
      */
     public function index()
     {
-        $user_create_requests = UserCreationRequest::where('action_user_id',auth()->user()->id)->get();
+        $user_create_requests = UserCreationRequest::withTrashed()->where('action_user_id',auth()->user()->id)->get();
         return view('user_create_request.index',compact('user_create_requests'));
     }
 
@@ -44,7 +48,7 @@ class UserCreationRequestController extends Controller
             'last_name'=>'required',
             'email'=>'required',
             'mobile_no'=>'required',
-            'user_type'=>'required',
+            'user_type'=>['required','regex:/^(dataentry|verifier)$/'],
         ];
         $this->validate($request,$rules);
         $inputs = $request->all();
@@ -104,5 +108,55 @@ class UserCreationRequestController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function approveUser($id){
+        DB::connection('hrm')->beginTransaction();
+        try{
+            $user_detail = UserCreationRequest::findOrFail($id);
+            $user_name = str_random(6);
+            while(User::where('user_name',$user_name)->exists()){
+                $user_name = str_random(6);
+            }
+            $password = str_random(6);
+            $type = $user_detail->user_type=='dataentry'?55:44;
+            $user_parent_id = $user_detail->user->id;
+            $user = User::create([
+                'user_name'=>$user_name,
+                'password'=>Hash::make($password),
+                'type'=>$type,
+                'user_parent_id'=>$user_parent_id,
+            ]);
+            $user->userProfile()->create([
+               'first_name'=>$user_detail->first_name,
+               'last_name'=>$user_detail->last_name,
+               'email'=>$user_detail->email,
+               'mobile_no'=>$user_detail->mobile_no,
+            ]);
+            $user->userLog()->create([]);
+            $user->userPermission()->create([]);
+            $user_detail->status = 'approved';
+            $user_detail->save();
+            $user_detail->delete();
+            $this->sendSMS("88{$user_detail->mobile_no}","your user name: {$user_name}, password: {$password}");
+            DB::connection('hrm')->commit();
+        }catch(\Exception $e){
+            DB::connection('hrm')->rollback();
+            return redirect()->back()->with('error',$e->getMessage());
+        }
+        return redirect()->back()->with('success',"User approved complete");
+    }
+    public function cancelUser($id){
+        DB::connection('hrm')->beginTransaction();
+        try{
+            $user_detail = UserCreationRequest::findOrFail($id);
+            $user_detail->status = 'canceled';
+            $user_detail->save();
+            $user_detail->delete();
+            DB::connection('hrm')->commit();
+        }catch(\Exception $e){
+            DB::connection('hrm')->rollback();
+            return redirect()->back()->with('error',$e->getMessage());
+        }
+        return redirect()->back()->with('success',"User approved complete");
     }
 }

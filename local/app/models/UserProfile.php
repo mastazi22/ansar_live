@@ -9,6 +9,7 @@ class UserProfile extends Model
     //
     protected $connection = 'hrm';
     protected $table = 'tbl_user_details';
+    protected $guarded = ['id'];
     function user(){
         return $this->belongsTo('App\models\User');
     }

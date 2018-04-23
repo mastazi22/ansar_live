@@ -100,6 +100,13 @@ class CheckUserType
                                 else abort(401);
                             }
                         }
+                        else if($user->userParent&&$user->userParent->type==22){
+                            if(Session::has('module')&&Session::get('module')==='recruitment'&&$user->recDistrict) {
+                                $input[$key] = $user->userParent->recDistrict->id;
+//                                return $input;
+                            }
+                            else $input[$key] = $user->userParent->district->id;
+                        }
                     }
                     else if($type=='range'){
                         if($user->type==22){
@@ -108,6 +115,10 @@ class CheckUserType
                         }
                         else if($user->type==66){
                             $input[$key] = $user->division_id;
+                        }
+                        else if($user->userParent&&$user->userParent->type==22){
+                            if(Session::has('module')&&Session::get('module')==='recruitment'&&$user->recDistrict) $input[$key] = $user->userParent->recDistrict->division_id;
+                            else $input[$key] = $user->userParent->district->division_id;
                         }
                     }
                 }

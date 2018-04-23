@@ -101,15 +101,15 @@
                         <li class="dropdown notifications-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-bell-o"></i>
-                                <span class="label label-warning">{{Notification::getTotal()}}</span>
+                                <span class="label label-warning">{{Notification::getForgetPasswordNotificationTotal()}}</span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li class="header">You have {{Notification::getTotal()}} forget password notifications
+                                <li class="header">You have {{Notification::getForgetPasswordNotificationTotal()}} forget password notifications
                                 </li>
                                 <li>
                                     <!-- inner menu: contains the actual data -->
                                     <ul class="menu">
-                                        @foreach(Notification::getNotification() as $notification)
+                                        @foreach(Notification::getForgetPasswordNotification() as $notification)
                                             <li>
                                                 <a href="{{URL::to((request()->route()?request()->route()->getPrefix():'')."/change_password/".$notification->user_name)}}"
                                                    style="white-space: normal !important;overflow: auto !important;text-overflow: initial !important;">
@@ -122,41 +122,40 @@
                                     </ul>
                                 </li>
                                 <li class="footer"><a
-                                            href="{{URL::to((request()->route()?request()->route()->getPrefix():'')."/all_notification")}}">View
+                                            href="{{URL::to("/all_notification")}}">View
                                         all</a></li>
                             </ul>
                         </li>
-                    @endif
-                    @if(!is_null(request()->route())&&strcasecmp(request()->route()->getPrefix(),'HRM')==0)
                         <li class="dropdown notifications-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-file-excel-o"></i>
-                                <span class="label label-warning">{{Notification::getTotal()}}</span>
+                                <i class="fa fa-user"></i>
+                                <span class="label label-warning">{{Notification::getTotalUserRequest()}}</span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li class="header">You have {{Notification::getTotal()}} forget password notifications
+                                <li class="header">You have {{Notification::getTotalUserRequest()}} user create notifications
                                 </li>
                                 <li>
                                     <!-- inner menu: contains the actual data -->
                                     <ul class="menu">
-                                        @foreach(Notification::getNotification() as $notification)
+                                        @foreach(Notification::getUserRequestNotification() as $notification)
                                             <li>
-                                                <a href="{{URL::to((request()->route()?request()->route()->getPrefix():'')."/change_password/".$notification->user_name)}}"
+                                                <a href="{{URL::to("/change_password/".$notification->user_name)}}"
                                                    style="white-space: normal !important;overflow: auto !important;text-overflow: initial !important;">
                                                     <i class="fa fa-users text-aqua"></i>
-                                                    <span style="color: #000000;font-size: 1.3em;">{{$notification->user_name}}</span>
-                                                    forgets password.
+                                                    <span style="color: #000000;font-size: 1.3em;">{{$notification->user->user_name}}</span>
+                                                    make a user create request.
                                                 </a>
                                             </li>
                                         @endforeach
                                     </ul>
                                 </li>
                                 <li class="footer"><a
-                                            href="{{URL::to((request()->route()?request()->route()->getPrefix():'')."/all_notification")}}">View
+                                            href="{{URL::to("/all_user_request_notification")}}">View
                                         all</a></li>
                             </ul>
                         </li>
                     @endif
+
                     <li class="dropdown user user-menu"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <img
                                     src="{{action('UserController@getImage',['file'=>auth()->user()->userProfile->profile_image])}}"

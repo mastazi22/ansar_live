@@ -21,7 +21,7 @@
         <div class="box box-solid">
             <div class="box-body">
                 <div class="row">
-                    <div class="col-sm-6 col-sm-offset-3">
+                    <div class="col-sm-8 col-sm-offset-2">
                         {!! Form::open(['route'=>'user_create_request.store','method'=>'post']) !!}
                             <div class="form-group">
                                 {!! Form::label('first_name','First Name',['class'=>'control-label required']) !!}
@@ -46,6 +46,7 @@
                             </div>
                             <div class="form-group">
                                 {!! Form::label('mobile_no','Mobile No',['class'=>'control-label required']) !!}
+                                <small class="text text-danger">(Please enter valid mobile no. you will receive your user name and password in this number)</small>
                                 {!! Form::text('mobile_no',null,['class'=>'form-control','placeholder'=>'Mobile no']) !!}
                                 @if(isset($errors)&&$errors->first('mobile_no'))
                                     <p class="text text-danger">{{$errors->first('mobile_no')}}</p>
