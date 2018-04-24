@@ -3277,8 +3277,10 @@ table.text-center, table.text-center td, table.text-center th {
 }
 
 .login-page, .register-page {
-    background: url('../img/login_backk.jpg');
+    background: url('../img/login_backk.png');
     background-size: cover;
+    background-position: 0 -100px;
+    background-repeat: no-repeat;
 }
 
 .login-box, .register-box {
