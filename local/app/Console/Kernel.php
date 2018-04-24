@@ -67,7 +67,8 @@ class Kernel extends ConsoleKernel
                     $count = $offer->getOfferCount();
                     $dis = $offer->district->unit_name_eng;
                     $dc = strtoupper($dis);
-                    $body = "Apni (ID:{$offer->ansar_id}, {$a->designation->name_eng}) aaj {$dis} theke offer peyesen. Please type (ans YES ) and send korun 6969 number e 24 ghontar moddhey . Otherwise  offer ti cancel hoie jabe-DC {$dc}";
+                    $sms_end_date = Carbon::parse($offer->sms_end_datetime)->format('d-m-Y h:i:s A');
+                    $body = "Apni (ID:{$offer->ansar_id}, {$a->designation->name_eng}) aaj {$dis} theke offer peyesen. Please type (ans YES ) and send korun 6969 number e {$sms_end_date} tarikh er moddhey . Otherwise  offer ti cancel hoie jabe-DC {$dc}";
                     //Log::info($a);
 //                    break;
 
@@ -122,9 +123,11 @@ class Kernel extends ConsoleKernel
                     //Log::info($a);
 //                    break;
                     $dis = $offer->district->unit_name_eng;
-                    $body = 'You (ID:' . $offer->ansar_id . ') are offered for ' . $dis . ' as Rank ' . $a->designation->name_eng . ' Please type (ans YES/ans NO) and send to 6969 within 48 hours. Otherwise your offer will be cancelled - DC ' . strtoupper($dis);
+                    $dc = strtoupper($dis);
+                    $sms_end_date = Carbon::parse($offer->sms_end_datetime)->format('d-m-Y h:i:s A');
+                    $body = "Apni (ID:{$offer->ansar_id}, {$a->designation->name_eng}) aaj {$dis} theke offer peyesen. Please type (ans YES ) and send korun 6969 number e {$sms_end_date} tarikh er moddhey . Otherwise  offer ti cancel hoie jabe-DC {$dc}";
                     $phone = '88' . trim($a->mobile_no_self);
-                    $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
+                   /* $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
                     $crl = curl_init();
                     curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, FALSE);
                     curl_setopt($crl, CURLOPT_SSL_VERIFYHOST, 2);
@@ -132,9 +135,9 @@ class Kernel extends ConsoleKernel
                     curl_setopt($crl, CURLOPT_HEADER, 0);
                     curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
                     curl_setopt($crl, CURLOPT_POST, 1);
-                    curl_setopt($crl, CURLOPT_POSTFIELDS, $param);
-                    $response = curl_exec($crl);
-                    curl_close($crl);
+                    curl_setopt($crl, CURLOPT_POSTFIELDS, $param);*/
+                    $response = $this->sendSMS($phone,$body);
+//                    curl_close($crl);
                     $r = Parser::xml($response);
                     Log::info("SERVER RESPONSE : " . json_encode($r));
                     $offer->sms_try += 1;
@@ -144,6 +147,10 @@ class Kernel extends ConsoleKernel
                     } else {
                         $offer->sms_status = 'Failed';
                         $offer->save();
+                    }
+                    $count = $offer->getOfferCount();
+                    if($count==2){
+                        $this->sendSMS($phone,"Et apnaer 3rd offer. Ei offer YES na korle agami 6 mas  ar offer passen na. Sotorko houn");
                     }
                     DB::connection('hrm')->commit();
                 } catch (\Exception $e) {
