@@ -327,7 +327,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
         Route::get('offer_report',['as'=>'offer_report','uses'=>'ReportController@offerReportView']);
         Route::get('get_offered_ansar',['as'=>'get_offered_ansar','uses'=>'ReportController@getOfferedAnsar']);
         Route::get('over_aged_ansar',['as'=>'over_aged_ansar','uses'=>'ReportController@ansarOverAgedInfo']);
-        Route::any('unfrozen_report',['as'=>'unfrozen_report','uses'=>'ReportController@unfrozenAnsarReport']);
+//        Route::any('unfrozen_report',['as'=>'unfrozen_report','uses'=>'ReportController@unfrozenAnsarReport']);
         //END REPORT ROUTE
 //Start EmbodimentnewEmbodimentView
         Route::get('/new_embodiment', ['as' => 'go_to_new_embodiment_page', 'uses' => 'EmbodimentController@newEmbodimentView']);
