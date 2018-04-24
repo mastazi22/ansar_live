@@ -14,7 +14,8 @@ class VerifyCsrfToken extends BaseVerifier
     protected $except = [
         //
         'HRM/receive_sms',
-        '*/api/*',
+        'AVURP/api/*',
+        'HRM/api/*',
         'api/*',
     ];
 }
