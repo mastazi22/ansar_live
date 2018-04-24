@@ -40,12 +40,23 @@
             {id: 8, number_bng: 'ওয়ার্ড-০৮'},
             {id: 9, number_bng: 'ওয়ার্ড-০৯'},
         ]
-        $scope.ranks = [
-            {value: 'ansar', text: 'আনসার'},
-            {value: 'vdp', text: 'ভিডিপি'},
-            {value: 'tdp', text: 'টিডিপি'},
-            {value: 'basic', text: 'মৌলিক/পেশাভিত্তিক'},
-        ]
+        $scope.ranks = {
+            "আনসার":[
+                "আনসার",
+                "কোম্পানী কমান্ডার",
+                "সহকারী কোম্পানী কমান্ডার",
+                "প্লাটুন কমান্ডার",
+                "সহকারী প্লাটুন কমান্ডার"
+            ],
+            "ভিডিপি":[
+                "ভিডিপি",
+                "ইউনিয়ন দলনেতা",
+                "সহাকারী ইউনিয়ন দলনেতা",
+                "ইউনিয়ন দলনেত্রী",
+                "ওয়ার্ড দলনেতা",
+                "ওয়ার্ড দলনেত্রী"
+            ]
+        }
         $q.all([
             httpService.range(),
             httpService.bloodGroup(),
@@ -324,8 +335,17 @@
                     <span class="pull-right">:</span>
                 </label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" placeholder="বর্তমান পদবী" ng-model="info.form.designation"
-                           id="rank">
+                    <select class="form-control" placeholder="বর্তমান পদবী" ng-model="info.form.designation"
+                            id="rank">
+                        <option value="">--পদবী নির্বাচন করুন--</option>
+                        <optgroup ng-repeat="(k,v) in ranks" label="[[k]]">
+                            <option ng-repeat="r in v" value="[[r]]">[[r]]</option>
+                        </optgroup>
+                        <option value="সহকারী ওয়ার্ড দলনেতা">সহকারী ওয়ার্ড দলনেতা</option>
+                        <option value="সহকারী ওয়ার্ড দলনেত্রী">সহকারী ওয়ার্ড দলনেত্রী</option>
+                    </select>
+                    {{--<input type="text" class="form-control" placeholder="বর্তমান পদবী" ng-model="info.form.designation"
+                           id="rank">--}}
                     <p ng-if="errors.designation&&errors.designation.length>0" class="text text-danger">
                         [[errors.designation[0] ]]</p>
                 </div>
