@@ -79,6 +79,10 @@ return [
                     "route" => "make_offer",
                     "icon" => "fa-mobile",
                 ],
+                "Offer Rollback" => [
+                    "route" => "HRM.offer_rollback.index",
+                    "icon" => "fa-mobile",
+                ],
                 "Embodiment" => [
                     "route" => "#",
                     "icon" => "fa-dashboard",

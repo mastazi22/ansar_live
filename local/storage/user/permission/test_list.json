@@ -215,6 +215,19 @@
         "name": "Offer"
       },
       {
+        "text": "Offer Rollback",
+        "actions": [
+          {
+            "value":"HRM.offer_rollback.index",
+            "name":"View All Offer Blocked"
+          },
+          {
+            "value":"HRM.offer_rollback.update",
+            "name":"Edit Offer Blocked"
+          }
+        ]
+      },
+      {
         "text": "Embodiment",
         "actions": [
           {

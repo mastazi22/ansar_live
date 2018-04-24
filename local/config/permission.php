@@ -146,5 +146,7 @@ return [
         "AVURP.api.edit",
         "AVURP.api.show",
         "AVURP.api.update",
+        "HRM.offer_rollback.index",
+        "HRM.offer_rollback.update",
     ]
 ];
