@@ -650,7 +650,7 @@ class ReportController extends Controller
             ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
             ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_offer_info.district_id')
-            ->where('tbl_sms_offer_info.sms_send_datetime', '>=', $c_date)
+            ->whereDate('tbl_sms_offer_info.sms_send_datetime', '>=', $c_date)
             ->where('tbl_units.id', $unit)
             ->where('tbl_units.division_id', $division)
             ->select('tbl_ansar_parsonal_info.ansar_name_eng','tbl_units.unit_name_bng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_offer_info.sms_send_datetime')
@@ -658,7 +658,7 @@ class ReportController extends Controller
                 ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_send_log.ansar_id')
                 ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_send_log.offered_district')
-                ->where('tbl_sms_send_log.action_date', '>=', $c_date)
+                ->whereDate('tbl_sms_send_log.offered_date', '>=', $c_date)
                 ->where('tbl_units.id', $unit)
                 ->where('tbl_units.division_id', $division)
                 ->where('tbl_sms_send_log.reply_type', 'No Reply')
@@ -668,30 +668,30 @@ class ReportController extends Controller
             ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_receive_info.ansar_id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_receive_info.offered_district')
             ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-            ->where('tbl_sms_receive_info.sms_received_datetime', '>=', $c_date)
+            ->whereDate('tbl_sms_receive_info.sms_send_datetime', '>=', $c_date)
             ->where('tbl_units.id', $unit)
             ->where('tbl_units.division_id', $division)
-            ->select('tbl_ansar_parsonal_info.ansar_name_eng','tbl_units.unit_name_bng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_receive_info.sms_received_datetime')
+            ->select('tbl_sms_receive_info.sms_send_datetime as offered_date','tbl_ansar_parsonal_info.ansar_name_eng','tbl_units.unit_name_bng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_receive_info.sms_received_datetime')
             ->unionAll(DB::table('tbl_sms_send_log')
                 ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_send_log.ansar_id')
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_send_log.offered_district')
                 ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
-                ->where('tbl_sms_send_log.action_date', '>=', $c_date)
+                ->whereDate('tbl_sms_send_log.offered_date', '>=', $c_date)
                 ->where('tbl_units.id', $unit)
                 ->where('tbl_units.division_id', $division)
                 ->where('tbl_sms_send_log.reply_type', 'Yes')
-                ->select('tbl_ansar_parsonal_info.ansar_name_eng','tbl_units.unit_name_bng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.action_date as sms_received_datetime'))->get();
+                ->select('tbl_sms_send_log.offered_date','tbl_ansar_parsonal_info.ansar_name_eng','tbl_units.unit_name_bng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.action_date as sms_received_datetime'))->get();
 
 
         $offer_reject = DB::table('tbl_sms_send_log')
             ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_send_log.ansar_id')
             ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_send_log.offered_district')
-            ->where('tbl_sms_send_log.action_date', '>=', $c_date)
+            ->whereDate('tbl_sms_send_log.offered_date', '>=', $c_date)
             ->where('tbl_units.id', $unit)
             ->where('tbl_units.division_id', $division)
             ->where('tbl_sms_send_log.reply_type', 'No')
-            ->select('tbl_ansar_parsonal_info.ansar_name_eng','tbl_units.unit_name_bng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.action_date as reject_date')->get();
+            ->select('tbl_sms_send_log.offered_date','tbl_ansar_parsonal_info.ansar_name_eng','tbl_units.unit_name_bng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.action_date as reject_date')->get();
         if(Input::exists('export')&&Input::get('export')=='true'){
             $e = Excel::create('offer_report',function ($excel) use($offer_not_respond,$offer_received,$offer_reject){
                $excel->sheet('offer_not_respond',function ($sheet) use ($offer_not_respond){

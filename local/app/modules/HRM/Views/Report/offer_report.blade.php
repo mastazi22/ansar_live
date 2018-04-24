@@ -14,11 +14,12 @@
                 type:"1"
             };
             $scope.customData = {
+                "Today":0,
                 "Past 2 days":2,
                 "Past 3 days":3,
                 "Past 5 days":5,
                 "Past 7 days":7,
-                "Custom":0,
+                "Custom":-1,
             }
             $scope.ansars = [];
             $scope.onr = [];
@@ -26,14 +27,14 @@
             $scope.orj = [];
             $scope.loadingUnit = false;
             $scope.report = {};
-            $scope.selectedDate = "2"
+            $scope.selectedDate = "0"
             $scope.reportType = 'eng';
             $scope.errorFind = 0;
             $scope.allLoading = false;
             $scope.loadAnsar = function (t) {
                 $scope.allLoading = true;
                 var data = {};
-                if ($scope.selectedDate == 0) {
+                if ($scope.selectedDate == -1) {
                     data = {
                         unit: $scope.params.unit,
                         division: $scope.params.range,
@@ -143,7 +144,7 @@
                     ></filter-template>
                     <div class="row">
                         <div class="col-sm-4 col-sm-offset-8">
-                            <div class="form-group row" ng-if="selectedDate==0">
+                            <div class="form-group row" ng-if="selectedDate==-1">
                                 <div class="col-xs-7">
                                     <input type="text" class="form-control" ng-model="unit.custom"
                                            placeholder="No of day,month or year">
@@ -205,7 +206,7 @@
                                                 <td>[[a.ansar_name_eng]]</td>
                                                 <td>[[a.code]]</td>
                                                 <td>[[a.unit_name_bng]]</td>
-                                                <td>[[a.sms_send_datetime|dateformat:'DD-MMM-YYYY']]</td>
+                                                <td>[[a.sms_send_datetime|dateformat:'DD-MMM-YYYY hh:mm:ss A']]</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -221,6 +222,7 @@
                                                 <th>Ansar ID</th>
                                                 <th>Name</th>
                                                 <th>Rank</th>
+                                                <th>Offered Date</th>
                                                 <th>Offer Accepted Date</th>
                                             </tr>
                                             <tr ng-if="or.data.length<=0&&errorFind==0">
@@ -232,7 +234,8 @@
                                                 <td>[[a.ansar_id]]</td>
                                                 <td>[[a.ansar_name_eng]]</td>
                                                 <td>[[a.code]]</td>
-                                                <td>[[a.sms_received_datetime|dateformat:'DD-MMM-YYYY']]</td>
+                                                <td>[[a.offered_date|dateformat:'DD-MMM-YYYY hh:mm:ss A']]</td>
+                                                <td>[[a.sms_received_datetime|dateformat:'DD-MMM-YYYY hh:mm:ss A']]</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -248,6 +251,7 @@
                                                 <th>Ansar ID</th>
                                                 <th>Name</th>
                                                 <th>Rank</th>
+                                                <th>Offered Date</th>
                                                 <th>Reject Date</th>
                                             </tr>
                                             <tr ng-if="orj.length<=0&&errorFind==0">
@@ -259,7 +263,8 @@
                                                 <td>[[a.ansar_id]]</td>
                                                 <td>[[a.ansar_name_eng]]</td>
                                                 <td>[[a.code]]</td>
-                                                <td>[[a.reject_date|dateformat:'DD-MMM-YYYY']]</td>
+                                                <td>[[a.offered_date|dateformat:'DD-MMM-YYYY hh:mm:ss A']]</td>
+                                                <td>[[a.reject_date|dateformat:'DD-MMM-YYYY hh:mm:ss A']]</td>
                                             </tr>
                                         </table>
                                     </div>
