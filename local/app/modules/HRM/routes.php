@@ -163,6 +163,8 @@ Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
         Route::get('rejected_offer_list',['as'=>'rejected_offer_list','uses'=>'ReportController@rejectedOfferListView']);
         Route::get('get_rejected_ansar_list',['as'=>'get_rejected_ansar_list','uses'=>'ReportController@getRejectedAnsarList']);
         //END OFFER ROUTE
+
+        Route::resource('offer_rollback','OfferBlockController');
         //SESSION
 
         Route::get('/session', ['as' => 'create_session', 'uses' => 'SessionController@index']);
