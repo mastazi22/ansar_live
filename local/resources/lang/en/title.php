@@ -15,6 +15,7 @@ return [
   'tad'=>'Total Ansars (Own District)',
   'tar'=>'Total Ansars (Own Range)',
   'tp'=>'Total Paneled',
+  'tob'=>'Total Offer Blocked',
   'tpd'=>'Total Paneled (Own District)',
   'tpr'=>'Total Paneled (Own Range)',
   'tf'=>'Total Free',

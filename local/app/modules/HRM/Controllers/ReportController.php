@@ -706,7 +706,29 @@ class ReportController extends Controller
             })->store('xls',storage_path());
             return response()->json(['status'=>true,'url'=>url()->route('download_file_by_name',['file'=>base64_encode(storage_path('offer_report.xls'))])]);
         }
-        $r =  Response::json(['onr' => $offer_not_respond, 'or' => $offer_received, 'orj' => $offer_reject]);
+        $offer_not_respond_count =  collect($offer_not_respond)->groupBy('code')->map(function($item,$key){
+            return collect($item)->count();
+        });
+        $offer_received_count =  collect($offer_received)->groupBy('code')->map(function($item,$key){
+            return collect($item)->count();
+        });
+        $offer_reject_count =  collect($offer_reject)->groupBy('code')->map(function($item,$key){
+            return collect($item)->count();
+        });
+        $r =  Response::json([
+            'onr' => [
+                'data'=>$offer_not_respond,
+                'count'=>$offer_not_respond_count
+            ],
+            'or' => [
+                'data'=>$offer_received,
+                'count'=>$offer_received_count
+            ],
+            'orj' =>[
+                'data'=>$offer_reject,
+                'count'=>$offer_reject_count
+            ]
+        ]);
 //        return DB::getQueryLog();
         return $r;
     }

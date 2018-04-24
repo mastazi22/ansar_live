@@ -162,6 +162,7 @@ class HrmController extends Controller
             'recentBlockList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime)),
             'recentBlackList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('black_list_status', 1)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime)),
             'recentRest' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('rest_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime)),
+            'recentOfferBlock' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('offer_block_status', 1)->where('block_list_status', 0)->whereBetween('tbl_ansar_status_info.updated_at', array($backTime, $recentTime)),
         );
         if ($request->division_id) {
             $allStatus['recentAnsar']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
@@ -178,6 +179,7 @@ class HrmController extends Controller
             $allStatus['recentBlockList']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             $allStatus['recentBlackList']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             $allStatus['recentRest']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
+            $allStatus['recentOfferBlock']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
         }
         if ($request->unit_id) {
             $allStatus['recentAnsar']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
@@ -194,6 +196,7 @@ class HrmController extends Controller
             $allStatus['recentBlockList']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             $allStatus['recentBlackList']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             $allStatus['recentRest']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
+            $allStatus['recentOfferBlock']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
         }
         $results = [];
         foreach ($allStatus as $key => $q) {
@@ -230,6 +233,8 @@ class HrmController extends Controller
             $pageTitle = "Own Embodied Ansars";
         } elseif (strcasecmp($type, 'embodied_ansar_in_different_district') == 0) {
             $pageTitle = "Embodied Ansar in Different District";
+        } elseif (strcasecmp($type, 'offer_block') == 0) {
+            $pageTitle = "Total Offer Blocked";
         }
 
         return View::make('HRM::Dashboard.view_ansar_list')->with(['type' => $type, 'pageTitle' => $pageTitle]);
@@ -262,6 +267,8 @@ class HrmController extends Controller
             $pageTitle = "Total Embodied Ansars in Diffrenet District (Recent)";
         } elseif (strcasecmp($type, 'own_embodied_ansar') == 0) {
             $pageTitle = "Total Embodied Ansars in Own District (Recent)";
+        }elseif (strcasecmp($type, 'offer_block') == 0) {
+            $pageTitle = "Total Offer Blocked(Recent)";
         }
         return View::make('HRM::Dashboard.view_recent_ansar_list')->with(['type' => $type, 'pageTitle' => $pageTitle]);
     }
@@ -328,6 +335,9 @@ class HrmController extends Controller
                 break;
             case 'offerred_ansar':
                 $data = CustomQuery::getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                break;
+            case 'offer_block':
+                $data = CustomQuery::getTotalOfferBlockAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
                 break;
             case 'own_embodied_ansar':
                 $data = CustomQuery::getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
@@ -410,6 +420,9 @@ class HrmController extends Controller
                 break;
             case 'offerred_ansar':
                 $data = CustomQuery::getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                break;
+            case 'offer_block':
+                $data = CustomQuery::getTotalOfferBlockAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
                 break;
         }
         if ($request->exists('export')) {
@@ -548,6 +561,7 @@ class HrmController extends Controller
             'totalBlockList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('block_list_status', 1),
             'totalBlackList' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('black_list_status', 1),
             'totalRest' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('rest_status', 1)->where('block_list_status', 0),
+            'totalOfferBlock' => DB::table('tbl_ansar_status_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('offer_block_status', 1)->where('block_list_status', 0),
         );
         if ($request->division_id) {
             $allStatus['totalAnsar']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
@@ -564,6 +578,7 @@ class HrmController extends Controller
             $allStatus['totalBlockList']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             $allStatus['totalBlackList']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
             $allStatus['totalRest']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
+            $allStatus['totalOfferBlock']->where('tbl_ansar_parsonal_info.division_id', $request->division_id);
         }
         if ($request->unit_id) {
             $allStatus['totalAnsar']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
@@ -580,6 +595,7 @@ class HrmController extends Controller
             $allStatus['totalBlockList']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             $allStatus['totalBlackList']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
             $allStatus['totalRest']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
+            $allStatus['totalOfferBlock']->where('tbl_ansar_parsonal_info.unit_id', $request->unit_id);
         }
 
         $results = [];

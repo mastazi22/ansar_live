@@ -182,6 +182,9 @@
                             </ul>
                             <div class="tab-content">
                                 <div id="offer_not_respond" class="tab-pane active">
+                                    <h4 class="text text-bold">
+                                        PC([[onr.count.PC? onr.count.PC:0]]) APC([[onr.count.APC?onr.count.APC:0]]) Ansar([[onr.count.ANSAR?onr.count.ANSAR:0]])
+                                    </h4>
                                     <div class="table-responsive">
                                         <table class="table table-bordered">
                                             <tr>
@@ -192,11 +195,11 @@
                                                 <th>Offered District</th>
                                                 <th>Offered Date</th>
                                             </tr>
-                                            <tr ng-if="onr.length<=0&&errorFind==0">
+                                            <tr ng-if="onr.data.length<=0&&errorFind==0">
                                                 <th class="warning" colspan="5">No Ansar Found</th>
                                             </tr>
                                             <tbody ng-if="errorFind==1&&onr.length<=0" ng-bind-html="errorMessage"></tbody>
-                                            <tr ng-if="onr.length>0&&errorFind==0" ng-repeat="a in onr">
+                                            <tr ng-if="onr.data.length>0&&errorFind==0" ng-repeat="a in onr.data">
                                                 <td>[[$index+1]]</td>
                                                 <td>[[a.ansar_id]]</td>
                                                 <td>[[a.ansar_name_eng]]</td>
@@ -208,6 +211,9 @@
                                     </div>
                                 </div>
                                 <div id="offer_send" class="tab-pane">
+                                    <h4 class="text text-bold">
+                                        PC([[or.count.PC?or.count.PC:0]]) APC([[or.count.APC?or.count.APC:0]]) Ansar([[or.count.ANSAR?or.count.ANSAR:0]])
+                                    </h4>
                                     <div class="table-responsive">
                                         <table class="table table-bordered">
                                             <tr>
@@ -217,11 +223,11 @@
                                                 <th>Rank</th>
                                                 <th>Offer Accepted Date</th>
                                             </tr>
-                                            <tr ng-if="or.length<=0&&errorFind==0">
+                                            <tr ng-if="or.data.length<=0&&errorFind==0">
                                                 <th class="warning" colspan="5">No Ansar Found</th>
                                             </tr>
                                             <tbody ng-if="errorFind==1&&or.length<=0" ng-bind-html="errorMessage"></tbody>
-                                            <tr ng-if="or.length>0&&errorFind==0" ng-repeat="a in or">
+                                            <tr ng-if="or.data.length>0&&errorFind==0" ng-repeat="a in or.data">
                                                 <td>[[$index+1]]</td>
                                                 <td>[[a.ansar_id]]</td>
                                                 <td>[[a.ansar_name_eng]]</td>
@@ -232,6 +238,9 @@
                                     </div>
                                 </div>
                                 <div id="offer_reject" class="tab-pane">
+                                    <h4 class="text text-bold">
+                                        PC([[orj.count.PC?orj.count.PC:0]]) APC([[orj.count.APC?orj.count.APC:0]]) Ansar([[orj.count.ANSAR?orj.count.ANSAR:0]])
+                                    </h4>
                                     <div class="table-responsive">
                                         <table class="table table-bordered">
                                             <tr>
@@ -244,8 +253,8 @@
                                             <tr ng-if="orj.length<=0&&errorFind==0">
                                                 <th class="warning" colspan="5">No Ansar Found</th>
                                             </tr>
-                                            <tbody ng-if="errorFind==1&&orj.length<=0" ng-bind-html="errorMessage"></tbody>
-                                            <tr ng-if="orj.length>0&&errorFind==0" ng-repeat="a in orj">
+                                            <tbody ng-if="errorFind==1&&orj.data.length<=0" ng-bind-html="errorMessage"></tbody>
+                                            <tr ng-if="orj.data.length>0&&errorFind==0" ng-repeat="a in orj.data">
                                                 <td>[[$index+1]]</td>
                                                 <td>[[a.ansar_id]]</td>
                                                 <td>[[a.ansar_name_eng]]</td>

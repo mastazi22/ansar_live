@@ -2,11 +2,17 @@
 
 namespace App\modules\HRM\Controllers;
 
+use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\OfferBlockedAnsar;
+use App\modules\HRM\Models\OfferSMS;
+use App\modules\HRM\Models\PanelInfoLogModel;
+use App\modules\HRM\Models\PanelModel;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class OfferBlockController extends Controller
 {
@@ -23,7 +29,10 @@ class OfferBlockController extends Controller
             if($request->ansar_id){
                 $offer_blocked->where('ansar_id',$request->ansar_id);
             }
+            $ansars = $offer_blocked->get();
+            return view('HRM::offer_rollback.data',compact('ansars'));
         }
+        return view('HRM::offer_rollback.offer_rollback');
     }
 
     /**
@@ -78,7 +87,15 @@ class OfferBlockController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        if($request->type=='rollback'){
+            return response()->json($this->rollBackOffer($id));
+        }
+        else if($request->type=='sendtopanel'){
+            return response()->json($this->sendToPanel($id));
+        }
+        else{
+            return response()->json(['status'=>false,'message'=>"Invalid request"]);
+        }
     }
 
     /**
@@ -90,5 +107,58 @@ class OfferBlockController extends Controller
     public function destroy($id)
     {
         //
+    }
+    private function rollBackOffer($id){
+        DB::beginTransaction();
+        try{
+            $blocked_ansar = OfferBlockedAnsar::findOrFail($id);
+            $now = Carbon::now();
+            OfferSMS::create([
+                'sms_send_datetime' => $now,
+                'ansar_id' => $blocked_ansar->ansar_id,
+                'sms_end_datetime' => $now->addHours(24),
+//                    'sms_end_datetime' => Carbon::now()->addMinute(),
+                'district_id' => $blocked_ansar->last_offer_unit,
+                'come_from' => 'Offer Block',
+                'action_user_id' => auth()->user()->id
+            ]);
+            AnsarStatusInfo::where('ansar_id',$blocked_ansar->ansar_id)->update(['offer_block_status'=>0,'offer_sms_status'=>1]);
+            $blocked_ansar->status = "unblocked";
+            $blocked_ansar->unblocked_date = Carbon::now()->format('Y-m-d');
+            $blocked_ansar->save();
+            $blocked_ansar->delete();
+
+            DB::commit();
+        }catch(\Exception $exception){
+            DB::rollback();
+            return ['status'=>false,'message'=>$exception->getMessage()];
+        }
+        return ['status'=>true,'message'=>'Rollback complete'];
+    }
+    private function sendToPanel($id){
+        DB::beginTransaction();
+        try{
+            $blocked_ansar = OfferBlockedAnsar::findOrFail($id);
+            $now = Carbon::now();
+            $panel_log = PanelInfoLogModel::where('ansar_id',$blocked_ansar->ansar_id)->orderBy('panel_date','desc')->first();
+            PanelModel::create([
+                'memorandum_id' => $panel_log&&isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
+                'panel_date' => $now,
+                'come_from' => 'Offer Cancel',
+                'ansar_merit_list' => 1,
+                'ansar_id' => $blocked_ansar->ansar_id,
+            ]);
+            AnsarStatusInfo::where('ansar_id',$blocked_ansar->ansar_id)->update(['offer_block_status'=>0,'pannel_status'=>1]);
+            $blocked_ansar->status = "unblocked";
+            $blocked_ansar->unblocked_date = Carbon::now()->format('Y-m-d');
+            $blocked_ansar->save();
+            $blocked_ansar->delete();
+
+            DB::commit();
+        }catch(\Exception $exception){
+            DB::rollback();
+            return ['status'=>false,'message'=>$exception->getMessage()];
+        }
+        return ['status'=>true,'message'=>'Sending to panel complete'];
     }
 }

@@ -73,7 +73,15 @@
         border-bottom: 2px solid #306754;
         border-left: 2px solid #306754;
     }
-
+    .line-bar-bottom2 {
+        position: absolute;
+        width: 36px;
+        top: -114%;
+        left: -19px;
+        height: 140%;
+        border-bottom: 2px solid #306754;
+        border-left: 2px solid #306754;
+    }
     .line-bar-bottom::after {
         content: '';
         position: absolute;

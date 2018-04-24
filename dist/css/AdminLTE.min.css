@@ -3277,9 +3277,9 @@ table.text-center, table.text-center td, table.text-center th {
 }
 
 .login-page, .register-page {
-    background: url('../img/login_backk.png');
+    background: url('../img/login_backk.jpg');
     background-size: cover;
-    background-position: 0 -100px;
+    background-position: 0 0;
     background-repeat: no-repeat;
 }
 

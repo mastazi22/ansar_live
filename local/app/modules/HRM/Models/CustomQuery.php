@@ -662,6 +662,35 @@ class CustomQuery
         return ['total' => collect($t)->pluck('t', 'code'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'offer'];
     }
 
+    public static function getTotalOfferBlockAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q)
+    {
+        DB::enableQueryLog();
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::OFFER_BLOCK);
+        if ($rank != 'all') {
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
+        if ($division && $division != 'all') {
+            $ansarQuery->where('ou.division_id', $division);
+        }
+        if ($unit != 'all') {
+            $ansarQuery->where('ou.id', $unit);
+        }
+        if ($time == self::RECENT) {
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
+        }
+        if ($q) {
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+        }
+        $total = clone $ansarQuery;
+        $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_offer_blocked_ansar.blocked_date', 'ou.unit_name_eng as offer_unit');
+        $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        $ansars = $ansarQuery->skip($offset)->limit($limit)->get();
+        $t = $total->groupBy('code')->get();
+        return ['total' => collect($t)->pluck('t', 'code'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'offer_block'];
+    }
+
 
 // Dashboard rested ansar list
     public static function getTotalRestAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q)
@@ -1326,7 +1355,7 @@ class CustomQuery
             });
         }
         $total = clone $kpiQuery;
-        $kpis = $kpiQuery->select('tbl_kpi_info.id', 'tbl_kpi_info.status_of_kpi', 'tbl_kpi_info.kpi_name as kpi_bng', 'tbl_kpi_info.kpi_name_eng as kpi_eng', 'tbl_kpi_info.kpi_address as address', 'tbl_kpi_info.kpi_contact_no as contact', 'tbl_division.division_name_eng as division_eng', 'tbl_division.division_name_bng as division_bng', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana', 'tbl_kpi_detail_info.total_ansar_request','tbl_kpi_detail_info.total_ansar_given', DB::raw('COUNT(tbl_embodiment.ansar_id) as total_embodied'))->groupBy('tbl_kpi_info.id')->orderBy('tbl_kpi_info.id', 'asc')->skip($offset)->limit($limit)->get();
+        $kpis = $kpiQuery->select('tbl_kpi_info.id', 'tbl_kpi_info.status_of_kpi', 'tbl_kpi_info.kpi_name as kpi_bng', 'tbl_kpi_info.kpi_name_eng as kpi_eng', 'tbl_kpi_info.kpi_address as address', 'tbl_kpi_info.kpi_contact_no as contact', 'tbl_division.division_name_eng as division_eng', 'tbl_division.division_name_bng as division_bng', 'tbl_units.unit_name_eng as unit', 'tbl_thana.thana_name_eng as thana', 'tbl_kpi_detail_info.total_ansar_request', 'tbl_kpi_detail_info.total_ansar_given', DB::raw('COUNT(tbl_embodiment.ansar_id) as total_embodied'))->groupBy('tbl_kpi_info.id')->orderBy('tbl_kpi_info.id', 'asc')->skip($offset)->limit($limit)->get();
 //        return View::make('kpi.selected_kpi_view')->with(['index' => ((ceil($offset / $limit)) * $limit) + 1, 'kpis' => $kpis]);
 //        return DB::getQueryLog();
         return ['total' => $total->distinct()->count('tbl_kpi_info.id'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'kpis' => $kpis];

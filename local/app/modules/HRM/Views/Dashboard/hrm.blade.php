@@ -51,6 +51,7 @@
                     totalBlockList: response.data,
                     totalBlackList: response.data,
                     totalRest: response.data,
+                    totalOfferBlock: response.data,
                 }
             })
         }
@@ -525,6 +526,43 @@
             <!-- /.info-box -->
         </div>
         <!-- /.col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+        {{--<div class="info-box bg-aqua"> <span class="info-box-icon"><i class="fa fa-exclamation-circle"></i></span>--}}
+        {{--<div class="info-box-content"> <span class="info-box-text">Total Not Verified (Status Free)</span> <span class="info-box-number">322</span>--}}
+        {{--<div class="progress">--}}
+        {{--<div class="progress-bar" style="width: 70%"></div>--}}
+        {{--</div>--}}
+        {{--<span class="progress-description">70% Increase in 30 Days </span> </div>--}}
+        {{--<!-- /.info-box-content -->--}}
+        {{--</div>--}}
+        <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+        <!-- show line-->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="line-bar-bottom2"></div>
+            <div class="info-box bg-aqua"><span class="info-box-icon"><img src="{{asset('dist/img/queue.png')}}"></span>
+
+                <div class="info-box-content">
+                    <a href="{{URL::to('HRM/show_ansar_list')}}/offer_block"
+                       class="btn-link" style="color: #FFFFFF !important;">
+                        <span class="info-box-text">@lang('title.tob')</span>
+                        <span class="info-box-number" style="font-weight: normal">
+                       [[allAnsar.totalOfferBlock]]
+                        <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar"></span>
+                    </a>
+
+                    <div class="progress">
+                        <div class="progress-bar" style="width: 70%"></div>
+                    </div>
+                    <a href="{{URL::to('HRM/show_recent_ansar_list')}}/offer_block"
+                       style="color:#FFFFFF" class="btn-link">
+                        <span class="progress-description">Recent-[[recentAnsar.recentOfferBlock]]</span></a>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
     </div>
     <!-- /.row -->
     <!-- =========================================================== -->
