@@ -32,7 +32,7 @@ class ApiUserController extends Controller
                 JWTAuth::invalidate($token);
                 return response()->json(['message'=>'User is BLOCKED'],401);
             }
-            $user = User::with(['usertype','userProfile'])->where('id',$user->id)->first();
+            $user = User::with(['usertype','userProfile','userParent'])->where('id',$user->id)->first();
         }catch (JWTException $e){
             return response()->json(['message'=>$e->getMessage()],500);
         }
