@@ -234,6 +234,8 @@ class SMSController extends Controller
                     return "Your Status Is REST";
                 case $ansar->retierment_status:
                     return "Your Status Is RETIERMENT";
+                case $ansar->offer_block_status:
+                    return "Your Status Is OFFER BLOCK";
                 default:
                     return "Your Status Is NOT VERIFIED";
 
