@@ -433,38 +433,33 @@ Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
         Route::get('upload_original_info',['as'=>'upload_original_info_view','uses'=>'GeneralSettingsController@uploadOriginalInfoView']);
         Route::get('test',function(){
 
-            /*$datas = \Maatwebsite\Excel\Facades\Excel::load(storage_path('union_list.xlsx'),function ($reader){
+            $datas = \Maatwebsite\Excel\Facades\Excel::load(storage_path('offer_vul.xlsx'),function ($reader){
 
             })->get();
-            $insertData = [];
-            $errorData = [];
-            foreach ($datas as $data){
-                foreach ($data as $d){
-                    $division_id = \App\modules\HRM\Models\Division::where('division_code',intval($d['division_code']))->first();
-
-
-                    $division_id=$division_id?$division_id->id:0;
-                    $unit_id = \App\modules\HRM\Models\District::where('unit_code',intval($d['unit_code']))->where('division_id',$division_id)->first();
-                    $unit_id=$unit_id?$unit_id->id:0;
-                    $thana_id = \App\modules\HRM\Models\Thana::where('thana_code',intval($d['thana_code']))->where('division_id',$division_id)->where('unit_id',$unit_id)->first();
-                    $thana_id=$thana_id?$thana_id->id:0;
-                    $code = $d['union_code'];
-                    $union_name_eng = $d['union_name_eng'];
-                    $union_name_bng = $d['union_name_bng'];
-                    if(!$unit_id||!$division_id||!$thana_id){
-                        array_push($errorData,$d);
-                        continue;
+            return $datas;
+            DB::connection('hrm')->beginTransaction();
+            try{
+                foreach (collect($datas)->toArray() as $data){
+                    if(OfferSMS::where('ansar_id',$data['ansar_id'])->exists()) continue;
+                    OfferSMS::create($data);
+                    PanelModel::where('ansar_id',$data['ansar_id'])->delete();
+                    \App\modules\HRM\Models\OfferSmsLog::where('ansar_id',$data['ansar_id'])->orderBy('offered_date','desc')->first()->delete();
+                    $status = AnsarStatusInfo::where('ansar_id',$data['ansar_id'])->first();
+                    $status->update(['offer_sms_status'=>1,'pannel_status'=>0]);
+                    $count = \App\modules\HRM\Models\OfferCount::where('ansar_id',$data['ansar_id'])->first();
+                    if($count&&$count->count==1) $count->delete();
+                    else if($count){
+                        $count->count = intval($count->count)-1;
+                        $count->save();
                     }
-                    elseif (\App\modules\HRM\Models\Unions::where(compact('division_id','unit_id','thana_id'))->exists()){
-                        continue;
-                    }
-                    array_push($insertData,compact('division_id','unit_id','thana_id','union_name_bng','union_name_eng','code'));
                 }
-
+                DB::connection('hrm')->commit();
+            }catch(\Exception $e){
+                DB::connection('hrm')->rollback();
+                Log::info($e->getTraceAsString());
+                return $e->getMessage();
             }
-            \App\modules\HRM\Models\Unions::insert($insertData);
-            return $errorData;*/
-            return \App\Helper\Helper::getLastWorkingDay('22-04-2018',7);
+            return "success";
         });
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
