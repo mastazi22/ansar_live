@@ -191,7 +191,7 @@ class Kernel extends ConsoleKernel
         })->everyMinute()->name("offer_cancel")->withoutOverlapping();
         $schedule->call(function () {
             Log::info("REVERT OFFER");
-            $offeredAnsars = OfferSMS::where('sms_end_datetime', '>=', Carbon::now())->get();
+            $offeredAnsars = OfferSMS::where('sms_end_datetime', '<=', Carbon::now())->get();
             foreach ($offeredAnsars as $ansar) {
                 Log::info("CALLED START: OFFER NO REPLY" . $ansar->ansar_id);
                 DB::beginTransaction();
