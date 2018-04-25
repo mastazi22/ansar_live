@@ -436,7 +436,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
             $datas = \Maatwebsite\Excel\Facades\Excel::load(storage_path('offer_vul.xlsx'),function ($reader){
 
             })->get();
-            return $datas;
+            //return $datas;
             DB::connection('hrm')->beginTransaction();
             try{
                 foreach (collect($datas)->toArray() as $data){
