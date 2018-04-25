@@ -241,7 +241,7 @@ class Kernel extends ConsoleKernel
                     Log::info("ERROR: " . $e->getMessage());
                 }
             }
-        })->everyMinute()->name("revert_offer")->withoutOverlapping();
+        })->everyMinute()->name("revert_offer_2")->withoutOverlapping();
         $schedule->call(function () {
 
             $offeredAnsars = SmsReceiveInfoModel::all();
