@@ -21,7 +21,7 @@
         <td>[[ansar.unit]]</td>
         <td>[[ansar.thana]]</td>
         <td>[[ansar.offer_unit]]</td>
-        <td>[[ansar.sms_send_datetime|dateformat:"DD-MMM-YYYY"]]</td>
+        <td>[[ansar.sms_send_datetime|dateformat:"DD-MMM-YYYY hh:mm:ss A"]]</td>
     </tr>
     <tr ng-if="data.ansars.length<=0">
         <td class="warning" colspan="9">No Ansar Found</td>
