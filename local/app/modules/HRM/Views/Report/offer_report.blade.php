@@ -14,7 +14,7 @@
                 type:"1"
             };
             $scope.customData = {
-                "Today":0,
+                "Today":1,
                 "Past 2 days":2,
                 "Past 3 days":3,
                 "Past 5 days":5,
@@ -27,7 +27,7 @@
             $scope.orj = [];
             $scope.loadingUnit = false;
             $scope.report = {};
-            $scope.selectedDate = "0"
+            $scope.selectedDate = "1"
             $scope.reportType = 'eng';
             $scope.errorFind = 0;
             $scope.allLoading = false;
