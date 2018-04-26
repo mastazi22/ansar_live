@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 
 class ApiController extends Controller
 {
@@ -45,6 +46,7 @@ class ApiController extends Controller
     public function store(VDPInfoRequest $request)
     {
 //        return $request->all();
+        Log::info($request->all());
         $response = $this->infoRepository->create($request,$request->action_user_id);
         return response()->json($response);
 
