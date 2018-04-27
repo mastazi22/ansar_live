@@ -7,6 +7,7 @@ namespace App\modules\HRM\Models;
 use App\Helper\Facades\GlobalParameterFacades;
 use App\Helper\Helper;
 use App\Helper\QueryHelper;
+use App\models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -172,14 +173,20 @@ class CustomQuery
     {
         $t = strtotime(Carbon::now());
         $s = (int)config('session.lifetime');
-        $users = DB::connection('hrm')->table('tbl_user')
+        $users = User::with(['userLog','userProfile','userParent']);
+
+
+        /*$users = DB::connection('hrm')->table('tbl_user')
             ->leftJoin('sessions', 'sessions.user_id', '=', 'tbl_user.id')
             ->join('tbl_user_details', 'tbl_user_details.user_id', '=', 'tbl_user.id')
             ->join('tbl_user_log', 'tbl_user_log.user_id', '=', 'tbl_user.id')
             ->select(DB::raw(" {$s}-(({$t}-sessions.last_activity)/60)as total_time"), 'tbl_user.id', 'tbl_user.status', 'tbl_user.user_name', 'tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.email', 'tbl_user_log.last_login', 'tbl_user_log.user_status', 'tbl_user.status')
-            ->orderBy('tbl_user.user_name');
+            ->orderBy('tbl_user.user_name');*/
         if ($q) {
-            $users->where('tbl_user.user_name', 'LIKE', "%{$q}%");
+            $users->whereHas('userParent',function ($query) use ($q){
+                if($q)$query->where('user_name', 'LIKE', "%$q%");
+            });
+            $users->orWhere('user_name', 'LIKE', "%{$q}%");
         }
         $t = clone $users;
         $total = $t->count();

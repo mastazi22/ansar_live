@@ -176,6 +176,7 @@
                             <tr>
                                 <th>SL. No</th>
                                 <th>User Name</th>
+                                <th>User Parent</th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Activity</th>
@@ -188,12 +189,16 @@
                                 <td>[[(limit*currentPage)+$index+1]]</td>
                                 <td><i ng-if="user.total_time>0" style="vertical-align: middle;" class="fa fa-circle text-success"></i><span style="padding-left: 5px">[[user.user_name]]</span> </td>
                                 <td>
-                                    [[user.first_name+" "+user.last_name]]
+                                    [[user.user_parent.user_name]]
                                 </td>
-                                <td>[[user.email]]</td>
-                                <td ng-switch on="user.user_status">
+                                <td>
+                                    [[user.user_profile.first_name+" "+user.last_name]]
+                                </td>
+
+                                <td>[[user.user_profile.email]]</td>
+                                <td ng-switch on="user.user_log.user_status">
                                     <span ng-switch-when="0"> New. Not login yet</span>
-                                    <span ng-switch-when="1"> Last Login at&nbsp;[[user.last_login]]</span>
+                                    <span ng-switch-when="1"> Last Login at&nbsp;[[user.user_log.last_login]]</span>
                                     <span ng-switch-default>Blocked</span>
                                 </td>
                                 <td style="width: 121px">

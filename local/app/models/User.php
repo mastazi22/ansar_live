@@ -48,6 +48,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     function userProfile() {
         return $this->hasOne('App\models\UserProfile', 'user_id');
     }
+    function userSession() {
+        return $this->hasOne('App\models\UserSession', 'user_id');
+    }
 
     function userLog() {
         return $this->hasOne('App\models\UserLog', 'user_id');

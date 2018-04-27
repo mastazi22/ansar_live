@@ -394,12 +394,16 @@ class UserController extends Controller
         DB::enableQueryLog();
         $username = Input::get('user_name');
 //        return User::where('user_name',$username)->get();
-        $users = DB::table('tbl_user')
+        $users = User::with(['userLog','userProfile','userParent'])
+            ->whereHas('userParent',function ($q) use ($username){
+               $q->where('user_name', 'LIKE', "%$username%");
+            })->orWhere('user_name', 'LIKE', "%$username%")->get();
+        /*$users = DB::table('tbl_user')
             ->join('tbl_user_details', 'tbl_user_details.user_id', '=', 'tbl_user.id')
             ->leftJoin('tbl_user_log', 'tbl_user_log.user_id', '=', 'tbl_user.id')
             ->where('tbl_user.user_name', 'LIKE', "%$username%")
             ->select('tbl_user.id', 'tbl_user.user_name', 'tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.email', 'tbl_user_log.last_login', 'tbl_user_log.user_status', 'tbl_user.status')
-            ->get();
+            ->get();*/
         return Response::json($users);
     }
 
