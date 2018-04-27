@@ -28,7 +28,7 @@ class ApiController extends Controller
     {
         $divisions = collect($this->dataRepo->getDivisions($request->id))
             ->pluck('division_name_bng', 'id');
-        $divisions = $divisions->prepend('বিভাগ নির্বাচন করুন', '');
+        $divisions = $divisions->prepend('বিভাগ নির্বাচন করুন', '0');
         return response()->json($divisions);
     }
 
