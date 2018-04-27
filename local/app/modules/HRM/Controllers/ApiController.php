@@ -36,7 +36,7 @@ class ApiController extends Controller
     {
         $units = collect($this->dataRepo->getUnits($request->range_id, $request->id))
             ->pluck('unit_name_bng', 'id')
-            ->prepend('জেলা নির্বাচন করুন', '');
+            ->prepend('জেলা নির্বাচন করুন', '0');
         return response()->json($units);
     }
 
@@ -44,7 +44,7 @@ class ApiController extends Controller
     {
         $thanas = collect($this->dataRepo->getThanas($request->range_id, $request->unit_id, $request->id))
             ->pluck('thana_name_bng', 'id')
-            ->prepend('থানা নির্বাচন করুন', '');
+            ->prepend('থানা নির্বাচন করুন', '0');
         return response()->json($thanas);
     }
 
@@ -52,7 +52,7 @@ class ApiController extends Controller
     {
         $unions = collect($this->dataRepo->getUnions($request->range_id, $request->unit_id, $request->thana_id, $request->id))
             ->pluck('union_name_bng', 'id')
-            ->prepend('ইউনিয়ন নির্বাচন করুন', '');
+            ->prepend('ইউনিয়ন নির্বাচন করুন', '0');
         return response()->json($unions);
 
     }
@@ -67,7 +67,7 @@ class ApiController extends Controller
     public function bloodGroup()
     {
         $data = $this->dataRepo->getBloodGroup()->pluck('blood_group_name_bng', 'id');
-        $data = $data->prepend('রক্তের গ্রুপ নির্বাচন করুন', '');
+        $data = $data->prepend('রক্তের গ্রুপ নির্বাচন করুন', '0');
         return response()->json($data);
 
     }
@@ -75,7 +75,7 @@ class ApiController extends Controller
     public function educationList()
     {
         $data = collect($this->dataRepo->getEducationList())->pluck('education_deg_bng', 'id');
-        $data = $data->prepend('নির্বাচন করুন', '');
+        $data = $data->prepend('নির্বাচন করুন', '0');
         return response()->json($data);
 
     }
