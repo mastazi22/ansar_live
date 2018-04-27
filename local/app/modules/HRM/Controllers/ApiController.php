@@ -26,9 +26,9 @@ class ApiController extends Controller
 
     public function division(Request $request)
     {
-        $divisions = collect($this->dataRepo->getDivisions($request->id))
+        $divisions = collect(['id'=>'','division_name_bng'=>'বিভাগ নির্বাচন করুন']+$this->dataRepo->getDivisions($request->id))
             ->pluck('division_name_bng', 'id');
-        $divisions = $divisions->prepend('বিভাগ নির্বাচন করুন', '');
+//        $divisions = $divisions->prepend('বিভাগ নির্বাচন করুন', '');
         return response()->json($divisions);
     }
 
