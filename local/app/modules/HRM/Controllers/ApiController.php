@@ -27,55 +27,74 @@ class ApiController extends Controller
     public function division(Request $request)
     {
         $divisions = collect($this->dataRepo->getDivisions($request->id))
-            ->pluck('division_name_bng', 'id');
-        $divisions = $divisions->prepend('বিভাগ নির্বাচন করুন', '0');
+            ->map(function ($item, $key) {
+                return ['id' => $item->id, 'name' => $item->division_name_bng];
+            });
+//            ->pluck('division_name_bng', 'id');
+        $divisions = $divisions->prepend(['id' => '', 'name' => 'বিভাগ নির্বাচন করুন']);
         return response()->json($divisions);
     }
 
     public function unit(Request $request)
     {
         $units = collect($this->dataRepo->getUnits($request->range_id, $request->id))
-            ->pluck('unit_name_bng', 'id')
-            ->prepend('জেলা নির্বাচন করুন', '0');
+            ->map(function ($item, $key) {
+                return ['id' => $item->id, 'name' => $item->unit_name_bng];
+            })
+            ->prepend(['id' => '', 'name' => 'জেলা নির্বাচন করুন']);
         return response()->json($units);
     }
 
     public function thana(Request $request)
     {
         $thanas = collect($this->dataRepo->getThanas($request->range_id, $request->unit_id, $request->id))
-            ->pluck('thana_name_bng', 'id')
-            ->prepend('থানা নির্বাচন করুন', '0');
+            ->map(function ($item, $key) {
+                return ['id' => $item->id, 'name' => $item->thana_name_bng];
+            })
+            ->prepend(['id' => '', 'name' => 'থানা নির্বাচন করুন']);
         return response()->json($thanas);
     }
 
     public function union(Request $request)
     {
         $unions = collect($this->dataRepo->getUnions($request->range_id, $request->unit_id, $request->thana_id, $request->id))
-            ->pluck('union_name_bng', 'id')
-            ->prepend('ইউনিয়ন নির্বাচন করুন', '0');
+            ->map(function ($item, $key) {
+                return ['id' => $item->id, 'name' => $item->union_name_bng];
+            })
+            ->prepend(['id' => '', 'name' => 'ইউনিয়ন নির্বাচন করুন']);
         return response()->json($unions);
 
     }
 
     public function main_training()
     {
-        $data = MainTrainingInfo::all()->pluck('training_name_bng', 'id')->prepend('নির্বাচন করুন', '');
+        $data = MainTrainingInfo::all()
+            ->map(function ($item, $key) {
+                return ['id' => $item->id, 'name' => $item->training_name_bng];
+            })
+            ->prepend(['id' => '', 'name' => 'নির্বাচন করুন']);
         return response()->json($data);
 
     }
 
     public function bloodGroup()
     {
-        $data = $this->dataRepo->getBloodGroup()->pluck('blood_group_name_bng', 'id');
-        $data = $data->prepend('রক্তের গ্রুপ নির্বাচন করুন', '0');
+        $data = $this->dataRepo->getBloodGroup()
+            ->map(function ($item, $key) {
+                return ['id' => $item->id, 'name' => $item->blood_group_name_bng];
+            })
+            ->prepend(['id' => '', 'name' => 'রক্তের গ্রুপ নির্বাচন করুন']);
         return response()->json($data);
 
     }
 
     public function educationList()
     {
-        $data = collect($this->dataRepo->getEducationList())->pluck('education_deg_bng', 'id');
-        $data = $data->prepend('নির্বাচন করুন', '0');
+        $data = collect($this->dataRepo->getEducationList())
+            ->map(function ($item, $key) {
+                return ['id' => $item->id, 'name' => $item->education_deg_bng];
+            })
+            ->prepend(['id' => '', 'name' => 'নির্বাচন করুন']);
         return response()->json($data);
 
     }
@@ -86,7 +105,13 @@ class ApiController extends Controller
         if (!$request->has('id')) $data = [];
         else {
             $data = MainTrainingInfo::find($request->id);
-            if ($data) $data = collect($data->subTraining)->pluck('training_name_bng', 'id')->prepend('নির্বাচন করুন', '');
+            if ($data) {
+                $data = collect($data->subTraining)
+                    ->map(function ($item, $key) {
+                        return ['id' => $item->id, 'name' => $item->training_name_bng];
+                    })
+                    ->prepend(['id' => '', 'name' => 'নির্বাচন করুন']);
+            }
             else $data = [];
         }
         return response()->json($data);

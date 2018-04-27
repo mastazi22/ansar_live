@@ -715,6 +715,18 @@
           {
             "value": "HRM.api.union",
             "name": "Union List"
+          },
+          {
+            "value": "HRM.api.blood_group",
+            "name": "Blood Group List"
+          },
+          {
+            "value": "HRM.api.main_training",
+            "name": "Main training List"
+          },
+          {
+            "value": "HRM.api.sub_training",
+            "name": "Sub training List"
           }
         ]
       },
