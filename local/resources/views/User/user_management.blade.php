@@ -192,7 +192,7 @@
                                     [[user.user_parent.user_name]]
                                 </td>
                                 <td>
-                                    [[user.user_profile.first_name+" "+user.last_name]]
+                                    [[user.user_profile.first_name+" "+user.user_profile.last_name]]
                                 </td>
 
                                 <td>[[user.user_profile.email]]</td>
