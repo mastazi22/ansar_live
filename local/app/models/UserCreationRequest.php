@@ -17,4 +17,8 @@ class UserCreationRequest extends Model
     {
         return $this->belongsTo(User::class, 'user_parent_id');
     }
+    public function userApprove()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

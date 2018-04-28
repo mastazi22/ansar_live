@@ -44,14 +44,21 @@
                             <th>User Type</th>
                             <th>Status</th>
                         </tr>
-                        <?php $i=1;?>
+                        <?php $i = 1;?>
                         @forelse($user_create_requests as $user_create_request)
                             <tr>
                                 <td>{{$i++}}</td>
-                                <td>{{$user_create_request->first_name}}</td>
-                                <td>{{$user_create_request->last_name}}</td>
-                                <td>{{$user_create_request->email}}</td>
-                                <td>{{$user_create_request->mobile_no}}</td>
+                                @if($user_create_request->userApprove)
+                                    <td>{{$user_create_request->userApprove->userProfile->first_name}}</td>
+                                    <td>{{$user_create_request->userApprove->userProfile->last_name}}</td>
+                                    <td>{{$user_create_request->userApprove->userProfile->email}}</td>
+                                    <td>{{$user_create_request->userApprove->userProfile->mobile_no}}</td>
+                                @else
+                                    <td>{{$user_create_request->first_name}}</td>
+                                    <td>{{$user_create_request->last_name}}</td>
+                                    <td>{{$user_create_request->email}}</td>
+                                    <td>{{$user_create_request->mobile_no}}</td>
+                                @endif
                                 <td>{{ucfirst($user_create_request->user_type)}}</td>
                                 <td>
                                     @if($user_create_request->status=='pending')

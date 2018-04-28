@@ -21,7 +21,7 @@ class UserCreationRequestController extends Controller
      */
     public function index()
     {
-        $user_create_requests = UserCreationRequest::withTrashed()->where('action_user_id',auth()->user()->id)->get();
+        $user_create_requests = UserCreationRequest::with(['userApprove.userProfile'])->withTrashed()->where('action_user_id',auth()->user()->id)->get();
         return view('user_create_request.index',compact('user_create_requests'));
     }
 
@@ -135,6 +135,7 @@ class UserCreationRequestController extends Controller
             $user->userLog()->create([]);
             $user->userPermission()->create([]);
             $user_detail->status = 'approved';
+            $user_detail->user_id = $user->id;
             $user_detail->save();
             $user_detail->delete();
             $this->sendSMS("88{$user_detail->mobile_no}","your user name: {$user_name}, password: {$password}");
