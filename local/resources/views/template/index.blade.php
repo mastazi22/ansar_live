@@ -116,6 +116,9 @@
                         'authentication' . But you have the admin role to entry, edit, update, verify and authenticate.
                     </li>
                     <li>
+                        Do not let users enter any fake data here. All data will go to our AVURP database.
+                    </li>
+                    <li>
                         If you find any trouble please notify system Admin.
                     </li>
                 </ul>
