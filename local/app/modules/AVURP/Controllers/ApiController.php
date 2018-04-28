@@ -45,8 +45,9 @@ class ApiController extends Controller
 
     public function store(VDPInfoRequest $request)
     {
-        return $request->all();
         Log::info($request->all());
+        return $request->all();
+
         $response = $this->infoRepository->create($request,$request->action_user_id);
         return response()->json($response);
 
