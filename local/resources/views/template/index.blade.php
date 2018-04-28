@@ -92,7 +92,7 @@
                 </h2>
                 <p style="font-size: 18px;font-weight: bold">
                     Your AVURP Admin credentials have been created. Please create necessary users for online data entry,
-                    verify and data authentication.
+                    verify and data approve.
                     To create users do the following things:
                 </p>
                 <ul class="warning">
