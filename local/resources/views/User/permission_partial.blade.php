@@ -13,11 +13,11 @@
             <ul class="sub-permission">
                 <li>
                 <span class="title text text-bold">
-                    <a class="tree-view" href="#">
-                        <i class="fa fa-minus fa-xs"></i>
+                    <a class="tree-view" href="#" data-open="0">
+                        <i class="fa fa-plus fa-xs"></i>
                     </a>&nbsp;{{$p->text}}
                 </span>
-                    <ul>
+                    <ul style="display: none">
                         @include('User.permission_partial',['data'=>$p->actions])
                     </ul>
                 </li>

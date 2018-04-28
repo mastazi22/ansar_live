@@ -34,6 +34,11 @@
                 if(checked==pLength) $("#all").prop('checked',true);
                 else $("#all").prop('checked',false);
             }
+            $(".permission-group").each(function () {
+                var t = $(this).find("input[type='checkbox']").length;
+                var c = $(this).find("input[type='checkbox']:checked").length;
+                $(this).children('.legend').children('span').text(`(${c} of ${t})`);
+            })
         })
     </script>
     <div>
@@ -60,9 +65,9 @@
                             @for($j=0;$j<3;$j++)
                             <div class="col-lg-4">
                                 @for($i=$j;$i<count($routes);$i+=3)
-                                    <div style="margin-top: 5px">
+                                    <div style="margin-top: 5px" class="permission-group">
                                         <div class="legend">
-                                            {{$routes[$i]->root}}
+                                            {{$routes[$i]->root}}<span style="color: black;font-weight:bold;font-size: 12px;margin-left: 10px"></span>
                                             <button class="btn btn-default btn-xs pull-right toggle-view">
                                                 <img src="{{asset('dist/img/down_icon.png')}}" class="rotate-img-down"
                                                      style="width: 18px;height: 20px;">
