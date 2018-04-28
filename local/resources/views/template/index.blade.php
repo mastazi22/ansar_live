@@ -85,14 +85,14 @@
         @if(Auth::user()->type==22)
             <div>
                 <h2>Attention:</h2>
-                <h1 class="text-danger" style="    padding: 10px;border: 2px solid red;">
+                <h2 class="text-danger" style="    padding: 10px;border: 2px solid red;">
                     Please update your profile. Name, official email, official cell numbers must be given in the
                     respective fields. These are necessary for time to time given system notification, two step
                     verification and OTP that are coming soon.
-                </h1>
+                </h2>
                 <p style="font-size: 18px;font-weight: bold">
                     Your AVURP Admin credentials have been created. Please create necessary users for online data entry,
-                    verify and authentication.
+                    verify and data authentication.
                     To create users do the following things:
                 </p>
                 <ul class="warning">
