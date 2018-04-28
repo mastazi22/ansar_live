@@ -64,11 +64,11 @@
                                         <div class="legend">
                                             {{$routes[$i]->root}}
                                             <button class="btn btn-default btn-xs pull-right toggle-view">
-                                                <img src="{{asset('dist/img/down_icon.png')}}" class="rotate-img-up"
+                                                <img src="{{asset('dist/img/down_icon.png')}}" class="rotate-img-down"
                                                      style="width: 18px;height: 20px;">
                                             </button>
                                         </div>
-                                        <div class="box-body p_continer" style="background-color: #FFFFFF;">
+                                        <div class="box-body p_continer" style="background-color: #FFFFFF;display: none">
                                             <ul class="permission-list">
                                                 @include('User.permission_partial',['data'=>$routes[$i]->children])
                                             </ul>
