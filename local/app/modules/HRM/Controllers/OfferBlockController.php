@@ -113,10 +113,11 @@ class OfferBlockController extends Controller
         try{
             $blocked_ansar = OfferBlockedAnsar::findOrFail($id);
             $now = Carbon::now();
+            $endDate = Carbon::now()->addHours(24);
             OfferSMS::create([
                 'sms_send_datetime' => $now,
                 'ansar_id' => $blocked_ansar->ansar_id,
-                'sms_end_datetime' => $now->addHours(24),
+                'sms_end_datetime' => $endDate,
 //                    'sms_end_datetime' => Carbon::now()->addMinute(),
                 'district_id' => $blocked_ansar->last_offer_unit,
                 'come_from' => 'Offer Block',
