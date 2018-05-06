@@ -8,5 +8,5 @@ class DemandLog extends Model
 {
 
     protected $connection = 'sd';
-    protected $table = 'tbl_demand_log';
+    protected $table = 'ansar_sd.tbl_demand_log';
 }

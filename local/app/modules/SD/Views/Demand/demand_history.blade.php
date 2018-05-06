@@ -20,18 +20,20 @@
                             <th>View Sheet</th>
                         </tr>
                         @foreach($logs as $log)
-                            <tr>
-                                <td>{{$i++}}</td>
-                                <td>{{$log->kpi_name}}</td>
-                                <td>{{\Carbon\Carbon::parse($log->form_date)->format('d M, Y')}}</td>
-                                <td>{{\Carbon\Carbon::parse($log->to_date)->format('d M, Y')}}</td>
-                                <td>{{\Carbon\Carbon::parse($log->generated_date)->format('d M, Y')}}</td>
-                                <td>
-                                    <a target="_blank" href="{{url('SD/viewdemandsheet',['id'=>$log->id])}}">
-                                        <i class="fa fa-lg fa-file-pdf-o"></i>
-                                    </a>
-                                </td>
-                            </tr>
+                            @foreach($log->demand as $demand)
+                                <tr>
+                                    <td>{{$i++}}</td>
+                                    <td>{{$log->kpi_name}}</td>
+                                    <td>{{\Carbon\Carbon::parse($demand->form_date)->format('d M, Y')}}</td>
+                                    <td>{{\Carbon\Carbon::parse($demand->to_date)->format('d M, Y')}}</td>
+                                    <td>{{\Carbon\Carbon::parse($demand->generated_date)->format('d M, Y')}}</td>
+                                    <td>
+                                        <a target="_blank" href="{{url('SD/viewdemandsheet',['id'=>$demand->id])}}">
+                                            <i class="fa fa-lg fa-file-pdf-o"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
                         @endforeach
                     </table>
                 </div>
