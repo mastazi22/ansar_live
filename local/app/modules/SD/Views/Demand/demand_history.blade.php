@@ -17,15 +17,21 @@
                             <th>From Date</th>
                             <th>To Date</th>
                             <th>Generated Date</th>
+                            <th>Memorandum ID</th>
+                            <th>Total Amount</th>
+                            <th>Total Min Amount</th>
                             <th>View Sheet</th>
                         </tr>
                         @foreach($logs as $log)
                             <tr>
                                 <td>{{$i++}}</td>
-                                <td>{{$log->kpi_name}}</td>
+                                <td>{{$log->kpi->kpi_name}}</td>
                                 <td>{{\Carbon\Carbon::parse($log->form_date)->format('d M, Y')}}</td>
                                 <td>{{\Carbon\Carbon::parse($log->to_date)->format('d M, Y')}}</td>
                                 <td>{{\Carbon\Carbon::parse($log->generated_date)->format('d M, Y')}}</td>
+                                <td>{{$log->memorandum_no}}</td>
+                                <td>{{$log->total_amount}}</td>
+                                <td>{{$log->total_min_paid_amount}}</td>
                                 <td>
                                     <a target="_blank" href="{{url('SD/viewdemandsheet',['id'=>$log->id])}}">
                                         <i class="fa fa-lg fa-file-pdf-o"></i>

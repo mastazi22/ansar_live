@@ -2,6 +2,7 @@
 
 namespace App\modules\HRM\Models;
 
+use App\modules\SD\Models\DemandLog;
 use Illuminate\Database\Eloquent\Model;
 
 class KpiGeneralModel extends Model
@@ -28,7 +29,7 @@ class KpiGeneralModel extends Model
 //        return $this->hasOne('App\models\FreezingInfoModel','kpi_id');
 //   }
     function demand(){
-        $this->hasMany('App\modules\SD\Models\DemandLog','kpi_id');
+        return $this->hasMany(DemandLog::class,'kpi_id');
     }
     function details(){
         return $this->hasOne(KpiDetailsModel::class, 'kpi_id');

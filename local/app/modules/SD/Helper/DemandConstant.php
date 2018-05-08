@@ -33,6 +33,8 @@ class DemandConstant
                 return $this->constants->where('cons_name','medical_fee')->first();
             case 'MV':
                 return $this->constants->where('cons_name','margha_fee')->first();
+            case 'WF':
+                return $this->constants->where('cons_name','welfare_fee')->first();
             default:
                 return 0;
 
