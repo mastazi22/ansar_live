@@ -127,6 +127,7 @@
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
             <td>{{$ansar->mobile_no_self}}</td>
+            <td>{{$ansar->offer_unit}}</td>
             <td>{{\Carbon\Carbon::parse($ansar->sms_send_datetime)->format('d-M-Y h:i:s')}}</td>
         </tr>
     @empty
