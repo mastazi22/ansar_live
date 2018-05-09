@@ -111,7 +111,7 @@
                                     <ul class="menu">
                                         @foreach(Notification::getForgetPasswordNotification() as $notification)
                                             <li>
-                                                <a href="{{URL::to((request()->route()?request()->route()->getPrefix():'')."/change_password/".$notification->user_name)}}"
+                                                <a href="{{URL::to("/change_password/".$notification->user_name)}}"
                                                    style="white-space: normal !important;overflow: auto !important;text-overflow: initial !important;">
                                                     <i class="fa fa-users text-aqua"></i>
                                                     <span style="color: #000000;font-size: 1.3em;">{{$notification->user_name}}</span>

@@ -46,12 +46,12 @@
                             <th>Request Date</th>
                             <th>Action</th>
                         </tr>
-                        @forelse(Notification::getAllNotification() as $notification)
+                        @forelse(Notification::getForgetPasswordNotification() as $notification)
                             <tr>
                                 <td>{{$i++}}</td>
                                 <td>{{$notification->user_name}}</td>
                                 <td>{{\Carbon\Carbon::parse($notification->created_at)->format('d M, y')}}</td>
-                                <td><a href="{{URL::to((request()->route()?request()->route()->getPrefix():'').'/change_password/'.$notification->user_name)}}" class="btn btn-info btn-xs">Change password</a> or <a href="{{URL::to((request()->route()?request()->route()->getPrefix():'').'/remove_request/'.$notification->user_name)}}" class="btn btn-xs btn-danger">Remove request</a>
+                                <td><a href="{{URL::to('/change_password/'.$notification->user_name)}}" class="btn btn-info btn-xs">Change password</a> or <a href="{{URL::to((request()->route()?request()->route()->getPrefix():'').'/remove_request/'.$notification->user_name)}}" class="btn btn-xs btn-danger">Remove request</a>
                             </tr>
                             @empty
                             <tr>
