@@ -10,12 +10,14 @@ namespace App\modules\AVURP\Repositories\VDPInfo;
 
 
 use App\Http\Requests\Request;
+use App\modules\AVURP\Models\UserActionLog;
 use App\modules\AVURP\Models\VDPAnsarInfo;
 use App\modules\AVURP\Requests\VDPInfoRequest;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
 use App\modules\HRM\Models\Thana;
 use App\modules\HRM\Models\Unions;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -45,8 +47,8 @@ class VDPInfoRepository implements VDPInfoInterface
         DB::connection('avurp')->beginTransaction();
         try {
 
-            $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', 'union_id', 'union_word_id','gender']))->count();
-            if($count>=32){
+            $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', 'union_id', 'union_word_id', 'gender']))->count();
+            if ($count >= 32) {
                 throw new \Exception("32 {$request->gender} already register in this ward");
             }
 
@@ -59,13 +61,13 @@ class VDPInfoRepository implements VDPInfoInterface
             $count += ($request->gender == 'Male' ? 1 : 33);
             $count = sprintf("%02d", $count);
             $geo_id = $division_code . $unit_code . $thana_code . $union_code . $gender_code . $word_code . $count;
-            if ($request->hasFile('profile_pic')&&!$request->is('AVURP/api/*')) {
+            if ($request->hasFile('profile_pic') && !$request->is('AVURP/api/*')) {
                 $file = $request->file('profile_pic');
                 $path = storage_path('avurp/profile_pic');
                 if (!File::exists($path)) File::makeDirectory($path, 777, true);
                 $image_name = $geo_id . '.' . $file->clientExtension();
                 Image::make($file)->save($path . '/' . $image_name);
-            } else if($request->profile_pic&&$request->is('AVURP/api/*')){
+            } else if ($request->profile_pic && $request->is('AVURP/api/*')) {
                 $path = storage_path('avurp/profile_pic');
                 $image = Image::make($request->profile_pic);;
                 $extension = 'png';
@@ -80,18 +82,29 @@ class VDPInfoRepository implements VDPInfoInterface
                 $image_name = $geo_id . '.' . $extension;
                 $image->save($path . '/' . $image_name);
             }
-            $data = $request->except(['educationInfo', 'training_info','status']);
+            $data = $request->except(['educationInfo', 'training_info', 'status']);
             $data['geo_id'] = $geo_id;
             if (isset($path) && isset($image_name)) $data['profile_pic'] = $image_name;
             else  $data['profile_pic'] = '';
             $info = $this->info->create($data);
             $info->status()->create([]);
-            foreach ($request->educationInfo as $education) {
-                $info->education()->create($education);
+            if ($request->educationInfo) {
+                foreach ($request->educationInfo as $education) {
+                    $info->education()->create($education);
+                }
             }
+
             foreach ($request->training_info as $training) {
                 $info->training_info()->create($training);
             }
+            $user = auth()->user();
+            $now = Carbon::now()->format('d-M-Y h:i:s A');
+            UserActionLog::create([
+                'action_user_id' => $user->id,
+                'action_description' => "VDP ID({$geo_id}) has been created by {$user->user_name} at {$now}",
+                'action_type'=>'Entry',
+                'action_id'=>$info->id,
+            ]);
             DB::connection('avurp')->commit();
         } catch (\Exception $e) {
             DB::connection('avurp')->rollback();
@@ -171,7 +184,8 @@ class VDPInfoRepository implements VDPInfoInterface
                 $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', 'union_id', 'union_word_id', 'gender']))->count();
 
                 if ($count >= 32) {
-                    throw new \Exception("32 {$request->gender} already register in this ward");
+                    throw new \Exception("32 {
+                $request->gender} already register in this ward");
                 }
                 $count += ($request->gender == 'Male' ? 1 : 33);
                 $count = sprintf("%02d", $count);
@@ -193,12 +207,23 @@ class VDPInfoRepository implements VDPInfoInterface
             $info->update($data);
             $info->education()->delete();
             $info->training_info()->delete();
-            foreach ($request->educationInfo as $education) {
-                $info->education()->create($education);
+            if ($request->educationInfo) {
+                foreach ($request->educationInfo as $education) {
+                    $info->education()->create($education);
+                }
             }
+
             foreach ($request->training_info as $training) {
                 $info->training_info()->create($training);
             }
+            $user = auth()->user();
+            $now = Carbon::now()->format('d-M-Y h:i:s A');
+            UserActionLog::create([
+                'action_user_id' => $user->id,
+                'action_description' => "VDP ID({$geo_id}) has been updated by {$user->user_name} at {$now}",
+                'action_type'=>'Edit',
+                'action_id'=>$info->id,
+            ]);
             DB::connection('avurp')->commit();
         } catch (\Exception $e) {
             DB::connection('avurp')->rollback();
@@ -235,8 +260,17 @@ class VDPInfoRepository implements VDPInfoInterface
             DB::connection('avurp')->beginTransaction();
             try{
                 $info = $this->info->findOrFail($id);
-                if($info->status!='new') throw new \Exception("He/She is already {$info->status}");
+                if($info->status!='new') throw new \Exception("He/She is already {
+                $info->status}");
                 $info->update(['status'=>'verified']);
+                $user = auth()->user();
+                $now = Carbon::now()->format('d-M-Y h:i:s A');
+                UserActionLog::create([
+                    'action_user_id' => $user->id,
+                    'action_description' => "VDP ID({$info->geo_id}) has been verified by {$user->user_name} at {$now}",
+                    'action_type'=>'Verify',
+                    'action_id'=>$info->id,
+                ]);
                 DB::connection('avurp')->commit();
             }catch(\Exception $e){
                 DB::connection('avurp')->rollback();
@@ -254,8 +288,17 @@ class VDPInfoRepository implements VDPInfoInterface
             DB::connection('avurp')->beginTransaction();
             try{
                 $info = $this->info->findOrFail($id);
-                if($info->status!='verified') throw new \Exception("His/Her status is  {$info->status}");
+                if($info->status!='verified') throw new \Exception("His / Her status is  {
+                $info->status}");
                 $info->update(['status'=>'approved']);
+                $user = auth()->user();
+                $now = Carbon::now()->format('d-M-Y h:i:s A');
+                UserActionLog::create([
+                    'action_user_id' => $user->id,
+                    'action_description' => "VDP ID({$info->geo_id}) has been approve by {$user->user_name} at {$now}",
+                    'action_type'=>'Approve',
+                    'action_id'=>$info->id,
+                ]);
                 DB::connection('avurp')->commit();
             }catch(\Exception $e){
                 DB::connection('avurp')->rollback();

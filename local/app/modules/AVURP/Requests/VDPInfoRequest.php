@@ -57,10 +57,10 @@ class VDPInfoRequest extends Request
                     'smart_card_id'=>'sometimes|exists:hrm.tbl_ansar_parsonal_info,ansar_id|unique:avurp.avurp_vdp_ansar_info',
                     'post_office_name'=>'required',
                     'village_house_no'=>'required',
-                    'educationInfo'=>'required',
+                    //'educationInfo'=>'required',
                     'training_info'=>'required',
-                    'educationInfo.*.education_id'=>'required|numeric|min:1',
-                    'educationInfo.*.institute_name'=>'required',
+                    /*'educationInfo.*.education_id'=>'required|numeric|min:1',
+                    'educationInfo.*.institute_name'=>'required',*/
                     'training_info.*.training_id'=>'required|numeric|min:1',
                     'training_info.*.sub_training_id'=>'required|numeric|min:1',
 
@@ -89,10 +89,10 @@ class VDPInfoRequest extends Request
                     'smart_card_id'=>'sometimes|exists:hrm.tbl_ansar_parsonal_info,ansar_id|unique:avurp.avurp_vdp_ansar_info,smart_card_id,'.$this->route()->parameters()['info'],
                     'post_office_name'=>'required',
                     'village_house_no'=>'required',
-                    'educationInfo'=>'required',
+                    //'educationInfo'=>'required',
                     'training_info'=>'required',
-                    'educationInfo.*.education_id'=>'required|numeric|min:1',
-                    'educationInfo.*.institute_name'=>'required',
+                    /*'educationInfo.*.education_id'=>'required|numeric|min:1',
+                    'educationInfo.*.institute_name'=>'required',*/
                     'training_info.*.training_id'=>'required|numeric|min:1',
                     'training_info.*.sub_training_id'=>'required|numeric|min:1',
                 ];
