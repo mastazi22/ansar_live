@@ -51,11 +51,17 @@ class VDPAnsarInfo extends Model
         }
         return '';
     }
+    public function log(){
+        return $this->hasMany(UserActionLog::class,'action_id','id');
+    }
     public function scopeUserQuery($query,$id){
         if($id){
             $user = User::find($id);
             if($user->usertype->type_name=="Dataentry"){
-                return $query->where('action_user_id',$id);
+                return $query->whereHas('log',function ($q) use ($user){
+                    $q->where('action_user_id',$user->id);
+                    $q->where('action_type','Entry');
+                });
             }
         }
         return $query;
