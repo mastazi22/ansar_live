@@ -691,10 +691,12 @@ class CustomQuery
             $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
         }
         $total = clone $ansarQuery;
-        $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_offer_blocked_ansar.blocked_date', 'ou.unit_name_eng as offer_unit');
-        $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        $ansarQuery->select(DB::raw('MAX(tbl_sms_send_log.offered_date) as offered_date'),'tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_offer_blocked_ansar.blocked_date', 'ou.unit_name_eng as offer_unit');
+        $total->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
         $ansars = $ansarQuery->skip($offset)->limit($limit)->get();
-        $t = $total->groupBy('code')->get();
+        //return $total->get();
+        $t = DB::table(DB::raw("( {$total->toSql()}) x"))->mergeBindings($total)->groupBy('x.code')->select(DB::raw("count(*) as t"), 'x.code')->get();
+//        return $t;
         return ['total' => collect($t)->pluck('t', 'code'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'offer_block'];
     }
 

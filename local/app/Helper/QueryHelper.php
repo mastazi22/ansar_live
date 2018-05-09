@@ -31,7 +31,7 @@ class QueryHelper
     public static function getQuery($type)
     {
         $ansarQuery = '';
-        switch($type){
+        switch ($type) {
             case self::ALL_ANSARS:
                 $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
                     ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
@@ -68,6 +68,7 @@ class QueryHelper
                 break;
             case self::OFFER_BLOCK:
                 $ansarQuery = DB::table('tbl_ansar_parsonal_info')
+                    ->leftJoin('tbl_sms_send_log', 'tbl_sms_send_log.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                     ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
                     ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
                     ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
@@ -76,7 +77,8 @@ class QueryHelper
                     ->join('tbl_units as ou', 'ou.id', '=', 'tbl_offer_blocked_ansar.last_offer_unit')
                     ->where('tbl_ansar_status_info.offer_block_status', 1)
                     ->where('tbl_ansar_status_info.block_list_status', 0)
-                    ->whereNull('tbl_offer_blocked_ansar.deleted_at');
+                    ->whereNull('tbl_offer_blocked_ansar.deleted_at')
+                    ->groupBy('tbl_sms_send_log.ansar_id');
                 break;
             case self::OFFER_RECEIVED:
                 $ansarQuery = DB::table('tbl_ansar_parsonal_info')

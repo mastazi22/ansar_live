@@ -8,6 +8,7 @@
         <th>Home District</th>
         <th>Thana</th>
         <th>Last Offer District</th>
+        <th>Last Offer Date</th>
         <th>Blocked Date</th>
 
     </tr>
@@ -21,6 +22,7 @@
         <td>[[ansar.unit]]</td>
         <td>[[ansar.thana]]</td>
         <td>[[ansar.offer_unit]]</td>
+        <td>[[ansar.offered_date|dateformat:"DD-MMM-YYYY"]]</td>
         <td>[[ansar.blocked_date|dateformat:"DD-MMM-YYYY"]]</td>
     </tr>
     <tr ng-if="data.ansars.length<=0">
