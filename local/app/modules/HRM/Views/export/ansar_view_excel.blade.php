@@ -135,6 +135,40 @@
             <td class="warning" colspan="8">No Ansar Found</td>
         </tr>
     @endforelse
+    @elseif(isset($type) && strcasecmp($type,"offer_block")==0)
+        <tr>
+            <th>SL. No</th>
+            <th>Ansar ID</th>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Birth Date</th>
+            <th>Home District</th>
+            <th>Thana</th>
+            <th>Mobile no</th>
+            <th>Last Offer District</th>
+            <th>Last Offer Date</th>
+            <th>Blocked Date</th>
+
+        </tr>
+        @forelse($ansars as $ansar)
+            <tr>
+                <td>{{$i++}}</td>
+                <td><a href="{{URL::to('HRM/entryreport',['ansarid'=>$ansar->id])}}">{{$ansar->id}}</a></td>
+                <td>{{$ansar->rank}}</td>
+                <td>{{$ansar->name}}</td>
+                <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
+                <td>{{$ansar->unit}}</td>
+                <td>{{$ansar->thana}}</td>
+                <td>{{$ansar->mobile_no_self}}</td>
+                <td>{{$ansar->offer_unit}}</td>
+                <td>{{\Carbon\Carbon::parse($ansar->offered_date)->format('d-M-Y h:i:s')}}</td>
+                <td>{{\Carbon\Carbon::parse($ansar->blocked_date)->format('d-M-Y')}}</td>
+            </tr>
+        @empty
+            <tr>
+                <td class="warning" colspan="8">No Ansar Found</td>
+            </tr>
+        @endforelse
 @elseif(isset($type) && strcasecmp($type,"rest_ansar")==0)
     <tr>
         <th>SL. No</th>
