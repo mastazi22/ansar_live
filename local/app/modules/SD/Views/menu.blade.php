@@ -1,4 +1,4 @@
-<aside class="main-sidebar">
+{{--<aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
         <!-- Sidebar user panel -->
@@ -10,20 +10,7 @@
                 <p style="padding: 0 !important;margin: 0;">(SD)</p>
             </div>
         </div>
-        <!-- search form -->
-        <form action="#" method="get" class="sidebar-form">
-            <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Search..."/>
-              <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                </button>
-              </span>
-            </div>
-        </form>
-        <!-- /.search form -->
-        <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu">
-            <li class="header">MAIN NAVIGATION</li>
             <li class="active treeview">
                 <a href="home.html">
                     <i class="fa fa-dashboard"></i> <span>Dashboard</span>
@@ -91,4 +78,42 @@
         </ul>
     </section>
     <!-- /.sidebar -->
+</aside>--}}
+<aside class="main-sidebar" ng-controller="MenuController">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+
+        <ul class="sidebar-menu">
+            <li>
+                <a href="{{URL::to('/SD')}}">
+                    <i class="fa fa-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            @include('HRM::Partial_view.partial_menu',['menus'=>config('menu.sd')])
+        </ul>
+    </section>
+    <!-- /.sidebar -->
+    <script>
+        $(window).load(function(){
+            var l = $('.sidebar-menu').children('li');
+            function removeMenu(m){
+
+                m.each(function () {
+                    //console.log({parent: $.trim($(this).parents('li').eq($(this).parents('li').length-1).children('a').text()),children: m.text()})
+                    //alert($(this).children('ul').length+" "+$(this).children('ul').children('li').length)
+                    if($(this).children('ul').length>0) {
+                        if ($(this).children('ul').children('li').length > 0) {
+                            removeMenu($(this).children('ul').children('li'));
+                        }
+                        else if ($(this).children('ul').children('li').length <= 0) {
+                            // alert(m.length)
+                            $(this).remove();
+                        }
+                    }
+                })
+            }
+            removeMenu(l)
+        })
+    </script>
 </aside>
