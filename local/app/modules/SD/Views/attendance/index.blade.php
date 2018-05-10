@@ -5,28 +5,44 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller("AttendanceController", function ($scope) {
+        GlobalApp.controller("AttendanceController", function ($scope,$http) {
             var currentYear = parseInt(moment().format('YYYY'));
             var currentMonth = parseInt(moment().format('M'));
             $scope.months = {
                 "--Select a month--": '',
-                January: 1,
-                February: 2,
-                March: 3,
-                April: 4,
-                May: 5,
-                June: 6,
-                July: 7,
-                Augest: 8,
-                September: 9,
-                October: 10,
-                November: 11,
-                December: 12
+                January: "01",
+                February: "02",
+                March: "03",
+                April: "04",
+                May: "05",
+                June: "06",
+                July: "07",
+                Augest: "08",
+                September: "09",
+                October: "10",
+                November: "11",
+                December: "12"
             }
 
             $scope.years = {"--Select a year--": ''};
             for (var i = currentYear - 5; i <= currentYear; i++) {
                 $scope.years[i] = i;
+            }
+            $scope.allLoading = false;
+            $scope.searchData = function () {
+                console.log($scope.param)
+                $scope.allLoading = true;
+                $http({
+                    method:'get',
+                    url:"{{URL::route('SD.attendance.index')}}",
+                    params:$scope.param,
+                }).then(function (response) {
+                    $scope.allLoading = false;
+                    console.log(response.data)
+                },function (response) {
+                    $scope.allLoading = false;
+                    console.log(response.data)
+                })
             }
         })
     </script>
@@ -89,8 +105,8 @@
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label style="display: block" for="">&nbsp;</label>
-                            <button class="btn btn-primary"
-                                    ng-disabled="(!param.range||!param.unit||!param.thana||!param.kpi||!param.month||!param.year)&&!param.ansar_id"
+                            <button class="btn btn-primary" ng-click="searchData()"
+                                    ng-disabled="(!param.range||!param.unit||!param.thana||!param.kpi||!param.month||!param.year)&&(!param.ansar_id||!param.month||!param.year)"
                             >
                                 <i class="fa fa-search"></i>&nbsp; Search
                             </button>

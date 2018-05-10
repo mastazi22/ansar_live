@@ -20,25 +20,25 @@ class AttendanceController extends Controller
         if($request->ajax()){
             $rules = [
                 "month"=>'required',
-                "range_id"=>'required_if:ansar_id,""',
-                "unit_id"=>'required_if:ansar_id,""',
-                "thana_id"=>'required_if:ansar_id,""',
-                "kpi_id"=>'required_if:ansar_id,""',
+                "range"=>'required_if:ansar_id,'.null,
+                "unit"=>'required_if:ansar_id,'.null,
+                "thana"=>'required_if:ansar_id,'.null,
+                "kpi"=>'required_if:ansar_id,'.null,
                 "year"=>'required|regex:/^[0-9]{4}$/',
             ];
             $this->validate($request,$rules);
             $attendance = Attendance::with(['kpi'])
             ->whereHas('kpi',function ($q) use($request){
-                if($request->range_id&&$request->range_id!='all'){
+                if($request->range&&$request->range!='all'){
                     $q->where('division_id',$request->range_id);
                 }
-                if($request->unit_id&&$request->unit_id!='all'){
+                if($request->unit&&$request->unit!='all'){
                     $q->where('unit_id',$request->unit_id);
                 }
-                if($request->thana_id&&$request->thana_id!='all'){
+                if($request->thana&&$request->thana!='all'){
                     $q->where('thana_id',$request->thana_id);
                 }
-                if($request->kpi_id&&$request->kpi_id!='all'){
+                if($request->kpi&&$request->kpi!='all'){
                     $q->where('id',$request->kpi_id);
                 }
             });
@@ -46,10 +46,10 @@ class AttendanceController extends Controller
                 $attendance->where('ansar_id',$request->ansar_id);
             }
             if($request->month){
-                $attendance->whereMonth('attendance_date',$request->month);
+                $attendance->whereMonth('attendance_date','=',$request->month);
             }
             if($request->year){
-                $attendance->whereYear('attendance_date',$request->year);
+                $attendance->whereYear('attendance_date','=',$request->year);
             }
             return response()->json($attendance->get());
 
