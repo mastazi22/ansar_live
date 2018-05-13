@@ -1,7 +1,7 @@
 @extends('template.master')
-@section('title','Dashboard')
+@section('title','Attendance')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('SD') !!}
+    {!! Breadcrumbs::render('attendance') !!}
 @endsection
 @section('content')
 @endsection

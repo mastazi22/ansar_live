@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class KpiGeneralModel extends Model
 {
     protected $connection = 'hrm';
-    protected $table ="tbl_kpi_info";
+    protected $table ="db_amis.tbl_kpi_info";
     protected $guarded = [];
 //    function division(){
 //       return $this->belongsTo('App\models\Division','division_id');

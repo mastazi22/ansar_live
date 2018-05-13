@@ -2,10 +2,21 @@
 
 namespace App\modules\SD\Controllers;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\modules\HRM\Models\District;
+use App\modules\HRM\Models\KpiDetailsModel;
+use App\modules\HRM\Models\KpiGeneralModel;
+use App\modules\HRM\Models\MemorandumModel;
+use App\modules\SD\Helper\Facades\DemandConstantFacdes;
+use App\modules\SD\Models\DemandLog;
+use App\modules\SD\Models\UserActionLog;
+use Barryvdh\Snappy\Facades\SnappyPdf;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
 
 class DemandSheetController extends Controller
 {
@@ -104,10 +115,12 @@ class DemandSheetController extends Controller
             return Response::json(['error' => false, 'status' => false, 'data' => $e->getTraceAsString()]);
         }
     }
+
     public function demandConstant()
     {
         return view("SD::Demand.demand_constant")->with(['constants' => DemandConstant::all()]);
     }
+
     public function updateConstant(Request $request)
     {
         $rules = [];
@@ -145,6 +158,7 @@ class DemandSheetController extends Controller
         if (!File::exists($path)) return Response::view('errors.404');
         else return Response::download($path);
     }
+
     function demandHistory()
     {
 //        return DemandLog::get();

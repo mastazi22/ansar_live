@@ -22,7 +22,7 @@
                             <th>Total Min Amount</th>
                             <th>View Sheet</th>
                         </tr>
-                        @foreach($logs as $log)
+                        @forelse($logs as $log)
                             <tr>
                                 <td>{{$i++}}</td>
                                 <td>{{$log->kpi->kpi_name}}</td>
@@ -38,7 +38,11 @@
                                     </a>
                                 </td>
                             </tr>
-                        @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="9" class="bg-warning">No History Available</td>
+                            </tr>
+                        @endforelse
                     </table>
                 </div>
                 <div style="float: right">

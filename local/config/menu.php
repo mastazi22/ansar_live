@@ -389,7 +389,36 @@ return [
             ]
         ]
     ],
-    "sd" => [],
+    "sd" => [
+        "Demand Sheet"=>[
+            "route"=>"#",
+            "icon"=>"fa-file",
+            "children"=>[
+                "Demand Constant"=>[
+                    "route"=>'SD.demand_constant',
+                    "icon"=>'fa-cog'
+                ],
+                "Generate Demand Sheet"=>[
+                    "route"=>'SD.demand_sheet',
+                    "icon"=>'fa-cog'
+                ],
+                "Demand History"=>[
+                    "route"=>'SD.demand_history',
+                    "icon"=>'fa-cog'
+                ],
+            ]
+        ],
+        "Salary Management"=>[
+            "route"=>"#",
+            "icon"=>"fa-money",
+            "children"=>[
+                "Attendance"=>[
+                    "route"=>'SD.attendance.index',
+                    "icon"=>'fa-calendar'
+                ],
+            ]
+        ],
+    ],
     "recruitment" => [
         "Job Category" => [
             "route" => "recruitment.category.index",
