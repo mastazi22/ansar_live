@@ -797,7 +797,7 @@ class EmbodimentController extends Controller
     {
         $rules = [
             'ansar_id' => 'required|numeric|regex:/^[0-9]+$/',
-            'new_embodiment_date' => ['required', 'regex:/^[0-9]{1,2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(dec))\-[0-9]{4}$/'],
+            'new_embodiment_date' => ['required'],
         ];
         $message = [
             'ansar_id.required' => 'Ansar ID is required',
