@@ -6,8 +6,9 @@
 @section('content')
     <script>
         GlobalApp.controller("AttendanceController", function ($scope,$http) {
-            var currentYear = parseInt(moment().format('YYYY'));
-            var currentMonth = parseInt(moment().format('M'));
+            var currentYear =$scope.currentMonth = parseInt(moment().format('YYYY'));
+            var currentMonth =$scope.currentYear= parseInt(moment().format('M'));
+            $scope.param = {}
             $scope.months = {
                 "--Select a month--": '',
                 January: "01",
@@ -44,6 +45,12 @@
                     console.log(response.data)
                 })
             }
+            $scope.init = function () {
+//                alert(1)
+                $scope.param.month = currentMonth;
+                $scope.param.year = currentYear;
+                console.log($scope.param)
+            }
         })
     </script>
     <section class="content" ng-controller="AttendanceController">
@@ -78,7 +85,7 @@
                 >
 
                 </filter-template>
-                <div class="row">
+                <div class="row" ng-init="init()">
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label for="">Select Month</label>
