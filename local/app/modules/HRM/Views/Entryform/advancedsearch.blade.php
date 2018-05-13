@@ -141,7 +141,7 @@
             $scope.SelectedDistrictChanged = function () {
 //            alert($scope.SelectedDistrict);
                 $scope.loading = true
-                httpService.thana($scope.searchOption.unit_id.value).then(function (response) {
+                httpService.thana($scope.searchOption.division_id.value,$scope.searchOption.unit_id.value).then(function (response) {
                     $scope.thana = response;
                     $scope.searchOption.thana_id.value = ''
                     $scope.loading = false
