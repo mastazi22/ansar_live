@@ -3,10 +3,12 @@
 namespace App\modules\SD\Controllers;
 
 use App\modules\SD\Models\Attendance;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
 {
@@ -46,12 +48,22 @@ class AttendanceController extends Controller
                 $attendance->where('ansar_id',$request->ansar_id);
             }
             if($request->month){
-                $attendance->whereMonth('attendance_date','=',$request->month);
+                $attendance->where('month','=',$request->month);
             }
             if($request->year){
-                $attendance->whereYear('attendance_date','=',$request->year);
+                $attendance->where('year','=',$request->year);
             }
-            return response()->json($attendance->get());
+            if(!$request->ansar_id ){
+                $type = "count";
+                $data = collect($attendance->select(DB::raw("SUM(is_present=1) as total_present"),DB::raw("SUM(is_present=0) as total_absent"),DB::raw("SUM(is_leave=1) as total_leave"),'day')
+                    ->groupBy('day')
+                    ->get());
+            }else{
+                $type = "view";
+                $data = $attendance->get();
+            }
+            $first_date = Carbon::parse("01-{$request->month}-{$request->year}");
+            return view('SD::attendance.data',compact('first_date','data','type'));
 
         }
         return view('SD::attendance.index');
