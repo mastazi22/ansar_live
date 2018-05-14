@@ -5,9 +5,14 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller("AttendanceController", function ($scope,$http) {
-            var currentYear =$scope.currentMonth = parseInt(moment().format('YYYY'));
-            var currentMonth =$scope.currentYear= parseInt(moment().format('M'));
+        GlobalApp.controller("AttendanceController", function ($scope, $http, $sce) {
+            var currentYear = $scope.currentMonth = parseInt(moment().format('YYYY'));
+            var currentMonth = $scope.currentYear = parseInt(moment().format('M'));
+            $scope.vdpList = $sce.trustAsHtml(`
+            <p style="font-size: 16px;font-weight: bold;text-align: center;">
+                Select guard,month,year or month,year and Ansar ID to load data
+            </p>
+            `)
             $scope.param = {}
             $scope.months = {
                 "--Select a month--": '',
@@ -34,13 +39,14 @@
                 console.log($scope.param)
                 $scope.allLoading = true;
                 $http({
-                    method:'get',
-                    url:"{{URL::route('SD.attendance.index')}}",
-                    params:$scope.param,
+                    method: 'get',
+                    url: "{{URL::route('SD.attendance.index')}}",
+                    params: $scope.param,
                 }).then(function (response) {
                     $scope.allLoading = false;
+                    $scope.vdpList = $sce.trustAsHtml(response.data)
                     console.log(response.data)
-                },function (response) {
+                }, function (response) {
                     $scope.allLoading = false;
                     console.log(response.data)
                 })
