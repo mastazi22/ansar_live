@@ -692,10 +692,11 @@ class CustomQuery
         }
         $currentDate = Carbon::now()->format('Y-m-d');
         $total = clone $ansarQuery;
-        $ansarQuery->select(DB::raw('MAX(tbl_sms_send_log.offered_date) as offered_date'),'tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_offer_blocked_ansar.blocked_date', 'ou.unit_name_eng as offer_unit')->orderBy(DB::raw("tbl_offer_blocked_ansar.blocked_date = '{$currentDate}'"))->orderBy('tbl_offer_blocked_ansar.blocked_date');
+        $ansarQuery->select(DB::raw('MAX(tbl_sms_send_log.offered_date) as offered_date'),'tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_offer_blocked_ansar.blocked_date', 'ou.unit_name_eng as offer_unit')->orderBy(DB::raw("tbl_offer_blocked_ansar.blocked_date = '{$currentDate}' desc"))->orderBy('tbl_offer_blocked_ansar.blocked_date');
 
         $total->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
-        $ansars = $ansarQuery->skip($offset)->limit($limit)->get();
+        $ansars = $ansarQuery->skip($offset)->limit($limit)->toSql();
+        return $ansars;
         //return $total->get();
         $t = DB::table(DB::raw("( {$total->toSql()}) x"))->mergeBindings($total)->groupBy('x.code')->select(DB::raw("count(*) as t"), 'x.code')->get();
 //        return $t;
