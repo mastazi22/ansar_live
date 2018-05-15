@@ -184,6 +184,9 @@ class BlockBlackController extends Controller
                 case AnsarStatusInfo::REST_STATUS:
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'REST', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                     break;
+                case AnsarStatusInfo::OFFER_BLOCK_STATUS:
+                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'OFFER BLOCK', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                    break;
                 default:
                     throw new \Exception('This Ansar can`t be blocked.Because he is BLACKED');
                     break;

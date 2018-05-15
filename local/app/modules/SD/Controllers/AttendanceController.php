@@ -2,6 +2,7 @@
 
 namespace App\modules\SD\Controllers;
 
+use App\modules\HRM\Models\KpiGeneralModel;
 use App\modules\SD\Models\Attendance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -61,9 +62,10 @@ class AttendanceController extends Controller
             }else{
                 $type = "view";
                 $data = $attendance->get();
+                $ansar_id = $request->ansar_id;
             }
             $first_date = Carbon::parse("01-{$request->month}-{$request->year}");
-            return view('SD::attendance.data',compact('first_date','data','type'));
+            return view('SD::attendance.data',compact('first_date','data','type','ansar_id'));
 
         }
         return view('SD::attendance.index');
@@ -74,9 +76,51 @@ class AttendanceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        if($request->ajax()){
+            $rules = [
+                "range"=>'required',
+                "unit"=>'required',
+                "thana"=>'required',
+                "kpi"=>'required',
+                "attendance_date"=>'required',
+            ];
+            $this->validate($request,$rules);
+            $attendance = KpiGeneralModel::with(['attendance']);
+                if($request->range&&$request->range!='all'){
+                    $attendance->where('division_id',$request->range);
+                }
+                    if($request->unit&&$request->unit!='all'){
+                        $attendance->where('unit_id',$request->unit);
+                    }
+                    if($request->thana&&$request->thana!='all'){
+                        $attendance->where('thana_id',$request->thana);
+                    }
+                    if($request->kpi&&$request->kpi!='all'){
+                        $attendance->where('id',$request->kpi);
+                    }
+            if($request->attendance_date) {
+                $d = Carbon::parse($request->attendance_date)->format('d');
+                $m = Carbon::parse($request->attendance_date)->format('m');
+                $y = Carbon::parse($request->attendance_date)->format('Y');
+                $attendance->whereHas('attendance',function ($q) use($d,$m,$y){
+                    $q->where('day', $d);
+                    $q->where('month', $m);
+                    $q->where('year', $y);
+                    $q->where('is_attendance_taken', 0);
+
+                });
+            }
+            DB::enableQueryLog();
+            $data = $attendance->first();
+                    /*return DB::getQueryLog();
+            return $data;*/
+            $date = $request->attendance_date;
+            return view('SD::attendance.create_data',compact('date','data'));
+
+        }
+        return view('SD::attendance.create');
     }
 
     /**

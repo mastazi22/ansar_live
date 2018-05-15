@@ -10,7 +10,8 @@ class Attendance extends Model
 {
 
     protected $connection = 'sd';
-    protected $table = 'tbl_attendance';
+    protected $table = 'ansar_sd.tbl_attendance';
+    protected $guarded = ['id'];
 
     public function kpi(){
         return $this->belongsTo(KpiGeneralModel::class,'kpi_id');
