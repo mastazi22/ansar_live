@@ -2,6 +2,7 @@
 
 namespace App\modules\HRM\Models;
 
+use App\modules\SD\Models\Attendance;
 use App\modules\SD\Models\DemandLog;
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,5 +34,8 @@ class KpiGeneralModel extends Model
     }
     function details(){
         return $this->hasOne(KpiDetailsModel::class, 'kpi_id');
+    }
+    function attendance(){
+        return $this->hasMany(Attendance::class,'kpi_id');
     }
 }

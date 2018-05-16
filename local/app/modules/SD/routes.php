@@ -19,7 +19,7 @@ Route::group(['prefix' => 'SD', 'middleware' => ['web', 'auth', 'permission']], 
         Route::get('/viewdemandsheet/{id}', 'DemandSheetController@viewDemandSheet')->where('id', '[0-9]+');
         Route::resource('attendance', 'AttendanceController');
         Route::get('/test', function () {
-            $kpis = KpiGeneralModel::with(['embodiment' => function ($q) {
+            /*$kpis = KpiGeneralModel::with(['embodiment' => function ($q) {
                 $q->select('ansar_id', 'kpi_id', 'emboded_status');
             }])
                 ->whereHas('embodiment.ansar.status', function ($q) {
@@ -28,35 +28,26 @@ Route::group(['prefix' => 'SD', 'middleware' => ['web', 'auth', 'permission']], 
                     $q->where('block_list_status', 0);
                 })->where('status_of_kpi', 1)
                 ->select('id', 'kpi_name')
-                ->get();
+                ->get();*/
+            $kpis = DB::connection('hrm')->table('tbl_kpi_info')
+                ->join('tbl_embodiment','tbl_embodiment.kpi_id','=','tbl_kpi_info.id')
+                ->join('tbl_ansar_status_info','tbl_ansar_status_info.ansar_id','=','tbl_embodiment.ansar_id')
+//                ->where('status_of_kpi', 1)
+                ->where('embodied_status', 1)
+                ->where('freezing_status', 0)
+                ->where('block_list_status', 0)
+                ->select('kpi_name','tbl_embodiment.ansar_id','tbl_kpi_info.id','emboded_status');
+//            return $kpis;
+
             $msg = [];
             $now = Carbon::now();
-            foreach ($kpis as $kpi){
-                DB::connection('sd')->beginTransaction();
-                try{
-
-                    $day = $now->format('d');
-                    $month = $now->format('m');
-                    $year = $now->format('Y');
-                    $kpi_id = $kpi->id;
-                    foreach ($kpi->embodiment as $e){
-                        $ansar_id = $e->ansar_id;
-                        if(Attendance::where(compact('day','month','year','kpi_id','ansar_id'))->exists()) {
-                            continue;
-                        }
-                        Attendance::create(compact('day','month','year','kpi_id','ansar_id'));
-                        DB::connection('sd')->commit();
-
-                    }
-                    array_push($msg,"success");
-
-                }catch(\Exception $e){
-                    DB::connection('sd')->rollBack();
-                    array_push($msg,$e->getMessage());
-                }
-
-            }
-            return $msg;
+            $day = $now->format('d');
+            $month = $now->format('m');
+            $year = $now->format('Y');
+            $kpis->chunk(5000,function ($data) use ($day,$month,$year){
+                dispatch(new \App\Jobs\GenerateAttendance($data,$day,$month,$year));
+            });
+            return "success";
         });
     });
 });
