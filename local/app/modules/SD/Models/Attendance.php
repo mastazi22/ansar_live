@@ -17,6 +17,6 @@ class Attendance extends Model
         return $this->belongsTo(KpiGeneralModel::class,'kpi_id');
     }
     public function ansar(){
-        return $this->belongsTo(PersonalInfo::class,'ansar_id');
+        return $this->belongsTo(PersonalInfo::class,'ansar_id','ansar_id');
     }
 }
