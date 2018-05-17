@@ -17,6 +17,7 @@ use App\modules\HRM\Models\RestInfoModel;
 use App\modules\HRM\Models\SmsReceiveInfoModel;
 use App\modules\recruitment\Models\JobAcceptedApplicant;
 use App\modules\recruitment\Models\JobCircular;
+use App\modules\SD\Models\Attendance;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -433,6 +434,61 @@ class Kernel extends ConsoleKernel
             }
 
         })->everyMinute()->name("send_sms_to_selected_applicant")->withoutOverlapping();
+
+        $schedule->call(function () {
+            Log::info("called : generate attendance");
+            //            DB::enableQueryLog();
+            $kpis = KpiGeneralModel::with(['embodiment' => function ($q) {
+                $q->select('ansar_id', 'kpi_id', 'emboded_status');
+                $q->whereHas('ansar.status', function ($q) {
+                    $q->where('embodied_status', 1);
+                    $q->where('freezing_status', 0);
+                    $q->where('block_list_status', 0);
+                });
+            }])->where('status_of_kpi', 1)
+                ->select('id', 'kpi_name');
+//            return DB::getQueryLog();
+            $now = Carbon::now();
+            $day = $now->format('d');
+            $month = $now->format('m');
+            $year = $now->format('Y');
+            $kpis->chunk(1000, function ($datas) use ($day, $month, $year) {
+
+                $inserts = [];
+                $bindings = [];
+                foreach ($datas as $data) {
+                    Log::info('KPI_ID : '.$data->id);
+                    foreach ($data->embodiment as $em){
+                        $qs = [
+                            '?',
+                            '?',
+                            '?',
+                            '?',
+                            '?',
+                        ];
+                        $bindings[] = $data->id;
+                        $bindings[] = $em->ansar_id;
+                        $bindings[] = $day;
+                        $bindings[] = $month;
+                        $bindings[] = $year;
+                        $inserts[] = '(' . implode(",", $qs) . ')';
+                        $p[] = $em->emboded_status;
+                    }
+                }
+                $query = "INSERT IGNORE INTO tbl_attendance(kpi_id,ansar_id,day,month,year) VALUES " . implode(",", $inserts);
+                DB::connection('sd')->beginTransaction();
+                try {
+                    DB::connection('sd')->insert($query,$bindings);
+                    DB::connection('sd')->commit();
+                } catch (\Exception $e) {
+
+                    DB::connection('sd')->rollback();
+                    return $e->getMessage();
+                }
+            });
+
+
+        })->everyMinute()->name("generate_attendance")->withoutOverlapping();
 
     }
 }
