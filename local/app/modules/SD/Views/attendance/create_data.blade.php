@@ -22,19 +22,20 @@
         @forelse($data->attendance as $attendance)
             <tr>
                 <td>{{++$i}}
-                    {!! Form::hidden('attendance_data['.($i-1).']["id"]',$attendance->id) !!}
+                    {!! Form::hidden('attendance_data['.($i-1).'][id]',$attendance->id) !!}
+                    {!! Form::hidden('attendance_data['.($i-1).'][is_attendance_taken]',1) !!}
                 </td>
                 <td>{{$attendance->ansar_id}}</td>
                 <td>{{$attendance->ansar->ansar_name_bng}}</td>
                 <td>
                     <div class="styled-checkbox">
-                        <input id="is_present_{{$i}}" class="is_present" name="attendance_data[{{$i-1}}]['is_present']" type="checkbox" value="1" >
+                        <input id="is_present_{{$i}}" class="is_present" name="attendance_data[{{$i-1}}][is_present]" type="checkbox" value="1" >
                         <label for="is_present_{{$i}}"></label>
                     </div>
                 </td>
                 <td>
                     <div class="styled-checkbox">
-                        <input id="is_leave_{{$i}}" class="is_leave" name="attendance_data[{{$i-1}}]['is_leave']" type="checkbox" value="1">
+                        <input id="is_leave_{{$i}}" class="is_leave" name="attendance_data[{{$i-1}}][is_leave]" type="checkbox" value="1">
                         <label for="is_leave_{{$i}}"></label>
                     </div>
                 </td>
