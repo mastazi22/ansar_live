@@ -2,13 +2,11 @@
 
 namespace App\modules\SD\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\modules\HRM\Models\KpiGeneralModel;
 use App\modules\SD\Models\Attendance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
@@ -33,16 +31,16 @@ class AttendanceController extends Controller
             $attendance = Attendance::with(['kpi'])
                 ->whereHas('kpi', function ($q) use ($request) {
                     if ($request->range && $request->range != 'all') {
-                        $q->where('division_id', $request->range_id);
+                        $q->where('division_id', $request->range);
                     }
                     if ($request->unit && $request->unit != 'all') {
-                        $q->where('unit_id', $request->unit_id);
+                        $q->where('unit_id', $request->unit);
                     }
                     if ($request->thana && $request->thana != 'all') {
-                        $q->where('thana_id', $request->thana_id);
+                        $q->where('thana_id', $request->thana);
                     }
                     if ($request->kpi && $request->kpi != 'all') {
-                        $q->where('id', $request->kpi_id);
+                        $q->where('id', $request->kpi);
                     }
                 });
             if ($request->ansar_id) {
@@ -54,6 +52,7 @@ class AttendanceController extends Controller
             if ($request->year) {
                 $attendance->where('year', '=', $request->year);
             }
+            $attendance->where('is_attendance_taken', '=', 1);
             if (!$request->ansar_id) {
                 $type = "count";
                 $data = collect($attendance->select(DB::raw("SUM(is_present=1) as total_present"), DB::raw("SUM(is_present=0) as total_absent"), DB::raw("SUM(is_leave=1) as total_leave"), 'day')
@@ -74,6 +73,7 @@ class AttendanceController extends Controller
     /**
      * Show the form for creating a new resource.
      *
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
     public function create(Request $request)
@@ -90,7 +90,7 @@ class AttendanceController extends Controller
             $d = Carbon::parse($request->attendance_date)->format('d');
             $m = Carbon::parse($request->attendance_date)->format('m');
             $y = Carbon::parse($request->attendance_date)->format('Y');
-            $attendance = KpiGeneralModel::with(['attendance'=>function ($q) use($d,$m,$y){
+            $attendance = KpiGeneralModel::with(['attendance' => function ($q) use ($d, $m, $y) {
                 $q->where('day', $d);
                 $q->where('month', $m);
                 $q->where('year', $y);
@@ -129,8 +129,26 @@ class AttendanceController extends Controller
     public function store(Request $request)
     {
         //
-        return $request->all();
+//        return $request->all();
+        $attendance_datas = $request->get("attendance_data");
+//        return $attendance_datas;
+        DB::connection('sd')->beginTransaction();
+        try {
+            foreach ($attendance_datas as $attendance_data) {
+//                dump($attendance_data);
+                $id = $attendance_data['id'];
+                unset($attendance_data['id']);
+                $attendance = Attendance::findOrFail($id);
+                $attendance->update($attendance_data);
+            }
+            DB::connection('sd')->commit();
+        } catch (\Exception $e) {
+            DB::connection('sd')->rollback();
+            return $e->getTraceAsString();
+        }
+        return "success";
     }
+
 
     /**
      * Display the specified resource.
