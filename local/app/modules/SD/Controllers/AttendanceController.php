@@ -55,7 +55,7 @@ class AttendanceController extends Controller
             $attendance->where('is_attendance_taken', '=', 1);
             if (!$request->ansar_id) {
                 $type = "count";
-                $data = collect($attendance->select(DB::raw("SUM(is_present=1) as total_present"), DB::raw("SUM(is_present=0) as total_absent"), DB::raw("SUM(is_leave=1) as total_leave"), 'day')
+                $data = collect($attendance->select(DB::raw("SUM(is_present=1) as total_present"), DB::raw("SUM(is_present=0 AND is_leave=0) as total_absent"), DB::raw("SUM(is_leave=1) as total_leave"), 'day')
                     ->groupBy('day')
                     ->get());
             } else {
