@@ -1,4 +1,16 @@
 <div class="table-responsive">
+    <style>
+        .count-box{
+            font-weight: bold;
+            font-size: 16px;
+            padding: 0 10px;
+            box-shadow: 1px 1px 3px -1px;
+            background: #ffffff;
+        }
+        .count-box:not(:last-child){
+            margin-right: 10px;
+        }
+    </style>
     @if($type=="count")
         <table class="table table-condensed table-bordered">
             <caption style="padding: 0 10px">
@@ -12,11 +24,18 @@
                 <th style="width: 50px">Action</th>
             </tr>
             @for($i=0;$i<\Carbon\Carbon::parse($first_date)->daysInMonth;$i++)
-                <?php $ad = $data->where('day',$i+1)->first(); ?>
+                <?php
+                $d = \Carbon\Carbon::parse($first_date)->addDays($i);
+                $ad = $data->where('day',intval($d->format('d')))->first();
+                ?>
                 <tr>
-                    <td>{{\Carbon\Carbon::parse($first_date)->addDays($i)->format('d-M-Y')}}</td>
+                    <td>{{$d->format('d-M-Y')}}</td>
                     @if($ad)
-                        <td>{{$ad}}</td>
+                        <td>
+                            <span class="text-success count-box">Total Present-{{$ad->total_present}}</span>
+                            <span class="text-danger count-box">Total Absent-{{$ad->total_absent}}</span>
+                            <span class="text-warning count-box">Total Leave-{{$ad->total_leave}}</span>
+                        </td>
                         @else
                         <td class="bg-danger">{{"No data available"}}</td>
                     @endif
