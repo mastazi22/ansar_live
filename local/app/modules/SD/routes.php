@@ -17,6 +17,7 @@ Route::group(['prefix' => 'SD', 'middleware' => ['web', 'auth', 'permission']], 
         Route::get('/demandhistory', 'DemandSheetController@demandHistory')->name('SD.demand_history');
         Route::get('/viewdemandsheet/{id}', 'DemandSheetController@viewDemandSheet')->where('id', '[0-9]+');
         Route::resource('attendance', 'AttendanceController');
+        Route::resource('leave', 'LeaveManagementController');
         Route::get('/test', function () {
 //            DB::enableQueryLog();
             $kpis = KpiGeneralModel::with(['embodiment' => function ($q) {
