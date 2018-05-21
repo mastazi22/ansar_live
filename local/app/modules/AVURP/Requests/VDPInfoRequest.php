@@ -32,7 +32,7 @@ class VDPInfoRequest extends Request
      */
     public function rules()
     {
-        if($this->is('api')){
+        if($this->is('/api/')){
             switch ($this->method()){
                 case 'POST':
                     return [
