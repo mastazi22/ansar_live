@@ -93,10 +93,13 @@ class VDPInfoRepository implements VDPInfoInterface
                     $info->education()->create($education);
                 }
             }
-
-            foreach ($request->training_info as $training) {
-                $info->training_info()->create($training);
+            if ($request->training_info) {
+                foreach ($request->training_info as $training) {
+                    $info->training_info()->create($training);
+                }
             }
+
+
             $user = auth()->user();
             $now = Carbon::now()->format('d-M-Y h:i:s A');
             UserActionLog::create([
