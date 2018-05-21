@@ -125,11 +125,11 @@ class VDPInfoRequest extends Request
                         'post_office_name'=>'required',
                         'village_house_no'=>'required',
                         //'educationInfo'=>'required',
-                        'training_info'=>'required',
+                        //'training_info'=>'required',
                         /*'educationInfo.*.education_id'=>'required|numeric|min:1',
                         'educationInfo.*.institute_name'=>'required',*/
-                        'training_info.*.training_id'=>'required|numeric|min:1',
-                        'training_info.*.sub_training_id'=>'required|numeric|min:1',
+                        //'training_info.*.training_id'=>'required|numeric|min:1',
+                        //'training_info.*.sub_training_id'=>'required|numeric|min:1',
 
                     ];
                 case 'PATCH':
@@ -157,11 +157,11 @@ class VDPInfoRequest extends Request
                         'post_office_name'=>'required',
                         'village_house_no'=>'required',
                         //'educationInfo'=>'required',
-                        'training_info'=>'required',
+                        //'training_info'=>'required',
                         /*'educationInfo.*.education_id'=>'required|numeric|min:1',
                         'educationInfo.*.institute_name'=>'required',*/
-                        'training_info.*.training_id'=>'required|numeric|min:1',
-                        'training_info.*.sub_training_id'=>'required|numeric|min:1',
+                        //'training_info.*.training_id'=>'required|numeric|min:1',
+                        //'training_info.*.sub_training_id'=>'required|numeric|min:1',
                     ];
             }
         }
