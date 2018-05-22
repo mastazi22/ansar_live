@@ -147,6 +147,7 @@ class VDPInfoRepository implements VDPInfoInterface
         $thana = isset($param['thana']) && $param['thana'] ? $param['thana'] : 'all';
         if($is_api){
             $vdp_infos = $this->info;
+            $vdp_infos->select('ansar_name_bng','geo_id','id','designation');
         } else{
             $vdp_infos = $this->info->with(['division', 'unit', 'thana', 'union']);
         }
@@ -161,9 +162,6 @@ class VDPInfoRepository implements VDPInfoInterface
         }
         $vdp_infos->userQuery($user_id);
         if(isset($param['q']))$vdp_infos->searchQuery($param['q']);
-        if($is_api){
-            $vdp_infos->select('ansar_name_bng','geo_id','id','designation');
-        }
         if ($paginate > 0) {
             return $vdp_infos->paginate($paginate);
         }
