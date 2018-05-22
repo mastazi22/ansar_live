@@ -159,6 +159,7 @@ class VDPInfoRepository implements VDPInfoInterface
         if ($paginate > 0) {
             return $vdp_infos->paginate($paginate);
         }
+        return $vdp_infos->toSql();
         return $vdp_infos->get();
     }
 
