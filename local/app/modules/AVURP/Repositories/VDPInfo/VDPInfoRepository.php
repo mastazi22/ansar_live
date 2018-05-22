@@ -137,6 +137,7 @@ class VDPInfoRepository implements VDPInfoInterface
      * @param array $param
      * @param int $paginate
      * @param string $user_id
+     * @param bool $is_api
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|static[]
      */
     public function getInfos($param = [], $paginate = 30, $user_id = '',$is_api=false)
@@ -144,10 +145,10 @@ class VDPInfoRepository implements VDPInfoInterface
         $range = isset($param['range']) && $param['range'] ? $param['range'] : 'all';
         $unit = isset($param['unit']) && $param['unit'] ? $param['unit'] : 'all';
         $thana = isset($param['thana']) && $param['thana'] ? $param['thana'] : 'all';
-        if(!$is_api){
-            $vdp_infos = $this->info->with(['division', 'unit', 'thana', 'union']);
-        } else{
+        if($is_api){
             $vdp_infos = $this->info;
+        } else{
+            $vdp_infos = $this->info->with(['division', 'unit', 'thana', 'union']);
         }
         if ($range != 'all') {
             $vdp_infos->where('division_id', $range);
@@ -166,7 +167,6 @@ class VDPInfoRepository implements VDPInfoInterface
         if ($paginate > 0) {
             return $vdp_infos->paginate($paginate);
         }
-//        return $vdp_infos->toSql();
         return $vdp_infos->get();
     }
 
