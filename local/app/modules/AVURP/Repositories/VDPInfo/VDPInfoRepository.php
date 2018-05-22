@@ -147,21 +147,21 @@ class VDPInfoRepository implements VDPInfoInterface
         $thana = isset($param['thana']) && $param['thana'] ? $param['thana'] : 'all';
         if($is_api){
             $vdp_infos = $this->info;
-            $vdp_infos->select('ansar_name_bng','geo_id','id','designation');
+            $vdp_infos = $vdp_infos->select('ansar_name_bng','geo_id','id','designation');
         } else{
             $vdp_infos = $this->info->with(['division', 'unit', 'thana', 'union']);
         }
         if ($range != 'all') {
-            $vdp_infos->where('division_id', $range);
+            $vdp_infos = $vdp_infos->where('division_id', $range);
         }
         if ($unit != 'all') {
-            $vdp_infos->where('unit_id', $unit);
+            $vdp_infos = $vdp_infos->where('unit_id', $unit);
         }
         if ($thana != 'all') {
-            $vdp_infos->where('thana_id', $thana);
+            $vdp_infos = $vdp_infos->where('thana_id', $thana);
         }
-        $vdp_infos->userQuery($user_id);
-        if(isset($param['q']))$vdp_infos->searchQuery($param['q']);
+        $vdp_infos = $vdp_infos->userQuery($user_id);
+        if(isset($param['q']))$vdp_infos = $vdp_infos->searchQuery($param['q']);
         if ($paginate > 0) {
             return $vdp_infos->paginate($paginate);
         }
