@@ -144,7 +144,11 @@ class VDPInfoRepository implements VDPInfoInterface
         $range = isset($param['range']) && $param['range'] ? $param['range'] : 'all';
         $unit = isset($param['unit']) && $param['unit'] ? $param['unit'] : 'all';
         $thana = isset($param['thana']) && $param['thana'] ? $param['thana'] : 'all';
-        $vdp_infos = $this->info->with(['division', 'unit', 'thana', 'union']);
+        if($is_api){
+            $vdp_infos = $this->info->with(['division', 'unit', 'thana', 'union']);
+        } else{
+            $vdp_infos = $this->info;
+        }
         if ($range != 'all') {
             $vdp_infos->where('division_id', $range);
         }
@@ -157,7 +161,7 @@ class VDPInfoRepository implements VDPInfoInterface
         $vdp_infos->userQuery($user_id);
         if(isset($param['q']))$vdp_infos->searchQuery($param['q']);
         if($is_api){
-            $vdp_infos->select('ansar_name_bng','geo_id','id');
+            $vdp_infos->select('ansar_name_bng','geo_id','id','designation');
         }
         if ($paginate > 0) {
             return $vdp_infos->paginate($paginate);
