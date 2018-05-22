@@ -139,7 +139,7 @@ class VDPInfoRepository implements VDPInfoInterface
      * @param string $user_id
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function getInfos($param = [], $paginate = 30, $user_id = '')
+    public function getInfos($param = [], $paginate = 30, $user_id = '',$is_api=false)
     {
         $range = isset($param['range']) && $param['range'] ? $param['range'] : 'all';
         $unit = isset($param['unit']) && $param['unit'] ? $param['unit'] : 'all';
@@ -156,10 +156,13 @@ class VDPInfoRepository implements VDPInfoInterface
         }
         $vdp_infos->userQuery($user_id);
         if(isset($param['q']))$vdp_infos->searchQuery($param['q']);
+        if($is_api){
+            $vdp_infos->select('ansar_name_bng','geo_id','id');
+        }
         if ($paginate > 0) {
             return $vdp_infos->paginate($paginate);
         }
-        return $vdp_infos->toSql();
+//        return $vdp_infos->toSql();
         return $vdp_infos->get();
     }
 

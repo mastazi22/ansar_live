@@ -47,9 +47,10 @@ interface VDPInfoInterface
      * @param array $param
      * @param int $paginate
      * @param string $user_id
+     * @param bool $is_api
      * @return array VDPAnsarInfo
      */
-    public function getInfos($param=[],$paginate=30,$user_id='');
+    public function getInfos($param=[],$paginate=30,$user_id='',$is_api=false);
 
     /**
      * @param id $
