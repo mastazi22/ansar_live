@@ -144,7 +144,7 @@ class VDPInfoRepository implements VDPInfoInterface
         $range = isset($param['range']) && $param['range'] ? $param['range'] : 'all';
         $unit = isset($param['unit']) && $param['unit'] ? $param['unit'] : 'all';
         $thana = isset($param['thana']) && $param['thana'] ? $param['thana'] : 'all';
-        if($is_api){
+        if(!$is_api){
             $vdp_infos = $this->info->with(['division', 'unit', 'thana', 'union']);
         } else{
             $vdp_infos = $this->info;
