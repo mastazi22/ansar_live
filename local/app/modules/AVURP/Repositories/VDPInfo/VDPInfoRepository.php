@@ -155,6 +155,7 @@ class VDPInfoRepository implements VDPInfoInterface
             $vdp_infos->where('thana_id', $thana);
         }
         $vdp_infos->userQuery($user_id);
+        $vdp_infos->searchQuery($param['q']);
         if ($paginate > 0) {
             return $vdp_infos->paginate($paginate);
         }
