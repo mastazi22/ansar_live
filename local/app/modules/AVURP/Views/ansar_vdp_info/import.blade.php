@@ -105,12 +105,9 @@
                                 </label>
                                 <input type="file" name="import_file" class="file" data-show-preview="false">
                             </div>
-                            <button class="btn btn-success ">
-                                <i class="fa fa-upload"></i>&nbsp;Upload File
-                            </button>
                         </form>
                         <div class="progress" ng-hide="hide" style="margin-top: 10px;margin-bottom: 0px;border-radius: 10px;height: 10px;">
-                            <div class="progress-bar" id="progress-bar">
+                            <div class="progress-bar progress-bar-striped active" id="progress-bar">
 
                             </div>
                         </div>
