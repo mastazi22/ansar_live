@@ -34,12 +34,12 @@
                     </div>`
             $scope.param = {}
             $scope.template = $sce.trustAsHtml(emptyTemplate);
-            $scope.loadData = function () {
+            $scope.loadData = function (url) {
                 console.log($scope.param);
                 $scope.allLoading = true;
                 $http({
                     method:'get',
-                    url:'{{URL::route('HRM.offer_rollback.index')}}',
+                    url:url||'{{URL::route('HRM.offer_rollback.index')}}',
                     params:$scope.param
                 }).then(function (response) {
                     $scope.template = $sce.trustAsHtml(response.data);
