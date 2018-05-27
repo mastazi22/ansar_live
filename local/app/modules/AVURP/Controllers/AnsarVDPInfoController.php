@@ -178,4 +178,10 @@ class AnsarVDPInfoController extends Controller
         }
         return Image::make($image)->response();
     }
+    public function import(){
+        return view('AVURP::ansar_vdp_info.import');
+    }
+    public function processImportedFile(Request $request){
+
+    }
 }

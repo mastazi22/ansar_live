@@ -413,8 +413,32 @@ return [
             "icon"=>"fa-money",
             "children"=>[
                 "Attendance"=>[
-                    "route"=>'SD.attendance.index',
-                    "icon"=>'fa-calendar'
+                    "route"=>'#',
+                    "icon"=>'fa-calendar',
+                    "children"=>[
+                        "View Attendances"=>[
+                            "route"=>'SD.attendance.index',
+                            "icon"=>'fa-cog',
+                        ],
+                        "Take Attendance"=>[
+                            "route"=>'SD.attendance.create',
+                            "icon"=>'fa-cog',
+                        ]
+                    ]
+                ],
+                "Leave Management"=>[
+                    "route"=>'#',
+                    "icon"=>'fa-cog',
+                    "children"=>[
+                        "View Leaves"=>[
+                            "route"=>'SD.leave.index',
+                            "icon"=>'fa-cog',
+                        ],
+                        "Grant Leave"=>[
+                            "route"=>'#',
+                            "icon"=>'fa-cog',
+                        ]
+                    ]
                 ],
             ]
         ],

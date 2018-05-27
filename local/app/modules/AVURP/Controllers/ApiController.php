@@ -26,7 +26,7 @@ class ApiController extends Controller
     public function index(Request $request)
     {
         $limit = $request->limit?$request->limit:-1;
-        return response()->json($this->infoRepository->getInfos($request->all(), $limit,$request->action_user_id));
+        return response()->json($this->infoRepository->getInfos($request->all(), $limit,$request->action_user_id,$request->is("AVURP/api/*")));
     }
 
     public function show(Request $request,$id)

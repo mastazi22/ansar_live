@@ -6,11 +6,11 @@ use App\modules\HRM\Models\KpiGeneralModel;
 use App\modules\HRM\Models\PersonalInfo;
 use Illuminate\Database\Eloquent\Model;
 
-class Attendance extends Model
+class Leave extends Model
 {
 
     protected $connection = 'sd';
-    protected $table = 'ansar_sd.tbl_attendance';
+    protected $table = 'ansar_sd.tbl_leave';
     protected $guarded = ['id'];
 
     public function kpi(){
@@ -19,4 +19,7 @@ class Attendance extends Model
     public function ansar(){
         return $this->belongsTo(PersonalInfo::class,'ansar_id','ansar_id');
     }
+    /*public function attendance(){
+        return $this->belongsTo(PersonalInfo::class,'ansar_id','ansar_id');
+    }*/
 }

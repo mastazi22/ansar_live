@@ -29,7 +29,7 @@ class OfferBlockController extends Controller
             if($request->ansar_id){
                 $offer_blocked->where('ansar_id',$request->ansar_id);
             }
-            $ansars = $offer_blocked->get();
+            $ansars = $offer_blocked->paginate(30);
             return view('HRM::offer_rollback.data',compact('ansars'));
         }
         return view('HRM::offer_rollback.offer_rollback');

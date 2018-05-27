@@ -93,10 +93,13 @@ class VDPInfoRepository implements VDPInfoInterface
                     $info->education()->create($education);
                 }
             }
-
-            foreach ($request->training_info as $training) {
-                $info->training_info()->create($training);
+            if ($request->training_info) {
+                foreach ($request->training_info as $training) {
+                    $info->training_info()->create($training);
+                }
             }
+
+
             $user = auth()->user();
             $now = Carbon::now()->format('d-M-Y h:i:s A');
             UserActionLog::create([
@@ -134,24 +137,31 @@ class VDPInfoRepository implements VDPInfoInterface
      * @param array $param
      * @param int $paginate
      * @param string $user_id
+     * @param bool $is_api
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function getInfos($param = [], $paginate = 30, $user_id = '')
+    public function getInfos($param = [], $paginate = 30, $user_id = '',$is_api=false)
     {
         $range = isset($param['range']) && $param['range'] ? $param['range'] : 'all';
         $unit = isset($param['unit']) && $param['unit'] ? $param['unit'] : 'all';
         $thana = isset($param['thana']) && $param['thana'] ? $param['thana'] : 'all';
-        $vdp_infos = $this->info->with(['division', 'unit', 'thana', 'union']);
+        if($is_api){
+            $vdp_infos = $this->info;
+            $vdp_infos = $vdp_infos->select('ansar_name_bng','geo_id','id','designation');
+        } else{
+            $vdp_infos = $this->info->with(['division', 'unit', 'thana', 'union']);
+        }
         if ($range != 'all') {
-            $vdp_infos->where('division_id', $range);
+            $vdp_infos = $vdp_infos->where('division_id', $range);
         }
         if ($unit != 'all') {
-            $vdp_infos->where('unit_id', $unit);
+            $vdp_infos = $vdp_infos->where('unit_id', $unit);
         }
         if ($thana != 'all') {
-            $vdp_infos->where('thana_id', $thana);
+            $vdp_infos = $vdp_infos->where('thana_id', $thana);
         }
-        $vdp_infos->userQuery($user_id);
+        $vdp_infos = $vdp_infos->userQuery($user_id);
+        if(isset($param['q']))$vdp_infos = $vdp_infos->searchQuery($param['q']);
         if ($paginate > 0) {
             return $vdp_infos->paginate($paginate);
         }

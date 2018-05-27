@@ -32,70 +32,138 @@ class VDPInfoRequest extends Request
      */
     public function rules()
     {
-        switch ($this->method()){
-            case 'POST':
-                return [
-                    'ansar_name_bng'=>'required',
-                    'ansar_name_eng'=>'required',
-                    'father_name_bng'=>'required',
-                    'mother_name_bng'=>'required',
-                    'designation'=>'required',
-                    'date_of_birth'=>'required',
-                    'marital_status'=>'required',
-                    'national_id_no'=>'required|unique:avurp.avurp_vdp_ansar_info',
-                    'mobile_no_self'=>'required|unique:avurp.avurp_vdp_ansar_info,mobile_no_self',
-                    'height_feet'=>'required',
-                    'height_inch'=>'required',
-                    'blood_group_id'=>'required',
-                    'gender'=>'required',
-                    'health_condition'=>'required',
-                    'division_id'=>'required|numeric|min:1',
-                    'unit_id'=>'required|numeric|min:1',
-                    'thana_id'=>'required|numeric|min:1',
-                    'union_id'=>'required|numeric|min:1',
-                    'union_word_id'=>'required|numeric|min:1',
-                    'smart_card_id'=>'sometimes|exists:hrm.tbl_ansar_parsonal_info,ansar_id|unique:avurp.avurp_vdp_ansar_info',
-                    'post_office_name'=>'required',
-                    'village_house_no'=>'required',
-                    //'educationInfo'=>'required',
-                    'training_info'=>'required',
-                    /*'educationInfo.*.education_id'=>'required|numeric|min:1',
-                    'educationInfo.*.institute_name'=>'required',*/
-                    'training_info.*.training_id'=>'required|numeric|min:1',
-                    'training_info.*.sub_training_id'=>'required|numeric|min:1',
+        if($this->is('/api/')){
+            switch ($this->method()){
+                case 'POST':
+                    return [
+                        'ansar_name_bng'=>'required',
+                        'ansar_name_eng'=>'required',
+                        'father_name_bng'=>'required',
+                        'mother_name_bng'=>'required',
+                        'designation'=>'required',
+                        'date_of_birth'=>'required',
+                        'marital_status'=>'required',
+                        'national_id_no'=>'required|unique:avurp.avurp_vdp_ansar_info',
+                        'mobile_no_self'=>'required|unique:avurp.avurp_vdp_ansar_info,mobile_no_self',
+                        'height_feet'=>'required',
+                        'height_inch'=>'required',
+                        'blood_group_id'=>'required',
+                        'gender'=>'required',
+                        'health_condition'=>'required',
+                        'division_id'=>'required|numeric|min:1',
+                        'unit_id'=>'required|numeric|min:1',
+                        'thana_id'=>'required|numeric|min:1',
+                        'union_id'=>'required|numeric|min:1',
+                        'union_word_id'=>'required|numeric|min:1',
+                        'smart_card_id'=>'sometimes|exists:hrm.tbl_ansar_parsonal_info,ansar_id|unique:avurp.avurp_vdp_ansar_info',
+                        'post_office_name'=>'required',
+                        'village_house_no'=>'required',
+                        //'educationInfo'=>'required',
+//                        'training_info'=>'required',
+                        /*'educationInfo.*.education_id'=>'required|numeric|min:1',
+                        'educationInfo.*.institute_name'=>'required',*/
+//                        'training_info.*.training_id'=>'required|numeric|min:1',
+//                        'training_info.*.sub_training_id'=>'required|numeric|min:1',
 
-                ];
-            case 'PATCH':
-                return [
-                    'ansar_name_bng'=>'required',
-                    'ansar_name_eng'=>'required',
-                    'father_name_bng'=>'required',
-                    'mother_name_bng'=>'required',
-                    'designation'=>'required',
-                    'date_of_birth'=>'required',
-                    'marital_status'=>'required',
-                    'national_id_no'=>'required|unique:avurp.avurp_vdp_ansar_info,national_id_no,'.$this->route()->parameters()['info'],
-                    'mobile_no_self'=>'required|unique:avurp.avurp_vdp_ansar_info,mobile_no_self,'.$this->route()->parameters()['info'],
-                    'height_feet'=>'required',
-                    'height_inch'=>'required',
-                    'blood_group_id'=>'required',
-                    'gender'=>'required',
-                    'health_condition'=>'required',
-                    'division_id'=>'required|numeric|min:1',
-                    'unit_id'=>'required|numeric|min:1',
-                    'thana_id'=>'required|numeric|min:1',
-                    'union_id'=>'required|numeric|min:1',
-                    'union_word_id'=>'required|numeric|min:1',
-                    'smart_card_id'=>'sometimes|exists:hrm.tbl_ansar_parsonal_info,ansar_id|unique:avurp.avurp_vdp_ansar_info,smart_card_id,'.$this->route()->parameters()['info'],
-                    'post_office_name'=>'required',
-                    'village_house_no'=>'required',
-                    //'educationInfo'=>'required',
-                    'training_info'=>'required',
-                    /*'educationInfo.*.education_id'=>'required|numeric|min:1',
-                    'educationInfo.*.institute_name'=>'required',*/
-                    'training_info.*.training_id'=>'required|numeric|min:1',
-                    'training_info.*.sub_training_id'=>'required|numeric|min:1',
-                ];
+                    ];
+                case 'PATCH':
+                    return [
+                        'ansar_name_bng'=>'required',
+                        'ansar_name_eng'=>'required',
+                        'father_name_bng'=>'required',
+                        'mother_name_bng'=>'required',
+                        'designation'=>'required',
+                        'date_of_birth'=>'required',
+                        'marital_status'=>'required',
+                        'national_id_no'=>'required|unique:avurp.avurp_vdp_ansar_info,national_id_no,'.$this->route()->parameters()['info'],
+                        'mobile_no_self'=>'required|unique:avurp.avurp_vdp_ansar_info,mobile_no_self,'.$this->route()->parameters()['info'],
+                        'height_feet'=>'required',
+                        'height_inch'=>'required',
+                        'blood_group_id'=>'required',
+                        'gender'=>'required',
+                        'health_condition'=>'required',
+                        'division_id'=>'required|numeric|min:1',
+                        'unit_id'=>'required|numeric|min:1',
+                        'thana_id'=>'required|numeric|min:1',
+                        'union_id'=>'required|numeric|min:1',
+                        'union_word_id'=>'required|numeric|min:1',
+                        'smart_card_id'=>'sometimes|exists:hrm.tbl_ansar_parsonal_info,ansar_id|unique:avurp.avurp_vdp_ansar_info,smart_card_id,'.$this->route()->parameters()['info'],
+                        'post_office_name'=>'required',
+                        'village_house_no'=>'required',
+                        //'educationInfo'=>'required',
+//                        'training_info'=>'required',
+                        /*'educationInfo.*.education_id'=>'required|numeric|min:1',
+                        'educationInfo.*.institute_name'=>'required',*/
+//                        'training_info.*.training_id'=>'required|numeric|min:1',
+//                        'training_info.*.sub_training_id'=>'required|numeric|min:1',
+                    ];
+            }
+        } else{
+            switch ($this->method()){
+                case 'POST':
+                    return [
+                        'ansar_name_bng'=>'required',
+                        'ansar_name_eng'=>'required',
+                        'father_name_bng'=>'required',
+                        'mother_name_bng'=>'required',
+                        'designation'=>'required',
+                        'date_of_birth'=>'required',
+                        'marital_status'=>'required',
+                        'national_id_no'=>'required|unique:avurp.avurp_vdp_ansar_info',
+                        'mobile_no_self'=>'required|unique:avurp.avurp_vdp_ansar_info,mobile_no_self',
+                        'height_feet'=>'required',
+                        'height_inch'=>'required',
+                        'blood_group_id'=>'required',
+                        'gender'=>'required',
+                        'health_condition'=>'required',
+                        'division_id'=>'required|numeric|min:1',
+                        'unit_id'=>'required|numeric|min:1',
+                        'thana_id'=>'required|numeric|min:1',
+                        'union_id'=>'required|numeric|min:1',
+                        'union_word_id'=>'required|numeric|min:1',
+                        'smart_card_id'=>'sometimes|exists:hrm.tbl_ansar_parsonal_info,ansar_id|unique:avurp.avurp_vdp_ansar_info',
+                        'post_office_name'=>'required',
+                        'village_house_no'=>'required',
+                        //'educationInfo'=>'required',
+                        //'training_info'=>'required',
+                        /*'educationInfo.*.education_id'=>'required|numeric|min:1',
+                        'educationInfo.*.institute_name'=>'required',*/
+                        //'training_info.*.training_id'=>'required|numeric|min:1',
+                        //'training_info.*.sub_training_id'=>'required|numeric|min:1',
+
+                    ];
+                case 'PATCH':
+                    return [
+                        'ansar_name_bng'=>'required',
+                        'ansar_name_eng'=>'required',
+                        'father_name_bng'=>'required',
+                        'mother_name_bng'=>'required',
+                        'designation'=>'required',
+                        'date_of_birth'=>'required',
+                        'marital_status'=>'required',
+                        'national_id_no'=>'required|unique:avurp.avurp_vdp_ansar_info,national_id_no,'.$this->route()->parameters()['info'],
+                        'mobile_no_self'=>'required|unique:avurp.avurp_vdp_ansar_info,mobile_no_self,'.$this->route()->parameters()['info'],
+                        'height_feet'=>'required',
+                        'height_inch'=>'required',
+                        'blood_group_id'=>'required',
+                        'gender'=>'required',
+                        'health_condition'=>'required',
+                        'division_id'=>'required|numeric|min:1',
+                        'unit_id'=>'required|numeric|min:1',
+                        'thana_id'=>'required|numeric|min:1',
+                        'union_id'=>'required|numeric|min:1',
+                        'union_word_id'=>'required|numeric|min:1',
+                        'smart_card_id'=>'sometimes|exists:hrm.tbl_ansar_parsonal_info,ansar_id|unique:avurp.avurp_vdp_ansar_info,smart_card_id,'.$this->route()->parameters()['info'],
+                        'post_office_name'=>'required',
+                        'village_house_no'=>'required',
+                        //'educationInfo'=>'required',
+                        //'training_info'=>'required',
+                        /*'educationInfo.*.education_id'=>'required|numeric|min:1',
+                        'educationInfo.*.institute_name'=>'required',*/
+                        //'training_info.*.training_id'=>'required|numeric|min:1',
+                        //'training_info.*.sub_training_id'=>'required|numeric|min:1',
+                    ];
+            }
         }
     }
 

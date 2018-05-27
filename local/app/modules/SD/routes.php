@@ -1,6 +1,5 @@
 <?php
 use App\modules\HRM\Models\KpiGeneralModel;
-use App\modules\SD\Models\Attendance;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -18,45 +17,73 @@ Route::group(['prefix' => 'SD', 'middleware' => ['web', 'auth', 'permission']], 
         Route::get('/demandhistory', 'DemandSheetController@demandHistory')->name('SD.demand_history');
         Route::get('/viewdemandsheet/{id}', 'DemandSheetController@viewDemandSheet')->where('id', '[0-9]+');
         Route::resource('attendance', 'AttendanceController');
+        Route::resource('leave', 'LeaveManagementController');
         Route::get('/test', function () {
+//            DB::enableQueryLog();
             $kpis = KpiGeneralModel::with(['embodiment' => function ($q) {
                 $q->select('ansar_id', 'kpi_id', 'emboded_status');
-            }])
-                ->whereHas('embodiment.ansar.status', function ($q) {
+                $q->whereHas('ansar.status', function ($q) {
                     $q->where('embodied_status', 1);
                     $q->where('freezing_status', 0);
                     $q->where('block_list_status', 0);
-                })->where('status_of_kpi', 1)
-                ->select('id', 'kpi_name')
-                ->get();
+                });
+            }])->where('status_of_kpi', 1)
+                ->select('id', 'kpi_name')->get();
+//            return DB::getQueryLog();
+            /*$kpiss = DB::connection('hrm')->table('tbl_kpi_info')
+                ->join('tbl_embodiment', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')
+                ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+                ->where('status_of_kpi', 1)
+                ->where('embodied_status', 1)
+                ->where('freezing_status', 0)
+                ->where('block_list_status', 0)
+                ->select('kpi_name', 'tbl_embodiment.ansar_id', 'tbl_kpi_info.id', 'emboded_status');*/
+//            return $kpis;
+//            return [$kpis->toSql(),$kpiss->toSql()];
+
             $msg = [];
             $now = Carbon::now();
-            foreach ($kpis as $kpi){
-                DB::connection('sd')->beginTransaction();
-                try{
+            $day = $now->format('d');
+            $month = $now->format('m');
+            $year = $now->format('Y');
+            $p = [];
+//            $bindings = [];
+            $kpis->chunk(1000, function ($datas) use ($day, $month, $year,&$p) {
+//                dispatch(new \App\Jobs\GenerateAttendance($data,$day,$month,$year));
 
-                    $day = $now->format('d');
-                    $month = $now->format('m');
-                    $year = $now->format('Y');
-                    $kpi_id = $kpi->id;
-                    foreach ($kpi->embodiment as $e){
-                        $ansar_id = $e->ansar_id;
-                        if(Attendance::where(compact('day','month','year','kpi_id','ansar_id'))->exists()) {
-                            continue;
-                        }
-                        Attendance::create(compact('day','month','year','kpi_id','ansar_id'));
-                        DB::connection('sd')->commit();
-
-                    }
-                    array_push($msg,"success");
-
-                }catch(\Exception $e){
-                    DB::connection('sd')->rollBack();
-                    array_push($msg,$e->getMessage());
+                $inserts = [];
+                $bindings = [];
+                foreach ($datas as $data) {
+                   foreach ($data->embodiment as $em){
+                       $qs = [
+                           '?',
+                           '?',
+                           '?',
+                           '?',
+                           '?',
+                       ];
+                       $bindings[] = $data->id;
+                       $bindings[] = $em->ansar_id;
+                       $bindings[] = $day;
+                       $bindings[] = $month;
+                       $bindings[] = $year;
+                       $inserts[] = '(' . implode(",", $qs) . ')';
+                       $p[] = $em->emboded_status;
+                   }
                 }
+                $query = "INSERT IGNORE INTO tbl_attendance(kpi_id,ansar_id,day,month,year) VALUES " . implode(",", $inserts);
+                DB::connection('sd')->beginTransaction();
+                try {
+                    DB::connection('sd')->insert($query,$bindings);
+                    DB::connection('sd')->commit();
+                } catch (\Exception $e) {
 
-            }
-            return $msg;
+                    DB::connection('sd')->rollback();
+                    return $e->getMessage();
+                }
+            });
+
+            return $p;
         });
     });
 });

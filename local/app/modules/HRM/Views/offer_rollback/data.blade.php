@@ -1,4 +1,4 @@
-<?php $i = 1; ?>
+<?php $i = (intVal($ansars->currentPage() - 1) * $ansars->perPage()) + 1; ?>
 <div class="table-responsive">
     <table class="table table-bordered table-condensed">
         <caption>
@@ -51,3 +51,12 @@
         @endforelse
     </table>
 </div>
+@if(count($ansars))
+    <div class="row">
+        <div class="col-sm-9 col-sm-offset-3">
+            <div class="pull-right" paginate ref="loadData(url)">
+                {{$ansars->render()}}
+            </div>
+        </div>
+    </div>
+@endif

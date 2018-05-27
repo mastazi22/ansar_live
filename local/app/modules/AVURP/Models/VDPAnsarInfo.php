@@ -66,4 +66,24 @@ class VDPAnsarInfo extends Model
         }
         return $query;
     }
+    public function scopeSearchQuery($query,$search){
+        if($search){
+            return $query->where(function ($q) use ($search){
+                $q->where('ansar_name_bng','like',"%$search%");
+                $q->orWhere('ansar_name_eng','like',"%$search%");
+                $q->orWhere('father_name_bng','like',"%$search%");
+                $q->orWhere('mother_name_bng','like',"%$search%");
+                $q->orWhere('designation','like',"%$search%");
+                $q->orWhere('marital_status','like',"%$search%");
+                $q->orWhere('marital_status',"%$search%");
+                $q->orWhere('national_id_no','like',"%$search%");
+                $q->orWhere('mobile_no_self',"%$search%");
+                if(strtotime($search)){
+                    $d = Carbon::parse($search)->format('Y-m-d');
+                    $q->orWhere('date_of_birth',$d);
+                }
+            });
+        }
+        return $query;
+    }
 }
