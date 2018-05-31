@@ -141,6 +141,7 @@ class JobCircularController extends Controller
             $request['login_status'] = !$request->login_status?'off':$request->login_status;
             $request['application_status'] = !$request->application_status?'off':$request->application_status;
             $request['circular_status'] = !$request->circular_status?'shutdown':$request->circular_status;
+            $request['quota_district_division']=!$request->quota_district_division?'off':$request->quota_district_division;
             $c = JobCircular::find($id);
             $c->update($request->except('constraint'));
             if ($c->constraint) $c->constraint()->update(['constraint' => $request->constraint]);

@@ -43,6 +43,12 @@
             <p class="text text-danger">{{$errors->first('pay_amount')}}</p>
         @endif
     </div>
+
+    <div class="form-group">
+        {!! Form::label('terms_and_conditions','Terms and Conditions :',['class'=>'control-label']) !!}
+        {!! Form::textarea('terms_and_conditions',null,['class'=>'form-control','placeholder'=>'']) !!}
+    </div>
+
     <div class="form-group">
         {!! Form::label('test','Circular Status : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
         <input type="checkbox" value="running" name="circular_status"
@@ -82,6 +88,13 @@
                @endif id="application_status" class="switch-checkbox">
         <label for="application_status" class=""></label>
 
+    </div>
+    <div class="form-group">
+        {!! Form::label('test','Quota applied for all divisions and districts : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
+        <input type="checkbox" value="on" name="quota_district_division"
+               @if((isset($data)&&$data->quota_district_division=='on')||Request::old('quota_district_division')=='on')checked
+               @endif id="quota_district_division" class="switch-checkbox">
+        <label for="quota_district_division" class=""></label>
     </div>
     <div class="form-group">
         {!! Form::label('Select applicant division','Select applicant division',['class'=>'control-label']) !!}
@@ -175,8 +188,8 @@
                         <fieldset>
                             <legend>
                                 <input type="checkbox" ng-model="constraint.age.selected" ng-true-value="'1'"
-                                           ng-false-value="''" name="age-select" value="1" id="age-select"
-                                           class="box-checkbox">
+                                       ng-false-value="''" name="age-select" value="1" id="age-select"
+                                       class="box-checkbox">
                                 <label for="age-select">Age</label>
                             </legend>
                             <div class="row">
@@ -211,6 +224,52 @@
                                                    class="form-control"
                                                    ng-disabled="constraint.age.selected!='1'||(constraint.gender.male!='male'&&constraint.gender.female!='female')"
                                                    ng-model="constraint.age.maxDate">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="form-group">
+                                            <label>Select Applicable Quotas</label>
+                                            <select ng-model="quota_type" class="form-control"
+                                                    ng-change="onChangeQuota()">
+                                                <option value="" selected>--Select Quota--</option>
+                                                <option value="son_of_freedom_fighter">Son of freedom fighter</option>
+                                                <option value="grand_son_of_freedom_fighter">Grandson of freedom
+                                                    fighter
+                                                </option>
+                                                <option value="member_of_ansar_or_vdp">Member of ANSAR or VDP</option>
+                                                <option value="orphan">Orphan</option>
+                                                <option value="physically_disabled">Physically disabled</option>
+                                                <option value="tribe">Tribe</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <div class="form-group">
+                                            <label>Quota Based Max Age</label>
+                                            <input type="text" placeholder="" class="form-control"
+                                                   ng-model="constraint.age.quota.maxAge">
+                                        </div>
+                                    </div>
+                                </div>
+                                <style>
+                                    .selected-quota {
+                                        padding: 1%;
+                                        display: inline-block;
+                                        background: green;
+                                        color: #FFF;
+                                        margin: 2px;
+                                        cursor: pointer;
+                                    }
+                                </style>
+                                <div class="col-md-12">
+                                    <div class="well">
+                                        <label style="width: 100%">Selected Quotas</label>
+                                        <div id="selected-quota-type">
+                                            {{--append from angular--}}
                                         </div>
                                     </div>
                                 </div>
