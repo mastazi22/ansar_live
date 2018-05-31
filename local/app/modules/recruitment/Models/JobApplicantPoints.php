@@ -41,6 +41,7 @@ class JobApplicantPoints extends Model
     }
     public function getEducationRules(){
         $er = json_decode(json_encode($this->rules),true);
+        if(!$this->rules || !$er['edu_point']) return "--";
         $values = array_values($er['edu_point']);
 //        return json_encode($values);
         $p = collect($values)->pluck('priority');
@@ -59,11 +60,21 @@ class JobApplicantPoints extends Model
             $view.=$column;
         }
         $view.="</table>";
+        if($er['edu_p_count']===2){
+            $view.="<p>Point count only descending priority</p>";
+        }
+        else if($er['edu_p_count']===1){
+            $view.="<p>Point count only ascending priority</p>";
+        }
+        else if($er['edu_p_count']===3){
+            $view.="<p>Sum up all point</p>";
+        }
         return $view;
 
     }
     public function getHeightRules(){
         $er = $this->rules;
+        if(!$this->rules || !$er) return "--";
         $view = "<div><strong>Minimum Height : </strong>{$er->min_height_feet}'{$er->min_height_inch}''</div>";
         $view .= "<div><strong>Minimum Point : </strong>{$er->min_point}</div>";
         $view .= "<div><strong>Maximum Height : </strong>{$er->max_height_feet}'{$er->max_height_inch}''</div>";
@@ -71,6 +82,7 @@ class JobApplicantPoints extends Model
         return $view;
     }
     public function getTrainingRules(){
+        if(!$this->rules || !$this->rules->training_point) return "--";
         $view = "<div><strong>For VDP or TDP Training point : </strong>{$this->rules->training_point}</div>";
         return $view;
     }
