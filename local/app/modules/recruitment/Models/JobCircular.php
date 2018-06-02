@@ -36,7 +36,10 @@ class JobCircular extends Model
 
     public function appliciantPaid()
     {
-        return $this->hasMany(JobAppliciant::class, 'job_circular_id')->where('job_applicant.status', 'applied');
+        return $this->hasMany(JobAppliciant::class, 'job_circular_id')->where('job_applicant.status', 'applied')
+            ->orWhere('job_applicant.status', 'selected')
+            ->orWhere('job_applicant.status', 'accepted')
+            ->orWhere('job_applicant.status', 'rejected');
     }
 
     public function appliciantNotPaid()
