@@ -1061,6 +1061,7 @@ GlobalApp.controller('jobCircularConstraintController', function ($scope, $filte
         }
     )
     $scope.initConstraint = function (data) {
+        if(!data) return;
         try {
             var d = JSON.parse(data);
             $scope.constraint = d;
