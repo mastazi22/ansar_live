@@ -64,6 +64,7 @@ class ApplicantScreeningController extends Controller
             Log::info(DB::getQueryLog());
             Log::info($summery);
 //            return "ssddsddds";
+//            return DB::getQueryLog();
             return response()->json($summery);
         }
         return view('recruitment::applicant.index');
@@ -366,7 +367,16 @@ class ApplicantScreeningController extends Controller
                 if ($type == 'Male' || $type == 'Female') {
                     $applicants->where('gender', $type);
                 } else if ($type == 'pending' || $type == 'applied' || $type == 'initial' || $type == 'paid' || $type == 'selected') {
-                    $applicants->where('status', $type);
+                   if($type=='applied'){
+                       $applicants->where(function ($q){
+                           $q->where('status', 'applied');
+                           $q->orWhere('status', 'selected');
+                           $q->orWhere('status', 'accepted');
+                           $q->orWhere('status', 'rejected');
+                       });
+                   } else{
+                       $applicants->where('status', $type);
+                   }
                 }
                 if ($request->range && $request->range != 'all') {
                     $applicants->where('division_id', $request->range);
@@ -384,7 +394,16 @@ class ApplicantScreeningController extends Controller
                 if ($type == 'Male' || $type == 'Female') {
                     $applicants->where('gender', $type);
                 } else if ($type == 'pending' || $type == 'applied' || $type == 'initial' || $type == 'paid' || $type == 'selected') {
-                    $applicants->where('status', $type);
+                    if($type=='applied'){
+                        $applicants->where(function ($q){
+                            $q->where('status', 'applied');
+                            $q->orWhere('status', 'selected');
+                            $q->orWhere('status', 'accepted');
+                            $q->orWhere('status', 'rejected');
+                        });
+                    } else{
+                        $applicants->where('status', $type);
+                    }
                 }
                 if ($request->range && $request->range != 'all') {
                     $applicants->where('division_id', $request->range);
