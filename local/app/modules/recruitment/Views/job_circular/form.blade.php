@@ -46,7 +46,7 @@
 
     <div class="form-group">
         {!! Form::label('terms_and_conditions','Terms and Conditions :',['class'=>'control-label']) !!}
-        {!! Form::textarea('terms_and_conditions',null,['class'=>'form-control','placeholder'=>'']) !!}
+        {!! Form::textarea('terms_and_conditions',null,['class'=>'form-control','placeholder'=>'','id'=>'terms_and_conditions']) !!}
     </div>
 
     <div class="form-group">
@@ -428,6 +428,7 @@
         </div>
     </div>
 </div>
+<script src="//cdn.ckeditor.com/4.8.0/standard/ckeditor.js"></script>
 <script>
     $(document).ready(function () {
         $(".range-app").on('change', function (event) {
@@ -440,5 +441,9 @@
                 $('*[data-division-id="' + v + '"]').prop('checked', false)
             }
         })
+
+        CKEDITOR.replace('terms_and_conditions');
+
     })
+
 </script>
