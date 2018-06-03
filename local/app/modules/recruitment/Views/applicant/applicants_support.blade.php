@@ -100,11 +100,9 @@
                             <th>Chest</th>
                             <th>Weight</th>
                             <th>Mobile no</th>
-                            @if($type=='pending'||$type=='initial')
-                                <th>Action</th>
-                            @elseif(!$type)
-                                <th>Status</th>
-                            @endif
+                            <th>Status</th>
+                            <th>Action</th>
+
                         </tr>
                         @foreach($applicants as $a)
                             <tr>
@@ -133,16 +131,17 @@
                                 <td>{{$a->chest_normal.'-'.$a->chest_extended}} inch</td>
                                 <td>{{$a->weight}} kg</td>
                                 <td>{{$a->mobile_no_self}}</td>
-                                @if($type=='pending'||$type=='initial')
-                                    <td>
-
+                                <td>{{$a->status}}</td>
+                                <td>
+                                    @if($a->status=='pending'||$a->status=='initial')
                                         <a class="btn btn-sm btn-primary"
                                            href="{{URL::route('recruitment.applicant.mark_as_paid',['id'=>$a->applicant_id,'type'=>$type,'circular_id'=>$a->job_circular_id])}}">Mark
                                             as paid</a>
-                                    </td>
-                                @elseif(!$type)
-                                    <td>{{$a->status}}</td>
-                                @endif
+                                    @else
+                                        --
+                                    @endif
+                                </td>
+
                             </tr>
                         @endforeach
                         <tr ng-if="circularSummery.length<=0">
@@ -158,7 +157,7 @@
     </section>
     <script>
         $(document).ready(function (e) {
-            $("#ccc").on('change',function (ee) {
+            $("#ccc").on('change', function (ee) {
                 $("form")[0].submit();
             })
         })
