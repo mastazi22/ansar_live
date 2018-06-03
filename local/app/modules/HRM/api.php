@@ -1,6 +1,6 @@
 <?php
 
-Route::group(['prefix'=>'HRM/api','namespace'=>'\App\modules\HRM\Controllers'],function(){
+Route::group(['prefix'=>'HRM/api','namespace'=>'\App\modules\HRM\Controllers','middleware'=>'cros'],function(){
     Route::get('image/{id}',['as'=>'HRM.api.profile_image','uses'=>'ApiController@loadProfileImage']);
     Route::group(['prefix'=>'HRM/api','middleware'=>['auth.api','permission','checkUserType']],function(){
         Route::get('divisions',['as'=>'HRM.api.division','uses'=>'ApiController@division']);

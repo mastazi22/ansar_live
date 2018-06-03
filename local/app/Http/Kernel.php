@@ -51,6 +51,7 @@ class Kernel extends HttpKernel
         'auth'=>\App\Http\Middleware\CheckAuthentication::class,
         'admin'=>\App\Http\Middleware\Admin::class,
         'dc'=>\App\Http\Middleware\DC::class,
+        'cros'=>\App\Http\Middleware\CROSMiddleWare::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'can' => \Illuminate\Foundation\Http\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
