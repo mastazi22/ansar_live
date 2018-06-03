@@ -58,10 +58,18 @@
                         </div>
                     </div>
                 </div>--}}
-                <div class="row" style="margin-bottom: 20px">
-                    <div class="col-sm-6 col-sm-offset-6">
-                        <form action="{{URL::route('recruitment.applicant.list',['type'=>$type,'circular_id'=>4])}}"
-                              method="get">
+                <form action="{{URL::route('recruitment.applicant.list',['type'=>$type])}}"
+                      method="get">
+                    <div class="row" style="margin-bottom: 20px">
+                        <div class="col-sm-4">
+
+                            <div class="form-group">
+                                {!! Form::select('circular_id',$circulars,(isset($circular_id)?$circular_id:null),['class'=>'form-control','id'=>'ccc']) !!}
+                            </div>
+
+                        </div>
+                        <div class="col-sm-6 col-sm-offset-2">
+
                             <div class="input-group">
                                 <input type="text" name="q" class="form-control"
                                        placeholder="Search here by txID or mobile no">
@@ -71,13 +79,14 @@
                                             </button>
                                         </span>
                             </div>
-                        </form>
+
+                        </div>
                     </div>
-                </div>
+                </form>
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <tr>
-                            <th style="se">Applicant Name</th>
+                            <th style="">Applicant Name</th>
                             <th>Applicant ID</th>
 
                             <th>Applicant Password</th>
@@ -147,4 +156,11 @@
             </div>
         </div>
     </section>
+    <script>
+        $(document).ready(function (e) {
+            $("#ccc").on('change',function (ee) {
+                $("form")[0].submit();
+            })
+        })
+    </script>
 @endsection
