@@ -126,7 +126,7 @@ class ApiController extends Controller
             $path = storage_path($a->profile_pic);
             if(File::exists($path)){
                 $image = Image::make($path);
-                return $image->response();
+                return ['data'=>$image->encode('data-url')];
             }
         }
         return response()->json(["message"=>"Not found"],400);
