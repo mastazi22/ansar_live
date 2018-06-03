@@ -5,11 +5,14 @@ namespace App\modules\HRM\Controllers;
 use App\modules\AVURP\Repositories\VDPInfo\VDPInfoInterface;
 use App\modules\AVURP\Requests\VDPInfoRequest;
 use App\modules\HRM\Models\MainTrainingInfo;
+use App\modules\HRM\Models\PersonalInfo;
 use App\modules\HRM\Repositories\data\DataRepository;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\File;
+use Intervention\Image\Facades\Image;
 
 class ApiController extends Controller
 {
@@ -116,5 +119,16 @@ class ApiController extends Controller
         }
         return response()->json($data);
 
+    }
+    public function loadProfileImage($id){
+        $a = PersonalInfo::where('ansar_id',$id)->first();
+        if($a){
+            $path = storage_path($a->profile_pic);
+            if(File::exists($path)){
+                $image = Image::make($path);
+                return ['data'=>$image->encode('data-url')];
+            }
+        }
+        return response()->json(["message"=>"Not found"],400);
     }
 }

@@ -324,14 +324,19 @@ class ApplicantScreeningController extends Controller
         return abort(401);
     }
 
-    public function applicantListSupport(Request $request, $circular_id, $type = null)
+    public function applicantListSupport(Request $request, $type = null)
     {
         DB::enableQueryLog();
         if ($request->q) {
             $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment' => function ($p) use ($request) {
                 $p->with(['paymentHistory']);
-            }])->where('job_circular_id', $circular_id)
-                ->where('mobile_no_self', 'like', '%' . $request->q . '%');
+            }])->where('mobile_no_self', 'like', '%' . $request->q . '%')
+            ->orWhereHas('payment.paymentHistory',function ($q) use ($request){
+                $q->where('txID','like',"%{$request->q}%");
+            });
+            if($request->circular_id){
+                $applicants->where('job_circular_id', $request->circular_id);
+            }
             if ($type == 'Male' || $type == 'Female') {
                 $applicants->where('gender', $type);
             } else if ($type) {
@@ -341,8 +346,10 @@ class ApplicantScreeningController extends Controller
         } else {
             $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment' => function ($q) {
                 $q->with('paymentHistory');
-            }])
-                ->where('job_circular_id', $circular_id);
+            }]);
+            if($request->circular_id){
+                $applicants->where('job_circular_id', $request->circular_id);
+            }
             if ($type == 'Male' || $type == 'Female') {
                 $applicants->where('gender', $type);
             } else if ($type) {
@@ -350,8 +357,9 @@ class ApplicantScreeningController extends Controller
             }
             $applicants = $applicants->paginate(50);
         }
+        $circulars = JobCircular::where('status','active')->pluck('circular_name','id')->prepend('--Select a circular--','');
 //        return DB::getQueryLog();
-        return view('recruitment::applicant.applicants_support', ['applicants' => $applicants, 'type' => $type]);
+        return view('recruitment::applicant.applicants_support', ['applicants' => $applicants, 'type' => $type,'circulars'=>$circulars,'circular_id'=>$request->circular_id]);
     }
 
     public function applicantList(Request $request, $circular_id, $type = null)

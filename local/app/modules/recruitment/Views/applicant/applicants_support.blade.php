@@ -58,10 +58,18 @@
                         </div>
                     </div>
                 </div>--}}
-                <div class="row" style="margin-bottom: 20px">
-                    <div class="col-sm-6 col-sm-offset-6">
-                        <form action="{{URL::route('recruitment.applicant.list',['type'=>$type,'circular_id'=>4])}}"
-                              method="get">
+                <form action="{{URL::route('recruitment.applicant.list',['type'=>$type])}}"
+                      method="get">
+                    <div class="row" style="margin-bottom: 20px">
+                        <div class="col-sm-4">
+
+                            <div class="form-group">
+                                {!! Form::select('circular_id',$circulars,(isset($circular_id)?$circular_id:null),['class'=>'form-control','id'=>'ccc']) !!}
+                            </div>
+
+                        </div>
+                        <div class="col-sm-6 col-sm-offset-2">
+
                             <div class="input-group">
                                 <input type="text" name="q" class="form-control"
                                        placeholder="Search here by txID or mobile no">
@@ -71,13 +79,14 @@
                                             </button>
                                         </span>
                             </div>
-                        </form>
+
+                        </div>
                     </div>
-                </div>
+                </form>
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <tr>
-                            <th style="se">Applicant Name</th>
+                            <th style="">Applicant Name</th>
                             <th>Applicant ID</th>
 
                             <th>Applicant Password</th>
@@ -91,11 +100,9 @@
                             <th>Chest</th>
                             <th>Weight</th>
                             <th>Mobile no</th>
-                            @if($type=='pending'||$type=='initial')
-                                <th>Action</th>
-                            @elseif(!$type)
-                                <th>Status</th>
-                            @endif
+                            <th>Status</th>
+                            <th>Action</th>
+
                         </tr>
                         @foreach($applicants as $a)
                             <tr>
@@ -124,16 +131,17 @@
                                 <td>{{$a->chest_normal.'-'.$a->chest_extended}} inch</td>
                                 <td>{{$a->weight}} kg</td>
                                 <td>{{$a->mobile_no_self}}</td>
-                                @if($type=='pending'||$type=='initial')
-                                    <td>
-
+                                <td>{{$a->status}}</td>
+                                <td>
+                                    @if($a->status=='pending'||$a->status=='initial')
                                         <a class="btn btn-sm btn-primary"
-                                           href="{{URL::route('recruitment.applicant.mark_as_paid',['id'=>$a->applicant_id,'type'=>$type,'circular_id'=>$a->job_circular_id])}}">Mark
+                                           href="{{URL::route('recruitment.applicant.mark_as_paid',['id'=>$a->applicant_id,'type'=>$a->status,'circular_id'=>$a->job_circular_id])}}">Mark
                                             as paid</a>
-                                    </td>
-                                @elseif(!$type)
-                                    <td>{{$a->status}}</td>
-                                @endif
+                                    @else
+                                        --
+                                    @endif
+                                </td>
+
                             </tr>
                         @endforeach
                         <tr ng-if="circularSummery.length<=0">
@@ -147,4 +155,11 @@
             </div>
         </div>
     </section>
+    <script>
+        $(document).ready(function (e) {
+            $("#ccc").on('change', function (ee) {
+                $("form")[0].submit();
+            })
+        })
+    </script>
 @endsection
