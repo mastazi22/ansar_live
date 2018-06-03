@@ -330,7 +330,10 @@ class ApplicantScreeningController extends Controller
         if ($request->q) {
             $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment' => function ($p) use ($request) {
                 $p->with(['paymentHistory']);
-            }])->where('mobile_no_self', 'like', '%' . $request->q . '%');
+            }])->where('mobile_no_self', 'like', '%' . $request->q . '%')
+            ->orWhereHas('paymentHistory',function ($q) use ($request){
+                $q->where('txID','like',"%{$request->q}%");
+            });
             if($request->circular_id){
                 $applicants->where('job_circular_id', $request->circular_id);
             }
