@@ -224,6 +224,111 @@ class ApplicantHRMController extends Controller
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
+    public function moveBulkApplicantToHRM(Request $request)
+    {
+        $response = [
+            'success'=>0,
+            'fail'=>0,
+        ];
+        foreach ($request->hrmIds as $id){
+            DB::connection('hrm')->beginTransaction();
+            DB::beginTransaction();
+            try {
+                $applicant_hrm_details = JobApplicantHRMDetails::find($id);
+                if ($applicant_hrm_details) {
+                    $data = clone $applicant_hrm_details;
+                    $ansar_id = intval(PersonalInfo::orderBy('ansar_id', 'desc')->first()->ansar_id) + 1;
+                    $applicant_hrm_details['ansar_id'] = $data['ansar_id'] = $ansar_id;
+                    $education_info = $data['appliciant_education_info'];
+                    $training_info = $data['applicant_training_info'];
+                    $nominee_info = $data['applicant_nominee_info'];
+                    unset($data['appliciant_education_info']);
+                    unset($data['applicant_training_info']);
+                    unset($data['applicant_nominee_info']);
+                    foreach ($education_info as $ed) {
+                        $ed->education_id = $ed->job_education_id;
+                        unset($ed->job_education_id);
+                        unset($ed->job_applicant_id);
+                        unset($ed->created_at);
+                        unset($ed->updated_at);
+                    }
+
+                    unset($data['updated_at']);
+                    unset($data['updated_at']);
+                    unset($data['applicant_id']);
+                    unset($data['job_circular_id']);
+//                return $data;
+//                return $data['profile_pic'];
+                    $profile_pic = storage_path('data' . DIRECTORY_SEPARATOR . 'photo');
+                    $sign_pic = storage_path('data' . DIRECTORY_SEPARATOR . 'signature');
+                    if (!File::exists($profile_pic)) File::makeDirectory($profile_pic);
+                    if (!File::exists($sign_pic)) File::makeDirectory($sign_pic);
+                    if ($data['profile_pic']&&File::exists($data['profile_pic'])) {
+                        if (!File::move($data['profile_pic'], $profile_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg')) {
+                            throw new \Exception("Can`t move image. please try again later");
+                        }
+
+                    }
+                    $data['profile_pic'] = 'data/photo/' . $ansar_id . '.jpg';
+                    if ($data['sign_pic']&&File::exists($data['sign_pic'])) {
+                        if (!File::move($data['sign_pic'], $sign_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg')) {
+                            throw new \Exception("Can`t move image. please try again later");
+                        }
+
+                    }
+                    $data['sign_pic'] = 'data/signature/' . $ansar_id . '.jpg';
+                    $data['verified'] = 0;
+                    $ansar_new = new PersonalInfo(json_decode(json_encode($data), true));
+                    foreach ($training_info as $training) {
+                        $ansar_new->training()->save(new TrainingInfo((array)$training));
+                    }
+                    foreach ($education_info as $education) {
+                        $ansar_new->education()->save(new Edication((array)$education));
+                    }
+                    foreach ($nominee_info as $nominee) {
+                        $ansar_new->nominee()->save(new Nominee((array)$nominee));
+                    }
+                    $ansar_new->status()->save(new AnsarStatusInfo());
+                    $ansar_new->save();
+                    $applicant_hrm_details->save();
+
+                    DB::connection('hrm')->commit();
+                    DB::commit();
+                    $response['success']++;
+
+
+                } else {
+                    throw new \Exception("Invalid request");
+                }
+
+            } catch (\Error $e) {
+                Log::info($e->getMessage());
+                Log::info($e->getTraceAsString());
+                DB::connection('hrm')->rollback();
+                DB::rollback();
+                if(isset($sign_pic))$this->rollbackFile($sign_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['sign_pic']);
+                if(isset($profile_pic))$this->rollbackFile($profile_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['profile_pic']);
+                $response['fail']++;
+            } catch (\Throwable $e) {
+                Log::info($e->getMessage());
+                Log::info($e->getTraceAsString());
+                DB::connection('hrm')->rollback();
+                DB::rollback();
+                if(isset($sign_pic))$this->rollbackFile($sign_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['sign_pic']);
+                if(isset($profile_pic))$this->rollbackFile($profile_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['profile_pic']);
+                $response['fail']++;
+            }catch (\Exception $e) {
+                Log::info($e->getMessage());
+                Log::info($e->getTraceAsString());
+                DB::connection('hrm')->rollback();
+                DB::rollback();
+                if(isset($sign_pic))$this->rollbackFile($sign_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['sign_pic']);
+                if(isset($profile_pic))$this->rollbackFile($profile_pic . DIRECTORY_SEPARATOR . $ansar_id . '.jpg', $applicant_hrm_details['profile_pic']);
+                $response['fail']++;
+            }
+        }
+        return response()->json(['status'=>'success','message'=>"Total ".count($request->hrmIds).". Success {$response['success']}. fail {$response['fail']}"]);
+    }
 
     function rollbackFile($current_file, $old_file)
     {

@@ -9,6 +9,7 @@
             var p = '50'
             $scope.categories = [];
             $scope.q = '';
+            $scope.recIds = [];
             $scope.selectMessage = '';
             $scope.educations = [];
             $scope.circulars = [];
@@ -56,7 +57,26 @@
                     $scope.loadApplicant();
                 }
             })
+            $scope.moveThisPageToHrm = function () {
+                console.log($scope.recIds)
+                $scope.allLoading = true;
+                $http({
+                    url:"{{URL::route('recruitment.hrm.bulk_move')}}",
+                    method:'post',
+                    data:{
+                        hrmIds:$scope.recIds
+                    }
+                }).then(function (response) {
+                    $scope.allLoading = false;
+                    notificationService.notify(response.data.status,response.data.message);
+                    $scope.loadApplicant();
+                },function (response) {
+                    $scope.allLoading = false;
+                    notificationService.notify('error',response.data);
+                })
+            }
             $scope.loadApplicant = function (url) {
+                $scope.recIds = [];
                 if($scope.param.limit===undefined){
                     $scope.param['limit'] = '50';
                 }

@@ -48,6 +48,7 @@ Route::group(['prefix'=>'recruitment','middleware'=>['recruitment'],'namespace'=
        Route::any('/applicant/hrm',['as'=>'recruitment.hrm.index','uses'=>'ApplicantHRMController@index']);
        Route::get('/applicant/hrm/{type}/{circular_id}/{id}',['as'=>'recruitment.hrm.view_download','uses'=>'ApplicantHRMController@applicantEditForHRM']);
        Route::post('/applicant/hrm/move/{id}',['as'=>'recruitment.hrm.move','uses'=>'ApplicantHRMController@moveApplicantToHRM']);
+       Route::post('/applicant/hrm/bulk_move',['as'=>'recruitment.hrm.bulk_move','uses'=>'ApplicantHRMController@moveBulkApplicantToHRM']);
 
        Route::any('/applicant/hrm/card_print',['as'=>'recruitment.hrm.card_print','uses'=>'ApplicantHRMController@print_card']);
 
