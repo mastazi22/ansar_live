@@ -3,7 +3,7 @@
     <div class="table-responsive">
         <table class="table table-bordered table-condensed">
             <caption style="font-size: 20px;color:#111111">Total applicants({{$applicants->total()}})
-                <button class="btn btn-xs btn-primary">
+                <button class="btn btn-xs btn-primary" ng-click="moveThisPageToHrm()">
                     Move this page to HRM
                 </button>
                 <div class="input-group" style="margin-top: 10px">
@@ -29,7 +29,7 @@
                 <th>Action</th>
             </tr>
             @forelse($applicants as $a)
-                <tr>
+                <tr ng-init="recIds.push('{{$a->id}}')">
                     <td>{{$i++}}</td>
                     <td>{{$a->ansar_name_bng}}</td>
                     <td>{{$a->national_id_no}}</td>
