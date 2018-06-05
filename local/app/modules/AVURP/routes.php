@@ -8,4 +8,7 @@ Route::group(['prefix'=>'AVURP','namespace'=>'\App\modules\AVURP\Controllers','m
     Route::get('info/import',['as'=>'AVURP.info.import','uses'=>'AnsarVDPInfoController@import']);
     Route::post('info/import',['as'=>'AVURP.info.import_upload','uses'=>'AnsarVDPInfoController@processImportedFile']);
     Route::resource('info','AnsarVDPInfoController');
+    Route::get('test',function (){
+       return substr("491074292",-5);
+    });
 });

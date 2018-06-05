@@ -86,25 +86,24 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
     $rootScope.user = ''
     $http.get('/' + prefix + 'user_data').then(function (response) {
         $rootScope.user = response.data;
-        /* $rootScope.ws = openSocketConnection();
-         var p = setInterval(function () {
-             console.log($rootScope.ws)
-             if($rootScope.ws.readyState===3) clearInterval(p)
-             if($rootScope.ws.readyState===1&&$rootScope.ws.bufferedAmount===0){
-                 $rootScope.ws.send(JSON.stringify({type:'init',data:{'user_id': $rootScope.user.id}}))
-                 clearInterval(p)
-             }
-         },500)*/
+       /* $rootScope.ws = openSocketConnection();
+        var p = setInterval(function () {
+            console.log($rootScope.ws)
+            if($rootScope.ws.readyState===3) clearInterval(p)
+            if($rootScope.ws.readyState===1&&$rootScope.ws.bufferedAmount===0){
+                $rootScope.ws.send(JSON.stringify({type:'init',data:{'user_id': $rootScope.user.id}}))
+                clearInterval(p)
+            }
+        },500)*/
     })
     $rootScope.loadingView = false;
     $rootScope.dateConvert = function (date) {
         return (moment(date).locale('bn').format('DD-MMMM-YYYY'));
     }
-
-    /*window.onbeforeunload = function (e) {
-        $rootScope.ws.onclose = function () {}; // disable onclose handler first
-        $rootScope.ws.close();
-    }*/
+   /*window.onbeforeunload = function (e) {
+       $rootScope.ws.onclose = function () {}; // disable onclose handler first
+       $rootScope.ws.close();
+   }*/
 
     function openSocketConnection() {
         var ws = new WebSocket("ws://" + window.location.hostname + ":8090/");
@@ -119,8 +118,8 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
             console.log(event)
             noty({
                 text: event.data,
-                layout: 'bottomRight',
-                type: 'success'
+                layout:'bottomRight',
+                type:'success'
             })
         }
         ws.onclose = function (event) {
@@ -132,9 +131,9 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
     }
 });
 GlobalApp.filter('num', function () {
-    return function (input, defaultValue) {
-        var d = parseInt(input === undefined ? '' : input.replace(',', ''));
-        return isNaN(d) ? defaultValue == undefined ? '' : defaultValue : d;
+    return function (input,defaultValue) {
+        var d = parseInt(input===undefined?'':input.replace(',', ''));
+        return isNaN(d) ? defaultValue==undefined?'':defaultValue : d;
     };
 });
 GlobalApp.filter('checkpermission', function ($rootScope) {
@@ -200,7 +199,7 @@ GlobalApp.directive('confirm', function () {
                 message: scope.message,
                 ok_button_text: 'Confirm',
                 cancel_button_text: 'Cancel',
-                event: scope.event || 'click',
+                event: scope.event||'click',
                 ok_callback: function (element) {
                     scope.callback(scope.data)
                 },
@@ -217,7 +216,7 @@ GlobalApp.directive('datePicker', function () {
         link: function (scope, element, attrs) {
             //alert(scope.event)
             var data = attrs.datePicker
-            var format = attrs.dateFormat || 'dd-M-yy';
+            var format = attrs.dateFormat||'dd-M-yy';
             console.log(data)
             if (data) {
                 $(element).val(eval(data));
@@ -225,7 +224,7 @@ GlobalApp.directive('datePicker', function () {
             }
 
             $(element).datepicker({
-                dateFormat: format
+                dateFormat:format
             })
 
         }
@@ -237,11 +236,11 @@ GlobalApp.directive('datePickerBig', function () {
         link: function (scope, element, attrs) {
             //alert(scope.event)
             var data = attrs.datePickerBig
-            var format = attrs.dateFormat || 'dd-M-yy';
+            var format = attrs.dateFormat||'dd-M-yy';
             console.log(data)
             // console.log(data)
             $(element).datepicker({
-                dateFormat: format,
+                dateFormat:format,
                 changeMonth: true,
                 changeYear: true,
                 yearRange: "-90:+00"
@@ -348,7 +347,7 @@ GlobalApp.factory('httpService', function ($http) {
             })
 
         },
-        union: function (division, unit, thana) {
+        union: function (division, unit,thana) {
             var http = '';
             //if (id == undefined) {
             //    http = $http({
@@ -360,7 +359,7 @@ GlobalApp.factory('httpService', function ($http) {
             http = $http({
                 method: 'get',
                 url: '/' + prefix + 'HRM/union/showall',
-                params: {unit_id: unit, division_id: division, thana_id: thana}
+                params: {unit_id: unit, division_id: division,thana_id:thana}
             })
             //}
             return http.then(function (response) {
@@ -403,7 +402,7 @@ GlobalApp.factory('httpService', function ($http) {
         },
         subTraining: function (id) {
             return $http({
-                url: '/' + prefix + 'HRM/sub_training/all/' + id,
+                url: '/' + prefix + 'HRM/sub_training/all/'+id,
                 method: 'get'
             }).then(function (response) {
                 return response.data;
@@ -431,37 +430,37 @@ GlobalApp.factory('httpService', function ($http) {
         },
         category: function (data) {
             return $http({
-                url: '/' + prefix + 'recruitment/category',
-                method: 'get',
-                params: data
+                url:'/' + prefix + 'recruitment/category',
+                method:'get',
+                params:data
             })
         },
         circular: function (data) {
             return $http({
-                url: '/' + prefix + 'recruitment/circular',
-                method: 'get',
-                params: data
+                url:'/' + prefix + 'recruitment/circular',
+                method:'get',
+                params:data
             })
         },
         circularSummery: function (data) {
             return $http({
-                url: '/' + prefix + 'recruitment/applicant',
-                method: 'post',
-                data: data
+                url:'/' + prefix + 'recruitment/applicant',
+                method:'post',
+                data:data
             })
         },
-        searchApplicant: function (url, data) {
+        searchApplicant: function (url,data) {
             return $http({
-                url: url === undefined ? '/' + prefix + 'recruitment/applicant/search' : url,
-                method: 'post',
-                data: data
+                url:url===undefined?'/' + prefix + 'recruitment/applicant/search':url,
+                method:'post',
+                data:data
             })
         },
         applicantQuota: function (data) {
             return $http({
-                url: '/' + prefix + 'recruitment/settings/applicant_quota',
-                method: 'post',
-                data: data
+                url:'/' + prefix + 'recruitment/settings/applicant_quota',
+                method:'post',
+                data:data
             })
         },
     }
@@ -535,6 +534,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
             unitFieldDisabled: '=?',
             rangeFieldDisabled: '=?',
             thanaFieldDisabled: '=?',
+            unionFieldDisabled: '=?',
             loadWatch: '=?',
             watchChange: '@',
             onLoad: "&",
@@ -557,13 +557,14 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
             customChange: '&',
             kpiType: '@',
             resetAll: '@',
-            callFunc: '=?'
+            callFunc:'=?'
         },
         controller: function ($scope, $rootScope, httpService) {
             $scope.selected = {
                 range: $scope.type == 'all' ? 'all' : '',
                 unit: $scope.type == 'all' ? 'all' : '',
                 thana: $scope.type == 'all' ? 'all' : '',
+                union: $scope.type == 'all' ? 'all' : '',
                 kpi: $scope.type == 'all' ? 'all' : '',
                 rank: $scope.type == 'all' ? 'all' : '',
                 gender: $scope.type == 'all' ? 'all' : '',
@@ -578,6 +579,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                         range: $scope.type == 'all' ? 'all' : '',
                         unit: $scope.type == 'all' ? 'all' : '',
                         thana: $scope.type == 'all' ? 'all' : '',
+                        union: $scope.type == 'all' ? 'all' : '',
                         kpi: $scope.type == 'all' ? 'all' : '',
                         rank: $scope.type == 'all' ? 'all' : '',
                         gender: $scope.type == 'all' ? 'all' : '',
@@ -678,6 +680,22 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                 })
                 $scope.thanaLoad({param: $scope.selected});
             }
+            $scope.loadUnion = function (d, u,id) {
+                if (!$scope.show('union')) return;
+                $scope.unions = $scope.kpis = []
+                $scope.loading.union = true;
+                httpService.union(d, u,id).then(function (data) {
+                    // alert(data)
+                    $scope.loading.union = false;
+                    if (data.status != undefined) {
+                        $scope.errorKey = {union: 'union'};
+                        $scope.errorMessage = {union: data.statusText};
+                        return;
+                    }
+                    $scope.unions = data;
+                })
+                $scope.unionLoad({param: $scope.selected});
+            }
             $scope.loadKPI = function (d, u, id) {
 
                 //$scope.kpiChange({param:$scope.selected});
@@ -735,8 +753,10 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
             $scope.changeThana = function (d, u, thana_id) {
                 if ($scope.type == 'all') {
                     $scope.loadKPI(d, u, thana_id)
+                    $scope.loadUnion(d, u, thana_id)
                 }
                 else {
+                    $scope.loadUnion(undefined, undefined, thana_id)
                     $scope.loadKPI(undefined, undefined, thana_id)
                 }
             }
@@ -746,7 +766,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                 if (!n) return;
                 if ($rootScope.user.usertype.type_name == 'DC') {
                     $scope.selected.range = $rootScope.user.district.division_id
-                    if (p.length > 1 && p[1] === 'recruitment' && $rootScope.user.rec_district) $scope.selected.unit = $rootScope.user.rec_district.id
+                    if(p.length>1&&p[1]==='recruitment'&&$rootScope.user.rec_district)$scope.selected.unit = $rootScope.user.rec_district.id
                     else $scope.selected.unit = $rootScope.user.district.id
                     $scope.loadThana(undefined, $rootScope.user.district.id)
                 }
@@ -834,7 +854,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                 })
 
             })
-            if (scope.callFunc) {
+            if(scope.callFunc){
                 scope.callFunc['reset'] = function () {
                     // alert(1);
                     scope.selected.unit = scope.type == 'all' ? 'all' : ''
@@ -852,7 +872,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                 scope.rangeChange({param: scope.selected})
             })
             $(element).on('change', '#unit', function () {
-                scope.getUnitName = $.trim($(this).children('option:selected').text())
+                scope.getUnitName= $.trim($(this).children('option:selected').text())
                 scope.selected.thana = scope.type == 'all' ? 'all' : ''
                 scope.selected.kpi = scope.type == 'all' ? 'all' : ''
                 scope.unitChange({param: scope.selected})
@@ -936,14 +956,14 @@ GlobalApp.directive('formSubmit', function (notificationService, $timeout) {
             message: '@',
             onReset: '&',
             resetExcept: '@',
-            responseData: '=?'
+            responseData:'=?'
         },
         link: function (scope, element, attrs) {
             $(element).on('submit', function (e) {
                 e.preventDefault();
                 if (scope.confirmBox) {
                     $(element).confirmDialog({
-                        message: scope.message || "Are u sure?",
+                        message: scope.message||"Are u sure?",
                         ok_button_text: 'Confirm',
                         cancel_button_text: 'Cancel',
                         event: 'submit',
@@ -1034,15 +1054,16 @@ GlobalApp.directive('numericField', function () {
         }
     }
 })
-GlobalApp.controller('jobCircularConstraintController', function ($scope, $filter, $http) {
+GlobalApp.controller('jobCircularConstraintController',function ($scope,$filter,$http) {
 
     $scope.constraint = {
-        gender: {male: '', female: ''},
-        age: {min: '0', max: '0', minDate: '', maxDate: '', quota: {maxAge: 0, type: []}},
-        height: {male: {feet: '0', inch: '0'}, female: {feet: '0', inch: '0'}},
-        weight: {male: '0', female: '0'},
-        chest: {male: {min: '0', max: '0'}, female: {min: '0', max: '0'}},
-        education: {min: '0', max: '0'}
+        gender:{male:'',female:''},
+        age:{min:'0',max:'0',minDate:'',maxDate:''},
+        height:{male:{feet:'0',inch:'0'},female:{feet:'0',inch:'0'}},
+        weight:{male:'0',female:'0'},
+        chest:{male:{min:'0',max:'0'},female:{min:'0',max:'0'}},
+        education:{min:'0',max:'0'}
+
     };
     $scope.minEduList = {};
     $scope.maxEduList = {};
@@ -1061,72 +1082,41 @@ GlobalApp.controller('jobCircularConstraintController', function ($scope, $filte
         }
     )
     $scope.initConstraint = function (data) {
-        if(!data) return;
-        try {
-            var d = JSON.parse(data);
-            $scope.constraint = d;
-        } catch (e) {
-            // console.log(e);
-        }
-        if (!$scope.constraint.age.quota) {
-            $scope.constraint.age.quota = {maxAge: 0, type: []};
-        }
+
+        var d = JSON.parse(data);
         $scope.constraint = d;
         $scope.onSave('constraint')
+
     }
-    $scope.$watch('constraint', function (newVal) {
+    $scope.$watch('constraint',function (newVal) {
 
-        $scope.constraint.age.min = $filter('num')($scope.constraint.age.min + "", 0);
-        $scope.constraint.age.max = $filter('num')($scope.constraint.age.max + "", 0);
-        $scope.constraint.height.male.feet = $filter('num')($scope.constraint.height.male.feet + "", 0);
-        $scope.constraint.height.male.inch = $filter('num')($scope.constraint.height.male.inch + "", 0);
-        $scope.constraint.height.female.feet = $filter('num')($scope.constraint.height.female.feet + "", 0);
-        $scope.constraint.height.female.inch = $filter('num')($scope.constraint.height.female.inch + "", 0);
-        $scope.constraint.weight.male = $filter('num')($scope.constraint.weight.male + "", 0);
-        $scope.constraint.weight.female = $filter('num')($scope.constraint.weight.female + "", 0);
-        $scope.constraint.chest.male.min = $filter('num')($scope.constraint.chest.male.min + "", 0);
-        $scope.constraint.chest.male.max = $filter('num')($scope.constraint.chest.male.max + "", 0);
-        $scope.constraint.chest.female.min = $filter('num')($scope.constraint.chest.female.min + "", 0);
-        $scope.constraint.chest.female.max = $filter('num')($scope.constraint.chest.female.max + "", 0);
+        $scope.constraint.age.min = $filter('num')($scope.constraint.age.min+"",0);
+        $scope.constraint.age.max = $filter('num')($scope.constraint.age.max+"",0);
+        $scope.constraint.height.male.feet = $filter('num')($scope.constraint.height.male.feet+"",0);
+        $scope.constraint.height.male.inch = $filter('num')($scope.constraint.height.male.inch+"",0);
+        $scope.constraint.height.female.feet = $filter('num')($scope.constraint.height.female.feet+"",0);
+        $scope.constraint.height.female.inch = $filter('num')($scope.constraint.height.female.inch+"",0);
+        $scope.constraint.weight.male = $filter('num')($scope.constraint.weight.male+"",0);
+        $scope.constraint.weight.female = $filter('num')($scope.constraint.weight.female+"",0);
+        $scope.constraint.chest.male.min = $filter('num')($scope.constraint.chest.male.min+"",0);
+        $scope.constraint.chest.male.max = $filter('num')($scope.constraint.chest.male.max+"",0);
+        $scope.constraint.chest.female.min = $filter('num')($scope.constraint.chest.female.min+"",0);
+        $scope.constraint.chest.female.max = $filter('num')($scope.constraint.chest.female.max+"",0);
 
-    }, true)
+    },true)
 
-    $scope.onChangeQuota = function () {
-        if ($scope.quota_type === "" || $scope.quota_type == null) return;
-        if ($scope.constraint.age.quota.type.indexOf($scope.quota_type) < 0) {
-            $scope.constraint.age.quota.type.push($scope.quota_type);
-        }
-        $scope.formatValue();
-    };
-    $scope.formatValue = function () {
-        document.getElementById("selected-quota-type").innerHTML = '';
-        for (var i = 0; i < $scope.constraint.age.quota.type.length; i++) {
-            var data = $scope.constraint.age.quota.type[i].replace(new RegExp("_", 'g'), " ");
-            data = data.charAt(0).toUpperCase() + data.slice(1);
-            jQuery("#selected-quota-type").append('<div class="selected-quota" data-value =' +
-                $scope.constraint.age.quota.type[i] + ' >' + data + '</div>');
-        }
-    };
-    jQuery("#selected-quota-type").on("click", "div.selected-quota", function (event) {
-        var data2 = jQuery(this).attr("data-value");
-        var index = $scope.constraint.age.quota.type.indexOf(data2);
-        if (index > -1) {
-            $scope.constraint.age.quota.type.splice(index, 1);
-            $scope.formatValue();
-        }
-    });
 })
-GlobalApp.directive('paginate', function () {
+GlobalApp.directive('paginate',function () {
     return {
-        restrict: 'A',
-        scope: {
-            ref: '&'
+        restrict:'A',
+        scope:{
+            ref:'&'
         },
-        link: function (scope, elem, attr) {
-            $(elem).find('.pagination a').on('click', function (e) {
+        link:function (scope,elem,attr) {
+            $(elem).find('.pagination a').on('click',function (e) {
                 e.preventDefault();
                 var urll = $(this).attr('href')
-                scope.ref({url: urll})
+                scope.ref({url:urll})
             })
 
         }

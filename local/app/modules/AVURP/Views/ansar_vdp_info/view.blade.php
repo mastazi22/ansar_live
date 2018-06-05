@@ -291,7 +291,7 @@
                                 </label>
                                 <div class="col-sm-8">
                                     <div class="form-control">
-                                        {{$info->bloodGroup->blood_group_name_bng}}
+                                        {{$info->bloodGroup?$info->bloodGroup->blood_group_name_bng:'--'}}
                                     </div>
                                 </div>
                             </div>
@@ -361,7 +361,7 @@
                                         @foreach($info->training_info as $t)
                                             <tr>
                                                 <td>{{$t->main_training->training_name_bng}}</td>
-                                                <td>{{$t->sub_training->training_name_bng}}</td>
+                                                <td>{{$t->sub_training?$t->sub_training->training_name_bng:'--'}}</td>
                                                 <td>{{$t->institute_name}}</td>
                                                 <td>{{$t->certificate_no}}</td>
                                                 <td>{{$t->training_start_date}}</td>

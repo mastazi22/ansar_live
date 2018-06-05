@@ -1,24 +1,24 @@
 @extends('template.master')
-@section('title','Entry List')
+@section('title','Import Data')
 @section('breadcrumb')
     {!! Breadcrumbs::render('entry.list') !!}
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('VDPController',function ($scope, $http, $sce) {
+        GlobalApp.controller('VDPController', function ($scope, $http, $sce) {
             $scope.param = {};
             $scope.allLoading = false;
             $scope.hide = true;
         })
-        GlobalApp.directive('compileHtml',function ($compile) {
+        GlobalApp.directive('compileHtml', function ($compile) {
             return {
-                restrict:'A',
-                link:function (scope,elem,attr) {
+                restrict: 'A',
+                link: function (scope, elem, attr) {
                     var newScope;
                     scope.$watch('vdpList', function (n) {
 
                         if (attr.ngBindHtml) {
-                            if(newScope) newScope.$destroy();
+                            if (newScope) newScope.$destroy();
                             newScope = scope.$new();
                             $compile(elem[0].children)(newScope)
                         }
@@ -27,28 +27,44 @@
                 }
             }
         })
-        GlobalApp.directive('fileUpload',function () {
+        GlobalApp.directive('fileUpload', function (notificationService) {
             return {
-                restrict:'A',
-                link:function (scope,elem,attr) {
+                restrict: 'A',
+                link: function (scope, elem, attr) {
                     $(elem).ajaxForm({
-                        beforeSubmit:function () {
-                          scope.hide = false;
-                          scope.$apply()
+                        beforeSubmit: function () {
+                            scope.hide = false;
+                            scope.$apply()
+                            $("button.fileinput-upload-button").prop('disabled', true)
                         },
-                        success:function (response) {
-
+                        success: function (response) {
+                            scope.hide = true;
+                            scope.allLoading = false;
+                            scope.$apply()
+                            console.log(response)
                         },
-                        error:function (response) {
-
+                        error: function (response) {
+                            scope.hide = true;
+                            scope.allLoading = false;
+                            scope.$apply()
+                            if(response.status===422){
+                                alert("Invalid request. Please check input data")
+                            } else{
+                                alert("Unknown error. Contact with system admin")
+                            }
                         },
-                        uploadProgress:function (e, p, t, pc) {
-                            var w = (p/t)*100
+                        uploadProgress: function (e, p, t, pc) {
+                            var w = (p / t) * 100
                             console.log($(elem).find("#progress-bar"))
                             $("#progress-bar").css({
-                                width:w+"%"
+                                width: w + "%"
                             })
-                            $("#p-text").text(parseInt(w)+"% Complete")
+                            $("#p-text").text(parseInt(w) + "% Complete")
+                            if (p >= t) {
+                                //scope.hide = true;
+                                scope.allLoading = true;
+                                scope.$apply()
+                            }
                         }
                     })
 
@@ -56,6 +72,18 @@
             }
         })
     </script>
+    <style>
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+        .fileinput-upload-button{
+            display: none;
+        }
+    </style>
     <section class="content">
         @if(Session::has('success_message'))
             <div style="padding: 10px 20px 0 20px;">
@@ -90,23 +118,43 @@
                 </filter-template>--}}
             </div>
             <div class="box-body">
-                <div class="overlay" ng-if="allLoading">
+                <div class="overlay loading-overlay" ng-if="allLoading">
                     <span class="fa">
                         <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
                     </span>
                 </div>
                 <div class="row">
                     <div class="col-sm-6 col-sm-offset-3">
-                        <form file-upload action="{{URL::route('AVURP.info.import_upload')}}" method="post" enctype="multipart/form-data">
+                        <form file-upload action="{{URL::route('AVURP.info.import_upload')}}" method="post"
+                              enctype="multipart/form-data">
                             {!! csrf_field() !!}
+                            <filter-template
+                                    show-item="['range','unit','thana','union']"
+                                    type="single"
+                                    range-change="loadPage()"
+                                    unit-change="loadPage()"
+                                    thana-change="loadPage()"
+                                    data="param"
+                                    field-name="{range:'division_id',unit:'unit_id',thana:'thana_id',union:'union_id'}"
+                                    start-load="range"
+                                    on-load="loadPage()"
+                                    layout-vertical="1"
+
+                            >
+
+                            </filter-template>
                             <div class="form-group">
                                 <label for="" class="control-label">
-                                    Select File :
+                                    Select file to import:
                                 </label>
                                 <input type="file" name="import_file" class="file" data-show-preview="false">
                             </div>
+                            <button type="submit" class="btn btn-primary" ng-disabled="!hide">
+                                Upload
+                            </button>
                         </form>
-                        <div class="progress" ng-hide="hide" style="margin-top: 10px;margin-bottom: 0px;border-radius: 10px;height: 10px;">
+                        <div class="progress" ng-hide="hide"
+                             style="margin-top: 10px;margin-bottom: 0px;border-radius: 10px;height: 10px;">
                             <div class="progress-bar progress-bar-striped active" id="progress-bar">
 
                             </div>
