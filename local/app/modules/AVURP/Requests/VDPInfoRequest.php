@@ -197,7 +197,7 @@ class VDPInfoRequest extends Request
     protected function getValidatorInstance()
     {
         $data = $this->all();
-        if($data['smart_card_id']&&strlen($data['smart_card_id'])>5) $data['smart_card_id'] = substr($data['smart_card_id'],-5);
+        if(isset($data['smart_card_id'])&&$data['smart_card_id']&&strlen($data['smart_card_id'])>5) $data['smart_card_id'] = substr($data['smart_card_id'],-5);
         $this->getInputSource()->replace($data);
         return parent::getValidatorInstance();
     }
