@@ -1104,6 +1104,30 @@ GlobalApp.controller('jobCircularConstraintController',function ($scope,$filter,
         $scope.constraint.chest.female.max = $filter('num')($scope.constraint.chest.female.max+"",0);
 
     },true)
+    $scope.onChangeQuota = function () {
+        if ($scope.quota_type === "" || $scope.quota_type == null) return;
+        if ($scope.constraint.age.quota.type.indexOf($scope.quota_type) < 0) {
+            $scope.constraint.age.quota.type.push($scope.quota_type);
+        }
+        $scope.formatValue();
+    };
+    $scope.formatValue = function () {
+        document.getElementById("selected-quota-type").innerHTML = '';
+        for (var i = 0; i < $scope.constraint.age.quota.type.length; i++) {
+            var data = $scope.constraint.age.quota.type[i].replace(new RegExp("_", 'g'), " ");
+            data = data.charAt(0).toUpperCase() + data.slice(1);
+            jQuery("#selected-quota-type").append('<div class="selected-quota" data-value =' +
+                $scope.constraint.age.quota.type[i] + ' >' + data + '</div>');
+        }
+    };
+    jQuery("#selected-quota-type").on("click", "div.selected-quota", function (event) {
+        var data2 = jQuery(this).attr("data-value");
+        var index = $scope.constraint.age.quota.type.indexOf(data2);
+        if (index > -1) {
+            $scope.constraint.age.quota.type.splice(index, 1);
+            $scope.formatValue();
+        }
+    });
 
 })
 GlobalApp.directive('paginate',function () {
