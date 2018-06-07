@@ -7,6 +7,7 @@ use App\modules\AVURP\Requests\VDPInfoRequest;
 use App\modules\HRM\Models\MainTrainingInfo;
 use App\modules\HRM\Models\PersonalInfo;
 use App\modules\HRM\Repositories\data\DataRepository;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -130,5 +131,11 @@ class ApiController extends Controller
             }
         }
         return response()->json(["message"=>"Not found"],400);
+    }
+
+    public function generateAndDownloadPDF(Request $request){
+        $html  = $request->data;
+        $pdf = SnappyPdf::loadHtml($html);
+        return $pdf->download();
     }
 }
