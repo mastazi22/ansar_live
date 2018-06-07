@@ -136,6 +136,7 @@ class ApiController extends Controller
     public function generateAndDownloadPDF(Request $request){
         $html  = $request->data;
         $pdf = SnappyPdf::loadHtml($html);
+        $pdf->setOption('encoding', 'UTF-8');
         return $pdf->download();
     }
 }
