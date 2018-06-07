@@ -137,6 +137,6 @@ class ApiController extends Controller
         $html  = $request->data;
         $pdf = SnappyPdf::loadHtml($html);
         $pdf->setOption('encoding', 'UTF-8');
-        return $pdf->download("admit_card");
+        return $pdf->download("admit_card.pdf");
     }
 }
