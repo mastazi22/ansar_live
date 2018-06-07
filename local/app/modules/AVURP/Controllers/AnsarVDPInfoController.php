@@ -214,7 +214,7 @@ class AnsarVDPInfoController extends Controller
                 "smart_card_id", "avub_id", "mobile_no_self", "email_fb_id", "height", "blood_group", "gender", "health_condition",
                 "education", "training"
             ];
-            $keys = ["union_word_id", "village_house_no", "post_office_name",
+            $keys = [ "village_house_no", "post_office_name",
                 "ansar_name_eng", "ansar_name_bng", "designation", "father_name_bng", "mother_name_bng",
                 "marital_status", "spouse_name_bng", "national_id_no",
                 "smart_card_id", "avub_id", "mobile_no_self","health_condition"];
@@ -286,6 +286,9 @@ class AnsarVDPInfoController extends Controller
                                 'sub_training_id' => 0,
                             ];
                         }
+                    }else if ($key == 'union_word_id') {
+                        $uwi = intval(LanguageConverterFacades::bngToEng($value));
+                        $r["union_word_id"] = $uwi;
                     }
                 }
                 $insertData[] = $r;
