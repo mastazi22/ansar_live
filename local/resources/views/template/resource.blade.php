@@ -32,6 +32,7 @@
 <link href="{{asset('dist/css/dropzone.css')}}" rel="stylesheet" type="text/css"/>
 <link href="{{asset('dist/css/jquery-ui.min.css')}}" rel="stylesheet" type="text/css"/>
 <link href="{{asset('dist/css/jquery-ui.multidatespicker.css')}}" rel="stylesheet" type="text/css"/>
+<link href="{{asset('dist/css/fileinput.min.css')}}" rel="stylesheet" type="text/css"/>
 
 <script src="{{asset('plugins/jQuery/jQuery-2.1.4.min.js')}}" type="text/javascript"></script>
 <script src="{{asset('plugins/jQueryUI/jquery-ui.min.js')}}" type="text/javascript"></script>
@@ -58,4 +59,5 @@
 <script src="{{asset('node_modules/noty/lib/noty.min.js')}}"></script>
 <script src="{{asset('node_modules/angular-cookies/angular-cookies.js')}}"></script>
 <script src="{{asset('dist/js/jquery-ui.multidatespicker.js')}}" ></script>
+<script src="{{asset('dist/js/fileinput.min.js')}}" ></script>
 {{--<script src="https://cdn.rawgit.com/dubrox/Multiple-Dates-Picker-for-jQuery-UI/master/jquery-ui.multidatespicker.js"></script>--}}

@@ -84,17 +84,23 @@ class AttendanceController extends Controller
                 "unit" => 'required',
                 "thana" => 'required',
                 "kpi" => 'required',
-                "attendance_date" => 'required',
+                "month" => 'required',
+                "year" => 'required',
             ];
             $this->validate($request, $rules);
-            $d = Carbon::parse($request->attendance_date)->format('d');
-            $m = Carbon::parse($request->attendance_date)->format('m');
-            $y = Carbon::parse($request->attendance_date)->format('Y');
-            $attendance = KpiGeneralModel::with(['attendance' => function ($q) use ($d, $m, $y) {
-                $q->where('day', $d);
+            $d = $request->day;
+            $m = $request->month;
+            $y = $request->year;
+            $ansar_id = $request->ansar_id;
+            $attendance = KpiGeneralModel::with(['attendance' => function ($q) use ($d, $m, $y,$ansar_id) {
+                if($d&&$d>0)$q->where('day', $d);
                 $q->where('month', $m);
                 $q->where('year', $y);
                 $q->where('is_attendance_taken', 0);
+                if((!$d||$d<0)&&!$ansar_id){
+                    $q->select('ansar_id','id','kpi_id',DB::raw("group_concat(CONCAT(id,':',concat(year,'-',month,'-',day))) as id_date"));
+                    $q->groupBy('ansar_id');
+                }
 
             }]);
             if ($request->range && $request->range != 'all') {
@@ -109,11 +115,15 @@ class AttendanceController extends Controller
             if ($request->kpi && $request->kpi != 'all') {
                 $attendance->where('id', $request->kpi);
             }
+            if ($request->ansar_id) {
+                $attendance->where('ansar_id', $request->ansar_id);
+            }
             DB::enableQueryLog();
             $data = $attendance->first();
-            /*return DB::getQueryLog();
-    return $data;*/
-            $date = $request->attendance_date;
+//            return DB::getQueryLog();
+//    return $data;
+            $date = $request->only(['day','month','year','ansar_id']);
+//            return compact('date', 'data');
             return view('SD::attendance.create_data', compact('date', 'data'));
 
         }

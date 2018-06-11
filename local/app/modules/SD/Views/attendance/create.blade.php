@@ -13,6 +13,7 @@
                 Select guard,month,year to load data
             </p>
             `)
+
             $scope.param = {}
             $scope.months = {
                 "--Select a month--": '',
@@ -31,8 +32,12 @@
             }
 
             $scope.years = {"--Select a year--": ''};
+            $scope.dates = {"--Select a day--": ''};
             for (var i = currentYear - 5; i <= currentYear; i++) {
                 $scope.years[i] = i;
+            }
+            for (var i = 1; i <= 31; i++) {
+                $scope.dates[i] = i;
             }
             $scope.allLoading = false;
             $scope.loadData = function () {
@@ -56,6 +61,23 @@
                 $scope.param.month = currentMonth;
                 $scope.param.year = currentYear;
                 console.log($scope.param)
+            }
+        })
+        GlobalApp.directive('compileHtml',function ($compile) {
+            return {
+                restrict:'A',
+                link:function (scope,elem,attr) {
+                    var newScope;
+                    scope.$watch('vdpList', function (n) {
+
+                        if (attr.ngBindHtml) {
+                            if(newScope) newScope.$destroy();
+                            newScope = scope.$new();
+                            $compile(elem[0].children)(newScope)
+                        }
+                    })
+
+                }
             }
         })
     </script>
@@ -92,17 +114,42 @@
 
                 </filter-template>
                 <div class="row" ng-init="init()">
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label for="">Select Day</label>
+                            <select class="form-control" ng-model="param.day">
+                                <option ng-repeat="(k,v) in dates" value="[[v]]">[[k]]</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label for="">Select Month</label>
+                            <select class="form-control" ng-model="param.month">
+                                <option ng-repeat="(k,v) in months" value="[[v]]">[[k]]</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <label for="">Select Year</label>
+                            <select class="form-control" ng-model="param.year">
+                                <option ng-repeat="(k,v) in years" value="[[v]]">[[k]]</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="col-sm-3">
                         <div class="form-group">
-                            <label for="">Select Date</label>
-                            <input type="text" class="form-control" date-picker="{{\Carbon\Carbon::now()->format('d-m-Y')}}" ng-model="param.attendance_date">
+                            <label for="">Search by Ansar ID</label>
+                            <input type="text" class="form-control" placeholder="Search by Ansar ID"
+                                   ng-model="param.ansar_id">
                         </div>
                     </div>
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label style="display: block" for="">&nbsp;</label>
                             <button class="btn btn-primary" ng-click="loadData()"
-                                    ng-disabled="!param.range||!param.unit||!param.thana||!param.kpi||!param.attendance_date"
+                                    ng-disabled="(!param.range||!param.unit||!param.thana||!param.kpi||!param.month||!param.year)&&(!param.ansar_id||!param.month||!param.year)"
                             >
                                 <i class="fa fa-download"></i>&nbsp; Load data
                             </button>
