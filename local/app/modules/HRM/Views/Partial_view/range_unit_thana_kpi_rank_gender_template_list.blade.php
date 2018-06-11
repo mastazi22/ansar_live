@@ -30,12 +30,25 @@
             <label class="control-label">@lang('title.thana')
                 <img ng-show="loading.thana" src="{{asset('dist/img/facebook.gif')}}" width="16">
             </label>
-            <select id="thana" ng-disabled="thanaFieldDisabled||loading.range||loading.unit||loading.thana||loading.kpi" name="[[fieldName.thana]]" class="form-control" ng-model="selected.thana" ng-change="loadKPI(selected.range||undefined,selected.unit||undefined,selected.thana)">
+            <select id="thana" ng-disabled="thanaFieldDisabled||loading.range||loading.unit||loading.thana||loading.kpi" name="[[fieldName.thana]]" class="form-control" ng-model="selected.thana" ng-change="loadKPI(selected.range||undefined,selected.unit||undefined,selected.thana);loadUnion(selected.range||undefined,selected.unit||undefined,selected.thana)">
                 <option value="all" ng-if="type=='all'">All</option>
                 <option value="" ng-if="type=='single'||type==undefined">--@lang('title.thana')--</option>
                 <option ng-repeat="t in thanas" value="[[t.id]]" ng-disabled="thanaDisabled==t.id">[[t.thana_name_bng]]</option>
             </select>
             <p class="text-danger" ng-if="errorKey.thana!=undefined||errorMessage[errorKey.thana]">[[errorMessage[errorKey.thana] ]]</p>
+        </div>
+    </div>
+    <div ng-class="fieldWidth.union" ng-if="show('union')">
+        <div class="form-group">
+            <label class="control-label">@lang('title.union')
+                <img ng-show="loading.union" src="{{asset('dist/img/facebook.gif')}}" width="16">
+            </label>
+            <select id="union" ng-disabled="unionFieldDisabled||loading.range||loading.unit||loading.union||loading.kpi" name="[[fieldName.union]]" class="form-control" ng-model="selected.union">
+                <option value="all" ng-if="type=='all'">All</option>
+                <option value="" ng-if="type=='single'||type==undefined">--@lang('title.union')--</option>
+                <option ng-repeat="t in unions" value="[[t.id]]" ng-disabled="unionDisabled==t.id">[[t.union_name_bng]]</option>
+            </select>
+            <p class="text-danger" ng-if="errorKey.union!=undefined||errorMessage[errorKey.union]">[[errorMessage[errorKey.union] ]]</p>
         </div>
     </div>
     <div ng-class="fieldWidth.kpi" ng-if="show('kpi')">
