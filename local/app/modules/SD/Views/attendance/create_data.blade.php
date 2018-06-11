@@ -73,7 +73,7 @@
 
             @forelse($data->attendance as $attendance)
 
-                <tr>
+                <tr ng-init="initCalenderDate('{{$attendance->dates}}',{{$i}})">
                     <td>{{++$i}}
                         {{--{!! Form::hidden('attendance_data['.($i-1).'][id]',$attendance->id) !!}
                         {!! Form::hidden('attendance_data['.($i-1).'][is_attendance_taken]',1) !!}--}}
@@ -81,10 +81,10 @@
                     <td>{{$attendance->ansar_id}}</td>
                     <td>{{$attendance->ansar->ansar_name_bng}}</td>
                     <td>
-                        <input type="text" multi-date-picker month="{{$date['month']}}" year="{{$date['year']}}">
+                        <input readonly type="text" multi-date-picker month="{{$date['month']}}" typee="present" year="{{$date['year']}}" selected-dates="selectedDates[{{$i-1}}].present" disabled-dates="disabledDates[{{$i-1}}].leave">
                     </td>
                     <td>
-                        <input type="text" multi-date-picker month="{{$date['month']}}" year="{{$date['year']}}">
+                        <input readonly type="text" multi-date-picker month="{{$date['month']}}" typee="leave" year="{{$date['year']}}" selected-dates="selectedDates[{{$i-1}}].leave" disabled-dates="disabledDates[{{$i-1}}].present">
                     </td>
                 </tr>
             @empty

@@ -98,7 +98,7 @@ class AttendanceController extends Controller
                 $q->where('year', $y);
                 $q->where('is_attendance_taken', 0);
                 if((!$d||$d<0)&&!$ansar_id){
-                    $q->select('ansar_id','id','kpi_id',DB::raw("group_concat(CONCAT(id,':',concat(year,'-',month,'-',day))) as id_date"));
+                    $q->select('ansar_id','id','kpi_id',DB::raw("group_concat(concat(year,'-',month,'-',day)) as dates"));
                     $q->groupBy('ansar_id');
                 }
 

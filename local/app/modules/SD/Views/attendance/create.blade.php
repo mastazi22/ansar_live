@@ -8,6 +8,9 @@
         GlobalApp.controller("AttendanceController", function ($scope, $http, $sce) {
             var currentYear = $scope.currentMonth = parseInt(moment().format('YYYY'));
             var currentMonth = $scope.currentYear = parseInt(moment().format('M'));
+            $scope.selectedDates = [];
+            $scope.calenderDatesDates = [];
+            $scope.disabledDates = [];
             $scope.vdpList = $sce.trustAsHtml(`
             <p style="font-size: 16px;font-weight: bold;text-align: center;">
                 Select guard,month,year to load data
@@ -62,7 +65,23 @@
                 $scope.param.year = currentYear;
                 console.log($scope.param)
             }
+            $scope.initCalenderDate = function (dates,index) {
+                $scope.disabledDates[index] = {present:[],leave:[]};
+                $scope.selectedDates[index] = {present:[],leave:[]};
+                var d = dates.split(',');
+                if(d.length>=0){
+                    var da = moment(d[0]);
+                    for(var i=1;i<=da.endOf('month').date();i++){
+                        var dt = da.date(i).format('YYYY-M-D')
+                        if(d.indexOf(dt)<0) {
+                            $scope.disabledDates[index].present.push(dt)
+                            $scope.disabledDates[index].leave.push(dt)
+                        }
+                    }
+                }
+            }
         })
+
         GlobalApp.directive('compileHtml',function ($compile) {
             return {
                 restrict:'A',

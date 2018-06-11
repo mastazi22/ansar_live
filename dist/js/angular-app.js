@@ -237,7 +237,8 @@ GlobalApp.directive('multiDatePicker', function () {
             disabledDates: '=',
             selectedDates:'=',
             month:'@',
-            year:'@'
+            year:'@',
+            typee:'@'
         },
         link: function (scope, element, attrs) {
 
@@ -248,8 +249,35 @@ GlobalApp.directive('multiDatePicker', function () {
                 dateFormat: 'yy-mm-dd',
                 minDate:minDate,
                 maxDate:maxDate,
+                addDisabledDates:scope.disabledDates,
                 onSelect:function (dateText) {
-                    alert(dateText)
+                    if(scope.typee=='present'){
+                        console.log(scope.selectedDates)
+                        if(scope.selectedDates.indexOf(dateText)<0) {
+                            // console.log(scope.selectedDates)
+                            scope.selectedDates.push(dateText)
+                            scope.disabledDates.push(dateText)
+                        } else{
+                            var i = scope.selectedDates.indexOf(dateText)
+                            scope.selectedDates.splice(i,1)
+                            i = scope.disabledDates.indexOf(dateText)
+                            scope.disabledDates.splice(i,1)
+                        }
+
+                    }
+                    else if(scope.typee=='leave'){
+                        if(scope.disabledDates.indexOf(dateText)<0) {
+                            scope.selectedDates.push(dateText)
+                            scope.disabledDates.push(dateText)
+                        } else{
+                            var i = scope.selectedDates.indexOf(dateText)
+                            scope.selectedDates.splice(i,1)
+                            i = scope.disabledDates.indexOf(dateText)
+                            scope.disabledDates.splice(i,1)
+                        }
+                    } else{
+                        alert(scope.typee)
+                    }
                 }
             })
 
