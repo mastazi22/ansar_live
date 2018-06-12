@@ -238,7 +238,8 @@ GlobalApp.directive('multiDatePicker', function () {
             selectedDates:'=',
             month:'@',
             year:'@',
-            typee:'@'
+            typee:'@',
+            disableElem:'@'
         },
         link: function (scope, element, attrs) {
 
@@ -251,33 +252,21 @@ GlobalApp.directive('multiDatePicker', function () {
                 maxDate:maxDate,
                 addDisabledDates:scope.disabledDates,
                 onSelect:function (dateText) {
-                    if(scope.typee=='present'){
-                        console.log(scope.selectedDates)
-                        if(scope.selectedDates.indexOf(dateText)<0) {
-                            // console.log(scope.selectedDates)
-                            scope.selectedDates.push(dateText)
-                            scope.disabledDates.push(dateText)
-                        } else{
-                            var i = scope.selectedDates.indexOf(dateText)
-                            scope.selectedDates.splice(i,1)
-                            i = scope.disabledDates.indexOf(dateText)
-                            scope.disabledDates.splice(i,1)
-                        }
-
-                    }
-                    else if(scope.typee=='leave'){
-                        if(scope.disabledDates.indexOf(dateText)<0) {
-                            scope.selectedDates.push(dateText)
-                            scope.disabledDates.push(dateText)
-                        } else{
-                            var i = scope.selectedDates.indexOf(dateText)
-                            scope.selectedDates.splice(i,1)
-                            i = scope.disabledDates.indexOf(dateText)
-                            scope.disabledDates.splice(i,1)
-                        }
+                    if(scope.selectedDates.indexOf(dateText)<0) {
+                        // console.log(scope.selectedDates)
+                        $(scope.disableElem).multiDatesPicker("addDates",dateText,"disabled")
+                        scope.selectedDates.push(dateText)
+                        scope.disabledDates.push(dateText)
                     } else{
-                        alert(scope.typee)
+                        $(scope.disableElem).multiDatesPicker("removeDates",dateText,"disabled")
+                        var i = scope.selectedDates.indexOf(dateText)
+                        scope.selectedDates.splice(i,1)
+                        i = scope.disabledDates.indexOf(dateText)
+                        scope.disabledDates.splice(i,1)
                     }
+                    console.log(scope.disabledDates);
+                    scope.$apply();
+
                 }
             })
 

@@ -72,7 +72,7 @@
                 if(d.length>=0){
                     var da = moment(d[0]);
                     for(var i=1;i<=da.endOf('month').date();i++){
-                        var dt = da.date(i).format('YYYY-M-D')
+                        var dt = da.date(i).format('YYYY-MM-DD')
                         if(d.indexOf(dt)<0) {
                             $scope.disabledDates[index].present.push(dt)
                             $scope.disabledDates[index].leave.push(dt)
