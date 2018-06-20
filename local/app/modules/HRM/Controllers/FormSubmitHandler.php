@@ -828,6 +828,7 @@ class FormSubmitHandler extends Controller
                         Image::make($request->file('thumb_pic'))->resize(220, 90)->save($path . '/' . $ansarId . '.' . $thumbextension);
                         $personalinfo->thumb_pic = 'data/fingerprint/' . $ansarId . '.' . $thumbextension;
                     } else $personalinfo->thumb_pic = 'data/fingerprint/' . $ansarId . '.jpg';
+                    $personalinfo->account()->delete();
                     $personalinfo->account()->create($bank_info);
                     $successpersonal = $personalinfo->save();
                     if ($successpersonal) {

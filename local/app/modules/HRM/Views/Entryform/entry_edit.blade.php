@@ -1414,8 +1414,7 @@
                                             <div class="form-horizontal col-md-12 "
                                                  ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.bank_name[0]}">
 
-                                                <label class="control-label col-sm-2" for="email"><sup
-                                                            style="color: #ff0709;font-size: 1em">*</sup>ব্যাংকের নাম</label>
+                                                <label class="control-label col-sm-2" for="email">ব্যাংকের নাম</label>
 
                                                 <div class="col-sm-10 ">
                                                     <select name="bank_name" class="form-control" id="sell"
@@ -1433,8 +1432,7 @@
                                             </div>
                                             <div class="form-horizontal col-md-12 "
                                                  ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.branch_name[0]}">
-                                                <label class="control-label col-sm-2" for="email"><sup
-                                                            style="color: #ff0709;font-size: 1em">*</sup>ব্রাঞ্চের নাম:</label>
+                                                <label class="control-label col-sm-2" for="email">ব্রাঞ্চের নাম:</label>
 
                                                 <div class="col-sm-10">
                                                     <input type="text" class="form-control" id="branch_name"
@@ -1447,8 +1445,7 @@
                                             </div>
                                             <div class="form-horizontal col-md-12 "
                                                  ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.account_no[0]}">
-                                                <label class="control-label col-sm-2" for="email"><sup
-                                                            style="color: #ff0709;font-size: 1em">*</sup>অ্যাকাউন্ট নম্বর:</label>
+                                                <label class="control-label col-sm-2" for="email">অ্যাকাউন্ট নম্বর:</label>
 
                                                 <div class="col-sm-10">
                                                     <input type="text" class="form-control" id="branch_name"
