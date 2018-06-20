@@ -18,6 +18,7 @@ Route::group(['prefix' => 'SD', 'middleware' => ['web', 'auth', 'permission']], 
         Route::get('/viewdemandsheet/{id}', 'DemandSheetController@viewDemandSheet')->where('id', '[0-9]+');
         Route::resource('attendance', 'AttendanceController');
         Route::resource('leave', 'LeaveManagementController');
+        Route::resource('salary_management', 'SalaryManagementController');
         Route::get('/test', function () {
 //            DB::enableQueryLog();
             $kpis = KpiGeneralModel::with(['embodiment' => function ($q) {
