@@ -9,6 +9,7 @@ return [
   'range'=>'Select Range',
   'unit'=>'Select Unit',
   'thana'=>'Select Thana',
+  'union'=>'Select Union',
   'kpi'=>'Select Guard',
   'reason'=>'Select Reason',
   'ta'=>'Total Ansars',

@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','Take Attendance')
+@section('title','Salary Management')
 @section('breadcrumb')
     {!! Breadcrumbs::render('attendance.create') !!}
 @endsection

@@ -132,4 +132,7 @@ class PersonalInfo extends Model
 
         return $this->mobile_no_self;
     }
+    function account(){
+        return $this->hasOne(AnsarBankAccountInfoDetails::class,'ansar_id','ansar_id');
+    }
 }

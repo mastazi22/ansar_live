@@ -20,6 +20,69 @@
             $scope.disableDDT = false;
             $scope.profile_pic = " ";
             $scope.formSubmitResult = {};
+            $scope.rank = [];
+            $scope.bankList = [
+                "AB Bank Limited",
+                "Agrani Bank Limited",
+                "Al-Arafah Islami Bank Limited",
+                "Bangladesh Commerce Bank Limited",
+                "Bangladesh Development Bank Limited",
+                "Bangladesh Krishi Bank",
+                "Bank Al-Falah Limited",
+                "Bank Asia Limited",
+                "BASIC Bank Limited",
+                "BRAC Bank Limited",
+                "Citibank N.A",
+                "Commercial Bank of Ceylon Limited",
+                "Dhaka Bank Limited",
+                "Dutch-Bangla Bank Limited",
+                "Eastern Bank Limited",
+                "EXIM Bank Limited",
+                "First Security Islami Bank Limited",
+                "Habib Bank Ltd.",
+                "ICB Islamic Bank Ltd.",
+                "IFIC Bank Limited",
+                "Islami Bank Bangladesh Ltd",
+                "Jamuna Bank Ltd",
+                "Janata Bank Limited",
+                "Meghna Bank Limited",
+                "Mercantile Bank Limited",
+                "Midland Bank Limited",
+                "Mutual Trust Bank Limited",
+                "National Bank Limited",
+                "National Bank of Pakistan",
+                "National Credit & Commerce Bank Ltd",
+                "NRB Commercial Bank Limited",
+                "One Bank Limited",
+                "Premier Bank Limited",
+                "Prime Bank Ltd",
+                "Pubali Bank Limited",
+                "Rajshahi Krishi Unnayan Bank",
+                "Rupali Bank Limited",
+                "Shahjalal Bank Limited",
+                "Shimanto Bank Limited",
+                "Social Islami Bank Ltd.",
+                "Sonali Bank Limited",
+                "South Bangla Agriculture & Commerce Bank Limited",
+                "Southeast Bank Limited",
+                "Standard Bank Limited",
+                "Standard Chartered Bank",
+                "State Bank of India",
+                "The City Bank Ltd.",
+                "The Hong Kong and Shanghai Banking Corporation. Ltd.",
+                "Trust Bank Limited",
+                "Union Bank Limited",
+                "United Commercial Bank Limited",
+                "Uttara Bank Limited",
+                "Woori Bank"
+            ]
+
+            $scope.mobileBankType = [
+                "bkash","rocket"
+            ]
+            $scope.bank_name='{{$ansarAllDetails->account?$ansarAllDetails->account->bank_name:""}}'
+            $scope.prefer_choice='{{$ansarAllDetails->account?$ansarAllDetails->account->prefer_choice:""}}'
+            $scope.mobile_bank_type='{{$ansarAllDetails->account?$ansarAllDetails->account->mobile_bank_type:""}}'
             $scope.ppp = {educationIdBng: []};
             $scope.rank = [];
 
@@ -1341,7 +1404,108 @@
                                         </div>
                                     </div>
                                 </fieldset>
+                                <fieldset>
+                                    <div class="level-title-session-entry">
+                                        <h5 style="text-align: center;">ব্যাংক অ্যাকাউন্ট তথ্য</h5>
+                                    </div>
+                                    <div class="box-info">
+                                        <div class="box-body">
+                                            <h4 class="text-center">সাধারণ ব্যাংকিং তথ্য</h4>
+                                            <div class="form-horizontal col-md-12 "
+                                                 ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.bank_name[0]}">
 
+                                                <label class="control-label col-sm-2" for="email">ব্যাংকের নাম</label>
+
+                                                <div class="col-sm-10 ">
+                                                    <select name="bank_name" class="form-control" id="sell"
+                                                            ng-model="bank_name">
+                                                        <option value="">--ব্যাংক নির্বাচন করুন--</option>
+                                                        <option ng-repeat="x in bankList"
+                                                                ng-selected="x=='{{Request::old('bank_name')}}'"
+                                                                value="[[x]]">[[x]]
+                                                        </option>
+                                                    </select>
+                                                    <span style="color:red"
+                                                          ng-show="formSubmitResult.error.bank_name[0]">[[ formSubmitResult.error.bank_name[0] ]]</span>
+                                                </div>
+
+                                            </div>
+                                            <div class="form-horizontal col-md-12 "
+                                                 ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.branch_name[0]}">
+                                                <label class="control-label col-sm-2" for="email">ব্রাঞ্চের নাম:</label>
+
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="branch_name"
+                                                           name="branch_name"
+                                                           value="{{ $ansarAllDetails->account?$ansarAllDetails->account->branch_name:''}}"
+                                                           placeholder="ব্রাঞ্চের নাম"/>
+                                                    <span style="color:red"
+                                                          ng-show="formSubmitResult.error.branch_name[0]">[[ formSubmitResult.error.branch_name[0] ]]</span>
+                                                </div>
+                                            </div>
+                                            <div class="form-horizontal col-md-12 "
+                                                 ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.account_no[0]}">
+                                                <label class="control-label col-sm-2" for="email">অ্যাকাউন্ট নম্বর:</label>
+
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="branch_name"
+                                                           name="account_no"
+                                                           value="{{ $ansarAllDetails->account?$ansarAllDetails->account->account_no:''}}"
+                                                           placeholder="ব্যাংক অ্যাকাউন্ট নম্বর"/>
+                                                    <span style="color:red"
+                                                          ng-show="formSubmitResult.error.account_no[0]">[[ formSubmitResult.error.account_no[0] ]]</span>
+                                                </div>
+                                            </div>
+                                            <h4 class="text-center">মোবাইল ব্যাংকিং তথ্য</h4>
+                                            <div class="form-horizontal col-md-12 "
+                                                 ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.mobile_bank_type[0]}">
+
+                                                <label class="control-label col-sm-2" for="email">মোবাইল ব্যাংকিং ধরন</label>
+
+                                                <div class="col-sm-10 ">
+                                                    <select name="mobile_bank_type" class="form-control" id="sell"
+                                                            ng-model="mobile_bank_type">
+                                                        <option value="">--নির্বাচন করুন--</option>
+                                                        <option ng-repeat="x in mobileBankType"
+                                                                ng-selected="x=='{{Request::old('mobile_bank_type')}}'"
+                                                                value="[[x]]">[[x]]
+                                                        </option>
+                                                    </select>
+                                                    <span style="color:red"
+                                                          ng-show="formSubmitResult.error.mobile_bank_type[0]">[[ formSubmitResult.error.mobile_bank_type[0] ]]</span>
+                                                </div>
+
+                                            </div>
+                                            <div class="form-horizontal col-md-12 "
+                                                 ng-class="{'has-error':formSubmitResult.status==false&&formSubmitResult.error.mobile_bank_account_no[0]}">
+                                                <label class="control-label col-sm-2" for="email">অ্যাকাউন্ট নম্বর:</label>
+
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control" id="branch_name"
+                                                           name="mobile_bank_account_no"
+                                                           value="{{ $ansarAllDetails->account?$ansarAllDetails->account->mobile_bank_account_no:''}}"
+                                                           placeholder="ব্যাংক অ্যাকাউন্ট নম্বর"/>
+                                                    <span style="color:red"
+                                                          ng-show="formSubmitResult.error.mobile_bank_account_no[0]">[[ formSubmitResult.error.mobile_bank_account_no[0] ]]</span>
+                                                </div>
+                                            </div>
+                                            <div class="form-horizontal col-md-12 ">
+
+                                                <label class="control-label col-sm-2" for="email">কোন অ্যাকাউন্ট এ টাকা পেতে চান?</label>
+
+                                                <div class="col-sm-10 ">
+                                                    <select name="prefer_choice" class="form-control" id="sell"
+                                                            ng-model="prefer_choice" value="{{$ansarAllDetails->account?$ansarAllDetails->account->prefer_choice:''}}">
+                                                        <option value="">--নির্বাচন করুন--</option>
+                                                        <option value="general">সাধারন ব্যাংকিং</option>
+                                                        <option value="mobile">মোবাইল ব্যাংকিং</option>
+                                                    </select>
+                                                   </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </fieldset>
                                 <fieldset>
                                     <div class="level-title-session-entry">
                                         <h5 style="text-align: center;">অন্যান্য তথ্য</h5>
