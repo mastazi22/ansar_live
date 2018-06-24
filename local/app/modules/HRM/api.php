@@ -3,6 +3,7 @@
 Route::group(['prefix'=>'HRM/api','namespace'=>'\App\modules\HRM\Controllers'],function(){
     Route::group(['middleware'=>'cros'],function (){
         Route::get('image/{id}',['as'=>'HRM.api.profile_image','uses'=>'ApiController@loadProfileImage']);
+        Route::get('user/image/{id}',['as'=>'HRM.api.user_profile_image','uses'=>'ApiController@loadUserProfileImage']);
         Route::post('pdf',['as'=>'HRM.api.pdf','uses'=>'ApiController@generateAndDownloadPDF']);
     });
     Route::group(['middleware'=>['auth.api','permission','checkUserType']],function(){

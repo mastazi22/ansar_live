@@ -2,6 +2,7 @@
 
 namespace App\modules\HRM\Controllers;
 
+use App\models\User;
 use App\modules\AVURP\Repositories\VDPInfo\VDPInfoInterface;
 use App\modules\AVURP\Requests\VDPInfoRequest;
 use App\modules\HRM\Models\MainTrainingInfo;
@@ -131,6 +132,19 @@ class ApiController extends Controller
             }
         }
         return response()->json(["message"=>"Not found"],400);
+    }
+    public function loadUserProfileImage($id){
+//        return $id;
+        $a = User::find($id);
+//        return $a->userProfile;
+        if($a&&$a->userProfile&&$a->userProfile->profile_image){
+            $path = storage_path($a->userProfile->profile_image);
+            if(File::exists($path)){
+                $image = Image::make($path);
+                return $image->response();
+            }
+        }
+        return Image::make(public_path('dist/img/nimage.png'))->response();
     }
 
     public function generateAndDownloadPDF(Request $request){
