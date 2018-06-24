@@ -137,7 +137,7 @@ class ApiController extends Controller
 //        return $id;
         $a = User::find($id);
 //        return $a->userProfile;
-        if($a&&$a->userProfile){
+        if($a&&$a->userProfile&&$a->userProfile->profile_image){
             $path = storage_path($a->userProfile->profile_image);
             if(File::exists($path)){
                 $image = Image::make($path);
