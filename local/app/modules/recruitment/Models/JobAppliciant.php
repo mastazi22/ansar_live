@@ -68,7 +68,7 @@ class JobAppliciant extends Model
     }
     public function physicalPoint(){
         if($this->status!='selected'){
-            return $this->status;
+            return -1;
         }
         $rules = $this->circular->point()->where('point_for','physical')->where('rule_name','height')->first()->rules;
         $min_height = floatval($rules->min_height_feet)*12+floatval($rules->min_height_inch);
@@ -83,7 +83,21 @@ class JobAppliciant extends Model
         return number_format(($delta_point/$delta_height)*(($total_height-$min_height))+$min_point,2);
     }
     public function educationTrainingPoint(){
-        $point_table = [
+        if($this->status!='selected'){
+            return -1;
+        }
+        $rules = $this->circular->point()->where('point_for','edu_training')->get();
+        $edu_point = 0;
+        foreach ($rules as $rule){
+            if($rule->rule_name==='education') {
+//                return $this->eduPoint(json_decode(json_encode($rule->rules),true));
+                $edu_point += $this->eduPoint(json_decode(json_encode($rule->rules),true));
+            }
+            else if($rule->rule_name==='training') {
+                $edu_point += floatval($rule->rules->training_point);
+            }
+        }
+        /*$point_table = [
           4=>10,
           7=>8,
           8=>6,
@@ -93,7 +107,28 @@ class JobAppliciant extends Model
         $order = 'desc';
         $education_priority = $this->education()->orderBy('priority',$order)->first()['priority'];
 //        $point_table[$education_priority] = 0;
-        $training_point = $this->training_info=='VDP training'||$this->training_info=='TDP training'?5:0;
-        return (isset($point_table[$education_priority])?$point_table[$education_priority]:0)+$training_point;
+        $training_point = $this->training_info=='VDP training'||$this->training_info=='TDP training'?5:0;*/
+        return $edu_point;
+    }
+    private function eduPoint($rules){
+        $point_table = array_values($rules['edu_point']);
+        $epp = intval($rules['edu_p_count']);
+        if($epp===1){
+            $education_priority = $this->education()->orderBy('priority','asc')->first()['priority'];
+            $key =  array_search($education_priority,array_column($point_table,'priority'));
+            $point = intval($point_table[$key]['point']);
+        }
+        else if($epp===2){
+            $education_priority = $this->education()->orderBy('priority','desc')->first()['priority'];
+            $key =  array_search($education_priority,array_column($point_table,'priority'));
+            $point = intval($point_table[$key]['point']);
+        }
+        else{
+            $p = collect($point_table)->pluck('priority');
+            $education_priority = $this->education()->whereIn('priority',$p)->pluck('priority');
+            $point = collect($point_table)->whereIn('priority',$education_priority)->sum('point');
+        }
+        return $point;
+
     }
 }
