@@ -35,9 +35,11 @@
             todayYear:0,
             defaultValue:moment(),
             dateFormat:'DD-MMM-YYYY',
-            editable:true
+            editable:true,
+            calenderType:'date' //type: date,month,year
         }
         $.extend(this.option,option);
+        console.log(this.option);
         this.init()
     }
 
@@ -69,13 +71,29 @@
         _self.option.currentMonth = d.getMonth();
         _self.option.currentYear = d.getFullYear();
         _self.option.weekDay = d.getDay();
-        _self.option.currentView = 'week';
+
         $('#'+_self.option.element+' .month-year-view').text(constent.month[_self.option.currentMonth] + ", " + _self.option.currentYear)
         _self.setYearMonth(_self.option.currentYear)
         _self.makeCalender(_self.option.currentMonth)
-        $('#'+_self.option.element+' .week-view').removeClass('zoomOut not-visible zoomIn')
+        /*$('#'+_self.option.element+' .week-view').removeClass('zoomOut not-visible zoomIn')
         $('#'+_self.option.element+' .month-view').addClass('not-visible')
-        $('#'+_self.option.element+' .year-view').addClass('not-visible')
+        $('#'+_self.option.element+' .year-view').addClass('not-visible')*/
+        // alert(_self.calenderType)
+        switch (_self.option.calenderType){
+            case 'date':
+                _self.option.currentView = 'week';
+                $('#'+_self.option.element+' .week-view').removeClass('zoomOut not-visible zoomIn')
+                $('#'+_self.option.element+' .month-view').addClass('not-visible')
+                $('#'+_self.option.element+' .year-view').addClass('not-visible')
+                break;
+            case 'month':
+                // alert(_self.calenderType)
+                _self.option.currentView = 'month';
+                $('#'+_self.option.element+' .month-view').removeClass('zoomOut not-visible zoomIn')
+                $('#'+_self.option.element+' .week-view').addClass('not-visible')
+                $('#'+_self.option.element+' .year-view').addClass('not-visible')
+                break;
+        }
 
     }
     Plugin.prototype.getCurrentDate = function() {
@@ -410,7 +428,10 @@
                     _self.option.weekDay = d.getDay()
                     _self.makeCalender(_self.option.currentMonth)
                     $('#'+_self.option.element+' .month-year-view').text(constent.month[_self.option.currentMonth] + ", " + _self.option.currentYear)
-                    _self.option.currentView = 'week';
+                    if(_self.option.calenderType=='month'){
+                        _self.getDate(1)
+                    }
+                    else _self.option.currentView = 'week';
                     break;
                 case 'year':
                     $('#'+_self.option.element+' .month-view').removeClass('zoomOut not-visible').addClass('zoomIn')
@@ -424,10 +445,8 @@
                     if (!$(this).parents('ul').hasClass('week-header')) {
                         //alert($(this).text())
                         //$(_self.element).focus()
-                        var date = _self.option.currentYear + "-" + (_self.option.currentMonth + 1 < 10 ? '0' + (_self.option.currentMonth + 1) : _self.option.currentMonth + 1) + "-" + (parseInt($(this).text().trim())<10?"0"+$(this).text():$(this).text());
-                        //alert(date)
-                        $(_self.element).val(moment(date).format(_self.option.dateFormat)).trigger('input')
-                        $('#'+_self.option.element).addClass('not-visible')
+                       // var date = _self.option.currentYear + "-" + (_self.option.currentMonth + 1 < 10 ? '0' + (_self.option.currentMonth + 1) : _self.option.currentMonth + 1) + "-" + (parseInt($(this).text().trim())<10?"0"+$(this).text():$(this).text());
+                        _self.getDate($(this).text().trim())
                     }
                     break;
             }
@@ -492,7 +511,13 @@
         })
 
     }
-
+    Plugin.prototype.getDate = function(date){
+        var _self = this;
+        var date = _self.option.currentYear + "-" + (_self.option.currentMonth + 1 < 10 ? '0' + (_self.option.currentMonth + 1) : _self.option.currentMonth + 1) + "-" + (parseInt(date)<10?"0"+date:date);
+        //alert(date)
+        $(_self.element).val(moment(date).format(_self.option.dateFormat)).trigger('input')
+        $('#'+_self.option.element).addClass('not-visible')
+    }
     Plugin.prototype.makeCalender = function(month) {
         var _self = this;
         var beforeMonth = month - 1 < 0 ? _self.option.yearMonth[11] : _self.option.yearMonth[month - 1];

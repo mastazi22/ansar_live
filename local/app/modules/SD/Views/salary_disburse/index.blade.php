@@ -18,37 +18,13 @@
             `)
 
             $scope.param = {}
-            $scope.months = {
-                "--Select a month--": '',
-                January: "01",
-                February: "02",
-                March: "03",
-                April: "04",
-                May: "05",
-                June: "06",
-                July: "07",
-                Augest: "08",
-                September: "09",
-                October: "10",
-                November: "11",
-                December: "12"
-            }
-
-            $scope.years = {"--Select a year--": ''};
-            $scope.dates = {"--Select a day--": ''};
-            for (var i = currentYear - 5; i <= currentYear; i++) {
-                $scope.years[i] = i;
-            }
-            for (var i = 1; i <= 31; i++) {
-                $scope.dates[i] = i;
-            }
             $scope.allLoading = false;
             $scope.loadData = function () {
                 console.log($scope.param)
                 $scope.allLoading = true;
                 $http({
                     method: 'get',
-                    url: "{{URL::route('SD.attendance.create')}}",
+                    url: "{{URL::route('SD.salary_management.index')}}",
                     params: $scope.param,
                 }).then(function (response) {
                     $scope.allLoading = false;
@@ -58,27 +34,6 @@
                     $scope.allLoading = false;
                     console.log(response.data)
                 })
-            }
-            $scope.init = function () {
-//                alert(1)
-                $scope.param.month = currentMonth;
-                $scope.param.year = currentYear;
-                console.log($scope.param)
-            }
-            $scope.initCalenderDate = function (dates,index) {
-                $scope.disabledDates[index] = {present:[],leave:[]};
-                $scope.selectedDates[index] = {present:[],leave:[]};
-                var d = dates.split(',');
-                if(d.length>=0){
-                    var da = moment(d[0]);
-                    for(var i=1;i<=da.endOf('month').date();i++){
-                        var dt = da.date(i).format('YYYY-MM-DD')
-                        if(d.indexOf(dt)<0) {
-                            $scope.disabledDates[index].present.push(dt)
-                            $scope.disabledDates[index].leave.push(dt)
-                        }
-                    }
-                }
             }
         })
 
@@ -132,43 +87,19 @@
                 >
 
                 </filter-template>
-                <div class="row" ng-init="init()">
-                    <div class="col-sm-2">
-                        <div class="form-group">
-                            <label for="">Select Day</label>
-                            <select class="form-control" ng-model="param.day">
-                                <option ng-repeat="(k,v) in dates" value="[[v]]">[[k]]</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
-                        <div class="form-group">
-                            <label for="">Select Month</label>
-                            <select class="form-control" ng-model="param.month">
-                                <option ng-repeat="(k,v) in months" value="[[v]]">[[k]]</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
-                        <div class="form-group">
-                            <label for="">Select Year</label>
-                            <select class="form-control" ng-model="param.year">
-                                <option ng-repeat="(k,v) in years" value="[[v]]">[[k]]</option>
-                            </select>
-                        </div>
-                    </div>
+                <div class="row">
                     <div class="col-sm-3">
                         <div class="form-group">
-                            <label for="">Search by Ansar ID</label>
-                            <input type="text" class="form-control" placeholder="Search by Ansar ID"
-                                   ng-model="param.ansar_id">
+                            <label for="">Select Month</label>
+                            <input typed-date-picker="" calender-type="month" type="text" class="form-control" placeholder="Select month & year"
+                                   ng-model="param.month_year">
                         </div>
                     </div>
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label style="display: block" for="">&nbsp;</label>
                             <button class="btn btn-primary" ng-click="loadData()"
-                                    ng-disabled="(!param.range||!param.unit||!param.thana||!param.kpi||!param.month||!param.year)&&(!param.ansar_id||!param.month||!param.year)"
+                                    ng-disabled="(!param.range||!param.unit||!param.thana||!param.kpi||!param.month_year)"
                             >
                                 <i class="fa fa-download"></i>&nbsp; Load data
                             </button>
