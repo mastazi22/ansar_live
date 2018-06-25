@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 
 class JobCircularController extends Controller
@@ -73,6 +72,7 @@ class JobCircularController extends Controller
             $request['application_status'] = !$request->application_status?'off':$request->application_status;
             $request['login_status'] = !$request->login_status?'off':$request->login_status;
             $request['circular_status'] = !$request->circular_status?'shutdown':$request->circular_status;
+            $request['quota_district_division']=!$request->quota_district_division?'off':$request->quota_district_division;
             $c = JobCategory::find($request->job_category_id)->circular()->create($request->except(['job_category_id', 'constraint']));
             $c->constraint()->create(['constraint' => $request->constraint]);
             DB::commit();
@@ -179,7 +179,6 @@ class JobCircularController extends Controller
     private function searchData($request)
     {
         $data = '';
-        DB::enableQueryLog();
         if ($request->exists('q') && $request->q) {
             $q = $request->q;
             if(!$data){
@@ -205,7 +204,6 @@ class JobCircularController extends Controller
         }
         if($data) {
             $data = $data->get();
-            Log::info(DB::getQueryLog());
             return response()->json($data);
         }
         else return response()->json(JobCircular::with('category')->get());

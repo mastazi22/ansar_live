@@ -54,7 +54,7 @@
                     $scope.allLoading = false;
                 },function (response) {
                     $scope.allLoading = false;
-                    $scope.applicants = $sce.trustAsHtml("<h3 class='text text-center'>Error ocur while loading. try again later</h3>")
+                    $scope.applicants = $sce.trustAsHtml("<h3 class='text text-center'>Error occur while loading. try again later</h3>")
                 })
             }
             $scope.editMark = function (id) {
@@ -67,7 +67,7 @@
                     $scope.markForm = $sce.trustAsHtml(response.data);
 
                 },function (response) {
-                    $scope.markForm = $sce.trustAsHtml("<h3 class='text text-center'>Error ocur while loading. try again later</h3>")
+                    $scope.markForm = $sce.trustAsHtml("<h3 class='text text-center'>Error occur while loading. try again later</h3>")
 
                 })
             }

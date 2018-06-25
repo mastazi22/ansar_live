@@ -123,7 +123,7 @@ class JobAppliciant extends Model
         if ($this->status != 'selected') {
             return -1;
         }
-        
+
         //=============
         if (is_null($this->circular->point()->first())) {
             return "--";

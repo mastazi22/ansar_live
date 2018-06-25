@@ -7,10 +7,10 @@
                     <input ng-keyup="$event.keyCode==13?loadApplicant():''" class="form-control" ng-model="param.q"
                            type="text" placeholder="Search by id,mobile no or national id">
                     <span class="input-group-btn">
-                    <button class="btn btn-primary" ng-click="loadApplicant()">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </span>
+                        <button class="btn btn-primary" ng-click="loadApplicant()">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
                 </div>
             </caption>
             <tr>
@@ -19,7 +19,6 @@
                 <th>Physical Fitness</th>
                 <th>Education & Training</th>
                 <th>Written</th>
-
                 <th>Viva</th>
                 <th>Total</th>
                 <th>Action</th>
@@ -35,10 +34,7 @@
                         <td>--</td>
                         <td>--</td>
                     @endif
-
                     <td>{{$a->marks?($a->marks->written?round($a->marks->convertedWrittenMark(),2):'--'):'--'}}</td>
-
-
                     <td>{{$a->marks?($a->marks->viva?$a->marks->viva:'--'):'--'}}</td>
                     <td>{{$a->marks?($a->marks->total?round($a->marks->total,2):'--'):'--'}}</td>
                     @if($a->marks)
