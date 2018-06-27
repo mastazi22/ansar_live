@@ -33,9 +33,9 @@
             })
 
             $scope.$watch('param.message',function (newVal) {
-                if(newVal!==undefined){
+                /*if(newVal!==undefined){
                     $scope.param['message']=newVal.length>160?newVal.substr(0,160):newVal;
-                }
+                }*/
             })
             $scope.submitData = function () {
                 $scope.allLoading = true;
