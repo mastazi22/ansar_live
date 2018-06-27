@@ -339,13 +339,13 @@ class FormSubmitHandler extends Controller
                                 $training[$i]->ansar_id = $ansarid;
                                 $training[$i]->training_designation = $training_designation[$i];
                                 $training[$i]->training_institute_name = $training_institute_name[$i];
-                                $training[$i]->training_start_date = $training_start_date[$i] ? Carbon::parse( $training_start_date[$i])->format("Y-m-d") : "0000-00-00";
-                                $training[$i]->training_end_date = $training_end_date[$i] ? Carbon::parse( $training_end_date[$i])->format("Y-m-d") : "0000-00-00";
+                                $training[$i]->training_start_date = $training_start_date[$i] ? Carbon::parse($training_start_date[$i])->format("Y-m-d") : "0000-00-00";
+                                $training[$i]->training_end_date = $training_end_date[$i] ? Carbon::parse($training_end_date[$i])->format("Y-m-d") : "0000-00-00";
                                 $training[$i]->trining_certificate_no = $trining_certificate_no[$i];
                                 $training[$i]->training_designation_eng = $training_designation_eng[$i];
                                 $training[$i]->training_institute_name_eng = $training_institute_name_eng[$i];
-                                $training[$i]->training_start_date_eng = $training_start_date_eng[$i] ? Carbon::parse( $training_start_date_eng[$i])->format("Y-m-d") : "0000-00-00";
-                                $training[$i]->training_end_date_eng = $training_end_date_eng[$i] ? Carbon::parse( $training_end_date_eng[$i])->format("Y-m-d") : "0000-00-00";
+                                $training[$i]->training_start_date_eng = $training_start_date_eng[$i] ? Carbon::parse($training_start_date_eng[$i])->format("Y-m-d") : "0000-00-00";
+                                $training[$i]->training_end_date_eng = $training_end_date_eng[$i] ? Carbon::parse($training_end_date_eng[$i])->format("Y-m-d") : "0000-00-00";
                                 $training[$i]->trining_certificate_no_eng = $trining_certificate_no_eng[$i];
                                 $successtraining = $training[$i]->save();
                             }
@@ -453,14 +453,14 @@ class FormSubmitHandler extends Controller
     public function DistrictName(Request $request)
     {
 //        return $request->all();
-        return Response::json($this->dataRepo->getUnits($request->id,$request->unit_id));
+        return Response::json($this->dataRepo->getUnits($request->id, $request->unit_id));
     }
 
     public function ThanaName(Request $request)
     {
 
 
-        return Response::json($this->dataRepo->getThanas($request->division_id,$request->id));
+        return Response::json($this->dataRepo->getThanas($request->division_id, $request->id));
     }
 
     public function testregistration(Request $request)
@@ -542,6 +542,7 @@ class FormSubmitHandler extends Controller
 
     public function submitEditEntry(Request $request)
     {
+        //return $request->all();
         $ansarId = $request->input('ID');
         $i = PersonalInfo::where('ansar_id', $ansarId)->select('id')->first();
         //return $i;
@@ -572,7 +573,9 @@ class FormSubmitHandler extends Controller
                 'national_id_no.regex' => 'National id no must be numeric and between 10 to 17 digits'
             ];
             $validator = Validator:: make($request->all(), $rules, $messages);
-
+            $bank_info = $request->only([
+                'bank_name', 'branch_name', 'account_no', 'mobile_bank_type', 'mobile_bank_account_no'
+                , 'prefer_choice']);
             if ($validator->fails()) {
 //                return Redirect::to('entryform')->withErrors($validator)->withInput();
                 return Response::json(['error' => $validator->errors(), 'status' => false]);
@@ -825,7 +828,8 @@ class FormSubmitHandler extends Controller
                         Image::make($request->file('thumb_pic'))->resize(220, 90)->save($path . '/' . $ansarId . '.' . $thumbextension);
                         $personalinfo->thumb_pic = 'data/fingerprint/' . $ansarId . '.' . $thumbextension;
                     } else $personalinfo->thumb_pic = 'data/fingerprint/' . $ansarId . '.jpg';
-
+                    $personalinfo->account()->delete();
+                    $personalinfo->account()->create($bank_info);
                     $successpersonal = $personalinfo->save();
                     if ($successpersonal) {
                         DB::commit();
@@ -836,7 +840,7 @@ class FormSubmitHandler extends Controller
                     throw new Exception();
                 } catch (\Exception $rollback) {
                     DB::rollback();
-                    return response($rollback->getMessage(), 400, ['Content-type' => 'text/html']);
+                    return response($rollback->getTraceAsString(), 400, ['Content-type' => 'text/html']);
                 }
             }
 
@@ -956,7 +960,7 @@ class FormSubmitHandler extends Controller
         if (Auth::user()->type == 55) {
             $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.user_id', Auth::user()->id);
         }
-        foreach ($request->except(['page','action_user_id']) as $key => $value) {
+        foreach ($request->except(['page', 'action_user_id']) as $key => $value) {
             $value = (object)($value);
 //            return $value;
             if ($key == 'smart_card_no') {
@@ -1000,15 +1004,14 @@ class FormSubmitHandler extends Controller
                 }
             } else if ($key == "hight_feet") {
                 if ($value->value) {
-                    if($value->compare=='>')$ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, ">=", $value->value);
-                    else if($value->compare=='<')$ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, "<=", $value->value);
+                    if ($value->compare == '>') $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, ">=", $value->value);
+                    else if ($value->compare == '<') $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, "<=", $value->value);
                     else $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, "=", $value->value);
                 }
             } else if ($key == "hight_inch") {
-                if($request->get('hight_feet')['value']) {
+                if ($request->get('hight_feet')['value']) {
                     $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->value ? $value->value : 0);
-                }
-                else if ($value->value) {
+                } else if ($value->value) {
                     $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->value);
                 }
 

@@ -331,7 +331,7 @@ class ApplicantScreeningController extends Controller
             $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment' => function ($p) use ($request) {
                 $p->with(['paymentHistory']);
             }])->where('mobile_no_self', 'like', '%' . $request->q . '%');
-            if($request->circular_id){
+            if ($request->circular_id) {
                 $applicants->where('job_circular_id', $request->circular_id);
             }
             if ($type == 'Male' || $type == 'Female') {
@@ -344,7 +344,7 @@ class ApplicantScreeningController extends Controller
             $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment' => function ($q) {
                 $q->with('paymentHistory');
             }]);
-            if($request->circular_id){
+            if ($request->circular_id) {
                 $applicants->where('job_circular_id', $request->circular_id);
             }
             if ($type == 'Male' || $type == 'Female') {
@@ -354,9 +354,9 @@ class ApplicantScreeningController extends Controller
             }
             $applicants = $applicants->paginate(50);
         }
-        $circulars = JobCircular::where('status','active')->pluck('circular_name','id')->prepend('--Select a circular--','');
+        $circulars = JobCircular::where('status', 'active')->pluck('circular_name', 'id')->prepend('--Select a circular--', '');
 //        return DB::getQueryLog();
-        return view('recruitment::applicant.applicants_support', ['applicants' => $applicants, 'type' => $type,'circulars'=>$circulars,'circular_id'=>$request->circular_id]);
+        return view('recruitment::applicant.applicants_support', ['applicants' => $applicants, 'type' => $type, 'circulars' => $circulars, 'circular_id' => $request->circular_id]);
     }
 
     public function applicantList(Request $request, $circular_id, $type = null)
@@ -372,16 +372,16 @@ class ApplicantScreeningController extends Controller
                 if ($type == 'Male' || $type == 'Female') {
                     $applicants->where('gender', $type);
                 } else if ($type == 'pending' || $type == 'applied' || $type == 'initial' || $type == 'paid' || $type == 'selected') {
-                   if($type=='applied'){
-                       $applicants->where(function ($q){
-                           $q->where('status', 'applied');
-                           $q->orWhere('status', 'selected');
-                           $q->orWhere('status', 'accepted');
-                           $q->orWhere('status', 'rejected');
-                       });
-                   } else{
-                       $applicants->where('status', $type);
-                   }
+                    if ($type == 'applied') {
+                        $applicants->where(function ($q) {
+                            $q->where('status', 'applied');
+                            $q->orWhere('status', 'selected');
+                            $q->orWhere('status', 'accepted');
+                            $q->orWhere('status', 'rejected');
+                        });
+                    } else {
+                        $applicants->where('status', $type);
+                    }
                 }
                 if ($request->range && $request->range != 'all') {
                     $applicants->where('division_id', $request->range);
@@ -399,14 +399,14 @@ class ApplicantScreeningController extends Controller
                 if ($type == 'Male' || $type == 'Female') {
                     $applicants->where('gender', $type);
                 } else if ($type == 'pending' || $type == 'applied' || $type == 'initial' || $type == 'paid' || $type == 'selected') {
-                    if($type=='applied'){
-                        $applicants->where(function ($q){
+                    if ($type == 'applied') {
+                        $applicants->where(function ($q) {
                             $q->where('status', 'applied');
                             $q->orWhere('status', 'selected');
                             $q->orWhere('status', 'accepted');
                             $q->orWhere('status', 'rejected');
                         });
-                    } else{
+                    } else {
                         $applicants->where('status', $type);
                     }
                 }
@@ -637,13 +637,13 @@ class ApplicantScreeningController extends Controller
     public function confirmSelectionOrRejection(Request $request)
     {
         if ($request->type === 'selection') {
-            $result = ['success'=>0,'fail'=>0];
+            $result = ['success' => 0, 'fail' => 0];
             DB::beginTransaction();
             try {
                 foreach ($request->applicants as $applicant_id) {
                     $applicant = JobAppliciant::where('applicant_id', $applicant_id)
-                        ->whereDoesntHave('selectedApplicant',function ($q) use($applicant_id){
-                            $q->where('applicant_id',$applicant_id);
+                        ->whereDoesntHave('selectedApplicant', function ($q) use ($applicant_id) {
+                            $q->where('applicant_id', $applicant_id);
                         })->first();
                     if ($applicant) {
                         $applicant->update(['status' => 'selected']);
@@ -652,8 +652,7 @@ class ApplicantScreeningController extends Controller
                             'message' => $request->message
                         ]);
                         $result['success']++;
-                    }
-                    else{
+                    } else {
                         $result['fail']++;
                     }
                 }
@@ -694,10 +693,10 @@ class ApplicantScreeningController extends Controller
             $constraint= json_decode($circular->constraint->constraint);*/
             $written_pass_mark = 0;
             $viva_pass_mark = 0;
-            $mark_distribution = JobCircularMarkDistribution::where('job_circular_id',$request->circular)->first();
-            if($mark_distribution){
-                $written_pass_mark = (floatval($mark_distribution->convert_written_mark)*floatval($mark_distribution->written_pass_mark))/100;
-                $viva_pass_mark = (floatval($mark_distribution->viva)*floatval($mark_distribution->viva_pass_mark))/100;
+            $mark_distribution = JobCircularMarkDistribution::where('job_circular_id', $request->circular)->first();
+            if ($mark_distribution) {
+                $written_pass_mark = (floatval($mark_distribution->convert_written_mark) * floatval($mark_distribution->written_pass_mark)) / 100;
+                $viva_pass_mark = (floatval($mark_distribution->viva) * floatval($mark_distribution->viva_pass_mark)) / 100;
             }
             $accepted = JobAppliciant::whereHas('accepted', function ($q) {
 
@@ -711,7 +710,7 @@ class ApplicantScreeningController extends Controller
 
                 })->where('status', 'selected')->where('job_circular_id', $request->circular)->where('unit_id', $request->unit);
             })->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'))->havingRaw('total_mark>0')->orderBy('total_mark', 'desc');
-            $applicant_male->where('written','>=',$written_pass_mark)->where('viva','>=',$viva_pass_mark);
+            $applicant_male->where('written', '>=', $written_pass_mark)->where('viva', '>=', $viva_pass_mark);
             if ($quota) {
                 if (intval($quota->male) - $accepted > 0) $applicants = $applicant_male->limit(intval($quota->male) - $accepted)->get();
                 else $applicants = [];
@@ -771,6 +770,7 @@ class ApplicantScreeningController extends Controller
         }
         return response()->json(['status' => 'success', 'message' => 'Applicant accepted successfully']);
     }
+
     public function confirmAcceptedIfSpecialCandidate(Request $request)
     {
         $rules = [
@@ -851,7 +851,6 @@ class ApplicantScreeningController extends Controller
 
     public function loadApplicantByQuota(Request $request)
     {
-
         DB::enableQueryLog();
         $rules = [
             'unit' => 'required|regex:/^[0-9]+$/',
@@ -860,40 +859,48 @@ class ApplicantScreeningController extends Controller
         $this->validate($request, $rules);
         $written_pass_mark = 0;
         $viva_pass_mark = 0;
-        $mark_distribution = JobCircularMarkDistribution::where('job_circular_id',$request->circular)->first();
-        if($mark_distribution){
-            $written_pass_mark = (floatval($mark_distribution->convert_written_mark)*floatval($mark_distribution->written_pass_mark))/100;
-            $viva_pass_mark = (floatval($mark_distribution->viva)*floatval($mark_distribution->viva_pass_mark))/100;
+        $mark_distribution = JobCircularMarkDistribution::where('job_circular_id', $request->circular)->first();
+        if ($mark_distribution) {
+            $written_pass_mark = (floatval($mark_distribution->convert_written_mark) * floatval($mark_distribution->written_pass_mark)) / 100;
+            $viva_pass_mark = (floatval($mark_distribution->viva) * floatval($mark_distribution->viva_pass_mark)) / 100;
         }
         $quota = JobApplicantQuota::where('district_id', $request->unit)->first();
         $accepted = JobAppliciant::whereHas('accepted', function ($q) {
-
         })->where('status', 'accepted')->where('job_circular_id', $request->circular)->where('unit_id', $request->unit)->count();
+
         $applicant_male = JobApplicantMarks::with(['applicant' => function ($q) {
             $q->with(['district', 'division', 'thana']);
         }])->whereHas('applicant', function ($q) use ($request) {
-
             $q->whereHas('selectedApplicant', function () {
-
             })->where('status', 'selected')->where('job_circular_id', $request->circular)->where('unit_id', $request->unit);
         })->select(DB::raw('DISTINCT *,(written+viva+physical+edu_training) as total_mark'))->havingRaw('total_mark>0')->orderBy('total_mark', 'desc');
-        $applicant_male->where('written','>=',$written_pass_mark)->where('viva','>=',$viva_pass_mark);
+        $applicant_male->where('written', '>=', $written_pass_mark)->where('viva', '>=', $viva_pass_mark);
         $applicants = [];
+
         if ($quota) {
-            if (intval($quota->male) - $accepted > 0) $applicants = $applicant_male->limit(intval($quota->male) - $accepted)->get();
-//            else return view('recruitment::applicant.data_accepted',['applicants'=>[]]);
+            if (intval($quota->male) - $accepted > 0)
+                $applicant_male->limit(intval($quota->male) - $accepted);
+//            else return view('recruitment::applicant.data_accepted', ['applicants' => []]);
         }
 //        else return view('recruitment::applicant.data_accepted',['applicants'=>[]]);
         // $a = $applicant_male->get();
         // return DB::getQueryLog();
+
+        //for 3rd and 4th category
+        if (isset($request->cat_other_no_applicant) && $request->cat_other_no_applicant > 0) {
+            $applicants = $applicant_male->limit($request->cat_other_no_applicant)->get();
+        } else {
+            $applicants = $applicant_male->get();
+        }
+
         if ($request->exists('export') && $request->export == 'excel') {
             Excel::create('accepted_list', function ($excel) use ($applicants) {
                 $excel->sheet('sheet1', function ($sheet) use ($applicants) {
                     $sheet->loadView('recruitment::applicant.data_accepted', ['applicants' => $applicants]);
                 });
             })->download('xls');
-        } else return view('recruitment::applicant.data_accepted', ['applicants' => $applicants]);
-
+        } else
+            return view('recruitment::applicant.data_accepted', ['applicants' => $applicants]);
     }
 
 
@@ -964,7 +971,7 @@ class ApplicantScreeningController extends Controller
 
     public function applicantEditForHRM($type, $id)
     {
-        $applicant = JobAppliciant::with(['division', 'district', 'thana','circular.trainingDate' ,'appliciantEducationInfo' => function ($q) {
+        $applicant = JobAppliciant::with(['division', 'district', 'thana', 'circular.trainingDate', 'appliciantEducationInfo' => function ($q) {
             $q->with('educationInfo');
         }])->where('applicant_id', $id)->first();
         if ($type == 'download') {

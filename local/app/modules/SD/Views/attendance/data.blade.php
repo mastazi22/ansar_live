@@ -76,7 +76,7 @@
                             @elseif(!$ad->is_present&&!$ad->is_leave)
                                 <span class='att-label label-danger'>Absent</span>
                             @elseif($ad->is_leave)
-                                <span class='att-label label-success'>Leave</span>
+                                <span class='att-label label-warning'>Leave</span>
                             @endif
                         </td>
                     @else

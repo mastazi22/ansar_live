@@ -36,7 +36,7 @@ class ApiUserController extends Controller
         }catch (JWTException $e){
             return response()->json(['message'=>$e->getMessage()],500);
         }
-
+        $user->userProfile->profile_image = route('HRM.api.user_profile_image',['id'=>$user->id]);
         return response()->json(compact('token','user'));
     }
 }
