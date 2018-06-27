@@ -230,6 +230,30 @@ GlobalApp.directive('datePicker', function () {
         }
     }
 })
+GlobalApp.directive('typedDatePicker', function () {
+    return {
+        restrict: 'AC',
+        link: function (scope, element, attrs) {
+            //alert(scope.event)
+            var data = attrs.datePicker
+            var format = "DD-MMM-YYYY";
+            switch(attrs.calenderType){
+                case 'month':
+                    format = "MMMM, YYYY"
+                    break;
+                case 'year':
+                    format = "YYYY"
+                    break;
+            }
+
+            $(element).datePicker({
+                dateFormat: format,
+                calenderType:attrs.calenderType
+            })
+
+        }
+    }
+})
 GlobalApp.directive('multiDatePicker', function () {
     return {
         restrict: 'AC',

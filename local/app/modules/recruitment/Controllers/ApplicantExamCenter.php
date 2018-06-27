@@ -25,6 +25,16 @@ class ApplicantExamCenter extends Controller
             if ($request->circular) {
                 $data->where('job_circular_id', $request->circular);
             }
+            if ($request->range!='all') {
+                $data->whereHas('units',function($q) use ($request){
+                    $q->where('tbl_units.division_id',$request->range);
+                });
+            }
+            if ($request->unit!='all') {
+                $data->whereHas('units',function($q) use ($request){
+                    $q->where('tbl_units.id',$request->unit);
+                });
+            }
 //            return $data->get();
             return view('recruitment::exam_center.data', ['data' => $data->get()]);
 

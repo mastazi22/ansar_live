@@ -35,6 +35,10 @@ class DemandConstant
                 return $this->constants->where('cons_name','margha_fee')->first();
             case 'WF':
                 return $this->constants->where('cons_name','welfare_fee')->first();
+            case 'EBPA':
+                return $this->constants->where('cons_name','eid_bonus_for_pc_and_apc')->first();
+            case 'EBA':
+                return $this->constants->where('cons_name','eid_bonus_for_ansar')->first();
             default:
                 return 0;
 

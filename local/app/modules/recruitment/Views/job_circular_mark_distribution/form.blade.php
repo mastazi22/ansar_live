@@ -12,6 +12,7 @@
         @endif
     </div>
     <div class="form-group">
+        {!! Form::checkbox('is_physical_checkbox','checked',@(isset($data)&&!empty($data->physical))?true:false,['class'=>'field-active']) !!}
         {!! Form::label('physical','Physical Mark :',['class'=>'control-label']) !!}
         {!! Form::text('physical',null,['class'=>'form-control','placeholder'=>'Enter physical mark']) !!}
         @if(isset($errors)&&$errors->first('physical'))
@@ -19,51 +20,58 @@
         @endif
     </div>
     <div class="form-group">
+        {!! Form::checkbox('is_education_and_training_checkbox','checked',@(isset($data)&&!empty($data->edu_training))?true:false,['class'=>'field-active']) !!}
         {!! Form::label('edu_training','Education & Training Mark :',['class'=>'control-label']) !!}
         {!! Form::text('edu_training',null,['class'=>'form-control','placeholder'=>'Enter education & training mark']) !!}
         @if(isset($errors)&&$errors->first('edu_training'))
             <p class="text text-danger">{{$errors->first('edu_training')}}</p>
         @endif
     </div>
-    <div class="form-group">
-        {!! Form::label('written','Written Mark :',['class'=>'control-label']) !!}
-        {!! Form::text('written',null,['class'=>'form-control','placeholder'=>'Enter written mark']) !!}
-        @if(isset($errors)&&$errors->first('written'))
-            <p class="text text-danger">{{$errors->first('written')}}</p>
-        @endif
-    </div>
-    <div class="form-group">
-        {!! Form::label('convert_written_mark','Convert Written Mark To:',['class'=>'control-label']) !!}
-        {!! Form::text('convert_written_mark',null,['class'=>'form-control','placeholder'=>'Enter conversion  mark']) !!}
-        @if(isset($errors)&&$errors->first('convert_written_mark'))
-            <p class="text text-danger">{{$errors->first('convert_written_mark')}}</p>
-        @endif
-    </div>
-    <div class="form-group">
-        {!! Form::label('written_pass_mark','Written Qualifying Mark :',['class'=>'control-label']) !!}
-        <div class="input-group">
-            {!! Form::text('written_pass_mark',null,['class'=>'form-control','placeholder'=>'Enter qualifying mark']) !!}
-            <span class="input-group-addon">%</span>
-            @if(isset($errors)&&$errors->first('written_pass_mark'))
-                <p class="text text-danger">{{$errors->first('written_pass_mark')}}</p>
+    <div class="well">
+        <div class="form-group">
+            {!! Form::checkbox('is_written_checkbox','checked',@(isset($data)&&!empty($data->written))?true:false,['class'=>'field-active']) !!}
+            {!! Form::label('written','Written Mark :',['class'=>'control-label']) !!}
+            {!! Form::text('written',null,['class'=>'form-control','placeholder'=>'Enter written mark']) !!}
+            @if(isset($errors)&&$errors->first('written'))
+                <p class="text text-danger">{{$errors->first('written')}}</p>
             @endif
         </div>
-    </div>
-    <div class="form-group">
-        {!! Form::label('viva','Viva Mark :',['class'=>'control-label']) !!}
-        {!! Form::text('viva',null,['class'=>'form-control','placeholder'=>'Enter viva mark']) !!}
-        @if(isset($errors)&&$errors->first('viva'))
-            <p class="text text-danger">{{$errors->first('viva')}}</p>
-        @endif
-    </div>
-    <div class="form-group">
-        {!! Form::label('viva_pass_mark','Viva Qualifying Mark :',['class'=>'control-label']) !!}
-        <div class="input-group">
-            {!! Form::text('viva_pass_mark',null,['class'=>'form-control','placeholder'=>'Enter qualifying mark']) !!}
-            <span class="input-group-addon">%</span>
-            @if(isset($errors)&&$errors->first('viva_pass_mark'))
-                <p class="text text-danger">{{$errors->first('viva_pass_mark')}}</p>
+        <div class="form-group">
+            {!! Form::label('convert_written_mark','Convert Written Mark To:',['class'=>'control-label']) !!}
+            {!! Form::text('convert_written_mark',null,['class'=>'form-control','placeholder'=>'Enter conversion  mark']) !!}
+            @if(isset($errors)&&$errors->first('convert_written_mark'))
+                <p class="text text-danger">{{$errors->first('convert_written_mark')}}</p>
             @endif
+        </div>
+        <div class="form-group">
+            {!! Form::label('written_pass_mark','Written Qualifying Mark :',['class'=>'control-label']) !!}
+            <div class="input-group">
+                {!! Form::text('written_pass_mark',null,['class'=>'form-control','placeholder'=>'Enter qualifying mark']) !!}
+                <span class="input-group-addon">%</span>
+                @if(isset($errors)&&$errors->first('written_pass_mark'))
+                    <p class="text text-danger">{{$errors->first('written_pass_mark')}}</p>
+                @endif
+            </div>
+        </div>
+    </div>
+    <div class="well">
+        <div class="form-group">
+            {!! Form::checkbox('is_viva_checkbox','checked',@(isset($data)&&!empty($data->viva))?true:false,['class'=>'field-active']) !!}
+            {!! Form::label('viva','Viva Mark :',['class'=>'control-label']) !!}
+            {!! Form::text('viva',null,['class'=>'form-control','placeholder'=>'Enter viva mark']) !!}
+            @if(isset($errors)&&$errors->first('viva'))
+                <p class="text text-danger">{{$errors->first('viva')}}</p>
+            @endif
+        </div>
+        <div class="form-group">
+            {!! Form::label('viva_pass_mark','Viva Qualifying Mark :',['class'=>'control-label']) !!}
+            <div class="input-group">
+                {!! Form::text('viva_pass_mark',null,['class'=>'form-control','placeholder'=>'Enter qualifying mark']) !!}
+                <span class="input-group-addon">%</span>
+                @if(isset($errors)&&$errors->first('viva_pass_mark'))
+                    <p class="text text-danger">{{$errors->first('viva_pass_mark')}}</p>
+                @endif
+            </div>
         </div>
     </div>
     @if(isset($data))
@@ -78,4 +86,59 @@
     {!! Form::close() !!}
 </div>
 <script>
+    changeField();
+    jQuery('.field-active').change(function () {
+        changeField();
+    });
+
+    function changeField() {
+        //==== physical
+        if (jQuery("input[name='is_physical_checkbox']").prop('checked')) {
+            fieldChecked(jQuery("input[name='physical']"), true);
+        } else {
+            fieldUnChecked(jQuery("input[name='physical']"), true);
+        }
+
+        //==== education and training
+        if (jQuery("input[name='is_education_and_training_checkbox']").prop("checked")) {
+            fieldChecked(jQuery("input[name='edu_training']"), true);
+        } else {
+            fieldUnChecked(jQuery("input[name='edu_training']"), true);
+        }
+
+        //==== Written
+        if (jQuery("input[name='is_written_checkbox']").prop("checked")) {
+            fieldChecked(jQuery("input[name='written']"), true);
+            fieldChecked(jQuery("input[name='convert_written_mark']"), false);
+            fieldChecked(jQuery("input[name='written_pass_mark']"), false);
+        } else {
+            fieldUnChecked(jQuery("input[name='written']"), true);
+            fieldUnChecked(jQuery("input[name='convert_written_mark']"), false);
+            fieldUnChecked(jQuery("input[name='written_pass_mark']"), false);
+        }
+
+        //==== Viva
+        if (jQuery("input[name='is_viva_checkbox']").prop("checked")) {
+            fieldChecked(jQuery("input[name='viva']"), true);
+            fieldChecked(jQuery("input[name='viva_pass_mark']"), false);
+        } else {
+            fieldUnChecked(jQuery("input[name='viva']"), true);
+            fieldUnChecked(jQuery("input[name='viva_pass_mark']"), false);
+        }
+    }
+
+    function fieldChecked(element, isRequired) {
+        jQuery(element).removeAttr('disabled');
+        if (isRequired) {
+            jQuery(element).attr("required", "required");
+        }
+    }
+
+    function fieldUnChecked(element, isRequired) {
+        if (!isRequired) {
+            jQuery(element).removeAttr('required');
+        }
+        jQuery(element).val("");
+        jQuery(element).attr('disabled', 'disabled');
+    }
 </script>

@@ -141,13 +141,13 @@
             }
 //        $scope.getFreezeList();
 
-            $scope.reEmbodied = function (ansarids, date) {
+            $scope.reEmbodied = function (ansarids, date,ifd) {
                 console.log(ansarids)
                 $scope.submitting = true;
                 $http({
                     url: "{{URL::to('HRM/freezeRembodied')}}",
                     method: 'post',
-                    data: angular.toJson({ansarId: ansarids, unfreeze_date: date})
+                    data: angular.toJson({ansarId: ansarids, unfreeze_date: date,include_freeze_date:ifd})
                 }).then(function (response) {
                     console.log(response.data);
                     $scope.submitting = false;
@@ -671,7 +671,7 @@
                 <!-- Modal content-->
                 <div class="box-body modal-content">
                     <form class="form" role="form" method="post"
-                          ng-submit="reEmbodied([getSingleRow.ansar_id],unfreeze_date)">
+                          ng-submit="reEmbodied([getSingleRow.ansar_id],unfreeze_date,include_freeze_date)">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title">Ansar
@@ -687,6 +687,17 @@
                                 <input type="text" date-picker placeholder="Unfreeze date" class="form-control"
                                        id="unfreeze_date" ng-model="unfreeze_date" name="unfreeze_date">
                             </div>
+                            @if(UserPermission::userPermissionExists('include_freeze_days'))
+                                <div class="form-group">
+                                    <label class="control-label" for="include_freeze_date">
+                                        Include freezing days
+                                    </label>
+                                    <input type="checkbox" style="vertical-align: text-top;"
+                                           id="include_freeze_date"
+                                           ng-model="include_freeze_date" name="include_freeze_date"
+                                           ng-true-value="1" ng-false-value="0">
+                                </div>
+                            @endif
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-primary" type="submit" ng-disabled="submitting">
