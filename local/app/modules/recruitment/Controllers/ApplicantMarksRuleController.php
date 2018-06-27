@@ -55,6 +55,7 @@ class ApplicantMarksRuleController extends Controller
            'rule_name'=>'required',
        ];
        $this->validate($request,$rules);
+        $rules['job_circular_id']='required|unique:job_applicant_points,job_circular_id,NULL,id,rule_name,'.$request->rule_name;
        if($request->rule_name==='education'){
            $rules['edu_point.*.priority']='required';
            $rules['edu_point.*.point']='required';
@@ -143,7 +144,61 @@ class ApplicantMarksRuleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $rules=[
+            'job_circular_id'=>'required',
+            'point_for'=>'required',
+            'rule_name'=>'required',
+        ];
+        $this->validate($request,$rules);
+        $rules['job_circular_id']='required|unique:job_applicant_points,job_circular_id,'.$id.',id,rule_name,'.$request->rule_name;
+        if($request->rule_name==='education'){
+
+            $rules['edu_point.*.priority']='required';
+            $rules['edu_point.*.point']='required';
+            $rules['edu_p_count']='required';
+        }
+        if($request->rule_name==='height'){
+            $rules['min_height_feet']='required';
+            $rules['min_height_inch']='required';
+            $rules['min_point']='required';
+            $rules['max_height_feet']='required';
+            $rules['max_height_inch']='required';
+            $rules['max_point']='required';
+        }
+        if($request->rule_name==='training'){
+            $rules['training_point']='required';
+        }
+        $this->validate($request,$rules);
+        $data = [];
+        if($request->rule_name==='education'){
+            $data['job_circular_id'] = $request->job_circular_id;
+            $data['point_for'] = $request->point_for;
+            $data['rule_name'] = $request->rule_name;
+            $data['rules'] = json_encode($request->only(['edu_point','edu_p_count']));
+
+        }
+        if($request->rule_name==='height'){
+            $data['job_circular_id'] = $request->job_circular_id;
+            $data['point_for'] = $request->point_for;
+            $data['rule_name'] = $request->rule_name;
+            $data['rules'] = json_encode($request->only(['min_height_feet','min_height_inch','min_point','max_height_feet','max_height_inch','max_point']));
+        }
+        if($request->rule_name==='training'){
+            $data['job_circular_id'] = $request->job_circular_id;
+            $data['point_for'] = $request->point_for;
+            $data['rule_name'] = $request->rule_name;
+            $data['rules'] = json_encode($request->only(['training_point']));
+        }
+        DB::beginTransaction();
+        try{
+            $p = JobApplicantPoints::findOrFail($id);
+            $p->update($data);
+            DB::commit();
+        }catch(\Exception $e){
+            DB::rollback();
+            return redirect()->route('recruitment.marks_rules.index')->with('session_error',$e->getMessage());
+        }
+        return redirect()->route('recruitment.marks_rules.index')->with('session_success','Rules updated  successfully');
     }
 
     /**
