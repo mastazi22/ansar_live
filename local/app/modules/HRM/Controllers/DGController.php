@@ -1533,8 +1533,8 @@ class DGController extends Controller
             if ((!in_array(AnsarStatusInfo::PANEL_STATUS, $status) && !in_array(AnsarStatusInfo::REST_STATUS, $status)) || in_array(AnsarStatusInfo::BLOCK_STATUS, $status) || in_array(AnsarStatusInfo::BLACK_STATUS, $status)||in_array(AnsarStatusInfo::OFFER_BLOCK_STATUS, $status)) throw new \Exception("This ansar not eligible for offer");
             if (!$a && !preg_match('/^(\+88)?0[0-9]{10}/', $a->mobile_no_self)) throw new Exception("Invalid mobile number");
             $a->offer_sms_info()->save(new OfferSMS([
-                'sms_send_datetime' => Carbon::parse($request->offer_date),
-                'sms_end_datetime' => Carbon::parse($request->offer_date)->addHours(24),
+                'sms_send_datetime' => Carbon::parse($request->offer_date)->format("y-m-d H:i:s"),
+                'sms_end_datetime' => Carbon::parse($request->offer_date)->addHours(24)->format("y-m-d H:i:s"),
                 'district_id' => $request->unit_id,
                 'action_user_id' => auth()->user()->id,
                 'come_from' => $status[0]

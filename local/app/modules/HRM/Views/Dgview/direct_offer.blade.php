@@ -178,7 +178,25 @@
     </div>
     <script>
         $(document).ready(function () {
-            $("#date").datepicker({                dateFormat:'dd-M-yy'            })()
+            $("#date").datepicker({
+                dateFormat:'dd-M-yy',
+                onSelect:function (dateText) {
+                    var d = new Date(); // for now
+
+                    var h = d.getHours();
+                    h = (h < 10) ? ("0" + h) : h ;
+
+                    var m = d.getMinutes();
+                    m = (m < 10) ? ("0" + m) : m ;
+
+                    var s = d.getSeconds();
+                    s = (s < 10) ? ("0" + s) : s ;
+
+                    dateText = dateText + " " + h + ":" + m + ":" + s;
+
+                    $('#date').val(dateText);
+                }
+            })()
         })
     </script>
 @stop
