@@ -32,6 +32,9 @@ class JobCircularMarkDistribution extends Model
                 'is_education_and_training_checkbox' => 'sometimes',
                 'edu_training' => 'required_if:is_education_and_training_checkbox,checked|numeric',
                 //
+                'is_education_and_experience_checkbox' => 'sometimes',
+                'edu_experience' => 'required_if:is_education_and_experience_checkbox,checked|numeric',
+                //
                 'is_written_checkbox' => 'sometimes',
                 'written' => 'required_if:is_written_checkbox,checked|numeric',
                 //
@@ -47,6 +50,9 @@ class JobCircularMarkDistribution extends Model
                 //
                 'is_education_and_training_checkbox' => 'sometimes',
                 'edu_training' => 'required_if:is_education_and_training_checkbox,checked|numeric',
+                //
+                'is_education_and_experience_checkbox' => 'sometimes',
+                'edu_experience' => 'required_if:is_education_and_experience_checkbox,checked|numeric',
                 //
                 'is_written_checkbox' => 'sometimes',
                 'written' => 'required_if:is_written_checkbox,checked|numeric',
