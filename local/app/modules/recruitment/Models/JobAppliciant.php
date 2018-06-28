@@ -4,6 +4,8 @@ namespace App\modules\recruitment\Models;
 
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
+use App\modules\HRM\Models\EmbodimentLogModel;
+use App\modules\HRM\Models\EmbodimentModel;
 use App\modules\HRM\Models\Thana;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -98,13 +100,9 @@ class JobAppliciant extends Model
         if ($this->status != 'selected') {
             return -1;
         }
-
-        //========
-        if (is_null($this->circular->point()->first())) {
+        if (!$this->circular->point()->exists() || !$this->circular->point()->where('point_for', 'physical')->exists()) {
             return "--";
         }
-        //===========
-
         $rules = $this->circular->point()->where('point_for', 'physical')->where('rule_name', 'height')->first()->rules;
         $min_height = floatval($rules->min_height_feet) * 12 + floatval($rules->min_height_inch);
         $max_height = floatval($rules->max_height_feet) * 12 + floatval($rules->max_height_inch);
@@ -114,7 +112,6 @@ class JobAppliciant extends Model
         $delta_height = $max_height - $min_height;
         $delta_point = $max_point - $min_point;
         if ($total_height >= $max_height) return $max_point;
-//        return $total_height;
         return number_format(($delta_point / $delta_height) * (($total_height - $min_height)) + $min_point, 2);
     }
 
@@ -123,18 +120,13 @@ class JobAppliciant extends Model
         if ($this->status != 'selected') {
             return -1;
         }
-
-        //=============
-        if (is_null($this->circular->point()->first())) {
+        if (!$this->circular->point()->exists() || !$this->circular->point()->where('point_for', 'edu_training')->exists()) {
             return "--";
         }
-        //============
-
         $rules = $this->circular->point()->where('point_for', 'edu_training')->get();
         $edu_point = 0;
         foreach ($rules as $rule) {
             if ($rule->rule_name === 'education') {
-//                return $this->eduPoint(json_decode(json_encode($rule->rules),true));
                 $edu_point += $this->eduPoint(json_decode(json_encode($rule->rules), true));
             } else if ($rule->rule_name === 'training') {
                 $edu_point += floatval($rule->rules->training_point);
@@ -152,6 +144,35 @@ class JobAppliciant extends Model
 //        $point_table[$education_priority] = 0;
         $training_point = $this->training_info=='VDP training'||$this->training_info=='TDP training'?5:0;*/
         return $edu_point;
+    }
+
+    public function educationExperiencePoint()
+    {
+        if ($this->status != 'selected') {
+            return -1;
+        }
+        if (!$this->circular->point()->exists() || !$this->circular->point()->where('point_for', 'edu_experience')->exists()) {
+            return "--";
+        }
+        $rules = $this->circular->point()->where('point_for', 'edu_experience')->get();
+        $expRule = collect($rules)->where('rule_name', 'experience')->first();
+        $eduRule = collect($rules)->where('rule_name', 'education')->first();
+        $eduPoint = $point = 0;
+        if ($eduRule) {
+            $eduPoint = $this->eduPoint(json_decode(json_encode($eduRule->rules), true));
+        }
+        if ($expRule) {
+            $exp = $this->expCalculation();
+            $min_exp_years = floatval($expRule->rules->min_experience_years);
+            $max_exp_years = floatval($expRule->rules->max_experience_years);
+            $min_point = floatval($expRule->rules->min_exp_point);
+            $max_point = floatval($expRule->rules->max_exp_point);
+            $delta_height = $max_exp_years - $min_exp_years;
+            $delta_point = $max_point - $min_point;
+            if ($exp >= $max_exp_years) $point = $max_point;
+            else $point = number_format(($delta_point / $delta_height) * (($exp - $min_exp_years)) + $min_point, 2);
+        }
+        return $point + $eduPoint < 0 ? 0 : $point + $eduPoint;
     }
 
     private function eduPoint($rules)
@@ -173,5 +194,29 @@ class JobAppliciant extends Model
         }
         return $point;
 
+    }
+
+    public function expCalculation()
+    {
+        if (!$this->ansar_id) return 0;
+        $currentExp = $prevExp = 0;
+        $currentEmbodiment = EmbodimentModel::where("ansar_id", $this->ansar_id)->first();
+        if ($currentEmbodiment) {
+            $currentExp = $this->yearDiff(date('Y-m-d'), $currentEmbodiment->joining_date);
+        }
+        $embodimentHistory = EmbodimentLogModel::where("ansar_id", $this->ansar_id)->get();
+        if ($embodimentHistory->count() > 0) {
+            foreach ($embodimentHistory as $history) {
+                $prevExp += $this->yearDiff($history->joining_date, $history->release_date);
+            }
+        }
+        return $currentExp + $prevExp;
+    }
+
+    private function yearDiff($d1, $d2)
+    {
+        $d1 = new \DateTime($d1);
+        $d2 = new \DateTime($d2);
+        return $d1->diff($d2)->y;
     }
 }

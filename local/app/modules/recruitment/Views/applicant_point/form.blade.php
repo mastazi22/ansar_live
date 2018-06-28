@@ -25,6 +25,45 @@
             <p class="text text-danger">{{$errors->first('rule_name')}}</p>
         @endif
     </div>
+    <div id="experience_rules" class="rules-class" style="display: none">
+        <h4 class="text-center" style="border-bottom: 1px solid #000000">Rule for Experience</h4>
+        <div class="form-group">
+            {!! Form::label('','Min Experience(in years):',['class'=>'control-label']) !!}
+            <div class="row">
+                <div class="col-sm-12">
+                    {!! Form::text('min_experience_years',null,['class'=>'form-control','placeholder'=>'Years']) !!}
+                    @if(isset($errors)&&$errors->first('min_experience_years'))
+                        <p class="text text-danger">{{$errors->first('min_experience_years')}}</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            {!! Form::label('min_exp_point','Min Point :',['class'=>'control-label']) !!}
+            {!! Form::text('min_exp_point',null,['class'=>'form-control','placeholder'=>'Min Point']) !!}
+            @if(isset($errors)&&$errors->first('min_exp_point'))
+                <p class="text text-danger">{{$errors->first('min_exp_point')}}</p>
+            @endif
+        </div>
+        <div class="form-group">
+            {!! Form::label('','Max Experience(in years):',['class'=>'control-label']) !!}
+            <div class="row">
+                <div class="col-sm-12">
+                    {!! Form::text('max_experience_years',null,['class'=>'form-control','placeholder'=>'Years']) !!}
+                    @if(isset($errors)&&$errors->first('max_experience_years'))
+                        <p class="text text-danger">{{$errors->first('max_experience_years')}}</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            {!! Form::label('max_exp_point','Max Point :',['class'=>'control-label']) !!}
+            {!! Form::text('max_exp_point',null,['class'=>'form-control','placeholder'=>'Max Point']) !!}
+            @if(isset($errors)&&$errors->first('max_exp_point'))
+                <p class="text text-danger">{{$errors->first('max_exp_point')}}</p>
+            @endif
+        </div>
+    </div>
     <div id="height_rules" class="rules-class" style="display: none">
         <h4 class="text-center" style="border-bottom: 1px solid #000000">Rule for Height</h4>
         <div class="form-group">
@@ -99,7 +138,7 @@
                     <th>Priority</th>
                     <th>Point</th>
                 </tr>
-                <?php $i=0;$j=0?>
+                <?php $i = 0;$j = 0?>
                 @foreach($educations as $education)
                     <tr class="edu_c" data-id="{{$education->id}}">
                         <td>{{++$i}}</td>
@@ -118,13 +157,16 @@
         <div class="form-group">
             <h4>Choose a option</h4>
             <div class="radio">
-                <label>{!! Form::radio('edu_p_count',1,isset($data)&&isset($data['edu_p_count'])?intval($data['edu_p_count'])==1:false) !!}Point count only ascending priority</label>
+                <label>{!! Form::radio('edu_p_count',1,isset($data)&&isset($data['edu_p_count'])?intval($data['edu_p_count'])==1:false) !!}
+                    Point count only ascending priority</label>
             </div>
             <div class="radio">
-                <label>{!! Form::radio('edu_p_count',2,isset($data)&&isset($data['edu_p_count'])?intval($data['edu_p_count'])==2:false) !!}Point count only descending priority</label>
+                <label>{!! Form::radio('edu_p_count',2,isset($data)&&isset($data['edu_p_count'])?intval($data['edu_p_count'])==2:false) !!}
+                    Point count only descending priority</label>
             </div>
             <div class="radio">
-                <label>{!! Form::radio('edu_p_count',3,isset($data)&&isset($data['edu_p_count'])?intval($data['edu_p_count'])==3:false) !!}Sum all education point</label>
+                <label>{!! Form::radio('edu_p_count',3,isset($data)&&isset($data['edu_p_count'])?intval($data['edu_p_count'])==3:false) !!}
+                    Sum all education point</label>
             </div>
         </div>
     </div>
@@ -152,59 +194,63 @@
 <script>
     $(document).ready(function () {
         var constraint;
+
         function initCheck() {
             var v = $("select[name='rule_name']").val();
             var cid = $("select[name='job_circular_id']").val();
-            if(cid){
+            if (cid) {
                 loadConstraint(cid);
             }
-            if(!v) return;
+            if (!v) return;
             var id = `#${v}_rules`;
             $(id).show();
         }
-        $("select[name='rule_name']").on('change',function (evt) {
+
+        $("select[name='rule_name']").on('change', function (evt) {
             var v = $(this).val();
             $(".rules-class").hide();
-            if(!v) {
-
+            if (!v) {
                 return;
             }
             var id = `#${v}_rules`;
             $(id).show();
             modifyRule();
         })
-        $("select[name='job_circular_id']").on('change',function (evt) {
+        $("select[name='job_circular_id']").on('change', function (evt) {
             var v = $(this).val();
             loadConstraint(v);
         })
+
         function loadConstraint(id) {
             $.ajax({
-                url:'{{URL::to("/recruitment/circular/constraint")}}/'+id,
-                type:'get',
-                success:function (response) {
-                    try{
+                url: '{{URL::to("/recruitment/circular/constraint")}}/' + id,
+                type: 'get',
+                success: function (response) {
+                    try {
                         constraint = JSON.parse(response)
-                    }catch(exp){
+                    } catch (exp) {
                         constraint = response;
                     }
                     modifyRule();
                     console.log(constraint)
                 },
-                error:function (res) {
+                error: function (res) {
                     console.log(res)
                 }
             })
         }
-        function modifyRule(){
+
+        function modifyRule() {
             var t = $(".edu_c");
             var e = constraint.education;
             t.each(function (obj) {
                 var a = +$(this).attr("data-id");
-                if(a<+e.min||a>+e.max){
+                if (a < +e.min || a > +e.max) {
                     $(this).remove();
                 }
             })
         }
+
         initCheck();
     })
 </script>
