@@ -29,6 +29,19 @@
     </div>
 @endif
 
+@if(isset($mark_distribution) && $mark_distribution->edu_experience!=null)
+    <div class="form-group">
+        @if(auth()->user()->type==11)
+            {!! Form::label('edu_experience','Education & Experience',['class'=>'control-label']) !!}<sup
+                    style="color:red;font-size: 20px;top: 0;">*</sup>
+            <div class="form-control">{{isset($data)?$data->edu_experience:$applicant->educationExperiencePoint()}} out
+                of
+                <strong>{{$mark_distribution?$mark_distribution->edu_experience:'Not Defined'}}</strong></div>
+        @endif
+        {!! Form::hidden('edu_experience',isset($data)?$data->edu_experience:$applicant->educationExperiencePoint(),['class'=>'form-control','placeholder'=>'Enter education & experience mark']) !!}
+    </div>
+@endif
+
 @if(isset($mark_distribution) && $mark_distribution->written!=null)
     <div class="form-group">
         {!! Form::label('written','Written Exam',['class'=>'control-label']) !!}<sup

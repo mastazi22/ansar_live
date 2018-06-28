@@ -14,6 +14,7 @@
                                 <th>Applicant Name</th>
                                 <th>Physical Fitness</th>
                                 <th>Education &amp; Training</th>
+                                <th>Education &amp; Experience</th>
                                 <th>Written</th>
                                 <th>Viva</th>
                                 <th>Total</th>

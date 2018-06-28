@@ -27,6 +27,14 @@
             <p class="text text-danger">{{$errors->first('edu_training')}}</p>
         @endif
     </div>
+    <div class="form-group">
+        {!! Form::checkbox('is_education_and_experience_checkbox','checked',@(isset($data)&&!empty($data->edu_experience))?true:false,['class'=>'field-active']) !!}
+        {!! Form::label('edu_experience','Education & Experience Mark :',['class'=>'control-label']) !!}
+        {!! Form::text('edu_experience',null,['class'=>'form-control','placeholder'=>'Enter education & experience mark']) !!}
+        @if(isset($errors)&&$errors->first('edu_training'))
+            <p class="text text-danger">{{$errors->first('edu_training')}}</p>
+        @endif
+    </div>
     <div class="well">
         <div class="form-group">
             {!! Form::checkbox('is_written_checkbox','checked',@(isset($data)&&!empty($data->written))?true:false,['class'=>'field-active']) !!}
@@ -104,6 +112,13 @@
             fieldChecked(jQuery("input[name='edu_training']"), true);
         } else {
             fieldUnChecked(jQuery("input[name='edu_training']"), true);
+        }
+
+        //is_education_and_experience_checkbox
+        if (jQuery("input[name='is_education_and_experience_checkbox']").prop("checked")) {
+            fieldChecked(jQuery("input[name='edu_experience']"), true);
+        } else {
+            fieldUnChecked(jQuery("input[name='edu_experience']"), true);
         }
 
         //==== Written
