@@ -106,7 +106,7 @@
                             {!! Form::checkbox('applicatn_range[]',$r->id,in_array($r->id,explode(',',$data->applicatn_range)),['style'=>'vertical-align:sub','class'=>'range-app']) !!}
                             &nbsp;{{$r->division_name_bng}}
                         @else
-                            {!! Form::checkbox('applicatn_range[]',$r->id,true,['style'=>'vertical-align:sub']) !!}
+                            {!! Form::checkbox('applicatn_range[]',$r->id,true,['style'=>'vertical-align:sub','class'=>'range-app']) !!}
                             &nbsp;{{$r->division_name_bng}}
                         @endif
                     </li>
@@ -124,7 +124,7 @@
                             {!! Form::checkbox('applicatn_units[]',$u->id,in_array($u->division_id,explode(',',$data->applicatn_range))&&in_array($u->id,explode(',',$data->applicatn_units)),['style'=>'vertical-align:sub','data-division-id'=>$u->division_id]) !!}
                             &nbsp;{{$u->unit_name_bng}}
                         @else
-                            {!! Form::checkbox('applicatn_units[]',$u->id,true,['style'=>'vertical-align:sub']) !!}
+                            {!! Form::checkbox('applicatn_units[]',$u->id,true,['style'=>'vertical-align:sub','data-division-id'=>$u->division_id]) !!}
                             &nbsp;{{$u->unit_name_bng}}
                         @endif
                     </li>
@@ -432,6 +432,7 @@
 <script>
     $(document).ready(function () {
         $(".range-app").on('change', function (event) {
+
             var status = $(this).prop('checked');
             var v = $(this).val();
             if (status) {
