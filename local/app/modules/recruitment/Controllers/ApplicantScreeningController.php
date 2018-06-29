@@ -185,6 +185,7 @@ class ApplicantScreeningController extends Controller
                     $q->orWhere('mobile_no_self', 'like', '%' . $request->q . '%');
                     $q->orWhere('applicant_name_bng', 'like', '%' . $request->q . '%');
                     $q->orWhere('applicant_name_eng', 'like', '%' . $request->q . '%');
+                    $q->orWhere('ansar_id', 'like', '%' . $request->q . '%');
                 });
             }
             if ($request->range != 'all') {
@@ -592,7 +593,7 @@ class ApplicantScreeningController extends Controller
             'height_feet' => 'required|numeric',
             'height_inch' => 'required|numeric',
             'gender' => 'required',
-            'mobile_no_self' => 'required|regex:/^(\+?88)?0[0-9]{10}$/|unique:job_applicant,mobile_no_self,' . $request->id,
+            'mobile_no_self' => 'required|regex:/^(\+?88)?0[0-9]{10}$/|unique:job_applicant,mobile_no_self,' . $request->id.',id,job_circular_id,'.$request->job_circular_id,
             'connection_mobile_no' => 'regex:/^(\+?88)?0[0-9]{10}$/',
         ];
         $this->validate($request, $rules);
