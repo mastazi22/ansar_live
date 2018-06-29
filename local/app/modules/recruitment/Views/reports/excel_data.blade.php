@@ -1,16 +1,31 @@
 <table style="width: 100%" border="1">
     <tr>
         <th style="width: 10px">SL No.</th>
+        @if($ctype=='apc_training')
+            <th>Ansar ID</th>
+            @endif
         <th>Applicant Name</th>
         <th>Applicant ID</th>
         <th>Father Name</th>
         <th>Birth Date</th>
+        @if($ctype=='apc_training')
+            <th>Age</th>
+        @endif
         <th>National ID No.</th>
+        @if($ctype=='apc_training')
+            <th>HRM Status</th>
+            <th>Job Experience</th>
+        @endif
         <th>Division</th>
         <th>District</th>
         <th>Thana</th>
         <th>Height</th>
-        <th>Weight</th>
+        @if($ctype=='apc_training')
+            <th>Education</th>
+            @else
+            <th>Weight</th>
+        @endif
+
         @if(Auth::user()->type==11)
             <th>Mobile no</th>
         @endif
@@ -25,16 +40,31 @@
         @foreach($applicants as $a)
             <tr>
                 <td style="width: 10px">{{($index++).''}}</td>
+                @if($ctype=='apc_training')
+                    <td>{{$a->ansar_id}}</td>
+                @endif
                 <td>{{$a->applicant_name_bng}}</td>
                 <td>{{$a->applicant_id}}</td>
                 <td>{{$a->father_name_bng}}</td>
                 <td>{{$a->date_of_birth}}</td>
+                @if($ctype=='apc_training')
+                    <td>{{$a->ansar->calculateAge()}}</td>
+                @endif
                 <td>{{$a->national_id_no}}</td>
+                @if($ctype=='apc_training')
+                    <td>{{$a->ansar->status->getStatus()[0]}}</td>
+                    <td>{{$a->ansar->getExperience()}}</td>
+                @endif
                 <td>{{$a->division->division_name_bng}}</td>
                 <td>{{$a->district->unit_name_bng}}</td>
                 <td>{{$a->thana->thana_name_bng}}</td>
                 <td>{{$a->height_feet}} feet {{$a->height_inch}} inch</td>
-                <td>{{$a->weight}} kg</td>
+                @if($ctype=='apc_training')
+                    <th>{{$a->education()->orderBy('priority','desc')->first()->education_deg_eng}}</th>
+                @else
+                    <td>{{$a->weight}} kg</td>
+                @endif
+
                 @if(Auth::user()->type==11)
                     <td>{{$a->mobile_no_self}}</td>
                 @endif

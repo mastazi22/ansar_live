@@ -6,6 +6,7 @@ use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
 use App\modules\HRM\Models\EmbodimentLogModel;
 use App\modules\HRM\Models\EmbodimentModel;
+use App\modules\HRM\Models\PersonalInfo;
 use App\modules\HRM\Models\Thana;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -20,6 +21,10 @@ class JobAppliciant extends Model
     public function circular()
     {
         return $this->belongsTo(JobCircular::class, 'job_circular_id');
+    }
+    public function ansar()
+    {
+        return $this->belongsTo(PersonalInfo::class, 'ansar_id','ansar_id');
     }
 
     public function division()
