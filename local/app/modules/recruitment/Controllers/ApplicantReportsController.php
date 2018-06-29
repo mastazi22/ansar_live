@@ -6,6 +6,7 @@ use App\modules\HRM\Models\District;
 use App\modules\recruitment\Models\JobApplicantMarks;
 use App\modules\recruitment\Models\JobApplicantQuota;
 use App\modules\recruitment\Models\JobAppliciant;
+use App\modules\recruitment\Models\JobCircular;
 use Barryvdh\Snappy\Facades\SnappyPdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -124,6 +125,8 @@ class ApplicantReportsController extends Controller
             'page'=>'required|regex:/^[0-9]+$/'
         ];
         $this->validate($request,$rules);
+        $category_type = JobCircular::find($request->circular)->category->category_type;
+//        return $category_type;
         $applicants = JobAppliciant::with(['division','district','thana','marks'])->where('status',$request->status)
             ->where('job_circular_id',$request->circular);
         if($request->exists('range')&&$request->range!='all'){
@@ -135,12 +138,12 @@ class ApplicantReportsController extends Controller
         if($request->exists('thana')&&$request->thana!='all'){
             $applicants->where('thana_id',$request->thana);
         }
-        Excel::create('applicant_list('.$request->status.')',function ($excel) use($applicants,$request){
+        Excel::create('applicant_list('.$request->status.')',function ($excel) use($applicants,$request,$category_type){
 
-            $excel->sheet('sheet1',function ($sheet) use ($applicants,$request){
+            $excel->sheet('sheet1',function ($sheet) use ($applicants,$request,$category_type){
                 $sheet->setAutoSize(false);
                 $sheet->setWidth('A', 5);
-                $sheet->loadView('recruitment::reports.excel_data',['index'=>((intval($request->page)-1)*300)+1,'applicants'=>$applicants->skip((intval($request->page)-1)*300)->limit(300)->get(),'status'=>$request->status]);
+                $sheet->loadView('recruitment::reports.excel_data',['index'=>((intval($request->page)-1)*300)+1,'applicants'=>$applicants->skip((intval($request->page)-1)*300)->limit(300)->get(),'status'=>$request->status,'ctype'=>$category_type]);
             });
         })->download('xls');
     }
