@@ -64,7 +64,7 @@ class ApplicantScreeningController extends Controller
             Log::info(DB::getQueryLog());
             Log::info($summery);
 //            return "ssddsddds";
-//            return DB::getQueryLog();
+            return DB::getQueryLog();
             return response()->json($summery);
         }
         return view('recruitment::applicant.index');
@@ -132,6 +132,7 @@ class ApplicantScreeningController extends Controller
                 $query->where(function ($q) use ($request) {
                     $q->where('national_id_no', 'like', "%{$request->q}%");
                     $q->orWhere('applicant_id', 'like', "%{$request->q}%");
+                    $q->orWhere('ansar_id', 'like', "%{$request->q}%");
                     if (strtotime($request->q)) {
                         $q->orwhere('date_of_birth', Carbon::parse($request->q)->format('Y-m-d'));
                     }
@@ -185,6 +186,7 @@ class ApplicantScreeningController extends Controller
                     $q->orWhere('mobile_no_self', 'like', '%' . $request->q . '%');
                     $q->orWhere('applicant_name_bng', 'like', '%' . $request->q . '%');
                     $q->orWhere('applicant_name_eng', 'like', '%' . $request->q . '%');
+                    $q->orWhere('ansar_id', 'like', '%' . $request->q . '%');
                 });
             }
             if ($request->range != 'all') {
@@ -592,7 +594,7 @@ class ApplicantScreeningController extends Controller
             'height_feet' => 'required|numeric',
             'height_inch' => 'required|numeric',
             'gender' => 'required',
-            'mobile_no_self' => 'required|regex:/^(\+?88)?0[0-9]{10}$/|unique:job_applicant,mobile_no_self,' . $request->id,
+            'mobile_no_self' => 'required|regex:/^(\+?88)?0[0-9]{10}$/|unique:job_applicant,mobile_no_self,' . $request->id.',id,job_circular_id,'.$request->job_circular_id,
             'connection_mobile_no' => 'regex:/^(\+?88)?0[0-9]{10}$/',
         ];
         $this->validate($request, $rules);

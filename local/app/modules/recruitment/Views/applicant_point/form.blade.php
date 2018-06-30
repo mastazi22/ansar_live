@@ -64,6 +64,45 @@
             @endif
         </div>
     </div>
+    <div id="age_rules" class="rules-class" style="display: none">
+        <h4 class="text-center" style="border-bottom: 1px solid #000000">Rule for Age</h4>
+        <div class="form-group">
+            {!! Form::label('','Min Age(in years):',['class'=>'control-label']) !!}
+            <div class="row">
+                <div class="col-sm-12">
+                    {!! Form::text('min_age_years',null,['class'=>'form-control','placeholder'=>'Years']) !!}
+                    @if(isset($errors)&&$errors->first('min_age_years'))
+                        <p class="text text-danger">{{$errors->first('min_age_years')}}</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            {!! Form::label('min_age_point','Min Point :',['class'=>'control-label']) !!}
+            {!! Form::text('min_age_point',null,['class'=>'form-control','placeholder'=>'Min Point']) !!}
+            @if(isset($errors)&&$errors->first('min_age_point'))
+                <p class="text text-danger">{{$errors->first('min_age_point')}}</p>
+            @endif
+        </div>
+        <div class="form-group">
+            {!! Form::label('','Max Age(in years):',['class'=>'control-label']) !!}
+            <div class="row">
+                <div class="col-sm-12">
+                    {!! Form::text('max_age_years',null,['class'=>'form-control','placeholder'=>'Years']) !!}
+                    @if(isset($errors)&&$errors->first('max_age_years'))
+                        <p class="text text-danger">{{$errors->first('max_age_years')}}</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            {!! Form::label('max_age_point','Max Point :',['class'=>'control-label']) !!}
+            {!! Form::text('max_age_point',null,['class'=>'form-control','placeholder'=>'Max Point']) !!}
+            @if(isset($errors)&&$errors->first('max_age_point'))
+                <p class="text text-danger">{{$errors->first('max_age_point')}}</p>
+            @endif
+        </div>
+    </div>
     <div id="height_rules" class="rules-class" style="display: none">
         <h4 class="text-center" style="border-bottom: 1px solid #000000">Rule for Height</h4>
         <div class="form-group">

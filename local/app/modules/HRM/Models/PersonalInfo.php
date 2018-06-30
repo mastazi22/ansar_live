@@ -4,6 +4,7 @@ namespace App\modules\HRM\Models;
 
 use App\Helper\Facades\UserPermissionFacades;
 use App\models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
@@ -134,5 +135,26 @@ class PersonalInfo extends Model
     }
     function account(){
         return $this->hasOne(AnsarBankAccountInfoDetails::class,'ansar_id','ansar_id');
+    }
+    public function getExperience()
+    {
+        if (!$this->ansar_id) return 0;
+        $currentExp = $prevExp = 0;
+        $currentEmbodiment = EmbodimentModel::where("ansar_id", $this->ansar_id)->first();
+        if ($currentEmbodiment) {
+            $currentExp = Carbon::parse($currentEmbodiment->joining_date)->diffInYears(Carbon::now(),true);
+        }
+        $embodimentHistory = EmbodimentLogModel::where("ansar_id", $this->ansar_id)->get();
+        if ($embodimentHistory->count() > 0) {
+            foreach ($embodimentHistory as $history) {
+                $prevExp += Carbon::parse($history->joining_date)->diffInYears(Carbon::parse($history->release_date),true);;
+            }
+        }
+        return $currentExp + $prevExp;
+    }
+    public function calculateAge(){
+        $last_date_of_month = Carbon::now()->daysInMonth;
+        $current_date = Carbon::now()->day($last_date_of_month);
+        return Carbon::parse($this->data_of_birth)->diff($current_date)->format("%yy %mm %dd");
     }
 }

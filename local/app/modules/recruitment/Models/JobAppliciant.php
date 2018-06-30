@@ -6,6 +6,7 @@ use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
 use App\modules\HRM\Models\EmbodimentLogModel;
 use App\modules\HRM\Models\EmbodimentModel;
+use App\modules\HRM\Models\PersonalInfo;
 use App\modules\HRM\Models\Thana;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -20,6 +21,10 @@ class JobAppliciant extends Model
     public function circular()
     {
         return $this->belongsTo(JobCircular::class, 'job_circular_id');
+    }
+    public function ansar()
+    {
+        return $this->belongsTo(PersonalInfo::class, 'ansar_id','ansar_id');
     }
 
     public function division()
@@ -104,15 +109,7 @@ class JobAppliciant extends Model
             return "--";
         }
         $rules = $this->circular->point()->where('point_for', 'physical')->where('rule_name', 'height')->first()->rules;
-        $min_height = floatval($rules->min_height_feet) * 12 + floatval($rules->min_height_inch);
-        $max_height = floatval($rules->max_height_feet) * 12 + floatval($rules->max_height_inch);
-        $min_point = floatval($rules->min_point);
-        $max_point = floatval($rules->max_point);
-        $total_height = floatval($this->height_feet) * 12 + floatval($this->height_inch);
-        $delta_height = $max_height - $min_height;
-        $delta_point = $max_point - $min_point;
-        if ($total_height >= $max_height) return $max_point;
-        return number_format(($delta_point / $delta_height) * (($total_height - $min_height)) + $min_point, 2);
+        return $this->heightPoint($rules);
     }
 
     public function educationTrainingPoint()
@@ -174,6 +171,34 @@ class JobAppliciant extends Model
         }
         return $point + $eduPoint < 0 ? 0 : $point + $eduPoint;
     }
+    public function physicalAgePoint()
+    {
+        if ($this->status != 'selected') {
+            return -1;
+        }
+        if (!$this->circular->point()->exists() || !$this->circular->point()->where('point_for', 'physical_age')->exists()) {
+            return "--";
+        }
+        $rules = $this->circular->point()->where('point_for', 'physical_age')->get();
+        $ageRule = collect($rules)->where('rule_name', 'age')->first();
+        $physicalRule = collect($rules)->where('rule_name', 'height')->first();
+        $physical = $point = 0;
+        if ($physicalRule) {
+            $physical = $this->heightPoint($physicalRule->rules);
+        }
+        if ($ageRule) {
+            $age = $this->yearDiff($this->date_of_birth,Carbon::now()->format('Y-m-d'));
+            $min_age_years = floatval($ageRule->rules->min_age_years);
+            $max_age_years = floatval($ageRule->rules->max_age_years);
+            $min_point = floatval($ageRule->rules->min_age_point);
+            $max_point = floatval($ageRule->rules->max_age_point);
+            $delta_age = $max_age_years - $min_age_years;
+            $delta_point = $max_point - $min_point;
+            if ($age >= $max_age_years) $point = $max_point;
+            else $point = number_format(($delta_point / $delta_age) * (($age - $min_age_years)) + $min_point, 2);
+        }
+        return $point + $physical < 0 ? 0 : $point + $physical;
+    }
 
     private function eduPoint($rules)
     {
@@ -195,7 +220,18 @@ class JobAppliciant extends Model
         return $point;
 
     }
+    private function heightPoint($rules){
+        $min_height = floatval($rules->min_height_feet) * 12 + floatval($rules->min_height_inch);
+        $max_height = floatval($rules->max_height_feet) * 12 + floatval($rules->max_height_inch);
+        $min_point = floatval($rules->min_point);
+        $max_point = floatval($rules->max_point);
+        $total_height = floatval($this->height_feet) * 12 + floatval($this->height_inch);
+        $delta_height = $max_height - $min_height;
+        $delta_point = $max_point - $min_point;
+        if ($total_height >= $max_height) return $max_point;
+        return number_format(($delta_point / $delta_height) * (($total_height - $min_height)) + $min_point, 2);
 
+    }
     public function expCalculation()
     {
         if (!$this->ansar_id) return 0;
