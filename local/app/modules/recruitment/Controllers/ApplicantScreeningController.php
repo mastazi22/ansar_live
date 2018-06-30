@@ -110,6 +110,7 @@ class ApplicantScreeningController extends Controller
                 }
             }
 //            return $units;
+            DB::enableQueryLog();
             $query = JobAppliciant::with('appliciantEducationInfo')->whereHas('circular', function ($q) use ($request) {
                 $q->where('circular_status', 'running');
                 $q->where('id', 21);
@@ -131,7 +132,7 @@ class ApplicantScreeningController extends Controller
                 $query->where(function ($q) use ($request) {
                     $q->where('national_id_no', 'like', "%{$request->q}%");
                     $q->orWhere('applicant_id', 'like', "%{$request->q}%");
-                    $q->orWhere('ansar_id', 'like', "%{$request->q}%");
+                    $q->orWhere('job_applicant.ansar_id', 'like', "%{$request->q}%");
                     if (strtotime($request->q)) {
                         $q->orwhere('date_of_birth', Carbon::parse($request->q)->format('Y-m-d'));
                     }
