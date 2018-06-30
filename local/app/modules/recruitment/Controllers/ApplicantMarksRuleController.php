@@ -190,6 +190,12 @@ class ApplicantMarksRuleController extends Controller
             $rules['max_experience_years'] = 'required|numeric';
             $rules['max_exp_point'] = 'required|numeric';
         }
+        if ($request->rule_name === 'age') {
+            $rules['min_age_years'] = 'required|numeric';
+            $rules['min_age_point'] = 'required|numeric';
+            $rules['max_age_years'] = 'required|numeric';
+            $rules['max_age_point'] = 'required|numeric';
+        }
         $this->validate($request, $rules);
         $data = [];
         if ($request->rule_name === 'education') {
@@ -216,6 +222,12 @@ class ApplicantMarksRuleController extends Controller
             $data['point_for'] = $request->point_for;
             $data['rule_name'] = $request->rule_name;
             $data['rules'] = json_encode($request->only(['min_experience_years', 'min_exp_point', 'max_experience_years', 'max_exp_point']));
+        }
+        if ($request->rule_name === 'age') {
+            $data['job_circular_id'] = $request->job_circular_id;
+            $data['point_for'] = $request->point_for;
+            $data['rule_name'] = $request->rule_name;
+            $data['rules'] = json_encode($request->only(['min_age_years', 'min_age_point', 'max_age_years', 'max_age_point']));
         }
         DB::beginTransaction();
         try {
