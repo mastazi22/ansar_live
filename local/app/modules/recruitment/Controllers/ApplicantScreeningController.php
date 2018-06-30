@@ -84,13 +84,14 @@ class ApplicantScreeningController extends Controller
         if ($request->ajax()) {
 //            return $request->all();
             $rules = [
-                'category' => ['regex:/^([0-9]+)|(all)$/'],
-                'circular' => ['regex:/^([0-9]+)|(all)$/'],
                 'limit' => 'regex:/^[0-9]+$/'
             ];
             if (auth()->user()->type == 66 || auth()->user()->type == 22) {
                 $rules['q'] = 'required';
             }
+            /*if(!$request->category && !$request->circlar){
+                return view('recruitment::applicant.empty');
+            }*/
             $this->validate($request, $rules);
             DB::enableQueryLog();
             $selection_unit = JobApplicantExamCenter::with(['units' => function ($q) {
@@ -111,14 +112,12 @@ class ApplicantScreeningController extends Controller
 //            return $units;
             $query = JobAppliciant::with('appliciantEducationInfo')->whereHas('circular', function ($q) use ($request) {
                 $q->where('circular_status', 'running');
-                if ($request->exists('circular') && $request->circular != 'all') {
-                    $q->where('id', $request->circular);
-                }
+                $q->where('id', 21);
                 $q->whereHas('category', function ($q) use ($request) {
                     $q->where('status', 'active');
-                    if ($request->exists('category') && $request->category != 'all') {
+                    /*if ($request->exists('category') && $request->category != 'all') {
                         $q->where('id', $request->category);
-                    }
+                    }*/
                 });
             })->where('status', 'applied');
             if ($request->already_selected && count($request->already_selected) > 0) {
