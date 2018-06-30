@@ -64,7 +64,7 @@ class ApplicantScreeningController extends Controller
             Log::info(DB::getQueryLog());
             Log::info($summery);
 //            return "ssddsddds";
-//            return DB::getQueryLog();
+            return DB::getQueryLog();
             return response()->json($summery);
         }
         return view('recruitment::applicant.index');
@@ -132,6 +132,7 @@ class ApplicantScreeningController extends Controller
                 $query->where(function ($q) use ($request) {
                     $q->where('national_id_no', 'like', "%{$request->q}%");
                     $q->orWhere('applicant_id', 'like', "%{$request->q}%");
+                    $q->orWhere('ansar_id', 'like', "%{$request->q}%");
                     if (strtotime($request->q)) {
                         $q->orwhere('date_of_birth', Carbon::parse($request->q)->format('Y-m-d'));
                     }

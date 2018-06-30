@@ -46,6 +46,8 @@
                                     <td>{!! $point->getTrainingRules() !!}</td>
                                 @elseif($point->rule_name==='experience')
                                     <td>{!! $point->getExperienceRules() !!}</td>
+                                @elseif($point->rule_name==='age')
+                                    <td>{!! $point->getAgeRules() !!}</td>
                                 @endif
                                 <td>
                                     <a class="btn btn-primary btn-xs" href="{{URL::route('recruitment.marks_rules.edit',['id'=>$point->id])}}">

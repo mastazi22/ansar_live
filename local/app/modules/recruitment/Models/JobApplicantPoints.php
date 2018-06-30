@@ -35,7 +35,8 @@ class JobApplicantPoints extends Model
             '' => '--Select a option--',
             'physical' => 'Physical',
             'edu_training' => 'Education & Training',
-            'edu_experience' => 'Education & Experience'
+            'edu_experience' => 'Education & Experience',
+            'physical_age' => 'Physical & Age'
         ];
     }
 
@@ -88,6 +89,18 @@ class JobApplicantPoints extends Model
         $view .= "<div><strong>Maximum Point : </strong>{$er->max_point}</div>";
         return $view;
     }
+    public function getAgeRules()
+    {
+        $er = $this->rules;
+//        return var_dump($er);
+        if (!$this->rules || !$er) return "--";
+
+        $view = "<div><strong>Minimum Age : </strong>{$er->min_age_years} years</div>";
+        $view .= "<div><strong>Minimum Point : </strong>{$er->min_age_point}</div>";
+        $view .= "<div><strong>Maximum Age : </strong>{$er->max_age_years} years</div>";
+        $view .= "<div><strong>Maximum Point : </strong>{$er->max_age_point}</div>";
+        return $view;
+    }
 
     public function getTrainingRules()
     {
@@ -99,6 +112,7 @@ class JobApplicantPoints extends Model
     public function getExperienceRules()
     {
         $er = $this->rules;
+//        return var_dump($er);
         if (!$this->rules || !$er) return "--";
         $view = "<div><strong>Minimum Experience : </strong>{$er->min_experience_years} Year(s)</div>";
         $view .= "<div><strong>Minimum Point : </strong>{$er->min_exp_point}</div>";
