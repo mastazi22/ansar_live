@@ -138,6 +138,7 @@ class ApplicantScreeningController extends Controller
                     }
                 });
             }
+
 //            return response()->json($query->paginate(50));
             if (auth()->user()->type == 66) {
                 $query->where('job_applicant.division_id', $request->range);
@@ -151,8 +152,8 @@ class ApplicantScreeningController extends Controller
                 return response()->json($query->pluck('job_applicant.applicant_id'));
             }
             $query->select('job_applicant.*', 'dd.division_name_bng', 'uu.unit_name_bng', 'tt.thana_name_bng');
-//            $data = $query->get();
-//            return DB::getQueryLog();
+            $data = $query->get();
+            return DB::getQueryLog();
             if (auth()->user()->type == 11) return view('recruitment::applicant.part_search', ['applicants' => $query->paginate($request->limit ? $request->limit : 50)]);
             else {
                 $data = $query->get();
