@@ -36,6 +36,7 @@
                                 <th>Physical</th>
                                 <th>Education & Training</th>
                                 <th>Education & Experience</th>
+                                <th>Physical & Age</th>
                                 <th>Written</th>
                                 <th>Viva</th>
                                 <th>Action</th>
@@ -48,6 +49,7 @@
                                     <td>{{$mark_distribution->physical or '--'}}</td>
                                     <td>{{$mark_distribution->edu_training or '--'}}</td>
                                     <td>{{$mark_distribution->edu_experience or '--'}}</td>
+                                    <td>{{$mark_distribution->physical_age or $mark_distribution->physical_age?$mark_distribution->physical_age:'--'}}</td>
                                     <td>{{$mark_distribution->written or '--'}}</td>
                                     <td>{{$mark_distribution->viva or '--'}}</td>
                                     <td>

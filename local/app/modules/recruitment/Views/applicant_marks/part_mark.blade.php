@@ -19,6 +19,7 @@
                 <th>Physical Fitness</th>
                 <th>Education & Training</th>
                 <th>Education & Experience</th>
+                <th>Physical & Age</th>
                 <th>Written</th>
                 <th>Viva</th>
                 <th>Total</th>
@@ -32,7 +33,9 @@
                         <td>{{$a->marks?($a->marks->physical?$a->marks->physical:$a->physicalPoint()):$a->physicalPoint()}}</td>
                         <td>{{$a->marks?($a->marks->edu_training?$a->marks->edu_training:$a->educationTrainingPoint()):$a->educationTrainingPoint()}}</td>
                         <td>{{$a->marks?($a->marks->edu_experience?$a->marks->edu_experience:$a->educationExperiencePoint()):$a->educationExperiencePoint()}}</td>
+                        <td>{{$a->marks?($a->marks->physical_age?$a->marks->physical_age:$a->physicalAgePoint()):$a->physicalAgePoint()}}</td>
                     @else
+                        <td>--</td>
                         <td>--</td>
                         <td>--</td>
                         <td>--</td>

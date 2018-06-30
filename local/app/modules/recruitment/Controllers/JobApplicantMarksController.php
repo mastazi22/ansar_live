@@ -22,7 +22,7 @@ class JobApplicantMarksController extends Controller
     {
         if ($request->ajax()) {
             $applicants = JobAppliciant::with(['marks' => function ($q) {
-                $q->select(DB::raw('*,(written+edu_training+edu_experience+physical+viva) as total'));
+                $q->select(DB::raw('*,(written+edu_training+edu_experience+physical+viva+physical_age) as total'));
             }])->whereHas('selectedApplicant', function ($q) {
             });
             if ($request->exists('range') && $request->range != 'all') {
@@ -39,6 +39,7 @@ class JobApplicantMarksController extends Controller
                     $q->orWhere('mobile_no_self', $request->q);
                     $q->orWhere('applicant_id', 'like', "%" . $request->q . "%");
                     $q->orWhere('national_id_no', 'like', "%" . $request->q . "%");
+                    $q->orWhere('ansar_id', 'like', "%" . $request->q . "%");
                 });
             }
             $applicants->where('job_circular_id', $request->circular);

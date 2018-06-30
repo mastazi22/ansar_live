@@ -41,6 +41,18 @@
         {!! Form::hidden('edu_experience',isset($data)?$data->edu_experience:$applicant->educationExperiencePoint(),['class'=>'form-control','placeholder'=>'Enter education & experience mark']) !!}
     </div>
 @endif
+@if(isset($mark_distribution) && $mark_distribution->physical_age!=null)
+    <div class="form-group">
+        @if(auth()->user()->type==11)
+            {!! Form::label('physical_age','Physical & Age',['class'=>'control-label']) !!}<sup
+                    style="color:red;font-size: 20px;top: 0;">*</sup>
+            <div class="form-control">{{isset($data)?$data->physical_age:$applicant->physicalAgePoint()}} out
+                of
+                <strong>{{$mark_distribution?$mark_distribution->physical_age:'Not Defined'}}</strong></div>
+        @endif
+        {!! Form::hidden('physical_age',isset($data)?$data->physical_age:$applicant->physicalAgePoint(),['class'=>'form-control','placeholder'=>'Enter education & experience mark']) !!}
+    </div>
+@endif
 
 @if(isset($mark_distribution) && $mark_distribution->written!=null)
     <div class="form-group">
