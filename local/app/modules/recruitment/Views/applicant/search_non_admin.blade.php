@@ -403,7 +403,7 @@
                         <div class="form-group">
                             <label for="" class="control-label">Job Category</label>
                             <select name="" ng-model="category" id="" class="form-control">
-                                <option value="">Select a category</option>
+                                <option value="all">All</option>
                                 <option ng-repeat="c in categories" value="[[c.id]]">[[c.category_name_eng]]</option>
                             </select>
                         </div>
@@ -413,7 +413,7 @@
                             <label for="" class="control-label">Job Circular</label>
                             <select name="" ng-model="circular" id=""
                                     class="form-control">
-                                <option value="">Select a circular</option>
+                                <option value="all">All</option>
                                 <option ng-repeat="c in circulars" value="[[c.id]]">[[c.circular_name]]</option>
                             </select>
                         </div>
