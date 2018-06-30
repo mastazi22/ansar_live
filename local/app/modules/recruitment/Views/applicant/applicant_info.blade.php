@@ -425,7 +425,7 @@
                             class="fa fa-edit"></i>&nbsp;Edit info</a>
                 <button class="btn btn-primary" ng-click="addToSelection('{{$applicants->applicant_id}}')"><i
                             class="fa fa-plus"></i>&nbsp;Add to selection</button>
-                <button id="accept-applicant" class="btn btn-primary" ng-click="acceptedApplicants('{{$applicants->applicant_id}}')"><i
+                <button disabled="disabled" id="accept-applicant" class="btn btn-primary" ng-click="acceptedApplicants('{{$applicants->applicant_id}}')"><i
                             class="fa fa-check"></i>&nbsp;Accept if Bn Candidate</button>
                 <button class="btn btn-danger" ng-click="rejectApplicants('{{$applicants->applicant_id}}')"><i
                             class="fa fa-minus"></i>&nbsp;Reject applicant</button>
