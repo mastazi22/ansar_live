@@ -130,9 +130,9 @@ class ApplicantScreeningController extends Controller
             if ($request->q) {
 //                return $request->all();
                 $query->where(function ($q) use ($request) {
-                    $q->where('national_id_no', 'like', "%{$request->q}%");
-                    $q->orWhere('applicant_id', 'like', "%{$request->q}%");
-                    $q->orWhere('job_applicant.ansar_id', 'like', "%{$request->q}%");
+                    $q->where('national_id_no', '=', "{$request->q}");
+                    $q->orWhere('applicant_id', '=', "{$request->q}");
+                    $q->orWhere('job_applicant.ansar_id', '=', "{$request->q}");
                     if (strtotime($request->q)) {
                         $q->orwhere('date_of_birth', Carbon::parse($request->q)->format('Y-m-d'));
                     }
@@ -152,8 +152,8 @@ class ApplicantScreeningController extends Controller
                 return response()->json($query->pluck('job_applicant.applicant_id'));
             }
             $query->select('job_applicant.*', 'dd.division_name_bng', 'uu.unit_name_bng', 'tt.thana_name_bng');
-            $data = $query->get();
-            return DB::getQueryLog();
+            /*$data = $query->get();
+            return DB::getQueryLog();*/
             if (auth()->user()->type == 11) return view('recruitment::applicant.part_search', ['applicants' => $query->paginate($request->limit ? $request->limit : 50)]);
             else {
                 $data = $query->get();
