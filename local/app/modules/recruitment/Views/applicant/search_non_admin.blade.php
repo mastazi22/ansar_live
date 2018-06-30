@@ -345,6 +345,7 @@
                     $scope.allLoading = false;
                     if (response.status == 422) {
                         $scope.formSubmitResult['error'] = response.data;
+                        notificationService.notify('error', JSON.stringify(response.data),50000)
                     }
                     else {
                         notificationService.notify('error', 'An unknown error occur. Please try again later: error code:'+response.status,50000)
