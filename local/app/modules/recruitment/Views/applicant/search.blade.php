@@ -44,8 +44,8 @@
             $scope.circulars = [];
             $scope.applicants = $sce.trustAsHtml('loading data....');
             $scope.allStatus = {'all': 'All', 'inactive': 'Inactive', 'active': 'Active'}
-            $scope.circular = 'all';
-            $scope.category = 'all';
+            $scope.circular = '';
+            $scope.category = '';
             $scope.param={};
             $scope.ansarSelection = 'overall';
             $scope.selectedList = [];
@@ -72,8 +72,8 @@
                 if($scope.param['limit']===undefined){
                     $scope.param['limit'] = '50'
                 }
-                $scope.circular = 'all';
-                $scope.category = 'all';
+                $scope.circular = '';
+                $scope.category = '';
                 $scope.allLoading = true;
                 $q.all([
                     httpService.category({status: 'active'}),
@@ -88,16 +88,16 @@
                     $http.get("{{URL::to('HRM/getalleducation')}}")
                 ])
                     .then(function (response) {
-                        $scope.circular = 'all';
-                        $scope.category = 'all';
+                        $scope.circular = '';
+                        $scope.category = '';
                         $scope.categories = response[0].data;
                         $scope.circulars = response[1].data;
                         $scope.educations = response[3].data;
                         $scope.applicants = $sce.trustAsHtml(response[2].data);
                         $scope.allLoading = false;
                     }, function (response) {
-                        $scope.circular = 'all';
-                        $scope.category = 'all';
+                        $scope.circular = '';
+                        $scope.category = '';
                         $scope.categories = [];
                         $scope.circulars = [];
                         $scope.applicants = [];
@@ -117,13 +117,13 @@
                         q:$scope.param.q
                     })
                 ]).then(function (response) {
-                    $scope.circular = 'all';
+                    $scope.circular = '';
                     $scope.circulars = response[0].data;
                     $scope.applicants = $sce.trustAsHtml(response[1].data);
                     $scope.allLoading = false;
                     $scope.selectedList = [];
                 }, function (response) {
-                    $scope.circular = 'all';
+                    $scope.circular = '';
                     $scope.circulars = $sce.trustAsHtml('loading error.....');
                     $scope.allLoading = false;
                     $scope.selectedList = [];
@@ -264,7 +264,7 @@
                             <label for="" class="control-label">Job Category</label>
                             <select name="" ng-model="category" id="" class="form-control"
                                     ng-change="loadCircular(category)">
-                                <option value="all">All</option>
+                                <option value="">Select a category</option>
                                 <option ng-repeat="c in categories" value="[[c.id]]">[[c.category_name_eng]]</option>
                             </select>
                         </div>
@@ -274,7 +274,7 @@
                             <label for="" class="control-label">Job Circular</label>
                             <select name="" ng-model="circular" id="" ng-change="applyFilter()"
                                     class="form-control">
-                                <option value="all">All</option>
+                                <option value="">Select a circular</option>
                                 <option ng-repeat="c in circulars" value="[[c.id]]">[[c.circular_name]]</option>
                             </select>
                         </div>

@@ -44,8 +44,8 @@
             $scope.circulars = [];
             $scope.applicants = $sce.trustAsHtml('<h4 class="text-center">No Applicant available</h4>');
             $scope.allStatus = {'all': 'All', 'inactive': 'Inactive', 'active': 'Active'}
-            $scope.circular = 'all';
-            $scope.category = 'all';
+            $scope.circular = '';
+            $scope.category = '';
             $scope.limitList = '50';
             $scope.ansarSelection = 'overall';
             $scope.selectedList = [];
@@ -403,7 +403,7 @@
                         <div class="form-group">
                             <label for="" class="control-label">Job Category</label>
                             <select name="" ng-model="category" id="" class="form-control">
-                                <option value="all">All</option>
+                                <option value="">Select a category</option>
                                 <option ng-repeat="c in categories" value="[[c.id]]">[[c.category_name_eng]]</option>
                             </select>
                         </div>
@@ -413,7 +413,7 @@
                             <label for="" class="control-label">Job Circular</label>
                             <select name="" ng-model="circular" id=""
                                     class="form-control">
-                                <option value="all">All</option>
+                                <option value="">Select a circular</option>
                                 <option ng-repeat="c in circulars" value="[[c.id]]">[[c.circular_name]]</option>
                             </select>
                         </div>
@@ -432,7 +432,7 @@
                 </div>
                 <h3 class="text-center">Search applicant</h3>
                 <div class="input-group" style="margin-top: 10px">
-                    <input ng-keyup="$event.keyCode==13?loadApplicant():''" class="form-control" ng-model="q" type="text" placeholder="Search by national id,applicant id or date of birth">
+                    <input ng-disabled="!category && !circular" ng-keyup="$event.keyCode==13?loadApplicant():''" class="form-control" ng-model="q" type="text" placeholder="Search by national id,applicant id or date of birth">
                     <span class="input-group-btn">
                     <button class="btn btn-primary" ng-click="loadApplicant()">
                         <i class="fa fa-search"></i>
