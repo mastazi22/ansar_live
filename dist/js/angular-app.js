@@ -534,14 +534,14 @@ GlobalApp.factory('httpService', function ($http) {
 })
 GlobalApp.factory('notificationService', function () {
     return {
-        notify: function (type, message) {
+        notify: function (type, message,time) {
             //$.noty.closeAll();
             noty({
                 type: type,
                 text: message,
                 layout: 'top',
                 maxVisible: 5,
-                timeout: 5000,
+                timeout: time?time:5000,
                 dismissQueue: true
             })
 

@@ -347,7 +347,7 @@
                         $scope.formSubmitResult['error'] = response.data;
                     }
                     else {
-                        notificationService.notify('error', 'An unknown error occur. Please try again later')
+                        notificationService.notify('error', 'An unknown error occur. Please try again later: error code:'+response.status,50000)
                     }
                 })
             }
