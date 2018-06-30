@@ -588,7 +588,7 @@ class ApplicantScreeningController extends Controller
             'mother_name_bng' => 'required',
             'date_of_birth' => 'required',
             'marital_status' => 'required',
-            'national_id_no' => 'required|numeric|regex:/^[0-9]{8,17}$/',
+//            'national_id_no' => 'required|numeric|regex:/^[0-9]{8,17}$/',
             'division_id' => 'required',
             'unit_id' => 'required',
             'thana_id' => 'required',
