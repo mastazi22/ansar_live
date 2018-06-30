@@ -123,6 +123,7 @@ class JobCircularMarkDistributionController extends Controller
             "written_pass_mark" => null,
             "viva" => null,
             "viva_pass_mark" => null,
+            "physical_age" => null,
         );
         if ($formData == null || !is_array($formData)) return $defaultData;
         //set default value for disabled form fields
@@ -138,7 +139,7 @@ class JobCircularMarkDistributionController extends Controller
             }
         }
         //unset checkbox fields
-        unset($formData["is_physical_checkbox"], $formData["is_education_and_training_checkbox"], $formData["is_education_and_experience_checkbox"], $formData["is_written_checkbox"], $formData["is_viva_checkbox"]);
+        unset($formData["is_physical_checkbox"],$formData["is_physical_and_age_checkbox"], $formData["is_education_and_training_checkbox"], $formData["is_education_and_experience_checkbox"], $formData["is_written_checkbox"], $formData["is_viva_checkbox"]);
         return $formData;
     }
 }
