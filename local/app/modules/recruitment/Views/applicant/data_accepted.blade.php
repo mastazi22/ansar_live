@@ -19,6 +19,7 @@
             <th>Division</th>
             <th>District</th>
             <th>Thana</th>
+            <th>Education</th>
             <th>Height</th>
             <th>Chest</th>
             <th>Weight</th>
@@ -36,6 +37,7 @@
                     <td>{{$a->applicant->division->division_name_bng}}</td>
                     <td>{{$a->applicant->district->unit_name_bng}}</td>
                     <td>{{$a->applicant->thana->thana_name_bng}}</td>
+                    <td>{{$a->applicant->education()->orderBy('priority','desc')->first()->education_deg_eng}}</td>
                     <td>{{$a->applicant->height_feet}} feet {{$a->applicant->height_inch}} inch</td>
                     <td>{{$a->applicant->chest_normal.'-'.$a->applicant->chest_extended}} inch</td>
                     <td>{{$a->applicant->weight}} kg</td>

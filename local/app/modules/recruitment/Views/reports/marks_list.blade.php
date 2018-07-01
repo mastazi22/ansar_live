@@ -18,6 +18,8 @@
         <th>থানা</th>
         <th>শারীরিক যোগ্যতা</th>
         <th>শিক্ষা ও প্রশিক্ষন</th>
+        <th>শিক্ষা ও অভিজ্ঞতা</th>
+        <th>শারীরিক যোগ্যতা ও বয়স</th>
         <th>লিখিত পরীক্ষা</th>
         <th>মৌখিক পরীক্ষা</th>
         <th>প্রাপ্ত নম্বর</th>
@@ -38,6 +40,8 @@
 
 
                     <td>{{$a->marks->edu_training}}</td>
+                    <td>{{$a->marks->edu_experience}}</td>
+                    <td>{{$a->marks->physical_age}}</td>
                     <td>{{round($a->marks->convertedWrittenMark(),2)}}(out
                         of {{$a->circular->markDistribution->convert_written_mark}}) and {{round($a->marks->written,2)}}
                         (out of {{$a->circular->markDistribution->written}})
@@ -61,6 +65,9 @@
 
 
                     <td>{{$a->marks->edu_training}}</td>
+                    <td>{{$a->marks->edu_training}}</td>
+                    <td>{{$a->marks->edu_experience}}</td>
+                    <td>{{$a->marks->physical_age}}</td>
                     <td>{{round($a->marks->convertedWrittenMark(),2)}}(out
                         of {{$a->circular->markDistribution->convert_written_mark}}) and {{round($a->marks->written,2)}}
                         (out of {{$a->circular->markDistribution->written}})
