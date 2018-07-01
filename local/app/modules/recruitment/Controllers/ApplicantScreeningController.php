@@ -869,7 +869,7 @@ class ApplicantScreeningController extends Controller
             $written_pass_mark = (floatval($mark_distribution->convert_written_mark) * floatval($mark_distribution->written_pass_mark)) / 100;
             $viva_pass_mark = (floatval($mark_distribution->viva) * floatval($mark_distribution->viva_pass_mark)) / 100;
         }
-        return $written_pass_mark." ".$viva_pass_mark;
+//        return $written_pass_mark." ".$viva_pass_mark;
         $job_quota = JobCircularQuota::where('job_circular_id', $request->circular)->first();
         if($job_quota->type=="unit"){
             $quota = $job_quota->quota()->where('district',$request->unit)->first();
