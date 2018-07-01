@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class District extends Model
 {
     protected $connection = 'hrm';
-    protected $table = 'tbl_units';
+    protected $table = 'db_amis.tbl_units';
     protected $guarded = [];
 
     function kpi()

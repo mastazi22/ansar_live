@@ -129,7 +129,7 @@
                             <input id="nra" type="text" ng-model="param.cat_other_no_applicant" class="form-control">
                         </div>
                         <div class="form-group">
-                            <button ng-click="loadApplicant()" ng-disabled="!(param.circular&&param.unit)"
+                            <button ng-click="loadApplicant()" ng-disabled="!(param.circular&&(param.unit||param.range))"
                                     class="btn btn-primary btn-block">
                                 Load short listed applicant
                             </button>
