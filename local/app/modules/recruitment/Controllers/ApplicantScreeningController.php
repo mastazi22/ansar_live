@@ -64,7 +64,7 @@ class ApplicantScreeningController extends Controller
             Log::info(DB::getQueryLog());
             Log::info($summery);
 //            return "ssddsddds";
-            return DB::getQueryLog();
+//            return DB::getQueryLog();
             return response()->json($summery);
         }
         return view('recruitment::applicant.index');
