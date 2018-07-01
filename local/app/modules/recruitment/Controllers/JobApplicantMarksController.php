@@ -37,9 +37,9 @@ class JobApplicantMarksController extends Controller
             if ($request->exists('q') && $request->q) {
                 $applicants->where(function ($q) use ($request) {
                     $q->orWhere('mobile_no_self', $request->q);
-                    $q->orWhere('applicant_id', 'like', "%" . $request->q . "%");
-                    $q->orWhere('national_id_no', 'like', "%" . $request->q . "%");
-                    $q->orWhere('ansar_id', 'like', "%" . $request->q . "%");
+                    $q->orWhere('applicant_id', '=', $request->q);
+                    $q->orWhere('national_id_no', '=', $request->q);
+                    $q->orWhere('ansar_id', '=', $request->q);
                 });
             }
             $applicants->where('job_circular_id', $request->circular);
