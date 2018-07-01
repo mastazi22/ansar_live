@@ -3,6 +3,7 @@
 namespace App\modules\recruitment\Models;
 
 use App\modules\HRM\Models\District;
+use App\modules\HRM\Models\Division;
 use Illuminate\Database\Eloquent\Model;
 
 class JobApplicantQuota extends Model
@@ -14,5 +15,8 @@ class JobApplicantQuota extends Model
 
     public function unit(){
         return $this->belongsTo(District::class,'district_id');
+    }
+    public function range(){
+        return $this->belongsTo(Division::class,'range_id');
     }
 }

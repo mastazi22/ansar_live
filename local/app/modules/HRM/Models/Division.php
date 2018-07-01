@@ -2,6 +2,7 @@
 
 namespace App\modules\HRM\Models;
 
+use App\modules\recruitment\Models\JobApplicantQuota;
 use Illuminate\Database\Eloquent\Model;
 
 class Division extends Model
@@ -22,5 +23,8 @@ class Division extends Model
     }
     public function thana(){
         return $this->hasMany('App\models\Thana', 'division_id');
+    }
+    public function applicantQuota(){
+        return $this->hasOne(JobApplicantQuota::class,'range_id');
     }
 }
