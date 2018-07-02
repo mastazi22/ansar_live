@@ -299,6 +299,7 @@ class AnsarVDPInfoController extends Controller
                 "success"=>0,
                 "fail"=>[]
             ];
+//            return $insertData;
             Log::info($insertData);
 //            return $insertData?"sssss":"dddddd";
             foreach ($insertData as $i){
@@ -313,7 +314,7 @@ class AnsarVDPInfoController extends Controller
                     'date_of_birth'=>'required',
                     'marital_status'=>'required',
                     'national_id_no'=>'unique:avurp.avurp_vdp_ansar_info',
-                    'mobile_no_self'=>'unique:avurp.avurp_vdp_ansar_info,mobile_no_self',
+                    'mobile_no_self'=>'required|unique:avurp.avurp_vdp_ansar_info,mobile_no_self',
                     'height_feet'=>'',
                     'height_inch'=>'',
                     'blood_group_id'=>'',
@@ -325,8 +326,8 @@ class AnsarVDPInfoController extends Controller
                     'union_id'=>'required|numeric|min:1',
                     'union_word_id'=>'required|numeric|min:1',
                     'smart_card_id'=>'sometimes|exists:hrm.tbl_ansar_parsonal_info,ansar_id|unique:avurp.avurp_vdp_ansar_info',
-                    'post_office_name'=>'required',
-                    'village_house_no'=>'required',
+                    'post_office_name'=>'',
+                    'village_house_no'=>'',
                     //'educationInfo'=>'required',
                     //'training_info'=>'required',
                     /*'educationInfo.*.education_id'=>'required|numeric|min:1',
@@ -336,12 +337,12 @@ class AnsarVDPInfoController extends Controller
 
                 ]);
                 if($valid->fails()){
-                    $res["fail"][] = ['status'=>false,'message'=>'Invalid data format','data'=>$i];
+                    $res["fail"][] = ['status'=>false,'message'=>$valid->messages()];
                 }
                 else {
                     $response = $this->infoRepository->create($request,auth()->user()->id);
                     if($response['status']) $res["success"]++;
-                    else $res["fail"][] = ['status'=>false,'message'=>$response['data']['message'],'data'=>$i];
+                    else $res["fail"][] = ['status'=>false,'message'=>$response['data']['message']];
                 }
 //                $res[] = $i;
             }
