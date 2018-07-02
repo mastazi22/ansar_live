@@ -48,7 +48,7 @@
         বাহিনী,@if(isset($unit)) {{$unit->unit_name_bng}} @elseif(isset($range)) {{$range->division_name_bng}} @endif
         <br>
         @if($type=="apc_training")
-            সাধারন আনসার হতে এপিসি পদোন্নতি কোর্স
+            সাধারণ আনসার হতে এপিসি পদোন্নতি কোর্স - প্রথম ধাপ,২০১৮
         @elseif($type=="pc_training")
             এপিসি হতে পিসি পদোন্নতি কোর্স
         @else
