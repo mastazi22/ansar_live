@@ -112,19 +112,19 @@
                     <div class="input-group">
                         {!! Form::text('min_height_feet',null,['class'=>'form-control','placeholder'=>'Feet']) !!}
                         <span class="input-group-addon">Feet</span>
-                        @if(isset($errors)&&$errors->first('min_height_feet'))
-                            <p class="text text-danger">{{$errors->first('min_height_feet')}}</p>
-                        @endif
                     </div>
+                    @if(isset($errors)&&$errors->first('min_height_feet'))
+                        <p class="text text-danger">{{$errors->first('min_height_feet')}}</p>
+                    @endif
                 </div>
                 <div class="col-sm-6">
                     <div class="input-group">
                         {!! Form::text('min_height_inch',null,['class'=>'form-control','placeholder'=>'Inch']) !!}
                         <span class="input-group-addon">Inch</span>
-                        @if(isset($errors)&&$errors->first('min_height_inch'))
-                            <p class="text text-danger">{{$errors->first('min_height_inch')}}</p>
-                        @endif
                     </div>
+                    @if(isset($errors)&&$errors->first('min_height_inch'))
+                        <p class="text text-danger">{{$errors->first('min_height_inch')}}</p>
+                    @endif
                 </div>
             </div>
         </div>
@@ -142,19 +142,19 @@
                     <div class="input-group">
                         {!! Form::text('max_height_feet',null,['class'=>'form-control','placeholder'=>'Feet']) !!}
                         <span class="input-group-addon">Feet</span>
-                        @if(isset($errors)&&$errors->first('max_height_feet'))
-                            <p class="text text-danger">{{$errors->first('max_height_feet')}}</p>
-                        @endif
                     </div>
+                    @if(isset($errors)&&$errors->first('max_height_feet'))
+                        <p class="text text-danger">{{$errors->first('max_height_feet')}}</p>
+                    @endif
                 </div>
                 <div class="col-sm-6">
                     <div class="input-group">
                         {!! Form::text('max_height_inch',null,['class'=>'form-control','placeholder'=>'Inch']) !!}
                         <span class="input-group-addon">Inch</span>
-                        @if(isset($errors)&&$errors->first('max_height_inch'))
-                            <p class="text text-danger">{{$errors->first('max_height_inch')}}</p>
-                        @endif
                     </div>
+                    @if(isset($errors)&&$errors->first('max_height_inch'))
+                        <p class="text text-danger">{{$errors->first('max_height_inch')}}</p>
+                    @endif
                 </div>
             </div>
         </div>
