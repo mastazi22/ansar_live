@@ -50,6 +50,9 @@
     </caption>
     <tr>
         <th>ক্রমিক নং</th>
+        @if($type=="apc_training"||$type=="pc_training")
+            <th>আনসার আইডি</th>
+            @endif
         <th>নাম</th>
         <th>পিতার নাম</th>
         <th>ঠিকানা</th>
@@ -62,6 +65,9 @@
     @forelse($applicants as $a)
         <tr>
             <td>{{$i++}}</td>
+            @if($type=="apc_training"||$type=="pc_training")
+                <th>{{$a->applicant->ansar_id}}</th>
+            @endif
             <td>{{$a->applicant->applicant_name_bng}}</td>
             <td>{{$a->applicant->father_name_bng}}</td>
             <td>
