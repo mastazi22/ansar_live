@@ -48,9 +48,9 @@
         বাহিনী,@if(isset($unit)) {{$unit->unit_name_bng}} @elseif(isset($range)) {{$range->division_name_bng}} @endif
         <br>
         @if($type=="apc_training")
-            <th>সাধারন আনসার হতে এপিসি পদোন্নতি কোর্স</th>
+            সাধারন আনসার হতে এপিসি পদোন্নতি কোর্স
         @elseif($type=="pc_training")
-            <th>এপিসি হতে পিসি পদোন্নতি কোর্স</th>
+            এপিসি হতে পিসি পদোন্নতি কোর্স
         @else
             মৌলিক প্রশিক্ষণ -সাধারণ আনসার (পুরুষ)
         @endif<br>
