@@ -221,6 +221,7 @@ class AnsarVDPInfoController extends Controller
             $sheets = Excel::load($request->file('import_file'), function () {
 
             })->get();
+return $sheets;
             $all_data = [];
             foreach ($sheets as $sheet) {
                 $rows = collect($sheet)->toArray();
@@ -232,11 +233,11 @@ class AnsarVDPInfoController extends Controller
                 unset($rows[4]);
 
                 foreach ($rows as $row) {
-                    array_push($all_data, array_combine($fields, array_slice($row,0,count($fields))));
-//                    array_push($all_data, [count($fields),array_slice($row,0,count($fields))]);
+//                    array_push($all_data, array_combine($fields, array_slice($row,0,count($fields))));
+                    array_push($all_data, [count($fields),array_slice($row,0,count($fields))]);
                 }
             }
-//            return $all_data;
+            return $all_data;
             $insertData = [];
             foreach ($all_data as $data) {
                 $r = [];
