@@ -796,7 +796,7 @@ class ApplicantScreeningController extends Controller
     public function confirmAcceptedIfSpecialCandidate(Request $request)
     {
         $rules = [
-            'applicant_id' => 'required|regex:/^[A-Z0-9]+$/'
+            'applicant_id' => 'required|regex:/^[a-zA-Z0-9]+$/'
         ];
         $this->validate($request, $rules);
         DB::beginTransaction();
