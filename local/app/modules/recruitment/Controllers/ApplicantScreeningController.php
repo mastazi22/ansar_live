@@ -734,6 +734,7 @@ class ApplicantScreeningController extends Controller
                 $applicant_male->where('written', '>=', $written_pass_mark)->where('viva', '>=', $viva_pass_mark);
             }
             if ($quota) {
+
                 if (intval($quota->male) - $accepted > 0) $applicants = $applicant_male->limit(intval($quota->male) - $accepted)->get();
                 else $applicants = [];
             } else $applicants = [];
@@ -922,6 +923,7 @@ class ApplicantScreeningController extends Controller
         $applicants = [];
 
         if ($quota) {
+//            return compact('quota','accepted');
             if (intval($quota->male) - $accepted > 0)
                 $applicant_male->limit(intval($quota->male) - $accepted);
 //            else return view('recruitment::applicant.data_accepted', ['applicants' => []]);
@@ -931,11 +933,11 @@ class ApplicantScreeningController extends Controller
 //         return DB::getQueryLog();
 
         //for 3rd and 4th category
-        if (isset($request->cat_other_no_applicant) && $request->cat_other_no_applicant > 0) {
+        /*if (isset($request->cat_other_no_applicant) && $request->cat_other_no_applicant > 0) {
             $applicants = $applicant_male->limit($request->cat_other_no_applicant)->get();
         } else {
             $applicants = $applicant_male->get();
-        }
+        }*/
 
         if ($request->exists('export') && $request->export == 'excel') {
             Excel::create('accepted_list', function ($excel) use ($applicants) {
