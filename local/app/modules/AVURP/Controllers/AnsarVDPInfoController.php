@@ -295,7 +295,10 @@ class AnsarVDPInfoController extends Controller
 //                return $r?;
 
             }
-            $res = [];
+            $res = [
+                "success"=>0,
+                "fail"=>[]
+            ];
             Log::info($insertData);
 //            return $insertData?"sssss":"dddddd";
             foreach ($insertData as $i){
@@ -309,13 +312,13 @@ class AnsarVDPInfoController extends Controller
                     'designation'=>'required',
                     'date_of_birth'=>'required',
                     'marital_status'=>'required',
-                    'national_id_no'=>'required|unique:avurp.avurp_vdp_ansar_info',
-                    'mobile_no_self'=>'required|unique:avurp.avurp_vdp_ansar_info,mobile_no_self',
-                    'height_feet'=>'required',
-                    'height_inch'=>'required',
-                    'blood_group_id'=>'required',
+                    'national_id_no'=>'unique:avurp.avurp_vdp_ansar_info',
+                    'mobile_no_self'=>'unique:avurp.avurp_vdp_ansar_info,mobile_no_self',
+                    'height_feet'=>'',
+                    'height_inch'=>'',
+                    'blood_group_id'=>'',
                     'gender'=>'required',
-                    'health_condition'=>'required',
+                    'health_condition'=>'',
                     'division_id'=>'required|numeric|min:1',
                     'unit_id'=>'required|numeric|min:1',
                     'thana_id'=>'required|numeric|min:1',
@@ -333,9 +336,13 @@ class AnsarVDPInfoController extends Controller
 
                 ]);
                 if($valid->fails()){
-                    $res[] = ['status'=>false,'message'=>'Invalid data format'];
+                    $res["fail"][] = ['status'=>false,'message'=>'Invalid data format','data'=>$i];
                 }
-                else $res[] = $this->infoRepository->create($request,auth()->user()->id);
+                else {
+                    $response = $this->infoRepository->create($request,auth()->user()->id);
+                    if($response['status']) $res["success"]++;
+                    else $res["fail"][] = ['status'=>false,'message'=>$response['data']['message'],'data'=>$i];
+                }
 //                $res[] = $i;
             }
 
