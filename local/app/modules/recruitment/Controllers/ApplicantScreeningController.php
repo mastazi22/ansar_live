@@ -923,7 +923,7 @@ class ApplicantScreeningController extends Controller
         $applicants = [];
 
         if ($quota) {
-//            return compact('quota','accepted');
+            return compact('quota','accepted');
             if (intval($quota->male) - $accepted > 0)
                 $applicant_male->limit(intval($quota->male) - $accepted);
 //            else return view('recruitment::applicant.data_accepted', ['applicants' => []]);
