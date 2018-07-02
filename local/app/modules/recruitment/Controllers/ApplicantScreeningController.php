@@ -2,9 +2,8 @@
 
 namespace App\modules\recruitment\Controllers;
 
-use App\Jobs\FeedbackSMS;
+use App\Http\Controllers\Controller;
 use App\modules\HRM\Models\District;
-use App\modules\HRM\Models\Division;
 use App\modules\HRM\Models\Thana;
 use App\modules\recruitment\Models\JobApplicantExamCenter;
 use App\modules\recruitment\Models\JobApplicantHRMDetails;
@@ -14,15 +13,11 @@ use App\modules\recruitment\Models\JobAppliciant;
 use App\modules\recruitment\Models\JobCircular;
 use App\modules\recruitment\Models\JobCircularMarkDistribution;
 use App\modules\recruitment\Models\JobCircularQuota;
-use App\modules\recruitment\Models\JobSelectedApplicant;
 use App\modules\recruitment\Models\JobSettings;
 use App\modules\recruitment\Models\SmsQueue;
 use Barryvdh\Snappy\Facades\SnappyPdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
@@ -923,9 +918,10 @@ class ApplicantScreeningController extends Controller
         $applicants = [];
 
         if ($quota) {
-            return compact('quota','accepted');
+//            return compact('quota','accepted');
             if (intval($quota->male) - $accepted > 0)
                 $applicant_male->limit(intval($quota->male) - $accepted);
+            $applicants = $applicant_male->get();
 //            else return view('recruitment::applicant.data_accepted', ['applicants' => []]);
         }
 //        else return view('recruitment::applicant.data_accepted',['applicants'=>[]]);
