@@ -596,7 +596,7 @@ class ApplicantScreeningController extends Controller
             'height_feet' => 'required|numeric',
             'height_inch' => 'required|numeric',
             'gender' => 'required',
-            'mobile_no_self' => 'required|regex:/^(\+?88)?0[0-9]{10}$/|unique:job_applicant,mobile_no_self,' . $request->id.',id,job_circular_id,'.$request->job_circular_id,
+            'mobile_no_self' => 'required|regex:/^(\+?88)?0[0-9]{10}$/|unique:job_applicant,mobile_no_self,' . $request->id . ',id,job_circular_id,' . $request->job_circular_id,
             'connection_mobile_no' => 'regex:/^(\+?88)?0[0-9]{10}$/',
         ];
         $this->validate($request, $rules);
@@ -686,15 +686,14 @@ class ApplicantScreeningController extends Controller
 
     public function confirmAccepted(Request $request)
     {
+
         $rules = [
-            'unit' => 'required|regex:/^[0-9]+$/',
+            'range' => 'regex:/^[0-9]+$/',
+            'unit' => 'regex:/^[0-9]+$/',
             'circular' => 'required|regex:/^[0-9]+$/',
         ];
         $this->validate($request, $rules);
-        DB::beginTransaction();
         try {
-            /*$circular = JobCircular::with('constraint')->find($request->circular);
-            $constraint= json_decode($circular->constraint->constraint);*/
             $written_pass_mark = 0;
             $viva_pass_mark = 0;
             $mark_distribution = JobCircularMarkDistribution::where('job_circular_id', $request->circular)->first();
@@ -702,19 +701,38 @@ class ApplicantScreeningController extends Controller
                 $written_pass_mark = (floatval($mark_distribution->convert_written_mark) * floatval($mark_distribution->written_pass_mark)) / 100;
                 $viva_pass_mark = (floatval($mark_distribution->viva) * floatval($mark_distribution->viva_pass_mark)) / 100;
             }
-            $accepted = JobAppliciant::whereHas('accepted', function ($q) {
-
-            })->where('status', 'accepted')->where('job_circular_id', $request->circular)->where('unit_id', $request->unit)->count();
-            $quota = JobApplicantQuota::where('district_id', $request->unit)->first();
-            $applicant_male = JobApplicantMarks::with(['applicant' => function ($q) {
-                $q->with('accepted');
-            }])->whereHas('applicant', function ($q) use ($request) {
-
-                $q->whereHas('selectedApplicant', function () {
-
-                })->where('status', 'selected')->where('job_circular_id', $request->circular)->where('unit_id', $request->unit);
-            })->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'))->havingRaw('total_mark>0')->orderBy('total_mark', 'desc');
-            $applicant_male->where('written', '>=', $written_pass_mark)->where('viva', '>=', $viva_pass_mark);
+//        return $written_pass_mark." ".$viva_pass_mark;
+            $job_quota = JobCircularQuota::where('job_circular_id', $request->circular)->first();
+            if ($job_quota->type == "unit") {
+                $quota = $job_quota->quota()->where('district', $request->unit)->first();
+                $accepted = JobAppliciant::whereHas('accepted', function ($q) {
+                })->where('status', 'accepted')->where('job_circular_id', $request->circular)->where('unit_id', $request->unit)->count();
+            } else {
+                $quota = $job_quota->quota()->where('range_id', $request->range)->first();
+                $accepted = JobAppliciant::whereHas('accepted', function ($q) {
+                })->where('status', 'accepted')->where('job_circular_id', $request->circular)->where('division_id', $request->range)->count();
+            }
+            if ($job_quota->type == "unit") {
+                $applicant_male = JobApplicantMarks::with(['applicant' => function ($q) {
+                    $q->with(['district', 'division', 'thana']);
+                }])->whereHas('applicant', function ($q) use ($request) {
+                    $q->whereHas('selectedApplicant', function () {
+                    })->where('status', 'selected')->where('job_circular_id', $request->circular)->where('unit_id', $request->unit);
+                })->select(DB::raw('DISTINCT *,(written+viva+physical+edu_training+edu_experience+physical_age) as total_mark'))->havingRaw('total_mark>0')->orderBy('total_mark', 'desc');
+                $applicant_male->where('written', '>=', $written_pass_mark)->where('viva', '>=', $viva_pass_mark);
+            } else {
+                $applicant_male = JobApplicantMarks::with(['applicant' => function ($q) {
+                    $q->with(['district', 'division', 'thana']);
+                }])->whereHas('applicant', function ($q) use ($request) {
+                    $q->where(DB::raw('height_feet*12+height_inch'), ">=", 65);
+                    $q->whereHas('education', function ($q) {
+                        $q->where('priority', '>=', 7);
+                    });
+                    $q->whereHas('selectedApplicant', function () {
+                    })->where('status', 'selected')->where('job_circular_id', $request->circular)->where('division_id', $request->range);
+                })->select(DB::raw('DISTINCT *,(written+viva+physical+edu_training+edu_experience+physical_age) as total_mark'))->havingRaw('total_mark>0')->orderBy('total_mark', 'desc');
+                $applicant_male->where('written', '>=', $written_pass_mark)->where('viva', '>=', $viva_pass_mark);
+            }
             if ($quota) {
                 if (intval($quota->male) - $accepted > 0) $applicants = $applicant_male->limit(intval($quota->male) - $accepted)->get();
                 else $applicants = [];
@@ -871,16 +889,16 @@ class ApplicantScreeningController extends Controller
         }
 //        return $written_pass_mark." ".$viva_pass_mark;
         $job_quota = JobCircularQuota::where('job_circular_id', $request->circular)->first();
-        if($job_quota->type=="unit"){
-            $quota = $job_quota->quota()->where('district',$request->unit)->first();
+        if ($job_quota->type == "unit") {
+            $quota = $job_quota->quota()->where('district', $request->unit)->first();
             $accepted = JobAppliciant::whereHas('accepted', function ($q) {
             })->where('status', 'accepted')->where('job_circular_id', $request->circular)->where('unit_id', $request->unit)->count();
-        } else{
-            $quota = $job_quota->quota()->where('range_id',$request->range)->first();
+        } else {
+            $quota = $job_quota->quota()->where('range_id', $request->range)->first();
             $accepted = JobAppliciant::whereHas('accepted', function ($q) {
             })->where('status', 'accepted')->where('job_circular_id', $request->circular)->where('division_id', $request->range)->count();
         }
-        if($job_quota->type=="unit"){
+        if ($job_quota->type == "unit") {
             $applicant_male = JobApplicantMarks::with(['applicant' => function ($q) {
                 $q->with(['district', 'division', 'thana']);
             }])->whereHas('applicant', function ($q) use ($request) {
@@ -888,10 +906,14 @@ class ApplicantScreeningController extends Controller
                 })->where('status', 'selected')->where('job_circular_id', $request->circular)->where('unit_id', $request->unit);
             })->select(DB::raw('DISTINCT *,(written+viva+physical+edu_training+edu_experience+physical_age) as total_mark'))->havingRaw('total_mark>0')->orderBy('total_mark', 'desc');
             $applicant_male->where('written', '>=', $written_pass_mark)->where('viva', '>=', $viva_pass_mark);
-        } else{
+        } else {
             $applicant_male = JobApplicantMarks::with(['applicant' => function ($q) {
                 $q->with(['district', 'division', 'thana']);
             }])->whereHas('applicant', function ($q) use ($request) {
+                $q->where(DB::raw('height_feet*12+height_inch'), ">=", 65);
+                $q->whereHas('education', function ($q) {
+                    $q->where('priority', '>=', 7);
+                });
                 $q->whereHas('selectedApplicant', function () {
                 })->where('status', 'selected')->where('job_circular_id', $request->circular)->where('division_id', $request->range);
             })->select(DB::raw('DISTINCT *,(written+viva+physical+edu_training+edu_experience+physical_age) as total_mark'))->havingRaw('total_mark>0')->orderBy('total_mark', 'desc');
@@ -905,8 +927,8 @@ class ApplicantScreeningController extends Controller
 //            else return view('recruitment::applicant.data_accepted', ['applicants' => []]);
         }
 //        else return view('recruitment::applicant.data_accepted',['applicants'=>[]]);
-        // $a = $applicant_male->get();
-        // return DB::getQueryLog();
+        //$a = $applicant_male->get();
+//         return DB::getQueryLog();
 
         //for 3rd and 4th category
         if (isset($request->cat_other_no_applicant) && $request->cat_other_no_applicant > 0) {

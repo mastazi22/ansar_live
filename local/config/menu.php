@@ -435,7 +435,7 @@ return [
                             "icon"=>'fa-cog',
                         ],
                         "Grant Leave"=>[
-                            "route"=>'#',
+                            "route"=>'SD.leave.create',
                             "icon"=>'fa-cog',
                         ]
                     ]
@@ -562,8 +562,18 @@ return [
     ],
     "avurp"=>[
         'Entry List'=>[
-            'route'=>'AVURP.info.index',
-            'icon'=>'fa-cog'
+            'route'=>'#',
+            'icon'=>'fa-cog',
+            'children'=>[
+                'Entry List'=>[
+                    'route'=>'AVURP.info.index',
+                    'icon'=>'fa-cog',
+                ],
+                'Import List'=>[
+                    'route'=>'AVURP.info.import',
+                    'icon'=>'fa-cog',
+                ]
+            ]
         ]
     ]
 ];

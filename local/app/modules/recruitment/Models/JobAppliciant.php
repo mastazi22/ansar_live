@@ -10,6 +10,7 @@ use App\modules\HRM\Models\PersonalInfo;
 use App\modules\HRM\Models\Thana;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class JobAppliciant extends Model
 {
@@ -204,12 +205,16 @@ class JobAppliciant extends Model
     {
         $point_table = array_values($rules['edu_point']);
         $epp = intval($rules['edu_p_count']);
+        Log::info($this->education);
         if ($epp === 1) {
             $education_priority = $this->education()->orderBy('priority', 'asc')->first()['priority'];
+            Log::info("education_priority".$education_priority);
             $key = array_search($education_priority, array_column($point_table, 'priority'));
             $point = intval($point_table[$key]['point']);
         } else if ($epp === 2) {
+
             $education_priority = $this->education()->orderBy('priority', 'desc')->first()['priority'];
+            Log::info("education_priority".$education_priority);
             $key = array_search($education_priority, array_column($point_table, 'priority'));
             $point = intval($point_table[$key]['point']);
         } else {
@@ -217,6 +222,8 @@ class JobAppliciant extends Model
             $education_priority = $this->education()->whereIn('priority', $p)->pluck('priority');
             $point = collect($point_table)->whereIn('priority', $education_priority)->sum('point');
         }
+        Log::info("edu_point".$point);
+        Log::info($point_table);
         return $point;
 
     }

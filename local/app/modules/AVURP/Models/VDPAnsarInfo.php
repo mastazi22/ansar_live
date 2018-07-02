@@ -75,9 +75,10 @@ class VDPAnsarInfo extends Model
                 $q->orWhere('mother_name_bng','like',"%$search%");
                 $q->orWhere('designation','like',"%$search%");
                 $q->orWhere('marital_status','like',"%$search%");
-                $q->orWhere('marital_status',"%$search%");
+                $q->orWhere('marital_status','like',"%$search%");
                 $q->orWhere('national_id_no','like',"%$search%");
-                $q->orWhere('mobile_no_self',"%$search%");
+                $q->orWhere('mobile_no_self','like',"%$search%");
+                $q->orWhere('vdp_id','=',"$search");
                 if(strtotime($search)){
                     $d = Carbon::parse($search)->format('Y-m-d');
                     $q->orWhere('date_of_birth',$d);

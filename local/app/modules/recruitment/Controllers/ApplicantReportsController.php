@@ -3,6 +3,7 @@
 namespace App\modules\recruitment\Controllers;
 
 use App\modules\HRM\Models\District;
+use App\modules\HRM\Models\Division;
 use App\modules\recruitment\Models\JobApplicantMarks;
 use App\modules\recruitment\Models\JobApplicantQuota;
 use App\modules\recruitment\Models\JobAppliciant;
@@ -46,10 +47,13 @@ class ApplicantReportsController extends Controller
 
         if(strcasecmp($request->method(),'post')==0){
             $rules = [
-                'unit'=>'required|regex:/^[0-9]+$/',
+                'range'=>'regex:/^[0-9]+$/',
+                'unit'=>'regex:/^[0-9]+$/',
                 'circular'=>'required|regex:/^[0-9]+$/',
             ];
+//            return $request->all();
             $this->validate($request,$rules);
+            $category_type = JobCircular::find($request->circular)->category->category_type;
             $applicants = JobApplicantMarks::with(['applicant'=>function($q){
                 $q->with(['appliciantEducationInfo'=>function($q){
                     $q->with('educationInfo');
@@ -58,8 +62,14 @@ class ApplicantReportsController extends Controller
 
                 $q->whereHas('accepted',function(){
 
-                })->where('status','accepted')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit);
-            })->select(DB::raw('*,(written+viva+physical+edu_training) as total_mark'))->orderBy('is_bn_candidate','desc')->orderBy('specialized','desc')->orderBy('total_mark','desc');
+                })->where('status','accepted')->where('job_circular_id',$request->circular);
+                if($request->unit){
+                    $q->where('unit_id',$request->unit);
+                }
+                if($request->range){
+                    $q->where('division_id',$request->range);
+                }
+            })->select(DB::raw('*,(written+viva+physical+edu_training+edu_experience+physical_age) as total_mark'))->orderBy('is_bn_candidate','desc')->orderBy('specialized','desc')->orderBy('total_mark','desc');
             /*$applicants = JobAppliciant::with(['appliciantEducationInfo'=>function($q){
                 $q->with('educationInfo');
             },'district','marks'=>function($qq){
@@ -68,14 +78,27 @@ class ApplicantReportsController extends Controller
 
             })->where('status','accepted')->where('job_circular_id',$request->circular)->where('unit_id',$request->unit);
 //            return $applicants->get();*/
-            $pdf = SnappyPdf::loadView('recruitment::reports.accepted_list',[
-                'applicants'=>$applicants->get(),
-                'unit'=>District::find($request->unit)
-            ])
-                ->setPaper('a4')
-                ->setOption('footer-left',url('/'))
-                ->setOption('footer-right',Carbon::now()->format('d-M-Y H:i:s'))
-                ->setOrientation('landscape');
+            if($request->unit){
+                $pdf = SnappyPdf::loadView('recruitment::reports.accepted_list',[
+                    'applicants'=>$applicants->get(),
+                    'unit'=>District::find($request->unit),
+                    'type'=>$category_type
+                ])
+                    ->setPaper('a4')
+                    ->setOption('footer-left',url('/'))
+                    ->setOption('footer-right',Carbon::now()->format('d-M-Y H:i:s'))
+                    ->setOrientation('landscape');
+            } else{
+                $pdf = SnappyPdf::loadView('recruitment::reports.accepted_list',[
+                    'applicants'=>$applicants->get(),
+                    'range'=>Division::find($request->range),
+                    'type'=>$category_type
+                ])
+                    ->setPaper('a4')
+                    ->setOption('footer-left',url('/'))
+                    ->setOption('footer-right',Carbon::now()->format('d-M-Y H:i:s'))
+                    ->setOrientation('landscape');
+            }
             return $pdf->download();
             /*return view('recruitment::reports.accepted_list',[
                 'applicants'=>$applicants->get(),
