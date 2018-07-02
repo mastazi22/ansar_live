@@ -44,15 +44,23 @@
 <?php $i = 1 ?>
 <table style="width: 100%">
     <caption style="text-align: center;font-size: 20px;font-weight: bold;color:#000000;">
-        আনসার ও গ্রাম প্রতিরক্ষা বাহিনী,@if(isset($unit)) {{$unit->unit_name_bng}} @elseif(isset($range)) {{$range->division_name_bng}} @endif<br>
-        মৌলিক প্রশিক্ষণ -সাধারণ আনসার (পুরুষ)<br>
+        আনসার ও গ্রাম প্রতিরক্ষা
+        বাহিনী,@if(isset($unit)) {{$unit->unit_name_bng}} @elseif(isset($range)) {{$range->division_name_bng}} @endif
+        <br>
+        @if($type=="apc_training")
+            <th>সাধারন আনসার হতে এপিসি পদোন্নতি কোর্স</th>
+        @elseif($type=="pc_training")
+            <th>এপিসি হতে পিসি পদোন্নতি কোর্স</th>
+        @else
+            মৌলিক প্রশিক্ষণ -সাধারণ আনসার (পুরুষ)
+        @endif<br>
         চুড়ান্তভাবে নির্বাচিত প্রশিক্ষণার্থির তালিকা
     </caption>
     <tr>
         <th>ক্রমিক নং</th>
         @if($type=="apc_training"||$type=="pc_training")
             <th>আনসার আইডি</th>
-            @endif
+        @endif
         <th>নাম</th>
         <th>পিতার নাম</th>
         <th>ঠিকানা</th>
