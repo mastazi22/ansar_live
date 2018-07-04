@@ -39,9 +39,9 @@ class JobCircularController extends Controller
     {
         //
         $job_categories = JobCategory::pluck('category_name_eng', 'id')->prepend('--Select a job category--', '0');
-        $units = District::where('id','!=',0)->get();
-        $range = Division::where('id','!=',0)->get();
-        return view('recruitment::job_circular.create', ['categories' => $job_categories,'units'=>$units,'ranges'=>$range]);
+        $units = District::where('id', '!=', 0)->get();
+        $range = Division::where('id', '!=', 0)->get();
+        return view('recruitment::job_circular.create', ['categories' => $job_categories, 'units' => $units, 'ranges' => $range]);
     }
 
     /**
@@ -66,13 +66,13 @@ class JobCircularController extends Controller
         try {
             $request['start_date'] = Carbon::parse($request->start_date)->format('Y-m-d');
             $request['end_date'] = Carbon::parse($request->end_date)->format('Y-m-d');
-            $request['applicatn_units'] = implode(',',$request->applicatn_units);
-            $request['applicatn_range'] = implode(',',$request->applicatn_range);
-            $request['payment_status'] = !$request->payment_status?'off':$request->payment_status;
-            $request['application_status'] = !$request->application_status?'off':$request->application_status;
-            $request['login_status'] = !$request->login_status?'off':$request->login_status;
-            $request['circular_status'] = !$request->circular_status?'shutdown':$request->circular_status;
-            $request['quota_district_division']=!$request->quota_district_division?'off':$request->quota_district_division;
+            $request['applicatn_units'] = implode(',', $request->applicatn_units);
+            $request['applicatn_range'] = implode(',', $request->applicatn_range);
+            $request['payment_status'] = !$request->payment_status ? 'off' : $request->payment_status;
+            $request['application_status'] = !$request->application_status ? 'off' : $request->application_status;
+            $request['login_status'] = !$request->login_status ? 'off' : $request->login_status;
+            $request['circular_status'] = !$request->circular_status ? 'shutdown' : $request->circular_status;
+            $request['quota_district_division'] = !$request->quota_district_division ? 'off' : $request->quota_district_division;
             $c = JobCategory::find($request->job_category_id)->circular()->create($request->except(['job_category_id', 'constraint']));
             $c->constraint()->create(['constraint' => $request->constraint]);
             DB::commit();
@@ -106,9 +106,9 @@ class JobCircularController extends Controller
     {
         $job_categories = JobCategory::pluck('category_name_eng', 'id')->prepend('--Select a job category--', '0');
         $data = JobCircular::with('constraint')->find($id);
-        $units = District::where('id','!=',0)->get();
-        $range = Division::where('id','!=',0)->get();
-        return view('recruitment::job_circular.edit', ['categories' => $job_categories, 'data' => $data,'units'=>$units,'ranges'=>$range]);
+        $units = District::where('id', '!=', 0)->get();
+        $range = Division::where('id', '!=', 0)->get();
+        return view('recruitment::job_circular.edit', ['categories' => $job_categories, 'data' => $data, 'units' => $units, 'ranges' => $range]);
 
     }
 
@@ -135,13 +135,13 @@ class JobCircularController extends Controller
             $request['end_date'] = Carbon::parse($request->end_date)->format('Y-m-d');
             if (!$request->exists('status')) $request['status'] = 'inactive';
             if (!$request->exists('auto_terminate')) $request['auto_terminate'] = '0';
-            $request['applicatn_units'] = implode(',',$request->applicatn_units);
-            $request['applicatn_range'] = implode(',',$request->applicatn_range);
-            $request['payment_status'] = !$request->payment_status?'off':$request->payment_status;
-            $request['login_status'] = !$request->login_status?'off':$request->login_status;
-            $request['application_status'] = !$request->application_status?'off':$request->application_status;
-            $request['circular_status'] = !$request->circular_status?'shutdown':$request->circular_status;
-            $request['quota_district_division']=!$request->quota_district_division?'off':$request->quota_district_division;
+            $request['applicatn_units'] = implode(',', $request->applicatn_units);
+            $request['applicatn_range'] = implode(',', $request->applicatn_range);
+            $request['payment_status'] = !$request->payment_status ? 'off' : $request->payment_status;
+            $request['login_status'] = !$request->login_status ? 'off' : $request->login_status;
+            $request['application_status'] = !$request->application_status ? 'off' : $request->application_status;
+            $request['circular_status'] = !$request->circular_status ? 'shutdown' : $request->circular_status;
+            $request['quota_district_division'] = !$request->quota_district_division ? 'off' : $request->quota_district_division;
             $c = JobCircular::find($id);
             $c->update($request->except('constraint'));
             if ($c->constraint) $c->constraint()->update(['constraint' => $request->constraint]);
@@ -166,13 +166,15 @@ class JobCircularController extends Controller
     {
         //
     }
-    public function constraint($id){
-        try{
+
+    public function constraint($id)
+    {
+        try {
             $circular = JobCircular::findOrFail($id);
-            $constraint  = $circular->constraint->constraint;
+            $constraint = $circular->constraint->constraint;
             return $constraint;
-        }catch(\Exception $e){
-            return Response::json(['message'=>'invalid circular'],404);
+        } catch (\Exception $e) {
+            return Response::json(['message' => 'invalid circular'], 404);
         }
     }
 
@@ -181,8 +183,8 @@ class JobCircularController extends Controller
         $data = '';
         if ($request->exists('q') && $request->q) {
             $q = $request->q;
-            if(!$data){
-                $data = JobCircular::with('category')->where(function ($query) use($q){
+            if (!$data) {
+                $data = JobCircular::with('category')->where(function ($query) use ($q) {
                     $query->whereHas('category', function ($query) use ($q) {
                         $query->orWhere(function ($query) use ($q) {
                             $query->where('category_name_eng', 'like', "%{$q}%");
@@ -194,18 +196,17 @@ class JobCircularController extends Controller
             }
 
         }
-        if($request->exists('status')&&$request->status!='all'){
-            if($data) $data->where('circular_status',$request->status);
-            else $data = JobCircular::with('category')->where('circular_status',$request->status);
+        if ($request->exists('status') && $request->status != 'all') {
+            if ($data) $data->where('circular_status', $request->status);
+            else $data = JobCircular::with('category')->where('circular_status', $request->status);
         }
-        if($request->exists('category_id')&&$request->category_id){
-            if($data) $data->where('job_category_id',$request->category_id);
-            else $data = JobCircular::with('category')->where('job_category_id',$request->category_id);
+        if ($request->exists('category_id') && $request->category_id) {
+            if ($data) $data->where('job_category_id', $request->category_id);
+            else $data = JobCircular::with('category')->where('job_category_id', $request->category_id);
         }
-        if($data) {
+        if ($data) {
             $data = $data->get();
             return response()->json($data);
-        }
-        else return response()->json(JobCircular::with('category')->get());
+        } else return response()->json(JobCircular::with('category')->get());
     }
 }
