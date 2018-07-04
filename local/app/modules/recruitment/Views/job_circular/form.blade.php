@@ -20,7 +20,6 @@
             <p class="text text-danger">{{$errors->first('circular_name')}}</p>
         @endif
     </div>
-
     <div class="form-group">
         {!! Form::label('start_date','Start Date :',['class'=>'control-label']) !!}
         {!! Form::text('start_date',null,['class'=>'form-control','placeholder'=>'Enter Start Date','date-picker'=>(isset($data)?"moment('{$data->start_date}').format('DD-MMM-YYYY')":"moment('".\Carbon\Carbon::parse(Request::old('start_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
@@ -35,7 +34,6 @@
             <p class="text text-danger">{{$errors->first('end_date')}}</p>
         @endif
     </div>
-
     <div class="form-group">
         {!! Form::label('pay_amount','Pay Amount :',['class'=>'control-label']) !!}
         {!! Form::text('pay_amount',null,['class'=>'form-control','placeholder'=>'Pay Amount']) !!}
@@ -43,19 +41,16 @@
             <p class="text text-danger">{{$errors->first('pay_amount')}}</p>
         @endif
     </div>
-
     <div class="form-group">
         {!! Form::label('terms_and_conditions','Terms and Conditions :',['class'=>'control-label']) !!}
         {!! Form::textarea('terms_and_conditions',null,['class'=>'form-control','placeholder'=>'','id'=>'terms_and_conditions']) !!}
     </div>
-
     <div class="form-group">
         {!! Form::label('test','Circular Status : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
         <input type="checkbox" value="running" name="circular_status"
                @if((isset($data)&&$data->circular_status=='running')||Request::old('circular_status')=='running')checked
                @endif id="circular_status" class="switch-checkbox">
         <label for="circular_status" class=""></label>
-
     </div>
     <div class="form-group">
         {!! Form::label('test','Status : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
@@ -63,7 +58,6 @@
                @if((isset($data)&&$data->status=='active')||Request::old('status')=='active')checked
                @endif id="status" class="switch-checkbox">
         <label for="status" class=""></label>
-
     </div>
     <div class="form-group">
         {!! Form::label('test','Login Status : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
@@ -71,7 +65,6 @@
                @if((isset($data)&&$data->login_status=='on')||Request::old('login_status')=='on')checked
                @endif id="login_status" class="switch-checkbox">
         <label for="login_status" class=""></label>
-
     </div>
     <div class="form-group">
         {!! Form::label('test','Payment Status : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
@@ -79,7 +72,6 @@
                @if((isset($data)&&$data->payment_status=='on')||Request::old('payment_status')=='on')checked
                @endif id="payment_status" class="switch-checkbox">
         <label for="payment_status" class=""></label>
-
     </div>
     <div class="form-group">
         {!! Form::label('test','Application Status : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
@@ -87,7 +79,6 @@
                @if((isset($data)&&$data->application_status=='on')||Request::old('application_status')=='on')checked
                @endif id="application_status" class="switch-checkbox">
         <label for="application_status" class=""></label>
-
     </div>
     <div class="form-group">
         {!! Form::label('test','Quota applied for all divisions and districts : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
@@ -138,7 +129,10 @@
                @if((isset($data)&&$data->auto_terminate=='1')||Request::old('auto_terminate')=='1')checked
                @endif id="auto_terminate" class="switch-checkbox">
         <label for="auto_terminate" class=""></label>
-
+    </div>
+    <div class="form-group">
+        {!! Form::label('admit_card_message','Message for admit card :',['class'=>'control-label']) !!}
+        {!! Form::textarea('admit_card_message',null,['class'=>'form-control','placeholder'=>'','id'=>'admit_card_message']) !!}
     </div>
     <div class="form-group">
         <input type="hidden" name="constraint">
@@ -158,7 +152,6 @@
     {!! Form::close() !!}
     <div id="constraint-modal" class="modal fade" role="dialog">
         <div class="modal-dialog">
-
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
@@ -167,7 +160,6 @@
                 </div>
                 <div class="modal-body">
                     <div class="constraint-rule">
-
                         <fieldset>
                             <legend>Gender</legend>
                             <div class="row">
@@ -273,15 +265,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                {{--<div class="col-md-4">
-                                    <div class="form-group">
-                                        <div class="form-group">
-                                            <label class="control-label">On date</label>
-                                            <input type="text" date-picker="" class="form-control" ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
-                                                   ng-model="constraint.age.date">
-                                        </div>
-                                    </div>
-                                </div>--}}
                             </div>
                         </fieldset>
                         <fieldset>
@@ -383,7 +366,6 @@
                                 </div>
                             </div>
                         </fieldset>
-
                         <fieldset>
                             <legend>Education</legend>
                             <div class="row">
@@ -414,7 +396,6 @@
                                 </div>
                             </div>
                         </fieldset>
-
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -424,7 +405,6 @@
                     </button>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -432,7 +412,6 @@
 <script>
     $(document).ready(function () {
         $(".range-app").on('change', function (event) {
-
             var status = $(this).prop('checked');
             var v = $(this).val();
             if (status) {
@@ -442,9 +421,7 @@
                 $('*[data-division-id="' + v + '"]').prop('checked', false)
             }
         })
-
         CKEDITOR.replace('terms_and_conditions');
-
+        CKEDITOR.replace('admit_card_message');
     })
-
 </script>
