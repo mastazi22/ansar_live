@@ -34,7 +34,14 @@
     <input type="checkbox" value="active" name="status" @if(isset($data)&&$data->status=='active')checked
            @endif id="status" class="switch-checkbox">
     <label for="status" class=""></label>
-
+</div>
+<div class="form-group">
+    {!! Form::label('category_header','Header :',['class'=>'control-label']) !!}
+    {!! Form::textarea('category_header',null,['class'=>'form-control','placeholder'=>'','id'=>'category_header']) !!}
+</div>
+<div class="form-group">
+    {!! Form::label('category_conditions','Conditions :',['class'=>'control-label']) !!}
+    {!! Form::textarea('category_conditions',null,['class'=>'form-control','placeholder'=>'','id'=>'category_conditions']) !!}
 </div>
 @if(isset($data))
     <button type="submit" class="btn btn-primary pull-right">
@@ -46,3 +53,12 @@
     </button>
 @endif
 {!! Form::close() !!}
+
+<script src="//cdn.ckeditor.com/4.8.0/standard/ckeditor.js"></script>
+<script>
+    $(document).ready(function () {
+        CKEDITOR.replace('category_header');
+        CKEDITOR.replace('category_conditions');
+    })
+
+</script>
