@@ -214,18 +214,19 @@ class AnsarVDPInfoController extends Controller
                 "smart_card_id", "avub_id", "mobile_no_self", "email_fb_id", "height", "blood_group", "gender", "health_condition",
                 "education", "training"
             ];
-            $keys = [ "village_house_no", "post_office_name",
+            $keys = ["village_house_no", "post_office_name",
                 "ansar_name_eng", "ansar_name_bng", "designation", "father_name_bng", "mother_name_bng",
                 "marital_status", "spouse_name_bng", "national_id_no",
-                "smart_card_id", "avub_id", "mobile_no_self","health_condition"];
+                "smart_card_id", "avub_id", "mobile_no_self", "health_condition"];
             $sheets = Excel::load($request->file('import_file'), function () {
 
             })->get();
-return $sheets;
+//return $sheets;
             $all_data = [];
+            $error_headers = [];
             foreach ($sheets as $sheet) {
                 $rows = collect($sheet)->toArray();
-
+                $error_headers = $rows[2];
                 unset($rows[0]);
                 unset($rows[1]);
                 unset($rows[2]);
@@ -233,11 +234,10 @@ return $sheets;
                 unset($rows[4]);
 
                 foreach ($rows as $row) {
-//                    array_push($all_data, array_combine($fields, array_slice($row,0,count($fields))));
-                    array_push($all_data, [count($fields),array_slice($row,0,count($fields))]);
+                    array_push($all_data, array_combine($fields, array_slice($row, 0, count($fields))));
+//                    array_push($all_data, [count($fields),array_slice($row,0,count($fields))]);
                 }
             }
-            return $all_data;
             $insertData = [];
             foreach ($all_data as $data) {
                 $r = [];
@@ -254,7 +254,7 @@ return $sheets;
                         if (count($m) > 0 && is_array($m[0])) {
                             $bg = implode('', $m[0]);
                             $b = Blood::where('blood_group_name_eng', $bg)->orWhere('blood_group_name_bng', $bg)->first();
-                            $r['blood_group_id'] = $b?$b->id:0;
+                            $r['blood_group_id'] = $b ? $b->id : 0;
                         } else {
                             $r['blood_group_id'] = 0;
                         }
@@ -267,27 +267,27 @@ return $sheets;
 //                        return $m;
                     } else if ($key == 'date_of_birth') {
                         $r['date_of_birth'] = $this->parseDate($value);
-                    }else if ($key == 'marital_status') {
+                    } else if ($key == 'marital_status') {
                         $r['marital_status'] = $ms[$value];
-                    }else if ($key == 'gender') {
-                        $r['gender'] = $value=="পুরুষ"?"Male":"Female";
+                    } else if ($key == 'gender') {
+                        $r['gender'] = $value == "পুরুষ" ? "Male" : "Female";
                     } else if ($key == 'education') {
                         $r['educationInfo'][] = [
-                            'education_id'=>$this->parseEducation($value)
+                            'education_id' => $this->parseEducation($value)
                         ];
                     } else if ($key == 'training') {
-                        if (preg_match('/ভিডিপি/',$value)) {
+                        if (preg_match('/ভিডিপি/', $value)) {
                             $r['training_info'][] = [
                                 'training_id' => 3,
                                 'sub_training_id' => 0,
                             ];
-                        } else if (preg_match('/আনসার/',$value)) {
+                        } else if (preg_match('/আনসার/', $value)) {
                             $r['training_info'][] = [
                                 'training_id' => 7,
                                 'sub_training_id' => 0,
                             ];
                         }
-                    }else if ($key == 'union_word_id') {
+                    } else if ($key == 'union_word_id') {
                         $uwi = intval(LanguageConverterFacades::bngToEng($value));
                         $r["union_word_id"] = $uwi;
                     }
@@ -297,38 +297,40 @@ return $sheets;
 
             }
             $res = [
-                "success"=>0,
-                "fail"=>[]
+                "success" => 0,
+                "fail" => 0
             ];
 //            return $insertData;
             Log::info($insertData);
 //            return $insertData?"sssss":"dddddd";
-            foreach ($insertData as $i){
-                if($i['smart_card_id']&&strlen($i['smart_card_id'])>5) $i['smart_card_id'] = substr($i['smart_card_id'],-5);
+            $error_data = [];
+            $index = 0;
+            foreach ($insertData as $i) {
+                if ($i['smart_card_id'] && strlen($i['smart_card_id']) > 5) $i['smart_card_id'] = substr($i['smart_card_id'], -5);
                 $request->replace($i);
-                $valid = Validator::make($i,[
-                    'ansar_name_bng'=>'required',
-                    'ansar_name_eng'=>'required',
-                    'father_name_bng'=>'required',
-                    'mother_name_bng'=>'required',
-                    'designation'=>'required',
-                    'date_of_birth'=>'required',
-                    'marital_status'=>'required',
-                    'national_id_no'=>'unique:avurp.avurp_vdp_ansar_info',
-                    'mobile_no_self'=>'required|unique:avurp.avurp_vdp_ansar_info,mobile_no_self',
-                    'height_feet'=>'',
-                    'height_inch'=>'',
-                    'blood_group_id'=>'',
-                    'gender'=>'required',
-                    'health_condition'=>'',
-                    'division_id'=>'required|numeric|min:1',
-                    'unit_id'=>'required|numeric|min:1',
-                    'thana_id'=>'required|numeric|min:1',
-                    'union_id'=>'required|numeric|min:1',
-                    'union_word_id'=>'required|numeric|min:1',
-                    'smart_card_id'=>'sometimes|exists:hrm.tbl_ansar_parsonal_info,ansar_id|unique:avurp.avurp_vdp_ansar_info',
-                    'post_office_name'=>'',
-                    'village_house_no'=>'',
+                $valid = Validator::make($i, [
+                    'ansar_name_bng' => 'required',
+                    'ansar_name_eng' => 'required',
+                    'father_name_bng' => 'required',
+                    'mother_name_bng' => 'required',
+                    'designation' => 'required',
+                    'date_of_birth' => 'required',
+                    'marital_status' => 'required',
+                    'national_id_no' => 'unique:avurp.avurp_vdp_ansar_info',
+                    'mobile_no_self' => 'required|unique:avurp.avurp_vdp_ansar_info,mobile_no_self',
+                    'height_feet' => '',
+                    'height_inch' => '',
+                    'blood_group_id' => '',
+                    'gender' => 'required',
+                    'health_condition' => '',
+                    'division_id' => 'required|numeric|min:1',
+                    'unit_id' => 'required|numeric|min:1',
+                    'thana_id' => 'required|numeric|min:1',
+                    'union_id' => 'required|numeric|min:1',
+                    'union_word_id' => 'required|numeric|min:1',
+                    'smart_card_id' => 'sometimes|exists:hrm.tbl_ansar_parsonal_info,ansar_id|unique:avurp.avurp_vdp_ansar_info',
+                    'post_office_name' => '',
+                    'village_house_no' => '',
                     //'educationInfo'=>'required',
                     //'training_info'=>'required',
                     /*'educationInfo.*.education_id'=>'required|numeric|min:1',
@@ -337,99 +339,134 @@ return $sheets;
                     //'training_info.*.sub_training_id'=>'required|numeric|min:1',
 
                 ]);
-                if($valid->fails()){
-                    $res["fail"][] = ['status'=>false,'message'=>$valid->messages()];
+                if ($valid->fails()) {
+                    array_push($error_data, array_merge($all_data[$index],["errors"=>$this->validationErrorsToString($valid->messages())]));
+                    $res["fail"]++;
+                } else {
+                    $response = $this->infoRepository->create($request, auth()->user()->id);
+                    if ($response['status']) $res["success"]++;
+                    else {
+                        $res["fail"]++;
+                        array_push($error_data, array_merge($all_data[$index],["errors"=>$response['data']['message']]));
+                    }
                 }
-                else {
-                    $response = $this->infoRepository->create($request,auth()->user()->id);
-                    if($response['status']) $res["success"]++;
-                    else $res["fail"][] = ['status'=>false,'message'=>$response['data']['message']];
-                }
-//                $res[] = $i;
+                $index++;
+
+            }
+            if (count($error_data) > 0) {
+                array_push($error_headers,"errors");
+                $file_name = 'error_date_' . time();
+                Excel::create($file_name, function ($excel) use ($error_data, $error_headers) {
+
+                    $excel->sheet('sheet1', function ($sheet) use ($error_data, $error_headers) {
+                        $sheet->setAutoSize(false);
+                        $sheet->setWidth('A', 5);
+                        $sheet->loadView('AVURP::ansar_vdp_info.import_error', ['error_datas' => $error_data, 'headers' => $error_headers]);
+                    });
+                })->store('xls', storage_path());
             }
 
-            return $res;
+            return response()->json(['data' => $res, 'error' => isset($file_name) ? $file_name : false]);
         }
         return response()->json(['status' => false, 'msg' => 'Please upload excel u want to import']);
     }
-    private function parseDate($date){
+
+    private function parseDate($date)
+    {
         $value = LanguageConverterFacades::bngToEng($date);
         $formats = [
-          "d-m-y",
-          "d/m/y",
-          "d.m.y",
-          "d-m-Y",
-          "d/m/Y",
-          "d.m.Y",
-          "j-m-y",
-          "j/m/y",
-          "j.m.y",
-          "j-m-Y",
-          "j/m/Y",
-          "j.m.Y",
-          "d-n-y",
-          "d/n/y",
-          "d.n.y",
-          "d-n-Y",
-          "d/n/Y",
-          "d.n.Y",
-          "j-n-y",
-          "j/n/y",
-          "j.n.y",
-          "j-n-Y",
-          "j/n/Y",
-          "j.n.Y"
+            "d-m-y",
+            "d/m/y",
+            "d.m.y",
+            "d-m-Y",
+            "d/m/Y",
+            "d.m.Y",
+            "j-m-y",
+            "j/m/y",
+            "j.m.y",
+            "j-m-Y",
+            "j/m/Y",
+            "j.m.Y",
+            "d-n-y",
+            "d/n/y",
+            "d.n.y",
+            "d-n-Y",
+            "d/n/Y",
+            "d.n.Y",
+            "j-n-y",
+            "j/n/y",
+            "j.n.y",
+            "j-n-Y",
+            "j/n/Y",
+            "j.n.Y"
         ];
         $validDate = false;
-        foreach($formats as $format){
-            try{
-                $d = Carbon::createFromFormat($format,$value)->format('Y-m-d');
+        foreach ($formats as $format) {
+            try {
+                $d = Carbon::createFromFormat($format, $value)->format('Y-m-d');
                 $validDate = $d;
                 break;
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
 
             }
         }
-        return $validDate?$validDate:null;
+        return $validDate ? $validDate : null;
     }
-    private function parseEducation($value){
-        if(preg_match('/অস্তম|অষ্টম|৮ম|8/',$value)){
+
+    private function parseEducation($value)
+    {
+        if (preg_match('/অস্তম|অষ্টম|৮ম|8/', $value)) {
             $edu = AllEducationName::where('education_deg_bng', 'LIKE', "%অষ্টম%")->first();
-            return $edu?$edu->id:0;
-        }
-        else if(preg_match('/নবম|৯ম|9/',$value)){
+            return $edu ? $edu->id : 0;
+        } else if (preg_match('/নবম|৯ম|9/', $value)) {
             $edu = AllEducationName::where('education_deg_bng', 'LIKE', "%নবম%")->first();
-            return $edu?$edu->id:0;
-        }
-        else if(preg_match('/সপ্তম|৭ম|7/',$value)){
+            return $edu ? $edu->id : 0;
+        } else if (preg_match('/সপ্তম|৭ম|7/', $value)) {
             $edu = AllEducationName::where('education_deg_bng', 'LIKE', "%সপ্তম%")->first();
-            return $edu?$edu->id:0;
-        }
-        else if(preg_match('/ষষ্ঠ|৬ষ্ঠ|৬ম|6/',$value)){
+            return $edu ? $edu->id : 0;
+        } else if (preg_match('/ষষ্ঠ|৬ষ্ঠ|৬ম|6/', $value)) {
             $edu = AllEducationName::where('education_deg_bng', 'LIKE', "%ষষ্ঠ%")->first();
-            return $edu?$edu->id:0;
-        }
-        else if(preg_match('/পঞ্চম|৫ম|5/',$value)){
+            return $edu ? $edu->id : 0;
+        } else if (preg_match('/পঞ্চম|৫ম|5/', $value)) {
             $edu = AllEducationName::where('education_deg_bng', 'LIKE', "%পঞ্চম%")->first();
-            return $edu?$edu->id:0;
-        }
-        else if(preg_match('/দশম|১০ম|10/',$value)){
+            return $edu ? $edu->id : 0;
+        } else if (preg_match('/দশম|১০ম|10/', $value)) {
             $edu = AllEducationName::where('education_deg_bng', 'LIKE', "%দশম%")->first();
-            return $edu?$edu->id:0;
-        }
-        else if(preg_match('/এস.এস.সি|এস,এস,সি|এস\s+এস\s+সি/',$value)){
+            return $edu ? $edu->id : 0;
+        } else if (preg_match('/এস.এস.সি|এস,এস,সি|এস\s+এস\s+সি/', $value)) {
             $edu = AllEducationName::where('education_deg_bng', 'LIKE', "%এস.এস.সি%")->first();
-            return $edu?$edu->id:0;
-        }
-        else if(preg_match('/এইচ.এস.সি|এইচ,এস,সি|এইচ\s+এস\s+সি/',$value)){
+            return $edu ? $edu->id : 0;
+        } else if (preg_match('/এইচ.এস.সি|এইচ,এস,সি|এইচ\s+এস\s+সি/', $value)) {
             $edu = AllEducationName::where('education_deg_bng', 'LIKE', "%এইচ.এস.সি%")->first();
-            return $edu?$edu->id:0;
-        }
-        else if(preg_match('/বি.এ/',$value)){
+            return $edu ? $edu->id : 0;
+        } else if (preg_match('/বি.এ/', $value)) {
             $edu = AllEducationName::where('education_deg_bng', 'LIKE', "%স্নাতক%")->first();
-            return $edu?$edu->id:0;
+            return $edu ? $edu->id : 0;
         }
         $edu = AllEducationName::where('education_deg_bng', 'LIKE', "%$value%")->first();
-        return $edu?$edu->id:0;
+        return $edu ? $edu->id : 0;
+    }
+
+    public function downloadFile($file_name)
+    {
+        $path = storage_path($file_name . ".xls");
+        if (File::exists($path)) {
+            return response()->download($path)->deleteFileAfterSend(true);
+        }
+        abort(404);
+    }
+
+    private function validationErrorsToString($errArray)
+    {
+        $valArr = array();
+        $errStrFinal = '';
+        foreach ($errArray->toArray() as $key => $value) {
+            $errStr = $key . ' ' . $value[0];
+            array_push($valArr, $errStr);
+        }
+        if (!empty($valArr)) {
+            $errStrFinal = implode(',', $valArr);
+        }
+        return $errStrFinal;
     }
 }

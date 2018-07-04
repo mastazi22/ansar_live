@@ -9,6 +9,7 @@
             $scope.param = {};
             $scope.allLoading = false;
             $scope.hide = true;
+            $scope.errorLink = false;
         })
         GlobalApp.directive('compileHtml', function ($compile) {
             return {
@@ -38,10 +39,18 @@
                             $("button.fileinput-upload-button").prop('disabled', true)
                         },
                         success: function (response) {
+                            var data;
+                            try{
+                                data = JSON.parse(response)
+                            }catch(e){
+                                data = response
+                            }
+                            scope.errorLink = data.error
                             scope.hide = true;
                             scope.allLoading = false;
                             scope.$apply()
-                            console.log(response)
+                            notificationService.notify("success",`Success ${data.data.success}, error ${data.data.fail}`)
+
                         },
                         error: function (response) {
                             scope.hide = true;
@@ -161,6 +170,11 @@
                         </div>
                         <p id="p-text" ng-hide="hide" class="text-center text-bold"></p>
                     </div>
+                </div>
+                <div style="padding: 20px;display: flex;justify-content: center;" ng-if="errorLink">
+                    <a href="{{URL::route("AVURP.info.import.download",['file_name'=>''])}}/[[errorLink]]" class="btn btn-primary">
+                        <i class="fa fa-download"></i>&nbsp;Download error data
+                    </a>
                 </div>
                 <div ng-bind-html="vdpList" compile-html>
 
