@@ -142,6 +142,7 @@ class VDPInfoRepository implements VDPInfoInterface
      */
     public function getInfos($param = [], $paginate = 30, $user_id = '',$is_api=false)
     {
+        return $param;
         $range = isset($param['range']) && $param['range'] ? $param['range'] : 'all';
         $unit = isset($param['unit']) && $param['unit'] ? $param['unit'] : 'all';
         $thana = isset($param['thana']) && $param['thana'] ? $param['thana'] : 'all';
