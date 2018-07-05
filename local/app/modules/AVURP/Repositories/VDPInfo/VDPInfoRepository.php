@@ -268,7 +268,7 @@ class VDPInfoRepository implements VDPInfoInterface
      */
     public function getInfoForEdit($id, $user_id = '')
     {
-        $info = $this->info->with(['education', 'training_info', 'training_info.main_training.subTraining'])->where('id',$id)->userQuery($user_id);
+        $info = $this->info->with(['education', 'training_info', 'training_info.main_training.subTraining',"division","unit","thana","union"])->where('id',$id)->userQuery($user_id);
         return $info->first();
     }
 

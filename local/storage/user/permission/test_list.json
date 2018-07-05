@@ -679,6 +679,10 @@
             "name": "Edit"
           },
           {
+            "value": "AVURP.info.import,AVURP.info.import_upload,AVURP.info.import.download",
+            "name": "Import File"
+          },
+          {
             "value": "AVURP.info.verify",
             "name": "Verify VDP"
           },

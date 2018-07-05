@@ -151,5 +151,8 @@ return [
         "AVURP.api.update",
         "HRM.offer_rollback.index",
         "HRM.offer_rollback.update",
+        "AVURP.info.import.download",
+        "AVURP.info.import",
+        "AVURP.info.import_upload",
     ]
 ];
