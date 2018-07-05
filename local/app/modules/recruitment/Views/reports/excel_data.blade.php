@@ -3,7 +3,7 @@
         <th style="width: 10px">SL No.</th>
         @if($ctype=='apc_training')
             <th>Ansar ID</th>
-            @endif
+        @endif
         <th>Applicant Name</th>
         <th>Applicant ID</th>
         <th>Father Name</th>
@@ -22,7 +22,7 @@
         <th>Height</th>
         @if($ctype=='apc_training')
             <th>Education</th>
-            @else
+        @else
             <th>Weight</th>
         @endif
 
@@ -69,7 +69,7 @@
                     <td>{{$a->mobile_no_self}}</td>
                 @endif
                 @if(isset($status)&&$status=='accepted')
-                    <td>{{$a->marks->written+$a->marks->viva+$a->marks->physical+$a->marks->edu_training}}</td>
+                    <td>{{$a->marks->written+$a->marks->viva+$a->marks->physical+$a->marks->edu_training+$a->marks->physical_age}}</td>
                 @endif
                 <td>{{$a->status}}</td>
             </tr>

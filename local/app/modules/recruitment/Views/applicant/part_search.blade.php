@@ -32,7 +32,7 @@
                 <tr>
                     <td>{{$i++}}</td>
                     <td>{{$a->applicant_name_bng}}
-                        <a href="{{URL::route('recruitment.applicant.detail_view',['id'=>$a->applicant_id])}}" target="_blank" class="">
+                        <a href="#" ng-click="editApplicant('{{URL::route('recruitment.applicant.detail_view',['id'=>$a->applicant_id])}}')" class="">
                             <i class="fa fa-edit"></i>
                         </a>
                     </td>
