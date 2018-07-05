@@ -28,7 +28,7 @@
         @endif
     </div>
     <div class="form-group">
-        {!! Form::checkbox('is_physical_and_age_checkbox','checked',@(isset($data)&&!empty($data->edu_training))?true:false,['class'=>'field-active']) !!}
+        {!! Form::checkbox('is_physical_and_age_checkbox','checked',@(isset($data)&&!empty($data->physical_age))?true:false,['class'=>'field-active']) !!}
         {!! Form::label('physical_age','Physical & Age Mark :',['class'=>'control-label']) !!}
         {!! Form::text('physical_age',null,['class'=>'form-control','placeholder'=>'Enter education & training mark']) !!}
         @if(isset($errors)&&$errors->first('physical_age'))
@@ -128,6 +128,8 @@
         } else {
             fieldUnChecked(jQuery("input[name='edu_experience']"), true);
         }
+
+        //is_physical_and_age_checkbox
         if (jQuery("input[name='is_physical_and_age_checkbox']").prop("checked")) {
             fieldChecked(jQuery("input[name='physical_age']"), true);
         } else {

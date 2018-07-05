@@ -424,4 +424,8 @@
         CKEDITOR.replace('terms_and_conditions');
         CKEDITOR.replace('admit_card_message');
     })
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+        history.go(1);
+    };
 </script>
