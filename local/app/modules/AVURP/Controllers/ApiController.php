@@ -2,13 +2,16 @@
 
 namespace App\modules\AVURP\Controllers;
 
+use App\modules\AVURP\Models\VDPAnsarInfo;
 use App\modules\AVURP\Repositories\VDPInfo\VDPInfoInterface;
 use App\modules\AVURP\Requests\VDPInfoRequest;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Intervention\Image\Facades\Image;
 
 class ApiController extends Controller
 {
@@ -72,5 +75,20 @@ class ApiController extends Controller
     {
         $response = $this->infoRepository->verifyAndApproveVDP($id);
         return $response;
+    }
+    public function image($id)
+    {
+        $path = storage_path('avurp/profile_pic');
+        $image = VDPAnsarInfo::find($id);
+        if($image&&$image->profile_pic){
+            $path.="/".$image->profile_pic;
+        }else{
+            $path = public_path('dist/img/nimage.png');
+        }
+        if(File::exists($path)){
+            return Image::make($path)->response();
+        } else{
+            return Image::make(public_path('dist/img/nimage.png'))->response();
+        }
     }
 }

@@ -149,7 +149,15 @@ class VDPInfoRepository implements VDPInfoInterface
         $union = isset($param['union']) && $param['union'] ? $param['union'] : 'all';
         if($is_api){
             $vdp_infos = $this->info;
-            $vdp_infos = $vdp_infos->select('ansar_name_bng','geo_id','id','designation');
+            $vdp_infos = $vdp_infos->with(['division'=>function($q){
+                $q->select('division_name_bng as division_name','id');
+            }, 'unit'=>function($q){
+                $q->select('unit_name_bng as unit_name','id');
+            }, 'thana'=>function($q){
+                $q->select('thana_name_bng as thana_name','id');
+            }, 'union'=>function($q){
+                $q->select('union_name_bng as union_name','id');
+            }])->select('ansar_name_bng','geo_id','id','designation','division_id','unit_id','thana_id','union_id','status');
         } else{
             $vdp_infos = $this->info->with(['division', 'unit', 'thana', 'union']);
         }
