@@ -38,9 +38,10 @@ class ApiController extends Controller
 
     public function edit(Request $request,$id)
     {
+
         $info = $this->infoRepository->getInfoForEdit($id,$request->action_user_id);
         if(!$info) return response()->json(['message'=>'Not found'],404);
-        return response()->json();
+        return response()->json($info);
     }
 
     public function store(VDPInfoRequest $request)
