@@ -175,7 +175,7 @@ class VDPInfoRepository implements VDPInfoInterface
         }
         $vdp_infos = $vdp_infos->userQuery($user_id);
         if(isset($param['q']))$vdp_infos = $vdp_infos->searchQuery($param['q']);
-        if ($paginate > 0&&!$is_api) {
+        if ($paginate > 0) {
             return $vdp_infos->paginate($paginate);
         }
         return $vdp_infos->get();
