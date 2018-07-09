@@ -243,7 +243,27 @@ class AttendanceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        DB::connection("sd")->beginTransaction();
+        try{
+            $attendance = Attendance::findOrFail($id);
+            $data = [];
+            if($request->status=="present"&&((!$attendance->is_present&&!$attendance->is_leave)||(!$attendance->is_present&&$attendance->is_leave))){
+                $data["is_present"] = 1;
+                $data["is_leave"] = 0;
+            } else if($request->status=="absent"&&($attendance->is_present||$attendance->is_leave)){
+                $data["is_present"] = 0;
+                $data["is_leave"] = 0;
+            }else if($request->status=="leave"&&((!$attendance->is_present&&!$attendance->is_leave)||($attendance->is_present&&!$attendance->is_leave))){
+                $data["is_present"] = 0;
+                $data["is_leave"] = 1;
+            }
+            $attendance->update($data);
+            DB::connection("sd")->commit();
+        }catch(\Exception $e){
+            DB::connection("sd")->rollback();
+            return response()->json(['status'=>false,'message'=>$e->getMessage()]);
+        }
+        return response()->json(['status'=>true,'message'=>"Attendance updated successfully"]);
     }
 
     /**

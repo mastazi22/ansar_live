@@ -5,7 +5,7 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller("AttendanceController", function ($scope, $http, $sce) {
+        GlobalApp.controller("AttendanceController", function ($scope, $http, $sce,notificationService) {
             var currentYear = $scope.currentMonth = parseInt(moment().format('YYYY'));
             var currentMonth = $scope.currentYear = parseInt(moment().format('M'));
             $scope.vdpList = $sce.trustAsHtml(`
@@ -73,7 +73,7 @@
             </p>
             `)
                 $scope.present = {editing:[]};
-                $scope.param["date"] = day;
+                if(day!==undefined)$scope.param["date"] = day;
                 $("#viewAttendance").modal("show",{
                     backdrop: 'static',
                     keyboard: false
@@ -96,6 +96,53 @@
                 $scope.param.month = currentMonth;
                 $scope.param.year = currentYear;
                 console.log($scope.param)
+            }
+            $scope.updateAttendanceStatus = function (index, id, type) {
+                var data = {};
+                if(type==="present"){
+                    if($scope.present.loading===undefined) $scope.present.loading = [];
+                    $scope.present.loading[index]= true;
+                    data["status"] = $scope.present.status[index]!==undefined?$scope.present.status[index]:'';
+                } else if(type==="absent"){
+                    if($scope.absent.loading===undefined) $scope.absent.loading = [];
+                    $scope.absent.loading[index]= true;
+                    data["status"] = $scope.absent.status[index]!=undefined?$scope.absent.status[index]:'';
+                }else if(type==="leave"){
+                    if($scope.leave.loading===undefined) $scope.leave.loading = [];
+                    $scope.leave.loading[index]= true;
+                    data["status"] = $scope.leave.status[index]!=undefined?$scope.leave.status[index]:'';
+                }
+                data['_method'] = "patch"
+                $http({
+                    url:'{{URL::to("/SD/attendance/")}}/'+id,
+                    method:'post',
+                    data:data
+                }).then(function (success) {
+                    if(type==="present"){
+                        $scope.present.loading[index]= false;
+                    } else if(type==="absent"){
+                        $scope.absent.loading[index]= false;
+                    }else if(type==="leave"){
+                        $scope.leave.loading[index]= false;
+                    }
+                    var response = success.data;
+                    if(response.status){
+                        notificationService.notify("success",response.message);
+                    } else{
+                        notificationService.notify("error",response.message);
+                    }
+                    $scope.showDetails();
+                },function (error) {
+                    if(type==="present"){
+                        $scope.present.loading[index]= false;
+                    } else if(type==="absent"){
+                        $scope.absent.loading[index]= false;
+                    }else if(type==="leave"){
+                        $scope.leave.loading[index]= false;
+                    }
+                    notificationService.notify("error","An error occur while updating. error code:" +error.status);
+                })
+
             }
         })
         GlobalApp.directive('compileHtml', function ($compile) {

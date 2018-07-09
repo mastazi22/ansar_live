@@ -37,20 +37,20 @@
                                     <td>{{$present->ansar->thana->thana_name_bng}}</td>
                                     <td>
                                         <span ng-if="!present.editing[{{$i-1}}]">Present</span>
-                                        <select ng-if="present.editing[{{$i-1}}]" ng-model="moga[{{$i-1}}]">
+                                        <select ng-if="present.editing[{{$i-1}}]" ng-model="present.status[{{$i-1}}]">
                                             <option value="">Select a status</option>
                                             <option value="absent">Absent</option>
                                             <option value="leave">Leave</option>
                                         </select>
                                     </td>
                                     <td>
-                                        <a href="#" ng-click="enableEditing({{$i-1}})" class="btn btn-primary btn-xs" ng-if="!present.editing[{{$i-1}}]">
+                                        <a href="#" ng-click="present.editing[{{$i-1}}]=1" class="btn btn-primary btn-xs" ng-if="!present.editing[{{$i-1}}]">
                                             <i class="fa fa-edit"></i>
                                         </a>
-                                        <a href="#" ng-click="present.isEditing[{{$i-1}}]=0" class="btn btn-primary btn-xs" ng-if="present.editing[{{$i-1}}]">
-                                            <i class="fa fa-save"></i>
+                                        <a href="#" ng-disabled="!present.status[{{$i-1}}]||present.loading[{{$i-1}}]" ng-click="updateAttendanceStatus({{$i-1}},'{{$present->id}}','present')" class="btn btn-primary btn-xs" ng-if="present.editing[{{$i-1}}]">
+                                            <i class="fa " ng-class="{'fa-save':!present.loading[{{$i-1}}],'fa-spinner fa-pulse':present.loading[{{$i-1}}]}"></i>
                                         </a>
-                                        <a href="#" ng-click="present.editing[{{$i-1}}]=0" class="btn btn-danger btn-xs" ng-if="present.editing[{{$i-1}}]">
+                                        <a href="#" ng-disabled="present.loading[{{$i-1}}]" ng-click="present.editing[{{$i-1}}]=0;present.status[{{$i-1}}]=''" class="btn btn-danger btn-xs" ng-if="present.editing[{{$i-1}}]">
                                             <i class="fa fa-close"></i>
                                         </a>
                                     </td>
@@ -83,6 +83,7 @@
                                 <th>Own Division</th>
                                 <th>Own District</th>
                                 <th>Own Thana</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                             <?php $i = 0;?>
@@ -96,8 +97,22 @@
                                     <td>{{$absent->ansar->district->unit_name_bng}}</td>
                                     <td>{{$absent->ansar->thana->thana_name_bng}}</td>
                                     <td>
-                                        <a href="#" class="btn btn-primary btn-xs">
-                                            <i class="fa fa-edit"></i>&nbsp;Edit Attendance
+                                        <span ng-if="!absent.editing[{{$i-1}}]">Absent</span>
+                                        <select ng-if="absent.editing[{{$i-1}}]" ng-model="absent.status[{{$i-1}}]">
+                                            <option value="">Select a status</option>
+                                            <option value="present">Present</option>
+                                            <option value="leave">Leave</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <a href="#" ng-click="absent.editing[{{$i-1}}]=1" class="btn btn-primary btn-xs" ng-if="!absent.editing[{{$i-1}}]">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                        <a href="#" ng-disabled="!absent.status[{{$i-1}}]||absent.loading[{{$i-1}}]" ng-click="updateAttendanceStatus({{$i-1}},'{{$absent->id}}','absent')" class="btn btn-primary btn-xs" ng-if="absent.editing[{{$i-1}}]">
+                                            <i class="fa " ng-class="{'fa-save':!absent.loading[{{$i-1}}],'fa-spinner fa-pulse':absent.loading[{{$i-1}}]}"></i>
+                                        </a>
+                                        <a href="#" ng-disabled="absent.loading[{{$i-1}}]" ng-click="absent.editing[{{$i-1}}]=0;absent.status[{{$i-1}}]=''" class="btn btn-danger btn-xs" ng-if="absent.editing[{{$i-1}}]">
+                                            <i class="fa fa-close"></i>
                                         </a>
                                     </td>
                                 </tr>
@@ -129,6 +144,7 @@
                                 <th>Own Division</th>
                                 <th>Own District</th>
                                 <th>Own Thana</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                             <?php $i = 0;?>
@@ -142,8 +158,22 @@
                                     <td>{{$leave->ansar->district->unit_name_bng}}</td>
                                     <td>{{$leave->ansar->thana->thana_name_bng}}</td>
                                     <td>
-                                        <a href="#" class="btn btn-primary btn-xs">
-                                            <i class="fa fa-edit"></i>&nbsp;Edit Attendance
+                                        <span ng-if="!leave.editing[{{$i-1}}]">Leave</span>
+                                        <select ng-if="leave.editing[{{$i-1}}]" ng-model="leave.status[{{$i-1}}]">
+                                            <option value="">Select a status</option>
+                                            <option value="absent">Absent</option>
+                                            <option value="present">Present</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <a href="#" ng-click="leave.editing[{{$i-1}}]=1" class="btn btn-primary btn-xs" ng-if="!leave.editing[{{$i-1}}]">
+                                            <i class="fa fa-edit"></i>
+                                        </a>
+                                        <a href="#" ng-disabled="!leave.status[{{$i-1}}]||leave.loading[{{$i-1}}]" ng-click="updateAttendanceStatus({{$i-1}},'{{$leave->id}}','leave')" class="btn btn-primary btn-xs" ng-if="leave.editing[{{$i-1}}]">
+                                            <i class="fa " ng-class="{'fa-save':!leave.loading[{{$i-1}}],'fa-spinner fa-pulse':leave.loading[{{$i-1}}]}"></i>
+                                        </a>
+                                        <a href="#" ng-disabled="leave.loading[{{$i-1}}]" ng-click="leave.editing[{{$i-1}}]=0;leave.status[{{$i-1}}]=''" class="btn btn-danger btn-xs" ng-if="leave.editing[{{$i-1}}]">
+                                            <i class="fa fa-close"></i>
                                         </a>
                                     </td>
                                 </tr>
