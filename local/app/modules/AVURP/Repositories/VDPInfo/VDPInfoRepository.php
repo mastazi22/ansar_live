@@ -215,14 +215,32 @@ class VDPInfoRepository implements VDPInfoInterface
                 $count = sprintf("%02d", $count);
                 $geo_id .= $count;
             }
-
-            if ($request->hasFile('profile_pic')) {
+            if ($request->hasFile('profile_pic') && !$request->is('AVURP/api/*')) {
                 $file = $request->file('profile_pic');
                 $path = storage_path('avurp/profile_pic');
                 if (!File::exists($path)) File::makeDirectory($path, 777, true);
                 $image_name = $geo_id . '.' . $file->clientExtension();
                 Image::make($file)->save($path . '/' . $image_name);
+            } else if ($request->profile_pic && $request->is('AVURP/api/*')) {
+                $path = storage_path('avurp/profile_pic');
+                $image = Image::make($request->profile_pic);;
+                $extension = 'png';
+                $mime = $image->mime();
+                if ($mime == 'image/jpeg')
+                    $extension = 'jpg';
+                elseif ($mime == 'image/png')
+                    $extension = 'png';
+                elseif ($mime == 'image/gif')
+                    $extension = 'gif';
+                if (!File::exists($path)) File::makeDirectory($path, 777, true);
+                $image_name = $geo_id . '.' . $extension;
+                $image->save($path . '/' . $image_name);
             }
+
+
+
+
+
             $data = $request->except(['training_info','educationInfo','status','action_user_id']);
             $data['geo_id'] = $geo_id;
             if (isset($path) && isset($image_name)) $data['profile_pic'] = $path . '/' . $image_name;
