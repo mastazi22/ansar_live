@@ -72,7 +72,9 @@
                 <i class="fa fa-spinner fa-pulse fa-4x"></i>
             </p>
             `)
-                $scope.present = {editing:[]};
+                $scope.present = {};
+                $scope.absent = {};
+                $scope.leave = {};
                 if(day!==undefined)$scope.param["date"] = day;
                 $("#viewAttendance").modal("show",{
                     backdrop: 'static',
