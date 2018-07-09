@@ -13,6 +13,17 @@
                 Select guard,month,year or month,year and Ansar ID to load data
             </p>
             `)
+            $scope.view_attendance = $sce.trustAsHtml(`
+            <p style="font-size: 16px;font-weight: bold;text-align: center;">
+                <i class="fa fa-spinner fa-pulse fa-4x"></i>
+            </p>
+            `)
+            $scope.enableEditing = function (i) {
+
+            }
+            $scope.present = {editing:[]}
+            $scope.absent = {editing:[]}
+            $scope.leave = {editing:[]}
             $scope.param = {}
             $scope.months = {
                 "--Select a month--": '',
@@ -35,6 +46,10 @@
                 $scope.years[i] = i;
             }
             $scope.allLoading = false;
+            $scope.enableEditing = function (i) {
+                $scope.present.editing[i] = 1;
+                console.log($scope.present.editing)
+            }
             $scope.searchData = function () {
                 console.log($scope.param)
                 $scope.allLoading = true;
@@ -51,11 +66,71 @@
                     console.log(response.data)
                 })
             }
+            $scope.showDetails = function (day) {
+                $scope.view_attendance = $sce.trustAsHtml(`
+            <p style="font-size: 16px;font-weight: bold;text-align: center;">
+                <i class="fa fa-spinner fa-pulse fa-4x"></i>
+            </p>
+            `)
+                $scope.present = {editing:[]};
+                $scope.param["date"] = day;
+                $("#viewAttendance").modal("show",{
+                    backdrop: 'static',
+                    keyboard: false
+                })
+                $http({
+                    method: 'post',
+                    url: "{{URL::route('SD.attendance.view_attendance')}}",
+                    data: $scope.param,
+                }).then(function (response) {
+                    $scope.allLoading = false;
+                    $scope.view_attendance = $sce.trustAsHtml(response.data)
+                    console.log(response.data)
+                }, function (response) {
+                    $scope.allLoading = false;
+                    console.log(response.data)
+                })
+            }
             $scope.init = function () {
 //                alert(1)
                 $scope.param.month = currentMonth;
                 $scope.param.year = currentYear;
                 console.log($scope.param)
+            }
+        })
+        GlobalApp.directive('compileHtml', function ($compile) {
+            return {
+                restrict: 'A',
+                link: function (scope, elem, attr) {
+                    var newScope;
+                    scope.$watch('vdpList', function (n) {
+
+                        if (attr.ngBindHtml) {
+                            if(newScope) newScope.$destroy();
+                            newScope = scope.$new();
+                            $compile(elem[0].children)(newScope)
+                        }
+                    })
+
+                }
+            }
+        })
+        GlobalApp.directive('compileHtmll', function ($compile) {
+            return {
+                restrict: 'A',
+                link: function (scope, elem, attr) {
+                    var newScope;
+                    scope.$watch('view_attendance', function (n) {
+
+                        if (attr.ngBindHtml) {
+//                            alert(1)
+                            if(newScope) newScope.$destroy();
+                            newScope = scope.$new();
+                            $compile(elem[0].children)(newScope)
+                        }
+                    })
+
+                }
             }
         })
     </script>
@@ -135,6 +210,18 @@
                 </div>
 
                 <div ng-bind-html="vdpList" compile-html>
+
+                </div>
+            </div>
+            <div id="viewAttendance" class="modal fade" role="dialog">
+                <div class="modal-dialog modal-lg">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div ng-bind-html="view_attendance" compile-htmll>
+
+                        </div>
+                    </div>
 
                 </div>
             </div>

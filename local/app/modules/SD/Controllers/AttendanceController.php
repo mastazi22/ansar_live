@@ -8,6 +8,7 @@ use App\modules\SD\Models\Attendance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class AttendanceController extends Controller
 {
@@ -98,14 +99,14 @@ class AttendanceController extends Controller
             $m = $request->month;
             $y = $request->year;
             $ansar_id = $request->ansar_id;
-            $attendance = KpiGeneralModel::with(['attendance' => function ($q) use ($d, $m, $y,$ansar_id) {
-                if($d&&$d>0)$q->where('day', $d);
-                if($ansar_id)$q->where('ansar_id', $ansar_id);
+            $attendance = KpiGeneralModel::with(['attendance' => function ($q) use ($d, $m, $y, $ansar_id) {
+                if ($d && $d > 0) $q->where('day', $d);
+                if ($ansar_id) $q->where('ansar_id', $ansar_id);
                 $q->where('month', $m);
                 $q->where('year', $y);
                 $q->where('is_attendance_taken', 0);
-                if((!$d||$d<0)&&!$ansar_id){
-                    $q->select('ansar_id','id','kpi_id',DB::raw("group_concat(concat(year,'-',lpad(month,2,'0'),'-',lpad(day,2,'0'))) as dates"));
+                if ((!$d || $d < 0) && !$ansar_id) {
+                    $q->select('ansar_id', 'id', 'kpi_id', DB::raw("group_concat(concat(year,'-',lpad(month,2,'0'),'-',lpad(day,2,'0'))) as dates"));
                     $q->groupBy('ansar_id');
                 }
 
@@ -123,7 +124,7 @@ class AttendanceController extends Controller
                 $attendance->where('id', $request->kpi);
             }
             if ($request->ansar_id) {
-                $attendance->whereHas('attendance',function ($q) use($ansar_id){
+                $attendance->whereHas('attendance', function ($q) use ($ansar_id) {
                     $q->where('ansar_id', $ansar_id);
                 });
             }
@@ -132,7 +133,7 @@ class AttendanceController extends Controller
             $data = $attendance->first();
 //            return DB::getQueryLog();
 //    return $data;
-            $date = $request->only(['day','month','year','ansar_id']);
+            $date = $request->only(['day', 'month', 'year', 'ansar_id']);
 //            return compact('date', 'data');
             return view('SD::attendance.create_data', compact('date', 'data'));
 
@@ -153,7 +154,7 @@ class AttendanceController extends Controller
         $attendance_datas = $request->get("attendance_data");
         $type = $request->type;
 //        return $attendance_datas;
-        switch($type){
+        switch ($type) {
             case 'day_wise':
                 DB::connection('sd')->beginTransaction();
                 try {
@@ -167,36 +168,36 @@ class AttendanceController extends Controller
                     DB::connection('sd')->commit();
                 } catch (\Exception $e) {
                     DB::connection('sd')->rollback();
-                    return redirect()->route("SD.attendance.create")->with('error_message',"An error occur while submitting attendance. please try again later or contact with system admin");
+                    return redirect()->route("SD.attendance.create")->with('error_message', "An error occur while submitting attendance. please try again later or contact with system admin");
                 }
-                return redirect()->route("SD.attendance.create")->with('success_message',"Attendance taken successfully");
+                return redirect()->route("SD.attendance.create")->with('success_message', "Attendance taken successfully");
             case 'month_wise':
                 DB::connection('sd')->beginTransaction();
                 try {
                     $kpi_id = $request->kpi_id;
                     $month = $request->month;
-                    Attendance::where(compact('kpi_id','month'))->update(['is_attendance_taken'=>1]);
+                    Attendance::where(compact('kpi_id', 'month'))->update(['is_attendance_taken' => 1]);
                     foreach ($attendance_datas as $attendance_data) {
                         $ansar_id = $attendance_data['ansar_id'];
 
-                        $present_dates = explode(',',$attendance_data['present_dates']);
-                        $leave_dates = explode(',',$attendance_data['leave_dates']);
-                        if(count($present_dates)<=0&&count($leave_dates)<=0) continue;
-                        foreach ($present_dates as $present_date){
+                        $present_dates = explode(',', $attendance_data['present_dates']);
+                        $leave_dates = explode(',', $attendance_data['leave_dates']);
+                        if (count($present_dates) <= 0 && count($leave_dates) <= 0) continue;
+                        foreach ($present_dates as $present_date) {
                             $d = Carbon::parse($present_date);
                             $day = $d->day;
                             $month = $d->month;
                             $year = $d->year;
-                            $attendance = Attendance::where(compact('ansar_id','kpi_id','day','month','year'))->first();
-                            $attendance->update(['is_present'=>1,'is_attendance_taken'=>1,'is_leave'=>0]);
+                            $attendance = Attendance::where(compact('ansar_id', 'kpi_id', 'day', 'month', 'year'))->first();
+                            $attendance->update(['is_present' => 1, 'is_attendance_taken' => 1, 'is_leave' => 0]);
                         }
-                        foreach ($leave_dates as $leave_date){
+                        foreach ($leave_dates as $leave_date) {
                             $d = Carbon::parse($leave_date);
                             $day = $d->day;
                             $month = $d->month;
                             $year = $d->year;
-                            $attendance = Attendance::where(compact('ansar_id','kpi_id','day','month','year'))->first();
-                            $attendance->update(['is_leave'=>1,'is_attendance_taken'=>1,'is_present'=>0]);
+                            $attendance = Attendance::where(compact('ansar_id', 'kpi_id', 'day', 'month', 'year'))->first();
+                            $attendance->update(['is_leave' => 1, 'is_attendance_taken' => 1, 'is_present' => 0]);
                         }
 
                         //$attendance->update($attendance_data);
@@ -204,9 +205,9 @@ class AttendanceController extends Controller
                     DB::connection('sd')->commit();
                 } catch (\Exception $e) {
                     DB::connection('sd')->rollback();
-                    return redirect()->route("SD.attendance.create")->with('error_message',"An error occur while submitting attendance. please try again later or contact with system admin");
+                    return redirect()->route("SD.attendance.create")->with('error_message', "An error occur while submitting attendance. please try again later or contact with system admin");
                 }
-                return redirect()->route("SD.attendance.create")->with('success_message',"Attendance taken successfully");
+                return redirect()->route("SD.attendance.create")->with('success_message', "Attendance taken successfully");
         }
     }
 
@@ -255,4 +256,67 @@ class AttendanceController extends Controller
     {
         //
     }
+
+    public function viewAttendance(Request $request)
+    {
+//        return "sadasd";
+        if($request->ajax()){
+            $rules = [
+                "date" => 'required|regex:/^[0-9]{1,2}$/',
+                "month" => 'required',
+                "range" => 'required',
+                "unit" => 'required',
+                "thana" => 'required',
+                "kpi" => 'required',
+                "year" => 'required|regex:/^[0-9]{4}$/',
+            ];
+            $valid = Validator::make($request->all(), $rules);
+            if ($valid->fails()) {
+                return "";
+            }
+            $kpi = KpiGeneralModel::find($request->kpi);
+            $present_list = Attendance::with(['ansar' => function ($q) {
+                $q->with(["embodiment" => function ($qq) {
+                    $qq->with("kpi")->select("ansar_id", "kpi_id");
+                }])->select('ansar_id', 'ansar_name_bng','division_id','unit_id','thana_id');
+            }])->where('day', $request->date)
+                ->where('month', $request->month)
+                ->where('year', $request->year)
+                ->where('kpi_id', $request->kpi)
+                ->where('is_attendance_taken', 1)
+                ->where('is_leave', 0)
+                ->where('is_present', 1)
+                ->get();
+            $absent_list = Attendance::with(['ansar' => function ($q) {
+                $q->with(["embodiment" => function ($qq) {
+                    $qq->with("kpi")->select("ansar_id", "kpi_id");
+                }])->select('ansar_id', 'ansar_name_bng','division_id','unit_id','thana_id');
+            }])->where('day', $request->date)
+                ->where('month', $request->month)
+                ->where('year', $request->year)
+                ->where('kpi_id', $request->kpi)
+                ->where('is_attendance_taken', 1)
+                ->where('is_leave', 0)
+                ->where('is_present', 0)
+                ->get();
+            $leave_list = Attendance::with(['ansar' => function ($q) {
+                $q->with(["embodiment" => function ($qq) {
+                    $qq->with("kpi")->select("ansar_id", "kpi_id");
+                }])->select('ansar_id', 'ansar_name_bng','division_id','unit_id','thana_id');
+            }])->where('day', $request->date)
+                ->where('month', $request->month)
+                ->where('year', $request->year)
+                ->where('kpi_id', $request->kpi)
+                ->where('is_attendance_taken', 1)
+                ->where('is_leave', 1)
+                ->where('is_present', 0)
+                ->get();
+            $title = "Attendance of <br>".$kpi->kpi_name."<br> Date: ".Carbon::create($request->year,$request->month,$request->date)->format('d-M-Y');
+            return view('SD::attendance.view', compact('title', 'present_list','absent_list','leave_list'));
+        }
+        abort(401);
+
+    }
+
+
 }

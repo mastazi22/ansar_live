@@ -46,7 +46,7 @@
                         <td class="bg-danger">{{"No data available"}}</td>
                     @endif
                     <td>
-                        <button class="btn btn-primary btn-xs">
+                        <button class="btn btn-primary btn-xs" ng-click="showDetails({{intval($d->format('d'))}})">
                             <i class="fa fa-eye"></i>&nbsp;View
                         </button>
                     </td>

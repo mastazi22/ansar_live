@@ -17,6 +17,7 @@ Route::group(['prefix' => 'SD', 'middleware' => ['web', 'auth', 'permission']], 
         Route::get('/demandhistory', 'DemandSheetController@demandHistory')->name('SD.demand_history');
         Route::get('/viewdemandsheet/{id}', 'DemandSheetController@viewDemandSheet')->where('id', '[0-9]+');
         Route::resource('attendance', 'AttendanceController');
+        Route::post('attendance/view_attendance', ['as'=>'SD.attendance.view_attendance','uses'=>'AttendanceController@viewAttendance']);
         Route::resource('leave', 'LeaveManagementController');
         Route::resource('salary_management', 'SalaryManagementController');
         Route::get('/test', function () {
