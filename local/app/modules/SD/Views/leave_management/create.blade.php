@@ -37,46 +37,105 @@
                         year :$scope.currentMonth.year,
                         date : 1,
                     };
-                    $scope.next = function () {
-
+                    $scope.next = function (event) {
+                        event.preventDefault();
+                        var currentDate = moment().date(1).month($scope.nextMonth.month).year($scope.nextMonth.year);
+                        $scope.currentMonth = {
+                            totalDays : currentDate.daysInMonth(),
+                            month : currentDate.get('month'),
+                            year : currentDate.get('year'),
+                            date : currentDate.get('date'),
+                        };
+                        $scope.previousMonth = {
+                            totalDays : moment().date(1).month($scope.currentMonth.month-1).year($scope.currentMonth.year).daysInMonth(),
+                            month :  $scope.currentMonth.month-1,
+                            year :  $scope.currentMonth.year,
+                            date : 1,
+                        };
+                        $scope.nextMonth = {
+                            totalDays :moment().date(1).month($scope.currentMonth.month+1).year($scope.currentMonth.year).daysInMonth(),
+                            month : $scope.currentMonth.month+1,
+                            year :$scope.currentMonth.year,
+                            date : 1,
+                        };
+                        $scope.makeCalender();
                     }
                     $scope.previous = function () {
 
                     }
                     $scope.makeCalender = function() {
-                        $scope.calender = [];
+                        $scope.calender =  new Array(6);
                         makePreviousCalender();
 //                        alert(1)
-                        /*for(var i=0;i<6;i++){
+                        var wd = moment().date(1).month($scope.currentMonth.month).year($scope.currentMonth.year).day()
+                        for(var i=0;i<6;i++){
                             if(i*7+1>$scope.currentMonth.totalDays) break;
-                            var wd = moment().date(i*7+1).month($scope.currentMonth.month).year($scope.currentMonth.year).day()
-                            for(var j=wd;j<7&&i*7+j+1<=$scope.currentMonth.totalDays;j++){
-                                $scope.calender[i].push({
-                                    day:i*7+j+1,
-                                    tag:"cur"
-                                })
+                            for(var j=0;j<7;j++){
+                                if(i*7+j+1<=$scope.currentMonth.totalDays&&j>=wd) {
+                                    $scope.calender[i][j] = {
+                                        day: i * 7 + j-wd + 1,
+                                        tag: "cur"
+                                    }
+                                } else{
+                                    $scope.calender[i][j] = {};
+                                }
                             }
-                            $scope.calender[i+1] = [];
-                        }*/
+                            $scope.calender[i+1] =  new Array(7);
+                        }
 
                         console.log($scope.calender)
                     }
                     function makePreviousCalender() {
-                        $scope.calender[0] = [];
-                        var lastWeekDay = moment().date($scope.previousMonth.totalDays)
+                        $scope.calender[0] = new Array(7);
+                       /* var lastWeekDay =6 - moment().date($scope.previousMonth.totalDays)
                             .month($scope.previousMonth.month)
                             .year($scope.previousMonth.year).day();
                         console.log(lastWeekDay)
-                        for(var i = $scope.previousMonth.totalDays;i>=$scope.previousMonth.totalDays-lastWeekDay;i--){
+                        for(var i = $scope.previousMonth.totalDays-lastWeekDay;i<$scope.previousMonth.totalDays;i++){
                             $scope.calender[0].push({
                                 day:i,tag:"pre"
                             })
-                        }
+                        }*/
                     }
                 },
                 link:function ( scope,elem, attr) {
                     scope.makeCalender();
-                }
+                },
+                template:`<div class="big-date-picker">
+                            <div class="header">
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                       <h3 style="margin: 4px">
+                                           [[months[currentMonth.month] ]], [[currentMonth.year]]
+                                       </h3>
+                                    </div>
+                                    <div class="col-sm-4">
+                                       <div class="btn-group">
+                                           <a href="#" class="btn btn-default">
+                                               <i class="fa fa-angle-left"></i>
+                                           </a>
+                                           <a href="#" class="btn btn-default" ng-click="next($event)">
+                                               <i class="fa fa-angle-right"></i>
+                                           </a>
+                                       </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="body">
+                                <div class="week-row">
+                                    <div class="week-title">Sun</div>
+                                    <div class="week-title">Mon</div>
+                                    <div class="week-title">Tue</div>
+                                    <div class="week-title">Wed</div>
+                                    <div class="week-title">Thu</div>
+                                    <div class="week-title">Fri</div>
+                                    <div class="week-title">Sat</div>
+                                </div>
+                                <div class="date-row" ng-repeat="c in calender track by $index">
+                                    <div class="date" ng-repeat="d in c track by $index" ng-class="{'cursor-pointer':d.tag=='cur','cursor-disabled':d.tag!='cur'}">[[d.day]]</div>
+                                </div>
+                            </div>
+                        </div>`
             }
         })
     </script>
@@ -128,56 +187,7 @@
 
                     </div>
                     <div class="col-sm-6 col-centered">
-                        <div class="big-date-picker" calender>
-                            <div class="header">
-                                <div class="row">
-                                    <div class="col-sm-8">
-                                       <h3 style="margin: 4px">
-                                           JULY, 2018
-                                       </h3>
-                                    </div>
-                                    <div class="col-sm-4">
-                                       <div class="btn-group">
-                                           <a href="#" class="btn btn-default">
-                                               <i class="fa fa-angle-left"></i>
-                                           </a>
-                                           <a href="#" class="btn btn-default">
-                                               <i class="fa fa-angle-right"></i>
-                                           </a>
-                                       </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="body">
-                                <div class="week-row">
-                                    <div class="week-title">Sun</div>
-                                    <div class="week-title">Mon</div>
-                                    <div class="week-title">Tue</div>
-                                    <div class="week-title">Wed</div>
-                                    <div class="week-title">Thu</div>
-                                    <div class="week-title">Fri</div>
-                                    <div class="week-title">Sat</div>
-                                </div>
-                                <div class="date-row">
-                                    <div class="date">1</div>
-                                    <div class="date">2</div>
-                                    <div class="date">3</div>
-                                    <div class="date">4</div>
-                                    <div class="date">5</div>
-                                    <div class="date">6</div>
-                                    <div class="date">7</div>
-                                </div>
-                                <div class="date-row">
-                                    <div class="date">1</div>
-                                    <div class="date">2</div>
-                                    <div class="date">3</div>
-                                    <div class="date">4</div>
-                                    <div class="date">5</div>
-                                    <div class="date">6</div>
-                                    <div class="date">7</div>
-                                </div>
-                            </div>
-                        </div>
+                        <calender></calender>
                     </div>
                 </div>
             </div>
@@ -185,6 +195,12 @@
     </section>
 
     <style>
+        .cursor-pointer{
+            cursor: pointer;
+        }
+        .cursor-disabled{
+            cursor: not-allowed;
+        }
         .big-date-picker{
             display: block;
             border:1px solid #cccccc;;
