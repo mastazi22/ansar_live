@@ -4,6 +4,7 @@ namespace App\modules\HRM\Models;
 
 use App\Helper\Facades\UserPermissionFacades;
 use App\models\User;
+use App\modules\SD\Models\Leave;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
@@ -156,5 +157,8 @@ class PersonalInfo extends Model
         $last_date_of_month = Carbon::now()->daysInMonth;
         $current_date = Carbon::now()->day($last_date_of_month);
         return Carbon::parse($this->data_of_birth)->diff($current_date)->format("%yy %mm %dd");
+    }
+    public function leave(){
+        return $this->hasMany(Leave::class,'ansar_id','ansar_id');
     }
 }

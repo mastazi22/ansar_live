@@ -19,7 +19,10 @@ class Leave extends Model
     public function ansar(){
         return $this->belongsTo(PersonalInfo::class,'ansar_id','ansar_id');
     }
-    /*public function attendance(){
-        return $this->belongsTo(PersonalInfo::class,'ansar_id','ansar_id');
-    }*/
+    public function details(){
+        return $this->hasMany(LeaveDetails::class,'leave_id');
+    }
+    public function detailsc(){
+        return $this->hasMany(LeaveDetails::class,'leave_id')->where('leave_type','regular');
+    }
 }
