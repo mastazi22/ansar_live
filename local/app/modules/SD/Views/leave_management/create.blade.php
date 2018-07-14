@@ -70,12 +70,18 @@
                     disabledDates: '=?',
                     monthRange: '@',
                     disableDateSelection:'=?',
-                    disableNavigationBeforeMonth:'@'
+                    disableNavigationBeforeMonth:'@',
+                    disableDateBeforeCurrentDate:'@'
                 },
                 controller: function ($scope) {
                     $scope.months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
                     $scope.selectedDates = [];
                     var currentDate = moment();
+                    $scope.current = {
+                        month: currentDate.get('month'),
+                        year: currentDate.get('year'),
+                        date: currentDate.get('date'),
+                    };
                     $scope.currentMonth = {
                         totalDays: currentDate.daysInMonth(),
                         month: currentDate.get('month'),
@@ -213,6 +219,10 @@
                         })
                         return t;
                     }
+                    $scope.disableDate = function (d) {
+
+                        return +$scope.current.date>+d.day&&+$scope.current.month==+$scope.currentMonth.month&&+$scope.current.year==+$scope.currentMonth.year&&$scope.disableDateBeforeCurrentDate;
+                    }
                 },
                 link: function (scope, elem, attr) {
                     scope.selectedDates = [];
@@ -302,7 +312,7 @@
                                     data-tag="[[d.tag]]" data-day="[[d.day]]" data-month="[[previousMonth.month]]"  data-year="[[previousMonth.year]]"
                                     >[[d.day]]</div>
 
-                                    <div ng-if="d.tag=='cur'" class="date"  ng-repeat="d in c track by $index" ng-class="{'cursor-pointer':d.tag=='cur','cursor-disabled':d.tag!='cur','selected':checkDate(d.day,currentMonth.month,currentMonth.year)}"
+                                    <div ng-if="d.tag=='cur'" class="date"  ng-repeat="d in c track by $index" ng-class="{'cursor-pointer':d.tag=='cur'&&!disableDate(d),'cursor-disabled':d.tag!='cur'||disableDate(d),'selected':checkDate(d.day,currentMonth.month,currentMonth.year)}"
                                     data-tag="[[d.tag]]" data-day="[[d.day]]" data-month="[[currentMonth.month]]"  data-year="[[currentMonth.year]]"
                                     >[[d.day]]</div>
 
@@ -371,7 +381,7 @@
                             <p>KPI Name: [[personalDetails.personal_details.embodiment.kpi.kpi_name]]</p>
                             <p>Total Days Left: [[personalDetails.total_leave-param.selectedDates.length]]</p>
                         </div>
-                        <calender disable-date-selection="personalDetails.total_leave-param.selectedDates.length<=0" selected-dates="param.selectedDates" show-only-current-year="true" disable-navigation-before-month="6"></calender>
+                        <calender disable-date-before-current-date="true" disable-date-selection="personalDetails.total_leave-param.selectedDates.length<=0" selected-dates="param.selectedDates" show-only-current-year="true" disable-navigation-before-month="6"></calender>
                         <div class="form-group" style="margin-top: 10px;">
                             <label class="control-label">
                                 <div class="styled-checkbox">
