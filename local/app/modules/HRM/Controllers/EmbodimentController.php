@@ -1101,6 +1101,16 @@ class EmbodimentController extends Controller
 
     public function addNewBankAccount(Request $request)
     {
+        $rules = [
+            'ansar_id' => 'required',
+            'bank_name' => 'required',
+            'branch_name' => 'required',
+            'account_no' => 'required',
+            'mobile_bank_type' => 'required',
+            'mobile_bank_account_no' => 'required',
+            'prefer_choice' => 'required',
+        ];
+        $this->validate($request, $rules);
         $data = $request->all();
         $ansar = PersonalInfo::where("ansar_id", $data['ansar_id'])
             ->whereHas("status",function ($q){
