@@ -26,15 +26,15 @@ class ApiAuthenticationValidate
             }
             if($user->status!=1){
                 JWTAuth::invalidate(JWTAuth::getToken());
-                return response()->json(['message'=>'User is BLOCKED'],401);
+                return response()->json(['message'=>'User is BLOCKED'],403);
             }
         } catch (TokenExpiredException $e) {
 
-            return response()->json(['message'=>'token expired'], 401);
+            return response()->json(['message'=>'token expired'], 403);
 
         } catch (TokenInvalidException $e) {
 
-            return response()->json(['message'=>'token invalid'], 401);
+            return response()->json(['message'=>'token invalid'], 403);
 
         } catch (JWTException $e) {
 
