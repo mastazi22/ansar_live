@@ -294,31 +294,39 @@
                 </table>
             </td>
         </tr>
-        <tr>
-            <td colspan="8" style="padding-top: 10px;padding-bottom: 20px">
-                <table style="width: 100%">
-                    <tr>
-                        <th style="width: 30px;">৭ ।</th>
-                        <th style="text-align: left;">
+        @if(!$no_margha_fee)
+            <tr>
+                <td colspan="8" style="padding-top: 10px;padding-bottom: 20px">
+                    <table style="width: 100%">
+                        <tr>
+                            <th style="width: 30px;">৭ ।</th>
+                            <th style="text-align: left;">
                             <span style="border-bottom: 1px solid #1b1b1b;" >
                                 মহার্ঘ ভাতা:-
                             </span>
-                        </th>
-                        <td style="text-align: right">
-                            <span class="value3">{{LanguageConverter::engToBng($st9)}}</span>=.........................................................
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
+                            </th>
+                            <td style="text-align: right">
+                                <span class="value3">{{LanguageConverter::engToBng($st9)}}</span>=.........................................................
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            @endif
 
         <tr>
             <td colspan="3"></td>
             <td style="border-bottom: 1px solid #000000;width: 296px"></td>
         </tr>
+        @if(!$no_margha_fee)
         <tr>
             <td colspan="8" style="text-align: right;padding-top: 20px"><span class="value4">{{LanguageConverter::engToBng($st3+$st4+$st5+$st6+$st7+$st8+$st9)}}</span>সর্বমোট টাকা....................................................</td>
         </tr>
+        @else
+            <tr>
+                <td colspan="8" style="text-align: right;padding-top: 20px"><span class="value4">{{LanguageConverter::engToBng($st3+$st4+$st5+$st6+$st7+$st8)}}</span>সর্বমোট টাকা....................................................</td>
+            </tr>
+        @endif
         <tr  style="">
             <td colspan="8" style="padding: 20px 0;line-height: normal;text-align: justify;word-wrap: break-word;word-break: break-all">
 

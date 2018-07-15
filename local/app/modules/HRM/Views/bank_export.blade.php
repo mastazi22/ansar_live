@@ -26,7 +26,10 @@
         <td>permanent post</td>
         <td>permanent upzilla</td>
         <td>permanent zilla</td>
-        <td>work at</td>
+        <td>KPI Name</td>
+        <td>KPI Division</td>
+        <td>KPI District</td>
+        <td>KPI Thana</td>
     </tr>
     @foreach($ansars as $ansar)
         <tr>
@@ -57,7 +60,10 @@
             <td>{{$ansar->post_office_name}}</td>
             <td>{{$ansar->thana->thana_name_eng}}</td>
             <td>{{$ansar->district->unit_name_eng}}</td>
-            <td></td>
+            <td>{{$ansar->embodiment->kpi->kpi_name}}</td>
+            <td>{{$ansar->embodiment->kpi->division->division_name_eng}}</td>
+            <td>{{$ansar->embodiment->kpi->unit->unit_name_eng}}</td>
+            <td>{{$ansar->embodiment->kpi->thana->thana_name_eng}}</td>
         </tr>
         @endforeach
 </table>

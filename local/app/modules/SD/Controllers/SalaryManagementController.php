@@ -5,6 +5,7 @@ namespace App\modules\SD\Controllers;
 use App\modules\HRM\Models\KpiGeneralModel;
 use App\modules\SD\Helper\DemandConstant;
 use App\modules\SD\Helper\Facades\DemandConstantFacdes;
+use App\modules\SD\Models\SalaryHistory;
 use App\modules\SD\Models\SalarySheetHistory;
 use App\User;
 use Carbon\Carbon;
@@ -179,7 +180,20 @@ class SalaryManagementController extends Controller
                 'data' => gzcompress(serialize($request->attendance_data)),
 
             ];
+
             $history = SalarySheetHistory::create($data);
+            $salary_history = [];
+            foreach ($request->attendance_data as $ad){
+                array_push($salary_history,[
+                   'ansar_id'=>$ad["ansar_id"],
+                   'kpi_id'=>$request->kpi_id,
+                   'salary_sheet_id'=>$history->id,
+                   'amount'=>$ad["net_amount"],
+                   'status'=>"pending",
+                   'action_user_id'=>auth()->user()->id,
+                ]);
+            }
+            SalaryHistory::insert($salary_history);
             DB::commit();
             Excel::create('salary_sheet', function ($excel) use ($request) {
 

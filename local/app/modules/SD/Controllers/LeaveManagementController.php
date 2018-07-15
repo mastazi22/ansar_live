@@ -36,8 +36,18 @@ class LeaveManagementController extends Controller
                     $q->withCount('detailsc')->select('id', 'ansar_id');
                 }, 'embodiment' => function ($q) {
                     $q->with('kpi')->select('ansar_id', 'kpi_id');
-                }, 'designation'])->whereHas('embodiment', function ($qq) {
-
+                }, 'designation'])->whereHas('embodiment', function ($qq) use($request) {
+                    $qq->whereHas('kpi',function ($q) use($request){
+                        if($request->range){
+                            $q->where('division_id',$request->range);
+                        }
+                        if($request->unit){
+                            $q->where('unit_id',$request->unit);
+                        }
+                        if($request->thana){
+                            $q->where('thana_id',$request->thana);
+                        }
+                    });
                 })->whereHas('status', function ($qq) {
                     $qq->where('embodied_status', 1);
                     $qq->where('block_list_status', 0);

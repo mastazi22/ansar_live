@@ -15,9 +15,11 @@
                     $(element).ajaxForm({
                         beforeSubmit: function () {
                             $("#llllll").show();
+                            $("#llllll").parents("button").attr("disabled",true)
                         },
                         success: function (response) {
                             //console.log(response);
+                            $("#llllll").parents("button").attr("disabled",false)
                             $("#llllll").hide();
                             if(response.error){
                                 scope.errors = response.messages
@@ -27,6 +29,10 @@
                             else scope.showError = true;
                             if(response.data!=undefined) scope.data = response.data;
                             scope.$apply()
+                        },
+                        error:function (response) {
+                            $("#llllll").parents("button").disable(false)
+                            $("#llllll").hide();
                         }
                     })
                 }
@@ -79,6 +85,11 @@
                                 <label for="Other_date">Request payment date</label>
                                 <input class="form-control dddd" id="Other_date" name="other_date" type="text">
                                 <p ng-if="errors.other_date!=undefined" class="text text-danger">[[errors.other_date[0] ]]</p>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">
+                                    <input type="checkbox" value="1" name="no_margha_fee">&nbsp;Don`t add margha fee.
+                                </label>
                             </div>
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary">
