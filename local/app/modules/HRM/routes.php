@@ -433,33 +433,21 @@ Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
         Route::get('upload_original_info',['as'=>'upload_original_info_view','uses'=>'GeneralSettingsController@uploadOriginalInfoView']);
         Route::get('test',function(){
 
-            $datas = \Maatwebsite\Excel\Facades\Excel::load(storage_path('offer_vul.xlsx'),function ($reader){
+            Excel::create('bank_export',function ($excel) {
 
-            })->get();
-            //return $datas;
-            DB::connection('hrm')->beginTransaction();
-            try{
-                foreach (collect($datas)->toArray() as $data){
-                    if(OfferSMS::where('ansar_id',$data['ansar_id'])->exists()) continue;
-                    OfferSMS::create($data);
-                    PanelModel::where('ansar_id',$data['ansar_id'])->delete();
-                    \App\modules\HRM\Models\OfferSmsLog::where('ansar_id',$data['ansar_id'])->orderBy('offered_date','desc')->first()->delete();
-                    $status = AnsarStatusInfo::where('ansar_id',$data['ansar_id'])->first();
-                    $status->update(['offer_sms_status'=>1,'pannel_status'=>0]);
-                    $count = \App\modules\HRM\Models\OfferCount::where('ansar_id',$data['ansar_id'])->first();
-                    if($count&&$count->count==1) $count->delete();
-                    else if($count){
-                        $count->count = intval($count->count)-1;
-                        $count->save();
-                    }
-                }
-                DB::connection('hrm')->commit();
-            }catch(\Exception $e){
-                DB::connection('hrm')->rollback();
-                Log::info($e->getTraceAsString());
-                return $e->getMessage();
-            }
-            return "success";
+                $excel->sheet('sheet1',function ($sheet){
+                    $ansars = \App\modules\HRM\Models\PersonalInfo::with(['embodiment'=>function($q){
+                        $q->with(['kpi'=>function($q){
+                            $q->with(['division','unit','thana']);
+                        }]);
+                    }])->whereHas('embodiment',function ($q){
+
+                    })->limit(10000)->get();
+                    $sheet->setAutoSize(false);
+                    $sheet->setWidth('A', 5);
+                    $sheet->loadView('HRM::bank_export',['ansars'=>$ansars]);
+                });
+            })->download('xls');
         });
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
