@@ -20,11 +20,9 @@
         <th>District</th>
         <th>Thana</th>
         <th>Height</th>
-        @if($ctype=='apc_training')
-            <th>Education</th>
-        @else
-            <th>Weight</th>
-        @endif
+        <th>Education</th>
+        <th>Training Info</th>
+        <th>Weight</th>
 
         @if(Auth::user()->type==11)
             <th>Mobile no</th>
@@ -59,11 +57,9 @@
                 <td>{{$a->district->unit_name_bng}}</td>
                 <td>{{$a->thana->thana_name_bng}}</td>
                 <td>{{$a->height_feet}} feet {{$a->height_inch}} inch</td>
-                @if($ctype=='apc_training')
-                    <th>{{$a->education()->orderBy('priority','desc')->first()->education_deg_eng}}</th>
-                @else
-                    <td>{{$a->weight}} kg</td>
-                @endif
+                <th>{{$a->education()->orderBy('priority','desc')->first()->education_deg_eng}}</th>
+                <th>{{$a->training_info}}</th>
+                <td>{{$a->weight}} kg</td>
 
                 @if(Auth::user()->type==11)
                     <td>{{$a->mobile_no_self}}</td>
