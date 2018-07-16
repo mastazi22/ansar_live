@@ -330,6 +330,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
 //        Route::any('unfrozen_report',['as'=>'unfrozen_report','uses'=>'ReportController@unfrozenAnsarReport']);
         //END REPORT ROUTE
 //Start EmbodimentnewEmbodimentView
+        Route::post('/save-bank-info', ['as' => 'save-bank-info','uses' => 'EmbodimentController@addNewBankAccount']);
         Route::get('/new_embodiment', ['as' => 'go_to_new_embodiment_page', 'uses' => 'EmbodimentController@newEmbodimentView']);
         Route::get('KPIName', ['as' => 'kpi_name', 'uses' => 'EmbodimentController@kpiName']);
         Route::get('/embodiment_view', ['as' => 'go_to_embodiment_view_page', 'uses' => 'EmbodimentController@embodimentListView']);

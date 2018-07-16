@@ -81,6 +81,7 @@ class EmbodimentController extends Controller
             return [];
         }
         $ansarPersonalDetail = DB::table('tbl_ansar_parsonal_info')
+            ->leftJoin('tbl_ansar_bank_account_info', 'tbl_ansar_bank_account_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
@@ -88,7 +89,7 @@ class EmbodimentController extends Controller
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
             ->where('tbl_ansar_status_info.block_list_status', '=', 0)
             ->where('tbl_ansar_status_info.black_list_status', '=', 0)
-            ->select('tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_ansar_parsonal_info.ansar_id',
+            ->select('tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_bank_account_info.prefer_choice',
                 'pu.unit_name_bng as home_district', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_designations.name_bng',
                 'tbl_sms_receive_info.ansar_id', 'tbl_sms_receive_info.sms_send_datetime as offerDate', 'ou.unit_name_bng as offered_district', 'ou.id as ouid');
         if ($request->unit) {
@@ -171,8 +172,6 @@ class EmbodimentController extends Controller
         $memorandum_id = $request->input('memorandum_id');
         $global_value = GlobalParameterFacades::getValue("embodiment_period");
         $global_unit = GlobalParameterFacades::getUnit("embodiment_period");
-
-
         foreach ($request->ansar_ids as $ansar_id) {
             DB::beginTransaction();
             try {
@@ -234,7 +233,7 @@ class EmbodimentController extends Controller
                 $sms_receive_info->deleteCount();
                 $sms_receive_info->delete();
 
-                AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['free_status' => 0,'offer_block_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 0, 'embodied_status' => 1, 'pannel_status' => 0, 'freezing_status' => 0]);
+                AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['free_status' => 0, 'offer_block_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 0, 'embodied_status' => 1, 'pannel_status' => 0, 'freezing_status' => 0]);
 
                 CustomQuery::addActionlog(['ansar_id' => $ansar_id, 'action_type' => 'EMBODIED', 'from_state' => 'OFFER', 'to_state' => 'EMBODIED', 'action_by' => auth()->user()->id]);
                 DB::commit();
@@ -252,7 +251,6 @@ class EmbodimentController extends Controller
         $letter['unit'] = $request->unit_id;
         $letter['status'] = true;
         return Response::json(['status' => true, 'message' => 'Ansar is Embodied Successfully!', 'printData' => $letter]);
-
     }
 
     public function newMultipleEmbodimentEntry(Request $request)
@@ -304,7 +302,6 @@ class EmbodimentController extends Controller
                 $memorandum_entry->memorandum_id = $memorandum_id;
                 $memorandum_entry->mem_date = Carbon::parse($request->mem_date);
                 $memorandum_entry->save();
-
                 $mobile_no = PersonalInfo::where('ansar_id', $ansar['ansar_id'])->select('tbl_ansar_parsonal_info.mobile_no_self')->first();
                 $sms_log_save = new OfferSmsLog();
                 $sms_log_save->ansar_id = $ansar['ansar_id'];
@@ -317,15 +314,11 @@ class EmbodimentController extends Controller
                 $sms_log_save->offered_date = $sms_receive_info->sms_send_datetime;
                 $sms_log_save->action_user_id = Auth::user()->id;
                 $sms_log_save->save();
-
                 $sms_receive_info->delete();
-
                 AnsarStatusInfo::where('ansar_id', $ansar['ansar_id'])->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 0, 'embodied_status' => 1, 'pannel_status' => 0, 'freezing_status' => 0]);
-
                 CustomQuery::addActionlog(['ansar_id' => $ansar['ansar_id'], 'action_type' => 'EMBODIED', 'from_state' => 'OFFER', 'to_state' => 'EMBODIED', 'action_by' => auth()->user()->id]);
                 DB::commit();
                 $result['success']++;
-
             } catch (\Exception $e) {
                 DB::rollback();
                 Log::info($e->getMessage());
@@ -340,7 +333,6 @@ class EmbodimentController extends Controller
             $letter['status'] = true;
         }
         return Response::json(['status' => true, 'message' => "Success {$result['success']}, Failed {$result['fail']}", 'letterData' => $letter]);
-
     }
 
     public function transferProcessView()
@@ -380,7 +372,6 @@ class EmbodimentController extends Controller
             foreach ($transferred_ansar as $ansar) {
                 DB::beginTransaction();
                 try {
-
                     $e_id = EmbodimentModel::where('ansar_id', $ansar['ansar_id'])->where('kpi_id', $kpi_id[0])->first();
                     if ($e_id) {
                         if ($kpi_id[0] == $kpi_id[1]) throw new \Exception("Ansar(" . $e_id->ansar_id . ") can`t transferred in same kpi");
@@ -401,7 +392,6 @@ class EmbodimentController extends Controller
                         $transfer->transfered_kpi_join_date = Carbon::parse($t_date)->format("Y-m-d");
                         $transfer->action_by = Auth::user()->id;
                         $transfer->save();
-
                         $status['success']['count']++;
                         array_push($status['success']['data'], $ansar['ansar_id']);
                         CustomQuery::addActionlog(['ansar_id' => $ansar['ansar_id'], 'action_type' => 'TRANSFER', 'from_state' => $kpi_id[0], 'to_state' => $kpi_id[1], 'action_by' => auth()->user()->id]);
@@ -560,23 +550,20 @@ class EmbodimentController extends Controller
                     $reason = DB::table('tbl_disembodiment_reason')->where('id', $ansar->disReason)->first()->reason_in_eng;
                     $this->dispatch(new DisembodiedSMS($disembodiment_date, $reason, '88' . $mobile));
                     array_push($user, ['ansar_id' => $ansar->ansarId, 'action_type' => 'DISEMBODIMENT', 'from_state' => 'EMBODIED', 'to_state' => 'REST', 'action_by' => auth()->user()->id]);
-
                 }
                 CustomQuery::addActionlog($user, true);
                 DB::commit();
             }
-
         } catch (\Exception $e) {
             DB::rollback();
             return Response::json(['status' => false, 'message' => $e->getMessage()]);
         } catch (\Throwable $e) {
             DB::rollback();
             return Response::json(['status' => false, 'message' => $e->getMessage()]);
-        }catch (\Error $e) {
+        } catch (\Error $e) {
             DB::rollback();
             return Response::json(['status' => false, 'message' => $e->getMessage()]);
         }
-
         return Response::json(['status' => true, 'message' => "Ansar/s disemboded successfully"]);
     }
 
@@ -596,7 +583,6 @@ class EmbodimentController extends Controller
             ->where('tbl_ansar_status_info.black_list_status', '=', 0)
             ->select('tbl_ansar_status_info.ansar_id')
             ->first();
-
         if (!is_null($ansar_check)) {
             $ansar_details = DB::table('tbl_embodiment')
                 ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
@@ -643,7 +629,6 @@ class EmbodimentController extends Controller
             DB::beginTransaction();
             try {
                 $embodiment_info = EmbodimentModel::where('ansar_id', $ansar_id)->first();
-
                 $serviceExtenstionEntry = new ServiceExtensionModel();
                 $serviceExtenstionEntry->embodiment_id = $embodiment_info->id;
                 $serviceExtenstionEntry->ansar_id = $ansar_id;
@@ -652,11 +637,9 @@ class EmbodimentController extends Controller
                 $serviceExtenstionEntry->service_extension_comment = $service_extension_comment;
                 $serviceExtenstionEntry->action_user_id = Auth::user()->id;
                 $serviceExtenstionEntry->save();
-
                 $embodiment_info->service_ended_date = Carbon::parse($embodiment_info->service_ended_date)->addMonth($extended_period);
                 $embodiment_info->service_extension_status = 1;
                 $embodiment_info->save();
-
                 DB::commit();
                 return Redirect::route('service_extension_view')->with('success_message', 'Service Date for Ansar Extended Successfully!');
             } catch (\Exception $e) {
@@ -734,7 +717,6 @@ class EmbodimentController extends Controller
         $ansar_id = $request->input('ansar_id');
         $new_disembodiment_date = $request->input('new_disembodiment_date');
         $modified_new_disembodiment_date = Carbon::parse($new_disembodiment_date)->format('Y-m-d');
-
         DB::beginTransaction();
         try {
             $status = AnsarStatusInfo::where('ansar_id', $ansar_id)->first();
@@ -781,15 +763,11 @@ class EmbodimentController extends Controller
 //                $rest_period = $global_value;
 //                $rest_info_update->active_date = Carbon::parse($modified_new_disembodiment_date)->addDay($rest_period)->addHour(6);
 //            }
-
-
             CustomQuery::addActionlog(['ansar_id' => $ansar_id, 'action_type' => 'DISEMBODIMENT DATE CORRECTION', 'from_state' => 0, 'to_state' => 0, 'action_by' => auth()->user()->id]);
-
             DB::commit();
         } catch (\Exception $e) {
             return Redirect::back()->with('error_message', $e->getMessage());
         }
-
         return Redirect::route('disembodiment_date_correction_view')->with('success_message', 'Dis-Embodiment Date is corrected Successfully!');
     }
 
@@ -812,7 +790,6 @@ class EmbodimentController extends Controller
         }
         $ansar_id = $request->input('ansar_id');
         $new_embodiment_date = Carbon::parse($request->input('new_embodiment_date'));
-
         DB::beginTransaction();
         try {
             $embodied_ansar = EmbodimentModel::where('ansar_id', $ansar_id)->first();
@@ -828,7 +805,6 @@ class EmbodimentController extends Controller
         } catch (\Exception $e) {
             return Redirect::back()->with('error_message', $e->getMessage());
         }
-
         return Redirect::route('embodiment_date_correction_view')->with('success_message', 'Embodiment Date is corrected Successfully!');
     }
 
@@ -859,11 +835,9 @@ class EmbodimentController extends Controller
         try {
             $ansar_id = $request->input('ansar_id');
             $new_memorandum_id = $request->input('memorandum_id');
-
             $memorandum_entry = new MemorandumModel();
             $memorandum_entry->memorandum_id = $new_memorandum_id;
             $memorandum_entry->save();
-
             $mem_id_updated = EmbodimentModel::where('ansar_id', $ansar_id)->first();
             $mem_id_updated->memorandum_id = $new_memorandum_id;
             $mem_id_updated->save();
@@ -880,7 +854,6 @@ class EmbodimentController extends Controller
     public function getKpiDetail()
     {
         $id = Input::get('id');
-
         $detail = KpiDetailsModel::where('kpi_id', $id)->select('total_ansar_given', 'no_of_ansar', 'no_of_apc', 'no_of_pc')->first();
         if (Input::exists('ansar_id')) {
             $a_id = Input::get('ansar_id');
@@ -920,7 +893,6 @@ class EmbodimentController extends Controller
             'ansar_id.required' => 'Ansar id required',
             'ansar_id.numeric' => 'Invalid ansar id',
         ]);
-
         if ($valid->fails()) {
             return Response::json(['status' => 0, 'messages' => $valid->messages()->all()]);
         }
@@ -941,7 +913,6 @@ class EmbodimentController extends Controller
 
     public function confirmTransfer(Request $request)
     {
-
         $rules = [];
         if (auth()->user()->type == 11 || auth()->user()->type == 77) {
             $rules['memId'] = 'required';
@@ -956,7 +927,6 @@ class EmbodimentController extends Controller
         }
         $data = $request->ansars;
         $status = array('success' => array('count' => 0, 'data' => array()), 'error' => array('count' => 0, 'data' => array()));
-
         DB::beginTransaction();
         try {
             $m_id = $request->memId;
@@ -965,18 +935,14 @@ class EmbodimentController extends Controller
             $memorandum->mem_date = Carbon::parse(Input::get('mem_date'));
             $memorandum->save();
             $tp = SystemSettingHelper::getValue(SystemSettingHelper::$TRANSFER_POLICY);
-
             Log::info($tp);
             foreach ($data as $ansar) {
                 $ansar = (object)$ansar;
-
                 DB::beginTransaction();
                 try {
-
                     $e_ansar = EmbodimentModel::where('ansar_id', $ansar->ansarId)->where('kpi_id', $ansar->currentKpi)->first();
                     //print_r($ansar->ansarId); die;
                     if ($e_ansar) {
-
                         if (in_array($e_ansar->kpi->unit_id, $tp['data']) && $tp['status'] == 1) {
                             $t_history = $e_ansar->transfer()->pluck('present_kpi_id');
                             if (in_array($ansar->transferKpi, collect($t_history)->toArray())) throw new \Exception("Ansar(" . $e_ansar->ansar_id . ") previously transferred in this kpi");
@@ -1006,7 +972,6 @@ class EmbodimentController extends Controller
                     array_push($status['error']['data'], $e->getMessage());
 //                    return response(collect(['message' => "An error occur while transfer. Please try again later"])->toJson(), 400, ['Content-Type' => 'application/json']);
                 }
-
                 DB::commit();
             }
         } catch (\Exception $e) {
@@ -1018,7 +983,6 @@ class EmbodimentController extends Controller
 
     public function getSingleEmbodiedAnsarInfo($id)
     {
-
         $ansar = DB::table('tbl_ansar_parsonal_info')
             ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
@@ -1030,12 +994,10 @@ class EmbodimentController extends Controller
             ->where('tbl_ansar_status_info.block_list_status', 0)
             ->select('tbl_kpi_info.id as kpi_id', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_eng', 'tbl_kpi_info.kpi_name', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_embodiment.joining_date as join_date');
         return Response::json($ansar->first());
-
     }
 
     public function disembodiedThreeYearOverList()
     {
-
         $data = EmbodimentModel::whereYear('joining_date', '<=', 2013);
         return $data;
     }
@@ -1134,6 +1096,29 @@ class EmbodimentController extends Controller
             return view('HRM::Embodiment.disembodied_ansar_correction');
         } else {
             abort(403);
+        }
+    }
+
+    public function addNewBankAccount(Request $request)
+    {
+        $rules = [
+            'ansar_id' => 'required',
+            'bank_name' => 'required',
+            'branch_name' => 'required',
+            'account_no' => 'required',
+            'mobile_bank_type' => 'required',
+            'mobile_bank_account_no' => 'required',
+            'prefer_choice' => 'required',
+        ];
+        $this->validate($request, $rules);
+        $data = $request->all();
+        $ansar = PersonalInfo::where("ansar_id", $data['ansar_id'])
+            ->whereHas("status",function ($q){
+                $q->where('embodied_status',1)->where('block_list_status',0)->where('black_list_status',0);
+            })->first();
+        if ($ansar) {
+            unset($data['ansar_id'], $data['action_user_id']);
+            $ansar->account()->create($data);
         }
     }
 }

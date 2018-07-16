@@ -244,11 +244,14 @@ class SMSController extends Controller
         return "No Ansar Found With This mobile no :".$mobile_no." Please send sms from the register mobile no in Ansar";
     }
 
-    function getAnsarDetail($id)
+    function getAnsarDetail($id,$mobile_no)
     {
-        $ansar = PersonalInfo::where('ansar_id', $id)->first();
+        $mobile_part = preg_split('/^\+?(88)?/',$mobile_no);
+        $mobile_no = $mobile_part[count($mobile_part)-1];
+        $ansar = PersonalInfo::where('ansar_id', $id)->where('mobile_no_self',$mobile_no)->first();
+//        $ansar = PersonalInfo::where('ansar_id', $id)->first();
         if (!$ansar) {
-            return 'No Ansar Exists With This ID :' . $id;
+            return 'No Ansar Exists With This ID or mobile no:' . $id;
         }
         $info = 'Name : ' . $ansar->ansar_name_eng . ', Father Name : ' . $ansar->father_name_eng . ', Mother Name : ' . $ansar->mother_name_eng . ', NID : ' . $ansar->national_id_no . ', DOB : ' . date('d-M-y', strtotime($ansar->data_of_birth)) . ', Mobile : ' . $ansar->mobile_no_self;
         Log::info($info);

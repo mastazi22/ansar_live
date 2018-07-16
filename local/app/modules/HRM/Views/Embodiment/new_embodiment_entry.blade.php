@@ -9,16 +9,29 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('NewEmbodimentController', function ($scope, $http, notificationService, $timeout,$rootScope) {
+        GlobalApp.controller('NewEmbodimentController', function ($scope, $http, notificationService, $timeout, $rootScope) {
             $scope.ansarId = "";
-            $scope.errors = {division_name_eng:[],thana_name_eng:[],kpi_id:[]}
-            $scope.eMessage = {division_name_eng:$scope.errors.division_name_eng[0],thana_name_eng:$scope.errors.thana_name_eng[0],kpi_id:$scope.errors.kpi_id[0]};
+            $scope.errors = {division_name_eng: [], thana_name_eng: [], kpi_id: []};
+            $scope.eMessage = {
+                division_name_eng: $scope.errors.division_name_eng[0],
+                thana_name_eng: $scope.errors.thana_name_eng[0],
+                kpi_id: $scope.errors.kpi_id[0]
+            };
 
-            $scope.printLetter = [{},{}];
-            $scope.queue = []
+            $scope.bankDataErrorMessage = "";
+            $scope.bank_name = "";
+            $scope.prefer_choice = "";
+            $scope.mobile_bank_account_no = "";
+            $scope.mobile_bank_type = "";
+            $scope.account_no = "";
+            $scope.branch_name = "";
+
+            $scope.clickedAsnar = "";
+            $scope.printLetter = [{}, {}];
+            $scope.queue = [];
             $scope.ee = true;
             $scope.ansarDetail = {};
-            $scope.eData = []
+            $scope.eData = [];
             $scope.units = [];
             $scope.thanas = [];
             $scope.totalLength = 0;
@@ -29,20 +42,35 @@
             $scope.loadingAnsar = false;
             $scope.joining_date = "";
             $scope.isAnsarAvailable = false;
-            $scope.responseData = ''
+            $scope.responseData = '';
             $scope.ea = [];
             $scope.hh = 0;
             $scope.selectAll = false;
             $scope.msg = "";
+            $scope.bankList = ["AB Bank Limited", "Agrani Bank Limited", "Al-Arafah Islami Bank Limited", "Bangladesh Commerce Bank Limited",
+                "Bangladesh Development Bank Limited", "Bangladesh Krishi Bank", "Bank Al-Falah Limited", "Bank Asia Limited", "BASIC Bank Limited", "BRAC Bank Limited", "Citibank N.A",
+                "Commercial Bank of Ceylon Limited", "Dhaka Bank Limited", "Dutch-Bangla Bank Limited", "Eastern Bank Limited", "EXIM Bank Limited", "First Security Islami Bank Limited",
+                "Habib Bank Ltd.", "ICB Islamic Bank Ltd.", "IFIC Bank Limited", "Islami Bank Bangladesh Ltd", "Jamuna Bank Ltd", "Janata Bank Limited",
+                "Meghna Bank Limited", "Mercantile Bank Limited", "Midland Bank Limited", "Mutual Trust Bank Limited", "National Bank Limited", "National Bank of Pakistan",
+                "National Credit & Commerce Bank Ltd", "NRB Commercial Bank Limited", "One Bank Limited", "Premier Bank Limited", "Prime Bank Ltd", "Pubali Bank Limited",
+                "Rajshahi Krishi Unnayan Bank", "Rupali Bank Limited", "Shahjalal Bank Limited", "Shimanto Bank Limited", "Social Islami Bank Ltd.",
+                "Sonali Bank Limited", "South Bangla Agriculture & Commerce Bank Limited", "Southeast Bank Limited", "Standard Bank Limited",
+                "Standard Chartered Bank", "State Bank of India", "The City Bank Ltd.", "The Hong Kong and Shanghai Banking Corporation. Ltd.",
+                "Trust Bank Limited", "Union Bank Limited", "United Commercial Bank Limited", "Uttara Bank Limited", "Woori Bank"
+            ];
+
+            $scope.mobileBankType = [
+                "bkash", "rocket"
+            ];
             $scope.$watch('selected', function (n, o) {
-                if (n!==undefined&&n.constructor === Array&&n.length>0) {
+                if (n !== undefined && n.constructor === Array && n.length > 0) {
                     var l = 0;
                     n.forEach(function (value, index) {
                         if (value !== false) {
                             l++
                         }
-                    })
-                    if (l > 0) $scope.ee = false
+                    });
+                    if (l > 0) $scope.ee = false;
                     else $scope.ee = true;
                     if (n.length === l) {
                         $scope.selectAll = true
@@ -50,24 +78,21 @@
                     else $scope.selectAll = false
                 }
                 else $scope.selectAll = false
-            }, true)
+            }, true);
             $scope.changeAll = function () {
 
                 if ($scope.selectAll) {
                     $scope.ansarDetail.forEach(function (value, index) {
-
                         $scope.selected[index] = value.ansar_id;
-
                     })
                 }
                 else {
                     $scope.selected = Array.apply(null, Array($scope.ansarDetail.length)).map(Boolean.prototype.valueOf, false);
                 }
-
-            }
+            };
             $scope.pppp = function (value) {
                 return value !== false;
-            }
+            };
             $scope.loadAnsarDetail = function (id) {
                 $("#embodied-modal").modal('hide')
                 $scope.loadingAnsar = true;
@@ -83,15 +108,13 @@
                     $scope.auid = $scope.ansarDetail.length > 0 ? angular.copy($scope.ansarDetail[0]) : $scope.auid
                     $scope.selected = Array.apply(null, Array($scope.ansarDetail.length)).map(Boolean.prototype.valueOf, false)
                     $scope.loadingAnsar = false;
-                    console.log($scope.ansarDetail)
+                    // console.log($scope.ansarDetail)
                     $scope.totalLength--;
                     $scope.loadingAnsar = false;
-
-
                 }, function () {
                     $scope.loadingAnsar = false;
                 })
-            }
+            };
             $scope.loadAnsarDetailForMultipleKPI = function (id) {
                 $scope.loadingAnsar = true;
                 $http({
@@ -101,12 +124,10 @@
                 }).then(function (response) {
                     $scope.multipleAnsar = response.data.apd ? response.data.apd : [];
                     $scope.loadingAnsar = false;
-
-
                 }, function () {
                     $scope.loadingAnsar = false;
                 })
-            }
+            };
             $scope.addToCart = function () {
                 $("#cart-modal").modal('hide')
                 var exists = 0;
@@ -149,7 +170,7 @@
             }
             $scope.submitEmbodiment = function () {
                 console.log($scope.eData);
-                $scope.printLetter = [{},{}];
+                $scope.printLetter = [{}, {}];
                 $scope.loading = true;
                 $http({
                     method: 'post',
@@ -157,7 +178,7 @@
                         data: $scope.eData,
                         memorandum_id: $scope.memorandumIdm,
                         mem_date: $scope.memDatee,
-                        unit_id:$rootScope.user.district_id?$rootScope.user.district_id:$scope.params.unit
+                        unit_id: $rootScope.user.district_id ? $rootScope.user.district_id : $scope.params.unit
                     }),
                     url: '{{URL::route('new-embodiment-entry-multiple')}}'
                 }).then(function (response) {
@@ -182,12 +203,12 @@
                     else {
                         notificationService.notify('error', response.data.message);
                         $scope.loading = false;
-                        $scope.printLetter = [{},{}];
+                        $scope.printLetter = [{}, {}];
                     }
                 }, function (response) {
                     notificationService.notify('error', response.statusText);
                     $scope.loading = false;
-                    $scope.printLetter = [{},{}];
+                    $scope.printLetter = [{}, {}];
                 })
 
             }
@@ -199,18 +220,70 @@
                 $scope.memorandumIdm = ''
                 $scope.memDatee = ''
                 $scope.loading = false;
-                $scope.printLetter = [{},{}];
+                $scope.printLetter = [{}, {}];
             }
             $scope.ppppp = function () {
                 $scope.reset = {};
             }
-
-            $scope.$watch('responseData',function (newVal, oldVal) {
+            $scope.$watch('responseData', function (newVal, oldVal) {
                 $scope.selected = [];
-                if(newVal!==undefined&&newVal.constructor===Object){
+                if (newVal !== undefined && newVal.constructor === Object) {
                     $scope.printLetter[0] = newVal.printData;
                 }
-            },true)
+            }, true)
+            $scope.setAnsarId = function (ansar) {
+                $scope.clickedAsnar = ansar.ansar_id;
+            };
+            $scope.saveBankInfo = function () {
+                $scope.bankDataErrorMessage = "";
+                var isSubmit = false;
+                var formData = {
+                    bank_name: $scope.bank_name,
+                    prefer_choice: $scope.prefer_choice,
+                    mobile_bank_account_no: $scope.mobile_bank_account_no,
+                    mobile_bank_type: $scope.mobile_bank_type,
+                    account_no: $scope.account_no,
+                    branch_name: $scope.branch_name,
+                    ansar_id: $scope.clickedAsnar
+                };
+                if ($scope.prefer_choice === 'general') {
+                    if ($scope.bank_name && $scope.branch_name && $scope.account_no) {
+                        isSubmit = true;
+                    } else {
+                        $scope.bankDataErrorMessage = "You choose general banking. All fields related with general banking are required."
+                    }
+                }
+                else if ($scope.prefer_choice === 'mobile') {
+                    if ($scope.mobile_bank_type && $scope.mobile_bank_account_no) {
+                        isSubmit = true;
+                    } else {
+                        $scope.bankDataErrorMessage = "You choose mobile banking. All fields related with mobile banking are required."
+                    }
+                } else {
+                    $scope.bankDataErrorMessage = "Fields are required."
+                }
+                if (isSubmit) {
+                    $http({
+                        method: 'post',
+                        url: '{{URL::route('save-bank-info')}}',
+                        params: formData
+                    }).then(function (response) {
+                        console.log(response);
+                        angular.element(document.querySelector('#checkbox-' + $scope.clickedAsnar)).css('display', 'inline-block');
+                        angular.element(document.querySelector('#button-' + $scope.clickedAsnar)).css('display', 'none');
+                        $("#bank-account-modal").modal("toggle");
+                        $scope.bank_name = "";
+                        $scope.prefer_choice = "";
+                        $scope.mobile_bank_account_no = "";
+                        $scope.mobile_bank_type = "";
+                        $scope.account_no = "";
+                        $scope.branch_name = "";
+                        $scope.clickedAsnar = "";
+                    }, function (error) {
+                        console.log(error);
+                    })
+                }
+            }
         })
     </script>
     <div ng-controller="NewEmbodimentController">
@@ -222,7 +295,6 @@
                     </span>
                 </div>
                 <div class="box-body">
-
                     <filter-template
                             show-item="['range','unit']"
                             type="single"
@@ -261,13 +333,13 @@
                                             <th>প্যানেল আইডি নং</th>
                                             <th>বর্তমান অবস্থা</th>
                                             <th>অফারের তারিখ</th>
-                                            <th>
+                                            <th style="text-align: center">
                                                 <input type="checkbox" ng-model="selectAll" ng-true-value="true"
                                                        ng-false-value="false" ng-change="changeAll()"
                                                        ng-disabled="ansarDetail.length<=0">
                                             </th>
                                         </tr>
-                                        <tr ng-repeat="ansar in ansarDetail">
+                                        <tr class="table-middle-data" ng-repeat="ansar in ansarDetail">
                                             <td>[[$index+1]]</td>
                                             <td>[[ansar.ansar_id]]</td>
                                             <td>[[ansar.ansar_name_bng]]</td>
@@ -277,9 +349,18 @@
                                             <td>[[ansar.memorandum_id]]</td>
                                             <td>Offered</td>
                                             <td>[[ansar.offerDate|dateformat:"DD-MMM-YYYY"]]</td>
-                                            <td>
+                                            <td style="text-align: center;vertical-align: middle;">
+
                                                 <input type="checkbox" ng-model="selected[$index]"
-                                                       ng-false-value="false" ng-true-value="[[ansar.ansar_id]]">
+                                                       ng-style="{'display': (ansar.prefer_choice == 'general' || ansar.prefer_choice == 'mobile')? 'inline-block':'none'}"
+                                                       id="checkbox-[[ansar.ansar_id]]" ng-false-value="false"
+                                                       ng-true-value="[[ansar.ansar_id]]">
+                                                <button id="button-[[ansar.ansar_id]]" ng-click="setAnsarId(ansar)"
+                                                        ng-style="{'display': (ansar.prefer_choice != 'general' && ansar.prefer_choice != 'mobile')? 'inline-block':'none'}"
+                                                        type="button" class="btn btn-primary" data-toggle="modal"
+                                                        data-target=".bd-example-modal-lg">&nbsp;Bank Account
+                                                </button>
+
                                             </td>
                                         </tr>
                                         <tr ng-if="ansarDetail==undefined||ansarDetail.length<=0">
@@ -290,7 +371,8 @@
 
                                 {!! Form::open(['route'=>'print_letter','target'=>'_blank','class'=>'pull-left']) !!}
                                 <input type="hidden" ng-repeat="(k,v) in printLetter[0]" name="[[k]]" value="[[v]]">
-                                <button ng-show="printLetter[0].status" class="btn btn-primary"><i class="fa fa-print"></i>&nbsp;Print Embodied Letter
+                                <button ng-show="printLetter[0].status" class="btn btn-primary"><i
+                                            class="fa fa-print"></i>&nbsp;Print Embodied Letter
                                 </button>
                                 {!! Form::close() !!}
                                 <a href="#" class="btn btn-primary pull-right" ng-disabled="ee"
@@ -381,7 +463,8 @@
                                 <div>
                                     {!! Form::open(['route'=>'print_letter','target'=>'_blank','class'=>'pull-left']) !!}
                                     <input type="hidden" ng-repeat="(k,v) in printLetter[1]" name="[[k]]" value="[[v]]">
-                                    <button ng-show="printLetter[1].status" class="btn btn-primary"><i class="fa fa-print"></i>&nbsp;Print Embodied Letter
+                                    <button ng-show="printLetter[1].status" class="btn btn-primary"><i
+                                                class="fa fa-print"></i>&nbsp;Print Embodied Letter
                                     </button>
                                     {!! Form::close() !!}
                                     <button class="btn btn-primary pull-right" ng-disabled="listedAnsar.length<=0"
@@ -399,7 +482,8 @@
                                 <div class="modal-header">
                                     <h4 class="modal-title">Embodiment Form</h4>
                                 </div>
-                                <input type="hidden" name="unit_id" value="[[user.district_id?user.district_id:param.unit]]">
+                                <input type="hidden" name="unit_id"
+                                       value="[[user.district_id?user.district_id:param.unit]]">
                                 <div class="modal-body">
                                     <input type="hidden" name="ansar_ids[]" ng-repeat="s in selected|filter:pppp"
                                            value="[[s]]">
@@ -534,6 +618,91 @@
                                     <button type="submit" class="btn btn-primary pull-right" ng-click="addToCart()"
                                             ng-disabled="loading">
                                         <i class="fa fa-check"></i>Confirm
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="bank-account-modal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+                         aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close pull-right" data-dismiss="modal" aria-hidden="true">&times;
+                                    </button>
+                                    <h4 class="modal-title">ব্যাংক অ্যাকাউন্ট তথ্য</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="box-body">
+                                        <div class="alert alert-danger"
+                                             ng-if="bankDataErrorMessage!='' && bankDataErrorMessage!=null">
+                                            [[bankDataErrorMessage]]
+                                        </div>
+                                        <h5 class="text-center">সাধারণ ব্যাংকিং তথ্য</h5>
+                                        <div class="form-horizontal col-md-12 ">
+                                            <label class="control-label col-sm-3" for="email">ব্যাংকের
+                                                নাম</label>
+                                            <div class="col-sm-9 ">
+                                                <select class="form-control" id="sell" ng-model="bank_name">
+                                                    <option value="">--ব্যাংক নির্বাচন করুন--</option>
+                                                    <option ng-repeat="x in bankList" value="[[x]]">[[x]]
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-horizontal col-md-12 ">
+                                            <label class="control-label col-sm-3" for="email">ব্রাঞ্চের নাম:</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" id="branch_name"
+                                                       ng-model="branch_name" placeholder="ব্রাঞ্চের নাম"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-horizontal col-md-12 ">
+                                            <label class="control-label col-sm-3" for="email">অ্যাকাউন্ট
+                                                নম্বর:</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" id="branch_name"
+                                                       ng-model="account_no" placeholder="ব্যাংক অ্যাকাউন্ট নম্বর"/>
+                                            </div>
+                                        </div>
+                                        <h4 style="display: inline-block;text-align: center;width: 100%;">মোবাইল
+                                            ব্যাংকিং তথ্য</h4>
+                                        <div class="form-horizontal col-md-12 ">
+                                            <label class="control-label col-sm-3" for="email">মোবাইল ব্যাংকিং
+                                                ধরন</label>
+                                            <div class="col-sm-9 ">
+                                                <select class="form-control" id="sell" ng-model="mobile_bank_type">
+                                                    <option value="">--নির্বাচন করুন--</option>
+                                                    <option ng-repeat="x in mobileBankType" value="[[x]]">[[x]]
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-horizontal col-md-12 ">
+                                            <label class="control-label col-sm-3" for="email">অ্যাকাউন্ট
+                                                নম্বর:</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" id="branch_name"
+                                                       ng-model="mobile_bank_account_no" value=""
+                                                       placeholder="ব্যাংক অ্যাকাউন্ট নম্বর"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-horizontal col-md-12 ">
+                                            <label class="control-label col-sm-3" for="email">কোন অ্যাকাউন্ট এ
+                                                টাকা পেতে চান?</label>
+                                            <div class="col-sm-9 ">
+                                                <select class="form-control" id="sell" ng-model="prefer_choice">
+                                                    <option value="">--নির্বাচন করুন--</option>
+                                                    <option value="general">সাধারন ব্যাংকিং</option>
+                                                    <option value="mobile">মোবাইল ব্যাংকিং</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" ng-click="saveBankInfo()">Save
                                     </button>
                                 </div>
                             </div>
