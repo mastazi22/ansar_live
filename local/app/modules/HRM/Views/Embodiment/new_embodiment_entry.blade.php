@@ -260,7 +260,7 @@
                         $scope.bankDataErrorMessage = "You choose mobile banking. All fields related with mobile banking are required."
                     }
                 } else {
-                    $scope.bankDataErrorMessage = "Fields are required."
+                    $scope.bankDataErrorMessage = "Fill all required fields."
                 }
                 if (isSubmit) {
                     $http({
@@ -268,9 +268,10 @@
                         url: '{{URL::route('save-bank-info')}}',
                         params: formData
                     }).then(function (response) {
-                        console.log(response);
+                        angular.element(document.querySelector('#a-' + $scope.clickedAsnar)).css('display', 'inline-block');
                         angular.element(document.querySelector('#checkbox-' + $scope.clickedAsnar)).css('display', 'inline-block');
                         angular.element(document.querySelector('#button-' + $scope.clickedAsnar)).css('display', 'none');
+                        angular.element(document.querySelector('#button1-' + $scope.clickedAsnar)).css('display', 'none');
                         $("#bank-account-modal").modal("toggle");
                         $scope.bank_name = "";
                         $scope.prefer_choice = "";
@@ -346,21 +347,20 @@
                                             <td>[[ansar.name_bng]]</td>
                                             <td>[[ansar.home_district]]</td>
                                             <td>[[ansar.panel_date|dateformat:"DD-MMM-YYYY"]]</td>
-                                            <td>[[ansar.memorandum_id]]</td>
+                                            <td style="word-break: break-all;">[[ansar.memorandum_id]]</td>
                                             <td>Offered</td>
                                             <td>[[ansar.offerDate|dateformat:"DD-MMM-YYYY"]]</td>
                                             <td style="text-align: center;vertical-align: middle;">
-
                                                 <input type="checkbox" ng-model="selected[$index]"
                                                        ng-style="{'display': (ansar.prefer_choice == 'general' || ansar.prefer_choice == 'mobile')? 'inline-block':'none'}"
                                                        id="checkbox-[[ansar.ansar_id]]" ng-false-value="false"
                                                        ng-true-value="[[ansar.ansar_id]]">
                                                 <button id="button-[[ansar.ansar_id]]" ng-click="setAnsarId(ansar)"
                                                         ng-style="{'display': (ansar.prefer_choice != 'general' && ansar.prefer_choice != 'mobile')? 'inline-block':'none'}"
-                                                        type="button" class="btn btn-primary" data-toggle="modal"
-                                                        data-target=".bd-example-modal-lg">&nbsp;Bank Account
+                                                        type="button" class="btn btn-primary btn-xs" data-toggle="modal"
+                                                        data-target=".bd-example-modal-lg">
+                                                    <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Bank Account
                                                 </button>
-
                                             </td>
                                         </tr>
                                         <tr ng-if="ansarDetail==undefined||ansarDetail.length<=0">
@@ -412,14 +412,22 @@
                                             <td>[[ansar.name_bng]]</td>
                                             <td>[[ansar.home_district]]</td>
                                             <td>[[ansar.panel_date|dateformat:"DD-MMM-YYYY"]]</td>
-                                            <td>[[ansar.memorandum_id]]</td>
+                                            <td style="word-break: break-all;">[[ansar.memorandum_id]]</td>
                                             <td>Offered</td>
                                             <td>[[ansar.offerDate|dateformat:"DD-MMM-YYYY"]]</td>
                                             <td>
                                                 <a href="#" class="btn btn-primary btn-xs" ng-click="ppppp()"
+                                                   ng-style="{'display': (ansar.prefer_choice == 'general' || ansar.prefer_choice == 'mobile')? 'inline-block':'none'}"
+                                                   id="a-[[ansar.ansar_id]]"
                                                    data-target="#cart-modal" data-toggle="modal">
                                                     <i class="fa fa-plus"></i>&nbsp; Add to list
                                                 </a>
+                                                <button id="button1-[[ansar.ansar_id]]" ng-click="setAnsarId(ansar)"
+                                                        ng-style="{'display': (ansar.prefer_choice != 'general' && ansar.prefer_choice != 'mobile')? 'inline-block':'none'}"
+                                                        type="button" class="btn btn-primary btn-xs" data-toggle="modal"
+                                                        data-target=".bd-example-modal-lg">
+                                                    <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Bank Account
+                                                </button>
                                             </td>
                                         </tr>
                                         <tr ng-if="!multipleAnsar||multipleAnsar.length<=0">
