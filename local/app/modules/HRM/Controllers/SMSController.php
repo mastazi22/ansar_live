@@ -251,7 +251,7 @@ class SMSController extends Controller
         $ansar = PersonalInfo::where('ansar_id', $id)->where('mobile_no_self',$mobile_no)->first();
 //        $ansar = PersonalInfo::where('ansar_id', $id)->first();
         if (!$ansar) {
-            return 'No Ansar Exists With This ID or mobile no:' . $id;
+            return 'No Ansar Exists With This ID or mobile no:' . $mobile_no;
         }
         $info = 'Name : ' . $ansar->ansar_name_eng . ', Father Name : ' . $ansar->father_name_eng . ', Mother Name : ' . $ansar->mother_name_eng . ', NID : ' . $ansar->national_id_no . ', DOB : ' . date('d-M-y', strtotime($ansar->data_of_birth)) . ', Mobile : ' . $ansar->mobile_no_self;
         Log::info($info);
