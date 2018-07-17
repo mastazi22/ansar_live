@@ -79,12 +79,16 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
         //load image
         Route::get('/profile_image', ['as' => 'profile_image', 'uses' => 'ApplicantScreeningController@loadImage']);
         Route::get('/test', function () {
-            $a = [];
-            for ($i = 0; $i < 36; $i += .5) {
-                $c = ($i * 40) / 35;
-                $a[$i . ' '] = $c;
+            $e = \App\modules\recruitment\Models\JobApplicantEditHistory::whereDate('created_at','>=','2018-07-17')->get();
+            foreach ($e as $ee){
+                $p = unserialize($ee->previous_data);
+                $a = \App\modules\recruitment\Models\JobAppliciant::find($p["id"]);
+                if($a){
+                    $a->training_info = $p["training_info"];
+                    $a->save();
+                }
             }
-            return $a;
+            return "success";
         });
     });
 
