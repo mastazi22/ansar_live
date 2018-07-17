@@ -20,9 +20,9 @@ class KpiGeneralModel extends Model
     function division(){
         return $this->belongsTo(Division::class,'division_id');
     }
-//    function thana(){
-//        return $this->belongsTo('App\models\Thana','thana_id');
-//    }
+    function thana(){
+        return $this->belongsTo(Thana::class,'thana_id');
+    }
     function embodiment(){
         return $this->hasMany('App\modules\HRM\Models\EmbodimentModel','kpi_id');
     }
