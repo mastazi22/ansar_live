@@ -85,11 +85,9 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                 $p = unserialize($ee->previous_data);
 
                 $a = \App\modules\recruitment\Models\JobAppliciant::find($p["id"]);
-                array_push($z,$p["training_info"]." ".$p["applicant_id"]);
-                if($a){
-                    $a->training_info = $p["training_info"];
-                    $a->save();
-                }
+                $a->training_info = $p["training_info"];
+                $a->save();
+                array_push($z,$a->training_info." ".$p["applicant_id"]);
             }
             return $z;
         });
