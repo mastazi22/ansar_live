@@ -87,7 +87,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                 $a = \App\modules\recruitment\Models\JobAppliciant::find($p["id"]);
                 /*$a->training_info = $p["training_info"];
                 $a->save();*/
-                array_push($z,$a->training_info == $p["training_info"]);
+                array_push($z,[$a->training_info == $p["training_info"],$p["training_info"],$p["applicant_id"],$a->applicant_id]);
             }
             return $z;
         });
