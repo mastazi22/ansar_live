@@ -90,23 +90,6 @@ class ApplicantScreeningController extends Controller
             }*/
             $this->validate($request, $rules);
             DB::enableQueryLog();
-            $selection_unit = JobApplicantExamCenter::with(['units' => function ($q) {
-                $q->select('tbl_units.id');
-            }])
-                ->where('selection_date', Carbon::now()->subHour()->format('Y-m-d'));
-            if ($request->exists('circular') && $request->circular != 'all') {
-                $selection_unit->where('job_circular_id', $request->circular);
-            }
-
-            $selection_unit = $selection_unit->get();
-            $units = [];
-            if (count($selection_unit) > 0) {
-                foreach ($selection_unit as $u) {
-                    $units = array_merge($units, $u->units()->pluck('tbl_units.id')->toArray());
-                }
-            }
-//            return $units;
-            DB::enableQueryLog();
             $query = JobAppliciant::with('appliciantEducationInfo')->whereHas('circular', function ($q) use ($request) {
                 $q->where('circular_status', 'running');
                 if ($request->exists('circular') && $request->circular != 'all' &&$request->circular) {
@@ -130,7 +113,7 @@ class ApplicantScreeningController extends Controller
                 $query->where(function ($q) use ($request) {
                     $q->where('national_id_no', '=', "{$request->q}");
                     $q->orWhere('applicant_id', '=', "{$request->q}");
-                    $q->orWhere('job_applicant.ansar_id', '=', "{$request->q}");
+//                    $q->orWhere('job_applicant.ansar_id', '=', "{$request->q}");
                     if (strtotime($request->q)) {
                         $q->orwhere('date_of_birth', Carbon::parse($request->q)->format('Y-m-d'));
                     }
