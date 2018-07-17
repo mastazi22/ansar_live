@@ -109,11 +109,14 @@ class ApplicantScreeningController extends Controller
             DB::enableQueryLog();
             $query = JobAppliciant::with('appliciantEducationInfo')->whereHas('circular', function ($q) use ($request) {
                 $q->where('circular_status', 'running');
+                if ($request->exists('circular') && $request->circular != 'all' &&$request->circular) {
+                    $q->where('id', $request->circular);
+                }
                 $q->whereHas('category', function ($q) use ($request) {
                     $q->where('status', 'active');
-                    /*if ($request->exists('category') && $request->category != 'all') {
+                    if ($request->exists('category') && $request->category != 'all' &&$request->category) {
                         $q->where('id', $request->category);
-                    }*/
+                    }
                 });
             })->where('status', 'applied');
             if ($request->already_selected && count($request->already_selected) > 0) {
