@@ -1113,8 +1113,8 @@ class EmbodimentController extends Controller
         $this->validate($request, $rules);
         $data = $request->all();
         $ansar = PersonalInfo::where("ansar_id", $data['ansar_id'])
-            ->whereHas("status",function ($q){
-                $q->where('embodied_status',1)->where('block_list_status',0)->where('black_list_status',0);
+            ->whereHas("status", function ($q) {
+                $q->where('offer_sms_status', 1)->where('block_list_status', 0)->where('black_list_status', 0);
             })->first();
         if ($ansar) {
             unset($data['ansar_id'], $data['action_user_id']);
