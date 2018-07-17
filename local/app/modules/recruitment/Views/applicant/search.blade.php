@@ -101,7 +101,7 @@
                         $scope.categories = [];
                         $scope.circulars = [];
                         $scope.applicants = [];
-                        console.log(response);
+                       // console.log(response);
                         $scope.allLoading = false;
                     })
             }
@@ -158,7 +158,7 @@
                     select_all: true,
                     q:$scope.param.q
                 }).then(function (response) {
-                    console.log(response.data)
+                    //console.log(response.data)
                     $scope.allLoading = false;
                     $scope.selectedList = response.data.map(function (n) {
                         return n + '';
@@ -294,7 +294,7 @@
                     httpService.education(),
                     $http({method: 'get', url: '{{URL::route('recruitment.applicant.getfieldstore')}}'})
                 ]).then(function (response) {
-                    console.log(response)
+                    //console.log(response)
                     $scope.allLoading = false;
                     $scope.formData = response[0].data.data;
                     $scope.district = response[0].data.units;
@@ -306,11 +306,11 @@
                     $scope.formData.division_id += '';
                     $scope.formData.unit_id += '';
                     $scope.formData.thana_id += '';
-                    $scope.formData['training_info'] = $scope.formData.training_info?'No training':$scope.formData.training_info;
                     $scope.formData.appliciant_education_info.forEach(function (d, i) {
 
                         $scope.formData.appliciant_education_info[i].job_education_id += '';
                     })
+                    console.log($scope.formData)
                 });
             }
             $scope.SelectedItemChanged = function () {
@@ -369,8 +369,8 @@
             }
             $scope.isEditable = function (s) {
 
-                console.log(s+" : "+($scope.isAdmin!=11&&($scope.fields==undefined||$scope.fields.indexOf(s)<0)))
-                console.log($scope.fields)
+                //console.log(s+" : "+($scope.isAdmin!=11&&($scope.fields==undefined||$scope.fields.indexOf(s)<0)))
+                //console.log($scope.fields)
                 if($scope.isAdmin!=11&&($scope.fields==undefined||$scope.fields.indexOf(s)<0)) return -1;
                 return 1;
             }

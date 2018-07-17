@@ -291,7 +291,7 @@
                     $scope.formData.division_id += '';
                     $scope.formData.unit_id += '';
                     $scope.formData.thana_id += '';
-                    $scope.formData['training_info'] = $scope.formData.training_info?'No training':$scope.formData.training_info;
+//                    $scope.formData['training_info'] = $scope.formData.training_info?'No training':$scope.formData.training_info;
                     $scope.formData.appliciant_education_info.forEach(function (d, i) {
 
                         $scope.formData.appliciant_education_info[i].job_education_id += '';
