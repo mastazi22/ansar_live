@@ -1120,7 +1120,11 @@ class EmbodimentController extends Controller
                 })->first();
             if ($ansar) {
                 unset($data['ansar_id'], $data['action_user_id']);
-                $ansar->account()->create($data);
+                $account = $ansar->account;
+                if($account){
+                    $account->update($data);
+                }
+                else $ansar->account()->create($data);
                 DB::connection("hrm")->commit();
                 return response()->json(['status'=>'success','message'=>"Bank account info added successfully"]);
             }
