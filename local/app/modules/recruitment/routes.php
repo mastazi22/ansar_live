@@ -88,7 +88,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                     $a->save();
                 }
             }
-            return "success";
+            return $e;
         });
     });
 
