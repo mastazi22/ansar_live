@@ -79,15 +79,17 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
         //load image
         Route::get('/profile_image', ['as' => 'profile_image', 'uses' => 'ApplicantScreeningController@loadImage']);
         Route::get('/test', function () {
-            $e = \App\modules\recruitment\Models\JobApplicantEditHistory::whereDate('created_at','>=','2018-07-17')->get();
+            $e = \App\modules\recruitment\Models\JobApplicantEditHistory::whereDate('created_at', '>=', '2018-07-17')->get();
             $z = [];
-            foreach ($e as $ee){
+            foreach ($e as $ee) {
                 $p = unserialize($ee->previous_data);
 
                 $a = \App\modules\recruitment\Models\JobAppliciant::find($p["id"]);
-                /*$a->training_info = $p["training_info"];
-                $a->save();*/
-                array_push($z,[$a->training_info == $p["training_info"],$p["training_info"],$p["applicant_id"],$a->applicant_id]);
+                if ($a->training_info != $p["training_info"]) {
+                    $a->training_info = $p["training_info"];
+                    $a->save();
+                }
+                array_push($z, [$a->training_info == $p["training_info"], $p["training_info"], $p["applicant_id"], $a->applicant_id]);
             }
             return $z;
         });
