@@ -269,8 +269,8 @@
                         params: formData
                     }).then(function (response) {
                         $("#bank-account-modal").modal("toggle");
-                        notificationService.notify(response.data.status,response.data.message)
-                        if(response.data.status==="success") {
+                        notificationService.notify(response.data.status, response.data.message)
+                        if (response.data.status === "success") {
                             angular.element(document.querySelector('#a-' + $scope.clickedAsnar)).css('display', 'inline-block');
                             angular.element(document.querySelector('#checkbox-' + $scope.clickedAsnar)).css('display', 'inline-block');
                             angular.element(document.querySelector('#button-' + $scope.clickedAsnar)).css('display', 'none');
@@ -284,9 +284,18 @@
                         $scope.branch_name = "";
                         $scope.clickedAsnar = "";
                     }, function (error) {
-                        notificationService.notify("error","An error occur while saving code: "+error.status )
+                        notificationService.notify("error", "An error occur while saving code: " + error.status)
                     })
                 }
+            }
+            $scope.cancelBankAccount = function () {
+                $("#bank-account-modal").modal("toggle");
+                angular.element(document.querySelector('#a-' + $scope.clickedAsnar)).css('display', 'inline-block');
+                angular.element(document.querySelector('#checkbox-' + $scope.clickedAsnar)).css('display', 'inline-block');
+                angular.element(document.querySelector('#button-' + $scope.clickedAsnar)).css('display', 'none');
+                angular.element(document.querySelector('#button1-' + $scope.clickedAsnar)).css('display', 'none');
+
+
             }
         })
     </script>
@@ -714,7 +723,9 @@
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                     <button type="button" class="btn btn-primary" ng-click="saveBankInfo()">Save
-                                    </button>
+                                        <button type="button" class="btn btn-danger" ng-click="cancelBankAccount()">I
+                                            don`t have a bank account now
+                                        </button>
                                 </div>
                             </div>
                         </div>
