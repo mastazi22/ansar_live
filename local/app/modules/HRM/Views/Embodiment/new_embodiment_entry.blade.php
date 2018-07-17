@@ -268,11 +268,14 @@
                         url: '{{URL::route('save-bank-info')}}',
                         params: formData
                     }).then(function (response) {
-                        angular.element(document.querySelector('#a-' + $scope.clickedAsnar)).css('display', 'inline-block');
-                        angular.element(document.querySelector('#checkbox-' + $scope.clickedAsnar)).css('display', 'inline-block');
-                        angular.element(document.querySelector('#button-' + $scope.clickedAsnar)).css('display', 'none');
-                        angular.element(document.querySelector('#button1-' + $scope.clickedAsnar)).css('display', 'none');
                         $("#bank-account-modal").modal("toggle");
+                        notificationService.notify(response.data.status,response.data.message)
+                        if(response.data.status==="success") {
+                            angular.element(document.querySelector('#a-' + $scope.clickedAsnar)).css('display', 'inline-block');
+                            angular.element(document.querySelector('#checkbox-' + $scope.clickedAsnar)).css('display', 'inline-block');
+                            angular.element(document.querySelector('#button-' + $scope.clickedAsnar)).css('display', 'none');
+                            angular.element(document.querySelector('#button1-' + $scope.clickedAsnar)).css('display', 'none');
+                        }
                         $scope.bank_name = "";
                         $scope.prefer_choice = "";
                         $scope.mobile_bank_account_no = "";
@@ -281,7 +284,7 @@
                         $scope.branch_name = "";
                         $scope.clickedAsnar = "";
                     }, function (error) {
-                        console.log(error);
+                        notificationService.notify("error","An error occur while saving code: "+error.status )
                     })
                 }
             }

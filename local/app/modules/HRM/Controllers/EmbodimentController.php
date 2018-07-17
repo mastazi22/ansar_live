@@ -1103,22 +1103,32 @@ class EmbodimentController extends Controller
     {
         $rules = [
             'ansar_id' => 'required',
-            'bank_name' => 'required',
-            'branch_name' => 'required',
-            'account_no' => 'required',
-            'mobile_bank_type' => 'required',
-            'mobile_bank_account_no' => 'required',
+            'bank_name' => 'required_if:prefer_choice,general',
+            'branch_name' => 'required_if:prefer_choice,general',
+            'account_no' => 'required_if:prefer_choice,general',
+            'mobile_bank_type' => 'required_if:prefer_choice,mobile',
+            'mobile_bank_account_no' => 'required_if:prefer_choice,mobile',
             'prefer_choice' => 'required',
         ];
         $this->validate($request, $rules);
-        $data = $request->all();
-        $ansar = PersonalInfo::where("ansar_id", $data['ansar_id'])
-            ->whereHas("status", function ($q) {
-                $q->where('offer_sms_status', 1)->where('block_list_status', 0)->where('black_list_status', 0);
-            })->first();
-        if ($ansar) {
-            unset($data['ansar_id'], $data['action_user_id']);
-            $ansar->account()->create($data);
+        DB::connection("hrm")->beginTransaction();
+        try{
+            $data = $request->all();
+            $ansar = PersonalInfo::where("ansar_id", $data['ansar_id'])
+                ->whereHas("status", function ($q) {
+                    $q->where('offer_sms_status', 1)->where('block_list_status', 0)->where('black_list_status', 0);
+                })->first();
+            if ($ansar) {
+                unset($data['ansar_id'], $data['action_user_id']);
+                $ansar->account()->create($data);
+                DB::connection("hrm")->commit();
+                return response()->json(['status'=>'success','message'=>"Bank account info added successfully"]);
+            }
+            throw new \Exception("Invalid ansar");
+        }catch(\Exception $e){
+            DB::connection("hrm")->rollback();
+            return response()->json(['status'=>'error','message'=>$e->getMessage()]);
         }
+
     }
 }
