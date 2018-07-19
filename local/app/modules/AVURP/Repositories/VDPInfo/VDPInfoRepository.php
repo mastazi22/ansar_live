@@ -246,7 +246,7 @@ class VDPInfoRepository implements VDPInfoInterface
 
             $data = $request->except(['training_info','educationInfo','status','action_user_id']);
             $data['geo_id'] = $geo_id;
-            if (isset($path) && isset($image_name)) $data['profile_pic'] = $path . '/' . $image_name;
+            if (isset($path) && isset($image_name)) $data['profile_pic'] =  $image_name;
             else if ($request->hasFile('profile_pic')) $data['profile_pic'] = '';
 
             $info->update($data);
