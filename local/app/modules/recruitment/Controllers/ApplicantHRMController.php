@@ -26,12 +26,8 @@ class ApplicantHRMController extends Controller
     {
         if (strcasecmp($request->method(), 'post') == 0) {
             if ($request->ajax()) {
-                $applicants = JobApplicantHRMDetails::with(['division', 'district', 'thana'])
-                    ->where('job_circular_id', $request->circular)
-                ->where(function($q){
-                    $q->whereNull('ansar_id');
-                    $q->orWhere('ansar_id',0);
-                });
+                $applicants = JobApplicantHRMDetails::onlyTrashed()->with(['division', 'district', 'thana'])
+                    ->where('job_circular_id', $request->circular);
                 if ($request->range && $request->range != 'all') {
                     $applicants->where('division_id', $request->range);
                 }
@@ -104,7 +100,7 @@ class ApplicantHRMController extends Controller
 
     public function applicantEditForHRM($type, $circular_id, $id)
     {
-        $ansarAllDetails = JobApplicantHRMDetails::with(['division', 'district', 'thana', 'skill', 'disease', 'designation', 'bloodGroup'])
+        $ansarAllDetails = JobApplicantHRMDetails::onlyTrashed()->with(['division', 'district', 'thana', 'skill', 'disease', 'designation', 'bloodGroup'])
             ->where('id', $id)
             ->where('job_circular_id', $circular_id)
             ->first();
@@ -131,7 +127,7 @@ class ApplicantHRMController extends Controller
         DB::connection('hrm')->beginTransaction();
         DB::beginTransaction();
         try {
-            $applicant_hrm_details = JobApplicantHRMDetails::find($id);
+            $applicant_hrm_details = JobApplicantHRMDetails::onlyTrashed()->find($id);
             if ($applicant_hrm_details) {
                 $data = clone $applicant_hrm_details;
                 $ansar_id = intval(PersonalInfo::orderBy('ansar_id', 'desc')->first()->ansar_id) + 1;
@@ -152,6 +148,7 @@ class ApplicantHRMController extends Controller
 
                 unset($data['updated_at']);
                 unset($data['updated_at']);
+                unset($data['deleted_at']);
                 unset($data['applicant_id']);
                 unset($data['job_circular_id']);
 //                return $data;
@@ -188,6 +185,7 @@ class ApplicantHRMController extends Controller
                 $ansar_new->status()->save(new AnsarStatusInfo());
                 $ansar_new->save();
                 $applicant_hrm_details->save();
+                $applicant_hrm_details->restore();
 
                 DB::connection('hrm')->commit();
                 DB::commit();
@@ -234,7 +232,7 @@ class ApplicantHRMController extends Controller
             DB::connection('hrm')->beginTransaction();
             DB::beginTransaction();
             try {
-                $applicant_hrm_details = JobApplicantHRMDetails::find($id);
+                $applicant_hrm_details = JobApplicantHRMDetails::onlyTrashed()->find($id);
                 if ($applicant_hrm_details) {
                     $data = clone $applicant_hrm_details;
                     $ansar_id = intval(PersonalInfo::orderBy('ansar_id', 'desc')->first()->ansar_id) + 1;
@@ -255,6 +253,7 @@ class ApplicantHRMController extends Controller
 
                     unset($data['updated_at']);
                     unset($data['updated_at']);
+                    unset($data['deleted_at']);
                     unset($data['applicant_id']);
                     unset($data['job_circular_id']);
 //                return $data;
@@ -291,6 +290,7 @@ class ApplicantHRMController extends Controller
                     $ansar_new->status()->save(new AnsarStatusInfo());
                     $ansar_new->save();
                     $applicant_hrm_details->save();
+                    $applicant_hrm_details->restore();
 
                     DB::connection('hrm')->commit();
                     DB::commit();

@@ -95,6 +95,10 @@ class JobAppliciant extends Model
     {
         return $this->hasOne(JobApplicantHRMDetails::class, 'applicant_id', 'applicant_id');
     }
+    public function hrmDetailTrashed()
+    {
+        return $this->hrmDetail()->onlyTrashed();
+    }
 
     public function education()
     {

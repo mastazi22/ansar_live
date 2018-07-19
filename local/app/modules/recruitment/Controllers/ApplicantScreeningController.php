@@ -969,6 +969,7 @@ class ApplicantScreeningController extends Controller
             if ($request->ajax()) {
                 $applicants = JobAppliciant::with(['division', 'district', 'thana'])
                     ->doesnthave('hrmDetail')
+                    ->doesnthave('hrmDetailTrashed')
                     ->where('status', 'accepted')->where('job_circular_id', $request->circular);
                 if ($request->range && $request->range != 'all') {
                     $applicants->where('division_id', $request->range);
@@ -1070,6 +1071,7 @@ class ApplicantScreeningController extends Controller
             $applicant = JobAppliciant::where('applicant_id', $inputs['applicant_id'])->where('status', 'accepted')->first();
             if (!$applicant) throw new \Exception('Invalid applicant');
             $applicant->hrmDetail()->save(new JobApplicantHRMDetails($inputs));
+            $applicant->hrmDetail->delete();
             DB::commit();
             return response()->json(['status' => 'success', 'message' => 'Data inserted successfully']);
         } catch (\Exception $e) {

@@ -11,13 +11,16 @@ use App\modules\HRM\Models\Division;
 use App\modules\HRM\Models\Thana;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JobApplicantHRMDetails extends Model
 {
+    use SoftDeletes;
     //
     protected $table = 'job_applicant_hrm_details';
     protected $connection = 'recruitment';
     protected $guarded = ['id'];
+    protected $dates = ["deleted_at"];
 
     public function applicant(){
         return $this->belongsTo(JobAppliciant::class,'applicant_id','applicant_id');
