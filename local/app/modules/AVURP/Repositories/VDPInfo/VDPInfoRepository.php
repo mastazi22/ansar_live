@@ -236,6 +236,8 @@ class VDPInfoRepository implements VDPInfoInterface
                 $image_name = $geo_id . '.' . $extension;
                 $image->save($path . '/' . $image_name);
             }
+            Log::info($request->profile_pic);
+            Log::info("isApi: ".$request->is('AVURP/api/*')?"api":"no api");
 
 
 
