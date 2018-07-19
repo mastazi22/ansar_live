@@ -69,7 +69,7 @@ class VDPInfoRepository implements VDPInfoInterface
                 Image::make($file)->save($path . '/' . $image_name);
             } else if ($request->profile_pic && $request->is('AVURP/api/*')) {
                 $path = storage_path('avurp/profile_pic');
-                $image = Image::make($request->profile_pic);;
+                $image = Image::make(base64_decode($request->profile_pic));;
                 $extension = 'png';
                 $mime = $image->mime();
                 if ($mime == 'image/jpeg')
@@ -225,7 +225,7 @@ class VDPInfoRepository implements VDPInfoInterface
                 Image::make($file)->save($path . '/' . $image_name);
             } else if ($request->profile_pic && $request->is('AVURP/api/*')) {
                 $path = storage_path('avurp/profile_pic');
-                $image = Image::make($request->profile_pic);;
+                $image = Image::make(base64_decode($request->profile_pic));;
                 $extension = 'png';
                 $mime = $image->mime();
                 if ($mime == 'image/jpeg')
