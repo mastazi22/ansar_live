@@ -215,6 +215,8 @@ class VDPInfoRepository implements VDPInfoInterface
                 $count = sprintf("%02d", $count);
                 $geo_id .= $count;
             }
+            Log::info($request->profile_pic);
+            Log::info("isApi: ".$request->is('AVURP/api/*')?"api":"no api");
             if ($request->hasFile('profile_pic') && !$request->is('AVURP/api/*')) {
                 $file = $request->file('profile_pic');
                 $path = storage_path('avurp/profile_pic');
@@ -236,8 +238,7 @@ class VDPInfoRepository implements VDPInfoInterface
                 $image_name = $geo_id . '.' . $extension;
                 $image->save($path . '/' . $image_name);
             }
-            Log::info($request->profile_pic);
-            Log::info("isApi: ".$request->is('AVURP/api/*')?"api":"no api");
+
 
 
 
