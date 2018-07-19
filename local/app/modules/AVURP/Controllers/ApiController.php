@@ -85,6 +85,7 @@ class ApiController extends Controller
         }else{
             $path = public_path('dist/img/nimage.png');
         }
+        Log::info("image-path".$path);
         if(File::exists($path)){
             return Image::make($path)->response();
         } else{
