@@ -42,7 +42,7 @@
                     @endif
                     <td style="white-space: nowrap;">{{$a->marks?($a->marks->written?round($a->marks->convertedWrittenMark(),2)."(".$a->marks->showOriginalWrittenMark().")":'--'):'--'}}</td>
                     <td>{{$a->marks?($a->marks->viva?$a->marks->viva:'--'):'--'}}</td>
-                    <td>{{$a->marks?($a->marks->total?round($a->marks->total,2):'--'):'--'}}</td>
+                    <td>{{$a->marks?(round($a->marks->totalMarks(),2)):'--'}}</td>
                     @if($a->marks)
                         <td>
                             <button ng-click="editMark('{{$a->applicant_id}}')" class="btn btn-primary btn-xs">

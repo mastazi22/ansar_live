@@ -82,4 +82,13 @@ class JobApplicantMarks extends Model
         }
         return $this->convertedWrittenMark()<$written_pass_mark||$this->viva<$viva_pass_mark;
     }
+    public function totalMarks(){
+        $t = 0;
+        if($this->written) $t+=$this->convertedWrittenMark();
+        if($this->edu_training) $t+=$this->edu_training;
+        if($this->edu_experience) $t+=$this->edu_experience;
+        if($this->physical_age) $t+=$this->physical_age;
+        if($this->physical) $t+=$this->physical;
+        return $t;
+    }
 }
