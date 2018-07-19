@@ -130,7 +130,7 @@ class JobAppliciant extends Model
         foreach ($rules as $rule) {
             if ($rule->rule_name === 'education') {
                 $edu_point += $this->eduPoint(json_decode(json_encode($rule->rules), true));
-            } else if ($rule->rule_name === 'training') {
+            } else if ($rule->rule_name === 'training'&&($this->training_info=="VDP training"||$this->training_info=="TDP training")) {
                 $edu_point += floatval($rule->rules->training_point);
             }
         }
