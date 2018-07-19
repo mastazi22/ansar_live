@@ -23,7 +23,7 @@
                 <th>Written</th>
                 <th>Viva</th>
                 <th>Total</th>
-                <th>Action</th>
+                <th style="width: 150px;">Action</th>
             </tr>
             @forelse($applicants as $a)
                 <tr>
