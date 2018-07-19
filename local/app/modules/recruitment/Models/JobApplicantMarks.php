@@ -53,6 +53,12 @@ class JobApplicantMarks extends Model
         }
         return round((floatval($value)*$written)/$written_convert,2);
     }
+    public function showOriginalWrittenMark()
+    {
+        $applicant = $this->applicant?$this->applicant:$this->applicant()->where('applicant_id', $this->applicant_id)->first();
+        $mark_distribution = $applicant->circular->markDistribution;
+        return round($this->written,2)." out of ".$mark_distribution->written;
+    }
     public function convertedWrittenMark(){
         $applicant = $this->applicant?$this->applicant:$this->applicant()->where('applicant_id', $this->applicant_id)->first();
         $mark_distribution = $applicant->circular->markDistribution;
