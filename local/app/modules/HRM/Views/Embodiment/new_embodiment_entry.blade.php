@@ -659,7 +659,7 @@
                                             [[bankDataErrorMessage]]
                                         </div>
                                         <h5 class="text-center">সাধারণ ব্যাংকিং তথ্য</h5>
-                                        <div class="form-horizontal col-md-12 ">
+                                        <div class="form-horizontal col-md-12 form-group">
                                             <label class="control-label col-sm-3" for="email">ব্যাংকের
                                                 নাম</label>
                                             <div class="col-sm-9 ">
@@ -670,14 +670,14 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-horizontal col-md-12 ">
+                                        <div class="form-horizontal col-md-12 form-group">
                                             <label class="control-label col-sm-3" for="email">ব্রাঞ্চের নাম:</label>
                                             <div class="col-sm-9">
                                                 <input type="text" class="form-control" id="branch_name"
                                                        ng-model="branch_name" placeholder="ব্রাঞ্চের নাম"/>
                                             </div>
                                         </div>
-                                        <div class="form-horizontal col-md-12 ">
+                                        <div class="form-horizontal col-md-12 form-group">
                                             <label class="control-label col-sm-3" for="email">অ্যাকাউন্ট
                                                 নম্বর:</label>
                                             <div class="col-sm-9">
@@ -687,7 +687,7 @@
                                         </div>
                                         <h4 style="display: inline-block;text-align: center;width: 100%;">মোবাইল
                                             ব্যাংকিং তথ্য</h4>
-                                        <div class="form-horizontal col-md-12 ">
+                                        <div class="form-horizontal col-md-12 form-group">
                                             <label class="control-label col-sm-3" for="email">মোবাইল ব্যাংকিং
                                                 ধরন</label>
                                             <div class="col-sm-9 ">
@@ -698,7 +698,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="form-horizontal col-md-12 ">
+                                        <div class="form-horizontal col-md-12 form-group">
                                             <label class="control-label col-sm-3" for="email">অ্যাকাউন্ট
                                                 নম্বর:</label>
                                             <div class="col-sm-9">
@@ -707,7 +707,7 @@
                                                        placeholder="ব্যাংক অ্যাকাউন্ট নম্বর"/>
                                             </div>
                                         </div>
-                                        <div class="form-horizontal col-md-12 ">
+                                        <div class="form-horizontal col-md-12 form-group">
                                             <label class="control-label col-sm-3" for="email">কোন অ্যাকাউন্ট এ
                                                 টাকা পেতে চান?</label>
                                             <div class="col-sm-9 ">
@@ -720,7 +720,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="modal-footer">
+                                <div class="modal-footer" style="display: flex;align-items: flex-end;justify-content: center;flex-wrap: wrap;flex-direction: row">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                     <button type="button" class="btn btn-primary" ng-click="saveBankInfo()">Save
                                         <button type="button" class="btn btn-danger" ng-click="cancelBankAccount()">I
