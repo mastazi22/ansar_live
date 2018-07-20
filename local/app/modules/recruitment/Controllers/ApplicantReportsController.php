@@ -108,7 +108,6 @@ class ApplicantReportsController extends Controller
         return view('recruitment::reports.applicant_accepted_report');
     }
     public function applicantMarksReport(Request $request){
-//        return $request->all();
         if(strcasecmp($request->method(),'post')==0){
             $rules = [
                 'circular'=>'required|regex:/^[0-9]+$/',
