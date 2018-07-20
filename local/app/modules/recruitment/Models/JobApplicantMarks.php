@@ -89,6 +89,7 @@ class JobApplicantMarks extends Model
         if($this->edu_experience) $t+=$this->edu_experience;
         if($this->physical_age) $t+=$this->physical_age;
         if($this->physical) $t+=$this->physical;
+        if($this->viva) $t+=$this->viva;
         return $t;
     }
 }
