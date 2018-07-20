@@ -37,8 +37,6 @@
                     <td>
                         {{$a->marks->physical}}
                     </td>
-
-
                     <td>{{$a->marks->edu_training}}</td>
                     <td>{{$a->marks->edu_experience}}</td>
                     <td>{{$a->marks->physical_age}}</td>
@@ -62,9 +60,6 @@
                     <td>
                         {{$a->marks->physical}}
                     </td>
-
-
-                    <td>{{$a->marks->edu_training}}</td>
                     <td>{{$a->marks->edu_training}}</td>
                     <td>{{$a->marks->edu_experience}}</td>
                     <td>{{$a->marks->physical_age}}</td>
