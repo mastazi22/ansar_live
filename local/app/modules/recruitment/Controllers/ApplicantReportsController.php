@@ -69,7 +69,7 @@ class ApplicantReportsController extends Controller
                 if($request->range){
                     $q->where('division_id',$request->range);
                 }
-            })->select(DB::raw('*,(written+viva+physical+edu_training+edu_experience+physical_age) as total_mark'))->orderBy('is_bn_candidate','desc')->orderBy('specialized','desc')->orderBy('total_mark','desc');
+            })->select(DB::raw('*,(IFNULL(written,0)+IFNULL(viva,0)+IFNULL(physical,0)+IFNULL(edu_training,0)+IFNULL(edu_experience,0)+IFNULL(physical_age,0)) as total_mark'))->orderBy('is_bn_candidate','desc')->orderBy('specialized','desc')->orderBy('total_mark','desc');
             /*$applicants = JobAppliciant::with(['appliciantEducationInfo'=>function($q){
                 $q->with('educationInfo');
             },'district','marks'=>function($qq){
