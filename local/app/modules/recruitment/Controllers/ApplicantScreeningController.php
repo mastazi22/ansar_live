@@ -784,7 +784,7 @@ class ApplicantScreeningController extends Controller
         try {
             $applicant = JobAppliciant::where('applicant_id', $request->applicant_id)->first();
             if ($applicant) {
-                $job_quota = JobCircularQuota::where('job_circular_id', $request->circular)->first();
+                $job_quota = JobCircularQuota::where('job_circular_id',  $applicant->job_circular_id)->first();
                 if ($job_quota->type == "unit") {
                     $quota = $job_quota->quota()->where('district_id', $applicant->unit_id)->first();
                     $accepted = JobAppliciant::whereHas('accepted', function ($q) {
