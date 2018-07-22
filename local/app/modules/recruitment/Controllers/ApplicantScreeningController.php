@@ -784,10 +784,20 @@ class ApplicantScreeningController extends Controller
         try {
             $applicant = JobAppliciant::where('applicant_id', $request->applicant_id)->first();
             if ($applicant) {
-                $accepted = JobAppliciant::whereHas('accepted', function ($q) {
+                $job_quota = JobCircularQuota::where('job_circular_id', $request->circular)->first();
+                if ($job_quota->type == "unit") {
+                    $quota = $job_quota->quota()->where('district_id', $request->unit)->first();
+                    $accepted = JobAppliciant::whereHas('accepted', function ($q) {
+                    })->where('status', 'accepted')->where('job_circular_id', $request->circular)->where('unit_id', $applicant->unit_id)->count();
+                } else {
+                    $quota = $job_quota->quota()->where('range_id', $request->range)->first();
+                    $accepted = JobAppliciant::whereHas('accepted', function ($q) {
+                    })->where('status', 'accepted')->where('job_circular_id', $request->circular)->where('division_id', $applicant->division_id)->count();
+                }
+                /*$accepted = JobAppliciant::whereHas('accepted', function ($q) {
 
                 })->where('status', 'accepted')->where('job_circular_id', $applicant->job_circular_id)->where('unit_id', $applicant->unit_id)->count();
-                $quota = JobApplicantQuota::where('district_id', $applicant->unit_id)->first();
+                $quota = JobApplicantQuota::where('district_id', $applicant->unit_id)->first();*/
                 if ($quota) {
                     if (intval($quota->{strtolower($applicant->gender)}) - $accepted > 0) {
                         $applicant->status = 'accepted';
