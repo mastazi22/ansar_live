@@ -788,11 +788,11 @@ class ApplicantScreeningController extends Controller
                 if ($job_quota->type == "unit") {
                     $quota = $job_quota->quota()->where('district_id', $applicant->unit_id)->first();
                     $accepted = JobAppliciant::whereHas('accepted', function ($q) {
-                    })->where('status', 'accepted')->where('job_circular_id', $request->circular)->where('unit_id', $applicant->unit_id)->count();
+                    })->where('status', 'accepted')->where('job_circular_id', $applicant->job_circular_id)->where('unit_id', $applicant->unit_id)->count();
                 } else {
                     $quota = $job_quota->quota()->where('range_id', $applicant->division_id)->first();
                     $accepted = JobAppliciant::whereHas('accepted', function ($q) {
-                    })->where('status', 'accepted')->where('job_circular_id', $request->circular)->where('division_id', $applicant->division_id)->count();
+                    })->where('status', 'accepted')->where('job_circular_id', $applicant->job_circular_id)->where('division_id', $applicant->division_id)->count();
                 }
                 /*$accepted = JobAppliciant::whereHas('accepted', function ($q) {
 
