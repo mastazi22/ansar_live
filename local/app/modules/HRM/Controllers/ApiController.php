@@ -31,42 +31,25 @@ class ApiController extends Controller
 
     public function division(Request $request)
     {
-        $divisions = collect($this->dataRepo->getDivisions($request->id))
-            ->map(function ($item, $key) {
-                return ['id' => $item->id, 'name' => $item->division_name_bng];
-            });
-//            ->pluck('division_name_bng', 'id');
-        $divisions = $divisions->prepend(['id' => '', 'name' => 'বিভাগ নির্বাচন করুন']);
+        $divisions = collect($this->dataRepo->getDivisions($request->id));
         return response()->json($divisions);
     }
 
     public function unit(Request $request)
     {
-        $units = collect($this->dataRepo->getUnits($request->range_id, $request->id))
-            ->map(function ($item, $key) {
-                return ['id' => $item->id, 'name' => $item->unit_name_bng];
-            })
-            ->prepend(['id' => '', 'name' => 'জেলা নির্বাচন করুন']);
+        $units = collect($this->dataRepo->getUnits($request->range_id, $request->id));
         return response()->json($units);
     }
 
     public function thana(Request $request)
     {
-        $thanas = collect($this->dataRepo->getThanas($request->range_id, $request->unit_id, $request->id))
-            ->map(function ($item, $key) {
-                return ['id' => $item->id, 'name' => $item->thana_name_bng];
-            })
-            ->prepend(['id' => '', 'name' => 'থানা নির্বাচন করুন']);
+        $thanas = collect($this->dataRepo->getThanas($request->range_id, $request->unit_id, $request->id));
         return response()->json($thanas);
     }
 
     public function union(Request $request)
     {
-        $unions = collect($this->dataRepo->getUnions($request->range_id, $request->unit_id, $request->thana_id, $request->id))
-            ->map(function ($item, $key) {
-                return ['id' => $item->id, 'name' => $item->union_name_bng];
-            })
-            ->prepend(['id' => '', 'name' => 'ইউনিয়ন নির্বাচন করুন']);
+        $unions = collect($this->dataRepo->getUnions($request->range_id, $request->unit_id, $request->thana_id, $request->id));
         return response()->json($unions);
 
     }
