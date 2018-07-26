@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'driver' => env('MAIL_DRIVER', 'smtp'),
+    'driver' => "smtp",
 
     /*
     |--------------------------------------------------------------------------
@@ -29,7 +29,8 @@ return [
     |
     */
 
-    'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
+//    'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
+    'host' => "mail.ansarvdp.gov.bd",
 
     /*
     |--------------------------------------------------------------------------
@@ -42,7 +43,8 @@ return [
     |
     */
 
-    'port' => env('MAIL_PORT', 587),
+//    'port' => env('MAIL_PORT', 587),
+    'port' => 587,
 
     /*
     |--------------------------------------------------------------------------
@@ -55,7 +57,7 @@ return [
     |
     */
 
-    'from' => ['address' => null, 'name' => null],
+    'from' => ['address' => "no-reply@ansarvdp.gov.bd", 'name' => "no-reply"],
 
     /*
     |--------------------------------------------------------------------------
@@ -68,7 +70,8 @@ return [
     |
     */
 
-    'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+//    'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+    'encryption' => "tls",
 
     /*
     |--------------------------------------------------------------------------
@@ -81,7 +84,8 @@ return [
     |
     */
 
-    'username' => env('MAIL_USERNAME'),
+//    'username' => env('MAIL_USERNAME'),
+    'username' => "no-reply@ansarvdp.gov.bd",
 
     /*
     |--------------------------------------------------------------------------
@@ -94,7 +98,8 @@ return [
     |
     */
 
-    'password' => env('MAIL_PASSWORD'),
+//    'password' => env('MAIL_PASSWORD'),
+    'password' => "Ansar#2905",
 
     /*
     |--------------------------------------------------------------------------
@@ -108,5 +113,6 @@ return [
     */
 
     'sendmail' => '/usr/sbin/sendmail -bs',
+    'stream' => ["ssl" => ["verify_peer_name" => false, "verify_peer" => false]]
 
 ];

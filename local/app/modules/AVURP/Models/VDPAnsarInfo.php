@@ -21,6 +21,9 @@ class VDPAnsarInfo extends Model
     public function status(){
         return $this->hasOne(VDPAnsarStatusInfo::class,'vdp_ansar_info_id');
     }
+    public function bankInfo(){
+        return $this->hasOne(VDPAnsarBankAccountInfo::class,'vdp_id');
+    }
     public function education(){
         return $this->hasMany(VDPAnsarEducationInfo::class,'vdp_ansar_id');
     }

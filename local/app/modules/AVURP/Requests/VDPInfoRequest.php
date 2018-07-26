@@ -36,6 +36,7 @@ class VDPInfoRequest extends Request
             switch ($this->method()){
                 case 'POST':
                     return [
+                        'entry_unit'=>'required|regex:/^[1-5]{1}$/',
                         'ansar_name_bng'=>'required',
                         'ansar_name_eng'=>'required',
                         'father_name_bng'=>'required',
@@ -68,6 +69,7 @@ class VDPInfoRequest extends Request
                     ];
                 case 'PATCH':
                     return [
+                        'entry_unit'=>'required|regex:/^[1-5]{1}$/',
                         'ansar_name_bng'=>'required',
                         'ansar_name_eng'=>'required',
                         'father_name_bng'=>'required',
@@ -102,6 +104,7 @@ class VDPInfoRequest extends Request
             switch ($this->method()){
                 case 'POST':
                     return [
+                        'entry_unit'=>'required|regex:/^[1-5]{1}$/',
                         'ansar_name_bng'=>'required',
                         'ansar_name_eng'=>'required',
                         'father_name_bng'=>'required',
@@ -134,6 +137,7 @@ class VDPInfoRequest extends Request
                     ];
                 case 'PATCH':
                     return [
+                        'entry_unit'=>'required|regex:/^[1-5]{1}$/',
                         'ansar_name_bng'=>'required',
                         'ansar_name_eng'=>'required',
                         'father_name_bng'=>'required',

@@ -57,6 +57,13 @@
                 "ওয়ার্ড দলনেত্রী"
             ]
         }
+        $scope.entryUnits = {
+            1:"উপজেলা পুরুষ আনসার কোম্পানি",
+            2:"উপজেলা মহিলা আনসার প্লাটুন",
+            3:"ইউনিয়ন আনসার প্লাটুন(পুরুষ)",
+            4:"ইউনিয়ন ভিডিপি প্লাটুন",
+            5:"ওয়ার্ড ভিডিপি প্লাটুন"
+        }
         $q.all([
             httpService.range(),
             httpService.bloodGroup(),
@@ -212,6 +219,19 @@
                     </span>
     </div>
     <form class="form-horizontal" ng-submit="submitForm($event)">
+        <div class="form-group">
+            <label for="entry_unit" class="control-label col-sm-4">ইউনিট নির্বাচন করুন<sup class="text-red">*</sup>
+                <span class="pull-right">:</span>
+            </label>
+            <div class="col-sm-8">
+                <select class="form-control" ng-model="info.form.entry_unit" id="entry_unit">
+                    <option value="">--ইউনিট নির্বাচন করুন--</option>
+                    <option ng-repeat="(k,v) in entryUnits" value="[[k]]">[[v]]</option>
+                </select>
+                <p ng-if="errors.entry_unit&&errors.entry_unit.length>0" class="text text-danger">
+                    [[errors.entry_unit[0] ]]</p>
+            </div>
+        </div>
         <fieldset>
             <legend>জিও কোড ভিত্তিক আইডির জন্য তথ্য</legend>
             <div class="form-group">

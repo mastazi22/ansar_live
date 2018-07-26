@@ -10,6 +10,13 @@
             $scope.allLoading = false;
             $scope.hide = true;
             $scope.errorLink = false;
+            $scope.entryUnits = {
+                1:"উপজেলা পুরুষ আনসার কোম্পানি",
+                2:"উপজেলা মহিলা আনসার প্লাটুন",
+                3:"ইউনিয়ন আনসার প্লাটুন(পুরুষ)",
+                4:"ইউনিয়ন ভিডিপি প্লাটুন",
+                5:"ওয়ার্ড ভিডিপি প্লাটুন"
+            }
         })
         GlobalApp.directive('compileHtml', function ($compile) {
             return {
@@ -137,6 +144,15 @@
                         <form file-upload action="{{URL::route('AVURP.info.import_upload')}}" method="post"
                               enctype="multipart/form-data">
                             {!! csrf_field() !!}
+                            <div class="form-group">
+                                <label for="entry_unit" class="control-label">ইউনিট নির্বাচন করুন<sup class="text-red">*</sup>
+                                    <span class="pull-right">:</span>
+                                </label>
+                                <select class="form-control" name="entry_unit" ng-model="param.entry_unit" id="entry_unit">
+                                    <option value="">--ইউনিট নির্বাচন করুন--</option>
+                                    <option ng-repeat="(k,v) in entryUnits" value="[[k]]">[[v]]</option>
+                                </select>
+                            </div>
                             <filter-template
                                     show-item="['range','unit','thana','union']"
                                     type="single"

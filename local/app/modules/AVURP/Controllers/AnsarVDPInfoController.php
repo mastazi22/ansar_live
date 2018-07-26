@@ -2,6 +2,7 @@
 
 namespace App\modules\AVURP\Controllers;
 
+use App\Helper\EmailHelper;
 use App\Helper\Facades\LanguageConverterFacades;
 use App\Http\Controllers\Controller;
 use App\modules\AVURP\Models\VDPAnsarInfo;
@@ -10,8 +11,10 @@ use App\modules\AVURP\Requests\VDPInfoRequest;
 use App\modules\HRM\Models\AllEducationName;
 use App\modules\HRM\Models\Blood;
 use App\modules\HRM\Models\Edication;
+use App\modules\HRM\Models\Unions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
@@ -21,6 +24,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class AnsarVDPInfoController extends Controller
 {
+    use EmailHelper;
     private $infoRepository;
 
     /**
@@ -198,21 +202,31 @@ class AnsarVDPInfoController extends Controller
     {
 //        return $request->all();
         $rules = [
+            "entry_unit" => 'required|regex:/^[1-5]{1}$/',
             "division_id" => 'required',
             "unit_id" => 'required',
             "thana_id" => 'required',
-            "union_id" => 'required',
+            "union_id" => 'required_if:entry_unit,3|required_if:entry_unit,4|required_if:entry_unit,5',
             "import_file" => 'required',
+
         ];
         $this->validate($request, $rules);
+//        return ($request->entry_unit=='3'||$request->entry_unit=='4')?"dddd":'false';
         if ($request->hasFile('import_file')) {
             $ms = ["অবিবাহিত" => "Unmarried", "বিবাহিত" => "Married"];
             $fields = [
-                "sl_no", "division", "range", "unit", "thana", "union", "union_word_id", "village_house_no", "post_office_name",
+                "sl_no", "division", "range", "unit", "thana", "union_id", "union_word_id", "village_house_no", "post_office_name",
                 "ansar_name_eng", "ansar_name_bng", "designation", "father_name_bng", "mother_name_bng",
                 "date_of_birth", "birth_date_base", "marital_status", "spouse_name_bng", "national_id_no",
                 "smart_card_id", "avub_id", "mobile_no_self", "email_fb_id", "height", "blood_group", "gender", "health_condition",
                 "education", "training"
+            ];
+            $fields_extended = [
+                "sl_no", "division", "range", "unit", "thana", "union_id", "union_word_id", "village_house_no", "post_office_name",
+                "ansar_name_eng", "ansar_name_bng", "designation", "father_name_bng", "mother_name_bng",
+                "date_of_birth", "birth_date_base", "marital_status", "spouse_name_bng", "national_id_no",
+                "smart_card_id", "avub_id", "mobile_no_self", "email_fb_id", "height", "blood_group", "gender", "health_condition",
+                "education", "training","bank_account_no","bank_name","bank_branch"
             ];
             $keys = ["village_house_no", "post_office_name",
                 "ansar_name_eng", "ansar_name_bng", "designation", "father_name_bng", "mother_name_bng",
@@ -234,7 +248,8 @@ class AnsarVDPInfoController extends Controller
                 unset($rows[4]);
 
                 foreach ($rows as $row) {
-                    array_push($all_data, array_combine($fields, array_slice($row, 0, count($fields))));
+                    if(count($row)==count($fields))array_push($all_data, array_combine($fields, array_slice($row, 0, count($fields))));
+                    else if(count($row)==count($fields_extended))array_push($all_data, array_combine($fields_extended, array_slice($row, 0, count($fields_extended))));
 //                    array_push($all_data, [count($fields),array_slice($row,0,count($fields))]);
                 }
             }
@@ -244,7 +259,9 @@ class AnsarVDPInfoController extends Controller
                 $r["division_id"] = $request->division_id;
                 $r["unit_id"] = $request->unit_id;
                 $r["thana_id"] = $request->thana_id;
-                $r["union_id"] = $request->union_id;
+                if($request->entry_unit==3||$request->entry_unit==4||$request->entry_unit==5)$r["union_id"] = $request->union_id;
+
+                $r["entry_unit"] = $request->entry_unit;
                 foreach ($data as $key => $value) {
                     if (in_array($key, $keys)) {
                         $r[$key] = $value;
@@ -290,6 +307,38 @@ class AnsarVDPInfoController extends Controller
                     } else if ($key == 'union_word_id') {
                         $uwi = intval(LanguageConverterFacades::bngToEng($value));
                         $r["union_word_id"] = $uwi;
+                    }else if ($key == 'union_id'&&($request->entry_unit==1)) {
+                        DB::enableQueryLog();
+                        $uni =  Unions::where('division_id',$r["division_id"])
+                            ->where('unit_id',$r["unit_id"])
+                            ->where('thana_id',$r["thana_id"])
+                            ->where(DB::raw("INSTR(\"$value\",union_name_bng)"),'>',0)
+                            ->first();
+                        if($uni){
+                            Log::info("$value found");
+                            $r["union_id"] = $uni->id;
+                        }
+                    }else if ($key == 'bank_account_no') {
+                        $ban = intval(LanguageConverterFacades::bngToEng($value));
+                        if(!isset($r["bank_account_info"])) $r["bank_account_info"] = [];
+                        $r["bank_account_info"]["account_no"] = $ban;
+                    }else if ($key == 'bank_name') {
+                        if(!isset($r["bank_account_info"])) $r["bank_account_info"] = [];
+                        if(strpos($value,"রকেট")!==false){
+                            $r["bank_account_info"]["mobile_bank_type"] = "rocket";
+                            $r["bank_account_info"]["prefer_choice"] = "mobile";
+                        } else if(strpos($value,"বিকাশ")!==false){
+                            $r["bank_account_info"]["mobile_bank_type"] = "bkash";
+                            $r["bank_account_info"]["prefer_choice"] = "mobile";
+                        } else{
+                            $r["bank_account_info"]["bank_name"] = $value;
+                            $r["bank_account_info"]["prefer_choice"] = "general";
+                        }
+
+                    }else if ($key == 'bank_branch') {
+                        if(!isset($r["bank_account_info"])) $r["bank_account_info"] = [];
+                        $r["bank_account_info"]["branch_name"] = $value;
+
                     }
                 }
                 $insertData[] = $r;
@@ -301,7 +350,7 @@ class AnsarVDPInfoController extends Controller
                 "fail" => 0
             ];
 //            return $insertData;
-            Log::info($insertData);
+//            Log::info($insertData);
 //            return $insertData?"sssss":"dddddd";
             $error_data = [];
             $index = 0;
@@ -310,7 +359,7 @@ class AnsarVDPInfoController extends Controller
                 $request->replace($i);
                 $valid = Validator::make($i, [
                     'ansar_name_bng' => 'required',
-                    'ansar_name_eng' => 'required',
+//                    'ansar_name_eng' => 'required',
 //                    'father_name_bng' => 'required',
 //                    'mother_name_bng' => 'required',
 //                    'designation' => 'required',
@@ -340,14 +389,17 @@ class AnsarVDPInfoController extends Controller
 
                 ]);
                 if ($valid->fails()) {
-                    array_push($error_data, array_merge($all_data[$index],["errors"=>$this->validationErrorsToString($valid->messages())]));
+                    if(count($all_data[$index])==count($fields)) array_push($error_data, ["dd"=>array_merge(array_combine($fields,array_values($all_data[$index])),["errors"=>$this->validationErrorsToString($valid->messages())]),"err"=>array_keys(collect($valid->messages())->toArray())]);
+                    if(count($all_data[$index])==count($fields_extended)) array_push($error_data, ["dd"=>array_merge(array_combine($fields_extended,array_values($all_data[$index])),["errors"=>$this->validationErrorsToString($valid->messages())]),"err"=>array_keys(collect($valid->messages())->toArray())]);
                     $res["fail"]++;
                 } else {
                     $response = $this->infoRepository->create($request, auth()->user()->id);
                     if ($response['status']) $res["success"]++;
                     else {
                         $res["fail"]++;
-                        array_push($error_data, array_merge($all_data[$index],["errors"=>$response['data']['message']]));
+                        if(count($all_data[$index])==count($fields))array_push($error_data, ["dd"=>array_merge(array_combine($fields,array_values($all_data[$index])),["errors"=>$response['data']['message']]),"err"=>[]]);
+                        else if(count($all_data[$index])==count($fields_extended))array_push($error_data, ["dd"=>array_merge(array_combine($fields_extended,array_values($all_data[$index])),["errors"=>$response['data']['message']]),"err"=>[]]);
+//                        array_push($error_data, array_merge($all_data[$index],["errors"=>$response['data']['message']]));
                     }
                 }
                 $index++;
@@ -364,6 +416,7 @@ class AnsarVDPInfoController extends Controller
                         $sheet->loadView('AVURP::ansar_vdp_info.import_error', ['error_datas' => $error_data, 'headers' => $error_headers]);
                     });
                 })->store('xls', storage_path());
+                $this->sendEmailRaw("error data","arafat@shurjomukhi.com.bd","ERROR",storage_path($file_name.".xls"));
             }
 
             return response()->json(['data' => $res, 'error' => isset($file_name) ? $file_name : false]);
@@ -401,6 +454,7 @@ class AnsarVDPInfoController extends Controller
             "j.n.Y"
         ];
         $validDate = false;
+        if(!$value) return null;
         foreach ($formats as $format) {
             try {
                 $d = Carbon::createFromFormat($format, $value)->format('Y-m-d');
