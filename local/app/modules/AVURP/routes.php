@@ -14,4 +14,24 @@ Route::group(['prefix'=>'AVURP','namespace'=>'\App\modules\AVURP\Controllers','m
     Route::get("test", function () {
         return "বাঘবেড়"  == "বাঘবেড়"?"true":"false";
     });
+    Route::get("update_id", function () {
+        $vdps = \App\modules\AVURP\Models\VDPAnsarInfo::all();
+        return $vdps;
+        $ids = [];
+        foreach ($vdps as $vdp){
+            if(strlen($vdp->geo_id)==13){
+                \Illuminate\Support\Facades\Log::info("previous id : ".$vdp->geo_id);
+                $gid = substr($vdp->geo_id,0,11);
+                $c = substr($vdp->geo_id,11,2);
+//                array_push($ids,compact('gid','c'));
+                $c = '5010'.$c;
+                $gid.=$c;
+                \Illuminate\Support\Facades\Log::info("new id : ".$gid);
+                $vdp->geo_id = $gid;
+                $vdp->save();
+
+            }
+        }
+        return $ids;
+    });
 });

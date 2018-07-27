@@ -450,6 +450,28 @@ Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
                 });
             })->download('xls');
         });
+        Route::get('test1',function(){
+            $p = "storage\union_name.xlsx";
+            //return $p;
+            $data = Excel::load($p,function ($excel) {
+            })->get();
+//            return $data;
+            foreach ($data as $d){
+                $d = json_decode(json_encode($d));
+                $header = $d[0];
+                unset($d[0]);
+                $rows = [];
+                foreach ($d as $dd){
+                    $r = array_combine($header,$dd);
+                    $u = \App\modules\HRM\Models\Unions::where(collect($r)->only(['division_id','code','unit_id','thana_id'])->toArray())->first();
+                    if($u){
+                        $u->update($r);
+                    }
+                    else array_push($rows,$r);
+                }
+                if(count($rows)>0)\App\modules\HRM\Models\Unions::insert($rows);
+            }
+        });
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
     Route::get('/all_notification', function () {
