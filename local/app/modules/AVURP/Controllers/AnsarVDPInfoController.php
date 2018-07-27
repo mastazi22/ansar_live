@@ -231,7 +231,7 @@ class AnsarVDPInfoController extends Controller
             $keys = ["village_house_no", "post_office_name",
                 "ansar_name_eng", "ansar_name_bng", "designation", "father_name_bng", "mother_name_bng",
                 "marital_status", "spouse_name_bng", "national_id_no",
-                "smart_card_id", "avub_id", "mobile_no_self", "health_condition"];
+                "smart_card_id", "avub_id",  "health_condition"];
             $sheets = Excel::load($request->file('import_file'), function () {
 
             })->get();
@@ -284,6 +284,14 @@ class AnsarVDPInfoController extends Controller
 //                        return $m;
                     } else if ($key == 'date_of_birth') {
                         $r['date_of_birth'] = $this->parseDate($value);
+                    }else if ($key == 'mobile_no_self') {
+                        $split = str_split($value);
+                        if(intval($split[0])>0){
+                            $mobile_no = "0".$value;
+                        } else{
+                            $mobile_no = $value;
+                        }
+                        $r['mobile_no_self'] = $mobile_no;
                     } else if ($key == 'marital_status') {
                         $r['marital_status'] = $ms[$value];
                     } else if ($key == 'gender') {
