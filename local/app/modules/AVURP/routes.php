@@ -16,7 +16,7 @@ Route::group(['prefix'=>'AVURP','namespace'=>'\App\modules\AVURP\Controllers','m
     });
     Route::get("update_id", function () {
         $vdps = \App\modules\AVURP\Models\VDPAnsarInfo::all();
-        return $vdps;
+//        return $vdps;
         $ids = [];
         foreach ($vdps as $vdp){
             if(strlen($vdp->geo_id)==13){
