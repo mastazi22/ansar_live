@@ -451,7 +451,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
             })->download('xls');
         });
         Route::get('test1',function(){
-            $p = "storage\union_name.xlsx";
+            $p = "storage/union_name.xlsx";
             //return $p;
             $data = Excel::load($p,function ($excel) {
             })->get();
