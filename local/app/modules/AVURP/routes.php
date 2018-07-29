@@ -10,6 +10,7 @@ Route::group(['prefix'=>'AVURP','namespace'=>'\App\modules\AVURP\Controllers','m
     Route::post('info/import',['as'=>'AVURP.info.import_upload','uses'=>'AnsarVDPInfoController@processImportedFile']);
     Route::resource('info','AnsarVDPInfoController');
     Route::resource('kpi','KpiInfoController');
+    Route::post("offer_info/select_all",['as'=>'AVURP.offer_info.select_all','uses'=>'OfferInfoController@selectAll']);
     Route::resource('offer_info','OfferInfoController');
     Route::get("test", function () {
         return "বাঘবেড়"  == "বাঘবেড়"?"true":"false";

@@ -6,12 +6,15 @@ use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
 use App\modules\HRM\Models\Thana;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OfferInfo extends Model
 {
+    use SoftDeletes;
     protected $table = "avurp_offer_info";
     protected $connection = "avurp";
     protected $guarded = ['id'];
+    protected $dates = ["deleted_at"];
 
 
     public function unit(){

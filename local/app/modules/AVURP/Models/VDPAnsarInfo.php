@@ -10,6 +10,8 @@ use App\modules\HRM\Models\Thana;
 use App\modules\HRM\Models\Unions;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class VDPAnsarInfo extends Model
 {
@@ -20,6 +22,9 @@ class VDPAnsarInfo extends Model
 
     public function status(){
         return $this->hasOne(VDPAnsarStatusInfo::class,'vdp_ansar_info_id');
+    }
+    public function offer(){
+        return $this->hasOne(OfferInfo::class,'vdp_id');
     }
     public function bankInfo(){
         return $this->hasOne(VDPAnsarBankAccountInfo::class,'vdp_id');
@@ -89,5 +94,50 @@ class VDPAnsarInfo extends Model
             });
         }
         return $query;
+    }
+    public function scopeSearchQueryForOffer($query,$filters){
+        foreach ($filters as $key=>$value){
+            if(!is_array($value))$filter = json_decode($value,true);
+            else $filter = $value;
+            if($key=="height"&&isset($filter["value"])){
+                $total_height = 0;
+                if(isset($filter["value"]["feet"])&&$filter["value"]["feet"]) $total_height += floatval($filter["value"]["feet"])*12;
+                if(isset($filter["value"]["inch"])&&$filter["value"]["inch"]) $total_height += floatval($filter["value"]["inch"]);
+                if($total_height>0)$query->where(DB::raw("height_feet*12+height_inch"),$filter['comparator'],$total_height);
+            } else if($key=="age"&&isset($filter["value"])){
+                $age = -1;
+                if($filter["value"]) $age = floatval($filter["value"]);
+                if($age>=0)$query->where(DB::raw("TIMESTAMPDIFF(YEAR,date_of_birth,CURDATE())"),$filter['comparator'],$age);
+            }
+            else if($key=="units"){
+                $units = isset($filter['value'])?array_filter(array_values($filter['value'])):[];
+                $user = auth()->user();
+                if($user->type==22){
+                    if(!in_array($user->district_id,$units)){
+                        array_push($units,$user->district_id);
+                    }
+                } else if($user->type==66){
+                    $userUnit = District::where('division_id',$user->division_id)->pluck('id');
+                    $units = array_merge($units,$userUnit);
+                }
+                if(count($units)>0)$query->whereIn('unit_id',$units);
+            }
+        }
+
+        return $query;
+    }
+    public function age(){
+
+        $now = Carbon::now();
+        $age = false;
+        if($this->date_of_birth){
+            try {
+                $age = Carbon::parse($this->date_of_birth)->diffInYears($now, true);
+            }catch (\Exception $e){
+                $age = false;
+            }
+        }
+        return $age===false?"Invalid date of birth":$age;
+
     }
 }
