@@ -281,14 +281,14 @@ class SMSController extends Controller
                     ->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                     ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
                     ->where('tbl_ansar_parsonal_info.designation_id',$ansar->designation->id)
-                    ->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<' . $pc_apc_retirement_age)
+                    ->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<' . $pc_apc_retirement_age)
                     ->where('pannel_status', 1)->where('block_list_status', 0)->select('tbl_panel_info.ansar_id', 'tbl_panel_info.panel_date','tbl_panel_info.id');
 
             } else {
                 $query = DB::table('tbl_ansar_status_info')
                     ->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                     ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
-                    ->whereRaw('DATEDIFF(NOW(),tbl_ansar_parsonal_info.data_of_birth)/365<' . $ansar_retirement_age)
+                    ->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<' . $ansar_retirement_age)
                     ->where('tbl_ansar_parsonal_info.designation_id',$ansar->designation->id)
                     ->where('pannel_status', 1)->where('block_list_status', 0)->select('tbl_panel_info.ansar_id', 'tbl_panel_info.panel_date','tbl_panel_info.id');
             }
