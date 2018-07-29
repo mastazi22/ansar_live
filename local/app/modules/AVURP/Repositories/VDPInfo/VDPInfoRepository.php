@@ -383,21 +383,21 @@ class VDPInfoRepository implements VDPInfoInterface
         switch ($entry_unit) {
             case 1:
                 if (strcasecmp($request->gender, "male")) throw new \Exception("Gender doesn`t match with  unit selected");
-                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', 'Male']))->count();
+                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', 'gender']))->count();
                 $total =  115;
                 $platoon = 1;
                 $count += 1;
                 break;
             case 2:
                 if (strcasecmp($request->gender, "female")) throw new \Exception("Gender doesn`t match with  unit selected");
-                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', "Female", 'union_id']))->count();
+                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', "gender", 'union_id']))->count();
                 $total = 32;
                 $platoon = 1;
                 $count += 1;
                 break;
             case 3:
                 if (strcasecmp($request->gender, "male")) throw new \Exception("Gender doesn`t match with  unit selected");
-                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', "Male", 'union_id']))->count();
+                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', "gender", 'union_id']))->count();
                 $total = 32;
                 $platoon = 1;
                 $count += 1;
