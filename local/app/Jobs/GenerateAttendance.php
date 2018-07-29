@@ -58,6 +58,7 @@ class GenerateAttendance extends Job implements ShouldQueue
             DB::reconnect('sd');
         }
         Log::info("CONNECTION DATABASE : ".DB::connection('sd')->getDatabaseName());
+
         DB::connection('sd')->beginTransaction();
         try {
             foreach ($this->data as $data){

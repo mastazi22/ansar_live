@@ -574,6 +574,10 @@ return [
                     'icon'=>'fa-cog',
                 ]
             ]
-        ]
+        ],
+        'KPI Info'=>[
+            'route'=>'AVURP.kpi.index',
+            'icon'=>'fa-cog',
+        ],
     ]
 ];
