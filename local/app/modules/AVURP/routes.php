@@ -12,6 +12,9 @@ Route::group(['prefix'=>'AVURP','namespace'=>'\App\modules\AVURP\Controllers','m
     Route::resource('kpi','KpiInfoController');
     Route::post("offer_info/select_all",['as'=>'AVURP.offer_info.select_all','uses'=>'OfferInfoController@selectAll']);
     Route::resource('offer_info','OfferInfoController');
+    Route::resource('embodiment','EmbodimentController',[
+        "only"=>['index','store']
+    ]);
     Route::get("test", function () {
         return "বাঘবেড়"  == "বাঘবেড়"?"true":"false";
     });
