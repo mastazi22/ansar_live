@@ -9,9 +9,11 @@ Route::group(['prefix'=>'AVURP','namespace'=>'\App\modules\AVURP\Controllers','m
     Route::get('info/import/download/{file_name}',['as'=>'AVURP.info.import.download','uses'=>'AnsarVDPInfoController@downloadFile']);
     Route::post('info/import',['as'=>'AVURP.info.import_upload','uses'=>'AnsarVDPInfoController@processImportedFile']);
     Route::resource('info','AnsarVDPInfoController');
+    Route::get('kpi/kpi_name','KpiInfoController@kpiList');
     Route::resource('kpi','KpiInfoController');
     Route::post("offer_info/select_all",['as'=>'AVURP.offer_info.select_all','uses'=>'OfferInfoController@selectAll']);
     Route::resource('offer_info','OfferInfoController');
+    Route::post("embodiment/select_all",['as'=>'AVURP.embodiment.select_all','uses'=>'EmbodimentController@selectAll']);
     Route::resource('embodiment','EmbodimentController',[
         "only"=>['index','store']
     ]);

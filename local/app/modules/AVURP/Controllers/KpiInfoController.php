@@ -150,4 +150,22 @@ class KpiInfoController extends Controller
     {
         //
     }
+    public function kpiList(Request $request)
+    {
+        $d = $request->division;
+        $u = $request->unit;
+        $t = $request->thana;
+        $kpis = KpiInfo::select('id','kpi_name');
+        if($d&&$d!='all'){
+            $kpis->where('division_id',$d);
+        }
+        if($u&&$u!='all'){
+            $kpis->where('unit_id',$u);
+        }
+        if($t&&$t!='all'){
+            $kpis->where('thana_id',$t);
+        }
+        return $kpis->get();
+    }
+
 }
