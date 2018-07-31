@@ -443,7 +443,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
                         }]);
                     }])->whereHas('embodiment',function ($q){
 
-                    })->limit(10000)->get();
+                    })->skip(20000)->limit(30000)->get();
                     $sheet->setAutoSize(false);
                     $sheet->setWidth('A', 5);
                     $sheet->loadView('HRM::bank_export',['ansars'=>$ansars]);
