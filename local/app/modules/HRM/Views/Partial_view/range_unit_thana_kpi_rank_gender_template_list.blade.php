@@ -1,4 +1,4 @@
-<div ng-class="{row:!layoutVertical}">
+<div ng-class="{row:!layoutVertical}" ng-init="parseItem()">
     <div ng-class="fieldWidth.range" ng-if="show('range')">
         <div class="form-group">
             <label class="control-label">{{trim(Lang::get('title.range'))}}
@@ -30,7 +30,7 @@
             <label class="control-label">@lang('title.thana')
                 <img ng-show="loading.thana" src="{{asset('dist/img/facebook.gif')}}" width="16">
             </label>
-            <select id="thana" ng-disabled="thanaFieldDisabled||loading.range||loading.unit||loading.thana||loading.kpi" name="[[fieldName.thana]]" class="form-control" ng-model="selected.thana" ng-change="loadKPI(selected.range||undefined,selected.unit||undefined,selected.thana);loadUnion(selected.range||undefined,selected.unit||undefined,selected.thana)">
+            <select id="thana" ng-disabled="thanaFieldDisabled||loading.range||loading.unit||loading.thana||loading.kpi" name="[[fieldName.thana]]" class="form-control" ng-model="selected.thana" ng-change="loadKPI(selected.range||undefined,selected.unit||undefined,selected.thana);loadUnion(selected.range||undefined,selected.unit||undefined,selected.thana);loadShortKPI(selected.range||undefined,selected.unit||undefined,selected.thana)">
                 <option value="all" ng-if="type=='all'">All</option>
                 <option value="" ng-if="type=='single'||type==undefined">--@lang('title.thana')--</option>
                 <option ng-repeat="t in thanas" value="[[t.id]]" ng-disabled="thanaDisabled==t.id">[[t.thana_name_bng]]</option>
@@ -62,6 +62,19 @@
                 <option ng-repeat="t in kpis" value="[[t.id]]" ng-disabled="kpiDisabled==t.id">[[t.kpi_name]]</option>
             </select>
             <p class="text-danger" ng-if="errorKey.kpi!=undefined||errorMessage[errorKey.kpi]">[[errorMessage[errorKey.kpi] ]]</p>
+        </div>
+    </div>
+    <div ng-class="fieldWidth.shortKpi" ng-if="show('short_kpi')">
+        <div class="form-group">
+            <label class="control-label">@lang('title.shortKpi')
+                <img ng-show="loading.shortKpi" src="{{asset('dist/img/facebook.gif')}}" width="16">
+            </label>
+            <select id="shortKpi" ng-disabled="shortKpiFieldDisabled||loading.range||loading.unit||loading.thana||loading.shortKpi" name="[[fieldName.shortKpi]]" class="form-control" ng-model="selected.shortKpi">
+                <option value="all" ng-if="type=='all'">All</option>
+                <option value="" ng-if="type=='single'||type==undefined">--@lang('title.shortKpi')--</option>
+                <option ng-repeat="t in shortKpis" value="[[t.id]]" ng-disabled="shortKpiDisabled==t.id">[[t.kpi_name]]</option>
+            </select>
+            <p class="text-danger" ng-if="errorKey.shortKpi!=undefined||errorMessage[errorKey.shortKpi]">[[errorMessage[errorKey.shortKpi] ]]</p>
         </div>
     </div>
     <div ng-class="fieldWidth.rank" ng-if="show('rank')">

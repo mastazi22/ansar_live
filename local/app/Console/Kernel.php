@@ -392,7 +392,7 @@ class Kernel extends ConsoleKernel
                 DB::connection('recruitment')->rollback();
             }
 
-        })->dailyAt("00:00")->name("disable_circular")->withoutOverlapping();
+        })->dailyAt("23:50")->name("disable_circular")->withoutOverlapping();
         $schedule->call(function () {
             Log::info("called : send_sms_to_accepted_applicant");
             $messID = uniqid('SB_');
@@ -488,7 +488,7 @@ class Kernel extends ConsoleKernel
             });
 
 
-        })->everyMinute()->name("generate_attendance")->withoutOverlapping();
+        })->dailyAt("00:05")->name("generate_attendance")->withoutOverlapping();
 
     }
 }

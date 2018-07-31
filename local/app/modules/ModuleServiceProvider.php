@@ -14,6 +14,7 @@ class ModuleServiceProvider extends ServiceProvider
     public function boot()
     {
         $modules = config("modules.module");
+        $sub_module = config("modules.sub_module");
         foreach($modules as $module ){
             if(file_exists(__DIR__.'/'.$module.'/routes.php')){
                 include __DIR__.'/'.$module.'/routes.php';
@@ -28,6 +29,24 @@ class ModuleServiceProvider extends ServiceProvider
             }
             if(file_exists(__DIR__.'/'.$module.'/breadcrumbs.php')){
                 include __DIR__.'/'.$module.'/breadcrumbs.php';
+            }
+            if(isset($sub_module[$module])){
+                foreach ($sub_module[$module]["sub_module"] as $sub){
+                    if(file_exists(__DIR__.'/'.$module.'/subModule/'.$sub.'/routes.php')){
+                        include __DIR__.'/'.$module.'/subModule/'.$sub.'/routes.php';
+//                echo $module;
+                    }
+                    if(file_exists(__DIR__.'/'.$module.'/subModule/'.$sub.'/api.php')){
+                        include __DIR__.'/'.$module.'/subModule/'.$sub.'/api.php';
+//                echo $module;
+                    }
+                    if(is_dir(__DIR__.'/'.$module.'/subModule/'.$sub.'/Views')){
+                        $this->loadViewsFrom(__DIR__.'/'.$module.'/subModule/'.$sub.'/Views',$module.".".$sub);
+                    }
+                    if(file_exists(__DIR__.'/'.$module.'/subModule/'.$sub.'/breadcrumbs.php')){
+                        include __DIR__.'/'.$module.'/subModule/'.$sub.'/breadcrumbs.php';
+                    }
+                }
             }
         }
     }

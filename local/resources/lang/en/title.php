@@ -11,6 +11,7 @@ return [
   'thana'=>'Select Thana',
   'union'=>'Select Union',
   'kpi'=>'Select Guard',
+  'shortKpi'=>'Select Guard',
   'reason'=>'Select Reason',
   'ta'=>'Total Ansars',
   'tad'=>'Total Ansars (Own District)',

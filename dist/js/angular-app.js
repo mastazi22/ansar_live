@@ -237,7 +237,7 @@ GlobalApp.directive('typedDatePicker', function () {
             //alert(scope.event)
             var data = attrs.datePicker
             var format = "DD-MMM-YYYY";
-            switch(attrs.calenderType){
+            switch (attrs.calenderType) {
                 case 'month':
                     format = "MMMM, YYYY"
                     break;
@@ -248,7 +248,7 @@ GlobalApp.directive('typedDatePicker', function () {
 
             $(element).datePicker({
                 dateFormat: format,
-                calenderType:attrs.calenderType
+                calenderType: attrs.calenderType
             })
 
         }
@@ -259,34 +259,34 @@ GlobalApp.directive('multiDatePicker', function () {
         restrict: 'AC',
         scope: {
             disabledDates: '=',
-            selectedDates:'=',
-            month:'@',
-            year:'@',
-            typee:'@',
-            disableElem:'@'
+            selectedDates: '=',
+            month: '@',
+            year: '@',
+            typee: '@',
+            disableElem: '@'
         },
         link: function (scope, element, attrs) {
 
-            var minDate = new Date(scope.year,parseInt(scope.month)-1,1);
-            var maxDay = (new Date(scope.year,parseInt(scope.month),0)).getDate();
-            var maxDate = new Date(scope.year,parseInt(scope.month)-1,maxDay);
+            var minDate = new Date(scope.year, parseInt(scope.month) - 1, 1);
+            var maxDay = (new Date(scope.year, parseInt(scope.month), 0)).getDate();
+            var maxDate = new Date(scope.year, parseInt(scope.month) - 1, maxDay);
             $(element).multiDatesPicker({
                 dateFormat: 'yy-mm-dd',
-                minDate:minDate,
-                maxDate:maxDate,
-                addDisabledDates:scope.disabledDates,
-                onSelect:function (dateText) {
-                    if(scope.selectedDates.indexOf(dateText)<0) {
+                minDate: minDate,
+                maxDate: maxDate,
+                addDisabledDates: scope.disabledDates,
+                onSelect: function (dateText) {
+                    if (scope.selectedDates.indexOf(dateText) < 0) {
                         // console.log(scope.selectedDates)
-                        $(scope.disableElem).multiDatesPicker("addDates",dateText,"disabled")
+                        $(scope.disableElem).multiDatesPicker("addDates", dateText, "disabled")
                         scope.selectedDates.push(dateText)
                         scope.disabledDates.push(dateText)
-                    } else{
-                        $(scope.disableElem).multiDatesPicker("removeDates",dateText,"disabled")
+                    } else {
+                        $(scope.disableElem).multiDatesPicker("removeDates", dateText, "disabled")
                         var i = scope.selectedDates.indexOf(dateText)
-                        scope.selectedDates.splice(i,1)
+                        scope.selectedDates.splice(i, 1)
                         i = scope.disabledDates.indexOf(dateText)
-                        scope.disabledDates.splice(i,1)
+                        scope.disabledDates.splice(i, 1)
                     }
                     console.log(scope.disabledDates);
                     scope.$apply();
@@ -447,6 +447,17 @@ GlobalApp.factory('httpService', function ($http) {
                 return response
             })
         },
+        shortKpi: function (d, u, id, type) {
+            return $http({
+                url: '/' + prefix + "AVURP/kpi/kpi_name",
+                method: 'get',
+                params: {division: d, unit: u, thana: id, type: type}
+            }).then(function (response) {
+                return response.data;
+            }, function (response) {
+                return response
+            })
+        },
         rank: function () {
             return $http({
                 url: '/' + prefix + 'HRM/ansar_rank',
@@ -534,14 +545,14 @@ GlobalApp.factory('httpService', function ($http) {
 })
 GlobalApp.factory('notificationService', function () {
     return {
-        notify: function (type, message,time) {
+        notify: function (type, message, time) {
             //$.noty.closeAll();
             noty({
                 type: type,
                 text: message,
                 layout: 'top',
                 maxVisible: 5,
-                timeout: time?time:5000,
+                timeout: time ? time : 5000,
                 dismissQueue: true
             })
 
@@ -582,22 +593,26 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
     return {
         restrict: 'E',
         scope: {
-            showItem: '@',// ['range','unit','thana','kpi']
+            showItem: '@',// ['range','unit','thana','kpi','short_kpi']
             rangeChange: '&',//{func()}
             unitChange: '&',//{func()}
             thanaChange: '&',//{func()}
             kpiChange: '&',//{func()}
+            shortKpiChange: '&',//{func()}
             rankChange: '&',//{func()}
             genderChange: '&',//{func()}
             rangeLoad: '&',//{func()}
             unitLoad: '&',//{func()}
             thanaLoad: '&',//{func()}
             kpiLoad: '&',//{func()}
+            shortKpiLoad: '&',//{func()}
             kpiDisabled: '=?',
+            shortKpiDisabled: '=?',
             rangeDisabled: '=?',
             thanaDisabled: '=?',
             unitDisabled: '=?',
             kpiFieldDisabled: '=?',
+            shortKpiFieldDisabled: '=?',
             unitFieldDisabled: '=?',
             rangeFieldDisabled: '=?',
             thanaFieldDisabled: '=?',
@@ -611,6 +626,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
             fieldName: '=?',
             layoutVertical: '@',
             getKpiName: '=?',
+            getShortKpiName: '=?',
             getUnitName: '=?',
             getThanaName: '=?',
             data: '=?',
@@ -627,12 +643,16 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
             callFunc: '=?'
         },
         controller: function ($scope, $rootScope, httpService) {
+            $scope.items = JSON.parse($scope.showItem.replace(/\\n/g, "\\n")
+                .replace(/\'/g, "\""));
+            // console.log($scope.showItem);
             $scope.selected = {
                 range: $scope.type == 'all' ? 'all' : '',
                 unit: $scope.type == 'all' ? 'all' : '',
                 thana: $scope.type == 'all' ? 'all' : '',
                 union: $scope.type == 'all' ? 'all' : '',
                 kpi: $scope.type == 'all' ? 'all' : '',
+                shortKpi: $scope.type == 'all' ? 'all' : '',
                 rank: $scope.type == 'all' ? 'all' : '',
                 gender: $scope.type == 'all' ? 'all' : '',
                 custom: $scope.customModel
@@ -648,19 +668,23 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                         thana: $scope.type == 'all' ? 'all' : '',
                         union: $scope.type == 'all' ? 'all' : '',
                         kpi: $scope.type == 'all' ? 'all' : '',
+                        shortKpi: $scope.type == 'all' ? 'all' : '',
                         rank: $scope.type == 'all' ? 'all' : '',
                         gender: $scope.type == 'all' ? 'all' : '',
                         custom: $scope.customModel
                     }
                     if ($rootScope.user.usertype.type_name === 'DC') {
                         $scope.kpis = [];
+                        $scope.shortKpis = [];
                     }
                     else if ($rootScope.user.usertype.type_name === 'RC') {
                         $scope.kpis = [];
+                        $scope.shortKpis = [];
                         $scope.thanas = [];
                     }
                     else {
                         $scope.kpis = [];
+                        $scope.shortKpis = [];
                         $scope.thanas = [];
                         $scope.units = [];
                     }
@@ -680,7 +704,9 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                 kpi: false,
             }
             $scope.show = function (item) {
-                return $scope.showItem.indexOf(item) > -1 && hasPermission(item);
+
+                // console.log($scope.items)
+                return $scope.items.indexOf(item) > -1 && hasPermission(item);
             }
 
             function hasPermission(item) {
@@ -718,7 +744,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
             $scope.loadUnit = function (id) {
 
                 if (!$scope.show('unit')) return;
-                $scope.units = $scope.thanas = $scope.kpis = []
+                $scope.units = $scope.thanas = $scope.kpis = $scope.shortKpis = [];
                 $scope.loading.unit = true;
                 httpService.unit(id).then(function (data) {
                     if (data.status != undefined) {
@@ -733,7 +759,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
             }
             $scope.loadThana = function (d, id) {
                 if (!$scope.show('thana')) return;
-                $scope.thanas = $scope.kpis = []
+                $scope.thanas = $scope.kpis = $scope.shortKpis = []
                 $scope.loading.thana = true;
                 httpService.thana(d, id).then(function (data) {
                     // alert(data)
@@ -749,7 +775,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
             }
             $scope.loadUnion = function (d, u, id) {
                 if (!$scope.show('union')) return;
-                $scope.unions = $scope.kpis = []
+                $scope.unions = $scope.kpis = $scope.shortKpis = []
                 $scope.loading.union = true;
                 httpService.union(d, u, id).then(function (data) {
                     // alert(data)
@@ -781,6 +807,25 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
 
                 })
                 $scope.kpiLoad({param: $scope.selected});
+            }
+            $scope.loadShortKPI = function (d, u, id) {
+
+                //$scope.kpiChange({param:$scope.selected});
+                if (!$scope.show('short_kpi')) return;
+                $scope.loading.shortKpi = true;
+
+                httpService.shortKpi(d, u, id, $scope.kpiType).then(function (data) {
+                    $scope.loading.shortKpi = false;
+                    if (data.status != undefined) {
+                        $scope.errorKey = {kpi: 'kpi'};
+                        $scope.errorMessage = {kpi: data.statusText};
+                        return;
+                    }
+                    $scope.shortKpis = data;
+
+
+                })
+                $scope.shortKpiLoad({param: $scope.selected});
             }
             $scope.loadRank = function () {
 
@@ -820,11 +865,13 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
             $scope.changeThana = function (d, u, thana_id) {
                 if ($scope.type == 'all') {
                     $scope.loadKPI(d, u, thana_id)
+                    $scope.loadShortKPI(d, u, thana_id)
                     $scope.loadUnion(d, u, thana_id)
                 }
                 else {
                     $scope.loadUnion(undefined, undefined, thana_id)
                     $scope.loadKPI(undefined, undefined, thana_id)
+                    $scope.loadShortKPI(d, u, thana_id)
                 }
             }
             if ($scope.showItem.indexOf('rank') > -1) $scope.loadRank();
@@ -864,6 +911,9 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                                 $scope.loadThana();
                                 break;
                             case 'kpi':
+                                $scope.loadKpi();
+                                break;
+                            case 'short_kpi':
                                 $scope.loadKpi();
                                 break;
 
@@ -908,11 +958,16 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                     }
                 }
             })
+            $scope.parseItem = function(){
+                // alert(1);
+                $scope.showItem = JSON.parse($scope.showItem.replace(/\\n/g, "\\n")
+                    .replace(/\'/g, "\""));
+                console.log()
+            }
 
         },
         templateUrl: '/' + prefix + 'HRM/template_list/range_unit_thana_kpi_rank_gender_template',
         link: function (scope, element, attrs) {
-            //alert("aise")
             $rootScope.loadingView = false;
             scope.data = scope.selected;
             $timeout(function () {
@@ -927,6 +982,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                     scope.selected.unit = scope.type == 'all' ? 'all' : ''
                     scope.selected.thana = scope.type == 'all' ? 'all' : ''
                     scope.selected.kpi = scope.type == 'all' ? 'all' : ''
+                    scope.selected.shortKpi = scope.type == 'all' ? 'all' : ''
                     scope.selected.range = scope.type == 'all' ? 'all' : ''
                     // scope.$digest();
                 }
@@ -936,17 +992,20 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                 scope.selected.unit = scope.type == 'all' ? 'all' : ''
                 scope.selected.thana = scope.type == 'all' ? 'all' : ''
                 scope.selected.kpi = scope.type == 'all' ? 'all' : ''
+                scope.selected.shortKpi = scope.type == 'all' ? 'all' : ''
                 scope.rangeChange({param: scope.selected})
             })
             $(element).on('change', '#unit', function () {
                 scope.getUnitName = $.trim($(this).children('option:selected').text())
                 scope.selected.thana = scope.type == 'all' ? 'all' : ''
                 scope.selected.kpi = scope.type == 'all' ? 'all' : ''
+                scope.selected.shortKpi = scope.type == 'all' ? 'all' : ''
                 scope.unitChange({param: scope.selected})
             })
             $(element).on('change', "#thana", function () {
                 scope.getThanaName = $.trim($(this).children('option:selected').text())
                 scope.selected.kpi = scope.type == 'all' ? 'all' : ''
+                scope.selected.shortKpi = scope.type == 'all' ? 'all' : ''
                 scope.thanaChange({param: scope.selected})
             })
             $(element).on('change', "#rank", function () {
@@ -957,6 +1016,14 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                 $timeout(function () {
                     scope.$apply();
                     scope.kpiChange({param: scope.selected})
+                })
+
+            })
+            $(element).on('change', "#short_kpi", function () {
+                scope.getShortKpiName = $.trim($(this).children('option:selected').text())
+                $timeout(function () {
+                    scope.$apply();
+                    scope.shortKpiChange({param: scope.selected})
                 })
 
             })

@@ -73,7 +73,7 @@
             <?php $title = request()->route() ? request()->route()->getPrefix() : ''; ?>
             <span class="logo-mini">{{config("app.title_mini_{$title}")}}</span>
             <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg" style="font-size: 16px;"><b>{{config("app.title_lg_{$title}")}}</b></span>
+            <span class="logo-lg" style="font-size: 16px;"><b>{{config("app.title_lg_{$title}.title")}}</b></span>
         </a>
         <!-- Header Navbar: style can be found in header.less -->
         <nav id="resize_menu" class="navbar navbar-static-top" role="navigation">

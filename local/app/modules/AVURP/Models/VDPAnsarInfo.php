@@ -26,6 +26,9 @@ class VDPAnsarInfo extends Model
     public function offer(){
         return $this->hasOne(OfferInfo::class,'vdp_id');
     }
+    public function embodiment(){
+        return $this->hasOne(Embodiment::class,'vdp_id');
+    }
     public function bankInfo(){
         return $this->hasOne(VDPAnsarBankAccountInfo::class,'vdp_id');
     }
