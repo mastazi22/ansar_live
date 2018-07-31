@@ -9,7 +9,8 @@ use App\Http\Controllers\Controller;
 
 class Training extends Controller
 {
+    private $module_name = "recruitment.training";
     public function index(){
-        return "asdsadsadsassadasdsa";
+        return view("$this->module_name::index");
     }
 }

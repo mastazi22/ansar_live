@@ -444,6 +444,28 @@ return [
         ],
     ],
     "recruitment" => [
+        "TRAINING MODULE"=>[
+            "route" => "recruitment.training",
+            "icon" => "fa-cog"
+        ],
+        "training"=>[
+            "Training Category"=>[
+                "route" => "recruitment.training.category.index",
+                "icon" => "fa-cog"
+            ],
+            "Training Courses"=>[
+                "route" => "recruitment.training.courses.index",
+                "icon" => "fa-cog"
+            ],
+            "Training Session"=>[
+                "route" => "#",
+                "icon" => "fa-cog"
+            ],
+            "Training Center"=>[
+                "route" => "#",
+                "icon" => "fa-cog"
+            ],
+        ],
         "Job Category" => [
             "route" => "recruitment.category.index",
             "icon" => "fa-list"

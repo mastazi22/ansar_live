@@ -117,11 +117,11 @@ return [
         |--------------------------------------------------------------------------
         */
     'item_per_page'=>20,
-    'title_lg_HRM'=>'Human Resource Management',
-    'title_lg_SD'=>'Salary Disbursement',
-    'title_lg_AVURP'=>'Ansar VDP Unit Reform Project',
-    'title_lg_recruitment'=>'Ansar Recruitment',
-    'title_lg_'=>'Ansar & VDP ERP',
+    'title_lg_HRM'=>["title"=>'Human Resource Management'],
+    'title_lg_SD'=>["title"=>'Salary Disbursement'],
+    'title_lg_AVURP'=>["title"=>'Ansar VDP Unit Reform Project'],
+    'title_lg_recruitment'=>['training'=>["title"=>'Training module(Recruitment)'],"title"=>"Ansar Recruitment"],
+    'title_lg_'=>["title"=>'Ansar & VDP ERP'],
     'title_mini_HRM'=>'HRM',
     'title_mini_SD'=>'SD',
     'title_mini_AVURP'=>'AVURP',
