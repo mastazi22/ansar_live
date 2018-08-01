@@ -140,7 +140,7 @@ class DemandSheetController extends Controller
         }
         $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->fails()) {
-            return Redirect::to('SD/demandconstant')->withErrors($validator)->withInput($request->except(['_token']));
+            return redirect()->to('SD/demandconstant')->withErrors($validator)->withInput($request->except(['_token']));
         }
         $demandConstant = new DemandConstant();
         $demandConstant->where('cons_name', 'ration_fee')->update(['cons_value' => $request->get('ration_fee')]);
@@ -151,8 +151,13 @@ class DemandSheetController extends Controller
         $demandConstant->where('cons_name', 'per_day_salary_ansar')->update(['cons_value' => $request->get('per_day_salary_ansar')]);
         $demandConstant->where('cons_name', 'per_day_salary_pc_and_apc')->update(['cons_value' => $request->get('per_day_salary_pc_and_apc')]);
         $demandConstant->where('cons_name', 'welfare_fee')->update(['cons_value' => $request->get('welfare_fee')]);
+        $demandConstant->where('cons_name', 'share_amount')->update(['cons_value' => $request->get('share_amount')]);
+        $demandConstant->where('cons_name', 'pc_apc_per_day_salary_for_short_term_kpi')->update(['cons_value' => $request->get('pc_apc_per_day_salary_for_short_term_kpi')]);
+        $demandConstant->where('cons_name', 'ansar_vdp_per_day_salary_for_short_term_kpi')->update(['cons_value' => $request->get('ansar_vdp_per_day_salary_for_short_term_kpi')]);
+        $demandConstant->where('cons_name', 'other_amount')->update(['cons_value' => $request->get('other_amount')]);
+        $demandConstant->where('cons_name', 'deduct_amount')->update(['cons_value' => $request->get('deduct_amount')]);
         // return ['statys'=>$demandConstant->save()];
-        return Redirect::to('SD/demandconstant')->with('constant_update_success', 'Demand constant update successfully');
+        return redirect()->to('SD/demandconstant')->with('constant_update_success', 'Demand constant update successfully');
 
 
     }

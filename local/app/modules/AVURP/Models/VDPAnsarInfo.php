@@ -20,6 +20,9 @@ class VDPAnsarInfo extends Model
     protected $connection = "avurp";
     protected $guarded = ['id'];
 
+    public function account(){
+        return $this->hasOne(VDPAnsarBankAccountInfo::class,'vdp_id');
+    }
     public function status(){
         return $this->hasOne(VDPAnsarStatusInfo::class,'vdp_ansar_info_id');
     }

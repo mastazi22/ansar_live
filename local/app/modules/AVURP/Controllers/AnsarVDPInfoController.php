@@ -235,7 +235,7 @@ class AnsarVDPInfoController extends Controller
             $sheets = Excel::load($request->file('import_file'), function () {
 
             })->get();
-//return $sheets;
+return $sheets;
             $all_data = [];
             $error_headers = [];
             foreach ($sheets as $sheet) {

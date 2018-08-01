@@ -23,4 +23,11 @@ class KpiInfo extends Model
     public function thana(){
         return $this->belongsTo(Thana::class,'thana_id');
     }
+    public function embodiment(){
+        return $this->hasMany(Embodiment::class,'kpi_id');
+    }
+    public function vdp(){
+        return $this->belongsToMany(VDPAnsarInfo::class,'avurp_embodiment_info','kpi_id','vdp_id');
+    }
+
 }

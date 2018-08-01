@@ -20,6 +20,7 @@ Route::group(['prefix' => 'SD', 'middleware' => ['web', 'auth', 'permission']], 
         Route::post('attendance/view_attendance', ['as'=>'SD.attendance.view_attendance','uses'=>'AttendanceController@viewAttendance']);
         Route::resource('leave', 'LeaveManagementController');
         Route::resource('salary_management', 'SalaryManagementController');
+        Route::resource('salary_management_short', 'SalaryManagementForShortKPIController');
         Route::get('/test', function () {
 //            DB::enableQueryLog();
             $kpis = KpiGeneralModel::with(['embodiment' => function ($q) {

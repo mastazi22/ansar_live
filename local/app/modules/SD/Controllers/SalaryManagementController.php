@@ -81,9 +81,11 @@ class SalaryManagementController extends Controller
                         $total_transportation_fee = floatval(DemandConstantFacdes::getValue("CV")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
                         $total_medical_fee = floatval(DemandConstantFacdes::getValue("DV")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
                         $welfare_fee = floatval(DemandConstantFacdes::getValue("WF")->cons_value);
+                        $share_amount = floatval(DemandConstantFacdes::getValue("SA")->cons_value);
                         array_push($datas, [
                             'total_amount' => $total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee + $total_medical_fee,
                             'welfare_fee' => $welfare_fee,
+                            'share_amount' => $share_amount,
                             'ansar_id' => $ansar->ansar_id,
                             'ansar_name' => $ansar->ansar_name_eng,
                             'ansar_rank' => $ansar->designation->code,
@@ -126,7 +128,8 @@ class SalaryManagementController extends Controller
                             'total_present' => $a->total_present,
                             'total_leave' => $a->total_leave,
                             'total_absent' => $a->total_absent,
-                            'account_no' => $ansar->account ? $ansar->account->account_no : 'n\a',
+                            'account_no' => $ansar->account ? ($ansar->account->prefer_choice=="mobile"?$ansar->mobile_bank_account_no:$ansar->account_no) : 'n\a',
+                            'bank_type' => $ansar->account ? ($ansar->account->prefer_choice=="mobile"?$ansar->mobile_bank_type:"DBBL") : 'n\a',
                             'bonus_for'=>$request->bonusType
                         ]);
 //                        return $datas;

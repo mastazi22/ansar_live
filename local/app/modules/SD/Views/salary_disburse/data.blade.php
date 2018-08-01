@@ -20,6 +20,7 @@
                 <th>Total Absent</th>
                 <th>Total Salary</th>
                 <th>Welfare Fee</th>
+                <th>Share Fee</th>
                 <th>Net Amount</th>
             </tr>
             <?php $i=0;?>
@@ -33,8 +34,10 @@
                 {!! Form::hidden("attendance_data[$i][total_present]",$data['total_present']) !!}
                 {!! Form::hidden("attendance_data[$i][total_leave]",$data['total_leave']) !!}
                 {!! Form::hidden("attendance_data[$i][welfare_fee]",$data['welfare_fee']) !!}
+                {!! Form::hidden("attendance_data[$i][share_fee]",$data['share_amount']) !!}
                 {!! Form::hidden("attendance_data[$i][month]",$for_month) !!}
                 {!! Form::hidden("attendance_data[$i][account_no]",$data['account_no']) !!}
+                {!! Form::hidden("attendance_data[$i][bank_type]",$data['bank_type']) !!}
                 <tr>
                     <td>{{++$i}}</td>
                     <td>{{$data['ansar_id']}}</td>
@@ -45,7 +48,8 @@
                     <td>{{$data['total_absent']}}</td>
                     <td>{{$data['total_amount']}}</td>
                     <td>{{$data['welfare_fee']}}</td>
-                    <td>{{$data['total_amount']-$data['welfare_fee']}}</td>
+                    <td>{{$data['share_amount']}}</td>
+                    <td>{{$data['total_amount']-($data['welfare_fee']+$data['share_amount'])}}</td>
                 </tr>
             @empty
                 <tr>
