@@ -328,7 +328,7 @@ class AnsarVDPInfoController extends Controller
                             Log::info("$value found");
                             $r["thana_id"] = $uni->id;
                         }
-                    }else if ($key == 'union_id'&&($request->entry_unit==1)) {
+                    }else if ($key == 'union_id'&&($request->entry_unit==1)&&isset($r["thana_id"])) {
                         DB::enableQueryLog();
                         $uni =  Unions::where('division_id',$r["division_id"])
                             ->where('unit_id',$r["unit_id"])
