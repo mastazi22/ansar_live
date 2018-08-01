@@ -1,7 +1,9 @@
 <table>
     <tr>
         @foreach($headers as $header)
-            <th>{{$header}}</th>
+            @foreach($header as $h)
+                <th>{{$h}}</th>
+            @endforeach
         @endforeach
     </tr>
     @foreach($error_datas as $error_data)
