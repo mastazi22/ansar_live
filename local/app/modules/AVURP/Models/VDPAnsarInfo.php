@@ -137,10 +137,8 @@ class VDPAnsarInfo extends Model
         $now = Carbon::now();
         $age = false;
 
-        if($this->date_of_birth&&$this->date_of_birth!="0000-00-00"){
+        if($this->date_of_birth&&strtotime($this->date_of_birth)){
             try {
-                $d = Carbon::parse($this->date_of_birth);
-                if(!checkdate($d->month,$d->day,$d->year)) throw new \Exception("invalid date");
                 $age = Carbon::parse($this->date_of_birth)->diffInYears($now, true);
             }catch (\Exception $e){
                 $age = false;
