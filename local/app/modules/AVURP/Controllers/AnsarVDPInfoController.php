@@ -11,7 +11,6 @@ use App\modules\AVURP\Requests\VDPInfoRequest;
 use App\modules\HRM\Models\AllEducationName;
 use App\modules\HRM\Models\Blood;
 use App\modules\HRM\Models\Edication;
-use App\modules\HRM\Models\Thana;
 use App\modules\HRM\Models\Unions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -206,7 +205,7 @@ class AnsarVDPInfoController extends Controller
             "entry_unit" => 'required|regex:/^[1-5]{1}$/',
             "division_id" => 'required',
             "unit_id" => 'required',
-//            "thana_id" => 'required',
+            "thana_id" => 'required',
             "union_id" => 'required_if:entry_unit,3|required_if:entry_unit,4|required_if:entry_unit,5',
             "import_file" => 'required',
 
@@ -261,7 +260,7 @@ class AnsarVDPInfoController extends Controller
                 $r = [];
                 $r["division_id"] = $request->division_id;
                 $r["unit_id"] = $request->unit_id;
-                if($request->thana_id)$r["thana_id"] = $request->thana_id;
+                $r["thana_id"] = $request->thana_id;
                 if($request->entry_unit==3||$request->entry_unit==4||$request->entry_unit==5)$r["union_id"] = $request->union_id;
 
                 $r["entry_unit"] = $request->entry_unit;
@@ -318,17 +317,7 @@ class AnsarVDPInfoController extends Controller
                     } else if ($key == 'union_word_id') {
                         $uwi = intval(LanguageConverterFacades::bngToEng($value));
                         $r["union_word_id"] = $uwi;
-                    }else if ($key == 'thana'&&($request->entry_unit==1)) {
-                        DB::enableQueryLog();
-                        $uni =  Thana::where('division_id',$r["division_id"])
-                            ->where('unit_id',$r["unit_id"])
-                            ->where(DB::raw("INSTR(\"$value\",thana_name_bng)"),'>',0)
-                            ->first();
-                        if($uni){
-                            Log::info("$value found");
-                            $r["thana_id"] = $uni->id;
-                        }
-                    }else if ($key == 'union_id'&&($request->entry_unit==1)&&isset($r["thana_id"])) {
+                    }else if ($key == 'union_id'&&($request->entry_unit==1)) {
                         DB::enableQueryLog();
                         $uni =  Unions::where('division_id',$r["division_id"])
                             ->where('unit_id',$r["unit_id"])
