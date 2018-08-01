@@ -164,7 +164,7 @@ class VDPInfoRepository implements VDPInfoInterface
                 $q->select('union_name_bng as union_name', 'id');
             }])->select('ansar_name_bng', 'geo_id', 'id', 'designation', 'division_id', 'unit_id', 'thana_id', 'union_id', 'status');
         } else {
-            $vdp_infos = $this->info->with(['division', 'unit', 'thana', 'union']);
+            $vdp_infos = $this->info->with(['division', 'unit', 'thana', 'union','account']);
         }
         if ($range != 'all') {
             $vdp_infos = $vdp_infos->where('division_id', $range);
