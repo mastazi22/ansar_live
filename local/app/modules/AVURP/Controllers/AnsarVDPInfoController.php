@@ -240,7 +240,7 @@ class AnsarVDPInfoController extends Controller
             $error_headers = [];
             foreach ($sheets as $sheet) {
                 $rows = collect($sheet)->toArray();
-                $error_headers = $rows[2];
+                $error_headers = [$rows[0],$rows[1],$rows[2],$rows[3],$rows[4]];
                 unset($rows[0]);
                 unset($rows[1]);
                 unset($rows[2]);
