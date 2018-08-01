@@ -6,6 +6,9 @@
             <a href="{{URL::route('AVURP.info.create')}}" class="btn btn-primary btn-xs pull-right">
                 <i class="fa fa-plus"></i>&nbsp;Create New Entry
             </a>
+            <a style="margin-right: 10px" href="{{URL::route('AVURP.info.export')}}?page={{Request::get('page')?Request::get('page'):1}}" class="btn btn-primary btn-xs pull-right">
+                <i class="fa fa-file-excel-o"></i>&nbsp;Export Data
+            </a>
         </caption>
 
         <tr>
@@ -78,7 +81,18 @@
     </table>
 </div>
 @if(count($vdp_infos))
-    <div class="pull-right" style="margin: -20px 0" paginate ref="loadPage(url)">
-        {{$vdp_infos->render()}}
+    <div style="overflow: hidden">
+        <div class="pull-left">
+            <select name="" id="" ng-model="param.limit" ng-change="loadPage()">
+                <option value="30">30</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+                <option value="300">300</option>
+                <option value="500">500</option>
+            </select>
+        </div>
+        <div class="pull-right" style="margin: -20px 0" paginate ref="loadPage(url)">
+            {{$vdp_infos->render()}}
+        </div>
     </div>
 @endif

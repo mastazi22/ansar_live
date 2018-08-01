@@ -10,7 +10,6 @@ use App\modules\AVURP\Repositories\VDPInfo\VDPInfoRepository;
 use App\modules\AVURP\Requests\VDPInfoRequest;
 use App\modules\HRM\Models\AllEducationName;
 use App\modules\HRM\Models\Blood;
-use App\modules\HRM\Models\Edication;
 use App\modules\HRM\Models\Unions;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -52,6 +51,22 @@ class AnsarVDPInfoController extends Controller
             return view('AVURP::ansar_vdp_info.data', compact('vdp_infos'));
         }
         return view('AVURP::ansar_vdp_info.index');
+    }
+
+    public function export(Request $request)
+    {
+
+        $limit = $request->limit ? $request->limit : 30;
+        if (auth()->user()->usertype->type_name == "Dataentry") {
+            $vdp_infos = $this->infoRepository->getInfos($request->only(['range', 'unit', 'thana']), $limit, $request->action_user_id);
+        } else $vdp_infos = $this->infoRepository->getInfos($request->only(['range', 'unit', 'thana']), $limit);
+        return Excel::create("vdp_info", function ($excel) use ($vdp_infos) {
+            $excel->sheet("sheet1", function ($sheet) use ($vdp_infos) {
+                $sheet->setAutoSize(false);
+                $sheet->setWidth('A', 5);
+                $sheet->loadView('AVURP::ansar_vdp_info.export', compact('vdp_infos'));
+            });
+        })->download('xls');
     }
 
     /**
@@ -226,21 +241,21 @@ class AnsarVDPInfoController extends Controller
                 "ansar_name_eng", "ansar_name_bng", "designation", "father_name_bng", "mother_name_bng",
                 "date_of_birth", "birth_date_base", "marital_status", "spouse_name_bng", "national_id_no",
                 "smart_card_id", "avub_id", "mobile_no_self", "email_fb_id", "height", "blood_group", "gender", "health_condition",
-                "education", "training","bank_account_no","bank_name","bank_branch"
+                "education", "training", "bank_account_no", "bank_name", "bank_branch"
             ];
             $keys = ["village_house_no", "post_office_name",
                 "ansar_name_eng", "ansar_name_bng", "designation", "father_name_bng", "mother_name_bng",
                 "marital_status", "spouse_name_bng", "national_id_no",
-                "smart_card_id", "avub_id",  "health_condition"];
+                "smart_card_id", "avub_id", "health_condition"];
             $sheets = Excel::load($request->file('import_file'), function () {
 
             })->get();
-return $sheets;
+            return $sheets;
             $all_data = [];
             $error_headers = [];
             foreach ($sheets as $sheet) {
                 $rows = collect($sheet)->toArray();
-                $error_headers = [$rows[0],$rows[1],$rows[2],$rows[3],$rows[4]];
+                $error_headers = [$rows[0], $rows[1], $rows[2], $rows[3], $rows[4]];
                 unset($rows[0]);
                 unset($rows[1]);
                 unset($rows[2]);
@@ -248,10 +263,10 @@ return $sheets;
                 unset($rows[4]);
 
                 foreach ($rows as $row) {
-                    if(count($row)>32) $row = array_slice($row, 0, 32);
-                    if(count($row)==count($fields))array_push($all_data, array_combine($fields, array_slice($row, 0, count($fields))));
-                    else if(count($row)==count($fields_extended))array_push($all_data, array_combine($fields_extended, array_slice($row, 0, count($fields_extended))));
-                   // array_push($all_data, [count($row),count($fields_extended),count($fields)]);
+                    if (count($row) > 32) $row = array_slice($row, 0, 32);
+                    if (count($row) == count($fields)) array_push($all_data, array_combine($fields, array_slice($row, 0, count($fields))));
+                    else if (count($row) == count($fields_extended)) array_push($all_data, array_combine($fields_extended, array_slice($row, 0, count($fields_extended))));
+                    // array_push($all_data, [count($row),count($fields_extended),count($fields)]);
                 }
             }
 //            return $all_data;
@@ -261,7 +276,7 @@ return $sheets;
                 $r["division_id"] = $request->division_id;
                 $r["unit_id"] = $request->unit_id;
                 $r["thana_id"] = $request->thana_id;
-                if($request->entry_unit==3||$request->entry_unit==4||$request->entry_unit==5)$r["union_id"] = $request->union_id;
+                if ($request->entry_unit == 3 || $request->entry_unit == 4 || $request->entry_unit == 5) $r["union_id"] = $request->union_id;
 
                 $r["entry_unit"] = $request->entry_unit;
                 foreach ($data as $key => $value) {
@@ -286,11 +301,11 @@ return $sheets;
 //                        return $m;
                     } else if ($key == 'date_of_birth') {
                         $r['date_of_birth'] = $this->parseDate($value);
-                    }else if ($key == 'mobile_no_self') {
+                    } else if ($key == 'mobile_no_self') {
                         $split = str_split($value);
-                        if(intval($split[0])>0){
-                            $mobile_no = "0".$value;
-                        } else{
+                        if (intval($split[0]) > 0) {
+                            $mobile_no = "0" . $value;
+                        } else {
                             $mobile_no = $value;
                         }
                         $r['mobile_no_self'] = $mobile_no;
@@ -317,36 +332,36 @@ return $sheets;
                     } else if ($key == 'union_word_id') {
                         $uwi = intval(LanguageConverterFacades::bngToEng($value));
                         $r["union_word_id"] = $uwi;
-                    }else if ($key == 'union_id'&&($request->entry_unit==1)) {
+                    } else if ($key == 'union_id' && ($request->entry_unit == 1)) {
                         DB::enableQueryLog();
-                        $uni =  Unions::where('division_id',$r["division_id"])
-                            ->where('unit_id',$r["unit_id"])
-                            ->where('thana_id',$r["thana_id"])
-                            ->where(DB::raw("INSTR(\"$value\",union_name_bng)"),'>',0)
+                        $uni = Unions::where('division_id', $r["division_id"])
+                            ->where('unit_id', $r["unit_id"])
+                            ->where('thana_id', $r["thana_id"])
+                            ->where(DB::raw("INSTR(\"$value\",union_name_bng)"), '>', 0)
                             ->first();
-                        if($uni){
+                        if ($uni) {
                             Log::info("$value found");
                             $r["union_id"] = $uni->id;
                         }
-                    }else if ($key == 'bank_account_no') {
+                    } else if ($key == 'bank_account_no') {
                         $ban = intval(LanguageConverterFacades::bngToEng($value));
-                        if(!isset($r["bank_account_info"])) $r["bank_account_info"] = [];
+                        if (!isset($r["bank_account_info"])) $r["bank_account_info"] = [];
                         $r["bank_account_info"]["account_no"] = $ban;
-                    }else if ($key == 'bank_name') {
-                        if(!isset($r["bank_account_info"])) $r["bank_account_info"] = [];
-                        if(strpos($value,"রকেট")!==false){
+                    } else if ($key == 'bank_name') {
+                        if (!isset($r["bank_account_info"])) $r["bank_account_info"] = [];
+                        if (strpos($value, "রকেট") !== false) {
                             $r["bank_account_info"]["mobile_bank_type"] = "rocket";
                             $r["bank_account_info"]["prefer_choice"] = "mobile";
-                        } else if(strpos($value,"বিকাশ")!==false){
+                        } else if (strpos($value, "বিকাশ") !== false) {
                             $r["bank_account_info"]["mobile_bank_type"] = "bkash";
                             $r["bank_account_info"]["prefer_choice"] = "mobile";
-                        } else{
+                        } else {
                             $r["bank_account_info"]["bank_name"] = $value;
                             $r["bank_account_info"]["prefer_choice"] = "general";
                         }
 
-                    }else if ($key == 'bank_branch') {
-                        if(!isset($r["bank_account_info"])) $r["bank_account_info"] = [];
+                    } else if ($key == 'bank_branch') {
+                        if (!isset($r["bank_account_info"])) $r["bank_account_info"] = [];
                         $r["bank_account_info"]["branch_name"] = $value;
 
                     }
@@ -399,16 +414,16 @@ return $sheets;
 
                 ]);
                 if ($valid->fails()) {
-                    if(count($all_data[$index])==count($fields)) array_push($error_data, ["dd"=>array_merge(array_combine($fields,array_values($all_data[$index])),["errors"=>$this->validationErrorsToString($valid->messages())]),"err"=>array_keys(collect($valid->messages())->toArray())]);
-                    if(count($all_data[$index])==count($fields_extended)) array_push($error_data, ["dd"=>array_merge(array_combine($fields_extended,array_values($all_data[$index])),["errors"=>$this->validationErrorsToString($valid->messages())]),"err"=>array_keys(collect($valid->messages())->toArray())]);
+                    if (count($all_data[$index]) == count($fields)) array_push($error_data, ["dd" => array_merge(array_combine($fields, array_values($all_data[$index])), ["errors" => $this->validationErrorsToString($valid->messages())]), "err" => array_keys(collect($valid->messages())->toArray())]);
+                    if (count($all_data[$index]) == count($fields_extended)) array_push($error_data, ["dd" => array_merge(array_combine($fields_extended, array_values($all_data[$index])), ["errors" => $this->validationErrorsToString($valid->messages())]), "err" => array_keys(collect($valid->messages())->toArray())]);
                     $res["fail"]++;
                 } else {
                     $response = $this->infoRepository->create($request, auth()->user()->id);
                     if ($response['status']) $res["success"]++;
                     else {
                         $res["fail"]++;
-                        if(count($all_data[$index])==count($fields))array_push($error_data, ["dd"=>array_merge(array_combine($fields,array_values($all_data[$index])),["errors"=>$response['data']['message']]),"err"=>[]]);
-                        else if(count($all_data[$index])==count($fields_extended))array_push($error_data, ["dd"=>array_merge(array_combine($fields_extended,array_values($all_data[$index])),["errors"=>$response['data']['message']]),"err"=>[]]);
+                        if (count($all_data[$index]) == count($fields)) array_push($error_data, ["dd" => array_merge(array_combine($fields, array_values($all_data[$index])), ["errors" => $response['data']['message']]), "err" => []]);
+                        else if (count($all_data[$index]) == count($fields_extended)) array_push($error_data, ["dd" => array_merge(array_combine($fields_extended, array_values($all_data[$index])), ["errors" => $response['data']['message']]), "err" => []]);
 //                        array_push($error_data, array_merge($all_data[$index],["errors"=>$response['data']['message']]));
                     }
                 }
@@ -416,8 +431,8 @@ return $sheets;
 
             }
             if (count($error_data) > 0) {
-                for ($i=0;$i<count($error_headers);$i++){
-                    array_push($error_headers[$i],"errors");
+                for ($i = 0; $i < count($error_headers); $i++) {
+                    array_push($error_headers[$i], "errors");
                 }
                 $file_name = 'error_date_' . time();
                 Excel::create($file_name, function ($excel) use ($error_data, $error_headers) {
@@ -428,7 +443,7 @@ return $sheets;
                         $sheet->loadView('AVURP::ansar_vdp_info.import_error', ['error_datas' => $error_data, 'headers' => $error_headers]);
                     });
                 })->store('xls', storage_path());
-                $this->sendEmailRaw("error data","arafat@shurjomukhi.com.bd","ERROR",storage_path($file_name.".xls"));
+                $this->sendEmailRaw("error data", "arafat@shurjomukhi.com.bd", "ERROR", storage_path($file_name . ".xls"));
             }
 
             return response()->json(['data' => $res, 'error' => isset($file_name) ? $file_name : false]);
@@ -466,7 +481,7 @@ return $sheets;
             "j.n.Y"
         ];
         $validDate = false;
-        if(!$value) return null;
+        if (!$value) return null;
         foreach ($formats as $format) {
             try {
                 $d = Carbon::createFromFormat($format, $value)->format('Y-m-d');

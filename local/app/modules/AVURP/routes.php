@@ -8,6 +8,7 @@ Route::group(['prefix'=>'AVURP','namespace'=>'\App\modules\AVURP\Controllers','m
     Route::get('info/import',['as'=>'AVURP.info.import','uses'=>'AnsarVDPInfoController@import']);
     Route::get('info/import/download/{file_name}',['as'=>'AVURP.info.import.download','uses'=>'AnsarVDPInfoController@downloadFile']);
     Route::post('info/import',['as'=>'AVURP.info.import_upload','uses'=>'AnsarVDPInfoController@processImportedFile']);
+    Route::get('info/export',['as'=>'AVURP.info.export','uses'=>'AnsarVDPInfoController@export']);
     Route::resource('info','AnsarVDPInfoController');
     Route::get('kpi/kpi_name','KpiInfoController@kpiList');
     Route::resource('kpi','KpiInfoController');
