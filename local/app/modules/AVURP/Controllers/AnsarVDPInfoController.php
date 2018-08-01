@@ -248,11 +248,13 @@ class AnsarVDPInfoController extends Controller
                 unset($rows[4]);
 
                 foreach ($rows as $row) {
+                    if(count($row)>32) $row = array_slice($row, 0, 32);
                     if(count($row)==count($fields))array_push($all_data, array_combine($fields, array_slice($row, 0, count($fields))));
                     else if(count($row)==count($fields_extended))array_push($all_data, array_combine($fields_extended, array_slice($row, 0, count($fields_extended))));
-//                    array_push($all_data, [count($fields),array_slice($row,0,count($fields))]);
+                   // array_push($all_data, [count($row),count($fields_extended),count($fields)]);
                 }
             }
+//            return $all_data;
             $insertData = [];
             foreach ($all_data as $data) {
                 $r = [];
