@@ -1,11 +1,13 @@
 <table>
-    <tr>
+
         @foreach($headers as $header)
+        <tr>
             @foreach($header as $h)
                 <th>{{$h}}</th>
             @endforeach
+        </tr>
         @endforeach
-    </tr>
+
     @foreach($error_datas as $error_data)
         <tr>
             @foreach($error_data["dd"] as $key=>$data)

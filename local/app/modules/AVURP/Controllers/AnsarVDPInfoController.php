@@ -416,7 +416,9 @@ class AnsarVDPInfoController extends Controller
 
             }
             if (count($error_data) > 0) {
-                array_push($error_headers,"errors");
+                for ($i=0;$i<count($error_headers);$i++){
+                    array_push($error_headers[$i],"errors");
+                }
                 $file_name = 'error_date_' . time();
                 Excel::create($file_name, function ($excel) use ($error_data, $error_headers) {
 
