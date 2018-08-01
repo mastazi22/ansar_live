@@ -39,8 +39,8 @@
                     <td>{{$info->thana->thana_name_bng}}</td>
                     <td>{{$info->union->union_name_bng}}</td>
                     <td>{{$info->union_word_id}}</td>
-                    <td>{{$info->account->prefer_choice=="mobile"?$info->account->account_no:$info->account->mobile_bank_account_no}}</td>
-                    <td>{{$info->account->prefer_choice=="mobile"?$info->account->bank_name:$info->account->mobile_bank_type}}</td>
+                    <td>{{$info->account?($info->account->prefer_choice=="mobile"?$info->account->account_no:$info->account->mobile_bank_account_no):"n\a"}}</td>
+                    <td>{{$info->account?($info->account->prefer_choice=="mobile"?$info->account->bank_name:$info->account->mobile_bank_type):'n\a'}}</td>
                     @if($info->status=='new')
                         <td>
                             <span class="label label-danger">Unverified</span>
