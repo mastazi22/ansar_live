@@ -1104,7 +1104,6 @@ class EmbodimentController extends Controller
         $rules = [
             'ansar_id' => 'required',
             'bank_name' => 'required_if:prefer_choice,general',
-            'branch_name' => 'required_if:prefer_choice,general',
             'account_no' => 'required_if:prefer_choice,general',
             'mobile_bank_type' => 'required_if:prefer_choice,mobile',
             'mobile_bank_account_no' => 'required_if:prefer_choice,mobile',
