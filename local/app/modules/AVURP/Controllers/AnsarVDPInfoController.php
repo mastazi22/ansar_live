@@ -250,7 +250,7 @@ class AnsarVDPInfoController extends Controller
             $sheets = Excel::load($request->file('import_file'), function () {
 
             })->get();
-            return $sheets;
+//            return $sheets;
             $all_data = [];
             $error_headers = [];
             foreach ($sheets as $sheet) {
@@ -344,7 +344,7 @@ class AnsarVDPInfoController extends Controller
                             $r["union_id"] = $uni->id;
                         }
                     } else if ($key == 'bank_account_no') {
-                        $ban = intval(LanguageConverterFacades::bngToEng($value));
+                        $ban = LanguageConverterFacades::bngToEng($value);
                         if (!isset($r["bank_account_info"])) $r["bank_account_info"] = [];
                         $r["bank_account_info"]["account_no"] = $ban;
                     } else if ($key == 'bank_name') {
