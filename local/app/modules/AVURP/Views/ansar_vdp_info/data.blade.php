@@ -6,7 +6,7 @@
             <a href="{{URL::route('AVURP.info.create')}}" class="btn btn-primary btn-xs pull-right">
                 <i class="fa fa-plus"></i>&nbsp;Create New Entry
             </a>
-            <a style="margin-right: 10px" href="{{URL::route('AVURP.info.export')}}?page={{Request::get('page')?Request::get('page'):1}}" class="btn btn-primary btn-xs pull-right">
+            <a style="margin-right: 10px" href="{{URL::route('AVURP.info.export')}}?{{Request::query()}}" class="btn btn-primary btn-xs pull-right">
                 <i class="fa fa-file-excel-o"></i>&nbsp;Export Data
             </a>
         </caption>
