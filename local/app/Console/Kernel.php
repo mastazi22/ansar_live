@@ -69,7 +69,7 @@ class Kernel extends ConsoleKernel
                     $dis = $offer->district->unit_name_eng;
                     $dc = strtoupper($dis);
                     $sms_end_date = Carbon::parse($offer->sms_end_datetime)->format('d-m-Y h:i:s A');
-                    $body = "Apni (ID:{$offer->ansar_id}, {$a->designation->name_eng}) aaj {$dis} theke offer peyesen. Please type (ans YES ) and send korun 6969 number e {$sms_end_date} tarikh er moddhey . Otherwise  offer ti cancel hoie jabe-DC {$dc}";
+                    $body = "Apni (ID:{$offer->ansar_id}, {$a->designation->name_eng}) aaj {$dis} theke offer peyesen. Please type (ans YES ) and send korun 26969 number e {$sms_end_date} tarikh er moddhey . Otherwise  offer ti cancel hoie jabe-DC {$dc}";
                     //Log::info($a);
 //                    break;
 
