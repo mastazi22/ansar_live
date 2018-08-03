@@ -2,17 +2,13 @@
 
 namespace App\modules\SD\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\modules\HRM\Models\KpiGeneralModel;
-use App\modules\SD\Helper\DemandConstant;
 use App\modules\SD\Helper\Facades\DemandConstantFacdes;
 use App\modules\SD\Models\SalaryHistory;
 use App\modules\SD\Models\SalarySheetHistory;
-use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
@@ -28,9 +24,24 @@ class SalaryManagementController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
+            $history = SalarySheetHistory::with('kpi');
+            try {
+                if ($request->month_year && Carbon::createFromFormat("F, Y", $request->month_year)) {
+                    $history->where('generated_for_month', $request->month_year);
+                }
+            } catch (\Exception $e) {
 
+            }
+            $history->whereHas('kpi', function ($q) use ($request) {
+                if ($request->range && $request->range != 'all') $q->where('division_id', $request->range);
+                if ($request->unit && $request->unit != 'all') $q->where('unit_id', $request->unit);
+                if ($request->thana && $request->thana != 'all') $q->where('thana_id', $request->thana);
+                if ($request->kpi && $request->kpi != 'all') $q->where('id', $request->kpi);
+            });
+            $history = $history->paginate($request->limit?$request->limit:30);
+            return view('SD::salary_sheet.view_data',compact('history'));
         }
-        return view("SD::salary_disburse.index");
+        return view("SD::salary_sheet.index");
     }
 
     /**
@@ -101,7 +112,7 @@ class SalaryManagementController extends Controller
                     $generated_type = $request->sheetType;
                     $kpi_name = $kpi->kpi_name;
                     $kpi_id = $kpi->id;
-                    return view("SD::salary_disburse.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id', 'generated_type'));
+                    return view("SD::salary_sheet.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id', 'generated_type'));
 
                 } else if ($request->sheetType == 'bonus') {
                     $date = Carbon::createFromFormat('F, Y', $request->month_year);
@@ -128,9 +139,9 @@ class SalaryManagementController extends Controller
                             'total_present' => $a->total_present,
                             'total_leave' => $a->total_leave,
                             'total_absent' => $a->total_absent,
-                            'account_no' => $ansar->account ? ($ansar->account->prefer_choice=="mobile"?$ansar->mobile_bank_account_no:$ansar->account_no) : 'n\a',
-                            'bank_type' => $ansar->account ? ($ansar->account->prefer_choice=="mobile"?$ansar->mobile_bank_type:"DBBL") : 'n\a',
-                            'bonus_for'=>$request->bonusType
+                            'account_no' => $ansar->account ? ($ansar->account->prefer_choice == "mobile" ? $ansar->mobile_bank_account_no : $ansar->account_no) : 'n\a',
+                            'bank_type' => $ansar->account ? ($ansar->account->prefer_choice == "mobile" ? $ansar->mobile_bank_type : "DBBL") : 'n\a',
+                            'bonus_for' => $request->bonusType
                         ]);
 //                        return $datas;
                     }
@@ -139,7 +150,7 @@ class SalaryManagementController extends Controller
                     $generated_type = $request->sheetType;
                     $kpi_name = $kpi->kpi_name;
                     $kpi_id = $kpi->id;
-                    return view("SD::salary_disburse.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id', 'generated_type'));
+                    return view("SD::salary_sheet.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id', 'generated_type'));
 
                 }
 
@@ -147,7 +158,7 @@ class SalaryManagementController extends Controller
                 return response()->json(['message' => "Kpi detail does not found"], 400);
             }
         }
-        return view("SD::salary_disburse.create");
+        return view("SD::salary_sheet.create");
     }
 
     /**
@@ -160,7 +171,7 @@ class SalaryManagementController extends Controller
     {
 //        return $request->all();
         // return $request->attendance_data;
-//        return view('SD::salary_disburse.export',['datas'=>$request->attendance_data]);
+//        return view('SD::salary_sheet.export',['datas'=>$request->attendance_data]);
         $rules = [
             'kpi_id' => "required",
             'generated_for_month' => "required",
@@ -186,14 +197,14 @@ class SalaryManagementController extends Controller
 
             $history = SalarySheetHistory::create($data);
             $salary_history = [];
-            foreach ($request->attendance_data as $ad){
-                array_push($salary_history,[
-                   'ansar_id'=>$ad["ansar_id"],
-                   'kpi_id'=>$request->kpi_id,
-                   'salary_sheet_id'=>$history->id,
-                   'amount'=>$ad["net_amount"],
-                   'status'=>"pending",
-                   'action_user_id'=>auth()->user()->id,
+            foreach ($request->attendance_data as $ad) {
+                array_push($salary_history, [
+                    'ansar_id' => $ad["ansar_id"],
+                    'kpi_id' => $request->kpi_id,
+                    'salary_sheet_id' => $history->id,
+                    'amount' => $ad["net_amount"],
+                    'status' => "pending",
+                    'action_user_id' => auth()->user()->id,
                 ]);
             }
             SalaryHistory::insert($salary_history);
@@ -203,7 +214,7 @@ class SalaryManagementController extends Controller
                 $excel->sheet('sheet1', function ($sheet) use ($request) {
                     $sheet->setAutoSize(false);
                     $sheet->setWidth('A', 5);
-                    $sheet->loadView('SD::salary_disburse.export', ['datas' => $request->attendance_data,'type'=>$request->generated_type]);
+                    $sheet->loadView('SD::salary_sheet.export', ['datas' => $request->attendance_data, 'type' => $request->generated_type]);
                 });
             })->download('xls');
         } catch (\Exception $e) {

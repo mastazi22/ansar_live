@@ -440,6 +440,52 @@ return [
                         ]
                     ]
                 ],
+                "Salary Sheet"=>[
+                    "route"=>'#',
+                    "icon"=>'fa-cog',
+                    "children"=>[
+                        "Salary Generate History"=>[
+                            "route"=>'SD.salary_management.index',
+                            "icon"=>'fa-cog',
+                        ],
+                        "Generate Salary Sheet"=>[
+                            "route"=>'SD.salary_management.create',
+                            "icon"=>'fa-cog',
+                        ],
+                    ]
+                ],
+                "Salary Sheet(Temp. KPI)"=>[
+                    "route"=>'#',
+                    "icon"=>'fa-cog',
+                    "children"=>[
+                        "Salary Generate History"=>[
+                            "route"=>'SD.salary_management_short.index',
+                            "icon"=>'fa-cog',
+                        ],
+                        "Generate Salary Sheet"=>[
+                            "route"=>'SD.salary_management_short.create',
+                            "icon"=>'fa-cog',
+                        ],
+                    ]
+                ],
+            ]
+        ],
+        "Payment From KPI"=>[
+            "route"=>'SD.kpi_payment.index',
+            "icon"=>'fa-cog'
+        ],
+        "Disbursement of salary"=>[
+            "route"=>"#",
+            "icon"=>"fa-cog",
+            "children"=>[
+                "History of Salary Disburse"=>[
+                    "route"=>'SD.salary_disburse.index',
+                    "icon"=>'fa-cog'
+                ],
+                "Disburse Salary"=>[
+                    "route"=>'SD.salary_disburse.create',
+                    "icon"=>'fa-cog'
+                ],
             ]
         ],
     ],

@@ -85,14 +85,14 @@ class DemandSheetController extends Controller
         $path = storage_path('DemandSheet/' . $request->get('kpi'));
         $file_name = bcrypt(Carbon::now()->timestamp) . '.pdf';
         if (!File::exists($path)) File::makeDirectory($path, 0775, true);
-
-        SnappyPdf::loadView('SD::Demand.template', ['mem_no' => $request->get('mem_id'), 'address' => $address, 'total_pc' => $total_pc, 'total_apc' => $total_apc, 'total_ansar' => $total_ansar, 'to' => $to, 'form' => $form, 'p_date' => $payment_date, 'total_day' => $total_days, 'st1' => $st1, 'st2' => $st2, 'st3' => $st3, 'st4' => $st4, 'st5' => $st5, 'st6' => $st6, 'st7' => $st7, 'st8' => $st8, 'st9' => $st9, 'unit' => $unit,'no_margha_fee'=>$request->no_margha_fee])->save($path . '/' . $file_name);
+        $data = ['mem_no' => $request->get('mem_id'), 'address' => $address, 'total_pc' => $total_pc, 'total_apc' => $total_apc, 'total_ansar' => $total_ansar, 'to' => $to, 'form' => $form, 'p_date' => $payment_date, 'total_day' => $total_days, 'st1' => $st1, 'st2' => $st2, 'st3' => $st3, 'st4' => $st4, 'st5' => $st5, 'st6' => $st6, 'st7' => $st7, 'st8' => $st8, 'st9' => $st9, 'unit' => $unit,'no_margha_fee'=>$request->no_margha_fee];
+        SnappyPdf::loadView('SD::Demand.template', $data)->save($path . '/' . $file_name);
         $demandlog = new DemandLog();
         $mem = new MemorandumModel();
         $demandlog->kpi_id = $request->get('kpi');
         $demandlog->total_amount = $total_amount;
         $demandlog->total_min_paid_amount = $total_min_paid_amount;
-        $demandlog->sheet_name = $file_name;
+        $demandlog->sheet_name = gzcompress(serialize($data));
         $demandlog->form_date = Carbon::parse($request->get('form_date'))->format('Y-m-d');
         $demandlog->to_date = Carbon::parse($request->get('to_date'))->format('Y-m-d');
         $demandlog->request_payment_date = Carbon::parse($request->get('other_date'))->format('Y-m-d');
@@ -180,7 +180,25 @@ class DemandSheetController extends Controller
     function viewDemandSheet($id)
     {
         $log = DemandLog::find($id);
-        $path = storage_path('DemandSheet/' . $log->kpi_id . '/' . $log->sheet_name);
-        return response(file_get_contents($path), 200, ['content-type' => 'application/pdf', 'content-disposition' => 'inline;filename="' . $log->sheet_name . '"']);
+        return SnappyPdf::loadView('SD::Demand.template', unserialize(gzuncompress($log->sheet_name)))->stream();
+//        $path = storage_path('DemandSheet/' . $log->kpi_id . '/' . $log->sheet_name);
+//        return response(file_get_contents($path), 200, ['content-type' => 'application/pdf', 'content-disposition' => 'inline;filename="' . $log->sheet_name . '"']);
+    }
+    public function  getDemandList(Request $request){
+        if($request->ajax()){
+            $demands = DemandLog::with('kpi');
+            if($request->range){
+                $demands->whereHas('kpi',function($q) use($request){
+                    $q->where('division_id',$request->range);
+                });
+            }
+            if($request->unit){
+                $demands->whereHas('kpi',function($q) use($request){
+                    $q->where('unit_id',$request->unit);
+                });
+            }
+            return response()->json($demands->get());
+        }
+        return abort(403);
     }
 }

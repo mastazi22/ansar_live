@@ -30,9 +30,24 @@ class SalaryManagementForShortKPIController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
+            $history = SalarySheetHistoryShort::with('kpi');
+            try {
+                if ($request->month_year && Carbon::createFromFormat("F, Y", $request->month_year)) {
+                    $history->where('generated_for_month', $request->month_year);
+                }
+            } catch (\Exception $e) {
 
+            }
+            $history->whereHas('kpi', function ($q) use ($request) {
+                if ($request->range && $request->range != 'all') $q->where('division_id', $request->range);
+                if ($request->unit && $request->unit != 'all') $q->where('unit_id', $request->unit);
+                if ($request->thana && $request->thana != 'all') $q->where('thana_id', $request->thana);
+                if ($request->kpi && $request->kpi != 'all') $q->where('id', $request->kpi);
+            });
+            $history = $history->paginate($request->limit?$request->limit:30);
+            return view('SD::salary_sheet_short.view_data',compact('history'));
         }
-        return view("SD::salary_disburse.index");
+        return view("SD::salary_sheet_short.index");
     }
 
     /**
@@ -90,14 +105,14 @@ class SalaryManagementForShortKPIController extends Controller
                 $for_month = $request->month_year;
                 $kpi_name = $kpi->kpi_name;
                 $kpi_id = $kpi->id;
-                return view("SD::salary_disburse_short.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id'));
+                return view("SD::salary_sheet_short.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id'));
 
 
             } else {
                 return response()->json(['message' => "Kpi detail does not found"], 400);
             }
         }
-        return view("SD::salary_disburse_short.create");
+        return view("SD::salary_sheet_short.create");
     }
 
     /**
@@ -157,7 +172,7 @@ class SalaryManagementForShortKPIController extends Controller
                     $excel->sheet('sheet1', function ($sheet) use ($value) {
                         $sheet->setAutoSize(false);
                         $sheet->setWidth('A', 5);
-                        $sheet->loadView('SD::salary_disburse_short.export', ['datas' => $value]);
+                        $sheet->loadView('SD::salary_sheet_short.export', ['datas' => $value]);
                     });
                 })->save('xls',false,true);
                 array_push($files,$f_name);

@@ -12,10 +12,34 @@
             $scope.calenderDatesDates = [];
             $scope.disabledDates = [];
             $scope.vdpList = $sce.trustAsHtml(`
-            <p style="font-size: 16px;font-weight: bold;text-align: center;">
-                Select guard,month,year to load data
-            </p>
-            `)
+            <div class="table-responsive">
+
+    <table class="table table-bordered table-condensed">
+        <caption><span style="font-size: 20px;">Total()</span>
+        </caption>
+
+        <tr>
+            <th>#</th>
+            <th>KPI name</th>
+            <th>KPI Division</th>
+            <th>KPI District</th>
+            <th>KPI thana</th>
+            <th>Generated Date</th>
+            <th>Generate For Month</th>
+            <!--<th>Type</th>
+            <th>Disburse status</th>-->
+
+        </tr>
+
+        <tr>
+                    <td colspan="7" class="bg-warning">
+                        No Payment History Available
+                    </td>
+                </tr>
+
+                </table>
+            </div>
+`)
 
             $scope.param = {}
             $scope.allLoading = false;
@@ -24,7 +48,7 @@
                 $scope.allLoading = true;
                 $http({
                     method: 'get',
-                    url: "{{URL::route('SD.salary_management.index')}}",
+                    url: "{{URL::route('SD.salary_management_short.index')}}",
                     params: $scope.param,
                 }).then(function (response) {
                     $scope.allLoading = false;
@@ -75,15 +99,15 @@
         <div class="box box-solid">
             <div class="box-header">
                 <filter-template
-                        show-item="['range','unit','thana','kpi']"
-                        type="single"
-                        range-change="loadPage()"
-                        unit-change="loadPage()"
-                        thana-change="loadPage()"
+                        show-item="['range','unit','thana','short_kpi']"
+                        type="all"
+                        range-change="loadData()"
+                        unit-change="loadData()"
+                        thana-change="loadData()"
                         data="param"
                         start-load="range"
-                        on-load="loadPage()"
-                        field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
+                        on-load="loadData()"
+                        field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',shortKpi:'col-sm-3'}"
                 >
 
                 </filter-template>
@@ -99,7 +123,6 @@
                         <div class="form-group">
                             <label style="display: block" for="">&nbsp;</label>
                             <button class="btn btn-primary" ng-click="loadData()"
-                                    ng-disabled="(!param.range||!param.unit||!param.thana||!param.kpi||!param.month_year)"
                             >
                                 <i class="fa fa-download"></i>&nbsp; Load data
                             </button>

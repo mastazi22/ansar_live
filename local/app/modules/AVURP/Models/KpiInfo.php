@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class KpiInfo extends Model
 {
-    protected $table = "avurp_kpi_info";
+    protected $table = "AVURP.avurp_kpi_info";
     protected $connection = "avurp";
     protected $guarded = ['id'];
 
