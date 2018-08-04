@@ -17,6 +17,8 @@ Route::group(['prefix' => 'SD', 'middleware' => ['web', 'auth', 'permission']], 
         Route::post('/generatedemandsheet', 'DemandSheetController@generateDemandSheet');
         Route::get('/demandhistory', 'DemandSheetController@demandHistory')->name('SD.demand_history');
         Route::get('/viewdemandsheet/{id}', 'DemandSheetController@viewDemandSheet')->where('id', '[0-9]+');
+        Route::post('attendance/load_datab', ['as'=>"SD.attendance.load_datab",'uses'=>'AttendanceController@loadDataForPlanB']);
+        Route::post('attendance/storb', ['as'=>"SD.attendance.storeb",'uses'=>'AttendanceController@storePlanB']);
         Route::resource('attendance', 'AttendanceController');
         Route::post('attendance/view_attendance', ['as'=>'SD.attendance.view_attendance','uses'=>'AttendanceController@viewAttendance']);
         Route::resource('leave', 'LeaveManagementController');

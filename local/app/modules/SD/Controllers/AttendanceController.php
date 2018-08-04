@@ -4,6 +4,8 @@ namespace App\modules\SD\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\modules\HRM\Models\KpiGeneralModel;
+use App\modules\HRM\Models\PersonalInfo;
+use App\modules\HRM\Models\TransferAnsar;
 use App\modules\SD\Models\Attendance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -138,7 +140,7 @@ class AttendanceController extends Controller
             return view('SD::attendance.create_data', compact('date', 'data'));
 
         }
-        return view('SD::attendance.create');
+        return view('SD::attendance.create_b');
     }
 
     /**
@@ -244,26 +246,26 @@ class AttendanceController extends Controller
     public function update(Request $request, $id)
     {
         DB::connection("sd")->beginTransaction();
-        try{
+        try {
             $attendance = Attendance::findOrFail($id);
             $data = [];
-            if($request->status=="present"&&((!$attendance->is_present&&!$attendance->is_leave)||(!$attendance->is_present&&$attendance->is_leave))){
+            if ($request->status == "present" && ((!$attendance->is_present && !$attendance->is_leave) || (!$attendance->is_present && $attendance->is_leave))) {
                 $data["is_present"] = 1;
                 $data["is_leave"] = 0;
-            } else if($request->status=="absent"&&($attendance->is_present||$attendance->is_leave)){
+            } else if ($request->status == "absent" && ($attendance->is_present || $attendance->is_leave)) {
                 $data["is_present"] = 0;
                 $data["is_leave"] = 0;
-            }else if($request->status=="leave"&&((!$attendance->is_present&&!$attendance->is_leave)||($attendance->is_present&&!$attendance->is_leave))){
+            } else if ($request->status == "leave" && ((!$attendance->is_present && !$attendance->is_leave) || ($attendance->is_present && !$attendance->is_leave))) {
                 $data["is_present"] = 0;
                 $data["is_leave"] = 1;
             }
             $attendance->update($data);
             DB::connection("sd")->commit();
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::connection("sd")->rollback();
-            return response()->json(['status'=>false,'message'=>$e->getMessage()]);
+            return response()->json(['status' => false, 'message' => $e->getMessage()]);
         }
-        return response()->json(['status'=>true,'message'=>"Attendance updated successfully"]);
+        return response()->json(['status' => true, 'message' => "Attendance updated successfully"]);
     }
 
     /**
@@ -277,10 +279,11 @@ class AttendanceController extends Controller
         //
     }
 
+
     public function viewAttendance(Request $request)
     {
 //        return "sadasd";
-        if($request->ajax()){
+        if ($request->ajax()) {
             $rules = [
                 "date" => 'required|regex:/^[0-9]{1,2}$/',
                 "month" => 'required',
@@ -298,7 +301,7 @@ class AttendanceController extends Controller
             $present_list = Attendance::with(['ansar' => function ($q) {
                 $q->with(["embodiment" => function ($qq) {
                     $qq->with("kpi")->select("ansar_id", "kpi_id");
-                }])->select('ansar_id', 'ansar_name_bng','division_id','unit_id','thana_id');
+                }])->select('ansar_id', 'ansar_name_bng', 'division_id', 'unit_id', 'thana_id');
             }])->where('day', $request->date)
                 ->where('month', $request->month)
                 ->where('year', $request->year)
@@ -310,7 +313,7 @@ class AttendanceController extends Controller
             $absent_list = Attendance::with(['ansar' => function ($q) {
                 $q->with(["embodiment" => function ($qq) {
                     $qq->with("kpi")->select("ansar_id", "kpi_id");
-                }])->select('ansar_id', 'ansar_name_bng','division_id','unit_id','thana_id');
+                }])->select('ansar_id', 'ansar_name_bng', 'division_id', 'unit_id', 'thana_id');
             }])->where('day', $request->date)
                 ->where('month', $request->month)
                 ->where('year', $request->year)
@@ -322,7 +325,7 @@ class AttendanceController extends Controller
             $leave_list = Attendance::with(['ansar' => function ($q) {
                 $q->with(["embodiment" => function ($qq) {
                     $qq->with("kpi")->select("ansar_id", "kpi_id");
-                }])->select('ansar_id', 'ansar_name_bng','division_id','unit_id','thana_id');
+                }])->select('ansar_id', 'ansar_name_bng', 'division_id', 'unit_id', 'thana_id');
             }])->where('day', $request->date)
                 ->where('month', $request->month)
                 ->where('year', $request->year)
@@ -331,11 +334,168 @@ class AttendanceController extends Controller
                 ->where('is_leave', 1)
                 ->where('is_present', 0)
                 ->get();
-            $title = "Attendance of <br>".$kpi->kpi_name."<br> Date: ".Carbon::create($request->year,$request->month,$request->date)->format('d-M-Y');
-            return view('SD::attendance.view', compact('title', 'present_list','absent_list','leave_list'));
+            $title = "Attendance of <br>" . $kpi->kpi_name . "<br> Date: " . Carbon::create($request->year, $request->month, $request->date)->format('d-M-Y');
+            return view('SD::attendance.view', compact('title', 'present_list', 'absent_list', 'leave_list'));
         }
         abort(401);
 
+    }
+
+    public function loadDataForPlanB(Request $request)
+    {
+        if (!$request->ajax()) return abort(403);
+        $ansar_id = $request->ansar_id;
+        $personalDetails = PersonalInfo::with(['embodiment.kpi', 'designation'])->whereHas('status', function ($q) {
+            $q->where('embodied_status', 1);
+            $q->where('block_list_status', 0);
+            $q->where('black_list_status', 0);
+        })->where('ansar_id', $ansar_id)->first();
+        $data = [];
+        if ($personalDetails) {
+
+            if ($personalDetails->embodiment->joining_date != $personalDetails->embodiment->transfered_date) {
+                $row = [];
+                $row["kpi_id"] = $personalDetails->embodiment->kpi->id;
+                $row["kpi_name"] = $personalDetails->embodiment->kpi->kpi_name;
+                $row["dates"] = [];
+                $t_date = Carbon::parse($personalDetails->embodiment->transfered_date);
+                if ($t_date->month < 7 || $t_date->month > 7) {
+                    $t_date = Carbon::create(2018, 7, 1);
+                    for ($i = 0; $i < $t_date->daysInMonth; $i++) {
+                        $modified_date = $t_date->addDays($i == 0 ? 0 : 1);
+                        array_push($row['dates'], [
+                            'day' => $modified_date->day,
+                            'month' => $modified_date->month - 1,
+                            'year' => $modified_date->year,
+                        ]);
+                    }
+                } else {
+                    for ($i = 0; $i < $t_date->daysInMonth - $t_date->day; $i++) {
+                        $modified_date = $t_date->addDays($i == 0 ? 0 : 1);
+                        array_push($row['dates'], [
+                            'day' => $modified_date->day,
+                            'month' => $modified_date->month - 1,
+                            'year' => $modified_date->year,
+                        ]);
+                    }
+                }
+
+                array_push($data, $row);
+                $transfer_history = TransferAnsar::where('ansar_id', $ansar_id)
+                    ->where('embodiment_id', $personalDetails->embodiment->kpi->id)
+                    ->whereMonth('present_kpi_join_date', 7)
+                    ->whereYear('present_kpi_join_date', 2018)
+                    ->orderBy('present_kpi_join_date', 'desc')
+                    ->get();
+                foreach ($transfer_history as $th) {
+                    $row = [];
+                    $row["kpi_id"] = $th->present_kpi_id;
+                    $row["kpi_name"] = $th->presentKpi->kpi_name;
+                    $pd = Carbon::parse($th->present_kpi_join_date);
+                    $tdd = Carbon::parse($th->transfered_kpi_join_date);
+                    for ($i = $pd->day; $i < $tdd->day; $i++) {
+                        array_push($row['dates'], [
+                            'day' => $i,
+                            'month' => 6,
+                            'year' => 2018,
+                        ]);
+                    }
+                    array_push($data, $row);
+                }
+            } else {
+                $row = [];
+                $row["kpi_id"] = $personalDetails->embodiment->kpi->id;
+                $row["kpi_name"] = $personalDetails->embodiment->kpi->kpi_name;
+                $row["dates"] = [];
+                $first_date = Carbon::create(2018, 7, 1);
+                for ($i = 0; $i < $first_date->daysInMonth; $i++) {
+                    $modified_date = $first_date->addDays($i == 0 ? 0 : 1);
+                    array_push($row['dates'], [
+                        'day' => $modified_date->day,
+                        'month' => $modified_date->month - 1,
+                        'year' => $modified_date->year,
+                    ]);
+                }
+                array_push($data, $row);
+            }
+        }
+        return response()->json(compact('personalDetails', 'data'));
+
+
+    }
+
+    public function storePlanB(Request $request)
+    {
+        $rules = [
+            "ansar_id" => "required",
+            "selectedDates" => "required",
+            "selectedDates.*.kpi_id" => "required|exists:hrm.tbl_kpi_info,id"
+        ];
+        $this->validate($request, $rules);
+        $data = [];
+        DB::connection('sd')->beginTransaction();
+        try{
+            foreach ($request->selectedDates as $date) {
+
+                foreach ($date["present"] as $present){
+                    $row = $query = [];
+                    $row['ansar_id'] = $query['ansar_id'] = $request->ansar_id;
+                    $row['kpi_id'] = $query['kpi_id'] = $date["kpi_id"];
+                    $row['day'] = $query['day'] = $present["day"];
+                    $row['month'] = $query['month'] = intval($present["month"])+1;
+                    $row['year'] = $query['year'] = intval($present["year"]);
+                    $row['is_present'] = 1;
+                    $row['is_leave'] = 0;
+                    $row['is_attendance_taken'] = 1;
+                    $att = Attendance::where($query)->first();
+                    if(!$att)array_push($data,$row);
+                    else if(!$att->is_attendance_taken){
+                        $att->update($row);
+                    }
+                }
+                foreach ($date["absent"] as $absent){
+                    $row = $query = [];
+                    $row['ansar_id'] = $query['ansar_id'] = $request->ansar_id;
+                    $row['kpi_id'] = $query['kpi_id'] = $date["kpi_id"];
+                    $row['day'] = $query['day'] = $absent["day"];
+                    $row['month'] = $query['month'] = intval($absent["month"])+1;
+                    $row['year'] = $query['year'] = intval($absent["year"]);
+                    $row['is_present'] = 0;
+                    $row['is_leave'] = 0;
+                    $row['is_attendance_taken'] = 1;
+                    $att = Attendance::where($query)->first();
+                    if(!$att)array_push($data,$row);
+                    else if(!$att->is_attendance_taken){
+                        $att->update($row);
+                    }
+                }
+                foreach ($date["leave"] as $leave){
+                    $row = $query = [];
+                    $row['ansar_id'] = $query['ansar_id'] = $request->ansar_id;
+                    $row['kpi_id'] = $query['kpi_id'] = $date["kpi_id"];
+                    $row['day'] = $query['day'] = $leave["day"];
+                    $row['month'] = $query['month'] = intval($leave["month"])+1;
+                    $row['year'] = $query['year'] = intval($leave["year"]);
+                    $row['is_present'] = 0;
+                    $row['is_leave'] = 1;
+                    $row['is_attendance_taken'] = 1;
+                    $att = Attendance::where($query)->first();
+                    if(!$att)array_push($data,$row);
+                    else if(!$att->is_attendance_taken){
+                        $att->update($row);
+                    }
+                }
+            }
+            Attendance::insert($data);
+            DB::connection('sd')->commit();
+        }catch(\Exception $e){
+            DB::connection('sd')->rollback();
+            return response()->json(['status'=>false,'message'=>$e->getMessage()]);
+        }
+        if(count($data)==0){
+            return response()->json(['status'=>false,'message'=>'Attendance already taken']);
+        }
+        return response()->json(['status'=>true,'message'=>'Attendance taken successfully']);
     }
 
 
