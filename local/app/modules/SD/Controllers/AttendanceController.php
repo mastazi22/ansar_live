@@ -357,6 +357,7 @@ class AttendanceController extends Controller
         if ($personalDetails) {
 
             if ($personalDetails->embodiment->joining_date != $personalDetails->embodiment->transfered_date) {
+
                 $row = [];
                 $row["kpi_id"] = $personalDetails->embodiment->kpi->id;
                 $row["kpi_name"] = $personalDetails->embodiment->kpi->kpi_name;
@@ -390,6 +391,7 @@ class AttendanceController extends Controller
                     ->whereYear('present_kpi_join_date','=', 2018)
                     ->orderBy('present_kpi_join_date', 'desc')
                     ->get();
+                return $transfer_history;
                 foreach ($transfer_history as $th) {
                     $row = [];
                     $row["kpi_id"] = $th->present_kpi_id;
