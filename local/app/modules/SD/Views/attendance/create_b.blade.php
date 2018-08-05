@@ -421,7 +421,7 @@
 
                     </div>
                     <div class="col-sm-6 col-centered" ng-if="!personalDetails">
-                        <p class="text text-danger text-center">[[message]]</p>
+                        <p class="text text-danger text-center">This ansar does not embodied in July,2018 or previous month</p>
                     </div>
                 </div>
                 <div class="container-fluid" ng-if="personalDetails">
