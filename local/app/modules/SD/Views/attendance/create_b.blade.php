@@ -420,7 +420,7 @@
                         </div>
 
                     </div>
-                    <div class="col-sm-6 col-centered" ng-if="notFound">
+                    <div class="col-sm-6 col-centered" ng-if="!personalDetails">
                         <p class="text text-danger text-center">[[message]]</p>
                     </div>
                 </div>
