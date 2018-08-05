@@ -389,6 +389,8 @@ class AttendanceController extends Controller
                     ->where('embodiment_id', $personalDetails->embodiment->id)
                     ->whereMonth('present_kpi_join_date','<=', 7)
                     ->whereYear('present_kpi_join_date','<=', 2018)
+                    ->whereMonth('transfered_kpi_join_date','=', 7)
+                    ->whereYear('transfered_kpi_join_date','=', 2018)
                     ->orderBy('present_kpi_join_date', 'desc')
                     ->get();
 //                return $transfer_history;
