@@ -216,19 +216,42 @@ class SalaryManagementController extends Controller
             }
             SalaryHistory::insert($salary_history);
             DB::commit();
-            Excel::create('salary_sheet', function ($excel) use ($request) {
+            $data_collection = collect($request->attendance_data)->groupBy("bank_type");
+//            dd($data_collection);
+            $files = [];
+            foreach ($data_collection as $key=>$value) {
+                $f_name = Excel::create($key=='n\a'?"no_bank_info":$key, function ($excel) use ($value,$request) {
+
+                    $excel->sheet('sheet1', function ($sheet) use ($value,$request) {
+                        $sheet->setAutoSize(false);
+                        $sheet->setWidth('A', 5);
+                        $sheet->loadView('SD::salary_sheet.export', ['datas' => $value,'type' => $request->generated_type]);
+                    });
+                })->save('xls',false,true);
+                array_push($files,$f_name);
+            }
+            /*Excel::create('salary_sheet', function ($excel) use ($request) {
 
                 $excel->sheet('sheet1', function ($sheet) use ($request) {
                     $sheet->setAutoSize(false);
                     $sheet->setWidth('A', 5);
                     $sheet->loadView('SD::salary_sheet.export', ['datas' => $request->attendance_data, 'type' => $request->generated_type]);
                 });
-            })->download('xls');
+            })->download('xls');*/
         } catch (\Exception $e) {
             DB::rollback();
 //            return $e;
             return redirect()->route('SD.salary_management.create')->with("error_message", $e->getMessage());
         }
+        $zip_archive_name = "salary_sheet.zip";
+        $zip = new \ZipArchive();
+        if($zip->open(public_path($zip_archive_name),\ZipArchive::CREATE)===true){
+            foreach ($files as $file){
+                $zip->addFile($file["full"],$file["file"]);
+            }
+            $zip->close();
+        }
+        return response()->download(public_path($zip_archive_name));
     }
 
     /**
