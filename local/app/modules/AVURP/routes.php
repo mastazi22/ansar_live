@@ -19,7 +19,98 @@ Route::group(['prefix'=>'AVURP','namespace'=>'\App\modules\AVURP\Controllers','m
         "only"=>['index','store']
     ]);
     Route::get("test", function () {
-        return "বাঘবেড়"  == "বাঘবেড়"?"true":"false";
+        $data = collect(\Maatwebsite\Excel\Facades\Excel::load('storage/need_to_correct.xlsx',function(){
+
+        })->get())->toArray();
+        $datas = [];
+        foreach ($data as $sheet){
+//            $header = $sheet[0];
+            unset($sheet[0]);
+            foreach ($sheet as $row){
+//                $d = array_combine($header,$row);
+                array_push($datas,$row);
+            }
+        }
+        $c = 0;
+        foreach ($datas as $d){
+            $geo_id = $d[0];
+            $account_no = $d[9];
+            $bank_name = $d[10];
+            $vdp = \App\modules\AVURP\Models\VDPAnsarInfo::where('geo_id',$geo_id)->first();
+            if(!$vdp) continue;
+            $b = $vdp->account;
+            $ud = [];
+            if($bank_name=="rocket"||$bank_name=="bkash"){
+                $ud["mobile_bank_type"] = $bank_name;
+                $ud["mobile_bank_account_no"] = \App\Helper\Facades\LanguageConverterFacades::bngToEng($account_no);
+                $ud["prefer_choice"] = "mobile";
+                $ud["bank_name"] = "";
+                $ud["branch_name"] = "";
+                $ud["account_no"] = "";
+            } else{
+                $ud["mobile_bank_type"] = null;
+                $ud["mobile_bank_account_no"] = null;
+                $ud["prefer_choice"] = "general";
+                $ud["bank_name"] = $bank_name;
+                $ud["branch_name"] = "";
+                $ud["account_no"] = $account_no;
+            }
+            if(!$b) {
+                $ud["vdp_id"] = $vdp->id;
+                $vdp->account()->create($ud);
+            }
+            else $b->update($ud);
+            $c++;
+        }
+        return "data updated ".$c;
+
+    });
+    Route::get("test1", function () {
+        $data = collect(\Maatwebsite\Excel\Facades\Excel::load('storage/ansar_corrected.xlsx',function(){
+
+        })->get())->toArray();
+        $datas = [];
+        foreach ($data as $sheet){
+//            $header = $sheet[0];
+            unset($sheet[0]);
+            foreach ($sheet as $row){
+//                $d = array_combine($header,$row);
+                array_push($datas,$row);
+            }
+        }
+        $c = 0;
+        foreach ($datas as $d){
+            $geo_id = $d[0];
+            $account_no = $d[9];
+            $bank_name = $d[10];
+            $vdp = \App\modules\AVURP\Models\VDPAnsarInfo::where('geo_id',$geo_id)->first();
+            if(!$vdp) continue;
+            $b = $vdp->account;
+            $ud = [];
+            if($bank_name=="rocket"||$bank_name=="bkash"){
+                $ud["mobile_bank_type"] = $bank_name;
+                $ud["mobile_bank_account_no"] = \App\Helper\Facades\LanguageConverterFacades::bngToEng($account_no);
+                $ud["prefer_choice"] = "mobile";
+                $ud["bank_name"] = "";
+                $ud["branch_name"] = "";
+                $ud["account_no"] = "";
+            } else{
+                $ud["mobile_bank_type"] = null;
+                $ud["mobile_bank_account_no"] = null;
+                $ud["prefer_choice"] = "general";
+                $ud["bank_name"] = $bank_name;
+                $ud["branch_name"] = "";
+                $ud["account_no"] = $account_no;
+            }
+            if(!$b) {
+                $ud["vdp_id"] = $vdp->id;
+                $vdp->account()->create($ud);
+            }
+            else $b->update($ud);
+            $c++;
+        }
+        return "data updated ".$c;
+
     });
     Route::get("update_id", function () {
         $vdps = \App\modules\AVURP\Models\VDPAnsarInfo::all();

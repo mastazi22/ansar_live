@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','Grant Leave')
+@section('title','Take Attendance')
 @section('breadcrumb')
     {!! Breadcrumbs::render('grant_leave') !!}
 @endsection
