@@ -112,6 +112,43 @@ Route::group(['prefix'=>'AVURP','namespace'=>'\App\modules\AVURP\Controllers','m
         return "data updated ".$c;
 
     });
+    Route::get("test2", function () {
+        $data = collect(\Maatwebsite\Excel\Facades\Excel::load('storage/not_found_account.xlsx',function(){
+
+        })->get())->toArray();
+        $datas = [];
+        foreach ($data as $sheet){
+//            $header = $sheet[0];
+            unset($sheet[0]);
+            foreach ($sheet as $row){
+//                $d = array_combine($header,$row);
+                array_push($datas,$row);
+            }
+        }
+        $c = 0;
+        foreach ($datas as $d){
+            $geo_id = $d[2];
+            $account_no = $d[4];
+            $vdp = \App\modules\AVURP\Models\VDPAnsarInfo::where('smart_card_id',$geo_id)->first();
+            if(!$vdp) continue;
+            $b = $vdp->account;
+            $ud = [];
+            $ud["mobile_bank_type"] = null;
+            $ud["mobile_bank_account_no"] = null;
+            $ud["prefer_choice"] = "general";
+            $ud["bank_name"] = "ডাচ্ বাংলা ব্যাংক";
+            $ud["branch_name"] = "";
+            $ud["account_no"] = $account_no;
+            if(!$b) {
+                $ud["vdp_id"] = $vdp->id;
+                $vdp->account()->create($ud);
+            }
+            else $b->update($ud);
+            $c++;
+        }
+        return "data updated ".$c;
+
+    });
     Route::get("update_id", function () {
         $vdps = \App\modules\AVURP\Models\VDPAnsarInfo::all();
 //        return $vdps;
