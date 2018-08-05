@@ -69,6 +69,7 @@
                 <?php $ad = $data->where('day', $i + 1)->first(); ?>
                 <tr>
                     <td>{{\Carbon\Carbon::parse($first_date)->addDays($i)->format('d-M-Y')}}</td>
+                    {{dump($ad)}}
                     @if($ad)
                         <td>
                             @if($ad->is_present)
