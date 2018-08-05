@@ -66,10 +66,9 @@
                 <th style="width: 50px">Action</th>
             </tr>
             @for($i=0;$i<\Carbon\Carbon::parse($first_date)->daysInMonth;$i++)
-                <?php $ad = $data->where('day', $i + 1)->first(); ?>
+                <?php $ad = $data->whereLoose('day', $i + 1)->first(); ?>
                 <tr>
                     <td>{{\Carbon\Carbon::parse($first_date)->addDays($i)->format('d-M-Y')}}</td>
-                    {{dump($ad)}}
                     @if($ad)
                         <td>
                             @if($ad->is_present)
