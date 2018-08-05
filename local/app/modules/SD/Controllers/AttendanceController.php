@@ -66,6 +66,7 @@ class AttendanceController extends Controller
                 $data = $attendance->get();
                 $ansar_id = $request->ansar_id;
             }
+            return $data;
             $first_date = Carbon::parse("01-{$request->month}-{$request->year}");
             return view('SD::attendance.data', compact('first_date', 'data', 'type', 'ansar_id'));
 
