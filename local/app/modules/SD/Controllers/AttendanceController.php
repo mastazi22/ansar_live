@@ -396,6 +396,7 @@ class AttendanceController extends Controller
                     $row = [];
                     $row["kpi_id"] = $th->present_kpi_id;
                     $row["kpi_name"] = $th->presentKpi->kpi_name;
+                    $row['dates'] = [];
                     $pd = Carbon::parse($th->present_kpi_join_date);
                     $tdd = Carbon::parse($th->transfered_kpi_join_date);
                     for ($i = $pd->month<7?0:$pd->day; $i < $tdd->day; $i++) {
