@@ -349,6 +349,9 @@ class AttendanceController extends Controller
             $q->where('embodied_status', 1);
             $q->where('block_list_status', 0);
             $q->where('black_list_status', 0);
+        })->whereHas('embodiment',function($q){
+            $q->whereMonth('joining_date',7);
+            $q->whereYear('joining_date',2018);
         })->where('ansar_id', $ansar_id)->first();
         $data = [];
         if ($personalDetails) {
