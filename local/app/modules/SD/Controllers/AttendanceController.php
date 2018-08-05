@@ -375,7 +375,7 @@ class AttendanceController extends Controller
                     }
                 } else {
                     $modified_date = clone $t_date;
-                    for ($i = 0; $i < $t_date->daysInMonth - $t_date->day; $i++) {
+                    for ($i = 0; $i <= $t_date->daysInMonth - $t_date->day; $i++) {
                         $modified_date->addDays($i == 0 ? 0 : 1);
                         array_push($row['dates'], [
                             'day' => $modified_date->day,
