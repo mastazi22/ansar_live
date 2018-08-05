@@ -387,18 +387,18 @@ class AttendanceController extends Controller
                 array_push($data, $row);
                 $transfer_history = TransferAnsar::where('ansar_id', $ansar_id)
                     ->where('embodiment_id', $personalDetails->embodiment->kpi->id)
-                    ->whereMonth('present_kpi_join_date','=', 7)
-                    ->whereYear('present_kpi_join_date','=', 2018)
+                    ->whereMonth('present_kpi_join_date','<=', 7)
+                    ->whereYear('present_kpi_join_date','<=', 2018)
                     ->orderBy('present_kpi_join_date', 'desc')
                     ->get();
-                return $transfer_history;
+//                return $transfer_history;
                 foreach ($transfer_history as $th) {
                     $row = [];
                     $row["kpi_id"] = $th->present_kpi_id;
                     $row["kpi_name"] = $th->presentKpi->kpi_name;
                     $pd = Carbon::parse($th->present_kpi_join_date);
                     $tdd = Carbon::parse($th->transfered_kpi_join_date);
-                    for ($i = $pd->day; $i < $tdd->day; $i++) {
+                    for ($i = $pd->month<7?0:$pd->day; $i < $tdd->day; $i++) {
                         array_push($row['dates'], [
                             'day' => $i,
                             'month' => 6,
