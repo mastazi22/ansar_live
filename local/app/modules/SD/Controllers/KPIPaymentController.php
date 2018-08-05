@@ -67,14 +67,14 @@ class KPIPaymentController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            "demand_id"=>'required|exists:sd.tbl_demand_log,id',
+            "demand_or_salary_sheet_id"=>'required',
             "paid_amount"=>"required",
             "document"=>"required",
         ];
         $this->validate($request,$rules);
         DB::connection("sd")->beginTransaction();
         try{
-            $demand_log = DemandLog::find($request->demand_id);
+            $demand_log = DemandLog::find($request->demand_or_salary_sheet_id);
             $document = $request->file('document');
             $file_name = time().".".$document->clientExtension();
             $path = storage_path("bank_receipt");
@@ -83,7 +83,7 @@ class KPIPaymentController extends Controller
             }
             $image = Image::make($document)->save($path.'/'.$file_name);
             $data = [
-                'demand_id'=>$request->demand_id,
+                'demand_or_salary_sheet_id'=>$request->demand_id,
                 'document'=>$file_name,
                 'paid_amount'=>$request->paid_amount,
                 'kpi_id'=>$demand_log->kpi->id,

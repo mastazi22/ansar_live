@@ -2,11 +2,13 @@
 {!! Form::hidden('kpi_id',$kpi_id) !!}
 {!! Form::hidden('generated_for_month',$for_month) !!}
 {!! Form::hidden('generated_type',$generated_type) !!}
+{!! Form::hidden('extra',$extra) !!}
 <div class="table-responsive">
     @if($generated_type=='salary')
         <table class="table table-condensed table-bordered">
             <caption style="padding: 0 10px">
-                <h4 style="    box-shadow: 1px 1px 1px #c5bfbf;padding: 10px 0;line-height: 25px;" class="text-bold text-center">
+                <h4 style="    box-shadow: 1px 1px 1px #c5bfbf;padding: 10px 0;line-height: 25px;"
+                    class="text-bold text-center">
                     Salary of<br>{{$kpi_name}}<br>{{\Carbon\Carbon::parse($for_month)->format("F, Y")}}
                 </h4>
             </caption>
@@ -23,7 +25,7 @@
                 <th>Share Fee</th>
                 <th>Net Amount</th>
             </tr>
-            <?php $i=0;?>
+            <?php $i = 0;?>
             @forelse($datas as $data)
                 {!! Form::hidden("attendance_data[$i][kpi_name]",$kpi_name) !!}
                 {!! Form::hidden("attendance_data[$i][ansar_id]",$data['ansar_id']) !!}
@@ -56,12 +58,71 @@
                     <td colspan="10" class="bg-warning">No attendance data available for this month</td>
                 </tr>
             @endforelse
+            @if(count($datas)>0)
+                <tr>
+                    <th colspan="9" class="text-right">
+                        {{$withWeapon?"20% of daily salary":"15% of daily salary"}}:
+                    </th>
+                    <td colspan="2">
+                        {{$extra}}
+                    </td>
+                </tr>
+            @endif
         </table>
-        @else
+        @if(count($datas)>0)
+            <h3 class="text-center">Summery</h3>
+            <table class="table table-bordered table-condensed">
+                <tr>
+                    <th>{{$withWeapon?"20% of daily salary":"15% of daily salary"}}</th>
+                    <th>Total Welfare Fee</th>
+                    <th>Total Share Fee</th>
+                    <th>Total Net Salary</th>
+                    <th>Total Amount Need To Deposit</th>
+                    <th>Total Min Amount Need To
+                        Deposit<br>(without {{$withWeapon?"20% of daily salary":"15% of daily salary"}})
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        {{$extra}}
+                        {!! Form::hidden('summery[extra]',$extra) !!}
+                    </td>
+                    <td>
+                        {{collect($datas)->sum('welfare_fee')}}
+                        {!! Form::hidden('summery[welfare_fee]',collect($datas)->sum('welfare_fee')) !!}
+                    </td>
+                    <td>
+                        {{collect($datas)->sum('share_amount')}}
+                        {!! Form::hidden('summery[share_amount]',collect($datas)->sum('share_amount')) !!}
+                    </td>
+                    <td>
+                        <?php
+                        $total_net_amount = collect($datas)->sum(function ($data) {
+                            return $data['total_amount'] - ($data['welfare_fee'] + $data['share_amount']);
+                        });?>
+
+                        {{$total_net_amount}}
+                        {!! Form::hidden('summery[total_net_amount]',$total_net_amount) !!}
+                    </td>
+                    <td>
+                        {{collect($datas)->sum('total_amount')+$extra}}
+                        {!! Form::hidden('summery[total_max_amount]',collect($datas)->sum('total_amount')+$extra) !!}
+                    </td>
+                    <td>
+                        {{collect($datas)->sum('total_amount')}}
+                        {!! Form::hidden('summery[total_min_amount]',collect($datas)->sum('total_amount')) !!}
+                    </td>
+                </tr>
+            </table>
+        @endif
+    @else
         <table class="table table-condensed table-bordered">
             <caption style="padding: 0 10px">
-                <h4 style="    box-shadow: 1px 1px 1px #c5bfbf;padding: 10px 0;line-height: 25px;" class="text-bold text-center">
-                    Bonus of<br>{{$kpi_name}}<br>Based on <span class="text text-danger">{{\Carbon\Carbon::parse($for_month)->format("F, Y")}}</span> Attendance
+                <h4 style="    box-shadow: 1px 1px 1px #c5bfbf;padding: 10px 0;line-height: 25px;"
+                    class="text-bold text-center">
+                    Bonus of<br>{{$kpi_name}}<br>Based on <span
+                            class="text text-danger">{{\Carbon\Carbon::parse($for_month)->format("F, Y")}}</span>
+                    Attendance
                 </h4>
             </caption>
             <tr>
@@ -76,7 +137,7 @@
                 <th>Net Amount</th>
                 <th>Bonus For</th>
             </tr>
-            <?php $i=0;?>
+            <?php $i = 0;?>
             @forelse($datas as $data)
                 {!! Form::hidden("attendance_data[$i][kpi_name]",$kpi_name) !!}
                 {!! Form::hidden("attendance_data[$i][ansar_id]",$data['ansar_id']) !!}

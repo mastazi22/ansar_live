@@ -83,6 +83,7 @@ class SalaryManagementController extends Controller
                             'ansar_id', 'month', 'year'
                         )->groupBy('ansar_id')->get();
                     $datas = [];
+                    $all_daily_fee = 0;
                     foreach ($attendance as $a) {
                         $ansar = $a->ansar;
                         $total_daily_fee = floatval($ansar->designation_id == 3 ? DemandConstantFacdes::getValue("DPA")->cons_value : DemandConstantFacdes::getValue("DA")->cons_value)
@@ -93,6 +94,7 @@ class SalaryManagementController extends Controller
                         $total_medical_fee = floatval(DemandConstantFacdes::getValue("DV")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
                         $welfare_fee = floatval(DemandConstantFacdes::getValue("WF")->cons_value);
                         $share_amount = floatval(DemandConstantFacdes::getValue("SA")->cons_value);
+                        $all_daily_fee+=$total_daily_fee;
                         array_push($datas, [
                             'total_amount' => $total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee + $total_medical_fee,
                             'welfare_fee' => $welfare_fee,
@@ -104,6 +106,7 @@ class SalaryManagementController extends Controller
                             'total_leave' => $a->total_leave,
                             'total_absent' => $a->total_absent,
                             'account_no' => $ansar->account ? $ansar->account->account_no : 'n\a',
+                            'bank_type' => $ansar->account ? ($ansar->account->prefer_choice=="mobile"?$ansar->mobile_bank_type:"DBBL") : 'n\a',
                         ]);
 //                        return $datas;
                     }
@@ -111,8 +114,10 @@ class SalaryManagementController extends Controller
                     $for_month = $request->month_year;
                     $generated_type = $request->sheetType;
                     $kpi_name = $kpi->kpi_name;
+                    $withWeapon = $kpi->details->with_weapon;
+                    $extra = $withWeapon?ceil(($all_daily_fee*20)/100):ceil(($all_daily_fee*15)/100);
                     $kpi_id = $kpi->id;
-                    return view("SD::salary_sheet.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id', 'generated_type'));
+                    return view("SD::salary_sheet.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id', 'generated_type','withWeapon','extra'));
 
                 } else if ($request->sheetType == 'bonus') {
                     $date = Carbon::createFromFormat('F, Y', $request->month_year);
@@ -177,6 +182,7 @@ class SalaryManagementController extends Controller
             'generated_for_month' => "required",
             'generated_type' => "required",
             'attendance_data' => "required",
+            'summery' => "required",
 
         ];
         $v = Validator::make($request->all(), $rules);
@@ -192,6 +198,7 @@ class SalaryManagementController extends Controller
                 'generated_date' => Carbon::now()->format('Y-m-d'),
                 'action_user_id' => auth()->user()->id,
                 'data' => gzcompress(serialize($request->attendance_data)),
+                'summery' => gzcompress(serialize($request->summery)),
 
             ];
 

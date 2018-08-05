@@ -32,7 +32,7 @@
             @for($i=0;$i<\Carbon\Carbon::parse($first_date)->daysInMonth;$i++)
                 <?php
                 $d = \Carbon\Carbon::parse($first_date)->addDays($i);
-                $ad = $data->where('day', intval($d->format('d')))->first();
+                $ad = $data->whereLoose('day', intval($d->format('d')))->first();
                 ?>
                 <tr>
                     <td>{{$d->format('d-M-Y')}}</td>

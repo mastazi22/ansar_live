@@ -17,6 +17,9 @@ class CashDeposite extends Model
         return $this->belongsTo(KpiGeneralModel::class,'kpi_id');
     }
     public function demand(){
-        return $this->belongsTo(DemandLog::class,'demand_id');
+        return $this->belongsTo(DemandLog::class,'demand_or_salary_sheet_id')->where('payment_against','demand_sheet');
+    }
+    public function salarySheet(){
+        return $this->belongsTo(SalarySheetHistory::class,'demand_or_salary_sheet_id')->where('payment_against','salary_sheet');
     }
 }

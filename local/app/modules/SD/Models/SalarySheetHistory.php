@@ -19,4 +19,7 @@ class SalarySheetHistory extends Model
     public function salaryHistory(){
         return $this->hasMany(SalaryHistory::class,'salary_sheet_id');
     }
+    public function deposit(){
+        return $this->hasOne(CashDeposite::class,'demand_or_salary_sheet_id')->where('payment_against','salary_sheet');
+    }
 }

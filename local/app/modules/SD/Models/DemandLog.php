@@ -14,4 +14,7 @@ class DemandLog extends Model
     public function kpi(){
         return $this->belongsTo(KpiGeneralModel::class,'kpi_id');
     }
+    public function deposit(){
+        return $this->hasOne(CashDeposite::class,'demand_or_salary_sheet_id')->where('payment_against','demand_sheet');
+    }
 }

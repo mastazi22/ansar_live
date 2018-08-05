@@ -47,11 +47,12 @@
                 <div class="row">
                     <div class="col-sm-6 col-centered">
                         {!! Form::open(['route'=>"SD.kpi_payment.store","files"=>true]) !!}
+                        {!! Form::hidden('payment_against','demand_sheet') !!}
                             <div class="form-group">
                                 <label class="control-label">Select a demand sheet</label>
-                                <select name="demand_id" class="form-control" >
+                                <select name="demand_or_salary_sheet_id" class="form-control" >
                                     <option value="">--Select a item--</option>
-                                    <option ng-selected="d.id=='{{Request::old("demand_id")}}'" ng-repeat="d in demandList" value="[[d.id]]">
+                                    <option ng-selected="d.id=='{{Request::old("demand_or_salary_sheet_id")}}'" ng-repeat="d in demandList" value="[[d.id]]">
                                         [[d.memorandum_no+" - "+d.kpi.kpi_name]]
                                     </option>
                                 </select>
