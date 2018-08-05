@@ -129,7 +129,7 @@ return [
     'title_mini_'=>'ERP',
     'modules'=>[
         ['name'=>'HRM','route'=>'HRM'],
-        ['name'=>'SD','route'=>'#'],
+        ['name'=>'SD','route'=>'SD'],
         ['name'=>'ADAPS','route'=>'#'],
         ['name'=>'AVURP','route'=>'AVURP'],
         ['name'=>strtoupper('recruitment'),'route'=>'recruitment'],
