@@ -22,7 +22,7 @@
         @foreach($vdp_infos as $info)
             <tr>
                 <td>{{$i++}}</td>
-                <td>{{$info->geo_id}}</td>
+                <td>{{"id-".$info->geo_id}}</td>
                 <td>{{$info->ansar_name_eng}}</td>
                 <td>{{$info->ansar_name_bng}}</td>
                 <td>{{$info->date_of_birth}}</td>
