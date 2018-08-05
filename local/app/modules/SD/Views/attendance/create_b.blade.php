@@ -420,7 +420,7 @@
                         </div>
 
                     </div>
-                    <div class="col-sm-6 col-centered" ng-if="!personalDetails">
+                    <div class="col-sm-6 col-centered" ng-if="notFound">
                         <p class="text text-danger text-center">This ansar does not embodied in July,2018 or previous month</p>
                     </div>
                 </div>
