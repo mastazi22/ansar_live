@@ -123,7 +123,7 @@ class SalaryManagementForShortKPIController extends Controller
      */
     public function store(Request $request)
     {
-//        return $request->all();
+        return $request->all();
         // return $request->attendance_data;
 //        return view('SD::salary_disburse.export',['datas'=>$request->attendance_data]);
         $rules = [
