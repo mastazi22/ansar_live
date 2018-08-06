@@ -136,7 +136,7 @@ class SalaryManagementForShortKPIController extends Controller
         if ($v->fails()) {
             return redirect()->route('SD.salary_management_short.create')->with("error_message", "Validation error");
         }
-//        $data_collection = collect($request->salary_data)->groupBy("bank_type");
+        $data_collection = collect($request->salary_data)->groupBy("bank_type");
 //        dd($data_collection);
         DB::beginTransaction();
         try {
