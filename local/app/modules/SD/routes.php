@@ -10,13 +10,13 @@ Route::group(['prefix' => 'SD', 'middleware' => ['web', 'auth', 'permission']], 
         Route::get('/attendancesheet', 'SDController@attendanceSheet');
         Route::get('/demandconstant', 'DemandSheetController@demandConstant')->name('SD.demand_constant');
         Route::get('/salarysheet', 'SDController@salarySheet');
-        Route::post('/updateconstant', 'DemandSheetController@updateConstant');
+        Route::post('/updateconstant', 'DemandSheetController@updateConstant')->name('SD.update_demand_constant');
         Route::post('/demandList', ['as'=>'SD.demandList','uses'=>'DemandSheetController@getDemandList']);
         Route::get('/test', 'SDController@test');
         Route::get('/download_demand_sheet/{id}', 'DemandSheetController@downloadDemandSheet')->where('id', '[0-9]+');
-        Route::post('/generatedemandsheet', 'DemandSheetController@generateDemandSheet');
+        Route::post('/generatedemandsheet', 'DemandSheetController@generateDemandSheet')->name('SD.generate_demand_sheet');
         Route::get('/demandhistory', 'DemandSheetController@demandHistory')->name('SD.demand_history');
-        Route::get('/viewdemandsheet/{id}', 'DemandSheetController@viewDemandSheet')->where('id', '[0-9]+');
+        Route::get('/viewdemandsheet/{id}', 'DemandSheetController@viewDemandSheet')->name("SD.view_demand_sheet")->where('id', '[0-9]+');
         Route::post('attendance/load_datab', ['as'=>"SD.attendance.load_datab",'uses'=>'AttendanceController@loadDataForPlanB']);
         Route::post('attendance/storb', ['as'=>"SD.attendance.storeb",'uses'=>'AttendanceController@storePlanB']);
         Route::resource('attendance', 'AttendanceController');

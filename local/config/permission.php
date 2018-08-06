@@ -154,5 +154,17 @@ return [
         "AVURP.info.import.download",
         "AVURP.info.import",
         "AVURP.info.import_upload",
+        "SD.salary_management_short.create,SD.salary_management_short.store",
+        "SD.salary_management_short.index",
+        "SD.salary_management.create,SD.salary_management.store",
+        "SD.salary_management.index",
+        "SD.leave.create,SD.leave.store",
+        "SD.leave.index",
+        "SD.attendance.index",
+        "SD.attendance.create,SD.attendance.load_datab,SD.attendance.storeb,SD.attendance.store",
+        "SD.demand_constant,SD.update_demand_constant",
+        "SD.demand_sheet,SD.generate_demand_sheet",
+        "SD.demand_history,SD.view_demand_sheet",
+
     ]
 ];

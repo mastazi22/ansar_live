@@ -76,10 +76,11 @@ class OfferInfoController extends Controller
                 $time = Carbon::now();
                 $vdps = VDPAnsarInfo::whereIn('id',array_values($request->ids))->get();
                 foreach ($vdps as $vdp){
+                    $ed = clone $time;
                     $vdp->offer()->create([
                         'unit_id'=>$request->unit,
                         'sms_send_datetime'=>$time,
-                        'sms_end_datetime'=>$time->addHours(48),
+                        'sms_end_datetime'=>$ed->addHours(48),
                         'message'=>$request->message
                     ]);
                     $vdp->status()->update([
