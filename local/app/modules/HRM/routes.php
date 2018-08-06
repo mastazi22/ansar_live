@@ -433,9 +433,10 @@ Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
         Route::post('upload_original_info',['as'=>'upload_original_info','uses'=>'GeneralSettingsController@uploadOriginalInfo']);
         Route::get('upload_original_info',['as'=>'upload_original_info_view','uses'=>'GeneralSettingsController@uploadOriginalInfoView']);
         Route::get('test',function(){
-
+	    $s = set_time_limit(0);
+//	    return $s?"success":"fail";
+  //          Log::info("status :".($s?"success":"fail"));
             Excel::create('bank_export',function ($excel) {
-
                 $excel->sheet('sheet1',function ($sheet){
                     $ansars = \App\modules\HRM\Models\PersonalInfo::with(['embodiment'=>function($q){
                         $q->with(['kpi'=>function($q){
@@ -443,7 +444,7 @@ Route::group(['prefix'=>'HRM','middleware'=>['hrm'] ],function(){
                         }]);
                     }])->whereHas('embodiment',function ($q){
 
-                    })->skip(20000)->limit(30000)->get();
+                    })->skip(40001)->limit(10000)->get();
                     $sheet->setAutoSize(false);
                     $sheet->setWidth('A', 5);
                     $sheet->loadView('HRM::bank_export',['ansars'=>$ansars]);
