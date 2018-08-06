@@ -189,7 +189,7 @@ class SalaryManagementController extends Controller
         if ($v->fails()) {
             return redirect()->route('SD.salary_management.create')->with("error_message", "Validation error");
         }
-        DB::beginTransaction();
+        DB::connection('sd')->beginTransaction();
         try {
             $data = [
                 'kpi_id' => $request->kpi_id,
@@ -197,12 +197,13 @@ class SalaryManagementController extends Controller
                 'generated_type' => $request->generated_type,
                 'generated_date' => Carbon::now()->format('Y-m-d'),
                 'action_user_id' => auth()->user()->id,
-                'data' => gzcompress(serialize($request->attendance_data)),
-                'summery' => gzcompress(serialize($request->summery)),
+                'data' => gzencode(serialize($request->attendance_data),9),
+                'summery' => gzencode(serialize($request->summery),9),
 
             ];
 
             $history = SalarySheetHistory::create($data);
+
             $salary_history = [];
             foreach ($request->attendance_data as $ad) {
                 array_push($salary_history, [
@@ -215,21 +216,9 @@ class SalaryManagementController extends Controller
                 ]);
             }
             SalaryHistory::insert($salary_history);
-            DB::commit();
-            $data_collection = collect($request->attendance_data)->groupBy("bank_type");
-//            dd($data_collection);
-            $files = [];
-            foreach ($data_collection as $key=>$value) {
-                $f_name = Excel::create($key=='n\a'?"no_bank_info":$key, function ($excel) use ($value,$request) {
+            DB::connection('sd')->commit();
+//            return $history->summery;
 
-                    $excel->sheet('sheet1', function ($sheet) use ($value,$request) {
-                        $sheet->setAutoSize(false);
-                        $sheet->setWidth('A', 5);
-                        $sheet->loadView('SD::salary_sheet.export', ['datas' => $value,'type' => $request->generated_type]);
-                    });
-                })->save('xls',false,true);
-                array_push($files,$f_name);
-            }
             /*Excel::create('salary_sheet', function ($excel) use ($request) {
 
                 $excel->sheet('sheet1', function ($sheet) use ($request) {
@@ -239,9 +228,23 @@ class SalaryManagementController extends Controller
                 });
             })->download('xls');*/
         } catch (\Exception $e) {
-            DB::rollback();
+            DB::connection('sd')->rollback();
 //            return $e;
             return redirect()->route('SD.salary_management.create')->with("error_message", $e->getMessage());
+        }
+        $data_collection = collect($request->attendance_data)->groupBy("bank_type");
+//            dd($data_collection);
+        $files = [];
+        foreach ($data_collection as $key=>$value) {
+            $f_name = Excel::create($key=='n\a'?"no_bank_info":$key, function ($excel) use ($value,$request) {
+
+                $excel->sheet('sheet1', function ($sheet) use ($value,$request) {
+                    $sheet->setAutoSize(false);
+                    $sheet->setWidth('A', 5);
+                    $sheet->loadView('SD::salary_sheet.export', ['datas' => $value,'type' => $request->generated_type]);
+                });
+            })->save('xls',false,true);
+            array_push($files,$f_name);
         }
         $zip_archive_name = "salary_sheet.zip";
         $zip = new \ZipArchive();
@@ -297,5 +300,12 @@ class SalaryManagementController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function  getSalarySheetList(Request $request){
+        if($request->ajax()){
+            $sh = SalarySheetHistory::querySearch($request)->select('id','summery','generated_for_month');
+            return response()->json($sh->get());
+        }
+        return abort(403);
     }
 }
