@@ -105,7 +105,7 @@ class SalaryManagementForShortKPIController extends Controller
                 $for_month = $request->month_year;
                 $kpi_name = $kpi->kpi_name;
                 $kpi_id = $kpi->id;
-                return $datas;
+//                return $datas;
                 return view("SD::salary_sheet_short.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id'));
 
 
@@ -124,7 +124,7 @@ class SalaryManagementForShortKPIController extends Controller
      */
     public function store(Request $request)
     {
-        return $request->all();
+//        return $request->all();
         // return $request->attendance_data;
 //        return view('SD::salary_disburse.export',['datas'=>$request->attendance_data]);
         $rules = [
