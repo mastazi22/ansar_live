@@ -11,7 +11,7 @@
         <tr>
             <th>#</th>
             <th>KPI name</th>
-            <th>Demand Sheet No.</th>
+            <th>Demand Sheet No./Salary sheet month</th>
             <th>KPI Division</th>
             <th>KPI District</th>
             <th>KPI thana</th>
@@ -27,7 +27,7 @@
                 <tr>
                     <td>{{$i++}}</td>
                     <td>{{$info->kpi->kpi_name}}</td>
-                    <td>{{$info->demand->memorandum_no}}</td>
+                    <td>{{$info->payment_against=="demand_sheet"?$info->demandOrSalarySheet->memorandum_no:$info->demandOrSalarySheet->generated_for_month}}</td>
                     <td>{{$info->kpi->division->division_name_bng}}</td>
                     <td>{{$info->kpi->unit->unit_name_bng}}</td>
                     <td>{{$info->kpi->thana->thana_name_bng}}</td>

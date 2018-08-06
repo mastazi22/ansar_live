@@ -25,7 +25,7 @@ class KPIPaymentController extends Controller
     {
         if($request->ajax()){
             $limit = $request->limit?$request->limit:30;
-            $payment_history = CashDeposite::with(['demand','kpi'])
+            $payment_history = CashDeposite::with(['demandOrSalarySheet','kpi'])
             ->whereHas('kpi',function($q) use($request){
                 if($request->range&&$request->range!='all'){
                     $q->where('division_id',$request->range);
@@ -39,10 +39,10 @@ class KPIPaymentController extends Controller
                 if($request->kpi&&$request->kpi!='all'){
                     $q->where('id',$request->kpi);
                 }
-            })->whereHas('demand',function($q) use($request){
-                    if($request->q){
+            })->whereHas('demandOrSalarySheet',function($q) use($request){
+                    /*if($request->q){
                         $q->where('memorandum_no','LIKE',"%{$request->q}%");
-                    }
+                    }*/
                 })->paginate();
             return view("SD::kpi_payment.data",compact('payment_history'));
 
