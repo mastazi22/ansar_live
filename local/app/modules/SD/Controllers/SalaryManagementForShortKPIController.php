@@ -136,8 +136,8 @@ class SalaryManagementForShortKPIController extends Controller
         if ($v->fails()) {
             return redirect()->route('SD.salary_management_short.create')->with("error_message", "Validation error");
         }
-        return $request->all();
-        $data_collection = collect($request->salary_data)->groupBy("bank_type");
+//        return $request->all();
+//        $data_collection = collect($request->salary_data)->groupBy("bank_type");
 //        dd($data_collection);
         DB::beginTransaction();
         try {
@@ -167,7 +167,7 @@ class SalaryManagementForShortKPIController extends Controller
             $data_collection = collect($request->salary_data)->groupBy("bank_type");
 //            dd($data_collection);
             $files = [];
-            return $data_collection;
+//            return $data_collection;
             foreach ($data_collection as $key=>$value) {
                 $f_name = Excel::create($key=='n\a'?"no_bank_info":$key, function ($excel) use ($value) {
 
