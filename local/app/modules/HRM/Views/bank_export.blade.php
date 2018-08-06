@@ -4,6 +4,7 @@
         <td>Father Name</td>
         <td>Mother name</td>
         <td>Present vill</td>
+        <td>Present Range</td>
         <td>Present post</td>
         <td>Present upzilla</td>
         <td>Present zilla</td>
@@ -23,6 +24,7 @@
         <td>Ac Type</td>
         <td>MFS Number</td>
         <td>permanent vill</td>
+        <td>permanent Range</td>
         <td>permanent post</td>
         <td>permanent upzilla</td>
         <td>permanent zilla</td>
@@ -37,6 +39,7 @@
             <td>{{$ansar->father_name_eng}}</td>
             <td>{{$ansar->mother_name_eng}}</td>
             <td>{{$ansar->village_name}}</td>
+            <td>{{$ansar->division->division_name_bng}}</td>
             <td>{{$ansar->post_office_name}}</td>
             <td>{{$ansar->thana->thana_name_eng}}</td>
             <td>{{$ansar->district->unit_name_eng}}</td>
@@ -57,6 +60,7 @@
             <td></td>
 
             <td>{{$ansar->village_name}}</td>
+            <td>{{$ansar->division->division_name_bng}}</td>
             <td>{{$ansar->post_office_name}}</td>
             <td>{{$ansar->thana->thana_name_eng}}</td>
             <td>{{$ansar->district->unit_name_eng}}</td>
