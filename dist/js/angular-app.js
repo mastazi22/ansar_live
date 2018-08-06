@@ -1089,6 +1089,8 @@ GlobalApp.directive('formSubmit', function (notificationService, $timeout) {
             confirmBox: '@',
             message: '@',
             onReset: '&',
+            beforeSubmit: '&',
+            afterSubmit: '&',
             resetExcept: '@',
             responseData: '=?'
         },
@@ -1120,6 +1122,7 @@ GlobalApp.directive('formSubmit', function (notificationService, $timeout) {
                         scope.loading = true;
                         scope.status = false;
                         scope.errors = '';
+                        scope.beforeSubmit();
                         $timeout(function () {
                             scope.$apply();
                         })
@@ -1139,6 +1142,7 @@ GlobalApp.directive('formSubmit', function (notificationService, $timeout) {
                             $(element).resetForm();
                             scope.responseData = response;
                             scope.onReset();
+                            scope.afterSubmit();
                         }
                         else if (response.status === false) {
                             scope.status = false;
@@ -1149,6 +1153,7 @@ GlobalApp.directive('formSubmit', function (notificationService, $timeout) {
                             scope.errors = response;
                             console.log(scope.errors)
                         }
+
                         $timeout(function () {
                             scope.$apply();
                         })

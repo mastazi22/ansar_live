@@ -2,7 +2,6 @@
 {!! Form::hidden('kpi_id',$kpi_id) !!}
 {!! Form::hidden('generated_for_month',$for_month) !!}
 {!! Form::hidden('generated_type',$generated_type) !!}
-{!! Form::hidden('extra',$extra) !!}
 <div class="table-responsive">
     @if($generated_type=='salary')
         <table class="table table-condensed table-bordered">

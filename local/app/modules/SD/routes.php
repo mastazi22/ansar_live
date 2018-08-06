@@ -22,6 +22,7 @@ Route::group(['prefix' => 'SD', 'middleware' => ['web', 'auth', 'permission']], 
         Route::resource('attendance', 'AttendanceController');
         Route::post('attendance/view_attendance', ['as'=>'SD.attendance.view_attendance','uses'=>'AttendanceController@viewAttendance']);
         Route::resource('leave', 'LeaveManagementController');
+        Route::post('/salarySheetList', ['as'=>'SD.salary_management.salarySheetList','uses'=>'SalaryManagementController@getSalarySheetList']);
         Route::resource('salary_management', 'SalaryManagementController');
         Route::resource('salary_management_short', 'SalaryManagementForShortKPIController');
         Route::get('kpi_payment/document/{id}', ['as'=>'SD.kpi_payment.show_doc','uses'=>'KPIPaymentController@showDoc']);

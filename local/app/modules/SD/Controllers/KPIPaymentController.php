@@ -4,12 +4,14 @@ namespace App\modules\SD\Controllers;
 
 use App\modules\SD\Models\CashDeposite;
 use App\modules\SD\Models\DemandLog;
+use App\modules\SD\Models\SalarySheetHistory;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Session;
 use Intervention\Image\Facades\Image;
 
 class KPIPaymentController extends Controller
@@ -70,11 +72,18 @@ class KPIPaymentController extends Controller
             "demand_or_salary_sheet_id"=>'required',
             "paid_amount"=>"required",
             "document"=>"required",
+            "payment_against"=>"required",
         ];
         $this->validate($request,$rules);
         DB::connection("sd")->beginTransaction();
         try{
-            $demand_log = DemandLog::find($request->demand_or_salary_sheet_id);
+            if($request->payment_against=='demand_sheet'){
+                $demand_or_salary_log = DemandLog::find($request->demand_or_salary_sheet_id);
+            } else if($request->payment_against=='salary_sheet'){
+                $demand_or_salary_log = SalarySheetHistory::find($request->demand_or_salary_sheet_id);
+            } else{
+                throw new \Exception("invalid request");
+            }
             $document = $request->file('document');
             $file_name = time().".".$document->clientExtension();
             $path = storage_path("bank_receipt");
@@ -83,19 +92,24 @@ class KPIPaymentController extends Controller
             }
             $image = Image::make($document)->save($path.'/'.$file_name);
             $data = [
-                'demand_or_salary_sheet_id'=>$request->demand_id,
+                'demand_or_salary_sheet_id'=>$request->demand_or_salary_sheet_id,
                 'document'=>$file_name,
                 'paid_amount'=>$request->paid_amount,
-                'kpi_id'=>$demand_log->kpi->id,
+                'kpi_id'=>$demand_or_salary_log->kpi->id,
+                'payment_against'=>$request->payment_against,
+
                 'action_user_id'=>$request->action_user_id,
             ];
             CashDeposite::create($data);
             DB::connection("sd")->commit();
         }catch(\Exception $e){
             DB::connection("sd")->rollback();
-            return redirect()->route("SD.kpi_payment.index")->with('error_message',$e->getMessage());
+//            return redirect()->route("SD.kpi_payment.index")->with('error_message',$e->getMessage());
+            return response()->json(['status'=>false,"message"=>$e->getMessage()]);
         }
-        return redirect()->route("SD.kpi_payment.index")->with('success_message',"Data saved successfully");
+        Session::flash('success_message',"Payment added successfully");
+//        return redirect()->route("SD.kpi_payment.index")->with('success_message',"Data saved successfully");
+        return response()->json(['status'=>true,"message"=>"Payment added successfully"]);
     }
 
     /**

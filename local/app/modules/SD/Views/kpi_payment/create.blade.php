@@ -6,14 +6,39 @@
 @section('content')
     <script>
         GlobalApp.controller("AttendanceController", function ($scope, $http, $sce) {
-            $http({
-                url:"{{URL::route("SD.demandList")}}",
-                method:'post'
-            }).then(function (response) {
-                $scope.demandList = response.data;
-            },function (response) {
+            $scope.param = {};
+            $scope.loadData = function(){
+                if($scope.param.payment_against=="demand_sheet"){
+                    alert(1)
+                    $http({
+                        url:"{{URL::route("SD.demandList")}}",
+                        method:'post',
+                        data:$scope.param.query
+                    }).then(function (response) {
+                        $scope.demandList = response.data;
+                    },function (response) {
 
-            })
+                    })
+                }else if($scope.param.payment_against=="salary_sheet"){
+                    $http({
+                        url:"{{URL::route("SD.salary_management.salarySheetList")}}",
+                        method:'post',
+                        data:$scope.param.query
+                    }).then(function (response) {
+                        $scope.salaryList = response.data;
+                    },function (response) {
+
+                    })
+                }
+
+            }
+            $scope.beforeSubmit = function () {
+                $scope.allLoading = true;
+            }
+            $scope.afterSubmit = function () {
+                $scope.allLoading = false;
+                window,location.href = "{{URL::route('SD.kpi_payment.index')}}";
+            }
         })
 
 
@@ -36,7 +61,7 @@
             </div>
         @endif
         <div class="box box-solid">
-            <div class="overlay hidden" >
+            <div class="overlay"  ng-if="allLoading">
                     <span class="fa">
                         <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
                     </span>
@@ -46,17 +71,43 @@
             <div class="box-body">
                 <div class="row">
                     <div class="col-sm-6 col-centered">
-                        {!! Form::open(['route'=>"SD.kpi_payment.store","files"=>true]) !!}
-                        {!! Form::hidden('payment_against','demand_sheet') !!}
-                            <div class="form-group">
-                                <label class="control-label">Select a demand sheet</label>
-                                <select name="demand_or_salary_sheet_id" class="form-control" >
-                                    <option value="">--Select a item--</option>
-                                    <option ng-selected="d.id=='{{Request::old("demand_or_salary_sheet_id")}}'" ng-repeat="d in demandList" value="[[d.id]]">
-                                        [[d.memorandum_no+" - "+d.kpi.kpi_name]]
-                                    </option>
-                                </select>
+                        {!! Form::open(['route'=>"SD.kpi_payment.store","files"=>true,'form-submit'=>'','before-submit'=>'beforeSubmit()','after-submit'=>'afterSubmit()']) !!}
+                        <div class="form-group">
+                            {!! Form::label('payment_against',"Payment against",['class'=>'control-label']) !!}
+                            {!! Form::select('payment_against',[""=>"--Select a item--","demand_sheet"=>"Demand Sheet","salary_sheet"=>"Salary Sheet"],null,['class'=>"form-control",'ng-model'=>'param.payment_against']) !!}
+                        </div>
+                            <div ng-if="param.payment_against">
+                                <filter-template
+                                        show-item="['range','unit','thana','kpi']"
+                                        type="single"
+                                        kpi-change="loadData()"
+                                        data="param.query"
+                                        field-name="{range:'division_id',unit:'unit_id',thana:'thana_id',kpi:'kpi_id'}"
+                                        start-load="range"
+                                        on-load="loadPage()"
+                                        layout-vertical="1"
+
+                                ></filter-template>
+                                    <div class="form-group" ng-if="param.payment_against=='demand_sheet'">
+                                        <label class="control-label">Select a demand sheet</label>
+                                        <select name="demand_or_salary_sheet_id" class="form-control" >
+                                            <option value="">--Select a item--</option>
+                                            <option ng-repeat="d in demandList" value="[[d.id]]">
+                                                [[d.memorandum_no]]
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" ng-if="param.payment_against=='salary_sheet'">
+                                        <label class="control-label">Select salary sheet generated month</label>
+                                        <select name="demand_or_salary_sheet_id" class="form-control" >
+                                            <option value="">--Select a item--</option>
+                                            <option ng-repeat="d in salaryList" value="[[d.id]]">
+                                                [[d.generated_for_month]]
+                                            </option>
+                                        </select>
+                                    </div>
                             </div>
+
                             <div class="form-group">
                                 <label class="control-label">Paid amount</label>
                                 <input type="text" class="form-control" name="paid_amount" placeholder="Paid Amount">

@@ -186,17 +186,7 @@ class DemandSheetController extends Controller
     }
     public function  getDemandList(Request $request){
         if($request->ajax()){
-            $demands = DemandLog::with('kpi');
-            if($request->range){
-                $demands->whereHas('kpi',function($q) use($request){
-                    $q->where('division_id',$request->range);
-                });
-            }
-            if($request->unit){
-                $demands->whereHas('kpi',function($q) use($request){
-                    $q->where('unit_id',$request->unit);
-                });
-            }
+            $demands = DemandLog::querySearch($request);
             return response()->json($demands->get());
         }
         return abort(403);

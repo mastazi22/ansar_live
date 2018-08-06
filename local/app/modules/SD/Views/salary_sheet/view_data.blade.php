@@ -15,6 +15,7 @@
             <th>Generate For Month</th>
             <th>Type</th>
             <th>Disburse status</th>
+            <th>Deposit status</th>
 
         </tr>
 
@@ -32,11 +33,20 @@
                     <td>
                         @if($info->disburst_status=="pending")
                             <span class="label label-warning">pending</span>
-                            @elseif($info->disburst_status=="done")
+                        @elseif($info->disburst_status=="done")
                             <span class="label label-success">done</span>
                         @else
                             <span class="label label-danger">canceled</span><br>
                             ({{$info->cancel_reason}})
+                        @endif
+                    </td>
+                    <td>
+                        @if(!$info->deposit)
+                            <span class="label label-danger">Not Available</span>
+                        @elseif($info->deposit->total_amount<$info->summery["total_max_amount"])
+                            <span class="label label-warning">Partial</span>
+                        @else
+                            <span class="label label-success">Fully Deposit</span>
                         @endif
                     </td>
                 </tr>
