@@ -89,14 +89,14 @@ class SalaryManagementForShortKPIController extends Controller
                     $deduct_fee = floatval(DemandConstantFacdes::getValue("DAS")->cons_value);
                     array_push($datas, [
                         'ansar_id' => $ansar->geo_id,
-                        'ansar_name' => $ansar->ansar_name_eng,
+                        'ansar_name' => $ansar->ansar_name_bng,
                         'ansar_rank' => $ansar->designation,
                         'total_duration' => $a->duration,
                         'total_daily_fee'=>$total_daily_fee,
                         'other_fee'=>$other_fee,
                         'deduct_fee'=>$deduct_fee,
-                        'account_no' => $ansar->account ? ($ansar->account->prefer_choice=="mobile"?$ansar->mobile_bank_account_no:$ansar->account_no) : 'n\a',
-                        'bank_type' => $ansar->account ? ($ansar->account->prefer_choice=="mobile"?$ansar->mobile_bank_type:"DBBL") : 'n\a',
+                        'account_no' => $ansar->account ? ($ansar->account->prefer_choice=="mobile"?$ansar->account->mobile_bank_account_no:$ansar->account->account_no) : 'n\a',
+                        'bank_type' => $ansar->account ? ($ansar->account->prefer_choice=="mobile"?$ansar->account->mobile_bank_type:"DBBL") : 'n\a',
 
                     ]);
 //                        return $datas;
@@ -105,6 +105,7 @@ class SalaryManagementForShortKPIController extends Controller
                 $for_month = $request->month_year;
                 $kpi_name = $kpi->kpi_name;
                 $kpi_id = $kpi->id;
+//                return $datas;
                 return view("SD::salary_sheet_short.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id'));
 
 
@@ -136,6 +137,7 @@ class SalaryManagementForShortKPIController extends Controller
         if ($v->fails()) {
             return redirect()->route('SD.salary_management_short.create')->with("error_message", "Validation error");
         }
+//        return $request->all();
 //        $data_collection = collect($request->salary_data)->groupBy("bank_type");
 //        dd($data_collection);
         DB::beginTransaction();
@@ -166,6 +168,7 @@ class SalaryManagementForShortKPIController extends Controller
             $data_collection = collect($request->salary_data)->groupBy("bank_type");
 //            dd($data_collection);
             $files = [];
+//            return $data_collection;
             foreach ($data_collection as $key=>$value) {
                 $f_name = Excel::create($key=='n\a'?"no_bank_info":$key, function ($excel) use ($value) {
 
