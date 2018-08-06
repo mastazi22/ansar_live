@@ -46,6 +46,7 @@
                     {{$data['total_daily_fee']+$data['other_fee']-$data['deduct_fee']}}
                 </td>
             </tr>
+            <?php $i++;?>
         @empty
             <tr>
                 <td colspan="10" class="bg-warning">No VDP found in this kpi</td>
