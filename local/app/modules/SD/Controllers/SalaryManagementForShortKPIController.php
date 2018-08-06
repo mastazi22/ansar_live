@@ -105,6 +105,7 @@ class SalaryManagementForShortKPIController extends Controller
                 $for_month = $request->month_year;
                 $kpi_name = $kpi->kpi_name;
                 $kpi_id = $kpi->id;
+                return $datas;
                 return view("SD::salary_sheet_short.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id'));
 
 
