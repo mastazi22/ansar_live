@@ -18,7 +18,6 @@
                 <td>{{$data['kpi_name']}}</td>
                 <td>{{$data['account_no']}}</td>
                 <td>{{$data['net_amount']}}</td>
-                <td>{{$data['month']}}</td>
             </tr>
         @endforeach
     </table>
