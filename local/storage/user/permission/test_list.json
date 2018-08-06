@@ -760,5 +760,89 @@
         ]
       }
     ]
+  },
+  {
+    "root": "Salary Disburse",
+    "children": [
+      {
+        "value": "SD",
+        "name": "Dashboard"
+      },
+      {
+        "text": "Demand Sheet",
+        "actions": [
+          {
+            "value": "SD.demand_constant,SD.update_demand_constant",
+            "name": "Demand Constant"
+          },
+          {
+            "value": "SD.demand_sheet,SD.generate_demand_sheet",
+            "name": "Generate Demand Sheet"
+          },
+          {
+            "value": "SD.demand_history,SD.view_demand_sheet",
+            "name": "Demand Sheet History"
+          }
+        ]
+      },
+      {
+        "text": "Salary Management",
+        "actions": [
+          {
+            "text": "Attendance",
+            "actions": [
+              {
+                "value": "SD.attendance.index",
+                "name": "View Attendance"
+              },
+              {
+                "value": "SD.attendance.create,SD.attendance.load_datab,SD.attendance.storeb,SD.attendance.store",
+                "name": "Take Attendance"
+              }
+            ]
+          },
+          {
+            "text": "Leave Management",
+            "actions": [
+              {
+                "value": "SD.leave.index",
+                "name": "View Leaves"
+              },
+              {
+                "value": "SD.leave.create,SD.leave.store",
+                "name": "Grant Leaves"
+              }
+            ]
+          },
+          {
+            "text": "Salary Sheet",
+            "actions": [
+              {
+                "value": "SD.salary_management.index",
+                "name": "Salary Generate History"
+              },
+              {
+                "value": "SD.salary_management.create,SD.salary_management.store",
+                "name": "Generate Salary Sheet"
+              }
+            ]
+          },
+          {
+            "text": "Salary Sheet(Temp. KPI)",
+            "actions": [
+              {
+                "value": "SD.salary_management_short.index",
+                "name": "Salary Generate History"
+              },
+              {
+                "value": "SD.salary_management_short.create,SD.salary_management_short.store",
+                "name": "Generate Salary Sheet"
+              }
+            ]
+          }
+
+        ]
+      }
+    ]
   }
 ]
