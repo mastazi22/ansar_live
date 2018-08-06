@@ -86,7 +86,7 @@ class SalaryManagementController extends Controller
                     $all_daily_fee = 0;
                     foreach ($attendance as $a) {
                         $ansar = $a->ansar;
-                        $total_daily_fee = floatval($ansar->designation_id == 3 ? DemandConstantFacdes::getValue("DPA")->cons_value : DemandConstantFacdes::getValue("DA")->cons_value)
+                        $total_daily_fee = floatval($ansar->designation_id == 1 ? DemandConstantFacdes::getValue("DA")->cons_value : DemandConstantFacdes::getValue("DPA")->cons_value)
                             * (intval($a->total_present) + intval($a->total_leave));
                         $total_ration_fee = floatval(DemandConstantFacdes::getValue("R")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
                         $total_barber_fee = floatval(DemandConstantFacdes::getValue("CB")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
