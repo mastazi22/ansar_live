@@ -459,37 +459,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
             }
         });
 
-        Route::get('test-import-bank-data', function () {
-            foreach (glob(storage_path('ansar_bank_info/*.xls')) as $filename) {
-                $data = Excel::load($filename, function ($excel) {
-                })->get();
-                echo "executing......" . $filename . "<br/>";
-                foreach ($data as $d) {
-                    $d = json_decode(json_encode($d));
-                    $header = $d[0];
-                    unset($d[0]);
-                    $rows = [];
-                    $index = 0;
-                    foreach ($d as $dd) {
-                        if (!is_numeric($dd[1])) {
-                            echo "id column not found.\n";
-                        } else if (!empty(trim($dd[1])) && !empty(trim($dd[4]))) {
-                            $dataRow = [
-                                "ansar_id" => trim($dd[1]),
-                                "bank_name" => "DBBL",
-                                "account_no" => trim($dd[4]),
-                                "prefer_choice" => "general"
-                            ];
-                            $bankInfo = App\modules\HRM\Models\AnsarBankAccountInfoDetails::firstOrCreate($dataRow);
-                            $index++;
-                        } else {
-                            echo "Invalid Data\n";
-                        }
-                    }
-                    echo "total row count " . $index . "<br/>";
-                }
-            }
-        });
+        Route::any('/bulk-upload-bank-info',['as'=>"bulk_upload_bank_file",'uses'=>"EntryFormController@bulkUploadBankInfo"]);
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
     Route::get('/all_notification', function () {
