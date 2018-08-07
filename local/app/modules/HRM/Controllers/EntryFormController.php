@@ -241,35 +241,33 @@ class EntryFormController extends Controller
             ]);
             $data = Excel::load($request->file()['bulk_bank_account_info'], function ($excel) {
             })->get();
+            $index = 0;
             foreach ($data as $d) {
                 $d = json_decode(json_encode($d));
                 $header = $d[0];
                 unset($d[0]);
                 $rows = [];
-                $index = 0;
-//                foreach ($d as $dd) {
-//                    if (!is_numeric($dd[1])) {
+                foreach ($d as $dd) {
+                    if (!is_numeric($dd[1])) {
 //                        echo "id column not found.\n";
-//                    } else if (!empty(trim($dd[1])) && !empty(trim($dd[4])) && !empty(trim($dd[2]))) {
-//                        $dataRow["ansar_id"] = trim($dd[1]);
-//
-//                        if (strtolower(trim($dd[2])) === "rocket" || strtolower(trim($dd[2])) === "bkash") {
-//                            $dataRow["mobile_bank_account_no"] = trim($dd[4]);
-//                            $dataRow["mobile_bank_type"] = trim($dd[2]);
-//                            $dataRow["prefer_choice"] = "mobile";
-//                        } else {
-//                            $dataRow["bank_name"] = trim($dd[2]);
-//                            $dataRow["account_no"] = trim($dd[3]);
-//                            $dataRow["prefer_choice"] = "general";
-//                        }
-//                        $bankInfo = AnsarBankAccountInfoDetails::firstOrCreate($dataRow);
-//                        $index++;
-//                    } else {
-//                        echo "Invalid Data\n";
-//                    }
-//                }
-                return View::make('HRM::Entryform.upload_bank_info')->with("message", "Successfully add " . $index . " accounts.<br/>");
+                        continue;
+                    } else if (!empty(trim($dd[1])) && !empty(trim($dd[4])) && !empty(trim($dd[2]))) {
+                        $dataRow["ansar_id"] = trim($dd[1]);
+                        if (strtolower(trim($dd[2])) === "rocket" || strtolower(trim($dd[2])) === "bkash") {
+                            $dataRow["mobile_bank_account_no"] = trim($dd[4]);
+                            $dataRow["mobile_bank_type"] = trim($dd[2]);
+                            $dataRow["prefer_choice"] = "mobile";
+                        } else {
+                            $dataRow["bank_name"] = trim($dd[2]);
+                            $dataRow["account_no"] = trim($dd[3]);
+                            $dataRow["prefer_choice"] = "general";
+                        }
+                        $bankInfo = AnsarBankAccountInfoDetails::firstOrCreate($dataRow);
+                        $index++;
+                    }
+                }
             }
+            return View::make('HRM::Entryform.upload_bank_info')->with("message", "Successfully add " . $index . " accounts.<br/>");
         } else {
             return View::make('HRM::Entryform.upload_bank_info');
         }
