@@ -7,6 +7,7 @@
         <th>Applicant Name</th>
         <th>Applicant ID</th>
         <th>Father Name</th>
+        <th>Mother Name</th>
         <th>Birth Date</th>
         @if($ctype=='apc_training')
             <th>Age</th>
@@ -19,6 +20,9 @@
         <th>Division</th>
         <th>District</th>
         <th>Thana</th>
+        <th>Village</th>
+        <th>Post Office</th>
+        <th>Union</th>
         <th>Height</th>
         <th>Education</th>
         <th>Training Info</th>
@@ -44,6 +48,7 @@
                 <td>{{$a->applicant_name_bng}}</td>
                 <td>{{$a->applicant_id}}</td>
                 <td>{{$a->father_name_bng}}</td>
+                <td>{{$a->mother_name_bng}}</td>
                 <td>{{$a->date_of_birth}}</td>
                 @if($ctype=='apc_training')
                     <td>{{$a->ansar->calculateAge()}}</td>
@@ -56,6 +61,9 @@
                 <td>{{$a->division->division_name_bng}}</td>
                 <td>{{$a->district->unit_name_bng}}</td>
                 <td>{{$a->thana->thana_name_bng}}</td>
+                <td>{{$a->village_name_bng}}</td>
+                <td>{{$a->post_office_name_bng}}</td>
+                <td>{{$a->union_name_bng}}</td>
                 <td>{{$a->height_feet}} feet {{$a->height_inch}} inch</td>
                 <th>{{$a->education()->orderBy('priority','desc')->first()->education_deg_eng}}</th>
                 <th>{{$a->training_info}}</th>
