@@ -73,7 +73,8 @@
                     else{
                         $scope.generating = false;
                         $scope.file_count = 1;
-                        window.open($scope.export_data.download_url,'_blank')
+//                        window.open($scope.export_data.download_url,'_blank')
+                        window.location.href=$scope.export_data.download_url;
                     }
                 },function (res) {
                     if($scope.export_data.file_count>$scope.file_count){
