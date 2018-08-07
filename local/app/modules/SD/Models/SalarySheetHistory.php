@@ -25,6 +25,9 @@ class SalarySheetHistory extends Model
     public function deposit(){
         return $this->hasOne(CashDeposite::class,'demand_or_salary_sheet_id')->where('payment_against','salary_sheet');
     }
+    public function disburseLog(){
+        return $this->hasOne(SalaryDisburse::class,'salary_sheet_id');
+    }
 
     public function getSummeryAttribute($value){
         try {

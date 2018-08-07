@@ -7,6 +7,7 @@ use App\modules\HRM\Models\KpiGeneralModel;
 use App\modules\SD\Helper\Facades\DemandConstantFacdes;
 use App\modules\SD\Models\SalaryHistory;
 use App\modules\SD\Models\SalarySheetHistory;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -59,11 +60,15 @@ class SalaryManagementController extends Controller
                 "unit" => 'required',
                 "thana" => 'required',
                 "kpi" => 'required',
-                "sheetType" => 'required',
-                "month_year" => 'required_if:sheetType,salary|date_format:"F, Y"',
+                "sheetType" => ['required','regex:/^(salary)|(bonus)$/'],
+                "month_year" => 'required_if:sheetType,salary|date_format:"F, Y"|unique:sd.tbl_salary_sheet_generate_history,generated_for_month,NULL,id,generated_type,'.$request->sheetType.',kpi_id,'.$request->kpi,
                 "bonusType" => 'required_if:sheetType,bonus'
             ];
-            $this->validate($request, $rules);
+            $this->validate($request, $rules,[
+                'month_year.unique'=>"Salary sheet has been generated for this month for this kpi",
+                'sheetType.required'=>"Please select a sheet type:salary or bonus",
+                'sheetType.regex'=>"Please select a valid sheet type:salary or bonus",
+            ]);
             $division_id = $request->range;
             $unit_id = $request->unit;
             $thana_id = $request->thana;
@@ -229,32 +234,86 @@ class SalaryManagementController extends Controller
             })->download('xls');*/
         } catch (\Exception $e) {
             DB::connection('sd')->rollback();
+            return redirect()->route('SD.salary_management.create')->with("error_message", $e->getMessage());
+        }
+        return redirect()->route('SD.salary_management.index')->with("success_message", "Salary sheet created successfully");
+    }
+    public function generate_payroll(Request $request)
+    {
+//        return $request->all();
+        // return $request->attendance_data;
+//        return view('SD::salary_sheet.export',['datas'=>$request->attendance_data]);
+        $rules = [
+            'kpi_id' => "required",
+            'generated_for_month' => "required",
+            'generated_type' => "required",
+            'attendance_data' => "required",
+            'summery' => "required",
+
+        ];
+        $v = Validator::make($request->all(), $rules);
+        if ($v->fails()) {
+            return redirect()->route('SD.salary_management.create')->with("error_message", "Validation error");
+        }
+        try {
+            $generated_date = Carbon::now()->format('Y-m-d');
+            $generated_month = $request->generated_for_month;
+            $kpi = KpiGeneralModel::with('details')->find($request->kpi_id);
+            $date = Carbon::createFromFormat('F, Y', $request->generated_for_month);
+            $month = $date->month;
+            $year = $date->year;
+            $is_attendance_taken = 1;
+            $attendance = $kpi->attendance()->where(compact('month', 'year', 'is_attendance_taken'))
+                ->select(DB::raw("SUM(is_present=1 AND is_leave=0) as total_present"),
+                    DB::raw("SUM(is_present=0 AND is_leave=0) as total_absent"),
+                    DB::raw("SUM(is_present=0 AND is_leave=1) as total_leave"),
+                    'ansar_id', 'month', 'year',DB::raw("min(day) as min_day"),DB::raw("max(day) as max_day")
+                )->groupBy('ansar_id')->get();
+            $datas = [];
+            $all_daily_fee = 0;
+            foreach ($attendance as $a) {
+                $ansar = $a->ansar;
+                $total_daily_fee = floatval($ansar->designation_id == 1 ? DemandConstantFacdes::getValue("DA")->cons_value : DemandConstantFacdes::getValue("DPA")->cons_value)
+                    * (intval($a->total_present) + intval($a->total_leave));
+                $total_ration_fee = floatval(DemandConstantFacdes::getValue("R")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
+                $total_barber_fee = floatval(DemandConstantFacdes::getValue("CB")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
+                $total_transportation_fee = floatval(DemandConstantFacdes::getValue("CV")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
+                $total_medical_fee = floatval(DemandConstantFacdes::getValue("DV")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
+                $welfare_fee = floatval(DemandConstantFacdes::getValue("WF")->cons_value);
+                $share_amount = floatval(DemandConstantFacdes::getValue("SA")->cons_value);
+                $all_daily_fee+=$total_daily_fee;
+                array_push($datas, [
+                    'ansar_id'=>$ansar->ansar_id,
+                    'ansar_name'=>$ansar->ansar_name_bng,
+                    'father_name'=>$ansar->father_name_bng,
+                    'rank'=>$ansar->designation->name_bng,
+                    'total_daily_fee'=>$total_daily_fee,
+                    'min_date'=>Carbon::createFromFormat('F, Y', $request->generated_for_month)->day($a->min_day)->format('d/m/Y'),
+                    'max_date'=>Carbon::createFromFormat('F, Y', $request->generated_for_month)->day($a->max_day)->format('d/m/Y'),
+                    'total_day'=>$a->total_present+$a->total_leave,
+                    'total_ration_fee'=>$total_ration_fee,
+                    'total_barber_fee'=>$total_barber_fee,
+                    'total_transportation_fee'=>$total_transportation_fee,
+                    'total_medical_fee'=>$total_medical_fee,
+                    'reg_fee'=>$welfare_fee-5,
+                    'welfare_fee'=>$welfare_fee-4,
+                    'share_amount'=>$share_amount,
+                    'extra'=>$kpi->details->with_weapon?ceil(($total_daily_fee*20)/100):ceil(($total_daily_fee*15)/100),
+                    'net_amount'=>$total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee + $total_medical_fee-($welfare_fee+$share_amount),
+                    'total_amount'=>$total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee
+                ]);
+//                        return $datas;
+            }
+            $pdf = SnappyPdf::loadView("SD::salary_sheet.payroll_view", compact('generated_date','datas','kpi','generated_month'))
+                ->setPaper('legal')
+//                ->setOption('footer-left',url('/'))
+//                ->setOption('footer-right',Carbon::now()->format('d-M-Y H:i:s'))
+                ->setOrientation('landscape');
+            return $pdf->download();
+        } catch (\Exception $e) {
 //            return $e;
             return redirect()->route('SD.salary_management.create')->with("error_message", $e->getMessage());
         }
-        $data_collection = collect($request->attendance_data)->groupBy("bank_type");
-//            dd($data_collection);
-        $files = [];
-        foreach ($data_collection as $key=>$value) {
-            $f_name = Excel::create($key=='n\a'?"no_bank_info":$key, function ($excel) use ($value,$request) {
-
-                $excel->sheet('sheet1', function ($sheet) use ($value,$request) {
-                    $sheet->setAutoSize(false);
-                    $sheet->setWidth('A', 5);
-                    $sheet->loadView('SD::salary_sheet.export', ['datas' => $value,'type' => $request->generated_type]);
-                });
-            })->save('xls',false,true);
-            array_push($files,$f_name);
-        }
-        $zip_archive_name = "salary_sheet.zip";
-        $zip = new \ZipArchive();
-        if($zip->open(public_path($zip_archive_name),\ZipArchive::CREATE)===true){
-            foreach ($files as $file){
-                $zip->addFile($file["full"],$file["file"]);
-            }
-            $zip->close();
-        }
-        return response()->download(public_path($zip_archive_name));
     }
 
     /**

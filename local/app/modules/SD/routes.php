@@ -23,6 +23,7 @@ Route::group(['prefix' => 'SD', 'middleware' => ['web', 'auth', 'permission']], 
         Route::post('attendance/view_attendance', ['as'=>'SD.attendance.view_attendance','uses'=>'AttendanceController@viewAttendance']);
         Route::resource('leave', 'LeaveManagementController');
         Route::post('/salarySheetList', ['as'=>'SD.salary_management.salarySheetList','uses'=>'SalaryManagementController@getSalarySheetList']);
+        Route::post('/salary_management/view_payroll', ['as'=>'SD.salary_management.view_payroll','uses'=>'SalaryManagementController@generate_payroll']);
         Route::resource('salary_management', 'SalaryManagementController');
         Route::resource('salary_management_short', 'SalaryManagementForShortKPIController');
         Route::get('kpi_payment/document/{id}', ['as'=>'SD.kpi_payment.show_doc','uses'=>'KPIPaymentController@showDoc']);
@@ -30,7 +31,7 @@ Route::group(['prefix' => 'SD', 'middleware' => ['web', 'auth', 'permission']], 
         Route::resource('salary_disburse', 'SalaryDisburseController',["only"=>["index","create","store"]]);
         Route::get('/test', function () {
 //
-            return strtotime("0000-00-00")==false?"false":"true";
+            return view("SD::salary_sheet.payroll_view");
         });
     });
 });
