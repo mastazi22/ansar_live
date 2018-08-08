@@ -12,4 +12,20 @@ class AnsarBankAccountInfoDetails extends Model
     public function ansar(){
         return $this->belongsTo(PersonalInfo::class,'ansar_id','ansar_id');
     }
+    public function getAccountNo(){
+        $choice = $this->prefer_choice;
+        if($choice=='general'){
+            return $this->account_no;
+        } else{
+            return $this->mobile_bank_account_no;
+        }
+    }
+    public function getBankName(){
+        $choice = $this->prefer_choice;
+        if($choice=='general'){
+            return "DBBL";
+        } else{
+            return $this->mobile_bank_type;
+        }
+    }
 }
