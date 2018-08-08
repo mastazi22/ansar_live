@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\modules\HRM\Models\AllDisease;
 use App\modules\HRM\Models\AllEducationName;
 use App\modules\HRM\Models\AllSkill;
-use App\modules\HRM\Models\AnsarBankAccountInfoDetails;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\PersonalInfo;
@@ -250,18 +249,24 @@ class EntryFormController extends Controller
                     unset($d[0]);
                     $rows = [];
                     foreach ($d as $dd) {
-                        if (!is_numeric($dd[1])) {
+
+                        $ansarId = trim($dd[1]);
+                        $bankName = strtolower(trim($dd[2]));
+                        $bankAccountNo = trim($dd[3]);
+//                        $mobileBankAccount = trim($dd[4]);
+
+                        if (!is_numeric($ansarId)) {
 //                        echo "id column not found.\n";
                             continue;
-                        } else if (!empty(trim($dd[1])) && !empty(trim($dd[4])) && !empty(trim($dd[2]))) {
-                            $dataRow["ansar_id"] = trim($dd[1]);
-                            if (strtolower(trim($dd[2])) === "rocket" || strtolower(trim($dd[2])) === "bkash") {
-                                $dataRow["mobile_bank_account_no"] = trim($dd[4]);
-                                $dataRow["mobile_bank_type"] = trim($dd[2]);
+                        } else if (!empty($ansarId) && !empty($bankName)) {
+                            $dataRow["ansar_id"] = $ansarId;
+                            if ($bankName === "rocket" || $bankName === "bkash") {
+//                                $dataRow["mobile_bank_account_no"] = trim($dd[4]);
+                                $dataRow["mobile_bank_type"] = $bankName;
                                 $dataRow["prefer_choice"] = "mobile";
                             } else {
-                                $dataRow["bank_name"] = trim($dd[2]);
-                                $dataRow["account_no"] = trim($dd[3]);
+                                $dataRow["bank_name"] = $bankName;
+                                $dataRow["account_no"] = $bankAccountNo;
                                 $dataRow["prefer_choice"] = "general";
                             }
 //                            $bankInfo = AnsarBankAccountInfoDetails::firstOrCreate($dataRow);
@@ -269,7 +274,7 @@ class EntryFormController extends Controller
                         }
                     }
                 }
-                $message .= "uploaded file '" . $excel->getClientOriginalName() . "'. Successfully added " . $index . " account(s).<br/>";
+                $message .= "Uploaded file '" . $excel->getClientOriginalName() . "'. Successfully added " . $index . " account(s).<br/>";
             }
             return View::make('HRM::Entryform.upload_bank_info')->with("message", $message);
         } else {
