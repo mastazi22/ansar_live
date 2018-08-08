@@ -529,14 +529,19 @@ class FormSubmitHandler extends Controller
 
     public function editEntry($ansarid, Request $request)
     {
-        $personalinfo = PersonalInfo::where('ansar_id', $ansarid)->first();
+        $personalInfo = PersonalInfo::where('ansar_id', $ansarid)->first();
         if ($request->route()->getName() == 'editVerifiedEntry') {
-            if ($personalinfo->verified != 2) abort(401);
+            if ($personalInfo->verified != 2) abort(401);
         }
         if ($request->route()->getName() == 'editentry') {
-            if ($personalinfo->verified == 2) abort(401);
+            if ($personalInfo->verified == 2) abort(401);
         }
-        return View::make('HRM::Entryform.entry_edit')->with('ansarAllDetails', $personalinfo);
+
+        //temporary solution
+        if(strtolower($personalInfo->account->bank_name)==="dbbl"){
+            $personalInfo->account->bank_name = "Dutch-Bangla Bank Limited";
+        }
+        return View::make('HRM::Entryform.entry_edit')->with('ansarAllDetails', $personalInfo);
     }
 
 

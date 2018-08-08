@@ -15,10 +15,14 @@
                         {{$message}}
                     </div>
                 @endif
-                <p style="text-align: right">
+                <p style="text-align: right;position: absolute;right: 1%;">
                     <a class="btn btn-primary"
                        href="{{asset('sample_data_file/default_format.xls')}}">Download default format</a>
                 </p>
+
+                <p style="color: red;">Please check and re-check file(s) format and column structure before upload.<br/> Download
+                    the sample file first and make sure file(s) are structured same.</p>
+
                 <form id="bulk_bank_account_info_form" method="post" class="form"
                       action="{{ URL::to("HRM/bulk-upload-bank-info") }}" enctype="multipart/form-data">
                     {!! csrf_field() !!}

@@ -253,7 +253,7 @@ class EntryFormController extends Controller
                         $ansarId = trim($dd[1]);
                         $bankName = strtolower(trim($dd[2]));
                         $bankAccountNo = trim($dd[3]);
-//                        $mobileBankAccount = trim($dd[4]);
+//                        $mobileBankAccountNo = trim($dd[4]);
 
                         if (!is_numeric($ansarId)) {
 //                        echo "id column not found.\n";
@@ -261,7 +261,7 @@ class EntryFormController extends Controller
                         } else if (!empty($ansarId) && !empty($bankName)) {
                             $dataRow["ansar_id"] = $ansarId;
                             if ($bankName === "rocket" || $bankName === "bkash") {
-//                                $dataRow["mobile_bank_account_no"] = trim($dd[4]);
+//                                $dataRow["mobile_bank_account_no"] = $mobileBankAccountNo;
                                 $dataRow["mobile_bank_type"] = $bankName;
                                 $dataRow["prefer_choice"] = "mobile";
                             } else {
