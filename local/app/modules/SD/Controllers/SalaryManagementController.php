@@ -120,7 +120,7 @@ class SalaryManagementController extends Controller
                     $generated_type = $request->sheetType;
                     $kpi_name = $kpi->kpi_name;
                     $withWeapon = $kpi->details->with_weapon;
-                    $extra = $withWeapon?(($all_daily_fee*20)/100):(($all_daily_fee*15)/100);
+                    $extra = $withWeapon?(floatval($all_daily_fee*20)/100):(floatval($all_daily_fee*15)/100);
                     $extra = sprintf("%.2d",$extra);
                     $kpi_id = $kpi->id;
                     return view("SD::salary_sheet.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id', 'generated_type','withWeapon','extra'));
@@ -299,7 +299,7 @@ class SalaryManagementController extends Controller
                     'reg_fee'=>$welfare_fee-5,
                     'welfare_fee'=>$welfare_fee-4,
                     'share_amount'=>$share_amount,
-                    'extra'=>sprintf('%.2d',($kpi->details->with_weapon?(($total_daily_fee*20)/100):(($total_daily_fee*15)/100))),
+                    'extra'=>sprintf('%.2d',($kpi->details->with_weapon?(floatval($total_daily_fee*20)/100):(floatval($total_daily_fee*15)/100))),
                     'net_amount'=>$total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee + $total_medical_fee-($welfare_fee+$share_amount),
                     'total_amount'=>$total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee
                 ]);
