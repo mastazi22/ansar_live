@@ -233,13 +233,14 @@ class EntryFormController extends Controller
     {
         $message = "";
         if (strtolower($request->method()) == "post") {
-            $rules = [
-                'bulk_bank_account_info.*' => ['required', 'mimes:xls,xlsx'],
-            ];
-            $this->validate($request, $rules, [
-                'bulk_bank_account_info.*.required' => "Please attache a file.(Supported formats are xlsx,xls)",
-                'bulk_bank_account_info.*.mimes' => "File format not supported."
-            ]);
+//            $rules = [
+//                'bulk_bank_account_info.*' => ['required', 'mimes:xls,xlsx'],
+//            ];
+//            $this->validate($request, $rules, [
+//                'bulk_bank_account_info.*.required' => "Please attache a file.(Supported formats are xlsx,xls)",
+//                'bulk_bank_account_info.*.mimes' => "File format not supported."
+//            ]);
+//            dd($request->file()['bulk_bank_account_info']);
             foreach ($request->file()['bulk_bank_account_info'] as $excel) {
                 $data = Excel::load($excel, function ($excel) {
                 })->get();
@@ -270,6 +271,7 @@ class EntryFormController extends Controller
                                 $dataRow["account_no"] = $bankAccountNo;
                                 $dataRow["prefer_choice"] = "general";
                             }
+
                             $bankInfo = AnsarBankAccountInfoDetails::firstOrCreate($dataRow);
                             $index++;
                         }

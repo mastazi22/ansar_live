@@ -12,7 +12,7 @@
             <div class="box-body">
                 @if(!empty($message))
                     <div class="alert alert-success" role="alert">
-                        {{$message}}
+                        {!! $message !!}
                     </div>
                 @endif
                 <p style="text-align: right;position: absolute;right: 1%;">
