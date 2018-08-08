@@ -69,7 +69,7 @@
             @endif
         </table>
         @if(count($datas)>0)
-            <h3 class="text-center">Summery</h3>
+            <h3 class="text-center">Summary</h3>
             <table class="table table-bordered table-condensed">
                 <tr>
                     <th>{{$withWeapon?"20% of daily salary":"15% of daily salary"}}</th>
