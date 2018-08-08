@@ -231,43 +231,47 @@ class EntryFormController extends Controller
 
     public function bulkUploadBankInfo(Request $request)
     {
+        $message = "";
         if (strtolower($request->method()) == "post") {
             $rules = [
-                'bulk_bank_account_info' => ['required', 'mimes:xls,xlsx'],
+                'bulk_bank_account_info.*' => ['required', 'mimes:xls,xlsx'],
             ];
             $this->validate($request, $rules, [
-                'bulk_bank_account_info.required' => "Please attache a file.(Supported formats are xlsx,xls)",
-                'bulk_bank_account_info.mimes' => "File format not supported."
+                'bulk_bank_account_info.*.required' => "Please attache a file.(Supported formats are xlsx,xls)",
+                'bulk_bank_account_info.*.mimes' => "File format not supported."
             ]);
-            $data = Excel::load($request->file()['bulk_bank_account_info'], function ($excel) {
-            })->get();
-            $index = 0;
-            foreach ($data as $d) {
-                $d = json_decode(json_encode($d));
-                $header = $d[0];
-                unset($d[0]);
-                $rows = [];
-                foreach ($d as $dd) {
-                    if (!is_numeric($dd[1])) {
+            foreach ($request->file()['bulk_bank_account_info'] as $excel) {
+                $data = Excel::load($excel, function ($excel) {
+                })->get();
+                $index = 0;
+                foreach ($data as $d) {
+                    $d = json_decode(json_encode($d));
+                    $header = $d[0];
+                    unset($d[0]);
+                    $rows = [];
+                    foreach ($d as $dd) {
+                        if (!is_numeric($dd[1])) {
 //                        echo "id column not found.\n";
-                        continue;
-                    } else if (!empty(trim($dd[1])) && !empty(trim($dd[4])) && !empty(trim($dd[2]))) {
-                        $dataRow["ansar_id"] = trim($dd[1]);
-                        if (strtolower(trim($dd[2])) === "rocket" || strtolower(trim($dd[2])) === "bkash") {
-                            $dataRow["mobile_bank_account_no"] = trim($dd[4]);
-                            $dataRow["mobile_bank_type"] = trim($dd[2]);
-                            $dataRow["prefer_choice"] = "mobile";
-                        } else {
-                            $dataRow["bank_name"] = trim($dd[2]);
-                            $dataRow["account_no"] = trim($dd[3]);
-                            $dataRow["prefer_choice"] = "general";
+                            continue;
+                        } else if (!empty(trim($dd[1])) && !empty(trim($dd[4])) && !empty(trim($dd[2]))) {
+                            $dataRow["ansar_id"] = trim($dd[1]);
+                            if (strtolower(trim($dd[2])) === "rocket" || strtolower(trim($dd[2])) === "bkash") {
+                                $dataRow["mobile_bank_account_no"] = trim($dd[4]);
+                                $dataRow["mobile_bank_type"] = trim($dd[2]);
+                                $dataRow["prefer_choice"] = "mobile";
+                            } else {
+                                $dataRow["bank_name"] = trim($dd[2]);
+                                $dataRow["account_no"] = trim($dd[3]);
+                                $dataRow["prefer_choice"] = "general";
+                            }
+//                            $bankInfo = AnsarBankAccountInfoDetails::firstOrCreate($dataRow);
+                            $index++;
                         }
-                        $bankInfo = AnsarBankAccountInfoDetails::firstOrCreate($dataRow);
-                        $index++;
                     }
                 }
+                $message .= "uploaded file '" . $excel->getClientOriginalName() . "'. Successfully added " . $index . " account(s).<br/>";
             }
-            return View::make('HRM::Entryform.upload_bank_info')->with("message", "Successfully add " . $index . " accounts.<br/>");
+            return View::make('HRM::Entryform.upload_bank_info')->with("message", $message);
         } else {
             return View::make('HRM::Entryform.upload_bank_info');
         }
