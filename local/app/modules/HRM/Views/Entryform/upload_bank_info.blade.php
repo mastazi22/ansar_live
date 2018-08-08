@@ -10,9 +10,9 @@
                 <h3 class="box-title">Upload File</h3>
             </div>
             <div class="box-body">
-                @if(Session::has("success"))
+                @if(!empty($message))
                     <div class="alert alert-success" role="alert">
-                        {{Session::get("success")}}
+                        {{$message}}
                     </div>
                 @endif
                 <p style="text-align: right">
@@ -23,7 +23,7 @@
                       action="{{ URL::to("HRM/bulk-upload-bank-info") }}" enctype="multipart/form-data">
                     {!! csrf_field() !!}
                     <input type="submit" name="Upload" class="btn btn-primary" style="margin-bottom: 1%;">
-                    <input type="file" name="bulk_bank_account_info" id="bulk_bank_account_info">
+                    <input type="file" name="bulk_bank_account_info[]" id="bulk_bank_account_info" multiple>
                     @if(isset($errors)&&$errors->first('bulk_bank_account_info'))
                         <p class="text text-danger">{{$errors->first('bulk_bank_account_info')}}</p>
                     @endif
