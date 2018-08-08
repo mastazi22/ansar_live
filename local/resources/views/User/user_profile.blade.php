@@ -2,6 +2,12 @@
 @section('content')
     <script>
         $(document).ready(function () {
+            var v = "{{$user->userProfile->bank_name}}";
+            $("select[name='bank_name']").children('option').each(function () {
+                if ($(this).attr('value') == v) {
+                    $(this).attr('selected', true)
+                }
+            })
             @if(auth()->user()->type==11)
             $("#user-name-form").ajaxForm({
                 beforeSubmit: function (data) {
@@ -16,7 +22,10 @@
                         $("#user-name-form p").css('display', 'block')
                     }
                     else if (response.submit) {
-                        $('body').notifyDialog({type: 'success', message: 'User name changed successfully'}).showDialog()
+                        $('body').notifyDialog({
+                            type: 'success',
+                            message: 'User name changed successfully'
+                        }).showDialog()
                         $("#user-name-form p").css('display', 'none')
                     }
                     else {
@@ -126,7 +135,7 @@
                         console.log(data)
                     },
                     success: function (r) {
-                        if (r.status){
+                        if (r.status) {
                             noty({
                                 type: 'success',
                                 text: r.message,
@@ -272,6 +281,128 @@
                                                 <span class="glyphicon glyphicon-star form-control-feedback"></span>
                                             </div>
                                         </div>
+                                        <div class="form-group has-feedback">
+                                            <label for="rank" class="col-sm-3 control-label"
+                                                   style="text-align: left;padding-top:0">Rank</label>
+
+                                            <div class="col-sm-9">
+                                                <input type="text" name="rank" value="{{$user->userProfile->rank}}"
+                                                       class="form-control" placeholder="Rank"/>
+                                                <span class="glyphicon glyphicon-star form-control-feedback"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group has-feedback">
+                                            <label for="rank" class="col-sm-3 control-label"
+                                                   style="text-align: left;padding-top:0">Bank Name</label>
+
+                                            <div class="col-sm-9">
+                                                <select name="bank_name" value="{{$user->userProfile->bank_name}}"
+                                                        class="form-control">
+                                                    <option value="">Select a bank</option>
+                                                    <option value="AB Bank Limited">AB Bank Limited</option>
+                                                    <option value="Agrani Bank Limited">Agrani Bank Limited</option>
+                                                    <option value="Al-Arafah Islami Bank Limited">Al-Arafah Islami Bank
+                                                        Limited
+                                                    </option>
+                                                    <option value="Bangladesh Commerce Bank Limited">Bangladesh Commerce
+                                                        Bank Limited
+                                                    </option>
+                                                    <option value="Bangladesh Development Bank Limited">Bangladesh
+                                                        Development Bank Limited
+                                                    </option>
+                                                    <option value="Bangladesh Krishi Bank">Bangladesh Krishi Bank
+                                                    </option>
+                                                    <option value="Bank Al-Falah Limited">Bank Al-Falah Limited</option>
+                                                    <option value="Bank Asia Limited">Bank Asia Limited</option>
+                                                    <option value="BASIC Bank Limited">BASIC Bank Limited</option>
+                                                    <option value="BRAC Bank Limited">BRAC Bank Limited</option>
+                                                    <option value="Citibank N.A">Citibank N.A</option>
+                                                    <option value="Commercial Bank of Ceylon Limited">Commercial Bank of
+                                                        Ceylon Limited
+                                                    </option>
+                                                    <option value="Dhaka Bank Limited">Dhaka Bank Limited</option>
+                                                    <option value="Dutch-Bangla Bank Limited">Dutch-Bangla Bank
+                                                        Limited
+                                                    </option>
+                                                    <option value="Eastern Bank Limited">Eastern Bank Limited</option>
+                                                    <option value="EXIM Bank Limited">EXIM Bank Limited</option>
+                                                    <option value="First Security Islami Bank Limited" First Security
+                                                            Islami Bank Limited
+                                                    </option>
+                                                    <option value="Habib Bank Ltd.">Habib Bank Ltd.</option>
+                                                    <option value="ICB Islamic Bank Ltd.">ICB Islamic Bank Ltd.</option>
+                                                    <option value="IFIC Bank Limited">IFIC Bank Limited</option>
+                                                    <option value="Islami Bank Bangladesh Ltd">Islami Bank Bangladesh
+                                                        Ltd
+                                                    </option>
+                                                    <option value="Jamuna Bank Ltd">Jamuna Bank Ltd</option>
+                                                    <option value="Janata Bank Limited">Janata Bank Limited</option>
+                                                    <option value="Meghna Bank Limited">Meghna Bank Limited</option>
+                                                    <option value="Mercantile Bank Limited">Mercantile Bank Limited
+                                                    </option>
+                                                    <option value="Midland Bank Limited">Midland Bank Limited</option>
+                                                    <option value="Mutual Trust Bank Limited">Mutual Trust Bank
+                                                        Limited
+                                                    </option>
+                                                    <option value="National Bank Limited">National Bank Limited</option>
+                                                    <option value="National Bank of Pakistan">National Bank of
+                                                        Pakistan
+                                                    </option>
+                                                    <option value="National Credit & Commerce Bank Ltd">National Credit
+                                                        & Commerce Bank Ltd
+                                                    </option>
+                                                    <option value="NRB Commercial Bank Limited">NRB Commercial Bank
+                                                        Limited
+                                                    </option>
+                                                    <option value="One Bank Limited">One Bank Limited</option>
+                                                    <option value="Premier Bank Limited">Premier Bank Limited</option>
+                                                    <option value="Prime Bank Ltd">Prime Bank Ltd</option>
+                                                    <option value="Pubali Bank Limited">Pubali Bank Limited</option>
+                                                    <option value="Rajshahi Krishi Unnayan Bank">Rajshahi Krishi Unnayan
+                                                        Bank
+                                                    </option>
+                                                    <option value="Rupali Bank Limited">Rupali Bank Limited</option>
+                                                    <option value="Shahjalal Bank Limited">Shahjalal Bank Limited
+                                                    </option>
+                                                    <option value="Shimanto Bank Limited">Shimanto Bank Limited</option>
+                                                    <option value="Social Islami Bank Ltd.">Social Islami Bank Ltd.
+                                                    </option>
+                                                    <option value="Sonali Bank Limited">Sonali Bank Limited</option>
+                                                    <option value="South Bangla Agriculture & Commerce Bank Limited">
+                                                        South Bangla Agriculture & Commerce Bank Limited
+                                                    </option>
+                                                    <option value="Southeast Bank Limited">Southeast Bank Limited
+                                                    </option>
+                                                    <option value="Standard Bank Limited">Standard Bank Limited</option>
+                                                    <option value="Standard Chartered Bank">Standard Chartered Bank
+                                                    </option>
+                                                    <option value="State Bank of India">State Bank of India</option>
+                                                    <option value="The City Bank Ltd.">The City Bank Ltd.</option>
+                                                    <option value="The Hong Kong and Shanghai Banking Corporation. Ltd.">
+                                                        The Hong Kong and Shanghai Banking Corporation. Ltd.
+                                                    </option>
+                                                    <option value="Trust Bank Limited">Trust Bank Limited</option>
+                                                    <option value="Union Bank Limited">Union Bank Limited</option>
+                                                    <option value="United Commercial Bank Limited">United Commercial
+                                                        Bank Limited
+                                                    </option>
+                                                    <option value="Uttara Bank Limited">Uttara Bank Limited</option>
+                                                    <option value="Woori Bank">Woori Bank</option>
+                                                </select>
+                                                <span class="glyphicon glyphicon-star form-control-feedback"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group has-feedback">
+                                            <label for="rank" class="col-sm-3 control-label"
+                                                   style="text-align: left;padding-top:0">Bank account no</label>
+
+                                            <div class="col-sm-9">
+                                                <input type="text" name="bank_account_no"
+                                                       value="{{$user->userProfile->bank_account_no}}"
+                                                       class="form-control" placeholder="Bank account no"/>
+                                                <span class="glyphicon glyphicon-star form-control-feedback"></span>
+                                            </div>
+                                        </div>
                                         <div class="row">
                                             <div class="col-sm-4 col-sm-offset-8">
                                                 <button type="submit" class="btn btn-primary btn-block btn-flat">
@@ -331,8 +462,8 @@
                         <div id="user-name-password" class="tab-pane">
                             <div class="row">
                                 @if(auth()->user()->type==11)
-                                <div class="col-sm-4 col-sm-offset-4">
-                                    <h4 style="border-bottom: 1px solid #ababab">Change user name</h4>
+                                    <div class="col-sm-4 col-sm-offset-4">
+                                        <h4 style="border-bottom: 1px solid #ababab">Change user name</h4>
 
                                         <form id="user-name-form" action="{{action('UserController@changeUserName')}}"
                                               method="post">
@@ -361,7 +492,7 @@
                                             </div>
                                         </form>
 
-                                </div>
+                                    </div>
                                 @endif
                             </div>
                             <div class="row">
