@@ -21,7 +21,7 @@
                 $scope.vdpList = $sce.trustAsHtml('')
                 $http({
                     method: 'get',
-                    url: "{{URL::route('SD.salary_management.create')}}",
+                    url: "{{URL::route('SD.salary_disburse.create')}}",
                     params: $scope.param,
                 }).then(function (response) {
                     $scope.allLoading = false;
@@ -65,6 +65,48 @@
                 }
             }
         })
+        GlobalApp.directive('formSubmitLocal',function (notificationService,$sce,$timeout) {
+            return {
+                restrict:'A',
+                link:function (scope,elem,attr) {
+                    var newScope;
+                    $(elem).ajaxForm({
+                        beforeSubmit:function () {
+                            scope.allLoading = true
+                            $timeout(function () {
+                                scope.$apply();
+                            })
+                        },
+                        success:function (response) {
+                            var r;
+                            try{
+                                r  = JSON.parse(response);
+                            }catch(e){
+                                r = response;
+                            }
+                            if(r.status){
+                                notificationService.notify("success",r.message);
+                                window.location.href = r.download_url;
+                                scope.vdpList = $sce.trustAsHtml(`
+            <p style="font-size: 16px;font-weight: bold;text-align: center;">
+                Select guard,month,year to load data
+            </p>
+            `)
+
+                            } else{
+                                notificationService.notify("error",r.message);
+                            }
+                            $timeout(function () {
+                                scope.$apply();
+                            })
+                        },error:function (response) {
+                            notificationService.notify("error","error code : "+response.status);
+                        }
+                    })
+
+                }
+            }
+        })
     </script>
     <section class="content" ng-controller="AttendanceController">
         @if(Session::has('success_message'))
@@ -93,9 +135,6 @@
                 <filter-template
                         show-item="['range','unit','thana','kpi']"
                         type="single"
-                        range-change="loadPage()"
-                        unit-change="loadPage()"
-                        thana-change="loadPage()"
                         data="param"
                         start-load="range"
                         on-load="loadPage()"
@@ -106,8 +145,8 @@
                 <div class="row">
                     <div class="col-sm-3">
                         <div class="form-group">
-                            <label for="">Sheet Type</label>
-                            <select class="form-control" ng-model="param.sheetType">
+                            <label for="">Disburse Type</label>
+                            <select class="form-control" ng-model="param.disburseType">
                                 <option value="">--Select a type--</option>
                                 <option value="salary">Salary</option>
                                 <option value="bonus">Bonus</option>
@@ -121,21 +160,11 @@
                                    ng-model="param.month_year">
                         </div>
                     </div>
-                    <div class="col-sm-3" ng-if="param.sheetType=='bonus'">
-                        <div class="form-group">
-                            <label for="">Bonus For</label>
-                            <select class="form-control" ng-model="param.bonusType">
-                                <option value="">--Select a type--</option>
-                                <option value="eidulfitr">Eid-ul-fitr</option>
-                                <option value="eiduladah">Eid-ul-adah</option>
-                            </select>
-                        </div>
-                    </div>
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label style="display: block" for="">&nbsp;</label>
                             <button class="btn btn-primary" ng-click="loadData()"
-                                    ng-disabled="!param.range||!param.unit||!param.thana||!param.kpi||!param.month_year||(!param.bonusType&&param.sheetType=='bonus')||!param.sheetType"
+                                    ng-disabled="!param.range||!param.unit||!param.thana||!param.kpi||!param.month_year||!param.disburseType"
                             >
                                 <i class="fa fa-download"></i>&nbsp; Load data
                             </button>
@@ -155,7 +184,7 @@
     <script>
         $(document).ready(function () {
             $("body").filter("#ppppp").confirmDialog({
-                message: "Before submit make sure all data is correct.You can`t edit data nce you submit it.<br>Do you want to generate salary sheet",
+                message: "Are you sure?",
                 ok_button_text: 'Confirm',
                 cancel_button_text: 'Cancel',
                 event: 'click',

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Request;
 class PersonalInfo extends Model
 {
     protected $connection = 'hrm';
-    protected $table = 'tbl_ansar_parsonal_info';
+    protected $table = 'db_amis.tbl_ansar_parsonal_info';
     protected $guarded = ['id'];
 
     public function status()

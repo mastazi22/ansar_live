@@ -64,8 +64,8 @@ return [
                     "route" => "print_card_id_view",
                     "icon" => "fa-dashboard",
                 ],
+                "Bulk Upload Bank A/C" => []
             ]
-
         ],
         "Service" => [
             "route" => "#",
@@ -390,124 +390,124 @@ return [
         ]
     ],
     "sd" => [
-        "Demand Sheet"=>[
-            "route"=>"#",
-            "icon"=>"fa-file",
-            "children"=>[
-                "Demand Constant"=>[
-                    "route"=>'SD.demand_constant',
-                    "icon"=>'fa-cog'
+        "Demand Sheet" => [
+            "route" => "#",
+            "icon" => "fa-file",
+            "children" => [
+                "Demand Constant" => [
+                    "route" => 'SD.demand_constant',
+                    "icon" => 'fa-cog'
                 ],
-                "Generate Demand Sheet"=>[
-                    "route"=>'SD.demand_sheet',
-                    "icon"=>'fa-cog'
+                "Generate Demand Sheet" => [
+                    "route" => 'SD.demand_sheet',
+                    "icon" => 'fa-cog'
                 ],
-                "Demand History"=>[
-                    "route"=>'SD.demand_history',
-                    "icon"=>'fa-cog'
-                ],
-            ]
-        ],
-        "Salary Management"=>[
-            "route"=>"#",
-            "icon"=>"fa-money",
-            "children"=>[
-                "Attendance"=>[
-                    "route"=>'#',
-                    "icon"=>'fa-calendar',
-                    "children"=>[
-                        "View Attendances"=>[
-                            "route"=>'SD.attendance.index',
-                            "icon"=>'fa-cog',
-                        ],
-                        "Take Attendance"=>[
-                            "route"=>'SD.attendance.create',
-                            "icon"=>'fa-cog',
-                        ]
-                    ]
-                ],
-                "Leave Management"=>[
-                    "route"=>'#',
-                    "icon"=>'fa-cog',
-                    "children"=>[
-                        "View Leaves"=>[
-                            "route"=>'SD.leave.index',
-                            "icon"=>'fa-cog',
-                        ],
-                        "Grant Leave"=>[
-                            "route"=>'SD.leave.create',
-                            "icon"=>'fa-cog',
-                        ]
-                    ]
-                ],
-                "Salary Sheet"=>[
-                    "route"=>'#',
-                    "icon"=>'fa-cog',
-                    "children"=>[
-                        "Salary Generate History"=>[
-                            "route"=>'SD.salary_management.index',
-                            "icon"=>'fa-cog',
-                        ],
-                        "Generate Salary Sheet"=>[
-                            "route"=>'SD.salary_management.create',
-                            "icon"=>'fa-cog',
-                        ],
-                    ]
-                ],
-                "Salary Sheet(Temp. KPI)"=>[
-                    "route"=>'#',
-                    "icon"=>'fa-cog',
-                    "children"=>[
-                        "Salary Generate History"=>[
-                            "route"=>'SD.salary_management_short.index',
-                            "icon"=>'fa-cog',
-                        ],
-                        "Generate Salary Sheet"=>[
-                            "route"=>'SD.salary_management_short.create',
-                            "icon"=>'fa-cog',
-                        ],
-                    ]
+                "Demand History" => [
+                    "route" => 'SD.demand_history',
+                    "icon" => 'fa-cog'
                 ],
             ]
         ],
-        "Payment From KPI"=>[
-            "route"=>'SD.kpi_payment.index',
-            "icon"=>'fa-cog'
-        ],
-        "Disbursement of salary"=>[
-            "route"=>"#",
-            "icon"=>"fa-cog",
-            "children"=>[
-                "History of Salary Disburse"=>[
-                    "route"=>'SD.salary_disburse.index',
-                    "icon"=>'fa-cog'
+        "Salary Management" => [
+            "route" => "#",
+            "icon" => "fa-money",
+            "children" => [
+                "Attendance" => [
+                    "route" => '#',
+                    "icon" => 'fa-calendar',
+                    "children" => [
+                        "View Attendances" => [
+                            "route" => 'SD.attendance.index',
+                            "icon" => 'fa-cog',
+                        ],
+                        "Take Attendance" => [
+                            "route" => 'SD.attendance.create',
+                            "icon" => 'fa-cog',
+                        ]
+                    ]
                 ],
-                "Disburse Salary"=>[
-                    "route"=>'SD.salary_disburse.create',
-                    "icon"=>'fa-cog'
+                "Leave Management" => [
+                    "route" => '#',
+                    "icon" => 'fa-cog',
+                    "children" => [
+                        "View Leaves" => [
+                            "route" => 'SD.leave.index',
+                            "icon" => 'fa-cog',
+                        ],
+                        "Grant Leave" => [
+                            "route" => 'SD.leave.create',
+                            "icon" => 'fa-cog',
+                        ]
+                    ]
+                ],
+                "Salary Sheet" => [
+                    "route" => '#',
+                    "icon" => 'fa-cog',
+                    "children" => [
+                        "Salary Generate History" => [
+                            "route" => 'SD.salary_management.index',
+                            "icon" => 'fa-cog',
+                        ],
+                        "Generate Salary Sheet" => [
+                            "route" => 'SD.salary_management.create',
+                            "icon" => 'fa-cog',
+                        ],
+                    ]
+                ],
+                "Salary Sheet(Temp. KPI)" => [
+                    "route" => '#',
+                    "icon" => 'fa-cog',
+                    "children" => [
+                        "Salary Generate History" => [
+                            "route" => 'SD.salary_management_short.index',
+                            "icon" => 'fa-cog',
+                        ],
+                        "Generate Salary Sheet" => [
+                            "route" => 'SD.salary_management_short.create',
+                            "icon" => 'fa-cog',
+                        ],
+                    ]
+                ],
+            ]
+        ],
+        "Payment From KPI" => [
+            "route" => 'SD.kpi_payment.index',
+            "icon" => 'fa-cog'
+        ],
+        "Disbursement of salary" => [
+            "route" => "#",
+            "icon" => "fa-cog",
+            "children" => [
+                "History of Salary Disburse" => [
+                    "route" => 'SD.salary_disburse.index',
+                    "icon" => 'fa-cog'
+                ],
+                "Disburse Salary" => [
+                    "route" => 'SD.salary_disburse.create',
+                    "icon" => 'fa-cog'
                 ],
             ]
         ],
     ],
     "recruitment" => [
-        "TRAINING MODULE"=>[
+        "TRAINING MODULE" => [
             "route" => "recruitment.training",
             "icon" => "fa-cog"
         ],
-        "training"=>[
-            "Training Category"=>[
+        "training" => [
+            "Training Category" => [
                 "route" => "recruitment.training.category.index",
                 "icon" => "fa-cog"
             ],
-            "Training Courses"=>[
+            "Training Courses" => [
                 "route" => "recruitment.training.courses.index",
                 "icon" => "fa-cog"
             ],
-            "Training Session"=>[
+            "Training Session" => [
                 "route" => "#",
                 "icon" => "fa-cog"
             ],
-            "Training Center"=>[
+            "Training Center" => [
                 "route" => "#",
                 "icon" => "fa-cog"
             ],
@@ -520,91 +520,91 @@ return [
             "route" => "recruitment.circular.index",
             "icon" => "fa-clipboard"
         ],
-        "Applicant Management"=>[
-            "route"=>"#",
-            "icon"=>"fa-user",
-            "children"=>[
-                "Circular Summery"=>[
-                    "route"=>"recruitment.applicant.index",
-                    "icon"=>"fa-circle"
+        "Applicant Management" => [
+            "route" => "#",
+            "icon" => "fa-user",
+            "children" => [
+                "Circular Summery" => [
+                    "route" => "recruitment.applicant.index",
+                    "icon" => "fa-circle"
                 ],
-                "Search Applicant"=>[
-                    "route"=>"recruitment.applicant.search",
-                    "icon"=>"fa-circle"
+                "Search Applicant" => [
+                    "route" => "recruitment.applicant.search",
+                    "icon" => "fa-circle"
                 ],
-                "Edit Applicant"=>[
-                    "route"=>"recruitment.applicant.info",
-                    "icon"=>"fa-circle"
+                "Edit Applicant" => [
+                    "route" => "recruitment.applicant.info",
+                    "icon" => "fa-circle"
                 ],
-                "Revert Applicant Status"=>[
-                    "route"=>"recruitment.applicant.revert",
-                    "icon"=>"fa-circle"
+                "Revert Applicant Status" => [
+                    "route" => "recruitment.applicant.revert",
+                    "icon" => "fa-circle"
                 ],
-                "Applicant Mark Entry"=>[
-                    "route"=>"recruitment.marks.index",
-                    "icon"=>"fa-circle"
+                "Applicant Mark Entry" => [
+                    "route" => "recruitment.marks.index",
+                    "icon" => "fa-circle"
                 ],
-                "Send SMS to Applicant"=>[
-                    "route"=>"recruitment.applicant.sms",
-                    "icon"=>"fa-circle"
+                "Send SMS to Applicant" => [
+                    "route" => "recruitment.applicant.sms",
+                    "icon" => "fa-circle"
                 ],
-                "Final Accepted Applicant"=>[
-                    "route"=>"recruitment.applicant.final_list",
-                    "icon"=>"fa-circle"
+                "Final Accepted Applicant" => [
+                    "route" => "recruitment.applicant.final_list",
+                    "icon" => "fa-circle"
                 ]
 
             ]
         ],
-        "Reports"=>[
-            "route"=>"#",
-            "icon"=>"fa-file-excel-o",
-            "children"=>[
-                "View Applicant Status Report"=>[
-                    "route"=>"report.applicants.status",
-                    "icon"=>"fa-file-excel-o"
+        "Reports" => [
+            "route" => "#",
+            "icon" => "fa-file-excel-o",
+            "children" => [
+                "View Applicant Status Report" => [
+                    "route" => "report.applicants.status",
+                    "icon" => "fa-file-excel-o"
                 ],
-                "Download Accepted Applicant Report"=>[
-                    "route"=>"report.applicants.applicat_accepted_list",
-                    "icon"=>"fa-file-pdf-o"
+                "Download Accepted Applicant Report" => [
+                    "route" => "report.applicants.applicat_accepted_list",
+                    "icon" => "fa-file-pdf-o"
                 ],
-                "Download Applicant Marks Report"=>[
-                    "route"=>"report.applicants.applicat_marks_list",
-                    "icon"=>"fa-file-excel-o"
+                "Download Applicant Marks Report" => [
+                    "route" => "report.applicants.applicat_marks_list",
+                    "icon" => "fa-file-excel-o"
                 ],
 
             ]
         ],
-        "Settings"=>[
-            "route"=>"#",
-            "icon"=>"fa-cog",
-            "children"=>[
-                "Applicant Quota"=>[
-                    "route"=>"recruitment.quota.index",
-                    "icon"=>"fa-cog"
+        "Settings" => [
+            "route" => "#",
+            "icon" => "fa-cog",
+            "children" => [
+                "Applicant Quota" => [
+                    "route" => "recruitment.quota.index",
+                    "icon" => "fa-cog"
                 ],
-                "Applicant Marks Rules"=>[
-                    "route"=>"recruitment.marks_rules.index",
-                    "icon"=>"fa-cog"
+                "Applicant Marks Rules" => [
+                    "route" => "recruitment.marks_rules.index",
+                    "icon" => "fa-cog"
                 ],
-                "Applicant editable field"=>[
-                    "route"=>"recruitment.applicant.editfield",
-                    "icon"=>"fa-cog"
+                "Applicant editable field" => [
+                    "route" => "recruitment.applicant.editfield",
+                    "icon" => "fa-cog"
                 ],
-                "Exam Center"=>[
-                    "route"=>"recruitment.exam-center.index",
-                    "icon"=>"fa-cog"
+                "Exam Center" => [
+                    "route" => "recruitment.exam-center.index",
+                    "icon" => "fa-cog"
                 ],
-                "Application Instruction"=>[
-                    "route"=>"recruitment.instruction",
-                    "icon"=>"fa-cog"
+                "Application Instruction" => [
+                    "route" => "recruitment.instruction",
+                    "icon" => "fa-cog"
                 ],
-                "Mark Distribution"=>[
-                    "route"=>"recruitment.mark_distribution.index",
-                    "icon"=>"fa-cog"
+                "Mark Distribution" => [
+                    "route" => "recruitment.mark_distribution.index",
+                    "icon" => "fa-cog"
                 ],
-                "HRM Training Date"=>[
-                    "route"=>"recruitment.training.index",
-                    "icon"=>"fa-cog"
+                "HRM Training Date" => [
+                    "route" => "recruitment.training.index",
+                    "icon" => "fa-cog"
                 ]
 
             ]
@@ -628,24 +628,24 @@ return [
         ],
 
     ],
-    "avurp"=>[
-        'Entry List'=>[
-            'route'=>'#',
-            'icon'=>'fa-cog',
-            'children'=>[
-                'Entry List'=>[
-                    'route'=>'AVURP.info.index',
-                    'icon'=>'fa-cog',
+    "avurp" => [
+        'Entry List' => [
+            'route' => '#',
+            'icon' => 'fa-cog',
+            'children' => [
+                'Entry List' => [
+                    'route' => 'AVURP.info.index',
+                    'icon' => 'fa-cog',
                 ],
-                'Import List'=>[
-                    'route'=>'AVURP.info.import',
-                    'icon'=>'fa-cog',
+                'Import List' => [
+                    'route' => 'AVURP.info.import',
+                    'icon' => 'fa-cog',
                 ]
             ]
         ],
-        'KPI Info'=>[
-            'route'=>'AVURP.kpi.index',
-            'icon'=>'fa-cog',
+        'KPI Info' => [
+            'route' => 'AVURP.kpi.index',
+            'icon' => 'fa-cog',
         ],
     ]
 ];

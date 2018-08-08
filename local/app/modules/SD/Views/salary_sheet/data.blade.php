@@ -1,4 +1,4 @@
-{!! Form::open(['route'=>'SD.salary_management.store']) !!}
+{!! Form::open(['route'=>'SD.salary_management.store','id'=>'salary-form']) !!}
 {!! Form::hidden('kpi_id',$kpi_id) !!}
 {!! Form::hidden('generated_for_month',$for_month) !!}
 {!! Form::hidden('generated_type',$generated_type) !!}
@@ -169,5 +169,25 @@
         </table>
     @endif
 </div>
-<button type="submit" class="btn btn-primary pull-right">Confirm & Generate Salary Sheet</button>
+<button type="submit" id="generate_sheet" class="btn btn-primary pull-right">Confirm & Generate Salary Sheet</button>
+<button type="submit" id="view_payroll" class="btn btn-primary pull-right" style="margin-right: 20px">View Payroll</button>
 {!! Form::close() !!}
+<script>
+    $(document).ready(function () {
+        $("#view_payroll").on('click',function (evt) {
+            evt.preventDefault();
+            $("#salary-form").attr('action',"{{URL::route('SD.salary_management.view_payroll')}}").submit()
+        })
+        $("#generate_sheet").confirmDialog({
+            message: "<div style='text-align: center'>Before submit make sure all data is correct.<br>You can`t edit data once you submit it.<br>Do you want to generate salary sheet</div>",
+            ok_button_text: 'Confirm',
+            cancel_button_text: 'Cancel',
+            event: 'click',
+            ok_callback: function (element) {
+                $("#salary-form").attr('action',"{{URL::route('SD.salary_management.store')}}").submit()
+            },
+            cancel_callback: function (element) {
+            }
+        })
+    })
+</script>
