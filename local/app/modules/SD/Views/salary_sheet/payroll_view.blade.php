@@ -27,17 +27,17 @@
         page-break-inside: avoid !important;
     }
 </style>
-<h2 style="text-align: center;margin: 0;">
+<h2 style="text-align: center;margin: 0;padding-top:10px;line-height:24px">
     {{$kpi->unit->unit_name_bng}} জেলার অঙ্গীভূত পিসি/এপিসি ও আনসারদের ভাতাদির
     বিল {{LanguageConverter::engToBng(\Carbon\Carbon::parse($generated_date)->format('d/m/Y'))}} <br>
     সংস্থার নাম : {{$kpi->kpi_name}}
 </h2>
 <div style="padding: 10px 0px 0;font-size: 14px">
     <div style="overflow: hidden;margin-bottom: 10px">
-        <div style="float: left">
+        <div style="float: left;font-size:14px">
             তারিখ : {{LanguageConverter::engToBng(\Carbon\Carbon::now()->format('d/m/Y'))}}
         </div>
-        <div style="float: right">
+        <div style="float: right;white-space:nowrap;font-size:14px">
             মাসের নাম : {{$generated_month}}
         </div>
     </div>
