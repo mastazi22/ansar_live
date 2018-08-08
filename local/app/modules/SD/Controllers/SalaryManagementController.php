@@ -301,7 +301,7 @@ class SalaryManagementController extends Controller
                     'share_amount'=>$share_amount,
                     'extra'=>sprintf('%.2f',($kpi->details->with_weapon?(floatval($total_daily_fee*20)/100):(floatval($total_daily_fee*15)/100))),
                     'net_amount'=>$total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee + $total_medical_fee-($welfare_fee+$share_amount),
-                    'total_amount'=>$total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee+$welfare_fee+$share_amount
+                    'total_amount'=>$total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee
                 ]);
 //                        return $datas;
             }

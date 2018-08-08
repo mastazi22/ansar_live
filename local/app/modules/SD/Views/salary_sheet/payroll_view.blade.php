@@ -151,7 +151,7 @@
                         <td colspan="16" style="text-align: right">মোট : </td>
                     @endif
                     <td >{{LanguageConverter::engToBng(collect($chunk)->sum(function($item){
-            return $item["total_daily_fee"]+$item["total_ration_fee"]+$item["total_barber_fee"]+$item["total_transportation_fee"]+$item["total_medical_fee"]+$item["extra"]+$item["reg_fee"]+$item["welfare_fee"]+$item["share_amount"];
+            return $item["total_daily_fee"]+$item["total_ration_fee"]+$item["total_barber_fee"]+$item["total_transportation_fee"]+$item["total_medical_fee"]+$item["extra"];
             }))}}</td>
                     <td></td>
                 </tr>
