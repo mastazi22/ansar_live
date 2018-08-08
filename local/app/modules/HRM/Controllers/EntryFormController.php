@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\modules\HRM\Models\AllDisease;
 use App\modules\HRM\Models\AllEducationName;
 use App\modules\HRM\Models\AllSkill;
+use App\modules\HRM\Models\AnsarBankAccountInfoDetails;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\PersonalInfo;
