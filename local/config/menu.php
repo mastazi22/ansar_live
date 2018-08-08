@@ -64,7 +64,10 @@ return [
                     "route" => "print_card_id_view",
                     "icon" => "fa-dashboard",
                 ],
-                "Bulk Upload Bank A/C" => []
+                "Bulk Upload Bank A/C" => [
+                    "route" => "bulk_upload_bank_file",
+                    "icon" => "fa-dashboard",
+                ]
             ]
         ],
         "Service" => [
