@@ -199,6 +199,7 @@ class UserController extends Controller
         $user->userProfile->rank = Input::get('rank');
         $user->userProfile->bank_name = Input::get('bank_name');
         $user->userProfile->bank_account_no = Input::get('bank_account_no');
+        $user->userProfile->branch_name = Input::get('branch_name');
         $user->userProfile->save();
         return Response::json(['submit' => true]);
     }

@@ -394,6 +394,17 @@
                                         </div>
                                         <div class="form-group has-feedback">
                                             <label for="rank" class="col-sm-3 control-label"
+                                                   style="text-align: left;padding-top:0">Branch Name</label>
+
+                                            <div class="col-sm-9">
+                                                <input type="text" name="branch_name"
+                                                       value="{{$user->userProfile->branch_name}}"
+                                                       class="form-control" placeholder="Bank account no"/>
+                                                <span class="glyphicon glyphicon-star form-control-feedback"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group has-feedback">
+                                            <label for="rank" class="col-sm-3 control-label"
                                                    style="text-align: left;padding-top:0">Bank account no</label>
 
                                             <div class="col-sm-9">
@@ -403,6 +414,7 @@
                                                 <span class="glyphicon glyphicon-star form-control-feedback"></span>
                                             </div>
                                         </div>
+
                                         <div class="row">
                                             <div class="col-sm-4 col-sm-offset-8">
                                                 <button type="submit" class="btn btn-primary btn-block btn-flat">
