@@ -6,6 +6,7 @@ use App\modules\SD\Helper\Facades\DemandConstantFacdes;
 use App\modules\SD\Models\BankAccountList;
 use App\modules\SD\Models\SalaryDisburse;
 use App\modules\SD\Models\SalarySheetHistory;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -119,7 +120,7 @@ class SalaryDisburseController extends Controller
 //            return $collection;
             $files = [];
             foreach ($collection as $key=>$value) {
-                $f_name = Excel::create($key=='n\a'?"no_bank_info":$key, function ($excel) use ($value) {
+                $f_name_excel = Excel::create($key=='n\a'?"no_bank_info":$key, function ($excel) use ($value) {
 
                     $excel->sheet('sheet1', function ($sheet) use ($value) {
                         $sheet->setAutoSize(false);
@@ -127,7 +128,10 @@ class SalaryDisburseController extends Controller
                         $sheet->loadView('SD::salary_disburse.export', ['datas' => $value]);
                     });
                 })->save('xls',false,true);
-                array_push($files,$f_name);
+                $f_name_pdf = storage_path("exports/".($key=='n\a'?"no_bank_info":$key).".pdf");
+                SnappyPdf::loadView('SD::salary_disburse.export', ['datas' => $value])->save($f_name_pdf);
+                array_push($files,$f_name_excel);
+                array_push($files,$f_name_pdf);
             }
             $distribution_to_different_account = [];
             if($append_extra) {
@@ -193,7 +197,7 @@ class SalaryDisburseController extends Controller
                 $distribution_to_different_account[0]["branch_name"] = $salary_sheet->kpi->unit->dc->branch_name;
             }
 
-            $f_name = Excel::create("distribution_to_different_account", function ($excel) use ($distribution_to_different_account) {
+            $f_name_excel = Excel::create("distribution_to_different_account", function ($excel) use ($distribution_to_different_account) {
 
                 $excel->sheet('sheet1', function ($sheet) use ($distribution_to_different_account) {
                     $sheet->setAutoSize(false);
@@ -201,7 +205,10 @@ class SalaryDisburseController extends Controller
                     $sheet->loadView('SD::salary_disburse.export_other', ['datas' => $distribution_to_different_account]);
                 });
             })->save('xls',false,true);
-            array_push($files,$f_name);
+            $f_name_pdf = storage_path("exports/distribution_to_different_account.pdf");
+            SnappyPdf::loadView('SD::salary_disburse.export', ['datas' => $distribution_to_different_account])->save($f_name_pdf);
+            array_push($files,$f_name_excel);
+            array_push($files,$f_name_pdf);
             $zip_archive_name = "salary_sheet.zip";
             $zip = new \ZipArchive();
             if($zip->open(public_path($zip_archive_name),\ZipArchive::CREATE)===true){

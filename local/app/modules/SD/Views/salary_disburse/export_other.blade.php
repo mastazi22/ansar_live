@@ -1,3 +1,8 @@
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
 <table class="table table-condensed table-bordered">
     <tr>
         <th>SL. No</th>
@@ -20,3 +25,6 @@
         </tr>
     @endforeach
 </table>
+
+</body>
+</html>
