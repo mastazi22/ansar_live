@@ -57,7 +57,10 @@
         <table class="table table-condensed table-bordered">
             <caption style="padding: 0 10px">
                 <h4 style="    box-shadow: 1px 1px 1px #c5bfbf;padding: 10px 0;" class="text-bold text-center">
-                    Attendance of (ID:{{$ansar_id}})<br>{{\Carbon\Carbon::parse($first_date)->format("F, Y")}}
+                    Attendance of (ID:{{$ansar_id}})
+                    <br> Name : {{$ansar_name}}
+                    <br> Father Name : {{$father_name}}
+                    <br>{{\Carbon\Carbon::parse($first_date)->format("F, Y")}}
                 </h4>
             </caption>
             <tr>

@@ -62,12 +62,15 @@ class AttendanceController extends Controller
                     ->groupBy('day')
                     ->get());
             } else {
+                $personal_info = PersonalInfo::where('ansar_id',$request->ansar_id)->first();
                 $type = "view";
                 $data = $attendance->get();
                 $ansar_id = $request->ansar_id;
+                $ansar_name = $personal_info->ansar_name_bng;
+                $father_name = $personal_info->father_name_bng;
             }
             $first_date = Carbon::parse("01-{$request->month}-{$request->year}");
-            return view('SD::attendance.data', compact('first_date', 'data', 'type', 'ansar_id'));
+            return view('SD::attendance.data', compact('first_date', 'data', 'type', 'ansar_id','ansar_name','father_name'));
 
         }
         return view('SD::attendance.index');
