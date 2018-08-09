@@ -839,6 +839,15 @@
                 "name": "Generate Salary Sheet"
               }
             ]
+          },
+          {
+            "text": "Disburse Salary",
+            "actions": [
+              {
+                "value": "SD.salary_disburse.create,SD.salary_disburse.store",
+                "name": "Disburse Salary"
+              }
+            ]
           }
 
         ]

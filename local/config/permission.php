@@ -166,6 +166,7 @@ return [
         "SD.demand_constant,SD.update_demand_constant",
         "SD.demand_sheet,SD.generate_demand_sheet",
         "SD.demand_history,SD.view_demand_sheet",
+        "SD.salary_disburse.create,SD.salary_disburse.store",
 
     ]
 ];
