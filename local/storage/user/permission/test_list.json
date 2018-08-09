@@ -848,21 +848,22 @@
                 "name": "Disburse Salary"
               }
             ]
-          },
-          {
-            "text": "Deposit Info",
-            "actions": [
-              {
-                "value": "SD.kpi_payment.index",
-                "name": "View Deposit Info"
-              },
-              {
-                "value": "SD.kpi_payment.create,SD.kpi_payment.store",
-                "name": "Entry Deposit Info"
-              }
-            ]
           }
 
+
+        ]
+      },
+      {
+        "text": "Deposit Info",
+        "actions": [
+          {
+            "value": "SD.kpi_payment.index",
+            "name": "View Deposit Info"
+          },
+          {
+            "value": "SD.kpi_payment.create,SD.kpi_payment.store",
+            "name": "Entry Deposit Info"
+          }
         ]
       }
     ]
