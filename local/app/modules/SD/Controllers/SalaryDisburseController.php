@@ -144,7 +144,7 @@ class SalaryDisburseController extends Controller
 
                 $distribution_to_different_account[2]["account_name"] = "DC`s Account";
                 $distribution_to_different_account[2]["account_no"] = $salary_sheet->kpi->unit->dc->userProfile->bank_account_no;
-                $distribution_to_different_account[2]["branch_name"] = $salary_sheet->kpi->division->dc->userProfile->branch_name;
+                $distribution_to_different_account[2]["branch_name"] = $salary_sheet->kpi->unit->dc->userProfile->branch_name;
                 $distribution_to_different_account[2]["amount"] = sprintf("%.2f",(($salary_sheet->summery["extra"]*DemandConstantFacdes::getValue('DCEP')->cons_value)/100));
                 $distribution_to_different_account[2]["month"] = $salary_sheet->generated_for_month+$salary_sheet->summery["revenue_stamp"];
 
@@ -219,7 +219,7 @@ class SalaryDisburseController extends Controller
 
         }catch(\Exception $e){
             DB::connection('sd')->rollback();
-            return $e;
+//            return $e;
             return redirect()->route('SD.salary_disburse.create')->with('error_message',$e->getMessage());
         }
 
