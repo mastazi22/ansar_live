@@ -97,8 +97,8 @@
         <tr>
             <th>Account no</th>
             <td>{{\App\modules\SD\Models\BankAccountList::getAccount("DG")}}</td>
-            <td>{{$sheet->kpi->division->rc->userProfile->account_no}}</td>
-            <td>{{$sheet->kpi->unit->dc->userProfile->account_no}}</td>
+            <td>{{$sheet->kpi->division->rc->userProfile->bank_account_no}}</td>
+            <td>{{$sheet->kpi->unit->dc->userProfile->bank_account_no}}</td>
         </tr>
         <tr>
             <th>Amount</th>
