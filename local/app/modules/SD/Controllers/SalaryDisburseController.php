@@ -219,7 +219,7 @@ class SalaryDisburseController extends Controller
 
         }catch(\Exception $e){
             DB::connection('sd')->rollback();
-            return redirect()->route('SD.salary_disburse.create')->with('error_message',$e->getMessage());
+            return redirect()->route('SD.salary_disburse.create')->with('error_message',$e->getTraceAsString());
         }
 
     }
