@@ -97,6 +97,11 @@
             </div>
         @endif
         <div class="box box-solid">
+            <div class="overlay" ng-if="allLoading">
+                    <span class="fa">
+                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
+                    </span>
+            </div>
             <div class="box-header">
                 <filter-template
                         show-item="['range','unit','thana','kpi']"
@@ -131,11 +136,6 @@
                 </div>
             </div>
             <div class="box-body">
-                <div class="overlay" ng-if="allLoading">
-                    <span class="fa">
-                        <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
-                    </span>
-                </div>
 
                 <div ng-bind-html="vdpList" compile-html>
 

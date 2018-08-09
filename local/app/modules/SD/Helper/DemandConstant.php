@@ -53,6 +53,16 @@ class DemandConstant
                 return $this->constants->where('cons_name', 'pc_apc_per_day_salary_for_short_term_kpi')->first();
             case 'DVAS':
                 return $this->constants->where('cons_name', 'ansar_vdp_per_day_salary_for_short_term_kpi')->first();
+            case 'REGF':
+                return $this->constants->where('cons_name', 'regimental_fee')->first();
+            case 'REVS':
+                return $this->constants->where('cons_name', 'revenue_stamp')->first();
+            case 'DGEP':
+                return $this->constants->where('cons_name', 'part_of_dg_account_of_extra_amount')->first();
+            case 'RCEP':
+                return $this->constants->where('cons_name', 'part_of_rc_account_of_extra_amount')->first();
+            case 'DCEP':
+                return $this->constants->where('cons_name', 'part_of_dc_account_of_extra_amount')->first();
 
             default:
                 return 0;

@@ -2,6 +2,7 @@
 
 namespace App\modules\HRM\Models;
 
+use App\models\User;
 use App\modules\recruitment\Models\JobApplicantQuota;
 use Illuminate\Database\Eloquent\Model;
 
@@ -26,5 +27,8 @@ class Division extends Model
     }
     public function applicantQuota(){
         return $this->hasOne(JobApplicantQuota::class,'range_id');
+    }
+    public function rc(){
+        return $this->hasOne(User::class,'division_id')->where('type',66);
     }
 }

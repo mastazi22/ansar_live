@@ -37,6 +37,14 @@ class SalarySheetHistory extends Model
             return $e->getMessage();
         }
     }
+    public function getDataAttribute($value){
+        try {
+            $data = unserialize(gzdecode($value));
+            return $data;
+        }catch(\Exception $e){
+            return $e->getMessage();
+        }
+    }
     public function scopeQuerySearch($q,$request)
     {
         if ($request->range) {

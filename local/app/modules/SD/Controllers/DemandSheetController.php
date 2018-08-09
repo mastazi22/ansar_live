@@ -156,6 +156,12 @@ class DemandSheetController extends Controller
         $demandConstant->where('cons_name', 'ansar_vdp_per_day_salary_for_short_term_kpi')->update(['cons_value' => $request->get('ansar_vdp_per_day_salary_for_short_term_kpi')]);
         $demandConstant->where('cons_name', 'other_amount')->update(['cons_value' => $request->get('other_amount')]);
         $demandConstant->where('cons_name', 'deduct_amount')->update(['cons_value' => $request->get('deduct_amount')]);
+        $demandConstant->where('cons_name', 'regimental_fee')->update(['cons_value' => $request->get('regimental_fee')]);
+        $demandConstant->where('cons_name', 'revenue_stamp')->update(['cons_value' => $request->get('revenue_stamp')]);
+        $demandConstant->where('cons_name', 'part_of_dg_account_of_extra_amount')->update(['cons_value' => $request->get('part_of_dg_account_of_extra_amount')]);
+        $demandConstant->where('cons_name', 'part_of_rc_account_of_extra_amount')->update(['cons_value' => $request->get('part_of_rc_account_of_extra_amount')]);
+        $demandConstant->where('cons_name', 'part_of_rc_account_of_extra_amount')->update(['cons_value' => $request->get('part_of_rc_account_of_extra_amount')]);
+        $demandConstant->where('cons_name', 'part_of_dc_account_of_extra_amount')->update(['cons_value' => $request->get('part_of_dc_account_of_extra_amount')]);
         // return ['statys'=>$demandConstant->save()];
         return redirect()->to('SD/demandconstant')->with('constant_update_success', 'Demand constant update successfully');
 

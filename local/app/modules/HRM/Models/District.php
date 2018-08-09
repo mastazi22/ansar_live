@@ -2,6 +2,7 @@
 
 namespace App\modules\HRM\Models;
 
+use App\models\User;
 use App\modules\recruitment\Models\JobApplicantQuota;
 use Illuminate\Database\Eloquent\Model;
 
@@ -32,5 +33,8 @@ class District extends Model
     }
     public function applicantQuota(){
         return $this->hasOne(JobApplicantQuota::class,'district_id');
+    }
+    public function dc(){
+        return $this->hasOne(User::class,'district_id')->where('type',22);
     }
 }

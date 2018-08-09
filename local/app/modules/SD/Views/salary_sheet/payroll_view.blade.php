@@ -86,7 +86,7 @@
 
                         আনুসাঙ্গীক হারে
                     </td>
-                    <td colspan="3">কর্তন</td>
+                    <td colspan="4">কর্তন</td>
                     <td rowspan="2">
                         সর্বমোট টাকার পরিমান
                     </td>
@@ -100,6 +100,7 @@
                 <tr>
                     <td>রেজিমেন্টাল তহবিল</td>
                     <td>কল্যাণ তহবিল</td>
+                    <td>রেভিনিউ স্ট্যাম্প</td>
                     <td>শেয়ার ফি</td>
                 </tr>
                 <?php $i = 1;?>
@@ -119,6 +120,7 @@
                         <td>{{LanguageConverter::engToBng($data['extra'])}}</td>
                         <td>{{LanguageConverter::engToBng($data['reg_fee'])}}</td>
                         <td>{{LanguageConverter::engToBng($data['welfare_fee'])}}</td>
+                        <td>{{LanguageConverter::engToBng($data['revenue_stamp'])}}</td>
                         <td>{{LanguageConverter::engToBng($data['share_amount'])}}</td>
                         <td>{{LanguageConverter::engToBng($data['total_amount'])}}</td>
                         <td>{{LanguageConverter::engToBng($data['net_amount'])}}</td>
@@ -139,6 +141,7 @@
                     <td>{{LanguageConverter::engToBng(sprintf('%.2f',collect($chunk)->sum('extra')))}}</td>
                     <td>{{LanguageConverter::engToBng(collect($chunk)->sum('reg_fee'))}}</td>
                     <td>{{LanguageConverter::engToBng(collect($chunk)->sum('welfare_fee'))}}</td>
+                    <td>{{LanguageConverter::engToBng(collect($chunk)->sum('revenue_stamp'))}}</td>
                     <td>{{LanguageConverter::engToBng(collect($chunk)->sum('share_amount'))}}</td>
                     <td>{{LanguageConverter::engToBng(collect($chunk)->sum('total_amount'))}}</td>
                     <td>{{LanguageConverter::engToBng(collect($chunk)->sum('net_amount'))}}</td>

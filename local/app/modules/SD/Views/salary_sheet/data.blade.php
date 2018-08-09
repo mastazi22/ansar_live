@@ -21,6 +21,8 @@
                 <th>Total Absent</th>
                 <th>Total Salary</th>
                 <th>Welfare Fee</th>
+                <th>Regimental Fee</th>
+                <th>Revenue Stamp</th>
                 <th>Share Fee</th>
                 <th>Net Amount</th>
             </tr>
@@ -30,11 +32,13 @@
                 {!! Form::hidden("attendance_data[$i][ansar_id]",$data['ansar_id']) !!}
                 {!! Form::hidden("attendance_data[$i][ansar_name]",$data['ansar_name']) !!}
                 {!! Form::hidden("attendance_data[$i][ansar_rank]",$data['ansar_rank']) !!}
-                {!! Form::hidden("attendance_data[$i][net_amount]",$data['total_amount']-$data['welfare_fee']) !!}
+                {!! Form::hidden("attendance_data[$i][net_amount]",$data['total_amount']-($data['welfare_fee']+$data['reg_amount']+$data['revenue_stamp']+$data['share_amount'])) !!}
                 {!! Form::hidden("attendance_data[$i][total_amount]",$data['total_amount']) !!}
                 {!! Form::hidden("attendance_data[$i][total_present]",$data['total_present']) !!}
                 {!! Form::hidden("attendance_data[$i][total_leave]",$data['total_leave']) !!}
                 {!! Form::hidden("attendance_data[$i][welfare_fee]",$data['welfare_fee']) !!}
+                {!! Form::hidden("attendance_data[$i][reg_amount]",$data['reg_amount']) !!}
+                {!! Form::hidden("attendance_data[$i][revenue_stamp]",$data['revenue_stamp']) !!}
                 {!! Form::hidden("attendance_data[$i][share_fee]",$data['share_amount']) !!}
                 {!! Form::hidden("attendance_data[$i][month]",$for_month) !!}
                 {!! Form::hidden("attendance_data[$i][account_no]",$data['account_no']) !!}
@@ -49,8 +53,10 @@
                     <td>{{$data['total_absent']}}</td>
                     <td>{{$data['total_amount']}}</td>
                     <td>{{$data['welfare_fee']}}</td>
+                    <td>{{$data['reg_amount']}}</td>
+                    <td>{{$data['revenue_stamp']}}</td>
                     <td>{{$data['share_amount']}}</td>
-                    <td>{{$data['total_amount']-($data['welfare_fee']+$data['share_amount'])}}</td>
+                    <td>{{$data['total_amount']-($data['welfare_fee']+$data['share_amount']+$data['reg_amount']+$data['revenue_stamp'])}}</td>
                 </tr>
             @empty
                 <tr>
@@ -59,7 +65,7 @@
             @endforelse
             @if(count($datas)>0)
                 <tr>
-                    <th colspan="9" class="text-right">
+                    <th colspan="10" class="text-right">
                         {{$withWeapon?"20% of daily salary":"15% of daily salary"}}:
                     </th>
                     <td colspan="2">
@@ -74,6 +80,8 @@
                 <tr>
                     <th>{{$withWeapon?"20% of daily salary":"15% of daily salary"}}</th>
                     <th>Total Welfare Fee</th>
+                    <th>Total Regimental Fee</th>
+                    <th>Total Revenue Stamp</th>
                     <th>Total Share Fee</th>
                     <th>Total Net Salary</th>
                     <th>Total Amount Need To Deposit</th>
@@ -91,13 +99,21 @@
                         {!! Form::hidden('summery[welfare_fee]',collect($datas)->sum('welfare_fee')) !!}
                     </td>
                     <td>
+                        {{collect($datas)->sum('reg_amount')}}
+                        {!! Form::hidden('summery[reg_amount]',collect($datas)->sum('reg_amount')) !!}
+                    </td>
+                    <td>
+                        {{collect($datas)->sum('revenue_stamp')}}
+                        {!! Form::hidden('summery[revenue_stamp]',collect($datas)->sum('revenue_stamp')) !!}
+                    </td>
+                    <td>
                         {{collect($datas)->sum('share_amount')}}
                         {!! Form::hidden('summery[share_amount]',collect($datas)->sum('share_amount')) !!}
                     </td>
                     <td>
                         <?php
                         $total_net_amount = collect($datas)->sum(function ($data) {
-                            return $data['total_amount'] - ($data['welfare_fee'] + $data['share_amount']);
+                            return $data['total_amount'] - ($data['welfare_fee'] + $data['share_amount']+ $data['revenue_stamp']+ $data['reg_amount']);
                         });?>
 
                         {{$total_net_amount}}

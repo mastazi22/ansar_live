@@ -99,11 +99,15 @@ class SalaryManagementController extends Controller
                         $total_medical_fee = floatval(DemandConstantFacdes::getValue("DV")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
                         $welfare_fee = floatval(DemandConstantFacdes::getValue("WF")->cons_value);
                         $share_amount = floatval(DemandConstantFacdes::getValue("SA")->cons_value);
+                        $regimental_fee = floatval(DemandConstantFacdes::getValue("REGF")->cons_value);
+                        $revenue_stamp = floatval(DemandConstantFacdes::getValue("REVS")->cons_value);
                         $all_daily_fee+=$total_daily_fee;
                         array_push($datas, [
                             'total_amount' => $total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee + $total_medical_fee,
                             'welfare_fee' => $welfare_fee,
                             'share_amount' => $share_amount,
+                            'reg_amount' => $regimental_fee,
+                            'revenue_stamp' => $revenue_stamp,
                             'ansar_id' => $ansar->ansar_id,
                             'ansar_name' => $ansar->ansar_name_eng,
                             'ansar_rank' => $ansar->designation->code,
@@ -281,6 +285,8 @@ class SalaryManagementController extends Controller
                 $total_transportation_fee = floatval(DemandConstantFacdes::getValue("CV")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
                 $total_medical_fee = floatval(DemandConstantFacdes::getValue("DV")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
                 $welfare_fee = floatval(DemandConstantFacdes::getValue("WF")->cons_value);
+                $regimental_fee = floatval(DemandConstantFacdes::getValue("REGF")->cons_value);
+                $revenue_stamp = floatval(DemandConstantFacdes::getValue("REVS")->cons_value);
                 $share_amount = floatval(DemandConstantFacdes::getValue("SA")->cons_value);
                 $all_daily_fee+=$total_daily_fee;
                 array_push($datas, [
@@ -296,11 +302,12 @@ class SalaryManagementController extends Controller
                     'total_barber_fee'=>$total_barber_fee,
                     'total_transportation_fee'=>$total_transportation_fee,
                     'total_medical_fee'=>$total_medical_fee,
-                    'reg_fee'=>$welfare_fee-5,
-                    'welfare_fee'=>$welfare_fee-4,
+                    'reg_fee'=>$regimental_fee,
+                    'welfare_fee'=>$welfare_fee,
+                    'revenue_stamp'=>$revenue_stamp,
                     'share_amount'=>$share_amount,
                     'extra'=>sprintf('%.2f',($kpi->details->with_weapon?(floatval($total_daily_fee*20)/100):(floatval($total_daily_fee*15)/100))),
-                    'net_amount'=>$total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee + $total_medical_fee-($welfare_fee+$share_amount),
+                    'net_amount'=>$total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee + $total_medical_fee-($welfare_fee+$share_amount+$revenue_stamp+$regimental_fee),
                     'total_amount'=>$total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee+$total_medical_fee
                 ]);
 //                        return $datas;

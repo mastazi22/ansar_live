@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','Generate Salary Sheet')
+@section('title','Disburse Salary')
 @section('breadcrumb')
     {!! Breadcrumbs::render('attendance.create') !!}
 @endsection
