@@ -20,10 +20,10 @@
                 <th>Total Leave(paid)</th>
                 <th>Total Absent</th>
                 <th>Total Salary</th>
-                <th>Welfare Fee</th>
-                <th>Regimental Fee</th>
+                <th>Welfare Fund</th>
+                <th>Regimental Fund</th>
                 <th>Revenue Stamp</th>
-                <th>Share Fee</th>
+                <th>AVUB Share</th>
                 <th>Net Amount</th>
             </tr>
             <?php $i = 0;?>
@@ -66,7 +66,7 @@
             @if(count($datas)>0)
                 <tr>
                     <th colspan="11" class="text-right">
-                        {{$withWeapon?"20% of daily salary":"15% of daily salary"}}:
+                        {{$withWeapon?"20% of daily allowance":"15% of daily allowance"}}:
                     </th>
                     <td colspan="2">
                         {{$extra}}
@@ -78,7 +78,7 @@
             <h3 class="text-center">Summary</h3>
             <table class="table table-bordered table-condensed">
                 <tr>
-                    <th>{{$withWeapon?"20% of daily salary":"15% of daily salary"}}</th>
+                    <th>{{$withWeapon?"20% of daily allowance":"15% of daily allowance"}}</th>
                     <th>Total Welfare Fee</th>
                     <th>Total Regimental Fee</th>
                     <th>Total Revenue Stamp</th>
@@ -86,7 +86,7 @@
                     <th>Total Net Salary</th>
                     <th>Total Amount Need To Deposit</th>
                     <th>Total Min Amount Need To
-                        Deposit<br>(without {{$withWeapon?"20% of daily salary":"15% of daily salary"}})
+                        Deposit<br>(without {{$withWeapon?"20% of daily allowance":"15% of daily allowance"}})
                     </th>
                 </tr>
                 <tr>

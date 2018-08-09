@@ -152,19 +152,4 @@
             </div>
         </div>
     </section>
-    <script>
-        $(document).ready(function () {
-            $("body").filter("#ppppp").confirmDialog({
-                message: "Before submit make sure all data is correct.You can`t edit data nce you submit it.<br>Do you want to generate salary sheet",
-                ok_button_text: 'Confirm',
-                cancel_button_text: 'Cancel',
-                event: 'click',
-                ok_callback: function (element) {
-                    $("#salary-form").attr('action',"{{URL::route('SD.salary_management.store')}}").submit()
-                },
-                cancel_callback: function (element) {
-                }
-            })
-        })
-    </script>
 @endsection

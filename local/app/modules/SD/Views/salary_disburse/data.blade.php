@@ -8,7 +8,7 @@
         color: #cccccc !important;
     }
 </style>
-{!! Form::open(['route'=>'SD.salary_disburse.store','id'=>'disburse-form','form-submit-local']) !!}
+{!! Form::open(['route'=>'SD.salary_disburse.store','id'=>'disburse-form',]) !!}
 {!! Form::hidden('salary_sheet_id',\Illuminate\Support\Facades\Crypt::encrypt($sheet->id)) !!}
 <div class="table-responsive">
     {{--{{dump($sheet->summery)}}--}}
@@ -80,7 +80,7 @@
         <caption style="text-align: center;
     font-size: 18px;
     font-weight: bold;">
-            <input type="checkbox" name="append_extra" checked>&nbsp;Disbursement Of {{$sheet->kpi->details->with_weapon?"20%":"15%"}} Of Daily Salary
+            <input type="checkbox" value="1" name="append_extra" checked>&nbsp;Disbursement Of {{$sheet->kpi->details->with_weapon?"20%":"15%"}} Of Daily Salary
         </caption>
         <tr>
             <th>Title</th>
@@ -114,8 +114,8 @@
             <td>{{$total_deposit?$total_deposit:'n\a'}}</td>
             <th>Total Amount Need To Pay : </th>
             <td>
-                @php($t_min_amount = collect($salary_histories)->sum('amount')+$sheet->summery["welfare_fee"]+$sheet->summery["reg_amount"]+$sheet->summery["share_amount"])
-                @php($t_max_amount = collect($salary_histories)->sum('amount')+$sheet->summery["welfare_fee"]+$sheet->summery["reg_amount"]+$sheet->summery["share_amount"]+$sheet->summery["extra"])
+                @php($t_min_amount = collect($salary_histories)->sum('amount')+$sheet->summery["welfare_fee"]+$sheet->summery["reg_amount"]+$sheet->summery["share_amount"]+$sheet->summery["revenue_stamp"])
+                @php($t_max_amount = collect($salary_histories)->sum('amount')+$sheet->summery["welfare_fee"]+$sheet->summery["reg_amount"]+$sheet->summery["share_amount"]+$sheet->summery["revenue_stamp"]+$sheet->summery["extra"])
                 <span id="t_min_amount" class="hidden @if($total_deposit>=$t_min_amount) text-success @else text-danger @endif">{{$t_min_amount}}</span>
                 <span id="t_max_amount" class="@if($total_deposit>=$t_max_amount) text-success @else text-danger @endif">{{$t_max_amount}}</span>
             </td>
@@ -135,7 +135,8 @@
             cancel_button_text: 'Cancel',
             event: 'click',
             ok_callback: function (element) {
-                $("#salary-form").attr('action', "{{URL::route('SD.salary_management.store')}}").submit()
+                $(element).prop('disabled',true);
+                $("#disburse-form").submit()
             },
             cancel_callback: function (element) {
             }

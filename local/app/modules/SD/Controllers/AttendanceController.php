@@ -368,7 +368,7 @@ class AttendanceController extends Controller
                 $row["kpi_name"] = $personalDetails->embodiment->kpi->kpi_name;
                 $row["dates"] = [];
                 $t_date = Carbon::parse($personalDetails->embodiment->transfered_date);
-                if ($t_date->month < 7 || $t_date->month > 7) {
+                if ($t_date->month < 7) {
                     $t_date = Carbon::create(2018, 7, 1);
                     for ($i = 0; $i < $t_date->daysInMonth; $i++) {
                         $modified_date = $t_date->addDays($i == 0 ? 0 : 1);
