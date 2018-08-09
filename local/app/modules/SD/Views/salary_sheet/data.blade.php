@@ -65,7 +65,7 @@
             @endforelse
             @if(count($datas)>0)
                 <tr>
-                    <th colspan="10" class="text-right">
+                    <th colspan="11" class="text-right">
                         {{$withWeapon?"20% of daily salary":"15% of daily salary"}}:
                     </th>
                     <td colspan="2">
