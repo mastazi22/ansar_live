@@ -106,8 +106,8 @@ class SalaryDisburseController extends Controller
                     'kpi_name'=>$history->kpi->kpi_name,
                     'amount'=>$history->amount,
                     'month'=>$salary_sheet->generated_for_month,
-                    'account_no'=>$history->ansar->account?($history->ansar->account->prefer_choice=="general"?$history->ansar->account->acount_no:$history->ansar->account->mobile_bank_account_no):'n\a',
-                    'account_type'=>$history->ansar->account?($history->ansar->account->prefer_choice=="general"?"DBBL":$history->ansar->account->mobile_bank_type):'n\a',
+                    'account_no'=>$history->ansar->account?$history->ansar->account->getAccountNo():'n\a',
+                    'account_type'=>$history->ansar->account?$history->ansar->account->getBankName():'n\a',
                 ]);
             }
             $salary_sheet->disburseLog()->create([
