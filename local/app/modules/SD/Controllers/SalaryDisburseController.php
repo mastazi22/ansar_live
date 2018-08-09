@@ -116,6 +116,7 @@ class SalaryDisburseController extends Controller
                 "action_user_id"=>auth()->user()->id,
             ]);
             $collection = collect($excel_sheet_data)->groupBy('account_type');
+//            return $collection;
             $files = [];
             foreach ($collection as $key=>$value) {
                 $f_name = Excel::create($key=='n\a'?"no_bank_info":$key, function ($excel) use ($value) {
@@ -145,8 +146,8 @@ class SalaryDisburseController extends Controller
                 $distribution_to_different_account[2]["account_name"] = "DC`s Account";
                 $distribution_to_different_account[2]["account_no"] = $salary_sheet->kpi->unit->dc->userProfile->bank_account_no;
                 $distribution_to_different_account[2]["branch_name"] = $salary_sheet->kpi->unit->dc->userProfile->branch_name;
-                $distribution_to_different_account[2]["amount"] = sprintf("%.2f",(($salary_sheet->summery["extra"]*DemandConstantFacdes::getValue('DCEP')->cons_value)/100));
-                $distribution_to_different_account[2]["month"] = $salary_sheet->generated_for_month+$salary_sheet->summery["revenue_stamp"];
+                $distribution_to_different_account[2]["amount"] = sprintf("%.2f",(($salary_sheet->summery["extra"]*DemandConstantFacdes::getValue('DCEP')->cons_value)/100)+$salary_sheet->summery["revenue_stamp"]);
+                $distribution_to_different_account[2]["month"] = $salary_sheet->generated_for_month;
 
                 $distribution_to_different_account[3]["account_name"] = "WELFARE Account";
                 $distribution_to_different_account[3]["account_no"] = BankAccountList::getAccount("WELFARE");
