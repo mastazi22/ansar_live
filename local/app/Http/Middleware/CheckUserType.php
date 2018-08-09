@@ -69,6 +69,7 @@ class CheckUserType
         'AVURP.info.index'=>['range'=>'range','unit'=>'unit'],
         'HRM.union.showall'=>['division_id'=>'range','unit_id'=>'unit'],
         'SD.leave.create'=>['range'=>'range','unit'=>'unit'],
+        'SD.attendance.load_datab'=>['range'=>'range','unit'=>'unit'],
     ];
     public function handle($request, Closure $next)
     {

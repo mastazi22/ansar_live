@@ -11,6 +11,17 @@
                     @include('HRM::Partial_view.partial_menu',['menus'=>$values['children']])
                 </ul>
             </li>
+        @elseif($values['route']=='#'&&isset($values['children']))
+            <li class="treeview">
+                <a href="{{URL::to($values['route'])}}">
+                    <i class="fa {{$values['icon']}}"></i>
+                    <span>{{$menu_title}}</span>
+                    <i class="fa fa-angle-right pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    @include('HRM::Partial_view.partial_menu',['menus'=>$values['children']])
+                </ul>
+            </li>
         @elseif($values['route']=='#')
             <li>
                 <a href="{{URL::to($values['route'])}}">

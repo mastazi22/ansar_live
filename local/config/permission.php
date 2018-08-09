@@ -154,6 +154,7 @@ return [
         "AVURP.info.import.download",
         "AVURP.info.import",
         "AVURP.info.import_upload",
+        "SD",
         "SD.salary_management_short.create,SD.salary_management_short.store",
         "SD.salary_management_short.index",
         "SD.salary_management.create,SD.salary_management.store",

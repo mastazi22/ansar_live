@@ -3,7 +3,7 @@ use App\modules\HRM\Models\KpiGeneralModel;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-Route::group(['prefix' => 'SD', 'middleware' => ['web', 'auth', 'permission']], function () {
+Route::group(['prefix' => 'SD', 'middleware' => [ 'auth','manageDatabase', 'checkUserType', 'permission']], function () {
     Route::group(['namespace' => '\App\modules\SD\Controllers'], function () {
         Route::get('/', 'SDController@index')->name('SD');
         Route::get('/demandsheet', 'DemandSheetController@demandSheet')->name('SD.demand_sheet');

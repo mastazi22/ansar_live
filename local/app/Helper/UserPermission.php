@@ -72,8 +72,9 @@ class UserPermission
         $status = false;
         foreach($p as $search){
             $results = explode(",",$search);
-           // Log::info($results);
-           // Log::info("NAME ===".$name);
+            Log::info("RESULTSS");
+            Log::info($results);
+            Log::info("NAME ===".$name);
             $status = in_array($name,$results);
             if($status) {
                 Log::info("FOUND ".$name);
@@ -96,12 +97,14 @@ class UserPermission
             else return false;
         }
         $p = json_decode($this->currentUserPermission);
+        Log::info("VALUESssss :");
+        Log::info($value);
         if (is_array($value)) {
-            //Log::info("STATUS :".($this->checkMenu($value,$p)?"true":"false"));
+            Log::info("STATUS :".($this->checkMenu($value,$p)?"true":"false"));
             return $this->checkMenu($value,$p);
         }
         else {
-            //Log::info("STATUS NOT:".($this->isUserMenuExists($value,$p)?"true":"false"));
+            Log::info("STATUS NOT:".($this->isUserMenuExists($value,$p)?"true":"false"));
             return $this->isUserMenuExists($value,$p);
         }
 
