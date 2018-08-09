@@ -202,7 +202,7 @@ class SalaryDisburseController extends Controller
                 throw new \Exception("Can`t create file");
             }
             foreach ($files as $file){
-                unlink($file);
+                unlink($file["full"]);
             }
             DB::connection('sd')->commit();
             return response()->download(public_path($zip_archive_name))->deleteFileAfterSend(true);
