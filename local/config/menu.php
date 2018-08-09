@@ -473,7 +473,7 @@ return [
                 ],
             ]
         ],
-        "Payment From KPI" => [
+        "Deposit Info" => [
             "route" => 'SD.kpi_payment.index',
             "icon" => 'fa-cog'
         ],

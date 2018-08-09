@@ -167,6 +167,8 @@ return [
         "SD.demand_sheet,SD.generate_demand_sheet",
         "SD.demand_history,SD.view_demand_sheet",
         "SD.salary_disburse.create,SD.salary_disburse.store",
+        "SD.kpi_payment.index",
+        "SD.kpi_payment.create,SD.kpi_payment.store",
 
     ]
 ];
