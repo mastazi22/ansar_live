@@ -7,12 +7,12 @@ use App\modules\HRM\Models\KpiGeneralModel;
 use App\modules\SD\Helper\Facades\DemandConstantFacdes;
 use App\modules\SD\Models\SalaryHistory;
 use App\modules\SD\Models\SalarySheetHistory;
+use App\modules\SD\Models\SharePurchaseHistory;
 use Barryvdh\Snappy\Facades\SnappyPdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Maatwebsite\Excel\Facades\Excel;
 
 class SalaryManagementController extends Controller
 {
@@ -39,8 +39,8 @@ class SalaryManagementController extends Controller
                 if ($request->thana && $request->thana != 'all') $q->where('thana_id', $request->thana);
                 if ($request->kpi && $request->kpi != 'all') $q->where('id', $request->kpi);
             });
-            $history = $history->paginate($request->limit?$request->limit:30);
-            return view('SD::salary_sheet.view_data',compact('history'));
+            $history = $history->paginate($request->limit ? $request->limit : 30);
+            return view('SD::salary_sheet.view_data', compact('history'));
         }
         return view("SD::salary_sheet.index");
     }
@@ -60,14 +60,14 @@ class SalaryManagementController extends Controller
                 "unit" => 'required',
                 "thana" => 'required',
                 "kpi" => 'required',
-                "sheetType" => ['required','regex:/^(salary)|(bonus)$/'],
-                "month_year" => 'required_if:sheetType,salary|date_format:"F, Y"|unique:sd.tbl_salary_sheet_generate_history,generated_for_month,NULL,id,generated_type,'.$request->sheetType.',kpi_id,'.$request->kpi,
+                "sheetType" => ['required', 'regex:/^(salary)|(bonus)$/'],
+                "month_year" => 'required_if:sheetType,salary|date_format:"F, Y"|unique:sd.tbl_salary_sheet_generate_history,generated_for_month,NULL,id,generated_type,' . $request->sheetType . ',kpi_id,' . $request->kpi,
                 "bonusType" => 'required_if:sheetType,bonus'
             ];
-            $this->validate($request, $rules,[
-                'month_year.unique'=>"Salary sheet has been generated for this month for this kpi",
-                'sheetType.required'=>"Please select a sheet type:salary or bonus",
-                'sheetType.regex'=>"Please select a valid sheet type:salary or bonus",
+            $this->validate($request, $rules, [
+                'month_year.unique' => "Salary sheet has been generated for this month for this kpi",
+                'sheetType.required' => "Please select a sheet type:salary or bonus",
+                'sheetType.regex' => "Please select a valid sheet type:salary or bonus",
             ]);
             $division_id = $request->range;
             $unit_id = $request->unit;
@@ -101,11 +101,15 @@ class SalaryManagementController extends Controller
                         $share_amount = floatval(DemandConstantFacdes::getValue("SA")->cons_value);
                         $regimental_fee = floatval(DemandConstantFacdes::getValue("REGF")->cons_value);
                         $revenue_stamp = floatval(DemandConstantFacdes::getValue("REVS")->cons_value);
-                        $all_daily_fee+=$total_daily_fee;
+                        $all_daily_fee += $total_daily_fee;
+                        $share_purchase_history = SharePurchaseHistory::where([
+                            'ansar_id'=>$ansar->ansar_id,
+                            'month'=>$request->month_year
+                        ]);
                         array_push($datas, [
                             'total_amount' => $total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee + $total_medical_fee,
                             'welfare_fee' => $welfare_fee,
-                            'share_amount' => $share_amount,
+                            'share_amount' => $share_purchase_history->exists()?0:$share_amount,
                             'reg_amount' => $regimental_fee,
                             'revenue_stamp' => $revenue_stamp,
                             'ansar_id' => $ansar->ansar_id,
@@ -115,7 +119,7 @@ class SalaryManagementController extends Controller
                             'total_leave' => $a->total_leave,
                             'total_absent' => $a->total_absent,
                             'account_no' => $ansar->account ? $ansar->account->account_no : 'n\a',
-                            'bank_type' => $ansar->account ? ($ansar->account->prefer_choice=="mobile"?$ansar->mobile_bank_type:"DBBL") : 'n\a',
+                            'bank_type' => $ansar->account ? ($ansar->account->prefer_choice == "mobile" ? $ansar->mobile_bank_type : "DBBL") : 'n\a',
                         ]);
 //                        return $datas;
                     }
@@ -124,10 +128,10 @@ class SalaryManagementController extends Controller
                     $generated_type = $request->sheetType;
                     $kpi_name = $kpi->kpi_name;
                     $withWeapon = $kpi->details->with_weapon;
-                    $extra = $withWeapon?(floatval($all_daily_fee*20)/100):(floatval($all_daily_fee*15)/100);
-                    $extra = sprintf("%.2f",$extra);
+                    $extra = $withWeapon ? (floatval($all_daily_fee * 20) / 100) : (floatval($all_daily_fee * 15) / 100);
+                    $extra = sprintf("%.2f", $extra);
                     $kpi_id = $kpi->id;
-                    return view("SD::salary_sheet.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id', 'generated_type','withWeapon','extra'));
+                    return view("SD::salary_sheet.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id', 'generated_type', 'withWeapon', 'extra'));
 
                 } else if ($request->sheetType == 'bonus') {
                     $date = Carbon::createFromFormat('F, Y', $request->month_year);
@@ -189,7 +193,7 @@ class SalaryManagementController extends Controller
 //        return view('SD::salary_sheet.export',['datas'=>$request->attendance_data]);
         $rules = [
             'kpi_id' => "required",
-            'generated_for_month' => "required",
+            'generated_for_month' => "required|date_format:'F, Y'",
             'generated_type' => "required",
             'attendance_data' => "required",
             'summery' => "required",
@@ -207,8 +211,8 @@ class SalaryManagementController extends Controller
                 'generated_type' => $request->generated_type,
                 'generated_date' => Carbon::now()->format('Y-m-d'),
                 'action_user_id' => auth()->user()->id,
-                'data' => gzencode(serialize($request->attendance_data),9),
-                'summery' => gzencode(serialize($request->summery),9),
+                'data' => gzencode(serialize($request->attendance_data), 9),
+                'summery' => gzencode(serialize($request->summery), 9),
 
             ];
 
@@ -224,8 +228,21 @@ class SalaryManagementController extends Controller
                     'status' => "pending",
                     'action_user_id' => auth()->user()->id,
                 ]);
+                $share_purchase_history = SharePurchaseHistory::where([
+                    'ansar_id' => $ad["ansar_id"],
+                    'month'=>$request->generated_for_month
+                ]);
+                if(!$share_purchase_history->exists()){
+                    SharePurchaseHistory::create([
+                        'ansar_id' => $ad["ansar_id"],
+                        'month'=>$request->generated_for_month,
+                        'salary_sheet_id'=>$history->id,
+                        'kpi_id'=>$request->kpi_id
+                    ]);
+                }
             }
             SalaryHistory::insert($salary_history);
+
             DB::connection('sd')->commit();
 //            return $history->summery;
 
@@ -243,6 +260,7 @@ class SalaryManagementController extends Controller
         }
         return redirect()->route('SD.salary_management.index')->with("success_message", "Salary sheet created successfully");
     }
+
     public function generate_payroll(Request $request)
     {
 //        return $request->all();
@@ -250,7 +268,7 @@ class SalaryManagementController extends Controller
 //        return view('SD::salary_sheet.export',['datas'=>$request->attendance_data]);
         $rules = [
             'kpi_id' => "required",
-            'generated_for_month' => "required",
+            'generated_for_month' => "required|date_format:'F, Y'",
             'generated_type' => "required",
             'attendance_data' => "required",
             'summery' => "required",
@@ -272,7 +290,7 @@ class SalaryManagementController extends Controller
                 ->select(DB::raw("SUM(is_present=1 AND is_leave=0) as total_present"),
                     DB::raw("SUM(is_present=0 AND is_leave=0) as total_absent"),
                     DB::raw("SUM(is_present=0 AND is_leave=1) as total_leave"),
-                    'ansar_id', 'month', 'year',DB::raw("min(day) as min_day"),DB::raw("max(day) as max_day")
+                    'ansar_id', 'month', 'year', DB::raw("min(day) as min_day"), DB::raw("max(day) as max_day")
                 )->groupBy('ansar_id')->get();
             $datas = [];
             $all_daily_fee = 0;
@@ -288,31 +306,33 @@ class SalaryManagementController extends Controller
                 $regimental_fee = floatval(DemandConstantFacdes::getValue("REGF")->cons_value);
                 $revenue_stamp = floatval(DemandConstantFacdes::getValue("REVS")->cons_value);
                 $share_amount = floatval(DemandConstantFacdes::getValue("SA")->cons_value);
-                $all_daily_fee+=$total_daily_fee;
-                array_push($datas, [
+                $all_daily_fee += $total_daily_fee;
+                $share_purchase_history = SharePurchaseHistory::where([
                     'ansar_id'=>$ansar->ansar_id,
-                    'ansar_name'=>$ansar->ansar_name_bng,
-                    'father_name'=>$ansar->father_name_bng,
-                    'rank'=>$ansar->designation->name_bng,
-                    'total_daily_fee'=>$total_daily_fee,
-                    'min_date'=>Carbon::createFromFormat('F, Y', $request->generated_for_month)->day($a->min_day)->format('d/m/Y'),
-                    'max_date'=>Carbon::createFromFormat('F, Y', $request->generated_for_month)->day($a->max_day)->format('d/m/Y'),
-                    'total_day'=>$a->total_present+$a->total_leave,
-                    'total_ration_fee'=>$total_ration_fee,
-                    'total_barber_fee'=>$total_barber_fee,
-                    'total_transportation_fee'=>$total_transportation_fee,
-                    'total_medical_fee'=>$total_medical_fee,
-                    'reg_fee'=>$regimental_fee,
-                    'welfare_fee'=>$welfare_fee,
-                    'revenue_stamp'=>$revenue_stamp,
-                    'share_amount'=>$share_amount,
-                    'extra'=>sprintf('%.2f',($kpi->details->with_weapon?(floatval($total_daily_fee*20)/100):(floatval($total_daily_fee*15)/100))),
-                    'net_amount'=>$total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee + $total_medical_fee-($welfare_fee+$share_amount+$revenue_stamp+$regimental_fee),
-                    'total_amount'=>$total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee+$total_medical_fee
+                    'month'=>$request->generated_for_month
+                ]);
+                array_push($datas, [
+                    'ansar_id' => $ansar->ansar_id,
+                    'ansar_name' => $ansar->ansar_name_bng,
+                    'father_name' => $ansar->father_name_bng,
+                    'rank' => $ansar->designation->name_bng,
+                    'total_daily_fee' => $total_daily_fee,
+                    'total_day' => $a->total_present + $a->total_leave,
+                    'total_ration_fee' => $total_ration_fee,
+                    'total_barber_fee' => $total_barber_fee,
+                    'total_transportation_fee' => $total_transportation_fee,
+                    'total_medical_fee' => $total_medical_fee,
+                    'reg_fee' => $regimental_fee,
+                    'welfare_fee' => $welfare_fee,
+                    'revenue_stamp' => $revenue_stamp,
+                    'share_amount' => $share_purchase_history->exists()?0:$share_amount,
+                    'extra' => sprintf('%.2f', ($kpi->details->with_weapon ? (floatval($total_daily_fee * 20) / 100) : (floatval($total_daily_fee * 15) / 100))),
+                    'net_amount' => $total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee + $total_medical_fee - ($welfare_fee + $share_amount + $revenue_stamp + $regimental_fee),
+                    'total_amount' => $total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee + $total_medical_fee
                 ]);
 //                        return $datas;
             }
-            $pdf = SnappyPdf::loadView("SD::salary_sheet.payroll_view", compact('generated_date','datas','kpi','generated_month'))
+            $pdf = SnappyPdf::loadView("SD::salary_sheet.payroll_view", compact('generated_date', 'datas', 'kpi', 'generated_month'))
                 ->setPaper('legal')
 //                ->setOption('footer-left',url('/'))
 //                ->setOption('footer-right',Carbon::now()->format('d-M-Y H:i:s'))
@@ -327,12 +347,16 @@ class SalaryManagementController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param Request $request
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request,$id)
     {
-        //
+        if(!$request->ajax()) return abort(403);
+        $salary_sheet = SalarySheetHistory::find($id);
+//        return $salary_sheet;
+        return view('SD::salary_sheet.view',compact('salary_sheet'));
     }
 
     /**
@@ -368,9 +392,11 @@ class SalaryManagementController extends Controller
     {
         //
     }
-    public function  getSalarySheetList(Request $request){
-        if($request->ajax()){
-            $sh = SalarySheetHistory::querySearch($request)->select('id','summery','generated_for_month');
+
+    public function getSalarySheetList(Request $request)
+    {
+        if ($request->ajax()) {
+            $sh = SalarySheetHistory::querySearch($request)->select('id', 'summery', 'generated_for_month');
             return response()->json($sh->get());
         }
         return abort(403);

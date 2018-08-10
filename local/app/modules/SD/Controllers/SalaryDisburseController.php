@@ -115,9 +115,19 @@ class SalaryDisburseController extends Controller
                 "kpi_id"=>$salary_sheet->kpi_id,
                 "total_disburst_amount"=>$disburse_amount,
                 "action_user_id"=>auth()->user()->id,
+                "extra_amount_include"=>$append_extra?1:0,
+                "dg_account_amount"=>$append_extra?(($salary_sheet->summery["extra"]*DemandConstantFacdes::getValue('DGEP')->cons_value)/100):null,
+                "rc_account_amount"=>$append_extra?(($salary_sheet->summery["extra"]*DemandConstantFacdes::getValue('RCEP')->cons_value)/100):null,
+                "dc_account_amount"=>$append_extra?(($salary_sheet->summery["extra"]*DemandConstantFacdes::getValue('DCEP')->cons_value)/100)+$salary_sheet->summery["revenue_stamp"]:$salary_sheet->summery["revenue_stamp"],
+                "welfare_account_amount"=>$salary_sheet->summery["welfare_fee"],
+                "share_account_amount"=>$salary_sheet->summery["share_amount"],
+                "regimental_account_amount"=>$salary_sheet->summery["reg_amount"],
+                "extra_amount"=>$salary_sheet->summery["extra"],
             ]);
             $collection = collect($excel_sheet_data)->groupBy('account_type');
 //            return $collection;
+            $file_path = storage_path('exports/'.$salary_sheet->kpi->id);
+            if(!File::exists($file_path))File::makeDirectory($file_path);
             $files = [];
             foreach ($collection as $key=>$value) {
                 $f_name_excel = Excel::create($key=='n\a'?"no_bank_info":$key, function ($excel) use ($value) {
@@ -127,8 +137,8 @@ class SalaryDisburseController extends Controller
                         $sheet->setWidth('A', 5);
                         $sheet->loadView('SD::salary_disburse.export', ['datas' => $value]);
                     });
-                })->save('xls',false,true);
-                $f_name_pdf = storage_path("exports/".($key=='n\a'?"no_bank_info":$key).".pdf");
+                })->save('xls',$file_path,true);
+                $f_name_pdf = $file_path."/".($key=='n\a'?"no_bank_info":$key).".pdf";
                 SnappyPdf::loadView('SD::salary_disburse.export', ['datas' => $value])->save($f_name_pdf);
                 array_push($files,$f_name_excel);
                 array_push($files,$f_name_pdf);
@@ -204,30 +214,36 @@ class SalaryDisburseController extends Controller
                     $sheet->setWidth('A', 5);
                     $sheet->loadView('SD::salary_disburse.export_other', ['datas' => $distribution_to_different_account]);
                 });
-            })->save('xls',false,true);
-            $f_name_pdf = storage_path("exports/distribution_to_different_account.pdf");
-            SnappyPdf::loadView('SD::salary_disburse.export', ['datas' => $distribution_to_different_account])->save($f_name_pdf);
+            })->save('xls',$file_path,true);
+            $f_name_pdf = $file_path."/distribution_to_different_account.pdf";
+            SnappyPdf::loadView('SD::salary_disburse.export_other', ['datas' => $distribution_to_different_account])->save($f_name_pdf);
             array_push($files,$f_name_excel);
             array_push($files,$f_name_pdf);
             $zip_archive_name = "salary_sheet.zip";
             $zip = new \ZipArchive();
             if($zip->open(public_path($zip_archive_name),\ZipArchive::CREATE)===true){
                 foreach ($files as $file){
-                    $zip->addFile($file["full"],$file["file"]);
+                    if(is_array($file))$zip->addFile($file["full"],$file["file"]);
+                    else {
+                        $name = explode('\\/',$file);
+                        $zip->addFile($file,$name[count($name)-1]);
+                    }
                 }
                 $zip->close();
             } else{
                 throw new \Exception("Can`t create file");
             }
             foreach ($files as $file){
-                unlink($file["full"]);
+                if(is_array($file))unlink($file["full"]);
+                else unlink($file);
             }
+            rmdir($file_path);
             DB::connection('sd')->commit();
             return response()->download(public_path($zip_archive_name))->deleteFileAfterSend(true);
 
         }catch(\Exception $e){
             DB::connection('sd')->rollback();
-//            return $e;
+            return $e;
             return redirect()->route('SD.salary_disburse.create')->with('error_message',$e->getMessage());
         }
 

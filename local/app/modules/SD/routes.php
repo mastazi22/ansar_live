@@ -31,7 +31,8 @@ Route::group(['prefix' => 'SD', 'middleware' => [ 'auth','manageDatabase', 'chec
         Route::resource('salary_disburse', 'SalaryDisburseController',["only"=>["index","create","store"]]);
         Route::get('/test', function () {
 //
-            return view("SD::salary_sheet.payroll_view");
+            return \Illuminate\Support\Facades\URL::route('SD.salary_management.show',36);
+              return view("SD::salary_sheet.payroll_view");
         });
     });
 });

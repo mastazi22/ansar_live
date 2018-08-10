@@ -53,10 +53,26 @@
                 }).then(function (response) {
                     $scope.allLoading = false;
                     $scope.vdpList = $sce.trustAsHtml(response.data)
-                    console.log(response.data)
                 }, function (response) {
                     $scope.allLoading = false;
-                    console.log(response.data)
+                })
+            }
+            $scope.viewDetails = function (id) {
+                $("#details_view").modal('show')
+                $scope.detailsView = $sce.trustAsHtml(`
+                    <div style="min-height: 200px;display: flex;justify-content: center;align-items: center">
+                        <i class="fa fa-spinner fa-pulse fa-4x"></i>
+                    </div>
+
+                `)
+                $http({
+                    method: 'get',
+                    url: "{{URL::to('SD/salary_management')}}/"+id,
+                }).then(function (response) {
+//                    $scope.allLoading = false;
+                    $scope.detailsView = $sce.trustAsHtml(response.data)
+                }, function (response) {
+//                    $scope.allLoading = false;
                 })
             }
         })
@@ -139,6 +155,21 @@
 
                 <div ng-bind-html="vdpList" compile-html>
 
+                </div>
+            </div>
+            <div class="modal fade" id="details_view" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">
+                                Salary Sheet Details
+                            </h4>
+                        </div>
+                        <div class="modal-body" ng-bind-html="detailsView">
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

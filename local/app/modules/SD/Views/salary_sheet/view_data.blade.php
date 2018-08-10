@@ -16,6 +16,7 @@
             <th>Type</th>
             <th>Disburse status</th>
             <th>Deposit status</th>
+            <th>Action</th>
 
         </tr>
 
@@ -48,6 +49,11 @@
                         @else
                             <span class="label label-success">Fully Deposit</span>
                         @endif
+                    </td>
+                    <td>
+                        <button class="btn btn-primary btn-xs" ng-click="viewDetails('{{$info->id}}')">
+                            <i class="fa fa-eye"></i>&nbsp;View Details
+                        </button>
                     </td>
                 </tr>
             @endforeach

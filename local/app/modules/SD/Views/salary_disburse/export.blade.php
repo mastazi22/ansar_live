@@ -13,11 +13,10 @@
     </style>
 </head>
 <body>
-<table class="table table-condensed table-bordered">
+<table border="1" cellspacing="0" cellpadding="0">
     <tr>
         <th>SL. No</th>
         <th>ID NO</th>
-
         <th>Rank</th>
         <th>Name</th>
         <th>Account No</th>
