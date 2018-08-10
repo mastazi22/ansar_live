@@ -3,7 +3,7 @@
     <meta charset="utf-8">
 </head>
 <body>
-<table class="table table-condensed table-bordered">
+<table border="1" cellpadding="0" cellspacing="0">
     <tr>
         <th>SL. No</th>
         <th>Name</th>

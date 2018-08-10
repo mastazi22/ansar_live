@@ -225,8 +225,7 @@ class SalaryDisburseController extends Controller
                 foreach ($files as $file){
                     if(is_array($file))$zip->addFile($file["full"],$file["file"]);
                     else {
-                        $name = explode('\\/',$file);
-                        $zip->addFile($file,$name[count($name)-1]);
+                        $zip->addFile($file,basename($file));
                     }
                 }
                 $zip->close();
