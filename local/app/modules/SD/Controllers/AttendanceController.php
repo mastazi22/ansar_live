@@ -358,17 +358,28 @@ class AttendanceController extends Controller
                 $qq->orWhere(DB::raw('YEAR(joining_date)'),'<=',2018);
             });
         })->where('ansar_id', $ansar_id)->first();
+        $rest_details = PersonalInfo::with(['rest.embodimentLog.kpi', 'designation'])->whereHas('status', function ($q) {
+            $q->where('rest_status', 1);
+            $q->where('block_list_status', 0);
+            $q->where('black_list_status', 0);
+        })->whereHas('rest',function($q){
+            $q->whereMonth('rest_date','>=',7);
+            $q->whereYear('rest_date','=',2018);
+        })->where('ansar_id', $ansar_id)->first();
+//        return $personalDetails;
         $data = [];
         if ($personalDetails) {
 
             if ($personalDetails->embodiment->joining_date != $personalDetails->embodiment->transfered_date) {
 
-                $row = [];
-                $row["kpi_id"] = $personalDetails->embodiment->kpi->id;
-                $row["kpi_name"] = $personalDetails->embodiment->kpi->kpi_name;
-                $row["dates"] = [];
+
                 $t_date = Carbon::parse($personalDetails->embodiment->transfered_date);
-                if ($t_date->month < 7) {
+//                return ['s'=>$t_date->month < 7];
+                if ($t_date->month < 7||$t_date->year<2018) {
+                    $row = [];
+                    $row["kpi_id"] = $personalDetails->embodiment->kpi->id;
+                    $row["kpi_name"] = $personalDetails->embodiment->kpi->kpi_name;
+                    $row["dates"] = [];
                     $t_date = Carbon::create(2018, 7, 1);
                     for ($i = 0; $i < $t_date->daysInMonth; $i++) {
                         $modified_date = $t_date->addDays($i == 0 ? 0 : 1);
@@ -378,7 +389,12 @@ class AttendanceController extends Controller
                             'year' => $modified_date->year,
                         ]);
                     }
-                } else {
+                    array_push($data, $row);
+                } else if($t_date->month == 7){
+                    $row = [];
+                    $row["kpi_id"] = $personalDetails->embodiment->kpi->id;
+                    $row["kpi_name"] = $personalDetails->embodiment->kpi->kpi_name;
+                    $row["dates"] = [];
                     $modified_date = clone $t_date;
                     for ($i = 0; $i <= $t_date->daysInMonth - $t_date->day; $i++) {
                         $modified_date->addDays($i == 0 ? 0 : 1);
@@ -388,18 +404,29 @@ class AttendanceController extends Controller
                             'year' => $modified_date->year,
                         ]);
                     }
+                    array_push($data, $row);
+                    $transfer_history = TransferAnsar::where('ansar_id', $ansar_id)
+                        ->where('embodiment_id', $personalDetails->embodiment->id)
+                        ->whereMonth('transfered_kpi_join_date','=', 7)
+                        ->whereYear('transfered_kpi_join_date','=', 2018)
+                        ->orderBy('present_kpi_join_date', 'desc')
+                        ->get();
+                } else{
+                    $transfer_history = TransferAnsar::where('ansar_id', $ansar_id)
+                        ->where('embodiment_id', $personalDetails->embodiment->id)
+                        ->where(function ($qq){
+                            $qq->whereMonth('present_kpi_join_date','<=',7);
+                            $qq->orWhere(DB::raw('YEAR(present_kpi_join_date)'),'<=',2018);
+                        })
+                        ->orderBy('present_kpi_join_date', 'desc')
+                        ->get();
+//                    return $transfer_history;
                 }
 
-                array_push($data, $row);
-                $transfer_history = TransferAnsar::where('ansar_id', $ansar_id)
-                    ->where('embodiment_id', $personalDetails->embodiment->id)
-                    ->whereMonth('present_kpi_join_date','<=', 7)
-                    ->whereYear('present_kpi_join_date','<=', 2018)
-                    ->whereMonth('transfered_kpi_join_date','=', 7)
-                    ->whereYear('transfered_kpi_join_date','=', 2018)
-                    ->orderBy('present_kpi_join_date', 'desc')
-                    ->get();
+
+
 //                return $transfer_history;
+                if(!isset($transfer_history)) $transfer_history = [];
                 foreach ($transfer_history as $th) {
                     $row = [];
                     $row["kpi_id"] = $th->present_kpi_id;
@@ -407,14 +434,15 @@ class AttendanceController extends Controller
                     $row['dates'] = [];
                     $pd = Carbon::parse($th->present_kpi_join_date);
                     $tdd = Carbon::parse($th->transfered_kpi_join_date);
-                    for ($i = $pd->month<7?0:$pd->day; $i < $tdd->day; $i++) {
+                    $total_days = $tdd->month==7?$tdd->day:32;
+                    for ($i = $pd->month<7||$pd->year<2018?1:$pd->day; $i < $total_days; $i++) {
                         array_push($row['dates'], [
                             'day' => $i,
                             'month' => 6,
                             'year' => 2018,
                         ]);
                     }
-                    array_push($data, $row);
+                    if(count($row['dates']))array_push($data, $row);
                 }
             } else {
                 $row = [];
@@ -432,6 +460,117 @@ class AttendanceController extends Controller
                 }
                 array_push($data, $row);
             }
+        }
+        else if ($rest_details) {
+//            return $rest_details;
+            $t_date = Carbon::parse($rest_details->rest->rest_date);
+            $e_date = Carbon::parse($rest_details->rest->embodimentLog->transfered_date);
+//                return ['s'=>$t_date->month < 7];
+            if ($t_date->month >7&&($e_date->month<7||$e_date->year<2018)) {
+                $row = [];
+                $row["kpi_id"] = $rest_details->rest->embodimentLog->kpi->id;
+                $row["kpi_name"] = $rest_details->rest->embodimentLog->kpi->kpi_name;
+                $row["dates"] = [];
+                $t_date = Carbon::create(2018, 7, 1);
+                for ($i = 0; $i < $t_date->daysInMonth; $i++) {
+                    $modified_date = $t_date->addDays($i == 0 ? 0 : 1);
+                    array_push($row['dates'], [
+                        'day' => $modified_date->day,
+                        'month' => $modified_date->month - 1,
+                        'year' => $modified_date->year,
+                    ]);
+                }
+                array_push($data, $row);
+            }
+            else if ($t_date->month >7&&$e_date->month==7&&$e_date->year==2018) {
+                $row = [];
+                $row["kpi_id"] = $rest_details->rest->embodimentLog->kpi->id;
+                $row["kpi_name"] = $rest_details->rest->embodimentLog->kpi->kpi_name;
+                $row["dates"] = [];
+                $t_date = Carbon::create(2018, 7, 1);
+                for ($i = $e_date->day; $i <= $e_date->daysInMonth; $i++) {
+                    $modified_date = $t_date->addDays($i == 0 ? 0 : 1);
+                    array_push($row['dates'], [
+                        'day' => $modified_date->day,
+                        'month' => $modified_date->month - 1,
+                        'year' => $modified_date->year,
+                    ]);
+                }
+                array_push($data, $row);
+                $transfer_history = TransferAnsar::where('ansar_id', $ansar_id)
+                    ->where('embodiment_id', $rest_details->rest->old_embodiment_id)
+                    ->whereMonth('transfered_kpi_join_date','=', 7)
+                    ->whereYear('transfered_kpi_join_date','=', 2018)
+                    ->orderBy('present_kpi_join_date', 'desc')
+                    ->get();
+            }
+            else if ($t_date->month >7&&$e_date->month>7) {
+                $transfer_history = TransferAnsar::where('ansar_id', $ansar_id)
+                    ->where('embodiment_id', $rest_details->rest->old_embodiment_id)
+                    ->where(function ($qq){
+                        $qq->whereMonth('present_kpi_join_date','<=',7);
+                        $qq->orWhere(DB::raw('YEAR(present_kpi_join_date)'),'<=',2018);
+                    })
+                    ->orderBy('present_kpi_join_date', 'desc')
+                    ->get();
+//                return $transfer_history;
+            }
+            else if($t_date->month == 7&&($e_date->month<7||$e_date->year<2018)){
+                $row = [];
+                $row["kpi_id"] = $rest_details->rest->embodimentLog->kpi->id;
+                $row["kpi_name"] = $rest_details->rest->embodimentLog->kpi->kpi_name;
+                $row["dates"] = [];
+                $modified_date = Carbon::create(2018,7,1);
+                for ($i = 0; $i < $t_date->day; $i++) {
+                    $modified_date->addDays($i == 0 ? 0 : 1);
+                    array_push($row['dates'], [
+                        'day' => $modified_date->day,
+                        'month' => $modified_date->month - 1,
+                        'year' => $modified_date->year,
+                    ]);
+                }
+                array_push($data, $row);
+            }
+            else if($t_date->month == 7&&($e_date->month==7&&$e_date->year==2018)){
+                $row = [];
+                $row["kpi_id"] = $rest_details->rest->embodimentLog->kpi->id;
+                $row["kpi_name"] = $rest_details->rest->embodimentLog->kpi->kpi_name;
+                $row["dates"] = [];
+                for ($i = $e_date->day; $i <= $t_date->day; $i++) {
+
+                    array_push($row['dates'], [
+                        'day' => $i,
+                        'month' => 6,
+                        'year' => 2018,
+                    ]);
+                }
+                array_push($data, $row);
+                $transfer_history = TransferAnsar::where('ansar_id', $ansar_id)
+                    ->where('embodiment_id', $rest_details->rest->old_embodiment_id)
+                    ->whereMonth('transfered_kpi_join_date','=', 7)
+                    ->whereYear('transfered_kpi_join_date','=', 2018)
+                    ->orderBy('present_kpi_join_date', 'desc')
+                    ->get();
+            }
+                if(!isset($transfer_history)) $transfer_history = [];
+                foreach ($transfer_history as $th) {
+                    $row = [];
+                    $row["kpi_id"] = $th->present_kpi_id;
+                    $row["kpi_name"] = $th->presentKpi->kpi_name;
+                    $row['dates'] = [];
+                    $pd = Carbon::parse($th->present_kpi_join_date);
+                    $tdd = Carbon::parse($th->transfered_kpi_join_date);
+                    $total_days = $tdd->month==7?$tdd->day:32;
+                    for ($i = $pd->month<7||$pd->year<2018?1:$pd->day; $i < $total_days; $i++) {
+                        array_push($row['dates'], [
+                            'day' => $i,
+                            'month' => 6,
+                            'year' => 2018,
+                        ]);
+                    }
+                    if(count($row['dates']))array_push($data, $row);
+                }
+            $personalDetails = $rest_details;
         }
         return response()->json(compact('personalDetails', 'data'));
 
