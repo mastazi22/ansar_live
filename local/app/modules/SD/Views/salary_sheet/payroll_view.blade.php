@@ -16,7 +16,7 @@
 
     table td, table th {
         text-align: center;
-        font-size: 14px;
+        font-size: 12px !important;
         padding: 0 2px;
     }
 
