@@ -62,7 +62,7 @@ class AttendanceController extends Controller
                     ->groupBy('day')
                     ->get());
             } else {
-                $personal_info = PersonalInfo::where('ansar_id',$request->ansar_id)->first();
+                $personal_info = PersonalInfo::where('ansar_id', $request->ansar_id)->first();
                 $type = "view";
                 $data = $attendance->get();
                 $ansar_id = $request->ansar_id;
@@ -70,7 +70,7 @@ class AttendanceController extends Controller
                 $father_name = $personal_info->father_name_bng;
             }
             $first_date = Carbon::parse("01-{$request->month}-{$request->year}");
-            return view('SD::attendance.data', compact('first_date', 'data', 'type', 'ansar_id','ansar_name','father_name'));
+            return view('SD::attendance.data', compact('first_date', 'data', 'type', 'ansar_id', 'ansar_name', 'father_name'));
 
         }
         return view('SD::attendance.index');
@@ -352,19 +352,29 @@ class AttendanceController extends Controller
             $q->where('embodied_status', 1);
             $q->where('block_list_status', 0);
             $q->where('black_list_status', 0);
-        })->whereHas('embodiment',function($q){
-            $q->where(function ($qq){
-                $qq->whereMonth('joining_date','<=',7);
-                $qq->orWhere(DB::raw('YEAR(joining_date)'),'<=',2018);
+        })->whereHas('embodiment', function ($q) {
+            $q->where(function ($qq) {
+                $qq->whereMonth('joining_date', '<=', 7);
+                $qq->orWhere(DB::raw('YEAR(joining_date)'), '<=', 2018);
+            });
+        })->where('ansar_id', $ansar_id)->first();
+        $freezeDetails = PersonalInfo::with(['embodiment.kpi', 'embodiment.freeze', 'designation'])->whereHas('status', function ($q) {
+            $q->where('freezing_status', 1);
+            $q->where('block_list_status', 0);
+            $q->where('black_list_status', 0);
+        })->whereHas('embodiment', function ($q) {
+            $q->where(function ($qq) {
+                $qq->whereMonth('joining_date', '<=', 7);
+                $qq->orWhere(DB::raw('YEAR(joining_date)'), '<=', 2018);
             });
         })->where('ansar_id', $ansar_id)->first();
         $rest_details = PersonalInfo::with(['rest.embodimentLog.kpi', 'designation'])->whereHas('status', function ($q) {
             $q->where('rest_status', 1);
             $q->where('block_list_status', 0);
             $q->where('black_list_status', 0);
-        })->whereHas('rest',function($q){
-            $q->whereMonth('rest_date','>=',7);
-            $q->whereYear('rest_date','=',2018);
+        })->whereHas('rest', function ($q) {
+            $q->whereMonth('rest_date', '>=', 7);
+            $q->whereYear('rest_date', '=', 2018);
         })->where('ansar_id', $ansar_id)->first();
 //        return $personalDetails;
         $data = [];
@@ -375,7 +385,7 @@ class AttendanceController extends Controller
 
                 $t_date = Carbon::parse($personalDetails->embodiment->transfered_date);
 //                return ['s'=>$t_date->month < 7];
-                if ($t_date->month < 7||$t_date->year<2018) {
+                if ($t_date->month < 7 || $t_date->year < 2018) {
                     $row = [];
                     $row["kpi_id"] = $personalDetails->embodiment->kpi->id;
                     $row["kpi_name"] = $personalDetails->embodiment->kpi->kpi_name;
@@ -390,7 +400,7 @@ class AttendanceController extends Controller
                         ]);
                     }
                     array_push($data, $row);
-                } else if($t_date->month == 7){
+                } else if ($t_date->month == 7) {
                     $row = [];
                     $row["kpi_id"] = $personalDetails->embodiment->kpi->id;
                     $row["kpi_name"] = $personalDetails->embodiment->kpi->kpi_name;
@@ -407,16 +417,16 @@ class AttendanceController extends Controller
                     array_push($data, $row);
                     $transfer_history = TransferAnsar::where('ansar_id', $ansar_id)
                         ->where('embodiment_id', $personalDetails->embodiment->id)
-                        ->whereMonth('transfered_kpi_join_date','=', 7)
-                        ->whereYear('transfered_kpi_join_date','=', 2018)
+                        ->whereMonth('transfered_kpi_join_date', '=', 7)
+                        ->whereYear('transfered_kpi_join_date', '=', 2018)
                         ->orderBy('present_kpi_join_date', 'desc')
                         ->get();
-                } else{
+                } else {
                     $transfer_history = TransferAnsar::where('ansar_id', $ansar_id)
                         ->where('embodiment_id', $personalDetails->embodiment->id)
-                        ->where(function ($qq){
-                            $qq->whereMonth('present_kpi_join_date','<=',7);
-                            $qq->orWhere(DB::raw('YEAR(present_kpi_join_date)'),'<=',2018);
+                        ->where(function ($qq) {
+                            $qq->whereMonth('present_kpi_join_date', '<=', 7);
+                            $qq->orWhere(DB::raw('YEAR(present_kpi_join_date)'), '<=', 2018);
                         })
                         ->orderBy('present_kpi_join_date', 'desc')
                         ->get();
@@ -424,9 +434,8 @@ class AttendanceController extends Controller
                 }
 
 
-
 //                return $transfer_history;
-                if(!isset($transfer_history)) $transfer_history = [];
+                if (!isset($transfer_history)) $transfer_history = [];
                 foreach ($transfer_history as $th) {
                     $row = [];
                     $row["kpi_id"] = $th->present_kpi_id;
@@ -434,15 +443,15 @@ class AttendanceController extends Controller
                     $row['dates'] = [];
                     $pd = Carbon::parse($th->present_kpi_join_date);
                     $tdd = Carbon::parse($th->transfered_kpi_join_date);
-                    $total_days = $tdd->month==7?$tdd->day:32;
-                    for ($i = $pd->month<7||$pd->year<2018?1:$pd->day; $i < $total_days; $i++) {
+                    $total_days = $tdd->month == 7 ? $tdd->day : 32;
+                    for ($i = $pd->month < 7 || $pd->year < 2018 ? 1 : $pd->day; $i < $total_days; $i++) {
                         array_push($row['dates'], [
                             'day' => $i,
                             'month' => 6,
                             'year' => 2018,
                         ]);
                     }
-                    if(count($row['dates']))array_push($data, $row);
+                    if (count($row['dates'])) array_push($data, $row);
                 }
             } else {
                 $row = [];
@@ -466,7 +475,7 @@ class AttendanceController extends Controller
             $t_date = Carbon::parse($rest_details->rest->rest_date);
             $e_date = Carbon::parse($rest_details->rest->embodimentLog->transfered_date);
 //                return ['s'=>$t_date->month < 7];
-            if ($t_date->month >7&&($e_date->month<7||$e_date->year<2018)) {
+            if ($t_date->month > 7 && ($e_date->month < 7 || $e_date->year < 2018)) {
                 $row = [];
                 $row["kpi_id"] = $rest_details->rest->embodimentLog->kpi->id;
                 $row["kpi_name"] = $rest_details->rest->embodimentLog->kpi->kpi_name;
@@ -481,8 +490,7 @@ class AttendanceController extends Controller
                     ]);
                 }
                 array_push($data, $row);
-            }
-            else if ($t_date->month >7&&$e_date->month==7&&$e_date->year==2018) {
+            } else if ($t_date->month > 7 && $e_date->month == 7 && $e_date->year == 2018) {
                 $row = [];
                 $row["kpi_id"] = $rest_details->rest->embodimentLog->kpi->id;
                 $row["kpi_name"] = $rest_details->rest->embodimentLog->kpi->kpi_name;
@@ -499,28 +507,26 @@ class AttendanceController extends Controller
                 array_push($data, $row);
                 $transfer_history = TransferAnsar::where('ansar_id', $ansar_id)
                     ->where('embodiment_id', $rest_details->rest->old_embodiment_id)
-                    ->whereMonth('transfered_kpi_join_date','=', 7)
-                    ->whereYear('transfered_kpi_join_date','=', 2018)
+                    ->whereMonth('transfered_kpi_join_date', '=', 7)
+                    ->whereYear('transfered_kpi_join_date', '=', 2018)
                     ->orderBy('present_kpi_join_date', 'desc')
                     ->get();
-            }
-            else if ($t_date->month >7&&$e_date->month>7) {
+            } else if ($t_date->month > 7 && $e_date->month > 7) {
                 $transfer_history = TransferAnsar::where('ansar_id', $ansar_id)
                     ->where('embodiment_id', $rest_details->rest->old_embodiment_id)
-                    ->where(function ($qq){
-                        $qq->whereMonth('present_kpi_join_date','<=',7);
-                        $qq->orWhere(DB::raw('YEAR(present_kpi_join_date)'),'<=',2018);
+                    ->where(function ($qq) {
+                        $qq->whereMonth('present_kpi_join_date', '<=', 7);
+                        $qq->orWhere(DB::raw('YEAR(present_kpi_join_date)'), '<=', 2018);
                     })
                     ->orderBy('present_kpi_join_date', 'desc')
                     ->get();
 //                return $transfer_history;
-            }
-            else if($t_date->month == 7&&($e_date->month<7||$e_date->year<2018)){
+            } else if ($t_date->month == 7 && ($e_date->month < 7 || $e_date->year < 2018)) {
                 $row = [];
                 $row["kpi_id"] = $rest_details->rest->embodimentLog->kpi->id;
                 $row["kpi_name"] = $rest_details->rest->embodimentLog->kpi->kpi_name;
                 $row["dates"] = [];
-                $modified_date = Carbon::create(2018,7,1);
+                $modified_date = Carbon::create(2018, 7, 1);
                 for ($i = 0; $i < $t_date->day; $i++) {
                     $modified_date->addDays($i == 0 ? 0 : 1);
                     array_push($row['dates'], [
@@ -530,8 +536,7 @@ class AttendanceController extends Controller
                     ]);
                 }
                 array_push($data, $row);
-            }
-            else if($t_date->month == 7&&($e_date->month==7&&$e_date->year==2018)){
+            } else if ($t_date->month == 7 && ($e_date->month == 7 && $e_date->year == 2018)) {
                 $row = [];
                 $row["kpi_id"] = $rest_details->rest->embodimentLog->kpi->id;
                 $row["kpi_name"] = $rest_details->rest->embodimentLog->kpi->kpi_name;
@@ -547,30 +552,94 @@ class AttendanceController extends Controller
                 array_push($data, $row);
                 $transfer_history = TransferAnsar::where('ansar_id', $ansar_id)
                     ->where('embodiment_id', $rest_details->rest->old_embodiment_id)
-                    ->whereMonth('transfered_kpi_join_date','=', 7)
-                    ->whereYear('transfered_kpi_join_date','=', 2018)
+                    ->whereMonth('transfered_kpi_join_date', '=', 7)
+                    ->whereYear('transfered_kpi_join_date', '=', 2018)
                     ->orderBy('present_kpi_join_date', 'desc')
                     ->get();
             }
-                if(!isset($transfer_history)) $transfer_history = [];
-                foreach ($transfer_history as $th) {
-                    $row = [];
-                    $row["kpi_id"] = $th->present_kpi_id;
-                    $row["kpi_name"] = $th->presentKpi->kpi_name;
-                    $row['dates'] = [];
-                    $pd = Carbon::parse($th->present_kpi_join_date);
-                    $tdd = Carbon::parse($th->transfered_kpi_join_date);
-                    $total_days = $tdd->month==7?$tdd->day:32;
-                    for ($i = $pd->month<7||$pd->year<2018?1:$pd->day; $i < $total_days; $i++) {
-                        array_push($row['dates'], [
-                            'day' => $i,
-                            'month' => 6,
-                            'year' => 2018,
-                        ]);
-                    }
-                    if(count($row['dates']))array_push($data, $row);
+            if (!isset($transfer_history)) $transfer_history = [];
+            foreach ($transfer_history as $th) {
+                $row = [];
+                $row["kpi_id"] = $th->present_kpi_id;
+                $row["kpi_name"] = $th->presentKpi->kpi_name;
+                $row['dates'] = [];
+                $pd = Carbon::parse($th->present_kpi_join_date);
+                $tdd = Carbon::parse($th->transfered_kpi_join_date);
+                $total_days = $tdd->month == 7 ? $tdd->day : 32;
+                for ($i = $pd->month < 7 || $pd->year < 2018 ? 1 : $pd->day; $i < $total_days; $i++) {
+                    array_push($row['dates'], [
+                        'day' => $i,
+                        'month' => 6,
+                        'year' => 2018,
+                    ]);
                 }
+                if (count($row['dates'])) array_push($data, $row);
+            }
             $personalDetails = $rest_details;
+        }
+        else if ($freezeDetails) {
+            $t_date = Carbon::parse($freezeDetails->embodiment->freeze->freez_date);
+            $e_date = Carbon::parse($freezeDetails->embodiment->transfered_date);
+            if ($t_date->month > 7 && $t_date->year==2018&&($e_date->month<7||$e_date->year<2018)) {
+                $row = [];
+                $row["kpi_id"] = $freezeDetails->embodiment->kpi->id;
+                $row["kpi_name"] = $freezeDetails->embodiment->kpi->kpi_name;
+                $row["dates"] = [];
+                $t_date = Carbon::create(2018, 7, 1);
+                for ($i = 0; $i < $t_date->daysInMonth; $i++) {
+                    $modified_date = $t_date->addDays($i == 0 ? 0 : 1);
+                    array_push($row['dates'], [
+                        'day' => $modified_date->day,
+                        'month' => $modified_date->month - 1,
+                        'year' => $modified_date->year,
+                    ]);
+                }
+                array_push($data, $row);
+            }
+            else if ($t_date->month == 7 && $t_date->year==2018&&($e_date->month<7||$e_date->year<2018)) {
+                $row = [];
+                $row["kpi_id"] = $freezeDetails->embodiment->kpi->id;
+                $row["kpi_name"] = $freezeDetails->embodiment->kpi->kpi_name;
+                $row["dates"] = [];
+                $modified_date = clone $t_date;
+                for ($i = 0; $i < $t_date->day; $i++) {
+                    $modified_date->addDays($i == 0 ? 0 : 1);
+                    array_push($row['dates'], [
+                        'day' => $modified_date->day,
+                        'month' => $modified_date->month - 1,
+                        'year' => $modified_date->year,
+                    ]);
+                }
+                array_push($data, $row);
+            }
+            else if ($t_date->month == 7 && $t_date->year==2018&&$e_date->month==7) {
+                $row = [];
+                $row["kpi_id"] = $freezeDetails->embodiment->kpi->id;
+                $row["kpi_name"] = $freezeDetails->embodiment->kpi->kpi_name;
+                $row["dates"] = [];
+                for ($i = $e_date->day; $i < $t_date->day; $i++) {
+                    array_push($row['dates'], [
+                        'day' => $i,
+                        'month' => 6,
+                        'year' => 2018,
+                    ]);
+                }
+                array_push($data, $row);
+            }
+            else if ($t_date->month > 7 && $t_date->year==2018&&$e_date->month==7) {
+                $row = [];
+                $row["kpi_id"] = $freezeDetails->embodiment->kpi->id;
+                $row["kpi_name"] = $freezeDetails->embodiment->kpi->kpi_name;
+                $row["dates"] = [];
+                for ($i = $e_date->day; $i <= $e_date->daysInMonth; $i++) {
+                    array_push($row['dates'], [
+                        'day' => $i,
+                        'month' => 6,
+                        'year' => 2018,
+                    ]);
+                }
+                array_push($data, $row);
+            }
         }
         return response()->json(compact('personalDetails', 'data'));
 
@@ -587,68 +656,68 @@ class AttendanceController extends Controller
         $this->validate($request, $rules);
         $data = [];
         DB::connection('sd')->beginTransaction();
-        try{
+        try {
             foreach ($request->selectedDates as $date) {
 
-                foreach ($date["present"] as $present){
+                foreach ($date["present"] as $present) {
                     $row = $query = [];
                     $row['ansar_id'] = $query['ansar_id'] = $request->ansar_id;
                     $row['kpi_id'] = $query['kpi_id'] = $date["kpi_id"];
                     $row['day'] = $query['day'] = $present["day"];
-                    $row['month'] = $query['month'] = intval($present["month"])+1;
+                    $row['month'] = $query['month'] = intval($present["month"]) + 1;
                     $row['year'] = $query['year'] = intval($present["year"]);
                     $row['is_present'] = 1;
                     $row['is_leave'] = 0;
                     $row['is_attendance_taken'] = 1;
                     $att = Attendance::where($query)->first();
-                    if(!$att)array_push($data,$row);
-                    else if(!$att->is_attendance_taken){
+                    if (!$att) array_push($data, $row);
+                    else if (!$att->is_attendance_taken) {
                         $att->update($row);
                     }
                 }
-                foreach ($date["absent"] as $absent){
+                foreach ($date["absent"] as $absent) {
                     $row = $query = [];
                     $row['ansar_id'] = $query['ansar_id'] = $request->ansar_id;
                     $row['kpi_id'] = $query['kpi_id'] = $date["kpi_id"];
                     $row['day'] = $query['day'] = $absent["day"];
-                    $row['month'] = $query['month'] = intval($absent["month"])+1;
+                    $row['month'] = $query['month'] = intval($absent["month"]) + 1;
                     $row['year'] = $query['year'] = intval($absent["year"]);
                     $row['is_present'] = 0;
                     $row['is_leave'] = 0;
                     $row['is_attendance_taken'] = 1;
                     $att = Attendance::where($query)->first();
-                    if(!$att)array_push($data,$row);
-                    else if(!$att->is_attendance_taken){
+                    if (!$att) array_push($data, $row);
+                    else if (!$att->is_attendance_taken) {
                         $att->update($row);
                     }
                 }
-                foreach ($date["leave"] as $leave){
+                foreach ($date["leave"] as $leave) {
                     $row = $query = [];
                     $row['ansar_id'] = $query['ansar_id'] = $request->ansar_id;
                     $row['kpi_id'] = $query['kpi_id'] = $date["kpi_id"];
                     $row['day'] = $query['day'] = $leave["day"];
-                    $row['month'] = $query['month'] = intval($leave["month"])+1;
+                    $row['month'] = $query['month'] = intval($leave["month"]) + 1;
                     $row['year'] = $query['year'] = intval($leave["year"]);
                     $row['is_present'] = 0;
                     $row['is_leave'] = 1;
                     $row['is_attendance_taken'] = 1;
                     $att = Attendance::where($query)->first();
-                    if(!$att)array_push($data,$row);
-                    else if(!$att->is_attendance_taken){
+                    if (!$att) array_push($data, $row);
+                    else if (!$att->is_attendance_taken) {
                         $att->update($row);
                     }
                 }
             }
             Attendance::insert($data);
             DB::connection('sd')->commit();
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::connection('sd')->rollback();
-            return response()->json(['status'=>false,'message'=>$e->getMessage()]);
+            return response()->json(['status' => false, 'message' => $e->getMessage()]);
         }
-        if(count($data)==0){
-            return response()->json(['status'=>false,'message'=>'Attendance already taken']);
+        if (count($data) == 0) {
+            return response()->json(['status' => false, 'message' => 'Attendance already taken']);
         }
-        return response()->json(['status'=>true,'message'=>'Attendance taken successfully']);
+        return response()->json(['status' => true, 'message' => 'Attendance taken successfully']);
     }
 
 
