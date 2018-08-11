@@ -36,7 +36,12 @@
     }
 </style>
 
-<?php $chunks = collect($datas)->chunk(8); $count = 1;?>
+<?php
+$chunks = collect($datas)->chunk(8); $count = 1;
+setlocale(LC_TIME, "bn");
+\Carbon\Carbon::setUtf8(true);
+?>
+
 @foreach($chunks as $chunk)
     <div class="page">
         <h2 style="text-align: center;margin: 0;padding-top:10px;line-height:24px">
