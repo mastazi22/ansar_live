@@ -277,7 +277,7 @@ class SalaryManagementController extends Controller
         ];
         $v = Validator::make($request->all(), $rules);
         if ($v->fails()) {
-            return redirect()->route('SD.salary_management.create')->with("error_message", "Validation error");
+            return redirect()->route('SD.salary_management.create')->with("error_message", $v->messages());
         }
         try {
             $generated_date = Carbon::now()->format('Y-m-d');
