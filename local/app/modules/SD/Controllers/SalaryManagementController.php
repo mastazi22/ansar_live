@@ -188,6 +188,7 @@ class SalaryManagementController extends Controller
      */
     public function store(Request $request)
     {
+        return abort(403);
 //        return $request->all();
         // return $request->attendance_data;
 //        return view('SD::salary_sheet.export',['datas'=>$request->attendance_data]);
