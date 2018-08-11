@@ -55,7 +55,7 @@ setlocale(LC_TIME, "bn_BD.utf8");
                     তারিখ : {{LanguageConverter::engToBng(\Carbon\Carbon::now()->format('d/m/Y'))}}
                 </div>
                 <div style="float: right;white-space:nowrap;font-size:14px">
-                    মাসের নাম : {{\Carbon\Carbon::createFromFormat("F, Y",$generated_month)->formatLocalized("%B, %Y")}}
+                    মাসের নাম : {{LanguageConverter::engToBng(\Carbon\Carbon::createFromFormat("F, Y",$generated_month)->formatLocalized("%B, %Y"))}}
                 </div>
             </div>
             <table border="1" cellpadding="0" cellspacing="0" style="width: 100%">
