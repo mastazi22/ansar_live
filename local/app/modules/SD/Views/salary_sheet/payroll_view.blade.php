@@ -38,8 +38,8 @@
 
 <?php
 $chunks = collect($datas)->chunk(8); $count = 1;
-setlocale(LC_TIME, "bn_BD");
-\Carbon\Carbon::setUtf8(true);
+setlocale(LC_TIME, "bn_BD.utf8");
+//\Carbon\Carbon::setUtf8(true);
 ?>
 
 @foreach($chunks as $chunk)
