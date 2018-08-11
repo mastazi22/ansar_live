@@ -52,10 +52,10 @@ setlocale(LC_TIME, "bn");
         <div style="padding: 10px 0px 0;font-size: 14px">
             <div style="overflow: hidden;margin-bottom: 10px">
                 <div style="float: left;font-size:14px">
-                    তারিখ : {{LanguageConverter::engToBng(\Carbon\Carbon::now()->format('d/m/Y'))}}
+                    তারিখ : {{LanguageConverter::engToBng(\Carbon\Carbon::now()->form('d/m/Y'))}}
                 </div>
                 <div style="float: right;white-space:nowrap;font-size:14px">
-                    মাসের নাম : {{$generated_month}}
+                    মাসের নাম : {{\Carbon\Carbon::createFromFormat("F, Y",$generated_month)->formatLocalized("F, Y")}}
                 </div>
             </div>
             <table border="1" cellpadding="0" cellspacing="0" style="width: 100%">
