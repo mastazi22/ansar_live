@@ -269,7 +269,7 @@ class SalaryManagementController extends Controller
 //        return view('SD::salary_sheet.export',['datas'=>$request->attendance_data]);
         $rules = [
             'kpi_id' => "required",
-            'generated_for_month' => 'required|date_format:"F, Y"',
+            'generated_for_month' => 'required',
             'generated_type' => "required",
             'attendance_data' => "required",
             'summery' => "required",
