@@ -31,7 +31,8 @@
     }
 
     .page {
-        page-break-after: always !important;
+        page-break-after: auto !important;
+        page-break-inside: avoid !important;
     }
 </style>
 
