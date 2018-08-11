@@ -13,25 +13,31 @@
         font-family: syamrupali !important;
         line-height: 18px;
     }
+
     table td, table th {
         text-align: center;
         font-size: 14px;
         padding: 0 2px;
     }
-    .sig-text{
+
+    .sig-text {
         padding: 5px;
         border-top: 1px dotted #000000;
         display: inline-block;
     }
+
     tr, td {
         page-break-inside: avoid !important;
     }
-    .page{
-        page-break-after: auto; !important;
+
+    .page {
+        page-break-after: auto;
+    !important;
     }
 </style>
 
-<?php $chunks = collect($datas)->chunk(12); ?>
+<?php $chunks = collect($datas)->chunk(8); ?>
+@php($count = 1;)
 @foreach($chunks as $chunk)
     <div class="page">
         <h2 style="text-align: center;margin: 0;padding-top:10px;line-height:24px">
@@ -55,21 +61,22 @@
                     <td rowspan="2">পদবী</td>
                     <td rowspan="2" style="width: 200px">নাম ও পিতার নাম</td>
                     <td rowspan="2">মোট দিন</td>
-                    <td rowspan="2">দৈনিক ভাতা পিসি/এপিসি {{LanguageConverter::engToBng(DC::getValue('DPA')->cons_value)}}
+                    <td rowspan="2">দৈনিক ভাতা
+                        পিসি/এপিসি {{LanguageConverter::engToBng(DC::getValue('DPA')->cons_value)}}
                         /-
                         টাকা এবং আনসার {{LanguageConverter::engToBng(DC::getValue('DA')->cons_value)}}/- টাকা হারে
                     </td>
-                    <td rowspan="2">দৈনিক রেশন  ভাতা  পিসি/এপিসি
+                    <td rowspan="2">দৈনিক রেশন ভাতা পিসি/এপিসি
                         আনসার {{LanguageConverter::engToBng(DC::getValue('R')->cons_value)}}/-
                         হারে
                     </td>
-                    <td rowspan="2">দৈনিক  ধৌত ও  চুল কাটা
-                        ভাতা {{LanguageConverter::engToBng(DC::getValue('CB')->cons_value)}}/-  হারে
+                    <td rowspan="2">দৈনিক ধৌত ও চুল কাটা
+                        ভাতা {{LanguageConverter::engToBng(DC::getValue('CB')->cons_value)}}/- হারে
                     </td>
-                    <td rowspan="2">দৈনিক  যাতায়াত  ভাতা {{LanguageConverter::engToBng(DC::getValue('CV')->cons_value)}}/-
+                    <td rowspan="2">দৈনিক যাতায়াত ভাতা {{LanguageConverter::engToBng(DC::getValue('CV')->cons_value)}}/-
                         হারে
                     </td>
-                    <td rowspan="2">দৈনিক  চিকিৎসা ভাতা {{LanguageConverter::engToBng(DC::getValue('DV')->cons_value)}}/-
+                    <td rowspan="2">দৈনিক চিকিৎসা ভাতা {{LanguageConverter::engToBng(DC::getValue('DV')->cons_value)}}/-
                         হারে
                     </td>
                     <td rowspan="2">
@@ -124,7 +131,7 @@
                         <td>{{LanguageConverter::engToBng($data['share_amount'])}}</td>
                         <td>{{LanguageConverter::engToBng($data['total_amount'])}}</td>
                         <td>{{LanguageConverter::engToBng($data['net_amount'])}}</td>
-                        <td >
+                        <td>
                             &nbsp;
                         </td>
                     </tr>
@@ -149,15 +156,26 @@
                 </tr>
                 <tr>
                     @if($chunks->count()==1)
-                    <td colspan="16" style="text-align: right">সর্বমোট : </td>
-                        @else
-                        <td colspan="16" style="text-align: right">মোট : </td>
+                        <td colspan="16" style="text-align: right">সর্বমোট :</td>
+                    @else
+                        <td colspan="16" style="text-align: right">মোট :</td>
                     @endif
-                    <td >{{LanguageConverter::engToBng(collect($chunk)->sum(function($item){
+                    <td>{{LanguageConverter::engToBng(collect($chunk)->sum(function($item){
             return $item["total_daily_fee"]+$item["total_ration_fee"]+$item["total_barber_fee"]+$item["total_transportation_fee"]+$item["total_medical_fee"]+$item["extra"];
             }))}}</td>
                     <td></td>
+                    <td></td>
                 </tr>
+                @if(count($chunks)>1&&$count++==count($chunks))
+                    <tr>
+                        <td colspan="16" style="text-align: right">সর্বমোট :</td>
+                        <td>{{LanguageConverter::engToBng(collect($datas)->sum(function($item){
+            return $item["total_daily_fee"]+$item["total_ration_fee"]+$item["total_barber_fee"]+$item["total_transportation_fee"]+$item["total_medical_fee"]+$item["extra"];
+            }))}}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                @endif
             </table>
             <div style="overflow: hidden;margin-top: 6%;font-size: 14px">
                 <div style="float: left;width: 20%;text-align: center">
@@ -187,7 +205,7 @@
 
         </div>
     </div>
-    @endforeach
+@endforeach
 
 </body>
 </html>
