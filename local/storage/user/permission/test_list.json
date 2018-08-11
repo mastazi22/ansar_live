@@ -157,6 +157,10 @@
           {
             "value": "editVerifiedEntry",
             "name": "Edit Ansar(Verified)"
+          },
+          {
+            "value": "bulk_upload_bank_file",
+            "name": "Bulk Upload Bank Account Info"
           }
         ]
       },
