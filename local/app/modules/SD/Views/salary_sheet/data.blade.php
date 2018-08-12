@@ -185,7 +185,7 @@
         </table>
     @endif
 </div>
-{{--<button type="submit" id="generate_sheet" class="btn btn-primary pull-right">Confirm & Generate Salary Sheet</button>--}}
+<button type="submit" id="generate_sheet" class="btn btn-primary pull-right">Confirm & Generate Salary Sheet</button>
 <button type="submit" id="view_payroll" class="btn btn-primary pull-right" style="margin-right: 20px">View Payroll</button>
 {!! Form::close() !!}
 <script>
