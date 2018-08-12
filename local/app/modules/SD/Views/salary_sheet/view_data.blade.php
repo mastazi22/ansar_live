@@ -44,7 +44,9 @@
                     <td>
                         @if(!$info->deposit)
                             <span class="label label-danger">Not Available</span>
-                        @elseif($info->deposit->paid_amount<$info->summery["total_max_amount"])
+                        @elseif($info->generated_type=="salary"&&$info->deposit->paid_amount<$info->summery["total_max_amount"])
+                            <span class="label label-warning">Partial</span>
+                        @elseif($info->generated_type=="bonus"&&$info->deposit->paid_amount<$info->salaryHistory->sum('amount'))
                             <span class="label label-warning">Partial</span>
                         @else
                             <span class="label label-success">Fully Deposit</span>

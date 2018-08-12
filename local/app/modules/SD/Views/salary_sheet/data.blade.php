@@ -136,9 +136,7 @@
             <caption style="padding: 0 10px">
                 <h4 style="    box-shadow: 1px 1px 1px #c5bfbf;padding: 10px 0;line-height: 25px;"
                     class="text-bold text-center">
-                    Bonus of<br>{{$kpi_name}}<br>Based on <span
-                            class="text text-danger">{{\Carbon\Carbon::parse($for_month)->format("F, Y")}}</span>
-                    Attendance
+                    Bonus of<br>{{$bonus_for=="eiduladah"?"ঈদ-উল-আযহা":"ঈদ-উল-ফিতর"}}<br>{{$kpi_name}}
                 </h4>
             </caption>
             <tr>
@@ -146,9 +144,7 @@
                 <th>Ansar ID</th>
                 <th>Name</th>
                 <th>Rank</th>
-                <th>Total Present</th>
-                <th>Total Leave(paid)</th>
-                <th>Total Absent</th>
+                <th>Joining Date</th>
                 <th>Total Bonus</th>
                 <th>Net Amount</th>
                 <th>Bonus For</th>
@@ -159,30 +155,36 @@
                 {!! Form::hidden("attendance_data[$i][ansar_id]",$data['ansar_id']) !!}
                 {!! Form::hidden("attendance_data[$i][ansar_name]",$data['ansar_name']) !!}
                 {!! Form::hidden("attendance_data[$i][ansar_rank]",$data['ansar_rank']) !!}
-                {!! Form::hidden("attendance_data[$i][net_amount]",$data['net_amount']) !!}
                 {!! Form::hidden("attendance_data[$i][total_amount]",$data['total_amount']) !!}
-                {!! Form::hidden("attendance_data[$i][total_present]",$data['total_present']) !!}
-                {!! Form::hidden("attendance_data[$i][total_leave]",$data['total_leave']) !!}
                 {!! Form::hidden("attendance_data[$i][bonus_for]",$data['bonus_for']=="eidulfitr"?"Eid-ul-fitr":"Eid-ul-adah") !!}
                 {!! Form::hidden("attendance_data[$i][month]",$for_month) !!}
                 {!! Form::hidden("attendance_data[$i][account_no]",$data['account_no']) !!}
+                {!! Form::hidden("attendance_data[$i][bank_type]",$data['bank_type']) !!}
                 <tr>
                     <td>{{++$i}}</td>
                     <td>{{$data['ansar_id']}}</td>
                     <td>{{$data['ansar_name']}}</td>
                     <td>{{$data['ansar_rank']}}</td>
-                    <td>{{$data['total_present']}}</td>
-                    <td>{{$data['total_leave']}}</td>
-                    <td>{{$data['total_absent']}}</td>
+                    <td>{{$data['joining_date']}}</td>
                     <td>{{$data['total_amount']}}</td>
-                    <td>{{$data['net_amount']}}</td>
+                    <td>
+                        {!! Form::text("attendance_data[".($i-1)."][net_amount]",null,['placeholder'=>"Enter net amount", 'ng-model'=>'net_amount['.($i-1).']']) !!}
+                    </td>
                     <td>{{$data['bonus_for']=="eidulfitr"?"Eid-ul-fitr":"Eid-ul-adah"}}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="10" class="bg-warning">No attendance data available for this month</td>
+                    <td colspan="8" class="bg-warning">No attendance data available for this month</td>
                 </tr>
             @endforelse
+            @if(count($datas)>0)
+                <tr>
+                    <th colspan="6" style="text-align: right">Total : </th>
+                    <td colspan="2">
+                        [[!net_amount?0:sumArray(net_amount) ]]
+                    </td>
+                </tr>
+                @endif
         </table>
     @endif
 </div>

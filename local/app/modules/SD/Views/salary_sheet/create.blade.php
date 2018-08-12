@@ -46,6 +46,15 @@
                     }
                 })
             }
+            $scope.sumArray = function (d) {
+                if(!d) return 0;
+                var v = Object.values(d).map(x=>parseFloat(x))
+                return v.reduce(function (t,n) {
+                    if(isNaN(t)) t = 0;
+                    if(isNaN(n)) n = 0;
+                    return t+n;
+                })
+            }
         })
 
         GlobalApp.directive('compileHtml',function ($compile) {

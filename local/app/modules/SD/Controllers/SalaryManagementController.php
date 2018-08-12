@@ -182,6 +182,7 @@ class SalaryManagementController extends Controller
                 else if ($request->sheetType == 'bonus'){
                     $ansars = $kpi->embodiment()->where('emboded_status','Emboded')->get();
                     $datas = [];
+                    $bonus_for = $request->bonusType;
                     foreach ($ansars as $a) {
                         $ansar = $a->ansar;
                         $total_amount = floatval($ansar->designation_id == 1 ? DemandConstantFacdes::getValue("EBA")->cons_value : DemandConstantFacdes::getValue("EBPA")->cons_value);
@@ -191,14 +192,18 @@ class SalaryManagementController extends Controller
                             'ansar_id' => $ansar->ansar_id,
                             'ansar_name' => $ansar->ansar_name_eng,
                             'ansar_rank' => $ansar->designation->code,
-                            'joining_date' => $a->transfered_date,
+                            'joining_date' => Carbon::parse($a->transfered_date)->format('d M, Y'),
                             'account_no' => $ansar->account ? ($ansar->account->prefer_choice == "mobile" ? $ansar->mobile_bank_account_no : $ansar->account_no) : 'n\a',
                             'bank_type' => $ansar->account ? ($ansar->account->prefer_choice == "mobile" ? $ansar->mobile_bank_type : "DBBL") : 'n\a',
                             'bonus_for' => $request->bonusType
                         ]);
 //                        return $datas;
                     }
-                    return view("SD::salary_sheet.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id', 'generated_type'));
+                    $kpi_id = $kpi->id;
+                    $for_month = $request->month_year;
+                    $generated_type = $request->sheetType;
+                    $kpi_name = $kpi->kpi_name;
+                    return view("SD::salary_sheet.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id', 'generated_type','bonus_for'));
                 }
             } else {
                 return response()->json(['message' => "Kpi detail does not found"], 400);
@@ -220,7 +225,7 @@ class SalaryManagementController extends Controller
             'generated_for_month' => 'required|date_format:"F, Y"',
             'generated_type' => "required",
             'attendance_data' => "required",
-            'summery' => "required",
+            'summery' => "required_if:generated_type,salary",
 
         ];
         $v = Validator::make($request->all(), $rules);
@@ -236,7 +241,7 @@ class SalaryManagementController extends Controller
                 'generated_date' => Carbon::now()->format('Y-m-d'),
                 'action_user_id' => auth()->user()->id,
                 'data' => gzencode(serialize($request->attendance_data), 9),
-                'summery' => gzencode(serialize($request->summery), 9),
+                'summery' => $request->generated_type=="salary"?gzencode(serialize($request->summery), 9):null,
 
             ];
 
@@ -252,17 +257,19 @@ class SalaryManagementController extends Controller
                     'status' => "pending",
                     'action_user_id' => auth()->user()->id,
                 ]);
-                $share_purchase_history = SharePurchaseHistory::where([
-                    'ansar_id' => $ad["ansar_id"],
-                    'month'=>$request->generated_for_month
-                ]);
-                if(!$share_purchase_history->exists()){
-                    SharePurchaseHistory::create([
+                if($request->generated_type=="salary") {
+                    $share_purchase_history = SharePurchaseHistory::where([
                         'ansar_id' => $ad["ansar_id"],
-                        'month'=>$request->generated_for_month,
-                        'salary_sheet_id'=>$history->id,
-                        'kpi_id'=>$request->kpi_id
+                        'month' => $request->generated_for_month
                     ]);
+                    if (!$share_purchase_history->exists()) {
+                        SharePurchaseHistory::create([
+                            'ansar_id' => $ad["ansar_id"],
+                            'month' => $request->generated_for_month,
+                            'salary_sheet_id' => $history->id,
+                            'kpi_id' => $request->kpi_id
+                        ]);
+                    }
                 }
             }
             SalaryHistory::insert($salary_history);
@@ -295,7 +302,7 @@ class SalaryManagementController extends Controller
             'generated_for_month' => 'required',
             'generated_type' => "required",
             'attendance_data' => "required",
-            'summery' => "required",
+            'summery' => "required_if:generated_type,salary",
 
         ];
         $v = Validator::make($request->all(), $rules);
@@ -306,61 +313,81 @@ class SalaryManagementController extends Controller
             $generated_date = Carbon::now()->format('Y-m-d');
             $generated_month = $request->generated_for_month;
             $kpi = KpiGeneralModel::with('details')->find($request->kpi_id);
-            $date = Carbon::createFromFormat('F, Y', $request->generated_for_month);
-            $month = $date->month;
-            $year = $date->year;
-            $is_attendance_taken = 1;
-            $attendance = $kpi->attendance()->where(compact('month', 'year', 'is_attendance_taken'))
-                ->select(DB::raw("SUM(is_present=1 AND is_leave=0) as total_present"),
-                    DB::raw("SUM(is_present=0 AND is_leave=0) as total_absent"),
-                    DB::raw("SUM(is_present=0 AND is_leave=1) as total_leave"),
-                    'ansar_id', 'month', 'year', DB::raw("min(day) as min_day"), DB::raw("max(day) as max_day")
-                )->groupBy('ansar_id')->get();
-            $datas = [];
-            $all_daily_fee = 0;
-            $withWeapon = $kpi->details->with_weapon;
-            $is_special = $kpi->details->is_special_kpi;
-            $special_amount = $kpi->details->special_amount;
+            $generated_type = $request->generated_type;
+            if($generated_type=='salary'){
+                $date = Carbon::createFromFormat('F, Y', $request->generated_for_month);
+                $month = $date->month;
+                $year = $date->year;
+                $is_attendance_taken = 1;
+                $attendance = $kpi->attendance()->where(compact('month', 'year', 'is_attendance_taken'))
+                    ->select(DB::raw("SUM(is_present=1 AND is_leave=0) as total_present"),
+                        DB::raw("SUM(is_present=0 AND is_leave=0) as total_absent"),
+                        DB::raw("SUM(is_present=0 AND is_leave=1) as total_leave"),
+                        'ansar_id', 'month', 'year', DB::raw("min(day) as min_day"), DB::raw("max(day) as max_day")
+                    )->groupBy('ansar_id')->get();
+                $datas = [];
+                $all_daily_fee = 0;
+                $withWeapon = $kpi->details->with_weapon;
+                $is_special = $kpi->details->is_special_kpi;
+                $special_amount = $kpi->details->special_amount;
 
-            foreach ($attendance as $a) {
-                $ansar = $a->ansar;
-                $total_daily_fee = floatval($ansar->designation_id == 1 ? DemandConstantFacdes::getValue("DA")->cons_value : DemandConstantFacdes::getValue("DPA")->cons_value)
-                    * (intval($a->total_present) + intval($a->total_leave));
-                $total_ration_fee = floatval(DemandConstantFacdes::getValue("R")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
-                $total_barber_fee = floatval(DemandConstantFacdes::getValue("CB")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
-                $total_transportation_fee = floatval(DemandConstantFacdes::getValue("CV")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
-                $total_medical_fee = floatval(DemandConstantFacdes::getValue("DV")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
-                $welfare_fee = floatval(DemandConstantFacdes::getValue("WF")->cons_value);
-                $regimental_fee = floatval(DemandConstantFacdes::getValue("REGF")->cons_value);
-                $revenue_stamp = floatval(DemandConstantFacdes::getValue("REVS")->cons_value);
-                $share_amount = floatval(DemandConstantFacdes::getValue("SA")->cons_value);
-                $all_daily_fee += $total_daily_fee;
-                $share_purchase_history = SharePurchaseHistory::where([
-                    'ansar_id'=>$ansar->ansar_id,
-                    'month'=>$request->generated_for_month
-                ]);
-                array_push($datas, [
-                    'ansar_id' => $ansar->ansar_id,
-                    'ansar_name' => $ansar->ansar_name_bng,
-                    'father_name' => $ansar->father_name_bng,
-                    'rank' => $ansar->designation->name_bng,
-                    'total_daily_fee' => $total_daily_fee,
-                    'total_day' => $a->total_present + $a->total_leave,
-                    'total_ration_fee' => $total_ration_fee,
-                    'total_barber_fee' => $total_barber_fee,
-                    'total_transportation_fee' => $total_transportation_fee,
-                    'total_medical_fee' => $total_medical_fee,
-                    'reg_fee' => $regimental_fee,
-                    'welfare_fee' => $welfare_fee,
-                    'revenue_stamp' => $revenue_stamp,
-                    'share_amount' => $share_purchase_history->exists()?0:$share_amount,
-                    'extra' => sprintf('%.2f', ($is_special?(floatval($total_daily_fee * $special_amount) / 100):($withWeapon ? (floatval($total_daily_fee * 20) / 100) : (floatval($total_daily_fee * 15) / 100)))),
-                    'net_amount' => $total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee + $total_medical_fee - ($welfare_fee + $share_amount + $revenue_stamp + $regimental_fee),
-                    'total_amount' => $total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee + $total_medical_fee
-                ]);
+                foreach ($attendance as $a) {
+                    $ansar = $a->ansar;
+                    $total_daily_fee = floatval($ansar->designation_id == 1 ? DemandConstantFacdes::getValue("DA")->cons_value : DemandConstantFacdes::getValue("DPA")->cons_value)
+                        * (intval($a->total_present) + intval($a->total_leave));
+                    $total_ration_fee = floatval(DemandConstantFacdes::getValue("R")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
+                    $total_barber_fee = floatval(DemandConstantFacdes::getValue("CB")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
+                    $total_transportation_fee = floatval(DemandConstantFacdes::getValue("CV")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
+                    $total_medical_fee = floatval(DemandConstantFacdes::getValue("DV")->cons_value) * (intval($a->total_present) + intval($a->total_leave));
+                    $welfare_fee = floatval(DemandConstantFacdes::getValue("WF")->cons_value);
+                    $regimental_fee = floatval(DemandConstantFacdes::getValue("REGF")->cons_value);
+                    $revenue_stamp = floatval(DemandConstantFacdes::getValue("REVS")->cons_value);
+                    $share_amount = floatval(DemandConstantFacdes::getValue("SA")->cons_value);
+                    $all_daily_fee += $total_daily_fee;
+                    $share_purchase_history = SharePurchaseHistory::where([
+                        'ansar_id'=>$ansar->ansar_id,
+                        'month'=>$request->generated_for_month
+                    ]);
+                    array_push($datas, [
+                        'ansar_id' => $ansar->ansar_id,
+                        'ansar_name' => $ansar->ansar_name_bng,
+                        'father_name' => $ansar->father_name_bng,
+                        'rank' => $ansar->designation->name_bng,
+                        'total_daily_fee' => $total_daily_fee,
+                        'total_day' => $a->total_present + $a->total_leave,
+                        'total_ration_fee' => $total_ration_fee,
+                        'total_barber_fee' => $total_barber_fee,
+                        'total_transportation_fee' => $total_transportation_fee,
+                        'total_medical_fee' => $total_medical_fee,
+                        'reg_fee' => $regimental_fee,
+                        'welfare_fee' => $welfare_fee,
+                        'revenue_stamp' => $revenue_stamp,
+                        'share_amount' => $share_purchase_history->exists()?0:$share_amount,
+                        'extra' => sprintf('%.2f', ($is_special?(floatval($total_daily_fee * $special_amount) / 100):($withWeapon ? (floatval($total_daily_fee * 20) / 100) : (floatval($total_daily_fee * 15) / 100)))),
+                        'net_amount' => $total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee + $total_medical_fee - ($welfare_fee + $share_amount + $revenue_stamp + $regimental_fee),
+                        'total_amount' => $total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee + $total_medical_fee
+                    ]);
 //                        return $datas;
+                }
+            } else if($generated_type=='bonus'){
+                $ansars = $kpi->embodiment()->where('emboded_status','Emboded')->get();
+                $datas = [];
+                foreach ($ansars as $a) {
+                    $ansar = $a->ansar;
+                    $total_amount = floatval($ansar->designation_id == 1 ? DemandConstantFacdes::getValue("EBA")->cons_value : DemandConstantFacdes::getValue("EBPA")->cons_value);
+//dump(collect($request->attendance_data)->whereLoose('ansar_id',$ansar->ansar_id)->first());
+                    array_push($datas, [
+                        'ansar_id' => $ansar->ansar_id,
+                        'ansar_name' => $ansar->ansar_name_bng,
+                        'father_name' => $ansar->father_name_bng,
+                        'rank' => $ansar->designation->name_bng,
+                        'net_amount' => collect($request->attendance_data)->whereLoose('ansar_id',$ansar->ansar_id)->first()["net_amount"],
+                    ]);
+//                        return $datas;
+                }
             }
-            $pdf = SnappyPdf::loadView("SD::salary_sheet.payroll_view", compact('generated_date', 'datas', 'kpi', 'generated_month'))
+//            return "dd";
+            $pdf = SnappyPdf::loadView("SD::salary_sheet.payroll_view", compact('generated_date', 'datas', 'kpi', 'generated_month','generated_type'))
                 ->setPaper('legal')
 //                ->setOption('footer-left',url('/'))
 //                ->setOption('footer-right',Carbon::now()->format('d-M-Y H:i:s'))

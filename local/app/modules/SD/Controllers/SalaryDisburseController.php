@@ -44,10 +44,10 @@ class SalaryDisburseController extends Controller
                 "thana" => 'required',
                 "kpi" => 'required',
                 "disburseType" => ['required','regex:/^(salary)|(bonus)$/'],
-                "month_year" => 'required|date_format:"F, Y"|exists:sd.tbl_salary_sheet_generate_history,generated_for_month,generated_type,'.$request->disburseType.',kpi_id,'.$request->kpi,
+                "month_year" => 'required|date_format:"F, Y"|exists:sd.tbl_salary_sheet_generate_history,generated_for_month,generated_type,'.$request->disburseType.',kpi_id,'.$request->kpi.',disburst_status,pending',
             ];
             $this->validate($request, $rules,[
-                'month_year.exists'=>"Salary sheet doesn`t generated for this month for this kpi",
+                'month_year.exists'=>"Salary sheet doesn`t generated for this month or already disburse for this kpi",
                 'disburseType.required'=>"Please select a sheet type:salary or bonus",
                 'disburseType.regex'=>"Please select a valid sheet type:salary or bonus",
             ]);
@@ -94,7 +94,11 @@ class SalaryDisburseController extends Controller
             })->get();*/
             $salary_histories = $salary_sheet->salaryHistory()->with('ansar.account')->get();
             if(!count($salary_histories)) throw new \Exception("No ansar account info found for disbursement");
-            $disburse_amount = $salary_histories->sum('amount')+$salary_sheet->summery["reg_amount"]+$salary_sheet->summery["share_amount"]+$salary_sheet->summery["welfare_fee"]+$salary_sheet->summery["revenue_stamp"]+($append_extra?$salary_sheet->summery["extra"]:0);
+            if($salary_sheet->generated_type=="salary"){
+                $disburse_amount = $salary_histories->sum('amount')+$salary_sheet->summery["reg_amount"]+$salary_sheet->summery["share_amount"]+$salary_sheet->summery["welfare_fee"]+$salary_sheet->summery["revenue_stamp"]+($append_extra?$salary_sheet->summery["extra"]:0);
+            } else{
+                $disburse_amount = $salary_histories->sum('amount');
+            }
             if($disburse_amount>$deposit->paid_amount) throw new \Exception("Not enough deposit available for disbursement");
             $excel_sheet_data = [];
             $salary_sheet->update(['disburst_status'=>'done']);
@@ -116,13 +120,13 @@ class SalaryDisburseController extends Controller
                 "total_disburst_amount"=>$disburse_amount,
                 "action_user_id"=>auth()->user()->id,
                 "extra_amount_include"=>$append_extra?1:0,
-                "dg_account_amount"=>$append_extra?(($salary_sheet->summery["extra"]*DemandConstantFacdes::getValue('DGEP')->cons_value)/100):null,
-                "rc_account_amount"=>$append_extra?(($salary_sheet->summery["extra"]*DemandConstantFacdes::getValue('RCEP')->cons_value)/100):null,
-                "dc_account_amount"=>$append_extra?(($salary_sheet->summery["extra"]*DemandConstantFacdes::getValue('DCEP')->cons_value)/100)+$salary_sheet->summery["revenue_stamp"]:$salary_sheet->summery["revenue_stamp"],
-                "welfare_account_amount"=>$salary_sheet->summery["welfare_fee"],
-                "share_account_amount"=>$salary_sheet->summery["share_amount"],
-                "regimental_account_amount"=>$salary_sheet->summery["reg_amount"],
-                "extra_amount"=>$salary_sheet->summery["extra"],
+                "dg_account_amount"=>$salary_sheet->generated_type=="salary"&&$append_extra?(($salary_sheet->summery["extra"]*DemandConstantFacdes::getValue('DGEP')->cons_value)/100):null,
+                "rc_account_amount"=>$salary_sheet->generated_type=="salary"&&$append_extra?(($salary_sheet->summery["extra"]*DemandConstantFacdes::getValue('RCEP')->cons_value)/100):null,
+                "dc_account_amount"=>$salary_sheet->generated_type=="salary"?($append_extra?(($salary_sheet->summery["extra"]*DemandConstantFacdes::getValue('DCEP')->cons_value)/100)+$salary_sheet->summery["revenue_stamp"]:$salary_sheet->summery["revenue_stamp"]):null,
+                "welfare_account_amount"=>$salary_sheet->generated_type=="salary"?$salary_sheet->summery["welfare_fee"]:null,
+                "share_account_amount"=>$salary_sheet->generated_type=="salary"?$salary_sheet->summery["share_amount"]:null,
+                "regimental_account_amount"=>$salary_sheet->generated_type=="salary"?$salary_sheet->summery["reg_amount"]:null,
+                "extra_amount"=>$salary_sheet->generated_type=="salary"?$salary_sheet->summery["extra"]:null,
             ]);
             $collection = collect($excel_sheet_data)->groupBy('account_type');
 //            return $collection;
@@ -144,81 +148,82 @@ class SalaryDisburseController extends Controller
                 array_push($files,$f_name_pdf);
             }
             $distribution_to_different_account = [];
-            if($append_extra) {
-                $distribution_to_different_account[0]["account_name"] = "DG`s Account";
-                $distribution_to_different_account[0]["account_no"] = BankAccountList::getAccount("DG");
-                $distribution_to_different_account[0]["amount"] = sprintf("%.2f",(($salary_sheet->summery["extra"]*DemandConstantFacdes::getValue('DGEP')->cons_value)/100));
-                $distribution_to_different_account[0]["month"] = $salary_sheet->generated_for_month;
-                $distribution_to_different_account[0]["branch_name"] = "";
+            if($salary_sheet->generated_type=="salary") {
+                if ($append_extra) {
+                    $distribution_to_different_account[0]["account_name"] = "DG`s Account";
+                    $distribution_to_different_account[0]["account_no"] = BankAccountList::getAccount("DG");
+                    $distribution_to_different_account[0]["amount"] = sprintf("%.2f", (($salary_sheet->summery["extra"] * DemandConstantFacdes::getValue('DGEP')->cons_value) / 100));
+                    $distribution_to_different_account[0]["month"] = $salary_sheet->generated_for_month;
+                    $distribution_to_different_account[0]["branch_name"] = "";
 
-                $distribution_to_different_account[1]["account_name"] = "RC`s Account";
-                $distribution_to_different_account[1]["account_no"] = $salary_sheet->kpi->division->rc->userProfile->bank_account_no;
-                $distribution_to_different_account[1]["branch_name"] = $salary_sheet->kpi->division->rc->userProfile->branch_name;
-                $distribution_to_different_account[1]["amount"] = sprintf("%.2f",(($salary_sheet->summery["extra"]*DemandConstantFacdes::getValue('RCEP')->cons_value)/100));
-                $distribution_to_different_account[1]["month"] = $salary_sheet->generated_for_month;
+                    $distribution_to_different_account[1]["account_name"] = "RC`s Account";
+                    $distribution_to_different_account[1]["account_no"] = $salary_sheet->kpi->division->rc->userProfile->bank_account_no;
+                    $distribution_to_different_account[1]["branch_name"] = $salary_sheet->kpi->division->rc->userProfile->branch_name;
+                    $distribution_to_different_account[1]["amount"] = sprintf("%.2f", (($salary_sheet->summery["extra"] * DemandConstantFacdes::getValue('RCEP')->cons_value) / 100));
+                    $distribution_to_different_account[1]["month"] = $salary_sheet->generated_for_month;
 
-                $distribution_to_different_account[2]["account_name"] = "DC`s Account";
-                $distribution_to_different_account[2]["account_no"] = $salary_sheet->kpi->unit->dc->userProfile->bank_account_no;
-                $distribution_to_different_account[2]["branch_name"] = $salary_sheet->kpi->unit->dc->userProfile->branch_name;
-                $distribution_to_different_account[2]["amount"] = sprintf("%.2f",(($salary_sheet->summery["extra"]*DemandConstantFacdes::getValue('DCEP')->cons_value)/100)+$salary_sheet->summery["revenue_stamp"]);
-                $distribution_to_different_account[2]["month"] = $salary_sheet->generated_for_month;
+                    $distribution_to_different_account[2]["account_name"] = "DC`s Account";
+                    $distribution_to_different_account[2]["account_no"] = $salary_sheet->kpi->unit->dc->userProfile->bank_account_no;
+                    $distribution_to_different_account[2]["branch_name"] = $salary_sheet->kpi->unit->dc->userProfile->branch_name;
+                    $distribution_to_different_account[2]["amount"] = sprintf("%.2f", (($salary_sheet->summery["extra"] * DemandConstantFacdes::getValue('DCEP')->cons_value) / 100) + $salary_sheet->summery["revenue_stamp"]);
+                    $distribution_to_different_account[2]["month"] = $salary_sheet->generated_for_month;
 
-                $distribution_to_different_account[3]["account_name"] = "WELFARE Account";
-                $distribution_to_different_account[3]["account_no"] = BankAccountList::getAccount("WELFARE");
-                $distribution_to_different_account[3]["amount"] = $salary_sheet->summery["welfare_fee"];
-                $distribution_to_different_account[3]["branch_name"] = '';
-                $distribution_to_different_account[3]["month"] = $salary_sheet->generated_for_month;
+                    $distribution_to_different_account[3]["account_name"] = "WELFARE Account";
+                    $distribution_to_different_account[3]["account_no"] = BankAccountList::getAccount("WELFARE");
+                    $distribution_to_different_account[3]["amount"] = $salary_sheet->summery["welfare_fee"];
+                    $distribution_to_different_account[3]["branch_name"] = '';
+                    $distribution_to_different_account[3]["month"] = $salary_sheet->generated_for_month;
 
-                $distribution_to_different_account[4]["account_name"] = "REGIMENTAL Account";
-                $distribution_to_different_account[4]["account_no"] = BankAccountList::getAccount("REGIMENTAL");
-                $distribution_to_different_account[4]["amount"] = $salary_sheet->summery["reg_amount"];
-                $distribution_to_different_account[4]["month"] = $salary_sheet->generated_for_month;
-                $distribution_to_different_account[4]["branch_name"] = '';
+                    $distribution_to_different_account[4]["account_name"] = "REGIMENTAL Account";
+                    $distribution_to_different_account[4]["account_no"] = BankAccountList::getAccount("REGIMENTAL");
+                    $distribution_to_different_account[4]["amount"] = $salary_sheet->summery["reg_amount"];
+                    $distribution_to_different_account[4]["month"] = $salary_sheet->generated_for_month;
+                    $distribution_to_different_account[4]["branch_name"] = '';
 
-                $distribution_to_different_account[5]["account_name"] = "SHARE Account";
-                $distribution_to_different_account[5]["account_no"] = BankAccountList::getAccount("SHARE");
-                $distribution_to_different_account[5]["amount"] = $salary_sheet->summery["share_amount"];
-                $distribution_to_different_account[5]["month"] = $salary_sheet->generated_for_month;
-                $distribution_to_different_account[5]["branch_name"] = '';
+                    $distribution_to_different_account[5]["account_name"] = "SHARE Account";
+                    $distribution_to_different_account[5]["account_no"] = BankAccountList::getAccount("SHARE");
+                    $distribution_to_different_account[5]["amount"] = $salary_sheet->summery["share_amount"];
+                    $distribution_to_different_account[5]["month"] = $salary_sheet->generated_for_month;
+                    $distribution_to_different_account[5]["branch_name"] = '';
+                } else {
+                    $distribution_to_different_account[1]["account_name"] = "WELFARE Account";
+                    $distribution_to_different_account[1]["account_no"] = BankAccountList::getAccount("WELFARE");
+                    $distribution_to_different_account[1]["amount"] = $salary_sheet->summery["welfare_fee"];
+                    $distribution_to_different_account[1]["month"] = $salary_sheet->generated_for_month;
+                    $distribution_to_different_account[1]["branch_name"] = '';
+
+                    $distribution_to_different_account[2]["account_name"] = "REGIMENTAL Account";
+                    $distribution_to_different_account[2]["account_no"] = BankAccountList::getAccount("REGIMENTAL");
+                    $distribution_to_different_account[2]["amount"] = $salary_sheet->summery["reg_amount"];
+                    $distribution_to_different_account[2]["month"] = $salary_sheet->generated_for_month;
+                    $distribution_to_different_account[2]["branch_name"] = '';
+
+                    $distribution_to_different_account[3]["account_name"] = "SHARE Account";
+                    $distribution_to_different_account[3]["account_no"] = BankAccountList::getAccount("SHARE");
+                    $distribution_to_different_account[3]["amount"] = $salary_sheet->summery["share_amount"];
+                    $distribution_to_different_account[3]["month"] = $salary_sheet->generated_for_month;
+                    $distribution_to_different_account[3]["branch_name"] = '';
+
+                    $distribution_to_different_account[0]["account_name"] = "DC`s Account";
+                    $distribution_to_different_account[0]["account_no"] = $salary_sheet->kpi->unit->dc->userProfile->bank_account_no;
+                    $distribution_to_different_account[0]["amount"] = $salary_sheet->summery["revenue_stamp"];
+                    $distribution_to_different_account[0]["month"] = $salary_sheet->generated_for_month;
+                    $distribution_to_different_account[0]["branch_name"] = $salary_sheet->kpi->unit->dc->branch_name;
+                }
+
+                $f_name_excel = Excel::create("distribution_to_different_account", function ($excel) use ($distribution_to_different_account) {
+
+                    $excel->sheet('sheet1', function ($sheet) use ($distribution_to_different_account) {
+                        $sheet->setAutoSize(false);
+                        $sheet->setWidth('A', 5);
+                        $sheet->loadView('SD::salary_disburse.export_other', ['datas' => $distribution_to_different_account]);
+                    });
+                })->save('xls', $file_path, true);
+                $f_name_pdf = $file_path . "/distribution_to_different_account.pdf";
+                SnappyPdf::loadView('SD::salary_disburse.export_other', ['datas' => $distribution_to_different_account])->save($f_name_pdf);
+                array_push($files, $f_name_excel);
+                array_push($files, $f_name_pdf);
             }
-            else{
-                $distribution_to_different_account[1]["account_name"] = "WELFARE Account";
-                $distribution_to_different_account[1]["account_no"] = BankAccountList::getAccount("WELFARE");
-                $distribution_to_different_account[1]["amount"] = $salary_sheet->summery["welfare_fee"];
-                $distribution_to_different_account[1]["month"] = $salary_sheet->generated_for_month;
-                $distribution_to_different_account[1]["branch_name"] = '';
-
-                $distribution_to_different_account[2]["account_name"] = "REGIMENTAL Account";
-                $distribution_to_different_account[2]["account_no"] = BankAccountList::getAccount("REGIMENTAL");
-                $distribution_to_different_account[2]["amount"] = $salary_sheet->summery["reg_amount"];
-                $distribution_to_different_account[2]["month"] = $salary_sheet->generated_for_month;
-                $distribution_to_different_account[2]["branch_name"] = '';
-
-                $distribution_to_different_account[3]["account_name"] = "SHARE Account";
-                $distribution_to_different_account[3]["account_no"] = BankAccountList::getAccount("SHARE");
-                $distribution_to_different_account[3]["amount"] = $salary_sheet->summery["share_amount"];
-                $distribution_to_different_account[3]["month"] = $salary_sheet->generated_for_month;
-                $distribution_to_different_account[3]["branch_name"] = '';
-
-                $distribution_to_different_account[0]["account_name"] = "DC`s Account";
-                $distribution_to_different_account[0]["account_no"] = $salary_sheet->kpi->unit->dc->userProfile->bank_account_no;
-                $distribution_to_different_account[0]["amount"] = $salary_sheet->summery["revenue_stamp"];
-                $distribution_to_different_account[0]["month"] = $salary_sheet->generated_for_month;
-                $distribution_to_different_account[0]["branch_name"] = $salary_sheet->kpi->unit->dc->branch_name;
-            }
-
-            $f_name_excel = Excel::create("distribution_to_different_account", function ($excel) use ($distribution_to_different_account) {
-
-                $excel->sheet('sheet1', function ($sheet) use ($distribution_to_different_account) {
-                    $sheet->setAutoSize(false);
-                    $sheet->setWidth('A', 5);
-                    $sheet->loadView('SD::salary_disburse.export_other', ['datas' => $distribution_to_different_account]);
-                });
-            })->save('xls',$file_path,true);
-            $f_name_pdf = $file_path."/distribution_to_different_account.pdf";
-            SnappyPdf::loadView('SD::salary_disburse.export_other', ['datas' => $distribution_to_different_account])->save($f_name_pdf);
-            array_push($files,$f_name_excel);
-            array_push($files,$f_name_pdf);
             $zip_archive_name = "salary_sheet.zip";
             $zip = new \ZipArchive();
             if($zip->open(public_path($zip_archive_name),\ZipArchive::CREATE)===true){
