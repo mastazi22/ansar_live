@@ -133,7 +133,9 @@ class SalaryManagementController extends Controller
                     $kpi_id = $kpi->id;
                     return view("SD::salary_sheet.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id', 'generated_type', 'withWeapon', 'extra'));
 
-                } else if ($request->sheetType == 'bonus') {
+                }
+                // THIS BONUS SYSTEM WIL BE IMPLEMENTED NEXT
+                /*else if ($request->sheetType == 'bonus') {
                     $date = Carbon::createFromFormat('F, Y', $request->month_year);
                     $month = $date->month;
                     $year = $date->year;
@@ -171,8 +173,29 @@ class SalaryManagementController extends Controller
                     $kpi_id = $kpi->id;
                     return view("SD::salary_sheet.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id', 'generated_type'));
 
-                }
+                }*/
+                //THIS WIL BE IMPLEMENTED NEXT END
+                else if ($request->sheetType == 'bonus'){
+                    $ansars = $kpi->embodiment()->where('emboded_status','Emboded')->get();
+                    $datas = [];
+                    foreach ($ansars as $a) {
+                        $ansar = $a->ansar;
+                        $total_amount = floatval($ansar->designation_id == 1 ? DemandConstantFacdes::getValue("EBA")->cons_value : DemandConstantFacdes::getValue("EBPA")->cons_value);
 
+                        array_push($datas, [
+                            'total_amount' => $total_amount,
+                            'ansar_id' => $ansar->ansar_id,
+                            'ansar_name' => $ansar->ansar_name_eng,
+                            'ansar_rank' => $ansar->designation->code,
+                            'joining_date' => $a->transfered_date,
+                            'account_no' => $ansar->account ? ($ansar->account->prefer_choice == "mobile" ? $ansar->mobile_bank_account_no : $ansar->account_no) : 'n\a',
+                            'bank_type' => $ansar->account ? ($ansar->account->prefer_choice == "mobile" ? $ansar->mobile_bank_type : "DBBL") : 'n\a',
+                            'bonus_for' => $request->bonusType
+                        ]);
+//                        return $datas;
+                    }
+                    return view("SD::salary_sheet.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id', 'generated_type'));
+                }
             } else {
                 return response()->json(['message' => "Kpi detail does not found"], 400);
             }
@@ -188,10 +211,6 @@ class SalaryManagementController extends Controller
      */
     public function store(Request $request)
     {
-        return abort(403);
-//        return $request->all();
-        // return $request->attendance_data;
-//        return view('SD::salary_sheet.export',['datas'=>$request->attendance_data]);
         $rules = [
             'kpi_id' => "required",
             'generated_for_month' => 'required|date_format:"F, Y"',
