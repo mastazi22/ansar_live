@@ -538,7 +538,7 @@ class FormSubmitHandler extends Controller
         }
 
         //temporary solution
-        if(strtolower($personalInfo->account->bank_name)==="dbbl"){
+        if($personalInfo->account&&strtolower($personalInfo->account->bank_name)==="dbbl"){
             $personalInfo->account->bank_name = "Dutch-Bangla Bank Limited";
         }
         return View::make('HRM::Entryform.entry_edit')->with('ansarAllDetails', $personalInfo);
