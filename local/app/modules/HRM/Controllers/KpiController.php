@@ -195,6 +195,8 @@ class KpiController extends Controller
         $no_of_ansar = $request->input('no_of_ansar');
         $no_of_apc = $request->input('no_of_apc');
         $no_of_pc = $request->input('no_of_pc');
+        $is_special_kpi = $request->input('is_special_kpi');
+        $special_amount = $request->input('special_amount');
         if (Auth::user()->type == 22) {
             $division_id = District::find($unit_id)->division_id;
         }
@@ -233,6 +235,8 @@ class KpiController extends Controller
             $kpi_details->no_of_ansar = $no_of_ansar;
             $kpi_details->no_of_apc = $no_of_apc;
             $kpi_details->no_of_pc = $no_of_pc;
+            $kpi_details->is_special_kpi = $is_special_kpi;
+            $kpi_details->special_amount = $special_amount;
             $kpi_details->save();
 
             DB::commit();

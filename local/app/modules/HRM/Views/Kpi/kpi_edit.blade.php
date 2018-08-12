@@ -29,6 +29,8 @@
             $scope.kpi_contact_no =`{{$kpi_info->kpi_contact_no}}`;
             $scope.total_ansar_request = '{{$kpi_info->details->total_ansar_request}}';
             $scope.total_ansar_given = '{{$kpi_info->details->total_ansar_given}}';
+            $scope.is_special_kpi = '{{$kpi_info->details->is_special_kpi}}';
+            $scope.special_amount = '{{$kpi_info->details->special_amount}}';
             $scope.with_weapon = `{{$kpi_info->details->with_weapon}}`;
             $scope.weapon_count = `{{$kpi_info->details->weapon_count}}`;
             $scope.bullet_no = `{{$kpi_info->details->bullet_no}}`;
@@ -262,6 +264,21 @@
                                                         </select>
                                                 <span ng-if="kpiForm.with_weapon.$touched && kpiForm.with_weapon.$error.required"><p
                                                             class="text-danger">Ansar With Weapon field is required.</p></span>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group required">
+                                                    {!! Form::label('is_special_kpi', 'Is Special:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
+                                                    <div class="col-sm-8"
+                                                         ng-class="{ 'has-error': kpiForm.total_ansar_given.$touched && kpiForm.total_ansar_given.$invalid }">
+                                                        {!! Form::checkbox('is_special_kpi', 1, null, $attributes = array( 'id' => 'is_special_kpi', 'placeholder' => 'Enter Total Ansar given Number', 'required', 'ng-model' => 'is_special_kpi', 'ng-true-value'=>'1','ng-false-value'=>'0','numeric-field')) !!}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group required">
+                                                    <div class="col-sm-8 col-sm-offset-4"
+                                                         ng-class="{ 'has-error': kpiForm.total_ansar_given.$touched && kpiForm.total_ansar_given.$invalid }">
+                                                        {!! Form::text('special_amount', $value = null, $attributes = array('class' => 'form-control', 'id' => 'special_amount', 'placeholder' => 'Custom percentage of 15-20%', 'required', 'ng-model' => 'special_amount','numeric-field')) !!}
+                                                        <span ng-if="kpiForm.total_ansar_given.$touched && kpiForm.total_ansar_given.$error.required"><p
+                                                                    class="text-danger">Total Ansar Given field is required.</p></span>
                                                     </div>
                                                 </div>
                                                 <div class="form-group required">
