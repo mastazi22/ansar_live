@@ -41,7 +41,7 @@ $chunks = collect($datas)->chunk(8); $count = 1;
 setlocale(LC_TIME, "bn_BD.utf8");
 //\Carbon\Carbon::setUtf8(true);
 ?>
-
+<?php $i = 1;?>
 @foreach($chunks as $chunk)
     <div class="page">
         <h2 style="text-align: center;margin: 0;padding-top:10px;line-height:24px">
@@ -87,12 +87,12 @@ setlocale(LC_TIME, "bn_BD.utf8");
                         মহার্ঘভাতা
                     </td>
                     <td rowspan="2">দৈনিক ভাতার
-                        @if($kpi->details->with_weapon)
-                            <span style="text-decoration: line-through">১৫%</span>
+                        @if($kpi->details->is_special_kpi)
+                            <span>{{LanguageConverter::engToBng($kpi->details->special_amount)}}%</span>
+                        @elseif($kpi->details->with_weapon)
                             <span>২০%</span>
                         @else
                             <span>১৫%</span>
-                            <span style="text-decoration: line-through">২০%</span>
                         @endif
 
                         আনুসাঙ্গীক হারে
@@ -114,7 +114,7 @@ setlocale(LC_TIME, "bn_BD.utf8");
                     <td>রেভিনিউ স্ট্যাম্প</td>
                     <td>শেয়ার ফি</td>
                 </tr>
-                <?php $i = 1;?>
+
                 @forelse($chunk as $data)
                     <tr>
                         <td>{{$i++}}</td>

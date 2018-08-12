@@ -128,10 +128,14 @@ class SalaryManagementController extends Controller
                     $generated_type = $request->sheetType;
                     $kpi_name = $kpi->kpi_name;
                     $withWeapon = $kpi->details->with_weapon;
-                    $extra = $withWeapon ? (floatval($all_daily_fee * 20) / 100) : (floatval($all_daily_fee * 15) / 100);
+                    $is_special = $kpi->details->is_special_kpi;
+                    $special_amount = $kpi->details->special_amount;
+//                    return $kpi->details;
+                    $extra = $is_special?(floatval($all_daily_fee * $special_amount) / 100):($withWeapon ? (floatval($all_daily_fee * 20) / 100) : (floatval($all_daily_fee * 15) / 100));
+//                    return $is_special?"$all_daily_fee x $special_amount% =  $extra":$extra;
                     $extra = sprintf("%.2f", $extra);
                     $kpi_id = $kpi->id;
-                    return view("SD::salary_sheet.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id', 'generated_type', 'withWeapon', 'extra'));
+                    return view("SD::salary_sheet.data", compact('datas', 'for_month', 'kpi_name', 'kpi_id', 'generated_type', 'withWeapon','special_amount', 'extra','is_special'));
 
                 }
                 // THIS BONUS SYSTEM WIL BE IMPLEMENTED NEXT
@@ -314,6 +318,10 @@ class SalaryManagementController extends Controller
                 )->groupBy('ansar_id')->get();
             $datas = [];
             $all_daily_fee = 0;
+            $withWeapon = $kpi->details->with_weapon;
+            $is_special = $kpi->details->is_special_kpi;
+            $special_amount = $kpi->details->special_amount;
+
             foreach ($attendance as $a) {
                 $ansar = $a->ansar;
                 $total_daily_fee = floatval($ansar->designation_id == 1 ? DemandConstantFacdes::getValue("DA")->cons_value : DemandConstantFacdes::getValue("DPA")->cons_value)
@@ -346,7 +354,7 @@ class SalaryManagementController extends Controller
                     'welfare_fee' => $welfare_fee,
                     'revenue_stamp' => $revenue_stamp,
                     'share_amount' => $share_purchase_history->exists()?0:$share_amount,
-                    'extra' => sprintf('%.2f', ($kpi->details->with_weapon ? (floatval($total_daily_fee * 20) / 100) : (floatval($total_daily_fee * 15) / 100))),
+                    'extra' => sprintf('%.2f', ($is_special?(floatval($total_daily_fee * $special_amount) / 100):($withWeapon ? (floatval($total_daily_fee * 20) / 100) : (floatval($total_daily_fee * 15) / 100)))),
                     'net_amount' => $total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee + $total_medical_fee - ($welfare_fee + $share_amount + $revenue_stamp + $regimental_fee),
                     'total_amount' => $total_daily_fee + $total_barber_fee + $total_ration_fee + $total_transportation_fee + $total_medical_fee
                 ]);

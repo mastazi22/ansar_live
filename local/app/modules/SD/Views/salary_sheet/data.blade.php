@@ -66,7 +66,8 @@
             @if(count($datas)>0)
                 <tr>
                     <th colspan="11" class="text-right">
-                        {{$withWeapon?"20% of daily allowance":"15% of daily allowance"}}:
+
+                        {{$is_special?"$special_amount% of daily allowance":($withWeapon?"20% of daily allowance":"15% of daily allowance")}}:
                     </th>
                     <td colspan="2">
                         {{$extra}}
@@ -78,7 +79,7 @@
             <h3 class="text-center">Summary</h3>
             <table class="table table-bordered table-condensed">
                 <tr>
-                    <th>{{$withWeapon?"20% of daily allowance":"15% of daily allowance"}}</th>
+                    <th>{{$is_special?"$special_amount% of daily allowance":($withWeapon?"20% of daily allowance":"15% of daily allowance")}}</th>
                     <th>Total Welfare Fee</th>
                     <th>Total Regimental Fee</th>
                     <th>Total Revenue Stamp</th>
@@ -86,7 +87,7 @@
                     <th>Total Net Salary</th>
                     <th>Total Amount Need To Deposit</th>
                     <th>Total Min Amount Need To
-                        Deposit<br>(without {{$withWeapon?"20% of daily allowance":"15% of daily allowance"}})
+                        Deposit<br>(without {{$is_special?"$special_amount% of daily allowance":($withWeapon?"20% of daily allowance":"15% of daily allowance")}})
                     </th>
                 </tr>
                 <tr>
