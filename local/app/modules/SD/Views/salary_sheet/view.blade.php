@@ -1,11 +1,11 @@
-
 <div class="table-responsive">
     @if($salary_sheet->generated_type=='salary')
         <table class="table table-condensed table-bordered">
             <caption style="padding: 0 10px">
                 <h4 style="    box-shadow: 1px 1px 1px #c5bfbf;padding: 10px 0;line-height: 25px;"
                     class="text-bold text-center">
-                    Kpi name : {{$salary_sheet->kpi->kpi_name}}<br>Month : {{\Carbon\Carbon::parse($salary_sheet->generated_for_month)->format("F, Y")}}
+                    Kpi name : {{$salary_sheet->kpi->kpi_name}}<br>Month
+                    : {{\Carbon\Carbon::parse($salary_sheet->generated_for_month)->format("F, Y")}}
                 </h4>
             </caption>
             <tr>
@@ -64,7 +64,8 @@
                     <th>Total Net Salary</th>
                     <th>Total Amount Need To Deposit</th>
                     <th>Total Min Amount Need To
-                        Deposit<br>(without {{$salary_sheet->kpi->details->with_weapon?"20% of daily allowance":"15% of daily allowance"}})
+                        Deposit<br>(without {{$salary_sheet->kpi->details->with_weapon?"20% of daily allowance":"15% of daily allowance"}}
+                        )
                     </th>
                 </tr>
                 <tr>
@@ -95,5 +96,49 @@
                 </tr>
             </table>
         @endif
+    @else
+        <table class="table table-condensed table-bordered">
+            <caption style="padding: 0 10px">
+                <h4 style="    box-shadow: 1px 1px 1px #c5bfbf;padding: 10px 0;line-height: 25px;"
+                    class="text-bold text-center">
+                    Bonus of<br>{{$salary_sheet->data[0]["bonus_for"]=="eiduladah"?"ঈদ-উল-আযহা":"ঈদ-উল-ফিতর"}}<br>{{$salary_sheet->kpi->kpi_name}}
+                </h4>
+            </caption>
+            <tr>
+                <th>SL. No</th>
+                <th>Ansar ID</th>
+                <th>Name</th>
+                <th>Rank</th>
+                <th>Total Bonus</th>
+                <th>Net Amount</th>
+                <th>Bonus For</th>
+            </tr>
+            <?php $i = 0;?>
+            @forelse($salary_sheet->data as $data)
+                <tr>
+                    <td>{{++$i}}</td>
+                    <td>{{$data['ansar_id']}}</td>
+                    <td>{{$data['ansar_name']}}</td>
+                    <td>{{$data['ansar_rank']}}</td>
+                    <td>{{$data['total_amount']}}</td>
+                    <td>
+                       {{$data['net_amount']}}
+                    </td>
+                    <td>{{$data['bonus_for']=="eidulfitr"?"Eid-ul-fitr":"Eid-ul-adah"}}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="7" class="bg-warning">No attendance data available for this month</td>
+                </tr>
+            @endforelse
+            @if(count($salary_sheet->data)>0)
+                <tr>
+                    <th colspan="5" style="text-align: right">Total : </th>
+                    <td colspan="2">
+                        {{collect($salary_sheet->data)->sum("net_amount")}}
+                    </td>
+                </tr>
+            @endif
+        </table>
     @endif
 </div>
