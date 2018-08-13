@@ -1095,22 +1095,24 @@ GlobalApp.directive('formSubmit', function (notificationService, $timeout) {
             responseData: '=?'
         },
         link: function (scope, element, attrs) {
+            if (scope.confirmBox) {
+                $(element).confirmDialog({
+                    message: scope.message || "Are u sure?",
+                    ok_button_text: 'Confirm',
+                    cancel_button_text: 'Cancel',
+                    event: 'submit',
+                    ok_callback: function (element) {
+                        submitForm()
+                    },
+                    cancel_callback: function (element) {
+                    }
+                })
+            }
             $(element).on('submit', function (e) {
                 e.preventDefault();
-                if (scope.confirmBox) {
-                    $(element).confirmDialog({
-                        message: scope.message || "Are u sure?",
-                        ok_button_text: 'Confirm',
-                        cancel_button_text: 'Cancel',
-                        event: 'submit',
-                        ok_callback: function (element) {
-                            submitForm()
-                        },
-                        cancel_callback: function (element) {
-                        }
-                    })
-                }
-                else {
+                // alert(2)
+                //
+                if(!scope.confirmBox) {
                     submitForm();
                 }
             })
@@ -1142,7 +1144,7 @@ GlobalApp.directive('formSubmit', function (notificationService, $timeout) {
                             $(element).resetForm();
                             scope.responseData = response;
                             scope.onReset();
-                            scope.afterSubmit();
+                            scope.afterSubmit({response:response});
                         }
                         else if (response.status === false) {
                             scope.status = false;

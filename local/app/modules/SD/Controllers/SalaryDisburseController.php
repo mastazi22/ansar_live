@@ -14,6 +14,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
 
 class SalaryDisburseController extends Controller
@@ -39,32 +41,35 @@ class SalaryDisburseController extends Controller
         if ($request->ajax()) {
 //            return $request->all();
             $rules = [
-                "range" => 'required',
-                "unit" => 'required',
-                "thana" => 'required',
-                "kpi" => 'required',
-                "disburseType" => ['required','regex:/^(salary)|(bonus)$/'],
-                "month_year" => 'required|date_format:"F, Y"|exists:sd.tbl_salary_sheet_generate_history,generated_for_month,generated_type,'.$request->disburseType.',kpi_id,'.$request->kpi.',disburst_status,pending',
+                "disburseType" => ['regex:/^(salary)|(bonus)$/'],
             ];
             $this->validate($request, $rules,[
-                'month_year.exists'=>"Salary sheet doesn`t generated for this month or already disburse for this kpi",
-                'disburseType.required'=>"Please select a sheet type:salary or bonus",
                 'disburseType.regex'=>"Please select a valid sheet type:salary or bonus",
             ]);
-            $division_id = $request->range;
-            $unit_id = $request->unit;
-            $thana_id = $request->thana;
-            $kpi_id = $request->kpi;
+            $division_id = ($request->range&&$request->range=='all')||!$request->range?null:$request->range;
+            $unit_id = ($request->unit&&$request->unit=='all')||!$request->unit?null:$request->unit;
+            $thana_id = ($request->thana&&$request->thana=='all')||!$request->thana?null:$request->thana;
+            $kpi_id = ($request->kpi&&$request->kpi=='all')||!$request->kpi?null:$request->kpi;
             $generated_for_month = $request->month_year;
-            $sheet = SalarySheetHistory::where(compact('kpi_id','generated_for_month'))
+            $generated_type = $request->disburseType;
+            $sheet = SalarySheetHistory::with('kpi.details')
                 ->whereHas('kpi',function($q) use($division_id,$unit_id,$thana_id){
-                   $q->where(compact('division_id','unit_id','thana_id'));
-                })->first();
-            if($sheet){
-                $salary_histories = $sheet->salaryHistory()->where('status','pending')->get();
-                return view('SD::salary_disburse.data',compact('sheet','salary_histories'));
+                if($division_id)$q->where(compact('division_id'));
+                if($unit_id)$q->where(compact('unit_id'));
+                if($thana_id)$q->where(compact('thana_id'));
+                });
+            if($kpi_id){
+                $sheet->where(compact('kpi_id'));
             }
-            return "<h4>No salary sheet generated for month {$request->month_year} for this kpi</h4>";
+            if($generated_for_month){
+                $sheet->where(compact('generated_for_month'));
+            }
+            if($generated_type){
+                $sheet->where(compact('generated_type'));
+            }
+            $sheets = $sheet->where('disburst_status','pending')->paginate($request->limit?$request->limit:30);
+//            return $sheets;
+            return view('SD::salary_disburse.view_data',compact('sheets'));
         }
         return view("SD::salary_disburse.create");
     }
@@ -77,6 +82,7 @@ class SalaryDisburseController extends Controller
      */
     public function store(Request $request)
     {
+        if(!$request->ajax()) return abort(403);
         $rules = [
             "salary_sheet_id" => 'required'
         ];
@@ -234,7 +240,7 @@ class SalaryDisburseController extends Controller
                 array_push($files, $f_name_excel);
                 array_push($files, $f_name_pdf);
             }
-            $zip_archive_name = "salary_sheet.zip";
+            $zip_archive_name = "salary_sheet_".time().".zip";
             $zip = new \ZipArchive();
             if($zip->open(public_path($zip_archive_name),\ZipArchive::CREATE)===true){
                 foreach ($files as $file){
@@ -253,12 +259,13 @@ class SalaryDisburseController extends Controller
             }
             rmdir($file_path);
             DB::connection('sd')->commit();
-            return response()->download(public_path($zip_archive_name))->deleteFileAfterSend(true);
+            return response()->json(["message"=>"Salary Disburse Successfully",'status'=>true,'url'=>url()->route("SD.salary_disburse.download",$zip_archive_name)]);
 
         }catch(\Exception $e){
             DB::connection('sd')->rollback();
-            return $e;
-            return redirect()->route('SD.salary_disburse.create')->with('error_message',$e->getMessage());
+//            return $e;
+//            return redirect()->route('SD.salary_disburse.create')->with('error_message',$e->getMessage());
+            return response()->json(["message"=>$e->getMessage(),'status'=>false]);
         }
 
     }
@@ -266,12 +273,43 @@ class SalaryDisburseController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request,$id)
     {
-        //
+        if ($request->ajax()) {
+//            return $request->all();
+            /*$rules = [
+                "range" => 'required',
+                "unit" => 'required',
+                "thana" => 'required',
+                "kpi" => 'required',
+                "disburseType" => ['required','regex:/^(salary)|(bonus)$/'],
+                "month_year" => 'required|date_format:"F, Y"|exists:sd.tbl_salary_sheet_generate_history,generated_for_month,generated_type,'.$request->disburseType.',kpi_id,'.$request->kpi.',disburst_status,pending',
+            ];
+            $this->validate($request, $rules,[
+                'month_year.exists'=>"Salary sheet doesn`t generated for this month or already disburse for this kpi",
+                'disburseType.required'=>"Please select a sheet type:salary or bonus",
+                'disburseType.regex'=>"Please select a valid sheet type:salary or bonus",
+            ]);*/
+            $sheet_id = Crypt::decrypt($id);
+            $division_id = ($request->range&&$request->range=='all')||!$request->range?null:$request->range;
+            $unit_id = ($request->unit&&$request->unit=='all')||!$request->unit?null:$request->unit;
+            $thana_id = ($request->thana&&$request->thana=='all')||!$request->thana?null:$request->thana;
+            $sheet = SalarySheetHistory::whereHas('kpi',function($q) use($division_id,$unit_id,$thana_id){
+                    if($division_id)$q->where(compact('division_id'));
+                    if($unit_id)$q->where(compact('unit_id'));
+                    if($thana_id)$q->where(compact('thana_id'));
+                })->where('id',$sheet_id)->first();
+            if($sheet){
+                $salary_histories = $sheet->salaryHistory()->where('status','pending')->get();
+                return view('SD::salary_disburse.data',compact('sheet','salary_histories'));
+            }
+            return "<h4>No salary sheet generated for month {$request->month_year} for this kpi</h4>";
+        }
+        return abort(403);
     }
 
     /**
@@ -306,5 +344,9 @@ class SalaryDisburseController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function download($file_name)
+    {
+        return response()->download(public_path($file_name))->deleteFileAfterSend(true);
     }
 }

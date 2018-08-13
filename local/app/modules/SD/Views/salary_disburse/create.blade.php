@@ -6,26 +6,46 @@
 @section('content')
     <script>
         GlobalApp.controller("AttendanceController", function ($scope, $http, $sce) {
-            $scope.vdpList = $sce.trustAsHtml(`
-            <p style="font-size: 16px;font-weight: bold;text-align: center;">
-                Select guard,month,year to load data
-            </p>
-            `)
+            $scope.sheetList = $sce.trustAsHtml(`
+            <table class="table table-bordered table-condensed">
+                <caption>
+                    <span style="font-size: 20px;">Total(0)</span>
+                </caption>
 
+                <tr>
+                    <th>#</th>
+                    <th>KPI name</th>
+                    <th>KPI Division</th>
+                    <th>KPI District</th>
+                    <th>KPI thana</th>
+                    <th>Generate For Month</th>
+                    <th>Total Ansar</th>
+                    <th>Amount need to pay</th>
+                    <th>Deposit status</th>
+                    <th>Action</th>
+
+                </tr>
+                <tr>
+                     <td colspan="10" class="bg-warning">
+                            No Salary/Bonus sheet available
+                     </td>
+                </tr>
+            </table>
+`)
             $scope.param = {}
             $scope.errors = null;
             $scope.allLoading = false;
             $scope.loadData = function () {
                 console.log($scope.param)
                 $scope.allLoading = true;
-                $scope.vdpList = $sce.trustAsHtml('')
+//                $scope.sheetList = $sce.trustAsHtml('')
                 $http({
                     method: 'get',
                     url: "{{URL::route('SD.salary_disburse.create')}}",
                     params: $scope.param,
                 }).then(function (response) {
                     $scope.allLoading = false;
-                    $scope.vdpList = $sce.trustAsHtml(response.data)
+                    $scope.sheetList = $sce.trustAsHtml(response.data)
                     console.log(response.data)
                 }, function (response) {
                     $scope.allLoading = false;
@@ -42,9 +62,36 @@
                                 </fieldset>
                             </div>
                         `;
-                        $scope.vdpList = $sce.trustAsHtml(errorView)
+                        $scope.sheetList = $sce.trustAsHtml(errorView)
                     }
                 })
+            }
+            $scope.viewDetails = function (url) {
+                $("#details_view").modal('show')
+                $scope.detailsView = $sce.trustAsHtml(`
+                    <div style="min-height: 200px;display: flex;justify-content: center;align-items: center">
+                        <i class="fa fa-spinner fa-pulse fa-4x"></i>
+                    </div>
+
+                `)
+                $http({
+                    method: 'get',
+                    url: url,
+                }).then(function (response) {
+//                    $scope.allLoading = false;
+                    $scope.detailsView = $sce.trustAsHtml(response.data)
+                }, function (response) {
+//                    $scope.allLoading = false;
+                })
+            }
+            $scope.beforeSubmit = function(){
+//                alert(1);
+                $("#details_view").modal('hide')
+            }
+            $scope.afterSubmit = function(response){
+                console.log(response)
+                window.location.href = response.url;
+                $scope.loadData();
             }
         })
 
@@ -53,7 +100,7 @@
                 restrict:'A',
                 link:function (scope,elem,attr) {
                     var newScope;
-                    scope.$watch('vdpList', function (n) {
+                    scope.$watch('sheetList', function (n) {
 
                         if (attr.ngBindHtml) {
                             if(newScope) newScope.$destroy();
@@ -65,42 +112,17 @@
                 }
             }
         })
-        GlobalApp.directive('formSubmitLocal',function (notificationService,$sce,$timeout) {
+        GlobalApp.directive('compileHtml1',function ($compile) {
             return {
                 restrict:'A',
                 link:function (scope,elem,attr) {
                     var newScope;
-                    $(elem).ajaxForm({
-                        beforeSubmit:function () {
-                            scope.allLoading = true
-                            $timeout(function () {
-                                scope.$apply();
-                            })
-                        },
-                        success:function (response) {
-                            var r;
-                            try{
-                                r  = JSON.parse(response);
-                            }catch(e){
-                                r = response;
-                            }
-                            if(r.status){
-                                notificationService.notify("success",r.message);
-                                window.location.href = r.download_url;
-                                scope.vdpList = $sce.trustAsHtml(`
-            <p style="font-size: 16px;font-weight: bold;text-align: center;">
-                Select guard,month,year to load data
-            </p>
-            `)
+                    scope.$watch('detailsView', function (n) {
 
-                            } else{
-                                notificationService.notify("error",r.message);
-                            }
-                            $timeout(function () {
-                                scope.$apply();
-                            })
-                        },error:function (response) {
-                            notificationService.notify("error","error code : "+response.status);
+                        if (attr.ngBindHtml) {
+                            if(newScope) newScope.$destroy();
+                            newScope = scope.$new();
+                            $compile(elem[0].children)(newScope)
                         }
                     })
 
@@ -126,7 +148,7 @@
             </div>
         @endif
         <div class="box box-solid">
-            <div class="overlay" ng-if="allLoading">
+            <div class="overlay" ng-if="allLoading||param.loading">
                     <span class="fa">
                         <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
                     </span>
@@ -134,10 +156,13 @@
             <div class="box-header">
                 <filter-template
                         show-item="['range','unit','thana','kpi']"
-                        type="single"
+                        type="all"
+                        range-change="loadData()"
+                        unit-change="loadData()"
+                        thana-change="loadData()"
                         data="param"
                         start-load="range"
-                        on-load="loadPage()"
+                        on-load="loadData()"
                         field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
                 >
 
@@ -163,9 +188,7 @@
                     <div class="col-sm-3">
                         <div class="form-group">
                             <label style="display: block" for="">&nbsp;</label>
-                            <button class="btn btn-primary" ng-click="loadData()"
-                                    ng-disabled="!param.range||!param.unit||!param.thana||!param.kpi||!param.month_year||!param.disburseType"
-                            >
+                            <button class="btn btn-primary" ng-click="loadData()">
                                 <i class="fa fa-download"></i>&nbsp; Load data
                             </button>
                         </div>
@@ -175,25 +198,25 @@
             <div class="box-body">
 
 
-                <div ng-bind-html="vdpList" compile-html>
+                <div ng-bind-html="sheetList" compile-html>
 
                 </div>
             </div>
         </div>
+            <div class="modal" id="details_view" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">
+                                Salary Disburse Details
+                            </h4>
+                        </div>
+                        <div class="modal-body" ng-bind-html="detailsView" compile-html1>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
     </section>
-    <script>
-        $(document).ready(function () {
-            $("body").filter("#ppppp").confirmDialog({
-                message: "Are you sure?",
-                ok_button_text: 'Confirm',
-                cancel_button_text: 'Cancel',
-                event: 'click',
-                ok_callback: function (element) {
-                    $("#salary-form").attr('action',"{{URL::route('SD.salary_management.store')}}").submit()
-                },
-                cancel_callback: function (element) {
-                }
-            })
-        })
-    </script>
 @endsection

@@ -9,7 +9,10 @@
         color: #cccccc !important;
     }
 </style>
-{!! Form::open(['route'=>'SD.salary_disburse.store','id'=>'disburse-form',]) !!}
+{!! Form::open(['route'=>'SD.salary_disburse.store','id'=>'disburse-form',
+'form-submit','confirm-box'=>"1",
+"message"=>"<div style='text-align: center'>Before submit make sure all data is correct.<br>Once you submit it, those data will be sent to respective bank for disburse.<br>Do you want to disburse salary</div>",
+"before-submit"=>"beforeSubmit()","after-submit"=>"afterSubmit(response)","loading"=>"param.loading"]) !!}
 {!! Form::hidden('salary_sheet_id',\Illuminate\Support\Facades\Crypt::encrypt($sheet->id)) !!}
 @if($sheet->generated_type=="salary")
     <div class="table-responsive">
@@ -188,16 +191,18 @@
 
     </div>
 @endif
-<button type="submit" id="disburse_salary"
-        @if(($sheet->deposit&&$sheet->deposit->paid_amount<$salary_histories->sum('amount'))||!$sheet->deposit) disabled="disabled"
-        @endif  class="btn btn-primary pull-right">Confirm & Disburse Salary
-</button>
+<div style="overflow: hidden">
+    <button type="submit" id="disburse_salary"
+            @if(($sheet->deposit&&$sheet->deposit->paid_amount<$salary_histories->sum('amount'))||!$sheet->deposit) disabled="disabled"
+            @endif  class="btn btn-primary pull-right">Confirm & Disburse Salary
+    </button>
+</div>
 {{--<button type="submit" id="cancel_disburse_salary"  class="btn btn-primary pull-right" style="margin-right: 10px">Cancel Disbursement</button>
 </button>--}}
 {!! Form::close() !!}
 <script>
     $(document).ready(function () {
-        $("#disburse_salary").confirmDialog({
+        /*$("#disburse_salary").confirmDialog({
             message: "<div style='text-align: center'>Before submit make sure all data is correct.<br>Once you submit it, those data will be sent to respective bank for disburse.<br>Do you want to disburse salary</div>",
             ok_button_text: 'Confirm',
             cancel_button_text: 'Cancel',
@@ -208,7 +213,7 @@
             },
             cancel_callback: function (element) {
             }
-        })
+        })*/
         $("input[name='append_extra']").on('change', function () {
             if ($(this).prop("checked")) {
                 $(this).parents('table').removeClass('append_extra')
