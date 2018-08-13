@@ -8,6 +8,7 @@
         <th>SL. No</th>
         <th>Name</th>
         <th>Account No</th>
+        <th>Bank Name</th>
         <th>Branch</th>
         <th>Amount</th>
         <th>Month</th>
@@ -19,6 +20,7 @@
             <td>{{++$i}}</td>
             <td>{{$data['account_name']}}</td>
             <td>{{$data['account_no']}}</td>
+            <td>{{$data['bank_name']}}</td>
             <td>{{$data['branch_name']}}</td>
             <td>{{$data['amount']}}</td>
             <td>{{$data['month']}}</td>

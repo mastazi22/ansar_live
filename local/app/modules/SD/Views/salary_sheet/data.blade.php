@@ -167,8 +167,8 @@
                     <td>{{$data['ansar_rank']}}</td>
                     <td>{{$data['joining_date']}}</td>
                     <td>{{$data['total_amount']}}</td>
-                    <td>
-                        {!! Form::text("attendance_data[".($i-1)."][net_amount]",$data['total_amount'],['placeholder'=>"Enter net amount", 'ng-model'=>'net_amount['.($i-1).']']) !!}
+                    <td ng-init="net_amount[{{($i-1)}}] = '{{$data['total_amount']}}'">
+                        {!! Form::text("attendance_data[".($i-1)."][net_amount]",$data['total_amount'],['placeholder'=>"Enter net amount","ng-value"=>$data['total_amount'], 'ng-model'=>'net_amount['.($i-1).']']) !!}
                     </td>
                     <td>{{$data['bonus_for']=="eidulfitr"?"Eid-ul-fitr":"Eid-ul-adah"}}</td>
                 </tr>
