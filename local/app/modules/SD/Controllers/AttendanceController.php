@@ -460,18 +460,20 @@ class AttendanceController extends Controller
                     }
                     if (count($row['dates'])) array_push($data, $row);
                 }
-            } else {
+            }
+            else {
                 $row = [];
                 $row["kpi_id"] = $personalDetails->embodiment->kpi->id;
                 $row["kpi_name"] = $personalDetails->embodiment->kpi->kpi_name;
                 $row["dates"] = [];
+                $jd = Carbon::parse($personalDetails->embodiment->joining_date);
                 $first_date = Carbon::create(2018, 7, 1);
-                for ($i = 0; $i < $first_date->daysInMonth; $i++) {
+                for ($i = $jd->month==7&&$jd->year==2018?$jd->day:1; $i <= $first_date->daysInMonth; $i++) {
                     $modified_date = $first_date->addDays($i == 0 ? 0 : 1);
                     array_push($row['dates'], [
-                        'day' => $modified_date->day,
-                        'month' => $modified_date->month - 1,
-                        'year' => $modified_date->year,
+                        'day' => $i,
+                        'month' => $first_date->month - 1,
+                        'year' => $first_date->year,
                     ]);
                 }
                 array_push($data, $row);
