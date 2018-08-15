@@ -135,6 +135,16 @@
                 <div class="row">
                     <div class="col-sm-3">
                         <div class="form-group">
+                            <label for="">Sheet Type</label>
+                            <select class="form-control" ng-model="param.sheetType">
+                                <option value="">--Select a type--</option>
+                                <option value="salary">Salary</option>
+                                <option value="bonus">Bonus</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
                             <label for="">Select Month</label>
                             <input typed-date-picker="" calender-type="month" type="text" class="form-control" placeholder="Select month & year"
                                    ng-model="param.month_year">

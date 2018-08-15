@@ -40,6 +40,9 @@ class SalaryManagementController extends Controller
                 if ($request->thana && $request->thana != 'all') $q->where('thana_id', $request->thana);
                 if ($request->kpi && $request->kpi != 'all') $q->where('id', $request->kpi);
             });
+            if($request->sheetType){
+                $history->where('generated_type',$request->sheetType);
+            }
             $history = $history->paginate($request->limit ? $request->limit : 30);
             return view('SD::salary_sheet.view_data', compact('history'));
         }
