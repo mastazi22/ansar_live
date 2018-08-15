@@ -56,6 +56,9 @@
                         <button class="btn btn-primary btn-xs" ng-click="viewDetails('{{$info->id}}')">
                             <i class="fa fa-eye"></i>&nbsp;View Details
                         </button>
+                        <a class="btn btn-primary btn-xs" href="{{URL::to('SD/salary_management',$info->id)}}?type=export">
+                            <i class="fa fa-file-excel-o"></i>&nbsp;Export Details
+                        </a>
                     </td>
                 </tr>
             @endforeach

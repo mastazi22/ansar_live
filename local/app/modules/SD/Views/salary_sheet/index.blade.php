@@ -67,7 +67,7 @@
                 `)
                 $http({
                     method: 'get',
-                    url: "{{URL::to('SD/salary_management')}}/"+id,
+                    url: "{{URL::to('SD/salary_management')}}/"+id+"?type=view",
                 }).then(function (response) {
 //                    $scope.allLoading = false;
                     $scope.detailsView = $sce.trustAsHtml(response.data)

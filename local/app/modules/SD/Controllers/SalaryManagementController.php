@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SalaryManagementController extends Controller
 {
@@ -408,10 +409,34 @@ class SalaryManagementController extends Controller
      */
     public function show(Request $request,$id)
     {
-        if(!$request->ajax()) return abort(403);
+        if(!$request->ajax()&&$request->type=="view") return abort(403);
         $salary_sheet = SalarySheetHistory::find($id);
 //        return $salary_sheet;
-        return view('SD::salary_sheet.view',compact('salary_sheet'));
+        if($request->type=="view") {
+            return view('SD::salary_sheet.view',compact('salary_sheet'));
+        }
+        else{
+            Excel::create("salary_sheet", function ($excel) use ($salary_sheet) {
+
+                $excel->sheet('sheet1', function ($sheet) use ($salary_sheet) {
+                    $sheet->getStyle('A1:K999')->getAlignment()->setWrapText(true);
+                    $sheet->setAutoSize(false);
+                    $sheet->setWidth('A', 15);
+                    $sheet->setWidth('B', 15);
+                    $sheet->setWidth('C', 15);
+                    $sheet->setWidth('A', 15);
+                    $sheet->setWidth('D', 15);
+                    $sheet->setWidth('E', 15);
+                    $sheet->setWidth('F', 15);
+                    $sheet->setWidth('G', 15);
+                    $sheet->setWidth('H', 15);
+                    $sheet->setWidth('I', 15);
+                    $sheet->setWidth('J', 15);
+                    $sheet->setWidth('K', 15);
+                    $sheet->loadView('SD::salary_sheet.view',compact('salary_sheet'));
+                });
+            })->download('xls');
+        }
     }
 
     /**
