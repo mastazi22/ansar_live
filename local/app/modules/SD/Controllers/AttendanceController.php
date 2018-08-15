@@ -469,11 +469,10 @@ class AttendanceController extends Controller
                 $jd = Carbon::parse($personalDetails->embodiment->joining_date);
                 $first_date = Carbon::create(2018, 7, 1);
                 for ($i = $jd->month==7&&$jd->year==2018?$jd->day:1; $i <= $first_date->daysInMonth; $i++) {
-                    $modified_date = $first_date->addDays($i == 0 ? 0 : 1);
                     array_push($row['dates'], [
                         'day' => $i,
-                        'month' => $first_date->month - 1,
-                        'year' => $first_date->year,
+                        'month' => 6,
+                        'year' => 2018,
                     ]);
                 }
                 array_push($data, $row);
