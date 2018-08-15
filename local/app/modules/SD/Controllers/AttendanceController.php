@@ -595,7 +595,7 @@ class AttendanceController extends Controller
             }
             else {
                 $em = $freezeDetails->freezing_info->freezedAnsarEmbodiment;
-                $e_date = Carbon::parse($freezeDetails->freezing_info->freezedAnsarEmbodiment->transfered_date);
+                $e_date = Carbon::parse($freezeDetails->freezing_info->freezedAnsarEmbodiment->transfer_date);
                 $em_id = $em->embodiment_id;
             }
             if ($t_date->month > 7 && $t_date->year==2018&&($e_date->month<7||$e_date->year<2018)) {
