@@ -245,8 +245,8 @@
                     }
                     $scope.findDisabledIndex = function (d,m,y) {
                         if($scope.disabledDates!=undefined&&$scope.disabledDates.length>0) {
-                            console.log($scope.disabledDates)
-                            console.log(d+" "+m+" "+y)
+//                            console.log($scope.disabledDates)
+//                            console.log(d+" "+m+" "+y)
                         }
                         var t = -1;
                         if($scope.disabledDates==undefined) return -1
@@ -268,13 +268,23 @@
                     scope.makeCalender();
 
                     var isMouseDown = false;
+                    var moveCount = 0;
                     $(elem).on("mousedown",".date-row",function (event) {
                        isMouseDown = true
+                        console.log("down")
                     })
                     $(elem).on("click",".date-row>.date:not(.cursor-disabled)",function (event) {
+                        event.stopPropagation();
+                        console.log("click")
+                        isMouseDown = false;
+                        /*if(isMouseMove){
+                            isMouseMove = false;
+                            return;
+                        }*/
                         if($(this).hasClass("selected")&&$(event.target).attr("data-tag")==="cur"){
                             var index = scope.findIndex($(event.target).attr("data-day"),$(event.target).attr("data-month"),$(event.target).attr("data-year"));
                             scope.selectedDates.splice(index,1);
+
 
                         } else if($(event.target).attr("data-tag")==="cur"){
                             if(scope.disableDateSelection){
@@ -291,14 +301,20 @@
 
                         if($(event.target).attr("data-tag")==="cur") {
                             $(this).toggleClass("selected")
+
                             scope.$apply();
                         }
                     })
-                    $(elem).on("mouseup",".date-row",function (event) {
+                    $(elem).on("mouseup",function (event) {
                         isMouseDown = false
+                        console.log("up")
+                        moveCount = 0;
                     })
                     $(elem).on("mousemove",".date-row",function (event) {
-                        if(isMouseDown){
+                        console.log("isMouseDown : "+isMouseDown)
+                        if(isMouseDown&&moveCount++>0){
+//                            alert(2)
+                            isMouseMove = true;
                             if(scope.disableDateSelection){
                                 notificationService.notify("error","you can`t select anymore date");
                                 return;
