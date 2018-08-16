@@ -31,13 +31,13 @@ Route::group(['prefix' => 'SD', 'middleware' => [ 'auth','manageDatabase', 'chec
         Route::resource('kpi_payment', 'KPIPaymentController');
         Route::get('salary_disburse/download/{file_name}', ['as'=>'SD.salary_disburse.download','uses'=>'SalaryDisburseController@download']);
         Route::resource('salary_disburse', 'SalaryDisburseController',["only"=>["index","create","store","show"]]);
-        Route::get('/test', function () {
+        /*Route::get('/test', function () {
 //
             setlocale(LC_TIME,"bn_BD");
             return strftime("%B, %Y",Carbon::now()->timestamp);
 //            return
             return \Illuminate\Support\Facades\URL::route('SD.salary_management.show',36);
               return view("SD::salary_sheet.payroll_view");
-        });
+        });*/
     });
 });
