@@ -47,7 +47,14 @@ class SDController extends Controller
     function test()
     {
 //        return view('SD::mail.salary_disburse_template');
-        return $this->sendEmail('SD::mail.salary_disburse_template',[],"arafat@shurjomukhi.com.bd","Request to disburse allowances to the Ansars of 2KPIs at Naogaon");
+        $cc = ["saha.rajnarayan@shurjomukhi.com.bd","tareq.anam@shurjomukhi.com.bd","naimul@shurjomukhi.com.bd"];
+//            $cc = [$salary_sheet->kpi->unit->dc->userDetails->email, $salary_sheet->kpi->division->rc->userDetails->email];
+        return $this->sendEmail("SD::mail.salary_disburse_template", [
+            "unit" => "sirajgong",
+            "no_of_transaction" => 1,
+            "total_amount" => 200000,
+        ], "arafat@shurjomukhi.com.bd", $cc,
+            "Request to disburse allowances to the Ansars of 1KPI at " . "sirajgong");
 //        return view('SD::test');
         //return SnappyPdf::loadView('SD::test')->setPaper('a4')->setOption('margin-right',0)->setOption('margin-left',0)->stream();
     }
