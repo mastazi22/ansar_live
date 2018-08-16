@@ -15,7 +15,8 @@ use Illuminate\Support\Facades\Mail;
 trait EmailHelper
 {
         public function sendEmail($view,$data,$to,$cc=null,$subject="",$attachment=null){
-            return Mail::send($view,$data,function($message) use($to,$subject,$attachment,$cc){
+            $headers = [];
+            Mail::send($view,$data,function($message) use($to,$subject,$attachment,$cc,&$headers){
                 $message->to($to);
                 $message->replyTo(config('mail.from.address'),config('mail.from.name'));
                 $message->sender(config('mail.from.address'),config('mail.from.name'));
@@ -38,8 +39,10 @@ trait EmailHelper
                 $message->getSwiftMessage()
                     ->getHeaders()
                     ->addTextHeader('X-Mailer', "PHP". phpversion());
+                $headers = $message->getSwiftMessage()
+                    ->getHeaders();
             });
-
+            return $headers;
         }
         public function sendEmailRaw($text,$to,$subject="",$attachment=null){
             return Mail::raw($text,function($message) use($to,$subject,$attachment){
