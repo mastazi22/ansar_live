@@ -34,6 +34,10 @@ trait EmailHelper
                 if($attachment&&File::exists($attachment)){
                     $message->attach($attachment);
                 }
+                $message->priority(3);
+                $message->getSwiftMessage()
+                    ->getHeaders()
+                    ->addTextHeader('X-Mailer', "PHP". phpversion());
             });
 
         }
