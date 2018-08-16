@@ -84,6 +84,7 @@ class KPIPaymentController extends Controller
             } else{
                 throw new \Exception("invalid request");
             }
+            if($demand_or_salary_log->deposit()->exists()) throw new \Exception("deposit info already exists");
             $document = $request->file('document');
             $file_name = time().".".$document->clientExtension();
             $path = storage_path("bank_receipt");

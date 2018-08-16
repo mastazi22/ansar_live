@@ -102,7 +102,7 @@
                                         <select name="demand_or_salary_sheet_id" class="form-control" >
                                             <option value="">--Select a item--</option>
                                             <option ng-repeat="d in salaryList" value="[[d.id]]">
-                                                [[d.generated_for_month]]
+                                                [[d.generated_for_month+" - "+d.generated_type]]
                                             </option>
                                         </select>
                                     </div>
