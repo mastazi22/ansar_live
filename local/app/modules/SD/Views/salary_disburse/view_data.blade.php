@@ -1,7 +1,7 @@
 <style>
     table td{
         vertical-align: middle !important;
-        white-space: nowrap !important;
+        /*white-space: nowrap !important;*/
     }
 </style>
 
