@@ -16,7 +16,7 @@
             <th>Type</th>
             <th>Disburse status</th>
             <th>Deposit status</th>
-            <th>Action</th>
+            <th style="width:100px;">Action</th>
 
         </tr>
 
@@ -54,10 +54,13 @@
                     </td>
                     <td>
                         <button class="btn btn-primary btn-xs" ng-click="viewDetails('{{$info->id}}')">
-                            <i class="fa fa-eye"></i>&nbsp;View Details
+                            <i class="fa fa-eye"></i>
                         </button>
-                        <a class="btn btn-primary btn-xs" href="{{URL::to('SD/salary_management',$info->id)}}?type=export">
-                            <i class="fa fa-file-excel-o"></i>&nbsp;Export Details
+                        <a title="export detail in excel" class="btn btn-primary btn-xs" href="{{URL::to('SD/salary_management',$info->id)}}?type=export">
+                            <i class="fa fa-file-excel-o"></i>
+                        </a>
+                        <a title="download payroll" class="btn btn-primary btn-xs" href="{{URL::route('SD.salary_management.view_payroll_by_id',$info->id)}}">
+                            <i class="fa fa-file-pdf-o"></i>
                         </a>
                     </td>
                 </tr>
@@ -75,7 +78,7 @@
 @if($history->total()>$history->perPage())
     <div style="overflow: hidden">
         <div class="pull-left">
-            <select name="" id="" ng-model="param.limit" ng-change="loadPage()">
+            <select name="" id="" ng-model="param.limit" ng-change="loadData()">
                 <option value="30">30</option>
                 <option value="100">100</option>
                 <option value="200">200</option>
@@ -83,7 +86,7 @@
                 <option value="500">500</option>
             </select>
         </div>
-        <div class="pull-right" style="margin: -20px 0" paginate ref="loadPage(url)">
+        <div class="pull-right" style="margin: -20px 0" paginate ref="loadData(url)">
             {{$history->render()}}
         </div>
     </div>
