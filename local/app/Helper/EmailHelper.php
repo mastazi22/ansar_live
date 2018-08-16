@@ -17,6 +17,8 @@ trait EmailHelper
         public function sendEmail($view,$data,$to,$cc=null,$subject="",$attachment=null){
             return Mail::send($view,$data,function($message) use($to,$subject,$attachment,$cc){
                 $message->to($to);
+                $message->replyTo(config('mail.from.address'),config('mail.from.name'));
+                $message->sender(config('mail.from.address'),config('mail.from.name'));
                 if($cc){
                     if(is_array($cc)){
                         foreach ($cc as $c){
