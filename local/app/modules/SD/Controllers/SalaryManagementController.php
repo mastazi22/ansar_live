@@ -560,7 +560,7 @@ class SalaryManagementController extends Controller
     public function getSalarySheetList(Request $request)
     {
         if ($request->ajax()) {
-            $sh = SalarySheetHistory::querySearch($request)->select('id', 'summery', 'generated_for_month');
+            $sh = SalarySheetHistory::whereDoesntHave('deposit')->querySearch($request)->select('id', 'summery', 'generated_for_month','generated_type');
             return response()->json($sh->get());
         }
         return abort(403);
