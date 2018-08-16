@@ -30,7 +30,7 @@ return [
     */
 
 //    'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
-    'host' => "mail.ansarvdp.gov.bd",
+    'host' => "zimbra94.bcc.gov.bd",
 
     /*
     |--------------------------------------------------------------------------
