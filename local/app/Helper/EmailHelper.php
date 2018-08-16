@@ -18,8 +18,6 @@ trait EmailHelper
             $headers = [];
             Mail::send($view,$data,function($message) use($to,$subject,$attachment,$cc,&$headers){
                 $message->to($to);
-                $message->replyTo(config('mail.from.address'),config('mail.from.name'));
-                $message->sender(config('mail.from.address'),config('mail.from.name'));
                 if($cc){
                     if(is_array($cc)){
                         foreach ($cc as $c){
@@ -36,11 +34,6 @@ trait EmailHelper
                     $message->attach($attachment);
                 }
                 $message->priority(3);
-                $message->getSwiftMessage()
-                    ->getHeaders()
-                    ->addTextHeader('X-Mailer', "PHP". phpversion());
-                $headers = $message->getSwiftMessage()
-                    ->getHeaders();
             });
             return $headers;
         }
