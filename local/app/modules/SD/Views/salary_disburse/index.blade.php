@@ -37,6 +37,9 @@
             $scope.param = {}
             $scope.errors = null;
             $scope.allLoading = false;
+            $scope.query = {
+                string:''
+            };
             $scope.loadData = function () {
                 console.log($scope.param)
                 $scope.allLoading = true;
@@ -67,6 +70,21 @@
                     }
                 })
             }
+            $scope.appendParam = function () {
+                alert(1)
+                var queryString = ""
+                Object.keys($scope.param).forEach(function (key) {
+                    queryString += "&"+key+"="+$scope.param[key]
+                })
+                return queryString
+            }
+            $scope.$watch('param',function (n,o) {
+                var queryString = ""
+                Object.keys($scope.param).forEach(function (key) {
+                    queryString += "&"+key+"="+$scope.param[key]
+                })
+                $scope.query.string = queryString;
+            },true)
         })
 
         GlobalApp.directive('compileHtml',function ($compile) {

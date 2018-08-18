@@ -3,7 +3,7 @@
 
     <table class="table table-bordered table-condensed">
         <caption><span style="font-size: 20px;">Total({{$histories->total()}})</span>
-            <a href="{{URL::route('SD.salary_disburse.index')}}?type=export" class="btn btn-primary btn-xs pull-right">
+            <a href="{{URL::route('SD.salary_disburse.index')}}?type=export[[query.string]]" class="btn btn-primary btn-xs pull-right">
                 <i class="fa fa-file-excel-o"></i>&nbsp;Export Data
             </a>
         </caption>
