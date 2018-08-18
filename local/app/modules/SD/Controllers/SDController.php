@@ -2,6 +2,7 @@
 
 namespace App\modules\SD\Controllers;
 
+use App\Helper\EmailHelper;
 use App\Http\Controllers\Controller;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\KpiDetailsModel;
@@ -22,6 +23,7 @@ use Illuminate\Support\Facades\Validator;
 
 class SDController extends Controller
 {
+    use EmailHelper;
     public function index()
     {
         return view('SD::index');
@@ -44,8 +46,15 @@ class SDController extends Controller
 
     function test()
     {
-
-
+//        return view('SD::mail.salary_disburse_template');
+        $cc = ["saha.rajnarayan@shurjomukhi.com.bd","arafat@shurjomukhi.com.bd","naimul@shurjomukhi.com.bd"];
+//            $cc = [$salary_sheet->kpi->unit->dc->userDetails->email, $salary_sheet->kpi->division->rc->userDetails->email];
+        return $this->sendEmail("SD::mail.salary_disburse_template", [
+            "unit" => "sirajgong",
+            "no_of_transaction" => 1,
+            "total_amount" => 200000,
+        ], "tareq.anam@shurjomukhi.com.bd", $cc,
+            "Request to disburse allowances to the Ansars of 1KPI at " . "sirajgong");
 //        return view('SD::test');
         //return SnappyPdf::loadView('SD::test')->setPaper('a4')->setOption('margin-right',0)->setOption('margin-left',0)->stream();
     }

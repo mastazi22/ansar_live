@@ -24,19 +24,20 @@ Route::group(['prefix' => 'SD', 'middleware' => [ 'auth','manageDatabase', 'chec
         Route::resource('leave', 'LeaveManagementController');
         Route::post('/salarySheetList', ['as'=>'SD.salary_management.salarySheetList','uses'=>'SalaryManagementController@getSalarySheetList']);
         Route::post('/salary_management/view_payroll', ['as'=>'SD.salary_management.view_payroll','uses'=>'SalaryManagementController@generate_payroll']);
+        Route::get('/salary_management/view_payroll_by_id/{id}', ['as'=>'SD.salary_management.view_payroll_by_id','uses'=>'SalaryManagementController@generate_payroll_salary_sheet']);
         Route::resource('salary_management', 'SalaryManagementController');
         Route::resource('salary_management_short', 'SalaryManagementForShortKPIController');
         Route::get('kpi_payment/document/{id}', ['as'=>'SD.kpi_payment.show_doc','uses'=>'KPIPaymentController@showDoc']);
         Route::resource('kpi_payment', 'KPIPaymentController');
         Route::get('salary_disburse/download/{file_name}', ['as'=>'SD.salary_disburse.download','uses'=>'SalaryDisburseController@download']);
         Route::resource('salary_disburse', 'SalaryDisburseController',["only"=>["index","create","store","show"]]);
-        Route::get('/test', function () {
+        /*Route::get('/test', function () {
 //
             setlocale(LC_TIME,"bn_BD");
             return strftime("%B, %Y",Carbon::now()->timestamp);
 //            return
             return \Illuminate\Support\Facades\URL::route('SD.salary_management.show',36);
               return view("SD::salary_sheet.payroll_view");
-        });
+        });*/
     });
 });
