@@ -14,6 +14,7 @@
             <th>KPI Address</th>
             <th>Disburse Type</th>
             <th>Disburse For Month</th>
+            <th>Total Ansar</th>
             <th>Total Salary</th>
             <th>Total AVUB Share</th>
             <th>Total Welfare</th>
@@ -36,6 +37,7 @@
                     </td>
                     <td>{{$history->salarySheet->generated_type}}</td>
                     <td>{{$history->salarySheet->generated_for_month}}</td>
+                    <td>{{$history->salarySheet->salaryHistory->count()}}</td>
                     <td>{{$history->salarySheet->salaryHistory->sum('amount')}}</td>
                     <td>{{$history->share_account_amount}}</td>
                     <td>{{$history->welfare_account_amount}}</td>
@@ -52,7 +54,7 @@
             @endforeach
         @else
             <tr>
-                <td colspan="11" class="bg-warning">
+                <td colspan="12" class="bg-warning">
                     No Payment History Available
                 </td>
             </tr>

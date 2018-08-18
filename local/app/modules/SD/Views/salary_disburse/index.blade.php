@@ -18,6 +18,7 @@
                     <th>KPI Address</th>
                     <th>Disburse Type</th>
                     <th>Disburse For Month</th>
+                    <th>Total Ansar</th>
                     <th>Total Salary</th>
                     <th>Total AVUB Share</th>
                     <th>Total Welfare</th>
@@ -28,7 +29,7 @@
 
                 </tr>
                 <tr>
-                     <td colspan="11" class="bg-warning">
+                     <td colspan="12" class="bg-warning">
                             No disburse history available
                      </td>
                 </tr>
