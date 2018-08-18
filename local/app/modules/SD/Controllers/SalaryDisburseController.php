@@ -25,9 +25,84 @@ class SalaryDisburseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if ($request->ajax()&&!$request->type) {
+//            return $request->all();
+            $rules = [
+                "disburseType" => ['regex:/^(salary)|(bonus)$/'],
+            ];
+            $this->validate($request, $rules,[
+                'disburseType.regex'=>"Please select a valid sheet type:salary or bonus",
+            ]);
+            $division_id = ($request->range&&$request->range=='all')||!$request->range?null:$request->range;
+            $unit_id = ($request->unit&&$request->unit=='all')||!$request->unit?null:$request->unit;
+            $thana_id = ($request->thana&&$request->thana=='all')||!$request->thana?null:$request->thana;
+            $kpi_id = ($request->kpi&&$request->kpi=='all')||!$request->kpi?null:$request->kpi;
+            $generated_for_month = $request->month_year;
+            $generated_type = $request->disburseType;
+            $sheet = SalaryDisburse::with(['salarySheet.salaryHistory','salarySheet.kpi'])
+                ->whereHas('salarySheet.kpi',function($q) use($division_id,$unit_id,$thana_id){
+                    if($division_id)$q->where(compact('division_id'));
+                    if($unit_id)$q->where(compact('unit_id'));
+                    if($thana_id)$q->where(compact('thana_id'));
+                })->whereHas('salarySheet',function($q) use($kpi_id,$generated_for_month,$generated_type){
+                    if($kpi_id){
+                        $q->where(compact('kpi_id'));
+                    }
+                    if($generated_for_month){
+                        $q->where(compact('generated_for_month'));
+                    }
+                    if($generated_type){
+                        $q->where(compact('generated_type'));
+                    }
+                });
+
+            $histories = $sheet->paginate($request->limit?$request->limit:30);
+//            return $histories;
+            return view('SD::salary_disburse.history_data',compact('histories'));
+        } else if($request->type=="export"){
+            $rules = [
+                "disburseType" => ['regex:/^(salary)|(bonus)$/'],
+            ];
+            $this->validate($request, $rules,[
+                'disburseType.regex'=>"Please select a valid sheet type:salary or bonus",
+            ]);
+            $division_id = ($request->range&&$request->range=='all')||!$request->range?null:$request->range;
+            $unit_id = ($request->unit&&$request->unit=='all')||!$request->unit?null:$request->unit;
+            $thana_id = ($request->thana&&$request->thana=='all')||!$request->thana?null:$request->thana;
+            $kpi_id = ($request->kpi&&$request->kpi=='all')||!$request->kpi?null:$request->kpi;
+            $generated_for_month = $request->month_year;
+            $generated_type = $request->disburseType;
+            $sheet = SalaryDisburse::with(['salarySheet.salaryHistory','salarySheet.kpi'])
+                ->whereHas('salarySheet.kpi',function($q) use($division_id,$unit_id,$thana_id){
+                    if($division_id)$q->where(compact('division_id'));
+                    if($unit_id)$q->where(compact('unit_id'));
+                    if($thana_id)$q->where(compact('thana_id'));
+                })->whereHas('salarySheet',function($q) use($kpi_id,$generated_for_month,$generated_type){
+                    if($kpi_id){
+                        $q->where(compact('kpi_id'));
+                    }
+                    if($generated_for_month){
+                        $q->where(compact('generated_for_month'));
+                    }
+                    if($generated_type){
+                        $q->where(compact('generated_type'));
+                    }
+                });
+
+            $histories = $sheet->get();
+            Excel::create("disburse_history", function ($excel) use ($histories) {
+
+                $excel->sheet('sheet1', function ($sheet) use ($histories) {
+                    $sheet->setAutoSize(false);
+                    $sheet->setWidth('A', 5);
+                    $sheet->loadView('SD::salary_disburse.export_history_data', compact('histories'));
+                });
+            })->export('xls');
+            return view('SD::salary_disburse.history_data',compact('histories'));
+        }
+        return view("SD::salary_disburse.index");
     }
 
     /**

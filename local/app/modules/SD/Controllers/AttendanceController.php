@@ -143,7 +143,7 @@ class AttendanceController extends Controller
             return view('SD::attendance.create_data', compact('date', 'data'));
 
         }
-        return view('SD::attendance.create_b');
+        return view('SD::attendance.create');
     }
 
     /**
