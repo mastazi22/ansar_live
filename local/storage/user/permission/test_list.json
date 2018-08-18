@@ -848,6 +848,10 @@
             "text": "Disburse Salary",
             "actions": [
               {
+                "value": "SD.salary_disburse.index",
+                "name": "Disburse Salary History"
+              },
+              {
                 "value": "SD.salary_disburse.create,SD.salary_disburse.store",
                 "name": "Disburse Salary"
               }
