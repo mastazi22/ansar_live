@@ -6,6 +6,7 @@ use App\Helper\EmailHelper;
 use App\Http\Controllers\Controller;
 use App\modules\SD\Helper\Facades\DemandConstantFacdes;
 use App\modules\SD\Models\BankAccountList;
+use App\modules\SD\Models\SalaryDisburse;
 use App\modules\SD\Models\SalarySheetHistory;
 use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
