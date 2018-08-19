@@ -169,7 +169,8 @@ return [
         "SD.salary_disburse.create,SD.salary_disburse.store",
         "SD.kpi_payment.index",
         "SD.kpi_payment.create,SD.kpi_payment.store",
-        "bulk_upload_bank_file"
+        "bulk_upload_bank_file",
+        "SD.salary_disburse.index"
 
     ]
 ];
