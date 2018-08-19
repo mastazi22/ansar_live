@@ -159,7 +159,7 @@ return [
     | this array to grant expanded functionality to your applications.
     |
     */
-
+    "bank_email"=>"alam.shohag@dutchbanglabank.com",
     'providers' => [
 
         /*
