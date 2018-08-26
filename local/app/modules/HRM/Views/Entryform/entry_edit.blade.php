@@ -268,6 +268,7 @@
             };
 
             @forelse($ansarAllDetails->training as $training)
+                $scope.training.push('{{$training->training_designation}}')
                 $scope.trainingRows.push([
                         {
                             text: "পদবী",
@@ -309,7 +310,7 @@
             $scope.trainingEngRows.push([
                 {
                     text: "Designation",
-                    value: '{{$training->training_designation_eng}}',
+                    value: '{{$training->training_designation}}',
                     name: 'training_designation_eng[]',
                     type: 'dropdown',
                     class_name: ''
@@ -1251,7 +1252,7 @@
                                                     <tr ng-repeat="row in trainingRows">
 
                                                         <td ng-repeat="r in row">
-                                                            <select ng-if="r.type=='dropdown'" name="[[r.name]]" ng-model="training[$parent.$parent.$index]">
+                                                            <select ng-if="r.type=='dropdown'" name="[[r.name]]" ng-model="training[$index]">
                                                                 <option value="">--পদবী নির্বাচন করুন--</option>
                                                                 <option ng-repeat="ra in rank" value="[[ra.id]]"
                                                                         ng-selected="ra.id==r.value">
@@ -1301,7 +1302,7 @@
 
                                                     <tr ng-repeat="row in trainingEngRows">
                                                         <td ng-repeat="r in row">
-                                                            <select ng-if="r.type=='dropdown'" name="[[r.name]]"  ng-model="training[$parent.$parent.$index]">
+                                                            <select ng-if="r.type=='dropdown'" name="[[r.name]]"  ng-model="training[$index]">
                                                                 <option value="">--Select a rank--</option>
                                                                 <option ng-repeat="ra in rank" value="[[ra.id]]"
                                                                         ng-selected="ra.id==r.value">
