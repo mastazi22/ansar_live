@@ -83,7 +83,7 @@
             $scope.bank_name='{{$ansarAllDetails->account?$ansarAllDetails->account->bank_name:""}}'
             $scope.prefer_choice='{{$ansarAllDetails->account?$ansarAllDetails->account->prefer_choice:""}}'
             $scope.mobile_bank_type='{{$ansarAllDetails->account?$ansarAllDetails->account->mobile_bank_type:""}}'
-            $scope.ppp = {educationIdBng: []};
+            $scope.ppp = {educationIdBng: [],training:[]};
             $scope.rank = [];
 
             $http({
@@ -268,7 +268,7 @@
             };
 
             @forelse($ansarAllDetails->training as $training)
-                $scope.training.push('{{$training->training_designation}}')
+                $scope.ppp.training.push('{{$training->training_designation}}')
                 $scope.trainingRows.push([
                         {
                             text: "পদবী",
@@ -1249,13 +1249,12 @@
                                                     </tr>
 
 
-                                                    <tr ng-repeat="row in trainingRows">
+                                                    <tr ng-repeat="row in trainingRows" ng-init="i=$index">
 
                                                         <td ng-repeat="r in row">
-                                                            <select ng-if="r.type=='dropdown'" name="[[r.name]]" ng-model="training[$index]">
+                                                            <select ng-if="r.type=='dropdown'" name="[[r.name]]" ng-model="ppp.training[i]">
                                                                 <option value="">--পদবী নির্বাচন করুন--</option>
-                                                                <option ng-repeat="ra in rank" value="[[ra.id]]"
-                                                                        ng-selected="ra.id==r.value">
+                                                                <option ng-repeat="ra in rank" value="[[ra.id]]">
                                                                     [[ra.name_bng]]
                                                                 </option>
                                                             </select>
@@ -1300,9 +1299,9 @@
                                                     </tr>
 
 
-                                                    <tr ng-repeat="row in trainingEngRows">
+                                                    <tr ng-repeat="row in trainingEngRows"  ng-init="i=$index">
                                                         <td ng-repeat="r in row">
-                                                            <select ng-if="r.type=='dropdown'" name="[[r.name]]"  ng-model="training[$index]">
+                                                            <select ng-if="r.type=='dropdown'" name="[[r.name]]"  ng-model="ppp.training[i]">
                                                                 <option value="">--Select a rank--</option>
                                                                 <option ng-repeat="ra in rank" value="[[ra.id]]"
                                                                         ng-selected="ra.id==r.value">
