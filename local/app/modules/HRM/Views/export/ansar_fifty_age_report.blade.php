@@ -10,6 +10,7 @@
         <th>Unit</th>
         <th>Thana</th>
         <th>Date of Birth</th>
+        <th>Date of Birth</th>
         <th>Gender</th>
     </tr>
     @forelse($ansars as $ansar)

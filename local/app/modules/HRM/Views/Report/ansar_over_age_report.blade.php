@@ -161,7 +161,7 @@
                             </span>
                     </div><br>
                     <filter-template
-                            show-item="['range','unit','thana',]"
+                            show-item="['range','unit','thana']"
                             type="all"
                             range-change="loadPage()"
                             unit-change="loadPage()"
