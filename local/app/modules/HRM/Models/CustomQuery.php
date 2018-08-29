@@ -27,6 +27,13 @@ class CustomQuery
         $ansar_retirement_age = Helper::getAnsarRetirementAge() - 3;
         $pc_apc_retirement_age = Helper::getPcApcRetirementAge() - 3;
         DB::enableQueryLog();
+        $eid = DB::connection('recruitment')->table('job_applicant')
+            ->join('job_circular','job_circular.id','=','job_applicant.job_circular_id')
+            ->join('job_category','job_category.id','=','job_circular.job_category_id')
+            ->where('job_applicant.status','selected')->where(function ($q){
+               $q->where('job_category.category_type','apc_training');
+               $q->orWhere('job_category.category_type','pc_training');
+            })->pluck('ansar_id');
         $query = DB::table('tbl_ansar_parsonal_info')
             ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
@@ -38,7 +45,8 @@ class CustomQuery
             ->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"')
             ->where('tbl_ansar_status_info.pannel_status', 1)
             ->where('tbl_ansar_status_info.block_list_status', 0)
-            ->where('tbl_ansar_status_info.offer_block_status', 0);
+            ->where('tbl_ansar_status_info.offer_block_status', 0)
+            ->whereNotIn('tbl_ansar_parsonal_info.ansar_id', $eid);
         if ($user->type == 22) {
             if (in_array($exclude_district, Config::get('app.offer'))) {
                 $d = Config::get('app.exclude_district');
