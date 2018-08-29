@@ -291,6 +291,8 @@
                                                 <span class="glyphicon glyphicon-star form-control-feedback"></span>
                                             </div>
                                         </div>
+                                        {{--<p class="text text-danger " style="font-size: 20px">You only edit your bank account one time</p>--}}
+                                        @if(!$user->userProfile->bank_name)
                                         <div class="form-group has-feedback">
                                             <label for="rank" class="col-sm-3 control-label"
                                                    style="text-align: left;padding-top:0">Bank Name</label>
@@ -326,8 +328,8 @@
                                                     </option>
                                                     <option value="Eastern Bank Limited">Eastern Bank Limited</option>
                                                     <option value="EXIM Bank Limited">EXIM Bank Limited</option>
-                                                    <option value="First Security Islami Bank Limited" First Security
-                                                            Islami Bank Limited
+                                                    <option value="First Security Islami Bank Limited">
+                                                        First Security Islami Bank Limited
                                                     </option>
                                                     <option value="Habib Bank Ltd.">Habib Bank Ltd.</option>
                                                     <option value="ICB Islamic Bank Ltd.">ICB Islamic Bank Ltd.</option>
@@ -392,6 +394,19 @@
                                                 <span class="glyphicon glyphicon-star form-control-feedback"></span>
                                             </div>
                                         </div>
+                                        @else
+                                            <div class="form-group">
+                                                <label for="rank" class="col-sm-3 control-label"
+                                                       style="text-align: left;padding-top:0">Bank Name</label>
+
+                                                <div class="col-sm-9">
+                                                    <div class="form-control">
+                                                        {{$user->userProfile->bank_name}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @endif
+                                        @if(!$user->userProfile->branch_name)
                                         <div class="form-group has-feedback">
                                             <label for="rank" class="col-sm-3 control-label"
                                                    style="text-align: left;padding-top:0">Branch Name</label>
@@ -399,10 +414,23 @@
                                             <div class="col-sm-9">
                                                 <input type="text" name="branch_name"
                                                        value="{{$user->userProfile->branch_name}}"
-                                                       class="form-control" placeholder="Bank account no"/>
+                                                       class="form-control" placeholder="branch_name"/>
                                                 <span class="glyphicon glyphicon-star form-control-feedback"></span>
                                             </div>
                                         </div>
+                                        @else
+                                            <div class="form-group">
+                                                <label for="rank" class="col-sm-3 control-label"
+                                                       style="text-align: left;padding-top:0">Branch Name</label>
+
+                                                <div class="col-sm-9">
+                                                    <div class="form-control">
+                                                        {{$user->userProfile->branch_name}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                        @if(!$user->userProfile->bank_account_no)
                                         <div class="form-group has-feedback">
                                             <label for="rank" class="col-sm-3 control-label"
                                                    style="text-align: left;padding-top:0">Bank account no</label>
@@ -414,7 +442,18 @@
                                                 <span class="glyphicon glyphicon-star form-control-feedback"></span>
                                             </div>
                                         </div>
+                                        @else
+                                            <div class="form-group">
+                                                <label for="rank" class="col-sm-3 control-label"
+                                                       style="text-align: left;padding-top:0">Bank Account No</label>
 
+                                                <div class="col-sm-9">
+                                                    <div class="form-control">
+                                                        {{$user->userProfile->bank_account_no}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                         <div class="row">
                                             <div class="col-sm-4 col-sm-offset-8">
                                                 <button type="submit" class="btn btn-primary btn-block btn-flat">

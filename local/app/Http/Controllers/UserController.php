@@ -197,9 +197,9 @@ class UserController extends Controller
         $user->userProfile->mobile_no = Input::get('mobile_no');
         $user->userProfile->contact_address = Input::get('contact_address');
         $user->userProfile->rank = Input::get('rank');
-        $user->userProfile->bank_name = Input::get('bank_name');
-        $user->userProfile->bank_account_no = Input::get('bank_account_no');
-        $user->userProfile->branch_name = Input::get('branch_name');
+        if(!$user->userProfile->bank_name)$user->userProfile->bank_name = Input::get('bank_name');
+        if(!$user->userProfile->bank_account_no)$user->userProfile->bank_account_no = Input::get('bank_account_no');
+        if(!$user->userProfile->branch_name)$user->userProfile->branch_name = Input::get('branch_name');
         $user->userProfile->save();
         return Response::json(['submit' => true]);
     }
