@@ -93,28 +93,23 @@ class AttendanceController extends Controller
                 "month" => 'required',
                 "year" => 'required',*/
                 "month" => 'required',
-                "range" => 'required_if:ansar_id,' . null,
-                "unit" => 'required_if:ansar_id,' . null,
-                "thana" => 'required_if:ansar_id,' . null,
-                "kpi" => 'required_if:ansar_id,' . null,
+                "range" => 'required',
+                "unit" => 'required',
+                "thana" => 'required',
+                "kpi" => 'required',
                 "year" => 'required|regex:/^[0-9]{4}$/',
             ];
             $this->validate($request, $rules);
-            $d = $request->day;
             $m = $request->month;
             $y = $request->year;
             $ansar_id = $request->ansar_id;
-            $attendance = KpiGeneralModel::with(['attendance' => function ($q) use ($d, $m, $y, $ansar_id) {
-                if ($d && $d > 0) $q->where('day', $d);
+            $attendance = KpiGeneralModel::with(['attendance' => function ($q) use ( $m, $y, $ansar_id) {
+
                 if ($ansar_id) $q->where('ansar_id', $ansar_id);
                 $q->where('month', $m);
                 $q->where('year', $y);
                 $q->where('is_attendance_taken', 0);
-                if ((!$d || $d < 0) && !$ansar_id) {
-//                    $q->select('ansar_id', 'id', 'kpi_id', DB::raw("group_concat(concat(year,'-',lpad(month,2,'0'),'-',lpad(day,2,'0'))) as dates"));
-                    $q->select('ansar_id', 'id', 'kpi_id', 'year','month','day');
-//                    $q->groupBy('ansar_id');
-                }
+                $q->select('ansar_id', 'id', 'kpi_id', 'year','month','day');
 
             },'attendance.ansar'=>function($q){
                 $q->select('ansar_id','ansar_name_bng','designation_id');
@@ -151,18 +146,18 @@ class AttendanceController extends Controller
             }
             unset($data->attendance);
             $data['attendance'] = $att;
-            if($request->ansar_id){
-                $type = "ansar_wise";
-            } else if($request->day){
-                $type = "day_wise";
-            }else if($request->month){
-                $type = "month_wise";
-            }
+//            if($request->ansar_id){
+//                $type = "ansar_wise";
+//            } else if($request->day){
+//                $type = "day_wise";
+//            }else if($request->month){
+//                $type = "month_wise";
+//            }
 //            return DB::getQueryLog();
 //    return $data;
             $date = $request->only(['day', 'month', 'year', 'ansar_id']);
             return compact('date', 'data','type');
-            return view('SD::attendance.create_data', compact('date', 'data'));
+//            return view('SD::attendance.create_data', compact('date', 'data'));
 
         }
         return view('SD::attendance.create');
@@ -178,64 +173,57 @@ class AttendanceController extends Controller
     {
         //
 //        return $request->all();
-        $attendance_datas = $request->get("attendance_data");
-        $type = $request->type;
-//        return $attendance_datas;
-        switch ($type) {
-            case 'day_wise':
-                DB::connection('sd')->beginTransaction();
-                try {
-                    foreach ($attendance_datas as $attendance_data) {
-//                dump($attendance_data);
-                        $id = $attendance_data['id'];
-                        unset($attendance_data['id']);
-                        $attendance = Attendance::findOrFail($id);
-                        $attendance->update($attendance_data);
-                    }
-                    DB::connection('sd')->commit();
-                } catch (\Exception $e) {
-                    DB::connection('sd')->rollback();
-                    return redirect()->route("SD.attendance.create")->with('error_message', "An error occur while submitting attendance. please try again later or contact with system admin");
-                }
-                return redirect()->route("SD.attendance.create")->with('success_message', "Attendance taken successfully");
-            case 'month_wise':
-                DB::connection('sd')->beginTransaction();
-                try {
-                    $kpi_id = $request->kpi_id;
-                    $month = $request->month;
-                    Attendance::where(compact('kpi_id', 'month'))->update(['is_attendance_taken' => 1]);
-                    foreach ($attendance_datas as $attendance_data) {
-                        $ansar_id = $attendance_data['ansar_id'];
+        $attendance_datas = collect($request->get("attendance_data"))->toArray();
+//        return var_dump($attendance_datas);
+//        $type = $request->type;
+        DB::connection('sd')->beginTransaction();
+        try {
+            $kpi_id = $request->kpi_id;
+            $month = intval($request->month);
+            $year = $request->year;
 
-                        $present_dates = explode(',', $attendance_data['present_dates']);
-                        $leave_dates = explode(',', $attendance_data['leave_dates']);
-                        if (count($present_dates) <= 0 && count($leave_dates) <= 0) continue;
-                        foreach ($present_dates as $present_date) {
-                            $d = Carbon::parse($present_date);
-                            $day = $d->day;
-                            $month = $d->month;
-                            $year = $d->year;
-                            $attendance = Attendance::where(compact('ansar_id', 'kpi_id', 'day', 'month', 'year'))->first();
-                            $attendance->update(['is_present' => 1, 'is_attendance_taken' => 1, 'is_leave' => 0]);
-                        }
-                        foreach ($leave_dates as $leave_date) {
-                            $d = Carbon::parse($leave_date);
-                            $day = $d->day;
-                            $month = $d->month;
-                            $year = $d->year;
-                            $attendance = Attendance::where(compact('ansar_id', 'kpi_id', 'day', 'month', 'year'))->first();
-                            $attendance->update(['is_leave' => 1, 'is_attendance_taken' => 1, 'is_present' => 0]);
-                        }
+            foreach ($attendance_datas as $attendance_data) {
+                $ansar_id = $attendance_data['ansar_id'];
 
-                        //$attendance->update($attendance_data);
-                    }
-                    DB::connection('sd')->commit();
-                } catch (\Exception $e) {
-                    DB::connection('sd')->rollback();
-                    return redirect()->route("SD.attendance.create")->with('error_message', "An error occur while submitting attendance. please try again later or contact with system admin");
+                $present_dates = isset($attendance_data['present_dates'])?$attendance_data['present_dates']:[];
+                $leave_dates = isset($attendance_data['leave_dates'])?$attendance_data['leave_dates']:[];
+                if (count($present_dates) <= 0 && count($leave_dates) <= 0) continue;
+                Attendance::where(compact('kpi_id', 'month','year','ansar_id'))->update(['is_attendance_taken' => 1]);
+                foreach ($present_dates as $present_date) {
+                    $d = Carbon::create($present_date['year'],$present_date['month']+1,$present_date['day']);
+                    $day = $d->day;
+                    $month = $d->month;
+                    $year = $d->year;
+                    $attendance = Attendance::where(compact('ansar_id', 'kpi_id', 'day', 'month', 'year'))->first();
+                    $attendance->update(['is_present' => 1, 'is_attendance_taken' => 1, 'is_leave' => 0]);
                 }
-                return redirect()->route("SD.attendance.create")->with('success_message', "Attendance taken successfully");
+                foreach ($leave_dates as $leave_date) {
+                    $d = Carbon::create($leave_date['year'],$leave_date['month']+1,$leave_date['day']);;
+                    $day = $d->day;
+                    $month = $d->month;
+                    $year = $d->year;
+                    $attendance = Attendance::where(compact('ansar_id', 'kpi_id', 'day', 'month', 'year'))->first();
+                    $attendance->update(['is_leave' => 1, 'is_attendance_taken' => 1, 'is_present' => 0]);
+                }
+
+                //$attendance->update($attendance_data);
+            }
+            DB::connection('sd')->commit();
+        } catch (\Exception $e) {
+            DB::connection('sd')->rollback();
+//            return redirect()->route("SD.attendance.create")->with('error_message', "An error occur while submitting attendance. please try again later or contact with system admin");
+            return redirect()->route("SD.attendance.create")->with('error_message', $e->getMessage());
+        }catch (\Throwable $e) {
+            DB::connection('sd')->rollback();
+//            return redirect()->route("SD.attendance.create")->with('error_message', "An error occur while submitting attendance. please try again later or contact with system admin");
+            return redirect()->route("SD.attendance.create")->with('error_message', $e->getMessage());
+        }catch (\Error $e) {
+            DB::connection('sd')->rollback();
+//            return redirect()->route("SD.attendance.create")->with('error_message', "An error occur while submitting attendance. please try again later or contact with system admin");
+            return redirect()->route("SD.attendance.create")->with('error_message', $e->getMessage());
         }
+        return redirect()->route("SD.attendance.create")->with('success_message', "Attendance taken successfully");
+
     }
 
 

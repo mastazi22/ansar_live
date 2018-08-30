@@ -45,6 +45,9 @@
             }
             $scope.allLoading = false;
             $scope.loadData = function () {
+                $scope.selectedDates = [];
+                $scope.calenderDatesDates = [];
+                $scope.attData = '';
                 console.log($scope.param)
                 $scope.allLoading = true;
                 $http({
@@ -68,9 +71,11 @@
                 console.log($scope.param)
             }
             $scope.initCalenderDate = function (dates, index) {
+//                console.log(dates[0])
 //                $scope.disabledDates[index] = {present:[],leave:[]};
                 $scope.selectedDates[index] = {present: [], leave: []};
-                for (var i = 1; i <= dates.length; i++) {
+                $scope.dates[index] = [];
+                for (var i = 0; i < dates.length; i++) {
                     $scope.dates[index].push({
                         day: dates[i].day,
                         month: dates[i].month - 1,
@@ -82,6 +87,10 @@
                 console.log(y + " " + m + " " + d)
                 return moment({year: parseInt(y), month: parseInt(m) - 1, date: d}).format("MMMM, YYYY")
             }
+            $scope.isAvailable = function () {
+                return Object.keys($scope.attData.data.attendance).length>0;
+            }
+
         })
 
         GlobalApp.directive('compileHtml', function ($compile) {
@@ -137,14 +146,6 @@
                 <div class="row" ng-init="init()">
                     <div class="col-sm-2">
                         <div class="form-group">
-                            <label for="">Select Day</label>
-                            <select class="form-control" ng-model="param.day">
-                                <option ng-repeat="(k,v) in dates" value="[[v]]">[[k]]</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-sm-2">
-                        <div class="form-group">
                             <label for="">Select Month</label>
                             <select class="form-control" ng-model="param.month">
                                 <option ng-repeat="(k,v) in months" value="[[v]]">[[k]]</option>
@@ -170,7 +171,7 @@
                         <div class="form-group">
                             <label style="display: block" for="">&nbsp;</label>
                             <button class="btn btn-primary" ng-click="loadData()"
-                                    ng-disabled="(!param.range||!param.unit||!param.thana||!param.kpi||!param.month||!param.year)&&(!param.ansar_id||!param.month||!param.year)"
+                                    ng-disabled="!param.range||!param.unit||!param.thana||!param.kpi||!param.month||!param.year"
                             >
                                 <i class="fa fa-download"></i>&nbsp; Load data
                             </button>
@@ -186,14 +187,17 @@
                 </div>
                 <div class="container-fluid" ng-if="attData">
                     {!! Form::open(['route'=>'SD.attendance.store']) !!}
-                    <input type="hidden" name="type" value="[[attData.type]]">
+                    {{--<input type="hidden" name="type" value="[[attData.type]]">--}}
+                    <input type="hidden" name="month" value="[[attData.date.month]]">
+                    <input type="hidden" name="year" value="[[attData.date.year]]">
+                    <input type="hidden" name="kpi_id" value="[[attData.data.id]]">
                     <div style="padding: 0 10px;margin-bottom: 20px">
                         <h4 style="    box-shadow: 1px 1px 1px #c5bfbf;padding: 10px 0;" class="text-bold text-center">
                             Attendance of "[[attData.data.kpi_name]]"
                             <br>[[parseDate(attData.date["year"],attData.date["month"],1)]]
                         </h4>
                     </div>
-                    <div style="padding: 0 10px">
+                    <div style="padding: 0 10px" [[attData.data.attendance.length]] ng-if="isAvailable()">
                         <div class="panel-group" id="accordion">
                             <div class="panel panel-default" ng-repeat="(k,att) in attData.data.attendance"
                                  ng-init="i=$index">
@@ -208,20 +212,40 @@
                                 </div>
                                 <div id="kpi_[[k]]" class="panel-collapse collapse" ng-class="{'in':$index==0}">
                                     <div class="panel-body">
+                                        <p class="text-danger text-bold text-center">
+                                            Please select date for PRESENT or LEAVE. For ABSENT don`t select any date
+                                        </p>
                                         <div class="row" ng-repeat="(kk,v) in att.data" ng-init="initCalenderDate(v,i)">
                                             <div class="col-sm-6" >
                                                 <h4>Present Dates</h4>
-                                                <calender enabled-dates="dates[i]" disabled-dates="selectedDates[$index].leave"  selected-dates="selectedDates[$index].present" show-only-current-year="true" show-only-month="[[parseInt(kk)-1]]"></calender>
+                                                <calender enabled-dates="dates[i]" disabled-dates="selectedDates[i].leave"  selected-dates="selectedDates[i].present" show-only-current-year="true" show-only-month="[[kk-1]]"></calender>
                                             </div>
                                             <div class="col-sm-6">
                                                 <h4>Leave Dates</h4>
-                                                <calender enabled-dates="dates[i]" disabled-dates="selectedDates[$index].present"  selected-dates="selectedDates[$index].leave" show-only-current-year="true" show-only-month="[[parseInt(kk)-1]]"></calender>
+                                                <calender enabled-dates="dates[i]" disabled-dates="selectedDates[i].present"  selected-dates="selectedDates[i].leave" show-only-current-year="true" show-only-month="[[kk-1]]"></calender>
                                             </div>
                                         </div>
                                     </div>
+                                    <input type="hidden" name="[[ 'attendance_data['+i+'][ansar_id]' ]]"value="[[att.details.ansar_id]]">
+                                    <div style="display: none" ng-repeat="selectedDate in selectedDates">
+                                        <input type="hidden" ng-repeat="d in selectedDate.present" name="[['attendance_data['+$parent.$index+'][present_dates]['+$index+'][day]' ]]" value="[[d.day]]">
+                                        <input type="hidden" ng-repeat="d in selectedDate.present" name="[['attendance_data['+$parent.$index+'][present_dates]['+$index+'][month]' ]]" value="[[d.month]]">
+                                        <input type="hidden" ng-repeat="d in selectedDate.present" name="[['attendance_data['+$parent.$index+'][present_dates]['+$index+'][year]' ]]" value="[[d.year]]">
+
+                                        <input type="hidden" ng-repeat="d in selectedDate.leave" name="[['attendance_data['+$parent.$index+'][leave_dates]['+$index+'][day]' ]]" value="[[d.day]]">
+                                        <input type="hidden" ng-repeat="d in selectedDate.leave" name="[['attendance_data['+$parent.$index+'][leave_dates]['+$index+'][month]' ]]" value="[[d.month]]">
+                                        <input type="hidden" ng-repeat="d in selectedDate.leave" name="[['attendance_data['+$parent.$index+'][leave_dates]['+$index+'][year]' ]]" value="[[d.year]]">
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
+                        <button type="submit" class="btn btn-primary pull-right">
+                            Submit Attendance
+                        </button>
+                    </div>
+                    <div style="padding: 10px" class="bg-danger"  ng-if="!isAvailable()">
+                        <strong>Attendance already taken or not generated for this month</strong>
                     </div>
                     {!! Form::close() !!}
                 </div>
