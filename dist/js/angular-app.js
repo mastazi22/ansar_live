@@ -1287,67 +1287,425 @@ GlobalApp.directive('paginate', function () {
         }
     }
 })
-/*GlobalApp.directive('dataTable',function () {
+GlobalApp.directive("calender", function (notificationService) {
+    return {
+        restrict: 'AE',
+        scope: {
+            showOnlyCurrentYear: '@',
+            showOnlyCurrentMonth: '@',
+            showOnlyMonth: '@',
+            selectedDates: '=?',
+            disabledDates: '=?',
+            enabledDates: '=?',
+            monthRange: '@',
+            disableDateSelection:'=?',
+            disableNavigationBeforeMonth:'@',
+            disableDateBeforeCurrentDate:'@'
+        },
+        controller: function ($scope) {
+            $scope.months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            $scope.selectedDates = [];
+            var currentDate = moment();
+            $scope.current = {
+                month: currentDate.get('month'),
+                year: currentDate.get('year'),
+                date: currentDate.get('date'),
+            };
+            $scope.currentMonth = {
+                totalDays: currentDate.daysInMonth(),
+                month: $scope.showOnlyMonth?$scope.showOnlyMonth:currentDate.get('month'),
+                year: currentDate.get('year'),
+                date: currentDate.get('date'),
+            };
+            $scope.previousMonth = {
+                totalDays: moment().date(1).month($scope.currentMonth.month - 1).year($scope.currentMonth.year).daysInMonth(),
+                month: $scope.currentMonth.month - 1,
+                year: $scope.currentMonth.year,
+                date: 1,
+            };
+            $scope.nextMonth = {
+                totalDays: moment().date(1).month($scope.currentMonth.month + 1).year($scope.currentMonth.year).daysInMonth(),
+                month: $scope.currentMonth.month + 1,
+                year: $scope.currentMonth.year,
+                date: 1,
+            };
+            $scope.next = function (event) {
+                event.preventDefault();
+                var currentDate = moment().date(1).month($scope.nextMonth.month%12).year($scope.nextMonth.year+Math.floor($scope.nextMonth.month/12));
+                $scope.currentMonth = {
+                    totalDays: currentDate.daysInMonth(),
+                    month: currentDate.get('month'),
+                    year: currentDate.get('year'),
+                    date: currentDate.get('date'),
+                };
+                $scope.previousMonth = {
+                    totalDays: moment().date(1).month($scope.currentMonth.month - 1).year($scope.currentMonth.year).daysInMonth(),
+                    month: $scope.currentMonth.month - 1,
+                    year: $scope.currentMonth.year,
+                    date: 1,
+                };
+                $scope.nextMonth = {
+                    totalDays: moment().date(1).month($scope.currentMonth.month + 1).year($scope.currentMonth.year).daysInMonth(),
+                    month: $scope.currentMonth.month + 1,
+                    year: $scope.currentMonth.year,
+                    date: 1,
+                };
+                $scope.makeCalender();
+            }
+            $scope.previous = function (event) {
+                event.preventDefault();
+                var currentDate = moment().date(1).month($scope.previousMonth.month).year($scope.previousMonth.year);
+                $scope.currentMonth = {
+                    totalDays: currentDate.daysInMonth(),
+                    month: currentDate.get('month'),
+                    year: currentDate.get('year'),
+                    date: currentDate.get('date'),
+                };
+                $scope.previousMonth = {
+                    totalDays: moment().date(1).month($scope.currentMonth.month - 1).year($scope.currentMonth.year).daysInMonth(),
+                    month: $scope.currentMonth.month - 1,
+                    year: $scope.currentMonth.year,
+                    date: 1,
+                };
+                $scope.nextMonth = {
+                    totalDays: moment().date(1).month($scope.currentMonth.month + 1).year($scope.currentMonth.year).daysInMonth(),
+                    month: $scope.currentMonth.month + 1,
+                    year: $scope.currentMonth.year,
+                    date: 1,
+                };
+                $scope.makeCalender();
+            }
+            $scope.makeCalender = function () {
+//                        console.log($scope.selectedDates)
+                $("body").find(".date").removeClass("selected")
+                $scope.calender = new Array(6);
+                makePreviousCalender();
+//                        alert(1)
+                var dd = 1;
+                var nn = 1;
+                var wd = moment().date(1).month($scope.currentMonth.month).year($scope.currentMonth.year).day()
+                for (var i = 0; i < 6; i++) {
+//                            if(i*7+1>$scope.currentMonth.totalDays) break;
+                    for (var j = 0; j < 7; j++) {
+                        if (dd <= $scope.currentMonth.totalDays) {
+                            if (j >= wd) {
+                                $scope.calender[i][wd++] = {
+                                    day: dd++,
+                                    tag: "cur"
+                                }
+                            }
+                        } else {
+                            $scope.calender[i][j] = {
+                                day: nn++,
+                                tag: "next"
+                            };
+                        }
+                    }
+                    wd = 0;
+                    if (i + 1 < 6) {
+                        $scope.calender[i + 1] = new Array(7);
+                    }
+                }
 
- return {
- restrict:'A',
- scope:{
- tableTitle:'@',
- headers:'@',
- dataKey:'@',
- itemPerPage:'@',
- onPageChange:'&',
- showItemPerPage:'@',
- requestDetail:'=',
- enableSearch:'@'
- },
- controller:function ($scope, $http) {
- $scope.allLoading = true;
- $scope.q = '';
- $scope.loadPagination = function () {
- $scope.pages = [];
- for (var i = 0; i < $scope.numOfPage; i++) {
- $scope.pages.push({
- pageNum: i,
- offset: i * $scope.itemPerPage,
- limit: $scope.itemPerPage
- })
- $scope.loadingPage[i] = false;
- }
- }
- $scope.loadPage = function (page, $event) {
- if ($event !== undefined)  $event.preventDefault();
- if($scope.requestDetail.method==='get'){
- if($scope.enableSearch) $scope.requestDetail.params['q'] = $scope.q;
- $scope.requestDetail.params['offset'] = page === undefined ? 0 : page.offset;
- $scope.requestDetail.params['limit'] = page === undefined ? $scope.itemPerPage : page.limit;
- }
- else{
- if($scope.enableSearch) $scope.requestDetail.data['q'] = $scope.q;
- $scope.requestDetail.data['offset'] = page === undefined ? 0 : page.offset;
- $scope.requestDetail.data['limit'] = page === undefined ? $scope.itemPerPage : page.limit;
- }
- $scope.currentPage = page;
- $scope.loadingPage[$scope.currentPage] = true;
- $http($scope.requestDetail).then(function (response) {
- $scope.datas = response.data;
- $scope.queue.shift();
- if ($scope.queue.length > 1) $scope.loadPage();
- $scope.loadingPage[$scope.currentPage] = false;
+//                        console.log($scope.calender)
+            }
+            function makePreviousCalender() {
+                var j = 0;
+                $scope.calender[0] = new Array(7);
+                var lastWeekDay = moment().date($scope.previousMonth.totalDays)
+                        .month($scope.previousMonth.month)
+                        .year($scope.previousMonth.year).day() % 6;
+                console.log(lastWeekDay)
+                for (var i = $scope.previousMonth.totalDays - lastWeekDay; i <= $scope.previousMonth.totalDays; i++) {
+                    $scope.calender[0][j++] = {
+                        day: i, tag: "pre"
+                    }
+                }
+            }
+            $scope.checkDate = function (d,m,y){
+                var data = {
+                    day:+d,
+                    month:+m,
+                    year:+y,
+                }
+                var t = false;
+                $scope.selectedDates.forEach(function (item) {
+                    if(item.day==+d&&item.month==+m&&item.year==+y) {
+                        t = true;
+                        return;
+                    }
+                })
+//                        console.log(t)
+                return t;
+            }
+            $scope.findIndex = function (d,m,y) {
+                var t = -1;
+                $scope.selectedDates.forEach(function (item,index) {
+                    if(item.day==+d&&item.month==+m&&item.year==+y) {
+                        t = index;
+                        return;
+                    }
+                })
+                return t;
+            }
+            $scope.isEnabled = function (d,m,y) {
+                var t = -1;
+                if($scope.enabledDates==undefined) return true;
 
- $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
- $scope.loadPagination();
- })
- }
+                $scope.enabledDates.forEach(function (item,index) {
+                    if(item.day==+d&&item.month==+m&&item.year==+y) {
+                        t = index;
+                        return;
+                    }
+                })
+                return t>=0;
+            }
+            $scope.findDisabledIndex = function (d,m,y) {
+                if($scope.disabledDates!=undefined&&$scope.disabledDates.length>0) {
+//                            console.log($scope.disabledDates)
+//                            console.log(d+" "+m+" "+y)
+                }
+                var t = -1;
+                if($scope.disabledDates==undefined) return -1
+                $scope.disabledDates.forEach(function (item,index) {
+                    if(item.day==+d&&item.month==+m&&item.year==+y) {
+                        t = index;
+                        return;
+                    }
+                })
+                return t;
+            }
+            $scope.disableDate = function (d,m,y) {
+//                        console.log(d)
+                return (+$scope.current.date>+d&&+$scope.current.month==+$scope.currentMonth.month&&+$scope.current.year==+$scope.currentMonth.year&&$scope.disableDateBeforeCurrentDate)||($scope.findDisabledIndex(d,m,y)>=0);
+            }
+        },
+        link: function (scope, elem, attr) {
+            scope.selectedDates = [];
+            scope.makeCalender();
 
- $scope.filterMiddlePage = function (value, index, array) {
- var minPage = $scope.currentPage - 3 < 0 ? 0 : ($scope.currentPage > array.length - 4 ? array.length - 8 : $scope.currentPage - 3);
- var maxPage = minPage + 7;
- if (value.pageNum >= minPage && value.pageNum <= maxPage) {
- return true;
- }
- }
- }
- }
+            var isMouseDown = false;
+            var moveCount = 0;
+            $(elem).on("mousedown",".date-row",function (event) {
+                isMouseDown = true
+                console.log("down")
+            })
+            $(elem).on("click",".date-row>.date:not(.cursor-disabled)",function (event) {
+                event.stopPropagation();
+                console.log("click")
+                isMouseDown = false;
+                /*if(isMouseMove){
+                 isMouseMove = false;
+                 return;
+                 }*/
+                if($(this).hasClass("selected")&&$(event.target).attr("data-tag")==="cur"){
+                    var index = scope.findIndex($(event.target).attr("data-day"),$(event.target).attr("data-month"),$(event.target).attr("data-year"));
+                    scope.selectedDates.splice(index,1);
 
- })*/
+
+                } else if($(event.target).attr("data-tag")==="cur"){
+                    if(scope.disableDateSelection){
+                        notificationService.notify("error","you can`t select anymore date");
+                        return;
+                    }
+                    var data = {
+                        day:+$(event.target).attr("data-day"),
+                        month:+$(event.target).attr("data-month"),
+                        year:+$(event.target).attr("data-year"),
+                    }
+                    scope.selectedDates.push(data);
+                }
+
+                if($(event.target).attr("data-tag")==="cur") {
+                    $(this).toggleClass("selected")
+
+                    scope.$apply();
+                }
+            })
+            $(elem).on("mouseup",function (event) {
+                isMouseDown = false
+                console.log("up")
+                moveCount = 0;
+            })
+            $(elem).on("mousemove",".date-row",function (event) {
+                console.log("isMouseDown : "+isMouseDown)
+                if(isMouseDown&&moveCount++>0){
+//                            alert(2)
+                    isMouseMove = true;
+                    if(scope.disableDateSelection){
+                        notificationService.notify("error","you can`t select anymore date");
+                        return;
+                    }
+                    if($(event.target).hasClass("date")&&!$(event.target).hasClass("selected")&&!$(event.target).hasClass("cursor-disabled")&&$(event.target).attr("data-tag")==="cur"){
+                        $(event.target).addClass("selected")
+                        var data = {
+                            day:+$(event.target).attr("data-day"),
+                            month:+$(event.target).attr("data-month"),
+                            year:+$(event.target).attr("data-year"),
+                        }
+                        scope.selectedDates.push(data);
+                        scope.$apply();
+                    }
+                }
+            })
+        },
+        template: `<div class="big-date-picker">
+                            <div class="header">
+                                <div class="row">
+                                    <div ng-class="{'col-sm-8':!showOnlyCurrentMonth&&!showOnlyMonth,'col-sm-12':showOnlyCurrentMonth&&showOnlyMonth}">
+                                       <h3 style="margin: 4px">
+                                           [[months[currentMonth.month] ]], [[currentMonth.year]]
+                                       </h3>
+                                    </div>
+                                    <div class="col-sm-4" ng-if="!showOnlyCurrentMonth&&!showOnlyMonth">
+                                       <div class="btn-group">
+                                           <a href="#" class="btn btn-default" ng-disabled="(previousMonth.month<0||previousMonth.month<disableNavigationBeforeMonth)&&showOnlyCurrentYear" ng-click="previous($event)">
+                                               <i class="fa fa-angle-left"></i>
+                                           </a>
+                                           <a href="#" class="btn btn-default" ng-disabled="nextMonth.month>11&&showOnlyCurrentYear" ng-click="next($event)">
+                                               <i class="fa fa-angle-right"></i>
+                                           </a>
+                                       </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="body">
+                                <div class="week-row">
+                                    <div class="week-title">Sun</div>
+                                    <div class="week-title">Mon</div>
+                                    <div class="week-title">Tue</div>
+                                    <div class="week-title">Wed</div>
+                                    <div class="week-title">Thu</div>
+                                    <div class="week-title">Fri</div>
+                                    <div class="week-title">Sat</div>
+                                </div>
+                                <div class="date-row" ng-repeat="c in calender track by $index">
+                                    <div ng-if="d.tag=='pre'" class="date"  ng-repeat="d in c track by $index" ng-class="{'cursor-pointer':d.tag=='cur'&&isEnabled(d.day,currentMonth.month,currentMonth.year),'cursor-disabled':d.tag!='cur'||disableDate(d.day,previousMonth.month,previousMonth.year)||!isEnabled(d.day,currentMonth.month,currentMonth.year),'selected':checkDate(d.day,previousMonth.month,previousMonth.year)}"
+                                    data-tag="[[d.tag]]" data-day="[[d.day]]" data-month="[[previousMonth.month]]"  data-year="[[previousMonth.year]]"
+                                    >[[d.day]]</div>
+
+                                    <div ng-if="d.tag=='cur'" class="date"  ng-repeat="d in c track by $index" ng-class="{'cursor-pointer':d.tag=='cur'&&!disableDate(d.day,currentMonth.month,currentMonth.year)&&isEnabled(d.day,currentMonth.month,currentMonth.year),'cursor-disabled':d.tag!='cur'||!isEnabled(d.day,currentMonth.month,currentMonth.year)||disableDate(d.day,currentMonth.month,currentMonth.year),'selected':checkDate(d.day,currentMonth.month,currentMonth.year)}"
+                                    data-tag="[[d.tag]]" data-day="[[d.day]]" data-month="[[currentMonth.month]]"  data-year="[[currentMonth.year]]"
+                                    >[[d.day]]</div>
+
+                                    <div ng-if="d.tag=='next'" class="date"  ng-repeat="d in c track by $index" ng-class="{'cursor-pointer':d.tag=='cur'&&isEnabled(d.day,currentMonth.month,currentMonth.year),'cursor-disabled':d.tag!='cur'||disableDate(d.day,nextMonth.month,nextMonth.year)||!isEnabled(d.day,currentMonth.month,currentMonth.year),'selected':checkDate(d.day,nextMonth.month,nextMonth.year)}"
+                                    data-tag="[[d.tag]]" data-day="[[d.day]]" data-month="[[nextMonth.month]]"  data-year="[[nextMonth.year]]"
+                                    >[[d.day]]</div>
+                                </div>
+                            </div>
+                        </div>
+                        <style>
+        .personal-details{
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .personal-details>p{
+            margin-bottom: 0;
+        }
+        .cursor-pointer {
+            cursor: pointer;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .cursor-disabled {
+            cursor: not-allowed;
+            color: #cccccc;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .big-date-picker {
+            display: block;
+            border: 1px solid #cccccc;;
+            /*padding: 10px;*/
+        }
+
+        .big-date-picker > .header {
+            text-align: center;
+            padding: 5px 10px;
+            font-size: 16px;
+            font-weight: bold;
+            overflow: hidden;
+            border-bottom: 1px solid #cccccc;
+            /*height: 50px;*/
+        }
+
+        .big-date-picker > .header span {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .big-date-picker > .body > .date-row, .big-date-picker > .body > .week-row {
+            display: flex;
+        }
+
+        .big-date-picker > .body > .date-row {
+            border-top: 1px solid #cccccc;
+            border-bottom: 1px solid #cccccc;
+        }
+
+        .big-date-picker > .body > .date-row > .date {
+            flex: 1;
+            height: 50px;
+            align-items: center;
+            justify-content: center;
+            display: flex;
+            font-weight: bold;
+            border-right: 1px solid #cccccc;
+        }
+
+        .date-row > .date:not(:first-child) {
+            /*border-left: none !important;*/
+            border-left: 1px solid #cccccc;
+            border-right: none !important;
+        }
+
+        .date-row > .date:first-child {
+            border-right: none !important;
+        }
+
+        .date-row:not(:nth-child(2)) {
+            border-top: none !important;
+        }
+
+        .date-row:last-child {
+            border-bottom: none !important;
+        }
+
+        .week-row > .week-title {
+            flex: 1;
+            font-weight: bold;
+            text-align: center;
+            padding: 5px 10px;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .date-row > .cursor-pointer.selected {
+            background: #77a9c2;
+            color: #ffffff;
+        }
+        .date-row > .cursor-disabled.selected {
+            background: rgba(119, 169, 194, 0.45);
+            color: #ffffff;
+        }
+
+    </style>
+                        `
+    }
+})

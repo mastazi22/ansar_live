@@ -11,6 +11,7 @@
             $scope.selectedDates = [];
             $scope.calenderDatesDates = [];
             $scope.disabledDates = [];
+            $scope.dates = [];
             $scope.vdpList = $sce.trustAsHtml(`
             <p style="font-size: 16px;font-weight: bold;text-align: center;">
                 Select guard,month,year to load data
@@ -52,7 +53,8 @@
                     params: $scope.param,
                 }).then(function (response) {
                     $scope.allLoading = false;
-                    $scope.vdpList = $sce.trustAsHtml(response.data)
+//                    $scope.vdpList = $sce.trustAsHtml(response.data)
+                    $scope.attData = response.data
                     console.log(response.data)
                 }, function (response) {
                     $scope.allLoading = false;
@@ -65,32 +67,32 @@
                 $scope.param.year = currentYear;
                 console.log($scope.param)
             }
-            $scope.initCalenderDate = function (dates,index) {
-                $scope.disabledDates[index] = {present:[],leave:[]};
-                $scope.selectedDates[index] = {present:[],leave:[]};
-                var d = dates.split(',');
-                if(d.length>=0){
-                    var da = moment(d[0]);
-                    for(var i=1;i<=da.endOf('month').date();i++){
-                        var dt = da.date(i).format('YYYY-MM-DD')
-                        if(d.indexOf(dt)<0) {
-                            $scope.disabledDates[index].present.push(dt)
-                            $scope.disabledDates[index].leave.push(dt)
-                        }
-                    }
+            $scope.initCalenderDate = function (dates, index) {
+//                $scope.disabledDates[index] = {present:[],leave:[]};
+                $scope.selectedDates[index] = {present: [], leave: []};
+                for (var i = 1; i <= dates.length; i++) {
+                    $scope.dates[index].push({
+                        day: dates[i].day,
+                        month: dates[i].month - 1,
+                        year: dates[i].year,
+                    })
                 }
+            }
+            $scope.parseDate = function (y, m, d) {
+                console.log(y + " " + m + " " + d)
+                return moment({year: parseInt(y), month: parseInt(m) - 1, date: d}).format("MMMM, YYYY")
             }
         })
 
-        GlobalApp.directive('compileHtml',function ($compile) {
+        GlobalApp.directive('compileHtml', function ($compile) {
             return {
-                restrict:'A',
-                link:function (scope,elem,attr) {
+                restrict: 'A',
+                link: function (scope, elem, attr) {
                     var newScope;
                     scope.$watch('vdpList', function (n) {
 
                         if (attr.ngBindHtml) {
-                            if(newScope) newScope.$destroy();
+                            if (newScope) newScope.$destroy();
                             newScope = scope.$new();
                             $compile(elem[0].children)(newScope)
                         }
@@ -182,10 +184,50 @@
                         <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
                     </span>
                 </div>
-
-                <div ng-bind-html="vdpList" compile-html>
-
+                <div class="container-fluid" ng-if="attData">
+                    {!! Form::open(['route'=>'SD.attendance.store']) !!}
+                    <input type="hidden" name="type" value="[[attData.type]]">
+                    <div style="padding: 0 10px;margin-bottom: 20px">
+                        <h4 style="    box-shadow: 1px 1px 1px #c5bfbf;padding: 10px 0;" class="text-bold text-center">
+                            Attendance of "[[attData.data.kpi_name]]"
+                            <br>[[parseDate(attData.date["year"],attData.date["month"],1)]]
+                        </h4>
+                    </div>
+                    <div style="padding: 0 10px">
+                        <div class="panel-group" id="accordion">
+                            <div class="panel panel-default" ng-repeat="(k,att) in attData.data.attendance"
+                                 ng-init="i=$index">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion" href="#kpi_[[k]]">
+                                            <strong>ID:[[att.details.ansar_id]]</strong><br>
+                                            <strong>Name:[[att.details.ansar_name_bng]]</strong><br>
+                                            <strong>Designation:[[att.details.designation.name_bng]]</strong>
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="kpi_[[k]]" class="panel-collapse collapse" ng-class="{'in':$index==0}">
+                                    <div class="panel-body">
+                                        <div class="row" ng-repeat="(kk,v) in att.data" ng-init="initCalenderDate(v,i)">
+                                            <div class="col-sm-6" >
+                                                <h4>Present Dates</h4>
+                                                <calender enabled-dates="dates[i]" disabled-dates="selectedDates[$index].leave"  selected-dates="selectedDates[$index].present" show-only-current-year="true" show-only-month="[[parseInt(kk)-1]]"></calender>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <h4>Leave Dates</h4>
+                                                <calender enabled-dates="dates[i]" disabled-dates="selectedDates[$index].present"  selected-dates="selectedDates[$index].leave" show-only-current-year="true" show-only-month="[[parseInt(kk)-1]]"></calender>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {!! Form::close() !!}
                 </div>
+                {{--<div ng-bind-html="vdpList" compile-html>
+
+                </div>--}}
             </div>
         </div>
     </section>

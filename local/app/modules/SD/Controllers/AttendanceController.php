@@ -111,10 +111,14 @@ class AttendanceController extends Controller
                 $q->where('year', $y);
                 $q->where('is_attendance_taken', 0);
                 if ((!$d || $d < 0) && !$ansar_id) {
-                    $q->select('ansar_id', 'id', 'kpi_id', DB::raw("group_concat(concat(year,'-',lpad(month,2,'0'),'-',lpad(day,2,'0'))) as dates"));
-                    $q->groupBy('ansar_id');
+//                    $q->select('ansar_id', 'id', 'kpi_id', DB::raw("group_concat(concat(year,'-',lpad(month,2,'0'),'-',lpad(day,2,'0'))) as dates"));
+                    $q->select('ansar_id', 'id', 'kpi_id', 'year','month','day');
+//                    $q->groupBy('ansar_id');
                 }
 
+            },'attendance.ansar'=>function($q){
+                $q->select('ansar_id','ansar_name_bng','designation_id');
+                $q->with('designation');
             }]);
             if ($request->range && $request->range != 'all') {
                 $attendance->where('division_id', $request->range);
@@ -136,10 +140,28 @@ class AttendanceController extends Controller
 
             DB::enableQueryLog();
             $data = $attendance->first();
+            $att = collect($data->attendance)->groupBy('ansar_id')->all();
+            foreach ($att as $k=>$a){
+                $ansar = $a[0]['ansar'];
+                foreach ($a as $kk=>$v){
+                    unset($a[$kk]['ansar']);
+                }
+                $mg = collect($a)->groupBy('month')->all();
+                $att[$k] = ['data'=>$mg,'details'=>$ansar];
+            }
+            unset($data->attendance);
+            $data['attendance'] = $att;
+            if($request->ansar_id){
+                $type = "ansar_wise";
+            } else if($request->day){
+                $type = "day_wise";
+            }else if($request->month){
+                $type = "month_wise";
+            }
 //            return DB::getQueryLog();
 //    return $data;
             $date = $request->only(['day', 'month', 'year', 'ansar_id']);
-//            return compact('date', 'data');
+            return compact('date', 'data','type');
             return view('SD::attendance.create_data', compact('date', 'data'));
 
         }

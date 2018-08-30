@@ -205,4 +205,32 @@
 </div>
 <button type="submit" class="btn btn-primary pull-right">Confirm Attendance</button>
 {!! Form::close() !!}
+<div class="panel-group" id="accordion">
+    <div class="panel panel-default" ng-repeat="att in attData">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#kpi_[[att.kpi_id]]">
+                    [[att.kpi_name]]</a>
+            </h4>
+        </div>
+        <div id="kpi_[[att.kpi_id]]" class="panel-collapse collapse" ng-class="{'in':$index==0}">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h3 class="text-center">Select date for present</h3>
+                        <calender enabled-dates="att.dates" disabled-dates="param.disabledDates[$index].present"  selected-dates="param.selectedDates[$index].present" show-only-current-year="true" show-only-month="6"></calender>
+                    </div>
+                    <div class="col-sm-4">
+                        <h3 class="text-center">Select date for absent</h3>
+                        <calender enabled-dates="att.dates"  disabled-dates="param.disabledDates[$index].absent"  selected-dates="param.selectedDates[$index].absent" show-only-current-year="true" show-only-month="6"></calender>
+                    </div>
+                    <div class="col-sm-4">
+                        <h3 class="text-center">Select date for leave</h3>
+                        <calender enabled-dates="att.dates" disabled-dates="param.disabledDates[$index].leave"  selected-dates="param.selectedDates[$index].leave" show-only-current-year="true" show-only-month="6"></calender>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
