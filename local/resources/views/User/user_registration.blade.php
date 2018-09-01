@@ -21,6 +21,7 @@
                 if ($scope.selectedUserType == 22) {
                     $scope.showDistrict = true;
                     $scope.showDivision = false;
+                    $scope.showUsers = false;
                     $http({
                         url: '{{URL::to('HRM/DistrictName')}}',
                         type: 'get'
@@ -32,6 +33,7 @@
                 else if ($scope.selectedUserType == 66) {
                     $scope.showDivision = true
                     $scope.showDistrict = false;
+                    $scope.showUsers = false;
                     $http({
                         url: '{{URL::to('HRM/DivisionName')}}',
                         type: 'get'
@@ -40,9 +42,22 @@
                         $scope.division = '{{Request::old('division_name')}}'
                     })
                 }
+                else if ($scope.selectedUserType == 88 ||$scope.selectedUserType == 99) {
+                    $scope.showDivision = false
+                    $scope.showDistrict = false;
+                    $scope.showUsers = true;
+                    $http({
+                        url: '{{URL::to('load_user')}}',
+                        type: 'get'
+                    }).then(function (response) {
+                        $scope.allUsers = response.data;
+                        $scope.user_parent = '{{Request::old('user_parent')}}'
+                    })
+                }
                 else {
                     $scope.showDistrict = false;
                     $scope.showDivision = false;
+                    $scope.showUsers = false;
                 }
             }
             $scope.onUserTypeChange();
@@ -141,6 +156,22 @@
                                     </select>
                                     @if($errors->has('division_name'))
                                         <p class="text-danger">{{$errors->first('division_name')}}</p>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback" ng-show="showUsers">
+                                <label for="district_name" class="col-sm-3 control-label"
+                                       style="text-align: left;padding-top:0  ">User Parent</label>
+
+                                <div class="col-sm-9">
+                                    <select name="user_parent" class="form-control" ng-model="user_parent">
+                                        <option value="">--Select a User--</option>
+                                        <option ng-repeat="user in allUsers" value="[[user.id]]">
+                                            [[user.user_name]]
+                                        </option>
+                                    </select>
+                                    @if($errors->has('user_parent'))
+                                        <p class="text-danger">{{$errors->first('user_parent')}}</p>
                                     @endif
                                 </div>
                             </div>

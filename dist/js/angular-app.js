@@ -712,7 +712,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
             function hasPermission(item) {
                 if (item == 'rank' || item == 'gender') return true;
                 if (!$rootScope.user) return false;
-                if ($rootScope.user.usertype.type_name == 'DC' && (item == 'range' || item == 'unit')) {
+                if (($rootScope.user.usertype.type_name == 'DC'||$rootScope.user.usertype.type_name == 'Accountant'||$rootScope.user.usertype.type_name == 'Office Assistance') && (item == 'range' || item == 'unit')) {
                     return false;
                 }
                 else if ($rootScope.user.usertype.type_name == 'RC' && item == 'range') {
@@ -883,6 +883,12 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                     if (p.length > 1 && p[1] === 'recruitment' && $rootScope.user.rec_district) $scope.selected.unit = $rootScope.user.rec_district.id
                     else $scope.selected.unit = $rootScope.user.district.id
                     $scope.loadThana(undefined, $rootScope.user.district.id)
+                }
+                else if ($rootScope.user.user_parent.type == 22) {
+                    $scope.selected.range = $rootScope.user.user_parent.district.division_id
+                    if (p.length > 1 && p[1] === 'recruitment' && $rootScope.user.rec_district) $scope.selected.unit = $rootScope.user.user_parent.rec_district.id
+                    else $scope.selected.unit = $rootScope.user.user_parent.district.id
+                    $scope.loadThana(undefined, $rootScope.user.user_parent.district.id)
                 }
                 else if ($rootScope.user.usertype.type_name == 'RC') {
                     $scope.selected.range = $rootScope.user.division.id

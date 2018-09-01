@@ -56,6 +56,7 @@ Route::group(['middleware' => 'auth'], function () {
        Route::post('/block_user', ['as' => 'block_user', 'uses' => 'UserController@blockUser']);
        Route::post('/unblock_user', ['as' => 'unblock_user', 'uses' => 'UserController@unBlockUser']);
        Route::get('/user_registration', ['as' => 'create_user', 'uses' => 'UserController@userRegistration']);
+       Route::get('/load_user', ['as' => 'load_user', 'uses' => 'UserController@loadUser']);
        Route::get('/edit_user_permission/{id}', ['as' => 'edit_user_permission', 'uses' => 'UserController@editUserPermission']);
        Route::get('/all_user_request_notification', function () {
            return view('all_user_request_notification');

@@ -145,6 +145,14 @@ class UserController extends Controller
                 'user_type' => 'required',
                 'division_name' => 'required'
             );
+        }else if (Input::get('user_type') == 88||Input::get('user_type') == 99) {
+            $rules = array(
+                'user_name' => 'required|unique:hrm.tbl_user',
+                'password' => 'required|min:6',
+                'r_password' => 'required|same:password',
+                'user_type' => 'required',
+                'user_parent' => 'required'
+            );
         } else {
             $rules = array(
                 'user_name' => 'required|unique:hrm.tbl_user',
@@ -153,6 +161,7 @@ class UserController extends Controller
                 'user_type' => 'required'
             );
         }
+        $rules['user_type'] = 'required|exists:hrm.tbl_user_type,type_code';
         $validation = Validator::make(Input::all(), $rules, $messages);
         if (!$validation->fails()) {
             $user = new User;
@@ -166,6 +175,9 @@ class UserController extends Controller
             } else if (Input::get('user_type') == 66) {
                 $user->division_id = Input::get('division_name');
             }
+            else if (Input::get('user_type') == 88||Input::get('user_type') == 99) {
+                $user->user_parent_id = Input::get('user_parent');
+            }
             $user->password = Hash::make(Input::get('password'));
             $user->save();
             $user_profile->user_id = $user->id;
@@ -175,7 +187,7 @@ class UserController extends Controller
             $user_permission->user_id = $user->id;
             $user_permission->save();
             CustomQuery::addActionlog(['ansar_id' => $user->id, 'action_type' => 'CREATE USER', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]);
-            return Redirect::action('UserController@userManagement')->with('success_message', 'New user created successfully');
+            return redirect()->route('edit_user_permission',['id'=>$user->id]);
         } else {
 //            return Response::json($validation->errors());
             return Redirect::action('UserController@userRegistration')->withInput(Input::except(array('password', 'r_password')))->withErrors($validation);
@@ -599,11 +611,16 @@ class UserController extends Controller
                 $e = $kpi->embodiment->pluck('ansar_id')->toArray();
                 $d = array_merge($d, $e);
             }
-            $v = User::with(['district','recDistrict', 'division', 'usertype', 'userPermission'])->find($user->id);
+            $v = User::with(['district','recDistrict', 'division', 'usertype', 'userPermission','userParent.district'])->find($user->id);
             $v['embodiment'] = $d;
             return $v;
         });
         return $v;
+    }
+
+    public function loadUser(){
+        $users = User::where('type',22)->select('id','user_name')->get();
+        return $users;
     }
 
 } 
