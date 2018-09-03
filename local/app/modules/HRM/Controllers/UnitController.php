@@ -49,15 +49,15 @@ class UnitController extends Controller
         //
         $rules = [
             'division_id' => 'required|numeric|integer|min:0',
-            'unit_name_eng' => 'required|regex:/^[a-zA-Z0-9_-]+$/',
+            'unit_name_eng' => 'required|regex:/^[a-zA-Z0-9\s_-]+$/',
             'unit_name_bng' => 'required',
             'unit_code' => 'required|numeric|integer',
         ];
         $valid  = Validator::make($request->all(),$rules);
         if($valid->fails()){
-            return Redirect::back()->withErrors($valid)->withInput($request->all());
+            return Redirect::back()->withErrors($valid)->withInput($request->except('action_user_id'));
         }
-        District::create($request->all());
+        District::create($request->except('action_user_id'));
         return Redirect::route('HRM.unit.index')->with('success_message','Unit Created Successfully');
     }
 

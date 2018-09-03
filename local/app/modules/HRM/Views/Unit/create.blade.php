@@ -18,7 +18,7 @@
 
         <!-- Main content -->
         <section class="content">
-            {!! Form::model(Request::old(),array('url' => 'HRM/unit_entry','name' => 'unitForm', 'class' => 'form-horizontal')) !!}
+            {!! Form::model(Request::old(),array('route' => 'HRM.unit.store','method'=>'post','name' => 'unitForm', 'class' => 'form-horizontal')) !!}
             <div class="row">
                 <!-- left column -->
                 <div class="col-lg-6 col-centered">
