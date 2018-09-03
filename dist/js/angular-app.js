@@ -884,7 +884,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                     else $scope.selected.unit = $rootScope.user.district.id
                     $scope.loadThana(undefined, $rootScope.user.district.id)
                 }
-                else if ($rootScope.user.user_parent.type == 22) {
+                else if ($rootScope.user.user_parent&&$rootScope.user.user_parent.type == 22) {
                     $scope.selected.range = $rootScope.user.user_parent.district.division_id
                     if (p.length > 1 && p[1] === 'recruitment' && $rootScope.user.rec_district) $scope.selected.unit = $rootScope.user.user_parent.rec_district.id
                     else $scope.selected.unit = $rootScope.user.user_parent.district.id
