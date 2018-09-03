@@ -54,7 +54,7 @@
                             </div>
                             <div class="form-group">
                                 {!! Form::label('user_type','User Type',['class'=>'control-label required']) !!}
-                                {!! Form::select('user_type',[''=>'--Select a user type--','dataentry'=>'Date Entry','verifier'=>'Verifier'],null,['class'=>'form-control']) !!}
+                                {!! Form::select('user_type',[''=>'--Select a user type--','dataentry'=>'Date Entry','verifier'=>'Verifier','accountant'=>'Accountant','office_assistance'=>'Office Assistance'],null,['class'=>'form-control']) !!}
                                 @if(isset($errors)&&$errors->first('user_type'))
                                     <p class="text text-danger">{{$errors->first('user_type')}}</p>
                                 @endif

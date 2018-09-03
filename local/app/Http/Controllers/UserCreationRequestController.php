@@ -48,7 +48,7 @@ class UserCreationRequestController extends Controller
             'last_name'=>'required',
             'email'=>'required',
             'mobile_no'=>'required',
-            'user_type'=>['required','regex:/^(dataentry|verifier)$/'],
+            'user_type'=>['required','regex:/^(dataentry|verifier|accountant|office_assistance)$/'],
         ];
         $this->validate($request,$rules);
         $inputs = $request->all();
@@ -118,7 +118,15 @@ class UserCreationRequestController extends Controller
                 $user_name = str_random(6);
             }
             $password = str_random(6);
-            $type = $user_detail->user_type=='dataentry'?55:44;
+            if($user_detail->user_type=='dataentry') {
+                $type = 55;
+            } else if($user_detail->user_type=='verifier') {
+                $type = 44;
+            }else if($user_detail->user_type=='accountant') {
+                $type = 88;
+            }else if($user_detail->user_type=='office_assistance') {
+                $type = 99;
+            }
             $user_parent_id = $user_detail->user->id;
             $user = User::create([
                 'user_name'=>$user_name,
