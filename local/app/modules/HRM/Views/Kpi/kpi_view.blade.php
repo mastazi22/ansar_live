@@ -224,7 +224,7 @@
                                 <td>[[a.total_ansar_request]]</td>
                                 <td>[[a.total_ansar_given]]</td>
                                 <td>[[a.total_embodied]]</td>
-                                <td>[[a.total_ansar_given>0?(a.total_embodied*100)/a.total_ansar_given:'infinity']]</td>
+                                <td>[[a.total_ansar_given>0?((a.total_embodied*100)/a.total_ansar_given).toFixed(2):'infinity']]</td>
                                 <td>[[a.total_ansar_request-a.total_embodied>0?((a.total_ansar_request-a.total_embodied)):0]]</td>
                                 <td>[[a.total_ansar_request-a.total_embodied<0?(-(a.total_ansar_request-a.total_embodied)):0]]</td>
                                 <td>
