@@ -22,25 +22,38 @@ class ForgetPassword
      */
     public function __construct()
     {
-        $this->forgetPasswordNotification = ForgetPasswordRequest::all(['user_name','created_at']);
-        $this->userNotification = collect(UserCreationRequest::with('user')->where('status','pending')->get());
+        $this->forgetPasswordNotification = ForgetPasswordRequest::all(['user_name', 'created_at']);
+        $this->userNotification = UserCreationRequest::with('user')->where('status', 'pending');
     }
-    public function getForgetPasswordNotificationTotal(){
+
+    public function getForgetPasswordNotificationTotal()
+    {
         return $this->forgetPasswordNotification->count();
     }
-    public function getTotalUserRequest(){
+
+    public function getTotalUserRequest()
+    {
         return $this->userNotification->count();
     }
-    public function getForgetPasswordNotification(){
+
+    public function getForgetPasswordNotification()
+    {
         return $this->forgetPasswordNotification->take(5);
     }
-    public function getUserRequestNotification(){
-        return $this->userNotification->take(5);
+
+    public function getUserRequestNotification()
+    {
+        return $this->userNotification->limit(5)->get();
     }
-    public function getAllUserRequestNotification(){
-        return $this->userNotification;
+
+    public function getAllUserRequestNotification($id)
+    {
+        if ($id) return $this->userNotification->where('id',$id)->get();
+        else return $this->userNotification->get();
     }
-    public function getAllForgetPasswordNotification(){
+
+    public function getAllForgetPasswordNotification()
+    {
         return $this->forgetPasswordNotification;
     }
 

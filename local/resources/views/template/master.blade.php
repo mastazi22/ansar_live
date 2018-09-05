@@ -139,12 +139,13 @@
                                     <ul class="menu">
                                         @foreach(Notification::getUserRequestNotification() as $notification)
                                             <li>
-                                                <a href="{{URL::to("/change_password/".$notification->user_name)}}"
-                                                   style="white-space: normal !important;overflow: auto !important;text-overflow: initial !important;">
+                                                <a href="{{URL::to("/all_user_request_notification/".$notification->id)}}"
+                                                   style="white-space: normal !important;overflow: auto !important;text-overflow: initial !important;display: block">
                                                     <i class="fa fa-users text-aqua"></i>
                                                     <span style="color: #000000;font-size: 1.3em;">{{$notification->user->user_name}}</span>
-                                                    make a user create request.
+                                                    make a user create request.<span class="label label-info">{{implode(" ",explode('_',$notification->user_type))}}</span>
                                                 </a>
+
                                             </li>
                                         @endforeach
                                     </ul>

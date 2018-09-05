@@ -50,7 +50,7 @@
                             <th>Action</th>
 
                         </tr>
-                        @forelse(Notification::getAllUserRequestNotification() as $notification)
+                        @forelse(Notification::getAllUserRequestNotification($id) as $notification)
                             <tr>
                                 <td>{{$i++}}</td>
                                 <td>{{$notification->first_name.' '.$notification->last_name}}</td>

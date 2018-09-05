@@ -58,8 +58,8 @@ Route::group(['middleware' => 'auth'], function () {
        Route::get('/user_registration', ['as' => 'create_user', 'uses' => 'UserController@userRegistration']);
        Route::get('/load_user', ['as' => 'load_user', 'uses' => 'UserController@loadUser']);
        Route::get('/edit_user_permission/{id}', ['as' => 'edit_user_permission', 'uses' => 'UserController@editUserPermission']);
-       Route::get('/all_user_request_notification', function () {
-           return view('all_user_request_notification');
+       Route::get('/all_user_request_notification/{id?}', function ($id=null) {
+           return view('all_user_request_notification',compact('id'));
        });
        Route::post('/approved_user_request/{id}','UserCreationRequestController@approveUser');
        Route::post('/cancel_user_request/{id}','UserCreationRequestController@cancelUser');
