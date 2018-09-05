@@ -43,7 +43,7 @@ class ForgetPassword
 
     public function getUserRequestNotification()
     {
-        return $this->userNotification->limit(5)->get();
+        return $this->userNotification->limit(20)->get();
     }
 
     public function getAllUserRequestNotification($id)
