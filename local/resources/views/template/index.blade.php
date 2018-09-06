@@ -54,7 +54,7 @@
                     <!-- small box -->
                     <div class="small-box bg-yellow">
                         <div class="inner">
-                            <h3>SD</h3>
+                            <h3>PRSD</h3>
 
                             <p>Salary Disbursement</p>
                         </div>
