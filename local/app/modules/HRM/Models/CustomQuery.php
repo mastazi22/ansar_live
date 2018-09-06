@@ -27,13 +27,13 @@ class CustomQuery
         $ansar_retirement_age = Helper::getAnsarRetirementAge() - 3;
         $pc_apc_retirement_age = Helper::getPcApcRetirementAge() - 3;
         DB::enableQueryLog();
-        $eid = DB::connection('recruitment')->table('job_applicant')
-            ->join('job_circular','job_circular.id','=','job_applicant.job_circular_id')
-            ->join('job_category','job_category.id','=','job_circular.job_category_id')
-            ->where('job_applicant.status','selected')->where(function ($q){
-               $q->where('job_category.category_type','apc_training');
-               $q->orWhere('job_category.category_type','pc_training');
-            })->pluck('ansar_id');
+//        $eid = DB::connection('recruitment')->table('job_applicant')
+//            ->join('job_circular','job_circular.id','=','job_applicant.job_circular_id')
+//            ->join('job_category','job_category.id','=','job_circular.job_category_id')
+//            ->where('job_applicant.status','selected')->where(function ($q){
+//               $q->where('job_category.category_type','apc_training');
+//               $q->orWhere('job_category.category_type','pc_training');
+//            })->pluck('ansar_id');
         $query = DB::table('tbl_ansar_parsonal_info')
             ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
@@ -45,8 +45,9 @@ class CustomQuery
             ->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"')
             ->where('tbl_ansar_status_info.pannel_status', 1)
             ->where('tbl_ansar_status_info.block_list_status', 0)
-            ->where('tbl_ansar_status_info.offer_block_status', 0)
-            ->whereNotIn('tbl_ansar_parsonal_info.ansar_id', $eid);
+            ->where('tbl_ansar_status_info.offer_block_status', 0);
+//            ->whereNotIn('tbl_ansar_parsonal_info.ansar_id', $eid);
+        $fquery = clone $query;
         if ($user->type == 22) {
             if (in_array($exclude_district, Config::get('app.offer'))) {
                 $d = Config::get('app.exclude_district');
@@ -57,17 +58,19 @@ class CustomQuery
                 $query->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id')
                     ->where('pu.id', '!=', $exclude_district)->where('du.id', '=', $exclude_district);
             }
+            $fquery->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id')
+                ->where('du.id', '=', $exclude_district)->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
         } else if ($user->type == 11 || $user->type == 33 || $user->type == 66) {
             if (is_array($unit_id)) {
                 $query = $query->whereIn('pu.id', $unit_id);
             }
         }
         $pc_male = clone $query;
-        $pc_female = clone $query;
+        $pc_female = clone $fquery;
         $apc_male = clone $query;
-        $apc_female = clone $query;
+        $apc_female = clone $fquery;
         $ansar_male = clone $query;
-        $ansar_female = clone $query;
+        $ansar_female = clone $fquery;
         $pc_male->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<' . $pc_apc_retirement_age)
             ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
@@ -98,7 +101,7 @@ class CustomQuery
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<' . $pc_apc_retirement_age)
             ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')->take($apc['female']);
-
+//            $b = $ansar_female->get();
         $b = $pc_male->unionAll($pc_female)->unionAll($apc_male)->unionAll($apc_female)->unionAll($ansar_male)->unionAll($ansar_female)->pluck('ansar_id');
 //        return DB::getQueryLog();
         return $b;
