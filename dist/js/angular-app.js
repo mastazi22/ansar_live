@@ -1311,15 +1311,25 @@ GlobalApp.directive("calender", function (notificationService) {
         controller: function ($scope) {
             $scope.months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             $scope.selectedDates = [];
-            var currentDate = moment();
-            $scope.current = {
-                month: currentDate.get('month'),
-                year: currentDate.get('year'),
-                date: currentDate.get('date'),
-            };
+            var currentDate
+            if($scope.showOnlyMonth) {
+                currentDate = moment().month(parseInt($scope.showOnlyMonth)).date(1);
+                $scope.current = {
+                    month: currentDate.get('month'),
+                    year: currentDate.get('year'),
+                    date: currentDate.get('date'),
+                };
+            } else{
+                currentDate = moment();
+                $scope.current = {
+                    month: currentDate.get('month'),
+                    year: currentDate.get('year'),
+                    date: currentDate.get('date'),
+                };
+            }
             $scope.currentMonth = {
                 totalDays: currentDate.daysInMonth(),
-                month: $scope.showOnlyMonth?$scope.showOnlyMonth:currentDate.get('month'),
+                month: currentDate.get('month'),
                 year: currentDate.get('year'),
                 date: currentDate.get('date'),
             };
@@ -1382,14 +1392,15 @@ GlobalApp.directive("calender", function (notificationService) {
                 $scope.makeCalender();
             }
             $scope.makeCalender = function () {
-//                        console.log($scope.selectedDates)
+                       console.log("cu")
+                       console.log($scope.currentMonth)
                 $("body").find(".date").removeClass("selected")
                 $scope.calender = new Array(6);
                 makePreviousCalender();
 //                        alert(1)
                 var dd = 1;
                 var nn = 1;
-                var wd = moment().date(1).month($scope.currentMonth.month).year($scope.currentMonth.year).day()
+                var wd = moment().year($scope.currentMonth.year).month($scope.currentMonth.month).date(1).day()
                 for (var i = 0; i < 6; i++) {
 //                            if(i*7+1>$scope.currentMonth.totalDays) break;
                     for (var j = 0; j < 7; j++) {
@@ -1413,15 +1424,19 @@ GlobalApp.directive("calender", function (notificationService) {
                     }
                 }
 
-//                        console.log($scope.calender)
+                       console.log($scope.calender)
             }
             function makePreviousCalender() {
                 var j = 0;
                 $scope.calender[0] = new Array(7);
-                var lastWeekDay = moment().date($scope.previousMonth.totalDays)
+                var lastWeekDay = moment().year($scope.previousMonth.year)
+                    .month($scope.previousMonth.month)
+                    .date($scope.previousMonth.totalDays).day()%6;
+                console.log("ld : "+ moment().year($scope.previousMonth.year)
                         .month($scope.previousMonth.month)
-                        .year($scope.previousMonth.year).day() % 6;
-                console.log(lastWeekDay)
+                        .date($scope.previousMonth.totalDays)
+                        .format("DD-MMM-YYYY"))
+                console.log($scope.previousMonth)
                 for (var i = $scope.previousMonth.totalDays - lastWeekDay; i <= $scope.previousMonth.totalDays; i++) {
                     $scope.calender[0][j++] = {
                         day: i, tag: "pre"
