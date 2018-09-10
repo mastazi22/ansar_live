@@ -272,7 +272,12 @@ class EntryFormController extends Controller
                                 $dataRow["prefer_choice"] = "general";
                             }
 
-                            $bankInfo = AnsarBankAccountInfoDetails::firstOrCreate($dataRow);
+                            $bankInfo = AnsarBankAccountInfoDetails::where('ansar_id',$ansarId)->first();
+                            if($bankInfo){
+                                $bankInfo->update($dataRow);
+                            } else{
+                                AnsarBankAccountInfoDetails::create($dataRow);
+                            }
                             $index++;
                         }
                     }
