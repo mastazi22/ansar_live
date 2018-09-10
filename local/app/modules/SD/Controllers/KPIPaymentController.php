@@ -43,7 +43,7 @@ class KPIPaymentController extends Controller
                     /*if($request->q){
                         $q->where('memorandum_no','LIKE',"%{$request->q}%");
                     }*/
-                })->paginate($request->limit?$request->limit:30);
+                })->orderBy('created_at','desc')->paginate($request->limit?$request->limit:30);
             return view("SD::kpi_payment.data",compact('payment_history'));
 
         }

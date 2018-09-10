@@ -57,7 +57,7 @@ class SalaryDisburseController extends Controller
                     }
                 });
 
-            $histories = $sheet->paginate($request->limit?$request->limit:30);
+            $histories = $sheet->orderBy('created_at','desc')->paginate($request->limit?$request->limit:30);
 //            return $histories;
             return view('SD::salary_disburse.history_data',compact('histories'));
         } else if($request->type=="export"){

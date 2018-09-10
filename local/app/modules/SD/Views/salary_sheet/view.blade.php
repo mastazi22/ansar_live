@@ -73,28 +73,28 @@
                 </tr>
                 <tr>
                     <td>
-                        {{$salary_sheet->summery['extra']}}
+                        {{sprintf("%.2f",$salary_sheet->summery['extra'])}}
                     </td>
                     <td>
-                        {{$salary_sheet->summery['welfare_fee']}}
+                        {{sprintf("%.2f",$salary_sheet->summery['welfare_fee'])}}
                     </td>
                     <td>
-                        {{$salary_sheet->summery['reg_amount']}}
+                        {{sprintf("%.2f",$salary_sheet->summery['reg_amount'])}}
                     </td>
                     <td>
-                        {{$salary_sheet->summery['revenue_stamp']}}
+                        {{sprintf("%.2f",$salary_sheet->summery['revenue_stamp'])}}
                     </td>
                     <td>
-                        {{$salary_sheet->summery['share_amount']}}
+                        {{sprintf("%.2f",$salary_sheet->summery['share_amount'])}}
                     </td>
                     <td>
-                        {{$salary_sheet->summery['total_net_amount']}}
+                        {{sprintf("%.2f",$salary_sheet->summery['total_net_amount'])}}
                     </td>
                     <td>
-                        {{$salary_sheet->summery['total_max_amount']}}
+                        {{sprintf("%.2f",$salary_sheet->summery['total_max_amount'])}}
                     </td>
                     <td>
-                        {{$salary_sheet->summery['total_min_amount']}}
+                        {{sprintf("%.2f",$salary_sheet->summery['total_min_amount'])}}
                     </td>
                 </tr>
             </table>

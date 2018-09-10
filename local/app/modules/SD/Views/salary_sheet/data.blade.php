@@ -92,23 +92,23 @@
                 </tr>
                 <tr>
                     <td>
-                        {{$extra}}
+                        {{sprintf("%.2f",$extra)}}
                         {!! Form::hidden('summery[extra]',$extra) !!}
                     </td>
                     <td>
-                        {{collect($datas)->sum('welfare_fee')}}
+                        {{sprintf("%.2f",collect($datas)->sum('welfare_fee'))}}
                         {!! Form::hidden('summery[welfare_fee]',collect($datas)->sum('welfare_fee')) !!}
                     </td>
                     <td>
-                        {{collect($datas)->sum('reg_amount')}}
+                        {{sprintf("%.2f",collect($datas)->sum('reg_amount'))}}
                         {!! Form::hidden('summery[reg_amount]',collect($datas)->sum('reg_amount')) !!}
                     </td>
                     <td>
-                        {{collect($datas)->sum('revenue_stamp')}}
+                        {{sprintf("%.2f",collect($datas)->sum('revenue_stamp'))}}
                         {!! Form::hidden('summery[revenue_stamp]',collect($datas)->sum('revenue_stamp')) !!}
                     </td>
                     <td>
-                        {{collect($datas)->sum('share_amount')}}
+                        {{sprintf("%.2f",collect($datas)->sum('share_amount'))}}
                         {!! Form::hidden('summery[share_amount]',collect($datas)->sum('share_amount')) !!}
                     </td>
                     <td>
@@ -117,15 +117,15 @@
                             return $data['total_amount'] - ($data['welfare_fee'] + $data['share_amount']+ $data['revenue_stamp']+ $data['reg_amount']);
                         });?>
 
-                        {{$total_net_amount}}
+                        {{sprintf("%.2f",$total_net_amount)}}
                         {!! Form::hidden('summery[total_net_amount]',$total_net_amount) !!}
                     </td>
                     <td>
-                        {{collect($datas)->sum('total_amount')+$extra}}
+                        {{sprintf("%.2f",collect($datas)->sum('total_amount')+$extra)}}
                         {!! Form::hidden('summery[total_max_amount]',collect($datas)->sum('total_amount')+$extra) !!}
                     </td>
                     <td>
-                        {{collect($datas)->sum('total_amount')}}
+                        {{sprintf("%.2f",collect($datas)->sum('total_amount'))}}
                         {!! Form::hidden('summery[total_min_amount]',collect($datas)->sum('total_amount')) !!}
                     </td>
                 </tr>
