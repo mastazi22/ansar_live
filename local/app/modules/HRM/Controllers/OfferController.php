@@ -121,7 +121,7 @@ class OfferController extends Controller
                 ['male' => $request->get('ansar_male'), 'female' => $request->get('ansar_female')],
                 $request->get('district'),
                 $request->get('exclude_district'), Auth::user());
-            return $data;
+//            return $data;
             Log::info($request->all());
             RequestDumper::create([
                 'user_id' => auth()->user()->id,
