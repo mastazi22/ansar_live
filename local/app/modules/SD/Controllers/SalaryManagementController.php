@@ -44,7 +44,7 @@ class SalaryManagementController extends Controller
             if($request->sheetType){
                 $history->where('generated_type',$request->sheetType);
             }
-            $history = $history->paginate($request->limit ? $request->limit : 30);
+            $history = $history->orderBy('created_at','desc')->paginate($request->limit ? $request->limit : 30);
             return view('SD::salary_sheet.view_data', compact('history'));
         }
         return view("SD::salary_sheet.index");
