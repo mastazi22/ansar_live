@@ -141,7 +141,7 @@ class SalaryDisburseController extends Controller
             if ($generated_type) {
                 $sheet->where(compact('generated_type'));
             }
-            $sheets = $sheet->where('disburst_status', 'pending')->paginate($request->limit ? $request->limit : 30);
+            $sheets = $sheet->where('disburst_status', 'pending')->orderBy('created_at','desc')->paginate($request->limit ? $request->limit : 30);
 //            return $sheets;
             return view('SD::salary_disburse.view_data', compact('sheets'));
         }
