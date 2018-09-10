@@ -43,12 +43,12 @@
 
             $scope.param = {}
             $scope.allLoading = false;
-            $scope.loadData = function () {
+            $scope.loadData = function (url) {
                 console.log($scope.param)
                 $scope.allLoading = true;
                 $http({
                     method: 'get',
-                    url: "{{URL::route('SD.salary_management.index')}}",
+                    url: url||"{{URL::route('SD.salary_management.index')}}",
                     params: $scope.param,
                 }).then(function (response) {
                     $scope.allLoading = false;
