@@ -88,7 +88,7 @@
                 return moment({year: parseInt(y), month: parseInt(m) - 1, date: d}).format("MMMM, YYYY")
             }
             $scope.isAvailable = function () {
-                return Object.keys($scope.attData.data.attendance).length>0;
+                return $scope.attData&&Object.keys($scope.attData.data.attendance).length>0;
             }
 
         })
