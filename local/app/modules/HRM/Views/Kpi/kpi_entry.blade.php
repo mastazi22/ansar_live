@@ -219,11 +219,10 @@
                                                             class="text-danger">Ansar With Weapon field is required.</p></span>
                                                     </div>
                                                 </div>
-                                                <div class="form-group required">
+                                                <div class="form-group">
                                                     {!! Form::label('is_special_kpi', 'Is Special:', $attributes = array('class' => 'col-sm-4 control-label')) !!}
-                                                    <div class="col-sm-8"
-                                                         ng-class="{ 'has-error': kpiForm.total_ansar_given.$touched && kpiForm.total_ansar_given.$invalid }">
-                                                        {!! Form::checkbox('is_special_kpi', 1, null, $attributes = array( 'id' => 'is_special_kpi', 'placeholder' => 'Enter Total Ansar given Number', 'required', 'ng-model' => 'total_ansar_given','numeric-field')) !!}
+                                                    <div class="col-sm-8">
+                                                        {!! Form::checkbox('is_special_kpi', 1, null, $attributes = array( 'id' => 'is_special_kpi', 'placeholder' => 'Enter Total Ansar given Number','ng-checked'=>'is_special_kpi', 'ng-model' => 'is_special_kpi')) !!}
                                                     </div>
                                                 </div>
                                                 <div class="form-group" ng-show="is_special_kpi">
