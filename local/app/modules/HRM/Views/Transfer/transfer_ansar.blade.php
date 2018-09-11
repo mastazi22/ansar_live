@@ -163,6 +163,9 @@
 
                 })
             }
+           /* $scope.$watch('trans',function (n,o) {
+                console.log(n)
+            },true)*/
 
         })
         GlobalApp.directive('openHideModal', function () {
@@ -328,7 +331,6 @@
                                             kpi-disabled="params.kpi"
                                             field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
                                             data = "trans"
-                                            reset-all="[[resetValue]]"
                                     ></filter-template>
 
                                     <div class="row">
