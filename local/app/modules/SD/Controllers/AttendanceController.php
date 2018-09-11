@@ -135,7 +135,7 @@ class AttendanceController extends Controller
 
             DB::enableQueryLog();
             $data = $attendance->first();
-            if(!$data) return null;
+            if(!$data) return "false";
             $att = collect($data->attendance)->groupBy('ansar_id')->all();
             foreach ($att as $k=>$a){
                 $ansar = $a[0]['ansar'];

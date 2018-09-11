@@ -110,6 +110,44 @@
                         field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
                 >
                 </filter-template>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="">Payment against</label>
+                            <select class="form-control" ng-model="param.payment_against">
+                                <option value="">--Select a type--</option>
+                                <option value="demand_sheet">Demand Sheet</option>
+                                <option value="salary_sheet">Salary Sheet</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-3" ng-if="param.payment_against=='salary_sheet'">
+                        <div class="form-group">
+                            <label for="">Sheet Type</label>
+                            <select class="form-control" ng-model="param.sheetType">
+                                <option value="">--Select a type--</option>
+                                <option value="salary">Salary</option>
+                                <option value="bonus">Bonus</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="">Select Month</label>
+                            <input typed-date-picker="" calender-type="month" type="text" class="form-control" placeholder="Select month & year"
+                                   ng-model="param.month_year">
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label style="display: block" for="">&nbsp;</label>
+                            <button class="btn btn-primary" ng-click="loadPage()">
+                                <i class="fa fa-download"></i>&nbsp; Load data
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="box-body">
 

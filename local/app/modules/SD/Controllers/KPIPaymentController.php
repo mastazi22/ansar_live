@@ -39,10 +39,14 @@ class KPIPaymentController extends Controller
                 if($request->kpi&&$request->kpi!='all'){
                     $q->where('id',$request->kpi);
                 }
+                if($request->payment_against){
+                    $q->where('payment_against',$request->payment_against);
+                }
             })->whereHas('demandOrSalarySheet',function($q) use($request){
-                    /*if($request->q){
-                        $q->where('memorandum_no','LIKE',"%{$request->q}%");
-                    }*/
+                    if($request->payment_against=='salary_sheet'){
+                        if($request->sheetType)$q->where('generated_type','=',$request->sheetType);
+                        if($request->month_year)$q->where('generated_for_month','=',$request->month_year);
+                    }
                 })->orderBy('created_at','desc')->paginate($request->limit?$request->limit:30);
             return view("SD::kpi_payment.data",compact('payment_history'));
 

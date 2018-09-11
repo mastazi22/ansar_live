@@ -58,7 +58,7 @@
                     $scope.allLoading = false;
 //                    $scope.vdpList = $sce.trustAsHtml(response.data)
                     $scope.attData = response.data
-                    console.log(response.data)
+                    alert(typeof($scope.attData))
                 }, function (response) {
                     $scope.allLoading = false;
                     console.log(response.data)
@@ -88,7 +88,8 @@
                 return moment({year: parseInt(y), month: parseInt(m) - 1, date: d}).format("MMMM, YYYY")
             }
             $scope.isAvailable = function () {
-                return $scope.attData&&Object.keys($scope.attData.data.attendance).length>0;
+
+                return typeof $scope.attData === "object"&&Object.keys($scope.attData.data.attendance).length>0;
             }
 
         })
@@ -185,7 +186,7 @@
                         <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
                     </span>
                 </div>
-                <div class="container-fluid" ng-if="attData">
+                <div class="container-fluid" ng-if="isAvailable()">
                     {!! Form::open(['route'=>'SD.attendance.store']) !!}
                     {{--<input type="hidden" name="type" value="[[attData.type]]">--}}
                     <input type="hidden" name="month" value="[[attData.date.month]]">
@@ -197,7 +198,7 @@
                             <br>[[parseDate(attData.date["year"],attData.date["month"],1)]]
                         </h4>
                     </div>
-                    <div style="padding: 0 10px" [[attData.data.attendance.length]] ng-if="isAvailable()">
+                    <div style="padding: 0 10px" ng-if="isAvailable()">
                         <div class="panel-group" id="accordion">
                             <div class="panel panel-default" ng-repeat="(k,att) in attData.data.attendance"
                                  ng-init="i=$index">
@@ -244,10 +245,11 @@
                             Submit Attendance
                         </button>
                     </div>
-                    <div style="padding: 10px" class="bg-danger"  ng-if="!isAvailable()">
-                        <strong>Attendance already taken or not generated for this month</strong>
-                    </div>
+
                     {!! Form::close() !!}
+                </div>
+                <div style="padding: 10px" class="bg-danger"  ng-if="attData==='false'">
+                    <strong>Attendance not generated</strong>
                 </div>
                 {{--<div ng-bind-html="vdpList" compile-html>
 
