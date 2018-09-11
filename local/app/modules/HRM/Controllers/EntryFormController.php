@@ -263,7 +263,7 @@ class EntryFormController extends Controller
                         } else if (!empty($ansarId) && !empty($bankName)) {
                             $dataRow["ansar_id"] = $ansarId;
                             if ($bankName === "rocket" || $bankName === "bkash") {
-//                                $dataRow["mobile_bank_account_no"] = $mobileBankAccountNo;
+                                $dataRow["mobile_bank_account_no"] = $bankAccountNo;
                                 $dataRow["mobile_bank_type"] = $bankName;
                                 $dataRow["prefer_choice"] = "mobile";
                             } else {
