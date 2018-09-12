@@ -221,7 +221,7 @@ class FreezeController extends Controller
     public function freezeDisEmbodied(Request $request)
     {
 //        return $request->all();
-        if (is_array($request->ansarId)) {
+        /*if (is_array($request->ansarId)) {
             foreach ($request->ansarId as $ansarId) {
                 $frezeInfo = FreezingInfoModel::where('ansar_id', $ansarId)->first();
                 $embodiment = $frezeInfo->embodiment;
@@ -287,7 +287,8 @@ class FreezeController extends Controller
             return Response::json(['status' => true, 'message' => 'dis-embodied successfully']);
         } else {
             return Response::json(['status' => false, 'message' => "Invalid Request"]);
-        }
+        }*/
+        return CustomQuery::freezeDisEmbodied($request);
     }
 
     public function transferFreezedAnsar(Request $request)

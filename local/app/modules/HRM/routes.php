@@ -419,16 +419,69 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::post('upload_original_info', ['as' => 'upload_original_info', 'uses' => 'GeneralSettingsController@uploadOriginalInfo']);
         Route::get('upload_original_info', ['as' => 'upload_original_info_view', 'uses' => 'GeneralSettingsController@uploadOriginalInfoView']);
         Route::get('test', function () {
-            $datas = \Maatwebsite\Excel\Facades\Excel::Load(storage_path('avub_share.csv'),function ($e){
+            $datas = \Maatwebsite\Excel\Facades\Excel::Load(storage_path('need_to_transfer_panel.xlsx'),function ($e){
 
             })->get()[0];
-            $i=0;
+//            i=0;
+            $status = [];
+            $ansar_ids = [];
+            $ea_ids = [];
             foreach ($datas as $data){
-                $a = \App\modules\HRM\Models\PersonalInfo::where('ansar_id',$data[1])->first();
-                $a->avub_share_id = $data[0];
-                $a->save();
+                $a = \App\modules\HRM\Models\PersonalInfo::where('ansar_id',$data[0])->first();
+                if(in_array("freeze",$a->status->getStatus())){
+                    array_push($ansar_ids,$data[0]);
+                }
+                if(in_array("Embodied",$a->status->getStatus())){
+                    array_push($ea_ids,[
+                        'ansarId'=>$data[0],
+                        'disReason'=>8,
+                    ]);
+                }
+                if(in_array("Block for offer",$a->status->getStatus())){
+                    \App\modules\HRM\Models\CustomQuery::sendToPanel($data[0]);
+                    $a->verified = 2;
+                    $a->save();
+                }
             }
-            return "updated";
+            $f_request = new \Illuminate\Http\Request();
+            $e_request = new \Illuminate\Http\Request();
+            $f_request->replace([
+                'rest_date'=>\Carbon\Carbon::now()->format('Y-m-d'),
+                'memorandum'=>'promotional_panel_'.\Carbon\Carbon::now()->format('Y-m-d'),
+                'ansarId'=>$ansar_ids,
+                'disembodiment_reason_id'=>8,
+                'comment'=>"promotion from ansar to apc"
+            ]);
+            $e_request->replace([
+                'disembodiment_date'=>\Carbon\Carbon::now()->format('Y-m-d'),
+                'memorandum_id'=>'promotional_panel_'.\Carbon\Carbon::now()->format('Y-m-d'),
+                'ansars'=>$ea_ids,
+                'disembodiment_comment'=>"promotion from ansar to apc"
+            ]);
+            $e_request->headers->set('X-Requested-With','XMLHttpRequest');
+            \App\modules\HRM\Models\CustomQuery::freezeDisEmbodied($f_request);
+            \App\modules\HRM\Models\CustomQuery::disembodimentEntry($e_request);
+            $r_ansars = [];
+            foreach ($datas as $data){
+                $a = \App\modules\HRM\Models\PersonalInfo::where('ansar_id',$data[0])->first();
+                if(in_array("rest",$a->status->getStatus())){
+                    array_push($r_ansars,$data[0]);
+                }
+            }
+            $r_request = new \Illuminate\Http\Request();
+            $r_request->replace([
+                'panel_date'=>\Carbon\Carbon::now()->format('Y-m-d'),
+                'memorandumId'=>'promotional_panel_'.\Carbon\Carbon::now()->format('Y-m-d'),
+                'ansar_id'=>$r_ansars,
+            ]);
+            \App\modules\HRM\Models\CustomQuery::savePanelEntry($r_request);
+            foreach ($datas as $data){
+                $a = \App\modules\HRM\Models\PersonalInfo::where('ansar_id',$data[0])->first();
+
+                    array_push($status,$a->status->getStatus());
+
+            }
+            return $status;
         });
 
         Route::any('/bulk-upload-bank-info', ['as' => "bulk_upload_bank_file", 'uses' => "EntryFormController@bulkUploadBankInfo"]);
