@@ -58,7 +58,7 @@
                     $scope.allLoading = false;
 //                    $scope.vdpList = $sce.trustAsHtml(response.data)
                     $scope.attData = response.data
-                    alert(typeof($scope.attData))
+//                    alert(typeof($scope.attData))
                 }, function (response) {
                     $scope.allLoading = false;
                     console.log(response.data)
