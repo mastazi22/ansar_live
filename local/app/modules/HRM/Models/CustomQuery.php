@@ -7,17 +7,22 @@ namespace App\modules\HRM\Models;
 use App\Helper\Facades\GlobalParameterFacades;
 use App\Helper\Helper;
 use App\Helper\QueryHelper;
+use App\Jobs\DisembodiedSMS;
 use App\models\User;
 use Carbon\Carbon;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Validator;
 use Services_Twilio;
 
 class CustomQuery
 {
+    use DispatchesJobs;
     const ALL_TIME = 1;
     const RECENT = 2;
     protected $connection = 'hrm';
@@ -1717,5 +1722,259 @@ class CustomQuery
             return Response::json(['total' => collect($total->get())->groupBy('code')]);
         }
 //        return $b;
+    }
+    public static function freezeDisEmbodied(Request $request)
+    {
+//        return $request->all();
+        if (is_array($request->ansarId)) {
+            foreach ($request->ansarId as $ansarId) {
+                $frezeInfo = FreezingInfoModel::where('ansar_id', $ansarId)->first();
+                if(!$frezeInfo) return $ansarId;
+                $embodiment = $frezeInfo->embodiment;
+                $freezed_ansar_embodiment_detail = $frezeInfo->freezedAnsarEmbodiment;
+
+
+                DB::beginTransaction();
+                try {
+                    if (!$frezeInfo || !($embodiment || $freezed_ansar_embodiment_detail)) throw new \Exception("Invalid Request");
+                    $m = new MemorandumModel;
+                    $m->memorandum_id = $request->memorandum;
+                    $m->save();
+                    FreezingInfoLog::create([
+                        'old_freez_id' => $frezeInfo->id,
+                        'ansar_id' => $ansarId,
+                        'freez_reason' => $frezeInfo->freez_reason,
+                        'comment_on_freez' => $frezeInfo->comment_on_freez,
+                        'move_frm_freez_date' => Carbon::parse($request->rest_date)->format('Y-m-d'),
+                        'move_to' => 'rest',
+                        'comment_on_move' => $request->comment ? $request->comment : 'No Comment',
+                    ]);
+                    EmbodimentLogModel::create([
+                        'old_embodiment_id' => $embodiment ? $embodiment->id : $freezed_ansar_embodiment_detail->embodiment_id,
+                        'old_memorandum_id' => $embodiment ? $embodiment->memorandum_id : $freezed_ansar_embodiment_detail->em_mem_id,
+                        'ansar_id' => $ansarId,
+                        'reporting_date' => $embodiment ? $embodiment->reporting_date : $freezed_ansar_embodiment_detail->reporting_date,
+                        'joining_date' => $embodiment ? $embodiment->joining_date : $freezed_ansar_embodiment_detail->embodied_date,
+                        'kpi_id' => $embodiment ? $embodiment->kpi_id : $freezed_ansar_embodiment_detail->freezed_kpi_id,
+                        'move_to' => 'rest',
+                        'disembodiment_reason_id' => $request->disembodiment_reason_id,
+                        'release_date' => Carbon::parse($request->rest_date)->format('Y-m-d'),
+                        'action_user_id' => Auth::id(),
+                    ]);
+                    RestInfoModel::create([
+                        'ansar_id' => $ansarId,
+                        'old_embodiment_id' => $embodiment ? $embodiment->id : $freezed_ansar_embodiment_detail->embodiment_id,
+                        'memorandum_id' => $request->memorandum,
+                        'rest_date' => Carbon::parse($request->rest_date)->format('Y-m-d'),
+                        'active_date' => Carbon::parse($request->rest_date)->addMonths(6)->format('Y-m-d'),
+                        'disembodiment_reason_id' => $request->disembodiment_reason_id,
+                        'total_service_days' => Carbon::parse($embodiment ? $embodiment->joining_date : $freezed_ansar_embodiment_detail->embodied_date)->diffInDays(Carbon::parse($request->rest_date), true),
+                        'rest_form' => 'Freeze',
+                        'comment' => $request->comment ? $request->comment : 'No Comment',
+                        'action_user_id' => Auth::id(),
+                    ]);
+                    $frezeInfo->delete();
+                    if ($embodiment) $embodiment->delete();
+                    if ($freezed_ansar_embodiment_detail) $freezed_ansar_embodiment_detail->delete();
+                    AnsarStatusInfo::where('ansar_id', $ansarId)->update([
+                        'rest_status' => 1,
+                        'freezing_status' => 0
+                    ]);
+                    static::addActionlog(['ansar_id' => $ansarId, 'action_type' => 'DISEMBODIMENT', 'from_state' => 'FREEZE', 'to_state' => 'REST', 'action_by' => auth()->user()->id]);
+                    DB::commit();
+
+
+//            throw new Exception();
+                } catch (\Exception $rollback) {
+                    DB::rollback();
+                    return Response::json(['status' => false, 'message' => $rollback->getMessage()]);
+                }
+            }
+            return Response::json(['status' => true, 'message' => 'dis-embodied successfully']);
+        } else {
+            return Response::json(['status' => false, 'message' => "Invalid Request"]);
+        }
+    }
+    public static function disembodimentEntry(Request $request)
+    {
+        $rules = [
+            'disembodiment_date' => 'required'
+        ];
+        if (auth()->user()->type == 11 || auth()->user()->type == 77) {
+            $rules['memorandum_id'] = 'required';
+        } else {
+            $rules['memorandum_id'] = 'required|unique:hrm.tbl_memorandum_id,memorandum_id|unique:hrm.tbl_embodiment,memorandum_id|unique:hrm.tbl_rest_info,memorandum_id||unique:hrm.tbl_transfer_ansar,transfer_memorandum_id';
+        }
+        $valid = Validator::make($request->all(), $rules);
+        if ($valid->fails()) {
+            $m = '';
+            foreach ($valid->messages()->toArray() as $p) {
+                $m .= $p[0] . ',';
+            }
+            return Response::json(['status' => false, 'message' => $m]);
+        }
+        DB::beginTransaction();
+        $user = [];
+        try {
+            if ($request->ajax()) {
+                $selected_ansars = $request->input('ansars');
+                $memorandum_id = $request->input('memorandum_id');
+                $disembodiment_date = $request->input('disembodiment_date');
+                $modified_disembodiment_date = Carbon::parse($disembodiment_date)->format('Y-m-d');
+                $disembodiment_comment = $request->input('disembodiment_comment');
+                if (count($selected_ansars) > 0) {
+                    $memorandum_entry = new MemorandumModel();
+                    $memorandum_entry->memorandum_id = $memorandum_id;
+                    $memorandum_entry->mem_date = Carbon::parse($request->mem_date);
+                    $memorandum_entry->save();
+                }
+                foreach ($selected_ansars as $ansar) {
+                    $ansar = (object)$ansar;
+                    $embodiment_infos = EmbodimentModel::where('ansar_id', $ansar->ansarId)->first();
+                    if (!$embodiment_infos) throw new \Exception("Invalid Request");
+                    $rest_entry = new RestInfoModel();
+                    $rest_entry->ansar_id = $ansar->ansarId;
+                    $rest_entry->old_embodiment_id = $embodiment_infos->id;
+                    $rest_entry->memorandum_id = $memorandum_id;
+                    $rest_entry->rest_date = $modified_disembodiment_date;
+                    $rest_entry->active_date = GlobalParameterFacades::getActiveDate($request->disembodiment_date);
+                    $rest_entry->total_service_days = Carbon::parse($request->disembodiment_date)->addDays(1)->diffInDays(Carbon::parse($embodiment_infos->joining_date));
+                    $rest_entry->disembodiment_reason_id = $ansar->disReason;
+                    $rest_entry->rest_form = "Regular";
+                    $rest_entry->action_user_id = Auth::user()->id;
+                    $rest_entry->comment = $disembodiment_comment ? $disembodiment_comment : "NO COMMENT";
+                    $rest_entry->save();
+                    $embodiment_log_update = new EmbodimentLogModel();
+                    $embodiment_log_update->old_embodiment_id = $embodiment_infos->id;
+                    $embodiment_log_update->old_memorandum_id = $embodiment_infos->memorandum_id;
+                    $embodiment_log_update->ansar_id = $ansar->ansarId;
+                    $embodiment_log_update->kpi_id = $embodiment_infos->kpi_id;
+                    $embodiment_log_update->reporting_date = $embodiment_infos->reporting_date;
+                    $embodiment_log_update->joining_date = $embodiment_infos->joining_date;
+                    $embodiment_log_update->transfered_date = $embodiment_infos->transfered_date;
+                    $embodiment_log_update->release_date = $modified_disembodiment_date;
+                    $embodiment_log_update->disembodiment_reason_id = $ansar->disReason;
+                    $embodiment_log_update->move_to = "Rest";
+                    $embodiment_log_update->service_extension_status = $embodiment_infos->service_extension_status;
+                    $embodiment_log_update->comment = $disembodiment_comment ? $disembodiment_comment : "NO COMMENT";
+                    $embodiment_log_update->action_user_id = Auth::user()->id;
+                    $embodiment_log_update->save();
+                    $embodiment_infos->delete();
+                    AnsarStatusInfo::where('ansar_id', $ansar->ansarId)->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 1, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 0]);
+                    $mobile = trim(PersonalInfo::where('ansar_id', $ansar->ansarId)->first()->mobile_no_self);
+                    $reason = DB::table('tbl_disembodiment_reason')->where('id', $ansar->disReason)->first()->reason_in_eng;
+//                    dispatch(new DisembodiedSMS($disembodiment_date, $reason, '88' . $mobile));
+                    array_push($user, ['ansar_id' => $ansar->ansarId, 'action_type' => 'DISEMBODIMENT', 'from_state' => 'EMBODIED', 'to_state' => 'REST', 'action_by' => auth()->user()->id]);
+                }
+                static::addActionlog($user, true);
+                DB::commit();
+            }
+        } catch (\Exception $e) {
+            DB::rollback();
+            return Response::json(['status' => false, 'message' => $e->getMessage()]);
+        } catch (\Throwable $e) {
+            DB::rollback();
+            return Response::json(['status' => false, 'message' => $e->getMessage()]);
+        } catch (\Error $e) {
+            DB::rollback();
+            return Response::json(['status' => false, 'message' => $e->getMessage()]);
+        }
+        return Response::json(['status' => true, 'message' => "Ansar/s disemboded successfully"]);
+    }
+    public static function sendToPanel($id){
+        DB::beginTransaction();
+        try{
+            $blocked_ansar = OfferBlockedAnsar::where('ansar_id',$id)->firstOrFail();
+            $now = Carbon::now();
+            $panel_log = PanelInfoLogModel::where('ansar_id',$blocked_ansar->ansar_id)->orderBy('panel_date','desc')->first();
+            PanelModel::create([
+                'memorandum_id' => $panel_log&&isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
+                'panel_date' => $now,
+                'come_from' => 'Offer Cancel',
+                'ansar_merit_list' => 1,
+                'ansar_id' => $blocked_ansar->ansar_id,
+            ]);
+            AnsarStatusInfo::where('ansar_id',$blocked_ansar->ansar_id)->update(['offer_block_status'=>0,'pannel_status'=>1]);
+            $blocked_ansar->status = "unblocked";
+            $blocked_ansar->unblocked_date = Carbon::now()->format('Y-m-d');
+            $blocked_ansar->save();
+            $blocked_ansar->delete();
+
+            DB::commit();
+        }catch(\Exception $exception){
+            DB::rollback();
+            return ['status'=>false,'message'=>$exception->getMessage()];
+        }
+        return ['status'=>true,'message'=>'Sending to panel complete'];
+    }
+    public static function savePanelEntry(Request $request)
+    {
+        $date = Carbon::yesterday()->format('d-M-Y');
+        $rules = [
+            'memorandumId' => 'required',
+            'ansar_id' => 'required|is_array|array_type:int',
+            'panel_date' => ["required", "after:{$date}"],
+        ];
+        $valid = Validator::make($request->all(), $rules);
+        if ($valid->fails()) {
+            return Response::json(['status' => false, 'message' => 'Invalid request']);
+        }
+        $selected_ansars = $request->input('ansar_id');
+        DB::beginTransaction();
+        $user = [];
+        try {
+            $mi = $request->input('memorandumId');
+            $pd = $request->input('panel_date');
+            $modified_panel_date = Carbon::parse($pd)->format('Y-m-d');
+            $memorandum_entry = new MemorandumModel();
+            $memorandum_entry->memorandum_id = $mi;
+            $memorandum_entry->save();
+            if (!is_null($selected_ansars)) {
+                for ($i = 0; $i < count($selected_ansars); $i++) {
+                    $ansar = PersonalInfo::where('ansar_id', $selected_ansars[$i])->first();
+                    if ($ansar && ($ansar->verified == 0 || $ansar->verified == 1)) {
+                        $ansar->verified = 2;
+                        $ansar->save();
+                    }
+                    $panel_entry = new PanelModel;
+                    $panel_entry->ansar_id = $selected_ansars[$i];
+                    $panel_entry->come_from = "Rest";
+                    $panel_entry->panel_date = $modified_panel_date;
+                    $panel_entry->memorandum_id = $mi;
+                    $panel_entry->ansar_merit_list =1;
+                    $panel_entry->action_user_id = Auth::user()->id;
+                    $panel_entry->save();
+
+                    $rest_info = RestInfoModel::where('ansar_id', $selected_ansars[$i])->first();
+
+                    $rest_log_entry = new RestInfoLogModel();
+                    $rest_log_entry->old_rest_id = $rest_info->id;
+                    $rest_log_entry->old_embodiment_id = $rest_info->old_embodiment_id;
+                    $rest_log_entry->old_memorandum_id = $rest_info->memorandum_id;
+                    $rest_log_entry->ansar_id = $selected_ansars[$i];
+                    $rest_log_entry->rest_date = $rest_info->rest_date;
+                    $rest_log_entry->total_service_days = $rest_info->total_service_days;
+                    $rest_log_entry->rest_type = $rest_info->rest_form;
+                    $rest_log_entry->disembodiment_reason_id = $rest_info->disembodiment_reason_id;
+                    $rest_log_entry->comment = $rest_info->comment;
+                    $rest_log_entry->move_to = "Panel";
+                    $rest_log_entry->move_date = $modified_panel_date;
+                    $rest_log_entry->action_user_id = Auth::user()->id;
+                    $rest_log_entry->save();
+
+                    $rest_info->delete();
+                    AnsarStatusInfo::where('ansar_id', $selected_ansars[$i])->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 1, 'freezing_status' => 0]);
+
+                    array_push($user, ['ansar_id' => $selected_ansars[$i], 'action_type' => 'PANELED', 'from_state' => 'REST', 'to_state' => 'PANELED', 'action_by' => auth()->user()->id]);
+
+                }
+            }
+            DB::commit();
+            static::addActionlog($user, true);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return Response::json(['status' => false, 'message' => "Ansar/s not added to panel"]);
+        }
+        return Response::json(['status' => true, 'message' => "Ansar/s added to panel successfully"]);
     }
 }

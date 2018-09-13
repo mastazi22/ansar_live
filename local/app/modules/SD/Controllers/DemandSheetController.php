@@ -52,7 +52,7 @@ class DemandSheetController extends Controller
         }
         $total_days = Carbon::parse($request->get('form_date'))->diffInDays(Carbon::parse($request->get('to_date')))+1;
         $total_ansars = DB::connection('hrm')->table('tbl_kpi_info')->join('tbl_embodiment', 'tbl_embodiment.kpi_id', '=', 'tbl_kpi_info.id')->join('tbl_ansar_parsonal_info', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('tbl_kpi_info.id', $request->get('kpi'))->groupBy('tbl_ansar_parsonal_info.designation_id')->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as count'), 'tbl_ansar_parsonal_info.designation_id')->get();
-        $with_weapon = KpiDetailsModel::where('kpi_id', $request->get('kpi'))->pluck('with_weapon');
+        $with_weapon = KpiDetailsModel::where('kpi_id', $request->get('kpi'))->first()->with_weapon;
         $address = KpiGeneralModel::find($request->get('kpi'))->address;
         $unit = District::find($request->unit);
         $total_pc = 0;
