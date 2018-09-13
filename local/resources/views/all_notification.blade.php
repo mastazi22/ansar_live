@@ -46,7 +46,7 @@
                             <th>Request Date</th>
                             <th>Action</th>
                         </tr>
-                        @forelse(Notification::getForgetPasswordNotification() as $notification)
+                        @forelse(Notification::getAllForgetPasswordNotification() as $notification)
                             <tr>
                                 <td>{{$i++}}</td>
                                 <td>{{$notification->user_name}}</td>
