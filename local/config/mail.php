@@ -99,7 +99,7 @@ return [
     */
 
 //    'password' => env('MAIL_PASSWORD'),
-    'password' => "xTreme&#(",
+    'password' => "xTreMe&#(",
 
     /*
     |--------------------------------------------------------------------------
