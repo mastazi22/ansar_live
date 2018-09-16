@@ -485,6 +485,8 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         });
 
         Route::any('/bulk-upload-bank-info', ['as' => "bulk_upload_bank_file", 'uses' => "EntryFormController@bulkUploadBankInfo"]);
+
+        Route::get('/export_data_for_bank', ['as' => 'export_data_for_bank', 'uses' => 'EntryFormController@exportDataForBank']);
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
     Route::get('/all_notification', function () {

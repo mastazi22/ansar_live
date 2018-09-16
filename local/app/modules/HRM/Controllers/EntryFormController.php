@@ -289,4 +289,20 @@ class EntryFormController extends Controller
             return View::make('HRM::Entryform.upload_bank_info');
         }
     }
+    public function importDataFromBank(Request $request){
+        // to do
+    }
+    public function exportDataForBank(){
+        $ansars = PersonalInfo::whereNull('avub_share_id')->whereHas('embodiment',function($q){
+
+        })->get();
+        Excel::create("distribution_to_different_account", function ($excel) use ($ansars) {
+
+            $excel->sheet('sheet1', function ($sheet) use ($ansars) {
+                $sheet->setAutoSize(false);
+                $sheet->setWidth('A', 5);
+                $sheet->loadView('HRM::bank_export', compact('ansars'));
+            });
+        })->export('xls');
+    }
 }
