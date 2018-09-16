@@ -433,4 +433,9 @@ class SalaryDisburseController extends Controller
     {
         return response()->download(public_path($file_name))->deleteFileAfterSend(true);
     }
+    public function test()
+    {
+        return $this->sendEmailRaw("hello, where are u?","arafat@shurjomukhi.com.bd","HELLO");
+    }
+
 }
