@@ -57,7 +57,7 @@ return [
     |
     */
 
-    'from' => ['address' => "no-reply@ansarvdp.gov.bd", 'name' => "no-reply"],
+    'from' => ['address' => "prsd@ansarvdp.gov.bd", 'name' => ""],
 
     /*
     |--------------------------------------------------------------------------
@@ -85,7 +85,7 @@ return [
     */
 
 //    'username' => env('MAIL_USERNAME'),
-    'username' => "no-reply@ansarvdp.gov.bd",
+    'username' => "prsd@ansarvdp.gov.bd",
 
     /*
     |--------------------------------------------------------------------------
@@ -99,7 +99,7 @@ return [
     */
 
 //    'password' => env('MAIL_PASSWORD'),
-    'password' => "Ansar#2905",
+    'password' => "xTreme&#(",
 
     /*
     |--------------------------------------------------------------------------
