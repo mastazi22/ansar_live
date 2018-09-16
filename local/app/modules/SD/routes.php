@@ -30,6 +30,7 @@ Route::group(['prefix' => 'SD', 'middleware' => [ 'auth','manageDatabase', 'chec
         Route::get('kpi_payment/document/{id}', ['as'=>'SD.kpi_payment.show_doc','uses'=>'KPIPaymentController@showDoc']);
         Route::resource('kpi_payment', 'KPIPaymentController');
         Route::get('salary_disburse/download/{file_name}', ['as'=>'SD.salary_disburse.download','uses'=>'SalaryDisburseController@download']);
+        Route::get('salary_disburse/test_email', ['as'=>'SD.salary_disburse.test_email','uses'=>'SalaryDisburseController@test']);
         Route::resource('salary_disburse', 'SalaryDisburseController',["only"=>["index","create","store","show"]]);
         /*Route::get('/test', function () {
 //
