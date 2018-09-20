@@ -91,23 +91,14 @@
             <td colspan="8"><span class="value2">{{LanguageConverter::engToBng(\Carbon\Carbon::now()->format('d-m-Y'))}}</span>তারিখঃ ................................. </td>
         </tr>
         <tr >
-            <td style="vertical-align: top;width: 30px">প্রতিঃ</td>
-            <td colspan="7">
-                <table  cellpadding="0" cellspacing="0">
-                    <tr>
-                        <td><span class="value1">{{$address}}</span>...................................................................................................</td>
-                    </tr>
-                    <tr style="height: 40px">
-                        <td>....................................................................................................</td>
-                    </tr>
-                    <tr>
-                        <td>....................................................................................................</td>
-                    </tr>
-                </table>
-            </td>
+            <td style="vertical-align: top;width: 30px;padding: 15px 0">প্রতিঃ</td>
+            <td colspan="7" style="word-break: normal;padding: 15px">{{$letter_to}}</td>
         </tr>
         <tr>
-            <td colspan="8" style="padding: 15px"></td>
+            <td style="vertical-align: top;width: 30px;padding: 15px 0">সুত্রঃ</td>
+            <td colspan="7" style="padding: 15px;">
+                {{$source}}
+            </td>
         </tr>
         <tr  style=""  >
             <td style="width: 30px">বিষয়ঃ </td>

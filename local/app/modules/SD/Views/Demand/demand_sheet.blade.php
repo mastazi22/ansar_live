@@ -86,6 +86,16 @@
                                 <input class="form-control dddd" id="Other_date" name="other_date" type="text">
                                 <p ng-if="errors.other_date!=undefined" class="text text-danger">[[errors.other_date[0] ]]</p>
                             </div>
+                            <div class="form-group" ng-class="{'has-error':errors.to!=undefined}">
+                                <label for="to">To</label>
+                                <input class="form-control" id="to" name="to" type="text">
+                                <p ng-if="errors.to!=undefined" class="text text-danger">[[errors.to[0] ]]</p>
+                            </div>
+                            <div class="form-group" ng-class="{'has-error':errors.source!=undefined}">
+                                <label for="source">Source(সুত্র)</label>
+                                <input class="form-control" id="source" name="source" type="text">
+                                <p ng-if="errors.source!=undefined" class="text text-danger">[[errors.source[0] ]]</p>
+                            </div>
                             <div class="form-group">
                                 <label class="control-label">
                                     <input type="checkbox" value="1" name="no_margha_fee">&nbsp;Don`t add margha fee.
