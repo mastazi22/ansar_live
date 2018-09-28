@@ -39,7 +39,9 @@ class DemandSheetController extends Controller
             'form_date' => 'required|date_format:d-M-Y',
             'to_date' => 'required|date_format:d-M-Y|after:form_date',
             'other_date' => 'required|date_format:d-M-Y|after:form_date',
-            'mem_id' => 'required|unique:hrm.tbl_memorandum_id,memorandum_id'
+            'mem_id' => 'required|unique:hrm.tbl_memorandum_id,memorandum_id',
+            'to'=>'required',
+            'source'=>'required',
         ];
         $messages = [
             'required' => 'This field is required',
@@ -83,9 +85,9 @@ class DemandSheetController extends Controller
            $total_min_paid_amount = $st3 + $st5 + $st6 + $st7 + $st8;
        }
         $path = storage_path('DemandSheet/' . $request->get('kpi'));
-        $file_name = bcrypt(Carbon::now()->timestamp) . '.pdf';
+        $file_name = Carbon::now()->timestamp . '.pdf';
         if (!File::exists($path)) File::makeDirectory($path, 0775, true);
-        $data = ['mem_no' => $request->get('mem_id'), 'address' => $address, 'total_pc' => $total_pc, 'total_apc' => $total_apc, 'total_ansar' => $total_ansar, 'to' => $to, 'form' => $form, 'p_date' => $payment_date, 'total_day' => $total_days, 'st1' => $st1, 'st2' => $st2, 'st3' => $st3, 'st4' => $st4, 'st5' => $st5, 'st6' => $st6, 'st7' => $st7, 'st8' => $st8, 'st9' => $st9, 'unit' => $unit,'no_margha_fee'=>$request->no_margha_fee];
+        $data = ['letter_to'=>$request->to,'source'=>$request->source,'mem_no' => $request->get('mem_id'), 'address' => $address, 'total_pc' => $total_pc, 'total_apc' => $total_apc, 'total_ansar' => $total_ansar, 'to' => $to, 'form' => $form, 'p_date' => $payment_date, 'total_day' => $total_days, 'st1' => $st1, 'st2' => $st2, 'st3' => $st3, 'st4' => $st4, 'st5' => $st5, 'st6' => $st6, 'st7' => $st7, 'st8' => $st8, 'st9' => $st9, 'unit' => $unit,'no_margha_fee'=>$request->no_margha_fee];
         SnappyPdf::loadView('SD::Demand.template', $data)->save($path . '/' . $file_name);
         $demandlog = new DemandLog();
         $mem = new MemorandumModel();
@@ -98,6 +100,8 @@ class DemandSheetController extends Controller
         $demandlog->request_payment_date = Carbon::parse($request->get('other_date'))->format('Y-m-d');
         $demandlog->generated_date = Carbon::now()->format('Y-m-d H:i:s');
         $demandlog->memorandum_no = $request->get('mem_id');
+        $demandlog->letter_to = $request->get('to');
+        $demandlog->letter_source = $request->get('source');
         $mem->memorandum_id = $request->get('mem_id');
         DB::connection('sd')->beginTransaction();
         DB::connection('hrm')->beginTransaction();
