@@ -5,6 +5,7 @@ namespace App\modules\recruitment\Controllers;
 use App\Jobs\FeedbackSMS;
 use App\modules\recruitment\Models\FeebBack;
 use App\modules\recruitment\Models\JobAppliciant;
+use App\modules\recruitment\Models\SmsQueue;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -86,5 +87,16 @@ class SupportController extends Controller
             return redirect()->back()->with('success_message', 'deleted successfully');
         }
         return redirect()->back()->with('error_message', 'not found');
+    }
+    public function sendUserNamePassword(){
+        $paids = JobAppliciant::where('job_circular_id',23)->where('status','paid')->get();
+        foreach ($paids as $paid){
+            $body = "Your applicant id:{$paid->applicant_id}, password: {$paid->applicant_password} . please apply before 3pm";
+            $to = $paid->mobile_no_self;
+            $payload = compact('to','body');
+            $try = 1;
+            SmsQueue::create(compact('payload','try'));
+        }
+        return "success";
     }
 }
