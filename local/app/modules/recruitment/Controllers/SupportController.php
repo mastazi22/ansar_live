@@ -93,8 +93,9 @@ class SupportController extends Controller
         foreach ($paids as $paid){
             $body = "Your applicant id:{$paid->applicant_id}, password: {$paid->applicant_password} . please apply before 3pm";
             $to = $paid->mobile_no_self;
-            $payload = compact('to','body');
+            $payload = json_encode(compact('to','body'));
             $try = 1;
+//            return $payload;
             SmsQueue::create(compact('payload','try'));
         }
         return "success";
