@@ -173,13 +173,15 @@
                 })
             }
             $scope.rejectApplicants = function (id) {
+                $("#reject-form").modal('hide');
                 $scope.allLoading = true;
                 $http({
                     url:'{{URL::route('recruitment.applicant.confirm_selection_or_rejection')}}',
                     method:'post',
                     data:{
                         applicants:[id],
-                        type:'rejection'
+                        type:'rejection',
+                        message:$scope.reject_message
                     }
                 }).then(function (response) {
                     $scope.applicants = $sce.trustAsHtml('<h4 class="text-center">No Applicant available</h4>');
@@ -228,6 +230,11 @@
                     $rootScope.detail = $sce.trustAsHtml(response.data.view);
                     $rootScope.applicant_id = response.data.id;
                 })
+            }
+            $scope.showRejectDialog = function (id) {
+                $scope.applicantId = id;
+                $("#reject-form").modal('show');
+
             }
             $scope.submitComplete = function () {
                 $("#edit-form").modal('hide');
@@ -517,6 +524,21 @@
                     </div>
                     <div class="modal-body" ng-bind-html="detail" compile-htmll>
 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="reject-form">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="" class="control-label">Reason</label>
+                            <input type="text" ng-model="reject_message" class="form-control" placeholder="Type the reason for rejection">
+                        </div>
+                        <div class="form-group">
+                            <buton class="btn btn-primary pull-right" ng-click="rejectApplicants(applicantId)">Reject</buton>
+                        </div>
                     </div>
                 </div>
             </div>
