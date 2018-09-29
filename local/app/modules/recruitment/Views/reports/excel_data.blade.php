@@ -53,7 +53,7 @@
                 @if($ctype=='apc_training')
                     <td>{{$a->ansar->calculateAge()}}</td>
                 @endif
-                <td>{{"N-".$a->national_id_no}}</td>
+                <td>{{$a->national_id_no}}&nbsp;</td>
                 @if($ctype=='apc_training')
                     <td>{{$a->ansar->status->getStatus()[0]}}</td>
                     <td>{{$a->ansar->getExperience()}}</td>
