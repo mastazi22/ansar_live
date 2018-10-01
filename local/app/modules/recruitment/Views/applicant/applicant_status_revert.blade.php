@@ -17,7 +17,10 @@
                             <caption style="font-size: 20px;color:#111111">All applicants</caption>
                             <tr>
                                 <th>Sl. No</th>
+                                <th>Applicant ID</th>
                                 <th>Applicant Name</th>
+                                <th>Father Name</th>
+                                <th>Height</th>
                                 <th>Gender</th>
                                 <th>Birth Date</th>
                                 <th>Division</th>
@@ -28,7 +31,7 @@
                                 <th>Action</th>
                             </tr>
                             <tr>
-                                <td colspan="10" class="bg-warning">No applicant available
+                                <td colspan="15" class="bg-warning">No applicant available
                                 .Select <strong>Circular</strong> and <strong>status</strong> to load applicant
                                 </td>
                             </tr>

@@ -54,7 +54,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td class="bg-warning" colspan="14">No data available</td>
+                    <td class="bg-warning" colspan="13">No data available</td>
                 </tr>
             @endforelse
         </table>
