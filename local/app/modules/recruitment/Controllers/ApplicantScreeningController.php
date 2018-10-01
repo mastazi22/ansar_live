@@ -652,6 +652,7 @@ class ApplicantScreeningController extends Controller
                 foreach ($request->applicants as $applicant_id) {
                     $applicant = JobAppliciant::where('applicant_id', $applicant_id)->first();
                     if ($applicant) {
+                        $applicant->rejected()->create(['remark'=>$request->message,'action_user_id'=>$request->action_user_id]);
                         $applicant->update(['status' => 'rejected']);
                     }
                 }

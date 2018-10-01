@@ -189,8 +189,12 @@
                     notificationService.notify(response.data.status,response.data.message)
                     $scope.selectedList = [];
                     $scope.applicantsDetail = [];
+                    $scope.applicantId = '';
+                    $scope.reject_message = '';
                 },function (response) {
                     $scope.allLoading = false;
+                    $scope.applicantId = '';
+                    $scope.reject_message = '';
                 })
             }
             var v = '<div class="text-center" style="margin-top: 20px"><i class="fa fa-spinner fa-pulse"></i></div>'
@@ -533,10 +537,10 @@
                 <div class="modal-content">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="" class="control-label">Reason</label>
-                            <input type="text" ng-model="reject_message" class="form-control" placeholder="Type the reason for rejection">
+                            <label for="" class="control-label">Remark</label>
+                            <input type="text" ng-model="reject_message" class="form-control" placeholder="Type the reason for remark">
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="overflow: hidden;">
                             <buton class="btn btn-primary pull-right" ng-click="rejectApplicants(applicantId)">Reject</buton>
                         </div>
                     </div>

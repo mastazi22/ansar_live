@@ -85,6 +85,10 @@ class JobAppliciant extends Model
     {
         return $this->hasOne(JobAcceptedApplicant::class, 'applicant_id', 'applicant_id');
     }
+    public function rejected()
+    {
+        return $this->hasOne(JobRejectedApplicant::class, 'applicant_id', 'applicant_id');
+    }
 
     public function marks()
     {
