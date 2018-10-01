@@ -15,7 +15,10 @@
             </caption>
             <tr>
                 <th>Sl. No</th>
+                <th>Applicant ID</th>
                 <th>Applicant Name</th>
+                <th>Father Name</th>
+                <th>Height</th>
                 <th>Gender</th>
                 <th>Birth Date</th>
                 <th>Division</th>
@@ -28,8 +31,10 @@
             @forelse($applicants as $a)
                 <tr ng-init="param[{{$i-1}}]['applicant_id']='{{$a->applicant_id}}'">
                     <td>{{$i++}}</td>
-                    <td>{{$a->applicant_name_bng}}
-                    </td>
+                    <td>{{$a->applicant_id}}</td>
+                    <td>{{$a->applicant_name_bng}}</td>
+                    <td>{{$a->father_name_bng}}</td>
+                    <td>{{$a->height_feet."'".$a->height_inch."''"}}</td>
                     <td>{{$a->gender}}</td>
                     <td>{{$a->date_of_birth}}</td>
                     <td>{{$a->division->division_name_bng}}</td>
@@ -49,7 +54,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td class="bg-warning" colspan="11">No data available</td>
+                    <td class="bg-warning" colspan="14">No data available</td>
                 </tr>
             @endforelse
         </table>
