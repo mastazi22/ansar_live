@@ -2,13 +2,11 @@
 
 namespace App\modules\recruitment\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\modules\recruitment\Models\JobApplicationInstruction;
 use App\modules\recruitment\Models\JobEducationInfo;
 use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 
 class RecruitmentController extends Controller
 {
@@ -19,23 +17,62 @@ class RecruitmentController extends Controller
         return view('recruitment::index');
     }
 
-    public function educationList(){
-        return JobEducationInfo::pluck('education_deg_bng','id');
+    public function educationList()
+    {
+        return JobEducationInfo::pluck('education_deg_bng', 'id');
     }
-    public function aplicationInstruction(Request $request){
-        $data = JobApplicationInstruction::all()->first();
-        if(strcasecmp($request->method(),'post')==0){
-            if(!$data){
-                $data = new JobApplicationInstruction;
-            }
-            $data->instruction = $request->instruction;
-            $data->save();
-            if($data){
-                return redirect()->back()->with(['success'=>'Instruction write successfully']);
-            }
-            return redirect()->back()->with(['error'=>'An error occur while writing. Please try again later']);
 
+    public function aplicationInstruction(Request $request)
+    {
+        $data = JobApplicationInstruction::all();
+        return view('recruitment::instruction.index', ['instructions' => $data]);
+    }
+
+    public function editApplicationInstruction(Request $request,$id)
+    {
+        if(strcasecmp($request->method(),'GET')==0){
+            $data = JobApplicationInstruction::find($id);
+            return view('recruitment::instruction.edit',compact('data'));
+        }else if(strcasecmp($request->method(),'POST')==0) {
+            $rules = [
+                'type'=>'required|unique:recruitment.job_application_instruction,type,'.$id,
+                'instruction'=>'required'
+            ];
+            $this->validate($request,$rules);
+            DB::connection('recruitment')->beginTransaction();
+            try{
+                $data = JobApplicationInstruction::find($id);
+                $data->instruction = $request->instruction;
+                $data->save();
+                DB::connection('recruitment')->commit();
+            }catch(\Exception $e){
+                DB::connection('recruitment')->rollback();
+                return redirect()->route('recruitment.instruction')->with('error',$e->getMessage());
+            }
+            return redirect()->route('recruitment.instruction')->with('success','Instruction updated successfully');
         }
-        return view('recruitment::instruction',['data'=>$data]);
+
+    }
+    public function createApplicationInstruction(Request $request)
+    {
+       if(strcasecmp($request->method(),'GET')==0){
+           return view('recruitment::instruction.create');
+       }else if(strcasecmp($request->method(),'POST')==0){
+           $rules = [
+               'type'=>'required|unique:recruitment.job_application_instruction',
+               'instruction'=>'required'
+           ];
+           $this->validate($request,$rules);
+           DB::connection('recruitment')->beginTransaction();
+           try{
+               JobApplicationInstruction::create($request->only(['type','instruction']));
+               DB::connection('recruitment')->commit();
+           }catch(\Exception $e){
+               DB::connection('recruitment')->rollback();
+               return redirect()->route('recruitment.instruction')->with('error',$e->getMessage());
+           }
+           return redirect()->route('recruitment.instruction')->with('success','Instruction created successfully');
+       }
+
     }
 }

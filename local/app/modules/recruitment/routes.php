@@ -71,7 +71,9 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
         Route::post('/reports/applicat_status/export', ['as' => 'report.applicants.status_export', 'uses' => 'ApplicantReportsController@exportData']);
 
 //
-        Route::any('/setting/instruction', ['as' => 'recruitment.instruction', 'uses' => 'RecruitmentController@aplicationInstruction']);
+        Route::get('/setting/instruction', ['as' => 'recruitment.instruction', 'uses' => 'RecruitmentController@aplicationInstruction']);
+        Route::any('/setting/instruction/create', ['as' => 'recruitment.instruction.create', 'uses' => 'RecruitmentController@createApplicationInstruction']);
+        Route::any('/setting/instruction/edit/{id}', ['as' => 'recruitment.instruction.edit', 'uses' => 'RecruitmentController@editApplicationInstruction']);
 
         Route::resource('exam-center', 'ApplicantExamCenter');
         Route::resource('mark_distribution', 'JobCircularMarkDistributionController');

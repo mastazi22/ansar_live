@@ -1,10 +1,10 @@
 @extends('template.master')
-@section('title','Application Instruction')
+@section('title','Create Application Instruction')
 @section('breadcrumb')
     {!! Breadcrumbs::render('recruitment') !!}
 @endsection
 @section('content')
-    <section class="content" ng-controller="applicantSearch">
+    <section class="content">
         @if(Session::has('success'))
             <div class="alert alert-success">
                 {!! Session::get('success') !!}
@@ -19,9 +19,13 @@
             <div class="box-body">
                 <div class="row">
                     <div class="col-sm-8 col-centered">
-                        {!! Form::model($data,['route'=>'recruitment.instruction']) !!}
+                        {!! Form::open(['route'=>'recruitment.instruction.create']) !!}
+                        {!! Form::label('type','Instruction type') !!}
+                        {!! Form::select('type',[''=>'--Select instruction type--','welcome_message'=>'Welcome Message','instruction_message'=>'Instruction Message'],null,['class'=>'form-control']) !!}
+                        {!! $errors->first('type','<p class="text-danger">:message</p>') !!}
                         {!! Form::label('instruction','Application instruction') !!}
                         {!! Form::textarea('instruction',null,['id'=>'instruction','class'=>'form-control']) !!}
+                        {!! $errors->first('instruction','<p class="text-danger">:message</p>') !!}
                         <button class="btn btn-primary" type="submit" style="margin-top: 20px">Save Instrcution</button>
                         {!! Form::close() !!}
                     </div>
