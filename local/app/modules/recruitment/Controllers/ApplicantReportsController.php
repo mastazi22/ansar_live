@@ -135,8 +135,8 @@ class ApplicantReportsController extends Controller
                 $applicants = collect($applicants)->groupBy('district.unit_name_eng')->all();
 //                return $applicants;
                 $files = [];
-                foreach ($applicants as $applicant){
-                    $excel = Excel::create('applicant_marks', function ($excel) use ($applicant) {
+                foreach ($applicants as $key=>$applicant){
+                    $excel = Excel::create($key.'_applicant_marks', function ($excel) use ($applicant) {
                         $excel->sheet('sheet1', function ($sheet) use ($applicant) {
                             $sheet->loadView('recruitment::reports.marks_list', [
                                 'applicants' => $applicant
