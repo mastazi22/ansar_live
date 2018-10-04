@@ -116,7 +116,9 @@ class ApplicantReportsController extends Controller
 //            DB::enableQueryLog();
             $applicants = JobAppliciant::with(['marks'=>function($q){
                 $q->select(DB::raw('*,(written+viva+physical+edu_training+ physical_age) as total_mark'));
-            },'district','circular.markDistribution','thana'])->whereHas('marks',function ($q){
+            },'district','circular'=>function($q){
+                $q->select('id')->with('markDistribution');
+            },'thana'])->whereHas('marks',function ($q){
             })->where('job_circular_id',$request->circular);
 
 
@@ -127,7 +129,7 @@ class ApplicantReportsController extends Controller
             if($request->exists('range')&&$request->range!='all'){
                 $applicants->where('division_id',$request->range);
             }
-            $applicants = $applicants->orderBy('unit_id')->orderBy('thana_id')->get();
+            $applicants = $applicants->select('applicant_id','applicant_name_bng','division_id','unit_id','thana_id','job_circular_id')->orderBy('unit_id')->orderBy('thana_id')->get();
 
 //            return $applicants;
 //            return DB::getQueryLog();
