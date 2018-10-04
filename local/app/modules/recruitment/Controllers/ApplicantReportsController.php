@@ -131,7 +131,7 @@ class ApplicantReportsController extends Controller
 
 //            return $applicants;
 //            return DB::getQueryLog();
-            if(!$request->exists('unit')&&$request->unit=='all'){
+            if($request->exists('unit')&&$request->unit=='all'){
                 $applicants = collect($applicants)->groupBy('district.unit_name_eng')->all();
                 return $applicants;
                 $files = [];
