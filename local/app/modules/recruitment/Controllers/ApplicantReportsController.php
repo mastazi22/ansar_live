@@ -127,13 +127,13 @@ class ApplicantReportsController extends Controller
             if($request->exists('range')&&$request->range!='all'){
                 $applicants->where('division_id',$request->range);
             }
-            $applicants = $applicants->select('applicant_name_bng','job_circular_id','division_id','unit_id','thana_id')->orderBy('unit_id')->orderBy('thana_id')->get();
+            $applicants = $applicants->orderBy('unit_id')->orderBy('thana_id')->get();
 
 //            return $applicants;
 //            return DB::getQueryLog();
             if($request->exists('unit')&&$request->unit=='all'){
                 $applicants = collect($applicants)->groupBy('district.unit_name_eng')->all();
-                return $applicants;
+//                return $applicants;
                 $files = [];
                 foreach ($applicants as $applicant){
                     $excel = Excel::create('applicant_marks', function ($excel) use ($applicant) {
@@ -145,7 +145,7 @@ class ApplicantReportsController extends Controller
                     })->store('xls',storage_path('exports'),true);
                     array_push($files,$excel);
                 }
-                $zip_archive_name = "applicants_mark" . time() . ".zip";
+                $zip_archive_name = "applicants_marks_report.zip";
                 $zip = new \ZipArchive();
                 if ($zip->open(public_path($zip_archive_name), \ZipArchive::CREATE) === true) {
                     foreach ($files as $file) {
@@ -153,6 +153,7 @@ class ApplicantReportsController extends Controller
                     }
                     $zip->close();
                 }
+                return response()->download(public_path($zip_archive_name))->deleteFileAfterSend(true);
             }
             else {
                 $excel = Excel::create('applicant_marks', function ($excel) use ($applicants) {
@@ -162,9 +163,10 @@ class ApplicantReportsController extends Controller
                         ]);
                     });
                 });
+                return $excel->download('xls');
             }
 
-            return $excel->download('xls');
+
         }
         return view('recruitment::reports.applicant_marks_report');
     }
