@@ -127,7 +127,7 @@ class ApplicantReportsController extends Controller
             if($request->exists('range')&&$request->range!='all'){
                 $applicants->where('division_id',$request->range);
             }
-            $applicants = $applicants->orderBy('unit_id')->orderBy('thana_id')->get();
+            $applicants = $applicants->select('applicant_name_bng','job_circular_id','division_id','unit_id','thana')->orderBy('unit_id')->orderBy('thana_id')->get();
 
 //            return $applicants;
 //            return DB::getQueryLog();
