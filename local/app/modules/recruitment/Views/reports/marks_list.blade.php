@@ -45,7 +45,7 @@
                         (out of {{$a->circular->markDistribution->written}})
                     </td>
                     <td>{{$a->marks->viva}}</td>
-                    <td>{{$a->marks->total_mark}}</td>
+                    <td>{{$a->marks->totalMarks()}}</td>
                 @endif
             </tr>
         @else
@@ -68,7 +68,7 @@
                         (out of {{$a->circular->markDistribution->written}})
                     </td>
                     <td>{{$a->marks->viva}}</td>
-                    <td>{{$a->marks->total_mark}}</td>
+                    <td>{{$a->marks->totalMarks()}}</td>
                 @endif
             </tr>
         @endif
