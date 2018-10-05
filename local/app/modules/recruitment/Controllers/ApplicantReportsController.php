@@ -114,7 +114,7 @@ class ApplicantReportsController extends Controller
             ];
             $this->validate($request,$rules);
             DB::enableQueryLog();
-            $applicants = JobAppliciant::with(['marks','district','circular'=>function($q){
+            $applicants = JobAppliciant::with(['district','circular'=>function($q){
                 $q->select('id')->with('markDistribution');
             },'thana'])->whereHas('marks',function ($q){
             })->where('job_circular_id',$request->circular);
