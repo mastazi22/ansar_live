@@ -159,7 +159,7 @@ class ApplicantReportsController extends Controller
                     unlink($file["full"]);
 
                 }
-                return response()->download(public_path($zip_archive_name))->deleteFileAfterSend(true);
+                return response()->download(public_path($zip_archive_name));
             }
             else {
                 $excel = Excel::create('applicant_marks', function ($excel) use ($applicants) {
