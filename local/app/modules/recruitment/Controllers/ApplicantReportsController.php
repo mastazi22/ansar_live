@@ -129,11 +129,11 @@ class ApplicantReportsController extends Controller
             }
             $applicants = $applicants->select('applicant_id','applicant_name_bng','division_id','unit_id','thana_id','job_circular_id')->orderBy('unit_id')->orderBy('thana_id')->get();
 //            return DB::getQueryLog();
-            return $applicants;
+//            return $applicants;
 //            return DB::getQueryLog();
             if($request->exists('unit')&&$request->unit=='all'){
                 $applicants = collect($applicants)->groupBy('district.unit_name_eng')->all();
-                return $applicants;
+//                return $applicants;
                 $files = [];
                 foreach ($applicants as $key=>$applicant){
                     $excel = Excel::create($key.'_applicant_marks', function ($excel) use ($applicant) {
