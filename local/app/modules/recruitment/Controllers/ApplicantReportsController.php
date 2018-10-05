@@ -113,7 +113,7 @@ class ApplicantReportsController extends Controller
                 'circular'=>'required|regex:/^[0-9]+$/',
             ];
             $this->validate($request,$rules);
-//            DB::enableQueryLog();
+            DB::enableQueryLog();
             $applicants = JobAppliciant::with(['marks','district','circular'=>function($q){
                 $q->select('id')->with('markDistribution');
             },'thana'])->whereHas('marks',function ($q){
@@ -128,7 +128,7 @@ class ApplicantReportsController extends Controller
                 $applicants->where('division_id',$request->range);
             }
             $applicants = $applicants->select('applicant_id','applicant_name_bng','division_id','unit_id','thana_id','job_circular_id')->orderBy('unit_id')->orderBy('thana_id')->get();
-
+            return DB::getQueryLog();
             return $applicants;
 //            return DB::getQueryLog();
             if($request->exists('unit')&&$request->unit=='all'){
