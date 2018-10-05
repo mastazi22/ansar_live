@@ -44,8 +44,8 @@
                     <td>{{$marks->edu_training}}</td>
                     <td>{{$marks->edu_experience}}</td>
                     <td>{{$marks->physical_age}}</td>
-                    <td>{{round($marks->convertedWrittenMark(),2)}}(out
-                        of {{$a->circular->markDistribution->convert_written_mark}}) and {{round($marks->written,2)}}
+                    <td>{{$marks->convertedWrittenMark()}}(out
+                        of {{$a->circular->markDistribution->convert_written_mark}}) and {{$marks->written}}
                         (out of {{$a->circular->markDistribution->written}})
                     </td>
                     <td>{{$marks->viva}}</td>
@@ -68,8 +68,8 @@
                     <td>{{$marks->edu_training}}</td>
                     <td>{{$marks->edu_experience}}</td>
                     <td>{{$marks->physical_age}}</td>
-                    <td>{{round($marks->convertedWrittenMark(),2)}}(out
-                        of {{$a->circular->markDistribution->convert_written_mark}}) and {{round($marks->written,2)}}
+                    <td>{{$marks->convertedWrittenMark()}}(out
+                        of {{$a->circular->markDistribution->convert_written_mark}}) and {{$marks->written}}
                         (out of {{$a->circular->markDistribution->written}})
                     </td>
                     <td>{{$marks->viva}}</td>
