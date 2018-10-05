@@ -13,6 +13,7 @@
 <table>
     <tr>
         <th>ক্রমিক নং</th>
+        <th>আবেদনকারীর আইডি</th>
         <th>নাম</th>
         <th>জেলা</th>
         <th>থানা</th>
@@ -28,7 +29,9 @@
         @if($a->marks->fail())
             <tr class="fail">
                 <td>{{($i++).''}}</td>
+                <td>{{$a->applicant_id}}</td>
                 <td>{{$a->applicant_name_bng}}</td>
+
                 <td>{{$a->district->unit_name_bng}}</td>
                 <td>{{$a->thana->thana_name_bng}}</td>
                 @if($a->marks->is_bn_candidate)
@@ -51,6 +54,7 @@
         @else
             <tr>
                 <td>{{($i++).''}}</td>
+                <td>{{$a->applicant_id}}</td>
                 <td>{{$a->applicant_name_bng}}</td>
                 <td>{{$a->district->unit_name_bng}}</td>
                 <td>{{$a->thana->thana_name_bng}}</td>
