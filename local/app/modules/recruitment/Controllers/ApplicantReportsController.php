@@ -135,7 +135,7 @@ class ApplicantReportsController extends Controller
 //            return DB::getQueryLog();
             if($request->exists('unit')&&$request->unit=='all'){
                 $applicants = collect($applicants)->groupBy('district.unit_name_eng')->all();
-//                return $applicants;
+                return $applicants;
                 $files = [];
                 foreach ($applicants as $key=>$applicant){
                     $excel = Excel::create($key.'_applicant_marks', function ($excel) use ($applicant) {
