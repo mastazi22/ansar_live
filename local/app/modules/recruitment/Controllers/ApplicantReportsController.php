@@ -155,6 +155,10 @@ class ApplicantReportsController extends Controller
                     }
                     $zip->close();
                 }
+                foreach ($files as $file) {
+                    unlink($file["full"]);
+
+                }
                 return response()->download(public_path($zip_archive_name))->deleteFileAfterSend(true);
             }
             else {
