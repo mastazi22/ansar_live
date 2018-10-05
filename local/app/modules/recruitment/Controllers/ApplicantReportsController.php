@@ -114,9 +114,7 @@ class ApplicantReportsController extends Controller
             ];
             $this->validate($request,$rules);
 //            DB::enableQueryLog();
-            $applicants = JobAppliciant::with(['marks'=>function($q){
-                $q->select(DB::raw('*,(written+viva+physical+edu_training+ physical_age) as total_mark'));
-            },'district','circular'=>function($q){
+            $applicants = JobAppliciant::with(['marks','district','circular'=>function($q){
                 $q->select('id')->with('markDistribution');
             },'thana'])->whereHas('marks',function ($q){
             })->where('job_circular_id',$request->circular);
@@ -131,11 +129,11 @@ class ApplicantReportsController extends Controller
             }
             $applicants = $applicants->select('applicant_id','applicant_name_bng','division_id','unit_id','thana_id','job_circular_id')->orderBy('unit_id')->orderBy('thana_id')->get();
 
-//            return $applicants;
+            return $applicants;
 //            return DB::getQueryLog();
             if($request->exists('unit')&&$request->unit=='all'){
                 $applicants = collect($applicants)->groupBy('district.unit_name_eng')->all();
-//                return $applicants;
+                return $applicants;
                 $files = [];
                 foreach ($applicants as $key=>$applicant){
                     $excel = Excel::create($key.'_applicant_marks', function ($excel) use ($applicant) {
