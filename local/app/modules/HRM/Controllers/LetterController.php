@@ -180,6 +180,7 @@ class LetterController extends Controller
             ->join('tbl_memorandum_id', 'tbl_memorandum_id.memorandum_id', '=', 'tbl_rest_info.memorandum_id')
             ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_rest_info.disembodiment_reason_id')
             ->select('tbl_disembodiment_reason.reason_in_bng as reason', 'tbl_memorandum_id.memorandum_id', 'tbl_memorandum_id.mem_date as created_at');
+
         //return Response::json($mem);
         $user = DB::table('tbl_user')
             ->join('tbl_user_details', 'tbl_user_details.user_id', '=', 'tbl_user.id')
@@ -196,8 +197,13 @@ class LetterController extends Controller
             ->whereRaw('tbl_embodiment_log.release_date=tbl_rest_info.rest_date')
             ->where('tbl_kpi_info.unit_id',$unit)
             ->select('tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'tbl_kpi_info.kpi_name as kpi_name', 'tbl_ansar_parsonal_info.village_name as village_name', 'tbl_ansar_parsonal_info.post_office_name as pon', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_embodiment_log.joining_date', 'tbl_embodiment_log.release_date')->orderBy('tbl_embodiment_log.id','DESC');
+
 //        return $result;
        // return DB::getQueryLog();
+
+//        return $result->toSql();
+
+//        return $result;
         if($option=='smartCardNo'){
             $l  = strlen($id.'');
             if($l>6) $id = substr($id.'',6);
@@ -205,14 +211,48 @@ class LetterController extends Controller
             $mem->where('tbl_rest_info.ansar_id',$id);
         }
         else{
-            $result->where('tbl_rest_info.memorandum_id', $id);
-            $mem->where('tbl_rest_info.memorandum_id', $id);
+            $result->where('tbl_memorandum_id.memorandum_id', $id);
+            $mem->where('tbl_memorandum_id.memorandum_id', $id);
         }
-//        return $result->toSql();
-        $result = DB::table(DB::raw("({$result->toSql()}) x"))->mergeBindings($result)->groupBy('ansar_id')->get();
-//        return $result;
-//        return DB::getQueryLog();
+//        return "exists:-".$result->get();
+        if(!$result->exists()){
+            $result = DB::table('tbl_embodiment_log')
+                ->join('tbl_rest_info_log as tbl_rest_info', 'tbl_rest_info.ansar_id', '=', 'tbl_embodiment_log.ansar_id')
+                ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment_log.kpi_id')
+                ->join('tbl_ansar_parsonal_info', 'tbl_embodiment_log.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
+                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+                ->whereRaw('tbl_embodiment_log.release_date=tbl_rest_info.rest_date')
+                ->where('tbl_kpi_info.unit_id',$unit)
+                ->select('tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'tbl_kpi_info.kpi_name as kpi_name', 'tbl_ansar_parsonal_info.village_name as village_name', 'tbl_ansar_parsonal_info.post_office_name as pon', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_embodiment_log.joining_date', 'tbl_embodiment_log.release_date')->orderBy('tbl_embodiment_log.id','DESC');
+            if($option=='smartCardNo'){
+                $l  = strlen($id.'');
+                if($l>6) $id = substr($id.'',6);
+                $result->where('tbl_ansar_parsonal_info.ansar_id',$id);
+            }
+            else{
+                $result->where('tbl_memorandum_id.memorandum_id', $id);
+            }
+        }
+        if(!$mem->exists()){
+            $mem = DB::table('tbl_rest_info_log as tbl_rest_info')
+                ->join('tbl_memorandum_id', 'tbl_memorandum_id.memorandum_id', '=', 'tbl_rest_info.old_memorandum_id')
+                ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_rest_info.disembodiment_reason_id')
+                ->select('tbl_disembodiment_reason.reason_in_bng as reason', 'tbl_memorandum_id.memorandum_id', 'tbl_memorandum_id.mem_date as created_at');
+            if($option=='smartCardNo'){
+                $l  = strlen($id.'');
+                if($l>6) $id = substr($id.'',6);
+                $mem->where('tbl_rest_info.ansar_id',$id);
+            }
+            else{
+                $mem->where('tbl_memorandum_id.memorandum_id', $id);
+            }
+        }
+
         $mem = $mem->first();
+        $result = DB::table(DB::raw("({$result->toSql()}) x"))->mergeBindings($result)->groupBy('ansar_id')->get();
+//        return DB::getQueryLog();
         if ($mem && $result) {
             return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'result' => $result, 'view' => 'print_disembodiment_letter']);
 //            else return View::make('HRM::Letter.print_disembodiment_letter')->with(['result' => $result, 'user' => $user, 'mem' => $mem]);
