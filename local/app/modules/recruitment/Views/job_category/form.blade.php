@@ -27,7 +27,7 @@
 </div>
 <div class="form-group">
     {!! Form::label('category_type','Job Category Type :',['class'=>'control-label']) !!}
-    {!! Form::select('category_type',[''=>'--Select a type--','new_training'=>'New Training','apc_training'=>'APC Training','pc_training'=>'PC Training','other'=>'other'],null,['class'=>'form-control']) !!}
+    {!! Form::select('category_type',[''=>'--Select a type--','new_training'=>'New Training','battalion_ansar'=>'Battalion Ansar','apc_training'=>'APC Training','pc_training'=>'PC Training','other'=>'other'],null,['class'=>'form-control']) !!}
 </div>
 <div class="form-group">
     {!! Form::label('test','Status : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
