@@ -13,6 +13,7 @@
 <table>
     <tr>
         <th>ক্রমিক নং</th>
+        <th>আবেদনকারীর আইডি</th>
         <th>নাম</th>
         <th>জেলা</th>
         <th>থানা</th>
@@ -25,50 +26,54 @@
         <th>প্রাপ্ত নম্বর</th>
     </tr>
     @forelse($applicants as $a)
-        @if($a->marks->fail())
+        @php($marks = $a->marks)
+        @if($marks->fail())
             <tr class="fail">
                 <td>{{($i++).''}}</td>
+                <td>{{$a->applicant_id}}</td>
                 <td>{{$a->applicant_name_bng}}</td>
+
                 <td>{{$a->district->unit_name_bng}}</td>
                 <td>{{$a->thana->thana_name_bng}}</td>
-                @if($a->marks->is_bn_candidate)
+                @if($marks->is_bn_candidate)
                     <td colspan="5" style="text-align: center;font-weight: bold">Bn Candidate</td>
                 @else
                     <td>
-                        {{$a->marks->physical}}
+                        {{$marks->physical}}
                     </td>
-                    <td>{{$a->marks->edu_training}}</td>
-                    <td>{{$a->marks->edu_experience}}</td>
-                    <td>{{$a->marks->physical_age}}</td>
-                    <td>{{round($a->marks->convertedWrittenMark(),2)}}(out
-                        of {{$a->circular->markDistribution->convert_written_mark}}) and {{round($a->marks->written,2)}}
+                    <td>{{$marks->edu_training}}</td>
+                    <td>{{$marks->edu_experience}}</td>
+                    <td>{{$marks->physical_age}}</td>
+                    <td>{{$marks->convertedWrittenMark()}}(out
+                        of {{$a->circular->markDistribution->convert_written_mark}}) and {{$marks->written}}
                         (out of {{$a->circular->markDistribution->written}})
                     </td>
-                    <td>{{$a->marks->viva}}</td>
-                    <td>{{$a->marks->total_mark}}</td>
+                    <td>{{$marks->viva}}</td>
+                    <td>{{$marks->totalMarks()}}</td>
                 @endif
             </tr>
         @else
             <tr>
                 <td>{{($i++).''}}</td>
+                <td>{{$a->applicant_id}}</td>
                 <td>{{$a->applicant_name_bng}}</td>
                 <td>{{$a->district->unit_name_bng}}</td>
                 <td>{{$a->thana->thana_name_bng}}</td>
-                @if($a->marks->is_bn_candidate)
+                @if($marks->is_bn_candidate)
                     <td colspan="5" style="text-align: center;font-weight: bold">Bn Candidate</td>
                 @else
                     <td>
-                        {{$a->marks->physical}}
+                        {{$marks->physical}}
                     </td>
-                    <td>{{$a->marks->edu_training}}</td>
-                    <td>{{$a->marks->edu_experience}}</td>
-                    <td>{{$a->marks->physical_age}}</td>
-                    <td>{{round($a->marks->convertedWrittenMark(),2)}}(out
-                        of {{$a->circular->markDistribution->convert_written_mark}}) and {{round($a->marks->written,2)}}
+                    <td>{{$marks->edu_training}}</td>
+                    <td>{{$marks->edu_experience}}</td>
+                    <td>{{$marks->physical_age}}</td>
+                    <td>{{$marks->convertedWrittenMark()}}(out
+                        of {{$a->circular->markDistribution->convert_written_mark}}) and {{$marks->written}}
                         (out of {{$a->circular->markDistribution->written}})
                     </td>
-                    <td>{{$a->marks->viva}}</td>
-                    <td>{{$a->marks->total_mark}}</td>
+                    <td>{{$marks->viva}}</td>
+                    <td>{{$marks->totalMarks()}}</td>
                 @endif
             </tr>
         @endif

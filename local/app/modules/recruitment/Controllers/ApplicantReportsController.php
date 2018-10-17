@@ -113,10 +113,10 @@ class ApplicantReportsController extends Controller
                 'circular'=>'required|regex:/^[0-9]+$/',
             ];
             $this->validate($request,$rules);
-//            DB::enableQueryLog();
-            $applicants = JobAppliciant::with(['marks'=>function($q){
-                $q->select(DB::raw('*,(written+viva+physical+edu_training+ physical_age) as total_mark'));
-            },'district','circular.markDistribution','thana'])->whereHas('marks',function ($q){
+            DB::enableQueryLog();
+            $applicants = JobAppliciant::with(['district','circular'=>function($q){
+                $q->select('id')->with('markDistribution');
+            },'thana'])->whereHas('marks',function ($q){
             })->where('job_circular_id',$request->circular);
 
 
@@ -127,18 +127,50 @@ class ApplicantReportsController extends Controller
             if($request->exists('range')&&$request->range!='all'){
                 $applicants->where('division_id',$request->range);
             }
-            $applicants = $applicants->orderBy('unit_id')->orderBy('thana_id')->get();
-
+            $applicants = $applicants->select('applicant_id','applicant_name_bng','division_id','unit_id','thana_id','job_circular_id')->orderBy('unit_id')->orderBy('thana_id')->get();
+//            return DB::getQueryLog();
 //            return $applicants;
 //            return DB::getQueryLog();
-            $excel = Excel::create('applicant_marks',function ($excel) use($applicants){
-                $excel->sheet('sheet1',function ($sheet) use($applicants){
-                    $sheet->loadView('recruitment::reports.marks_list',[
-                        'applicants'=>$applicants
-                    ]);
+            if($request->exists('unit')&&$request->unit=='all'){
+                $applicants = collect($applicants)->groupBy('district.unit_name_eng')->all();
+//                return $applicants;
+                $files = [];
+                foreach ($applicants as $key=>$applicant){
+                    $excel = Excel::create($key.'_applicant_marks', function ($excel) use ($applicant) {
+                        $excel->sheet('sheet1', function ($sheet) use ($applicant) {
+                            $sheet->loadView('recruitment::reports.marks_list', [
+                                'applicants' => $applicant
+                            ]);
+                        });
+                    })->store('xls',storage_path('exports'),true);
+                    array_push($files,$excel);
+                }
+                $zip_archive_name = "applicants_marks_report.zip";
+                $zip = new \ZipArchive();
+                if ($zip->open(public_path($zip_archive_name), \ZipArchive::CREATE) === true) {
+                    foreach ($files as $file) {
+                        if (is_array($file)) $zip->addFile($file["full"], $file["file"]);
+                    }
+                    $zip->close();
+                }
+                foreach ($files as $file) {
+                    unlink($file["full"]);
+
+                }
+                return response()->download(public_path($zip_archive_name));
+            }
+            else {
+                $excel = Excel::create('applicant_marks', function ($excel) use ($applicants) {
+                    $excel->sheet('sheet1', function ($sheet) use ($applicants) {
+                        $sheet->loadView('recruitment::reports.marks_list', [
+                            'applicants' => $applicants
+                        ]);
+                    });
                 });
-            });
-            return $excel->download('xls');
+                return $excel->download('xls');
+            }
+
+
         }
         return view('recruitment::reports.applicant_marks_report');
     }

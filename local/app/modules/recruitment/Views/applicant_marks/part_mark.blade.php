@@ -16,6 +16,7 @@
             <tr>
                 <th>Sl. No</th>
                 <th>Applicant Name</th>
+                <th>Applicant ID</th>
                 <th>Physical Fitness</th>
                 <th>Education & Training</th>
                 <th>Education & Experience</th>
@@ -29,6 +30,7 @@
                 <tr>
                     <td>{{$i++}}</td>
                     <td>{{$a->applicant_name_bng}}</td>
+                    <td>{{$a->applicant_id}}</td>
                     @if(auth()->user()->type==11)
                         <td>{{$a->marks?($a->marks->physical?$a->marks->physical:$a->physicalPoint()):$a->physicalPoint()}}</td>
                         <td>{{$a->marks?($a->marks->edu_training?$a->marks->edu_training:$a->educationTrainingPoint()):$a->educationTrainingPoint()}}</td>
