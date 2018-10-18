@@ -83,8 +83,9 @@
     <div class="form-group">
         {!! Form::label('test','Quota applied for all divisions and districts : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
         <input type="checkbox" value="on" name="quota_district_division"
-               @if((isset($data)&&$data->quota_district_division=='on')||Request::old('quota_district_division')=='on')checked
-               @endif id="quota_district_division" class="switch-checkbox">
+               @if((isset($data)&&$data->quota_district_division=='on')||Request::old('quota_district_division')=='on')checked ng-init="apply_quota=1"
+               @endif id="quota_district_division" class="switch-checkbox" ng-model="apply_quota" ng-true-value="1"
+               ng-false-value="0">
         <label for="quota_district_division" class=""></label>
     </div>
     <div class="form-group">
@@ -179,33 +180,33 @@
                         </fieldset>
                         <fieldset>
                             <legend>
-                                <input type="checkbox" ng-model="constraint.age.selected" ng-true-value="'1'"
-                                       ng-false-value="''" name="age-select" value="1" id="age-select"
-                                       class="box-checkbox">
-                                <label for="age-select">Age</label>
+                                Age
                             </legend>
+                            {{--age validation rules--}}
                             <div class="row">
+
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="control-label">Min age</label>
                                         <input type="text" placeholder="Min age" class="form-control"
-                                               ng-disabled="constraint.age.selected!='1'||(constraint.gender.male!='male'&&constraint.gender.female!='female')"
+                                               ng-disabled="(constraint.gender.male!='male'&&constraint.gender.female!='female')"
                                                ng-model="constraint.age.min">
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label">Min age date</label>
                                         <input type="text" placeholder="Min age date" date-picker=""
                                                class="form-control"
-                                               ng-disabled="constraint.age.selected!='1'||(constraint.gender.male!='male'&&constraint.gender.female!='female')"
+                                               ng-disabled="(constraint.gender.male!='male'&&constraint.gender.female!='female')"
                                                ng-model="constraint.age.minDate">
                                     </div>
                                 </div>
+
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <div class="form-group">
                                             <label class="control-label">Max age</label>
                                             <input type="text" placeholder="Max age" class="form-control"
-                                                   ng-disabled="constraint.age.selected!='1'||(constraint.gender.male!='male'&&constraint.gender.female!='female')"
+                                                   ng-disabled="(constraint.gender.male!='male'&&constraint.gender.female!='female')"
                                                    ng-model="constraint.age.max">
                                         </div>
                                     </div>
@@ -214,59 +215,102 @@
                                             <label class="control-label">Max age date</label>
                                             <input type="text" placeholder="Max age date" date-picker=""
                                                    class="form-control"
-                                                   ng-disabled="constraint.age.selected!='1'||(constraint.gender.male!='male'&&constraint.gender.female!='female')"
+                                                   ng-disabled="(constraint.gender.male!='male'&&constraint.gender.female!='female')"
                                                    ng-model="constraint.age.maxDate">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <div class="form-group">
-                                            <label>Select Applicable Quotas</label>
-                                            <select ng-model="quota_type" class="form-control"
-                                                    ng-change="onChangeQuota()">
-                                                <option value="" selected>--Select Quota--</option>
-                                                <option value="son_of_freedom_fighter">Son of freedom fighter</option>
-                                                <option value="grand_son_of_freedom_fighter">Grandson of freedom
-                                                    fighter
-                                                </option>
-                                                <option value="member_of_ansar_or_vdp">Member of ANSAR or VDP</option>
-                                                <option value="orphan">Orphan</option>
-                                                <option value="physically_disabled">Physically disabled</option>
-                                                <option value="tribe">Tribe</option>
-                                            </select>
+                                <div class="col-md-12" ng-if="apply_quota">
+                                    <fieldset>
+                                            <input type="checkbox" ng-model="constraint.age.quota.enabled"
+                                                   ng-true-value="'1'"
+                                                   ng-false-value="''" name="quota-select" value="1" id="quota-select"
+                                                   class="box-checkbox"
+                                                   ng-disabled="(constraint.gender.male!='male'&&constraint.gender.female!='female')||constraint.age.quota.data.length>0">
+                                            <label for="quota-select">Rules for Quota</label>
+                                            <button class="btn btn-link btn-xs" ng-click="(constraint.age.quota.data = constraint.age.quota.data?constraint.age.quota.data:[]).push({minAge:'',maxAge:''})" ng-show="constraint.age.quota.enabled&&!(constraint.gender.male!='male'&&constraint.gender.female!='female')">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        <div ng-if="constraint.age.quota.enabled" style="padding-left: 10px">
+                                            <div ng-repeat="d in constraint.age.quota.data" style="display: flex;justify-content: center;flex-direction: row;margin-bottom: 5px">
+                                                <button class="btn btn-link btn-xs text-danger" style="flex-grow: .3" ng-click="constraint.age.quota.data.splice($index,1)">
+                                                    <i class="fa fa-minus"></i>
+                                                </button>
+                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
+                                                    <select ng-model="d.type" class="form-control">
+                                                        <option value="">--Select Quota--</option>
+                                                        <option value="son_of_freedom_fighter">Son of freedom fighter</option>
+                                                        <option value="grand_son_of_freedom_fighter">Grandson of freedom fighter</option>
+                                                        <option value="member_of_ansar_or_vdp">Member of ANSAR or VDP</option>
+                                                        <option value="orphan">Orphan</option>
+                                                        <option value="physically_disabled">Physically disabled</option>
+                                                        <option value="tribe">Tribe</option>
+                                                    </select>
+                                                </div>
+                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
+                                                    <input type="text" placeholder="min age" class="form-control" ng-model="d.minAge">
+                                                </div>
+                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
+                                                    <input type="text" placeholder="max age" class="form-control" ng-model="d.maxAge">
+                                                </div>
+                                            </div>
+                                            <p class="text text-danger" ng-if="!constraint.age.quota.data||constraint.age.quota.data.length<=0">
+                                                No rules available. click <strong>"<i class="fa fa-plus"></i>"</strong> to add rule
+                                            </p>
                                         </div>
-                                    </div>
+
+                                    </fieldset>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <div class="form-group">
-                                            <label>Quota Based Max Age</label>
-                                            <input type="text" placeholder="" class="form-control"
-                                                   ng-model="constraint.age.quota.maxAge">
-                                        </div>
-                                    </div>
-                                </div>
-                                <style>
-                                    .selected-quota {
-                                        padding: 1%;
-                                        display: inline-block;
-                                        background: green;
-                                        color: #FFF;
-                                        margin: 2px;
-                                        cursor: pointer;
-                                    }
-                                </style>
-                                <div class="col-md-12">
-                                    <div class="well">
-                                        <label style="width: 100%">Selected Quotas</label>
-                                        <div id="selected-quota-type">
-                                            {{--append from angular--}}
-                                        </div>
-                                    </div>
-                                </div>
+                                {{--<div class="col-md-6">--}}
+                                {{--<div class="form-group">--}}
+                                {{--<div class="form-group">--}}
+                                {{--<label>Select Applicable Quotas</label>--}}
+                                {{--<select ng-model="quota_type" class="form-control"--}}
+                                {{--ng-change="onChangeQuota()">--}}
+                                {{--<option value="" selected>--Select Quota--</option>--}}
+                                {{--<option value="son_of_freedom_fighter">Son of freedom fighter</option>--}}
+                                {{--<option value="grand_son_of_freedom_fighter">Grandson of freedom--}}
+                                {{--fighter--}}
+                                {{--</option>--}}
+                                {{--<option value="member_of_ansar_or_vdp">Member of ANSAR or VDP</option>--}}
+                                {{--<option value="orphan">Orphan</option>--}}
+                                {{--<option value="physically_disabled">Physically disabled</option>--}}
+                                {{--<option value="tribe">Tribe</option>--}}
+                                {{--</select>--}}
+                                {{--</div>--}}
+                                {{--</div>--}}
+                                {{--</div>--}}
+                                {{--<div class="col-md-6">--}}
+                                {{--<div class="form-group">--}}
+                                {{--<div class="form-group">--}}
+                                {{--<label>Quota Based Max Age</label>--}}
+                                {{--<input type="text" placeholder="" class="form-control"--}}
+                                {{--ng-model="constraint.age.quota.maxAge">--}}
+                                {{--</div>--}}
+                                {{--</div>--}}
+                                {{--</div>--}}
+                                {{--<style>--}}
+                                {{--.selected-quota {--}}
+                                {{--padding: 1%;--}}
+                                {{--display: inline-block;--}}
+                                {{--background: green;--}}
+                                {{--color: #FFF;--}}
+                                {{--margin: 2px;--}}
+                                {{--cursor: pointer;--}}
+                                {{--}--}}
+                                {{--</style>--}}
+                                {{--<div class="col-md-12">--}}
+                                {{--<div class="well">--}}
+                                {{--<label style="width: 100%">Selected Quotas</label>--}}
+                                {{--<div id="selected-quota-type">--}}
+                                {{--append from angular--}}
+                                {{--</div>--}}
+                                {{--</div>--}}
+                                {{--</div>--}}
                             </div>
+                            {{--end age validation rules--}}
                         </fieldset>
+                        {{--start height validation rules--}}
                         <fieldset>
                             <legend>Height</legend>
                             <div class="row">
@@ -304,8 +348,58 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-md-12" ng-if="apply_quota">
+                                    <fieldset>
+                                        <input type="checkbox" ng-model="constraint.height.quota.enabled"
+                                               ng-true-value="'1'"
+                                               ng-false-value="''" name="quota-select-height" value="1" id="quota-select-height"
+                                               class="box-checkbox"
+                                               ng-disabled="(constraint.gender.male!='male'&&constraint.gender.female!='female')||constraint.height.quota.data.length>0">
+                                        <label for="quota-select-height">Rules for Quota</label>
+                                        <button class="btn btn-link btn-xs" ng-click="(constraint.height.quota.data = constraint.height.quota.data?constraint.height.quota.data:[]).push({})" ng-show="constraint.height.quota.enabled&&!(constraint.gender.male!='male'&&constraint.gender.female!='female')">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                        <div ng-if="constraint.height.quota.enabled" style="padding-left: 10px">
+                                            <div ng-repeat="d in constraint.height.quota.data" style="display: flex;justify-content: center;flex-direction: row;margin-bottom: 5px">
+                                                <button class="btn btn-link btn-xs text-danger" style="flex-grow: .3" ng-click="constraint.height.quota.data.splice($index,1)">
+                                                    <i class="fa fa-minus"></i>
+                                                </button>
+                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
+                                                    <select ng-model="d.type" class="form-control">
+                                                        <option value="">--Select Quota--</option>
+                                                        <option value="son_of_freedom_fighter">Son of freedom fighter</option>
+                                                        <option value="grand_son_of_freedom_fighter">Grandson of freedom fighter</option>
+                                                        <option value="member_of_ansar_or_vdp">Member of ANSAR or VDP</option>
+                                                        <option value="orphan">Orphan</option>
+                                                        <option value="physically_disabled">Physically disabled</option>
+                                                        <option value="tribe">Tribe</option>
+                                                    </select>
+                                                </div>
+                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
+                                                    <input type="text" ng-disabled="constraint.gender.male!='male'" placeholder="feet(Male)" class="form-control" ng-model="d.male.feet">
+                                                </div>
+                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
+                                                    <input type="text" ng-disabled="constraint.gender.male!='male'" placeholder="inch(Male)" class="form-control" ng-model="d.male.inch">
+                                                </div>
+                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
+                                                    <input type="text" ng-disabled="constraint.gender.female!='female'" placeholder="feet(Female)" class="form-control" ng-model="d.female.feet">
+                                                </div>
+                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
+                                                    <input type="text" ng-disabled="constraint.gender.female!='female'" placeholder="inch(Female)" class="form-control" ng-model="d.female.inch">
+                                                </div>
+
+                                            </div>
+                                            <p class="text text-danger" ng-if="!constraint.height.quota.data||constraint.height.quota.data.length<=0">
+                                                No rules available. click <strong>"<i class="fa fa-plus"></i>"</strong> to add rule
+                                            </p>
+                                        </div>
+
+                                    </fieldset>
+                                </div>
                             </div>
                         </fieldset>
+                        {{--end height validation rules--}}
+                        {{--start weight validation rules--}}
                         <fieldset>
                             <legend>Weight</legend>
                             <div class="row">
@@ -325,8 +419,52 @@
                                                placeholder="Weight in kg">
                                     </div>
                                 </div>
+                                <div class="col-md-12" ng-if="apply_quota">
+                                    <fieldset>
+                                        <input type="checkbox" ng-model="constraint.weight.quota.enabled"
+                                               ng-true-value="'1'"
+                                               ng-false-value="''" name="quota-select-weight" value="1" id="quota-select-weight"
+                                               class="box-checkbox"
+                                               ng-disabled="(constraint.gender.male!='male'&&constraint.gender.female!='female')||constraint.weight.quota.data.length>0">
+                                        <label for="quota-select-weight">Rules for Quota</label>
+                                        <button class="btn btn-link btn-xs" ng-click="(constraint.weight.quota.data = constraint.weight.quota.data?constraint.weight.quota.data:[]).push({})" ng-show="constraint.weight.quota.enabled&&!(constraint.gender.male!='male'&&constraint.gender.female!='female')">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                        <div ng-if="constraint.weight.quota.enabled" style="padding-left: 10px">
+                                            <div ng-repeat="d in constraint.weight.quota.data" style="display: flex;justify-content: center;flex-direction: row;margin-bottom: 5px">
+                                                <button class="btn btn-link btn-xs text-danger" style="flex-grow: .3" ng-click="constraint.weight.quota.data.splice($index,1)">
+                                                    <i class="fa fa-minus"></i>
+                                                </button>
+                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
+                                                    <select ng-model="d.type" class="form-control">
+                                                        <option value="">--Select Quota--</option>
+                                                        <option value="son_of_freedom_fighter">Son of freedom fighter</option>
+                                                        <option value="grand_son_of_freedom_fighter">Grandson of freedom fighter</option>
+                                                        <option value="member_of_ansar_or_vdp">Member of ANSAR or VDP</option>
+                                                        <option value="orphan">Orphan</option>
+                                                        <option value="physically_disabled">Physically disabled</option>
+                                                        <option value="tribe">Tribe</option>
+                                                    </select>
+                                                </div>
+                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
+                                                    <input type="text" ng-disabled="constraint.gender.male!='male'" placeholder="weight(Male)" class="form-control" ng-model="d.male">
+                                                </div>
+                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
+                                                    <input type="text" ng-disabled="constraint.gender.female!='female'" placeholder="weight(Female)" class="form-control" ng-model="d.female">
+                                                </div>
+
+                                            </div>
+                                            <p class="text text-danger" ng-if="!constraint.weight.quota.data||constraint.weight.quota.data.length<=0">
+                                                No rules available. click <strong>"<i class="fa fa-plus"></i>"</strong> to add rule
+                                            </p>
+                                        </div>
+
+                                    </fieldset>
+                                </div>
                             </div>
                         </fieldset>
+                        {{--end weight validation rules--}}
+                        {{--start chest validation rules--}}
                         <fieldset>
                             <legend>Chest</legend>
                             <div class="row">
@@ -364,8 +502,58 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-md-12" ng-if="apply_quota">
+                                    <fieldset>
+                                        <input type="checkbox" ng-model="constraint.chest.quota.enabled"
+                                               ng-true-value="'1'"
+                                               ng-false-value="''" name="quota-select-chest" value="1" id="quota-select-chest"
+                                               class="box-checkbox"
+                                               ng-disabled="(constraint.gender.male!='male'&&constraint.gender.female!='female')||constraint.chest.quota.data.length>0">
+                                        <label for="quota-select-chest">Rules for Quota</label>
+                                        <button class="btn btn-link btn-xs" ng-click="(constraint.chest.quota.data = constraint.chest.quota.data?constraint.chest.quota.data:[]).push({})" ng-show="constraint.chest.quota.enabled&&!(constraint.gender.male!='male'&&constraint.gender.female!='female')">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                        <div ng-if="constraint.chest.quota.enabled" style="padding-left: 10px">
+                                            <div ng-repeat="d in constraint.chest.quota.data" style="display: flex;justify-content: center;flex-direction: row;margin-bottom: 5px">
+                                                <button class="btn btn-link btn-xs text-danger" style="flex-grow: .3" ng-click="constraint.chest.quota.data.splice($index,1)">
+                                                    <i class="fa fa-minus"></i>
+                                                </button>
+                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
+                                                    <select ng-model="d.type" class="form-control">
+                                                        <option value="">--Select Quota--</option>
+                                                        <option value="son_of_freedom_fighter">Son of freedom fighter</option>
+                                                        <option value="grand_son_of_freedom_fighter">Grandson of freedom fighter</option>
+                                                        <option value="member_of_ansar_or_vdp">Member of ANSAR or VDP</option>
+                                                        <option value="orphan">Orphan</option>
+                                                        <option value="physically_disabled">Physically disabled</option>
+                                                        <option value="tribe">Tribe</option>
+                                                    </select>
+                                                </div>
+                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
+                                                    <input type="text" ng-disabled="constraint.gender.male!='male'" placeholder="mormal(Male)" class="form-control" ng-model="d.male.min">
+                                                </div>
+                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
+                                                    <input type="text" ng-disabled="constraint.gender.male!='male'" placeholder="expanded(Male)" class="form-control" ng-model="d.male.max">
+                                                </div>
+
+                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
+                                                    <input type="text" ng-disabled="constraint.gender.female!='female'" placeholder="mormal(Female)" class="form-control" ng-model="d.female.min">
+                                                </div>
+                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
+                                                    <input type="text" ng-disabled="constraint.gender.female!='female'" placeholder="expanded(Female)" class="form-control" ng-model="d.female.max">
+                                                </div>
+
+                                            </div>
+                                            <p class="text text-danger" ng-if="!constraint.chest.quota.data||constraint.chest.quota.data.length<=0">
+                                                No rules available. click <strong>"<i class="fa fa-plus"></i>"</strong> to add rule
+                                            </p>
+                                        </div>
+
+                                    </fieldset>
+                                </div>
                             </div>
                         </fieldset>
+                        {{--end chest validation rules--}}
                         <fieldset>
                             <legend>Education</legend>
                             <div class="row">

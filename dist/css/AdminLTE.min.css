@@ -4823,7 +4823,31 @@ ul.module-menu > li > a:hover {
     transform: translate(-100%,-50%);
     display: block;
 }
+.box-checkbox[disabled]:not(:checked)+label:before{
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: 0;
+    top: 50%;
+    border:2px solid #cccccc;
+    transform: translate(-100%,-50%);
+    display: block;
+    background: #cccccc;
+}
 .box-checkbox:checked+label:before{
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 0;
+    border:2px solid #111111;
+    transform: translate(-100%,-50%);
+    display: block;
+
+}
+.box-checkbox[disabled]:checked+label:before{
     content: '';
     position: absolute;
     width: 20px;
@@ -4858,5 +4882,18 @@ ul.module-menu > li > a:hover {
     text-align: center;
     background: darkgreen;
     color: #ffffff;
+    transform: translate(-100%,-50%);
+}
+.box-checkbox[disabled]:checked+label:after{
+    content: '✓';
+    position: absolute;
+    display: block;
+    width: 20px;
+    height: 20px;
+    left: 0;
+    top: 50%;
+    text-align: center;
+    background: #cccccc;
+    color: #111111;
     transform: translate(-100%,-50%);
 }
