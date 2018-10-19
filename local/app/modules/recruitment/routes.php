@@ -73,7 +73,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
 //
         Route::get('/setting/instruction', ['as' => 'recruitment.instruction', 'uses' => 'RecruitmentController@aplicationInstruction']);
         Route::any('/setting/instruction/create', ['as' => 'recruitment.instruction.create', 'uses' => 'RecruitmentController@createApplicationInstruction']);
-        Route::any('/setting/instruction/edit', ['as' => 'recruitment.instruction.edit', 'uses' => 'RecruitmentController@editApplicationInstruction']);
+        Route::any('/setting/instruction/edit/{id}', ['as' => 'recruitment.instruction.edit', 'uses' => 'RecruitmentController@editApplicationInstruction']);
 
         Route::resource('exam-center', 'ApplicantExamCenter');
         Route::resource('mark_distribution', 'JobCircularMarkDistributionController');
