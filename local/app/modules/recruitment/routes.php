@@ -73,7 +73,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
 //
         Route::get('/setting/instruction', ['as' => 'recruitment.instruction', 'uses' => 'RecruitmentController@aplicationInstruction']);
         Route::any('/setting/instruction/create', ['as' => 'recruitment.instruction.create', 'uses' => 'RecruitmentController@createApplicationInstruction']);
-        Route::any('/setting/instruction/edit', ['as' => 'recruitment.instruction.edit', 'uses' => 'RecruitmentController@createApplicationInstruction']);
+        Route::any('/setting/instruction/edit/{id}', ['as' => 'recruitment.instruction.edit', 'uses' => 'RecruitmentController@editApplicationInstruction']);
 
         Route::resource('exam-center', 'ApplicantExamCenter');
         Route::resource('mark_distribution', 'JobCircularMarkDistributionController');
@@ -103,6 +103,16 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                 $applicant->update('status','selected');
             }
 
+        });
+        Route::get('/testt', function () {
+            $a = \App\modules\recruitment\Models\JobAppliciant::with('marks')->where('job_circular_id',23)
+                ->whereHas('marks',function (){})->get();
+            foreach ($a as $e){
+                $p = $e->physicalPoint();
+                $e->marks->update([
+                    'physical'=>$p
+                ]);
+            }
         });
         Route::get('/send_sms_paid', ['as' => 'send_sms_paid', 'uses' => 'SupportController@sendUserNamePassword']);
     });
