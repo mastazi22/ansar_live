@@ -596,7 +596,7 @@
         </div>
     </div>
 </div>
-<script src="//cdn.ckeditor.com/4.8.0/standard/ckeditor.js"></script>
+<script src="//cdn.ckeditor.com/4.10.1/full/ckeditor.js"></script>
 <script>
     $(document).ready(function () {
         $(".range-app").on('change', function (event) {
