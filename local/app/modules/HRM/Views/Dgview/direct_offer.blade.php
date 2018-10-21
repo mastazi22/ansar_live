@@ -141,7 +141,7 @@
                                         <img ng-show="loadingDistrict" src="{{asset('dist/img/facebook.gif')}}" width="16"></label>
                                     <select class="form-control" name="unit_id" ng-model="selectedDistrict" ng-disabled="loadingDistrict">
                                         <option value="">--@lang('title.unit')--</option>
-                                        <option ng-repeat="d in districts" ng-disabled="ansarDetail.apid.unit_id==d.id" value="[[d.id]]">[[d.unit_name_bng]]</option>
+                                        <option ng-repeat="d in districts"  value="[[d.id]]">[[d.unit_name_bng]]</option>
                                     </select>
                                     <p class="text text-danger" ng-if="errors.unit_id!=undefined">
                                         [[errors.unit_id[0] ]]
