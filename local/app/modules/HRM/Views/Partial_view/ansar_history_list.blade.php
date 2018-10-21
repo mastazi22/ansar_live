@@ -14,7 +14,7 @@
             <div class="table-responsive">
                 <table class="table table-bordered" style="margin: 0 auto;width: auto !important;">
                     <tr>
-                        <td rowspan="5"  style="vertical-align: middle;width: 130px;height: 150px;background: #ffffff">
+                        <td rowspan="10"  style="vertical-align: middle;width: 130px;height: 150px;background: #ffffff">
                             <img  style="width: 120px;height: 150px" src="{{URL::to('image').'?file='}}[[data.apid.profile_pic]]" alt="">
                         </td>
                         <th style="background: #ffffff">ID</th>
@@ -37,6 +37,26 @@
                     <tr>
                         <th style="background: #ffffff">Home District</th>
                         <td style="background: #ffffff">[[data.apid.unit_name_bng]]</td>
+                    </tr>
+                    <tr>
+                        <th style="background: #ffffff">Date of birth</th>
+                        <td style="background: #ffffff">[[data.apid.dob]]</td>
+                    </tr>
+                    <tr>
+                        <th style="background: #ffffff">Age</th>
+                        <td style="background: #ffffff">[[data.apid.age]]</td>
+                    </tr>
+                    <tr>
+                        <th style="background: #ffffff">Account No</th>
+                        <td style="background: #ffffff">[[data.apid.prefer_choice=='general'?data.account_no:data.mobile_bank_account_no]]</td>
+                    </tr>
+                    <tr>
+                        <th style="background: #ffffff">Bank name/Mobile account type</th>
+                        <td style="background: #ffffff">[[data.apid.prefer_choice=='general'?data.bank_name:data.mobile_bank_type]]</td>
+                    </tr>
+                    <tr>
+                        <th style="background: #ffffff">AVUB Share ID</th>
+                        <td style="background: #ffffff">[[data.apid.avub_share_id]]</td>
                     </tr>
                 </table>
             </div>

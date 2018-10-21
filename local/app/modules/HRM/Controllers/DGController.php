@@ -71,12 +71,27 @@ class DGController extends Controller
             return response("Invalid Request(400)", 400);
         }
         try {
+//            return DB::table('tbl_ansar_parsonal_info')
+//                ->leftJoin('tbl_ansar_bank_account_info', 'tbl_ansar_bank_account_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)->select('tbl_ansar_parsonal_info.ansar_id')->get();
+//            $ansarPersonalDetail = DB::table('tbl_ansar_parsonal_info')
+//                ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+//                ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+//                ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
+//                ->select('tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_ansar_parsonal_info.profile_pic', 'tbl_ansar_parsonal_info.ansar_id',
+//                    'tbl_units.unit_name_bng', 'tbl_units.id as unit_id', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_designations.name_bng', 'tbl_ansar_parsonal_info.mobile_no_self')->first();
+
+
             $ansarPersonalDetail = DB::table('tbl_ansar_parsonal_info')
+                ->leftJoin('tbl_ansar_bank_account_info', 'tbl_ansar_bank_account_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
                 ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
                 ->where('tbl_ansar_parsonal_info.ansar_id', '=', $ansar_id)
                 ->select('tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_ansar_parsonal_info.profile_pic', 'tbl_ansar_parsonal_info.ansar_id',
-                    'tbl_units.unit_name_bng', 'tbl_units.id as unit_id', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_designations.name_bng', 'tbl_ansar_parsonal_info.mobile_no_self')->first();
+                    'tbl_units.unit_name_bng', 'tbl_units.id as unit_id', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_designations.name_bng', 'tbl_ansar_parsonal_info.mobile_no_self',
+                    DB::raw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW()) as age'),'tbl_ansar_parsonal_info.data_of_birth as dob','tbl_ansar_bank_account_info.mobile_bank_account_no',
+                    'tbl_ansar_bank_account_info.bank_name','tbl_ansar_bank_account_info.prefer_choice','tbl_ansar_bank_account_info.mobile_bank_type','tbl_ansar_bank_account_info.account_no','avub_share_id')->first();
+
+            $ansarStatusInfo = AnsarStatusInfo::where('ansar_id', $ansar_id)->first();
             $ansarStatusInfo = AnsarStatusInfo::where('ansar_id', $ansar_id)->first();
             $ansarPanelInfo = DB::table('tbl_panel_info')->where('ansar_id', $ansar_id);
             if (!$ansarPanelInfo->exists()) {
