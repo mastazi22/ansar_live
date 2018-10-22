@@ -16,6 +16,7 @@
             <th>VDP ID</th>
             <th>Name(English)</th>
             <th>Name(Bangla)</th>
+            <th>Rank</th>
             <th>Date of Birth</th>
             <th>Division</th>
             <th>District</th>
@@ -36,6 +37,7 @@
                     <td>{{$info->geo_id}}</td>
                     <td>{{$info->ansar_name_eng}}</td>
                     <td>{{$info->ansar_name_bng}}</td>
+                    <td>{{$info->designation}}</td>
                     <td>{{$info->date_of_birth}}</td>
                     <td>{{$info->division->division_name_bng}}</td>
                     <td>{{$info->unit->unit_name_bng}}</td>
