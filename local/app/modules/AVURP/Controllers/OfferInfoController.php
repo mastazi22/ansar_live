@@ -149,7 +149,7 @@ class OfferInfoController extends Controller
                 $q->where('embodied_status',0);
                 $q->where('retire_status',0);
                 $q->where('dead_status',0);
-            })->searchQueryForOffer($request->all())->pluck('id');
+            })->where('status','verified')->searchQueryForOffer($request->all())->pluck('id');
             return response()->json(compact('ids'));
         }
         return abort(403);
