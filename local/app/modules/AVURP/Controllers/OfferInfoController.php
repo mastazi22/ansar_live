@@ -30,7 +30,7 @@ class OfferInfoController extends Controller
                 $q->where('embodied_status',0);
                 $q->where('retire_status',0);
                 $q->where('dead_status',0);
-            })->searchQueryForOffer($request->all())->paginate(50);
+            })->where('status','verified')->searchQueryForOffer($request->all())->paginate(50);
 //            return DB::getQueryLog();
             return view("AVURP::offer_info.data",compact('vdp_infos'));
         }
