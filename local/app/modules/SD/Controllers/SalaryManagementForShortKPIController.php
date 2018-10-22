@@ -89,7 +89,7 @@ class SalaryManagementForShortKPIController extends Controller
                     $deduct_fee = $request->deduct_amount?floatval(DemandConstantFacdes::getValue("DAS")->cons_value):0;
                     array_push($datas, [
                         'ansar_id' => $ansar->geo_id,
-                        'ansar_name' => $ansar->ansar_name_bng,
+                        'ansar_name' => $ansar->ansar_name_eng?$ansar->ansar_name_eng:$ansar->ansar_name_bng,
                         'ansar_rank' => $ansar->designation,
                         'total_duration' => $a->duration,
                         'total_daily_fee'=>$total_daily_fee,
