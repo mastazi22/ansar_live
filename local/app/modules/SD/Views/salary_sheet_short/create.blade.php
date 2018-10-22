@@ -92,6 +92,18 @@
                     </div>
                     <div class="col-sm-3">
                         <div class="form-group">
+                            <label for="other_amount">Include other amount</label>
+                            <input type="checkbox" ng-model="param.other_amount" ng-true-value="1" ng-false-value="0" id="other_amount">
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <label for="deduct_amount">Deduct Amount</label>
+                            <input type="checkbox" ng-model="param.deduct_amount" ng-true-value="1" ng-false-value="0" id="deduct_amount">
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="form-group">
                             <label style="display: block" for="">&nbsp;</label>
                             <button class="btn btn-primary" ng-click="loadData()"
                                     ng-disabled="!param.range||!param.unit||!param.thana||!param.shortKpi||!param.month_year"

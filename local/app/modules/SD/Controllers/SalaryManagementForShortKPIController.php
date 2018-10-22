@@ -85,8 +85,8 @@ class SalaryManagementForShortKPIController extends Controller
                     $ansar = $a->vdp;
                     $total_daily_fee = floatval($ansar->designation == "পিসি"||$ansar->designation == "এপিসি" ? DemandConstantFacdes::getValue("DPAS")->cons_value : DemandConstantFacdes::getValue("DVAS")->cons_value)
                         * (intval($a->duration));
-                    $other_fee = floatval(DemandConstantFacdes::getValue("OAS")->cons_value);
-                    $deduct_fee = floatval(DemandConstantFacdes::getValue("DAS")->cons_value);
+                    $other_fee = $request->other_amount?floatval(DemandConstantFacdes::getValue("OAS")->cons_value):0;
+                    $deduct_fee = $request->deduct_amount?floatval(DemandConstantFacdes::getValue("DAS")->cons_value):0;
                     array_push($datas, [
                         'ansar_id' => $ansar->geo_id,
                         'ansar_name' => $ansar->ansar_name_bng,
