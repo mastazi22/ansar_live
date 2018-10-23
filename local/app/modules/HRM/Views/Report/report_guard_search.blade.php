@@ -218,6 +218,9 @@
                                     <th>[[report.ansar.id]]</th>
                                     <th>[[report.ansar.rank]]</th>
                                     <th>[[report.ansar.name]]</th>
+                                    <th>[[report.ansar.dob]]</th>
+                                    <th>[[report.ansar.height]]</th>
+                                    <th>[[report.ansar.education]]</th>
                                     <th>[[report.ansar.district]]</th>
                                     <th>[[report.ansar.embodiment_date]]</th>
                                     <th>[[report.ansar.join_date]]</th>
@@ -241,6 +244,16 @@
                                     <td>
                                         [[a.ansar_name_bng]]
                                     </td>
+                                    <td>
+                                        [[a.dob|dateformat:"DD MMM, YYYY"]]
+                                    </td>
+                                    <td>
+                                        [[a.height]]
+                                    </td>
+                                    <td>
+                                        [[a.education]]
+                                    </td>
+
                                     <td>
                                         [[a.unit_name_bng]]
                                     </td>

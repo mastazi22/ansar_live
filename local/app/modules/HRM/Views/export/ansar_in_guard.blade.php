@@ -4,6 +4,9 @@
         <th>Ansar ID</th>
         <th>Rank</th>
         <th>Name</th>
+        <th>Date of birth</th>
+        <th>Height</th>
+        <th>Education</th>
         <th>District</th>
         <th>Embodiment Date</th>
         <th>Joining Date</th>
@@ -22,6 +25,16 @@
             <td>
                 {{$a->ansar_name_bng}}
             </td>
+            <td>
+                {{$a->dob?\Carbon\Carbon::parse($a->dob)->format('d M, Y'):$a->dob}}
+            </td>
+            <td>
+                {{$a->height}}
+            </td>
+            <td>
+                {{$a->education}}
+            </td>
+
             <td>
                 {{$a->unit_name_bng}}
             </td>
