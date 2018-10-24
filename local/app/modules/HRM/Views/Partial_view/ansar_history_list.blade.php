@@ -48,11 +48,11 @@
                     </tr>
                     <tr>
                         <th style="background: #ffffff">Account No</th>
-                        <td style="background: #ffffff">[[data.apid.prefer_choice=='general'?data.account_no:data.mobile_bank_account_no]]</td>
+                        <td style="background: #ffffff">[[data.apid.prefer_choice=='general'?data.apid.account_no:data.apid.mobile_bank_account_no]]</td>
                     </tr>
                     <tr>
                         <th style="background: #ffffff">Bank name/Mobile account type</th>
-                        <td style="background: #ffffff">[[data.apid.prefer_choice=='general'?data.bank_name:data.mobile_bank_type]]</td>
+                        <td style="background: #ffffff">[[data.apid.prefer_choice=='general'?data.apid.bank_name:data.apid.mobile_bank_type]]</td>
                     </tr>
                     <tr>
                         <th style="background: #ffffff">AVUB Share ID</th>
