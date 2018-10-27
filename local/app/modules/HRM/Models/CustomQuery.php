@@ -52,6 +52,18 @@ class CustomQuery
             ->where('tbl_ansar_status_info.block_list_status', 0)
             ->where('tbl_ansar_status_info.offer_block_status', 0);
 //            ->whereNotIn('tbl_ansar_parsonal_info.ansar_id', $eid);
+        if(auth()->user()->id==1000){
+            $edu = DB::table('tbl_ansar_education_info')->select(DB::raw('MAX(education_id) edu_id'),'ansar_id')
+                ->groupBy('ansar_id')->toSql();
+            $query->join('tbl_ansar_education_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_ansar_education_info.ansar_id')
+                ->join('tbl_education_info', 'tbl_education_info.id', '=', 'tbl_ansar_education_info.education_id')
+                ->join(DB::raw("($edu) edu"), function ($q){
+                    $q->on('edu.edu_id', '=', 'tbl_ansar_education_info.education_id');
+                    $q->on('edu.ansar_id', '=', 'tbl_ansar_education_info.ansar_id');
+                });
+            $query->where('tbl_education_info.id','>=',7);
+            $query->whereRaw('tbl_ansar_parsonal_info.hight_feet*12+tbl_ansar_parsonal_info.hight_inch>=66');
+        }
         $fquery = clone $query;
         if ($user->type == 22) {
             if (in_array($exclude_district, Config::get('app.offer'))) {
