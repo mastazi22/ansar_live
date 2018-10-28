@@ -52,7 +52,7 @@ class CustomQuery
             ->where('tbl_ansar_status_info.block_list_status', 0)
             ->where('tbl_ansar_status_info.offer_block_status', 0);
 //            ->whereNotIn('tbl_ansar_parsonal_info.ansar_id', $eid);
-        if(auth()->user()->id==1000){
+        if(auth()->user()->id==343){
             $edu = DB::table('tbl_ansar_education_info')->select(DB::raw('MAX(education_id) edu_id'),'ansar_id')
                 ->groupBy('ansar_id')->toSql();
             $query->join('tbl_ansar_education_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_ansar_education_info.ansar_id')
@@ -88,6 +88,12 @@ class CustomQuery
         $apc_female = clone $fquery;
         $ansar_male = clone $query;
         $ansar_female = clone $fquery;
+        if(auth()->user()->id==343){
+            $ansar_male->whereRaw('tbl_ansar_parsonal_info.hight_feet*12+tbl_ansar_parsonal_info.hight_inch>=66');
+            $ansar_male->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<36');
+            $ansar_female->whereRaw('tbl_ansar_parsonal_info.hight_feet*12+tbl_ansar_parsonal_info.hight_inch>=64');
+            $ansar_female->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<33');
+        }
         $pc_male->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<' . $pc_apc_retirement_age)
             ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
