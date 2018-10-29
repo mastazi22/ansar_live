@@ -26,7 +26,9 @@
                         offset: 0,
                         division: $scope.params.range,
                         unit: $scope.params.unit,
-                        thana: $scope.params.thana
+                        thana: $scope.params.thana,
+                        form_ansar:params.from_ansar,
+                        to_ansar:params.to_ansar,
                     }
                 }).then(function (response) {
                     $scope.loading = false;
@@ -196,6 +198,9 @@
                                         <option value="80">90</option>
                                         <option value="90">90</option>
                                         <option value="100">100</option>
+                                        <option value="300">300</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
                                     </select>
                                 </div>
                             </div>
@@ -218,6 +223,20 @@
                     >
 
                     </filter-template>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="">From Ansar ID</label>
+                                <input type="text" ng-model="params.from_ansar" class="form-control" placeholder="Form Ansar ID">
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label for="">To Ansar ID</label>
+                                <input type="text" ng-model="params.to_ansar" class="form-control" placeholder="To Ansar ID">
+                            </div>
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <form id="not-verified-form" method="post" action="{{URL::to('HRM/entryChunkVerify')}}">
                             <input type="hidden" name="chunk_verification" value="chunk_verification">
