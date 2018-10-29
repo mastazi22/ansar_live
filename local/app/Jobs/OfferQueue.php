@@ -70,6 +70,7 @@ class OfferQueue extends Job implements ShouldQueue
                     'action_user_id' => $user->id
                 ]);
                 $mos->offer_sms_info()->save($offer);
+                $mos->offer_sms_info->saveCount(['ansar_id'=>$ansar_ids[$i],'last_offer_unit'=>$district_id]);
 //                //if (!$s) throw new Exception("An Error Occur While Send Offer. Please Try Again Later");
 ////                $this->removeFromPanel();
                 $pa = $mos->panel;

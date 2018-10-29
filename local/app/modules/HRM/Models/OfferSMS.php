@@ -37,21 +37,33 @@ class OfferSMS extends Model
             'reply_type'=>$reply
         ]));
     }
-    public function getOfferCount(){
+    public function getOfferCount($c=true){
         $count = OfferCount::where('ansar_id',$this->ansar_id)->first();
-        if(!$count) return 0;
-        return intval($count->count);
-    }
-    public function saveCount(){
-        $count = OfferCount::where('ansar_id',$this->ansar_id)->first();
-        if($count) {
-            $count->increment('count');
+        if($c){
+            if(!$count) return 0;
+            return intval($count->count);
         }
-        else  {
-            $count = new OfferCount;
-            $count->count = 1;
-            $count->ansar_id = $this->ansar_id;
-            $count->save();
+        return $count;
+    }
+    public function saveCount($data = null){
+        $count = OfferCount::where('ansar_id',$this->ansar_id)->first();
+        if(!$data){
+            if($count) {
+                $count->increment('count');
+            }
+            else  {
+                $count = new OfferCount;
+                $count->count = 1;
+                $count->ansar_id = $this->ansar_id;
+                $count->save();
+            }
+        } else{
+            if($count) {
+                $count->update($data);
+            }
+            else  {
+                OfferCount::create($data);
+            }
         }
     }
     public function deleteCount(){
