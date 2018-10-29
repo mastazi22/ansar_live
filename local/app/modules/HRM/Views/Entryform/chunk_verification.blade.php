@@ -27,8 +27,8 @@
                         division: $scope.params.range,
                         unit: $scope.params.unit,
                         thana: $scope.params.thana,
-                        form_ansar:params.from_ansar,
-                        to_ansar:params.to_ansar,
+                        form_ansar:$scope.params.from_ansar,
+                        to_ansar:$scope.params.to_ansar,
                     }
                 }).then(function (response) {
                     $scope.loading = false;
