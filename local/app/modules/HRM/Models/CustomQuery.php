@@ -249,7 +249,7 @@ class CustomQuery
             $ansar->where('tbl_ansar_parsonal_info.thana_id', $thana);
         }
         if ($from_ansar && $to_ansar) {
-            $ansar->whereBetween('tbl_ansar_parsonal_info.ansar_id', [$from_ansar,$to_ansar]);
+            $ansar->whereBetween('tbl_ansar_parsonal_info.ansar_id', [min([$from_ansar,$to_ansar]),max([$from_ansar,$to_ansar])]);
         }
         $b = $ansar->skip($offset)->take($limit)
             ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_ansar_parsonal_info.sex', 'tbl_units.unit_name_bng', 'tbl_thana.thana_name_bng', 'tbl_designations.name_bng')

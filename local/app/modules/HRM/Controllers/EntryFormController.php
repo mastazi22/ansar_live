@@ -123,6 +123,7 @@ class EntryFormController extends Controller
 
     public function entryChunkVerify(Request $request)
     {
+//        return $request->unverified;
         $user = Auth::user();
         $ids = $request->input('not_verified');
         $rules = [
@@ -152,11 +153,19 @@ class EntryFormController extends Controller
                     }
                     CustomQuery::addActionlog(['ansar_id' => $ids[$i], 'action_type' => 'VERIFIED', 'from_state' => 'ENTRY', 'to_state' => 'VERIFIED', 'action_by' => auth()->user()->id]);
                     array_push($messages, ['status' => true, 'message' => $ansar->ansar_id . ' verified successfully']);
-                    DB::commit();
+
                 }
 
 
             }
+            foreach ($request->unverified as $item){
+                if(!$item['ansar_id']) continue;
+                $ansar = PersonalInfo::where('ansar_id', $item['ansar_id'])->first();
+//                return $ansar;
+                $ansar->remark = $item['remark'];
+                $ansar->save();
+            }
+            DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
             return Response::json(['status' => false, 'messege' => $e->getMessage()]);

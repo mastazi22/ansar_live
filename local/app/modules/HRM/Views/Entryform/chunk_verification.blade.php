@@ -27,7 +27,7 @@
                         division: $scope.params.range,
                         unit: $scope.params.unit,
                         thana: $scope.params.thana,
-                        form_ansar:$scope.params.from_ansar,
+                        from_ansar:$scope.params.from_ansar,
                         to_ansar:$scope.params.to_ansar,
                     }
                 }).then(function (response) {
@@ -236,6 +236,14 @@
                                 <input type="text" ng-model="params.to_ansar" class="form-control" placeholder="To Ansar ID">
                             </div>
                         </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label style="display: block">&nbsp;</label>
+                                <button class="btn btn-primary" id="verify-ansar" ng-click="loadAnsar()">
+                                    <i class="fa fa-check"></i>&nbsp;load Ansar
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div class="table-responsive">
                         <form id="not-verified-form" method="post" action="{{URL::to('HRM/entryChunkVerify')}}">
@@ -255,6 +263,9 @@
                                     <th><input type="checkbox" ng-model="selectAll"
                                                ng-change="changeSelectedAll()" value="all" name="select_all">
                                     </th>
+                                    <th>
+                                        Remark
+                                    </th>
                                 </tr>
                                 <tr ng-if="ansars.length==0||error!=undefined">
                                     <td class="warning" colspan="8">No unverified ansar found</td>
@@ -270,6 +281,10 @@
                                     <td>[[a.sex]]</td>
                                     <td><input type="checkbox" ng-model="selected[$index]" value="[[a.ansar_id]]"
                                                name="not_verified[]"></td>
+                                    <td>
+                                        <input type="hidden" value="[[a.ansar_id]]" name="[['unverified['+$index+'][ansar_id]']]" ng-if="!selected[$index]">
+                                        <input type="text" placeholder="remark" name="[['unverified['+$index+'][remark]']]" ng-if="!selected[$index]">
+                                    </td>
                                 </tr>
                             </table>
                         </form>
