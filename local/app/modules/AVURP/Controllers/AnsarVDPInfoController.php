@@ -331,7 +331,7 @@ class AnsarVDPInfoController extends Controller
                         }
                     } else if ($key == 'union_word_id') {
                         $uwi = intval(LanguageConverterFacades::bngToEng($value));
-                        $r["union_word_id"] = $uwi;
+                        $r["union_word_id"] = is_nan($uwi)?0:$uwi;
                     } else if ($key == 'union_id' && ($request->entry_unit == 1)) {
                         DB::enableQueryLog();
                         $uni = Unions::where('division_id', $r["division_id"])
@@ -341,6 +341,13 @@ class AnsarVDPInfoController extends Controller
                             ->first();
                         if ($uni) {
                             Log::info("$value found");
+                            $r["union_id"] = $uni->id;
+                        } else{
+                            $uni = Unions::where('division_id', $r["division_id"])
+                                ->where('unit_id', $r["unit_id"])
+                                ->where('thana_id', $r["thana_id"])
+                                ->where("union_name_bng",'=','নাই')
+                                ->first();
                             $r["union_id"] = $uni->id;
                         }
                     } else if ($key == 'bank_account_no') {
@@ -400,8 +407,8 @@ class AnsarVDPInfoController extends Controller
                     'division_id' => 'required|numeric|min:1',
                     'unit_id' => 'required|numeric|min:1',
                     'thana_id' => 'required|numeric|min:1',
-                    'union_id' => 'required|numeric|min:1',
-                    'union_word_id' => 'required|numeric|min:1',
+                    'union_id' => 'required|numeric',
+                    'union_word_id' => 'required|numeric',
 //                    'smart_card_id' => 'sometimes|exists:hrm.tbl_ansar_parsonal_info,ansar_id|unique:avurp.avurp_vdp_ansar_info',
                     'post_office_name' => '',
                     'village_house_no' => '',
