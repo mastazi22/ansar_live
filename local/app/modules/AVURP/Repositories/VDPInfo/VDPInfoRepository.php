@@ -47,6 +47,23 @@ class VDPInfoRepository implements VDPInfoInterface
         DB::connection('avurp')->beginTransaction();
         try {
             $entry_unit = $request->entry_unit;
+            switch ($entry_unit) {
+                case 1:
+                    $request->merge([
+                        'gender' => 'Male',
+                    ]);
+                    break;
+                case 2:
+                    $request->merge([
+                        'gender' => 'Female',
+                    ]);
+                    break;
+                case 3:
+                    $request->merge([
+                        'gender' => 'Male',
+                    ]);
+                    break;
+            }
             $count = $this->getLastPartOfGeoID($entry_unit,$request);
 
             $division_code = sprintf("%02d", Division::find($request->division_id)->division_code);
@@ -198,8 +215,10 @@ class VDPInfoRepository implements VDPInfoInterface
     {
         DB::connection('avurp')->beginTransaction();
         try {
+
             $info = $this->info->findOrFail($id);
             $entry_unit = $request->entry_unit;
+
             $division_code = sprintf("%02d", Division::find($request->division_id)->division_code);
             $unit_code = sprintf("%02d", District::find($request->unit_id)->unit_code);
             $thana_code = sprintf("%02d", Thana::find($request->thana_id)->thana_code);
