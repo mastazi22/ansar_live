@@ -435,6 +435,14 @@ class VDPInfoRepository implements VDPInfoInterface
                 $count = $count - 32 >= 0 ? intval(($count - 32) % 30) : $count;
                 $count += ($request->gender == 'Male' ? 1 : 33);
                 break;
+            case 6:
+                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', 'gender', 'union_word_id']))->count();
+
+                $platoon = $count - 32 >= 0 ? 2 + intval(($count - 32) / 30) : 1;
+                $total = $platoon==1?32:30;
+                $count = $count - 32 >= 0 ? intval(($count - 32) % 30) : $count;
+                $count += ($request->gender == 'Male' ? 1 : 33);
+                break;
             default :
                 throw new \Exception("Invalid unit selected");
         }
