@@ -108,7 +108,7 @@ class LetterController extends Controller
             ->join('tbl_kpi_info as tk', 'tbl_transfer_ansar.transfered_kpi_id', '=', 'tk.id')
             ->join('tbl_ansar_parsonal_info', 'tbl_transfer_ansar.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->where('tk.unit_id',$unit)
+            ->where('pk.unit_id',$unit)
             ->orderBy('tbl_transfer_ansar.created_at','desc')
             ->select('tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'pk.kpi_name as p_kpi_name', 'tk.kpi_name as t_kpi_name');
         if($option=='smartCardNo'){
@@ -124,7 +124,7 @@ class LetterController extends Controller
         $result = DB::table(DB::raw('('.$result->toSql().') x'))->mergeBindings($result)->groupBy('x.ansar_id')->get();
         $mem = $mem->first();
 //        return DB::getQueryLog();
-//        return $result;
+//        return $mem->toSql();
         if ($mem && $result) {
             return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'result' => $result, 'view' => 'print_transfer_letter']);
 //            else return View::make('HRM::Letter.print_transfer_letter')->with(['mem' => $mem, 'user' => $user, 'ta' => $result]);
