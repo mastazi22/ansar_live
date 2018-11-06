@@ -483,6 +483,31 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
             }
             return $status;
         });
+        Route::get('upload_union', function () {
+            $datas = \Maatwebsite\Excel\Facades\Excel::Load(storage_path('union_name.xlsx'),function ($e){
+
+            })->get()[0];
+//            i=0;
+            $i=0;
+            foreach ($datas as $data){
+                if($i==0) {
+                    $i++;
+                    continue;
+                }
+                $i++;
+                $d = [
+                  'thana_id'=>$data[0],
+                  'division_id'=>$data[1],
+                  'unit_id'=>$data[2],
+                  'code'=>sprintf("%02d",$data[3]),
+                  'union_name_eng'=>$data[4],
+                  'union_name_bng'=>$data[5],
+                  'id'=>$data[6],
+                ];
+                \App\modules\HRM\Models\Unions::create($d);
+            }
+            return $i;
+        });
 
         Route::any('/bulk-upload-bank-info', ['as' => "bulk_upload_bank_file", 'uses' => "EntryFormController@bulkUploadBankInfo"]);
 

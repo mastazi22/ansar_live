@@ -47,6 +47,23 @@ class VDPInfoRepository implements VDPInfoInterface
         DB::connection('avurp')->beginTransaction();
         try {
             $entry_unit = $request->entry_unit;
+            switch ($entry_unit) {
+                case 1:
+                    $request->merge([
+                        'gender' => 'Male',
+                    ]);
+                    break;
+                case 2:
+                    $request->merge([
+                        'gender' => 'Female',
+                    ]);
+                    break;
+                case 3:
+                    $request->merge([
+                        'gender' => 'Male',
+                    ]);
+                    break;
+            }
             $count = $this->getLastPartOfGeoID($entry_unit,$request);
 
             $division_code = sprintf("%02d", Division::find($request->division_id)->division_code);
@@ -198,8 +215,10 @@ class VDPInfoRepository implements VDPInfoInterface
     {
         DB::connection('avurp')->beginTransaction();
         try {
+
             $info = $this->info->findOrFail($id);
             $entry_unit = $request->entry_unit;
+
             $division_code = sprintf("%02d", Division::find($request->division_id)->division_code);
             $unit_code = sprintf("%02d", District::find($request->unit_id)->unit_code);
             $thana_code = sprintf("%02d", Thana::find($request->thana_id)->thana_code);
@@ -409,6 +428,14 @@ class VDPInfoRepository implements VDPInfoInterface
                 $count += ($request->gender == 'Male' ? 1 : 33);
                 break;
             case 5:
+                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', 'gender', 'union_word_id']))->count();
+
+                $platoon = $count - 32 >= 0 ? 2 + intval(($count - 32) / 30) : 1;
+                $total = $platoon==1?32:30;
+                $count = $count - 32 >= 0 ? intval(($count - 32) % 30) : $count;
+                $count += ($request->gender == 'Male' ? 1 : 33);
+                break;
+            case 6:
                 $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', 'gender', 'union_word_id']))->count();
 
                 $platoon = $count - 32 >= 0 ? 2 + intval(($count - 32) / 30) : 1;

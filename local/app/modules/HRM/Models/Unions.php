@@ -13,7 +13,7 @@ class Unions extends Model
     //
     protected $table = 'tbl_unions';
     protected $connection = "hrm";
-    protected $guarded = ['id'];
+    protected $guarded = [];
     public function division(){
         return $this->belongsTo(Division::class,'division_id');
     }

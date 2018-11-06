@@ -72,6 +72,7 @@ class ReportController extends Controller
                 ->where('tbl_kpi_info.thana_id', '=', $request->thana)
                 ->where('tbl_kpi_info.division_id', '=', $request->division)
                 ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
+                ->groupBy('tbl_ansar_parsonal_info.ansar_id')
                 ->select('tbl_ansar_parsonal_info.ansar_id','tbl_ansar_parsonal_info.data_of_birth as dob',DB::raw('CONCAT(hight_feet," feet ",hight_inch," inch") as height'),'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_designations.name_bng',
                     'tbl_units.unit_name_bng', 'tbl_embodiment.transfered_date', 'tbl_embodiment.joining_date'
                 ,DB::raw("IF(tbl_education_info.id!=0,tbl_education_info.education_deg_bng,tbl_ansar_education_info.name_of_degree) AS education"))->orderBy('tbl_embodiment.joining_date','desc')->get();
