@@ -47,7 +47,7 @@ class AnsarVDPInfoController extends Controller
             $limit = $request->limit ? $request->limit : 30;
             if (auth()->user()->usertype->type_name == "Dataentry") {
                 $vdp_infos = $this->infoRepository->getInfos($request->only(['range', 'unit', 'thana']), $limit, $request->action_user_id);
-            } else $vdp_infos = $this->infoRepository->getInfos($request->only(['range', 'unit', 'thana']), $limit);
+            } else $vdp_infos = $this->infoRepository->getInfos($request->only(['range', 'unit', 'thana','entry_unit']), $limit);
             return view('AVURP::ansar_vdp_info.data', compact('vdp_infos'));
         }
         return view('AVURP::ansar_vdp_info.index');

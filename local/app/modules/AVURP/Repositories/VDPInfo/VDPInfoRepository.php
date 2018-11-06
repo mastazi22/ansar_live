@@ -169,6 +169,7 @@ class VDPInfoRepository implements VDPInfoInterface
         $unit = isset($param['unit']) && $param['unit'] ? $param['unit'] : 'all';
         $thana = isset($param['thana']) && $param['thana'] ? $param['thana'] : 'all';
         $union = isset($param['union']) && $param['union'] ? $param['union'] : 'all';
+        $entry_unit = isset($param['entry_unit']) && $param['entry_unit'] ? $param['entry_unit'] : '';
         if ($is_api) {
             $vdp_infos = $this->info;
             $vdp_infos = $vdp_infos->with(['division' => function ($q) {
@@ -194,6 +195,8 @@ class VDPInfoRepository implements VDPInfoInterface
         }
         if ($union != 'all') {
             $vdp_infos = $vdp_infos->where('union_id', $union);
+        }if ($entry_unit) {
+            $vdp_infos = $vdp_infos->whereRaw("SUBSTRING(geo_id,12,1)=".$entry_unit);
         }
         $vdp_infos = $vdp_infos->userQuery($user_id);
         if (isset($param['q'])) $vdp_infos = $vdp_infos->searchQuery($param['q']);
@@ -402,33 +405,38 @@ class VDPInfoRepository implements VDPInfoInterface
         switch ($entry_unit) {
             case 1:
                 if (strcasecmp($request->gender, "male")) throw new \Exception("Gender doesn`t match with  unit selected");
-                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', 'gender']))->count();
+                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', 'gender']))
+                    ->whereRaw("SUBSTRING(geo_id,12,1)=".$entry_unit)->count();
                 $total =  115;
                 $platoon = 1;
                 $count += 1;
                 break;
             case 2:
                 if (strcasecmp($request->gender, "female")) throw new \Exception("Gender doesn`t match with  unit selected");
-                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', "gender", 'union_id']))->count();
+                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', "gender", 'union_id']))
+                    ->whereRaw("SUBSTRING(geo_id,12,1)=".$entry_unit)->count();
                 $total = 32;
                 $platoon = 1;
                 $count += 1;
                 break;
             case 3:
                 if (strcasecmp($request->gender, "male")) throw new \Exception("Gender doesn`t match with  unit selected");
-                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', "gender", 'union_id']))->count();
+                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', "gender", 'union_id']))
+                    ->whereRaw("SUBSTRING(geo_id,12,1)=".$entry_unit)->count();
                 $total = 32;
                 $platoon = 1;
                 $count += 1;
                 break;
             case 4:
-                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', 'gender', 'union_id']))->count();
+                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', 'gender', 'union_id']))
+                    ->whereRaw("SUBSTRING(geo_id,12,1)=".$entry_unit)->count();
                 $total = 32;
                 $platoon = 1;
                 $count += ($request->gender == 'Male' ? 1 : 33);
                 break;
             case 5:
-                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', 'gender', 'union_word_id']))->count();
+                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', 'gender', 'union_word_id']))
+                    ->whereRaw("SUBSTRING(geo_id,12,1)=".$entry_unit)->count();
 
                 $platoon = $count - 32 >= 0 ? 2 + intval(($count - 32) / 30) : 1;
                 $total = $platoon==1?32:30;
@@ -436,7 +444,8 @@ class VDPInfoRepository implements VDPInfoInterface
                 $count += ($request->gender == 'Male' ? 1 : 33);
                 break;
             case 6:
-                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', 'gender', 'union_word_id']))->count();
+                $count = $this->info->where($request->only(['division_id', 'thana_id', 'unit_id', 'gender', 'union_word_id']))
+                    ->whereRaw("SUBSTRING(geo_id,12,1)=".$entry_unit)->count();
 
                 $platoon = $count - 32 >= 0 ? 2 + intval(($count - 32) / 30) : 1;
                 $total = $platoon==1?32:30;

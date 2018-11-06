@@ -7,6 +7,14 @@
     <script>
         GlobalApp.controller('VDPController',function ($scope, $http, $sce) {
             $scope.param = {};
+            $scope.entryUnits = {
+                1:"উপজেলা পুরুষ আনসার কোম্পানি",
+                2:"উপজেলা মহিলা আনসার প্লাটুন",
+                3:"ইউনিয়ন আনসার প্লাটুন(পুরুষ)",
+                4:"ইউনিয়ন ভিডিপি প্লাটুন",
+                5:"ওয়ার্ড ভিডিপি প্লাটুন",
+                6:"ওয়ার্ড টিডিপি প্লাটুন"
+            }
             $scope.vdpList = $sce.trustAsHtml(`<div class="table-responsive">
                         <table class="table table-bordered table-condensed">
                             <caption style="font-size: 20px;color:#111111">All VDP Member</caption>
@@ -97,6 +105,19 @@
                 >
 
                 </filter-template>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label for="entry_unit" class="control-label">ইউনিট নির্বাচন করুন<sup class="text-red">*</sup>
+                                <span class="pull-right">:</span>
+                            </label>
+                            <select class="form-control" name="entry_unit" ng-model="param.entry_unit" id="entry_unit" ng-change="loadPage()">
+                                <option value="">--ইউনিট নির্বাচন করুন--</option>
+                                <option ng-repeat="(k,v) in entryUnits" value="[[k]]">[[v]]</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="box-body">
                 <div class="overlay" ng-if="allLoading">
