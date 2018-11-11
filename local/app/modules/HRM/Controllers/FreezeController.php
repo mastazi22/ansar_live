@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
+use Maatwebsite\Excel\Facades\Excel;
 use Mockery\Exception;
 
 class FreezeController extends Controller
@@ -144,7 +145,15 @@ class FreezeController extends Controller
         if ($valid->fails()) {
             return response($valid->messages()->toJson(), 422, ['Content-Type' => 'application/json']);
         }
-        return response()->json(CustomQuery::getFreezeList($request->range, $request->unit, $request->thana, $request->kpi));
+        $data = CustomQuery::getFreezeList($request->range, $request->unit, $request->thana, $request->kpi);
+        if($request->exists('export')&&$request->export==1){
+            return  Excel::create('freeze_report',function ($excel) use($data){
+                $excel->sheet('sheet1',function ($sheet) use ($data){
+                    $sheet->loadView('HRM::export.freezelist',['allFreezeAnsar'=>$data]);
+                });
+            })->export('xlsx');
+        }
+        return response()->json($data);
     }
 
     public function freezeRembodied(Request $request)

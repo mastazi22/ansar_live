@@ -492,6 +492,9 @@
                                 <table class="table  table-bordered table-striped" id="ansar-table">
                                     <caption>
                                         <span class="text text-bold" style="color:#000000;font-size: 1.1em">Total : [[results==undefined?0:results.length]]</span>
+                                        <a class="btn btn-primary btn-xs" href="{{URL::route('getfreezelist',['export'=>1])}}">
+                                            <i class="fa fa-file-excel-o"></i> Export
+                                        </a>
                                         <input type="text" class="pull-right" ng-model="q"
                                                placeholder="Search in this table">
                                     </caption>
