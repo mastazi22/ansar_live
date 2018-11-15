@@ -207,7 +207,12 @@ class CustomQuery
     {
         $t = strtotime(Carbon::now());
         $s = (int)config('session.lifetime');
-        $users = User::with(['userLog','userProfile','userParent']);
+        $users = User::with(['userLog','userProfile','userParent'])
+            ->leftJoin('sessions', 'sessions.user_id', '=', 'tbl_user.id')
+            ->join('tbl_user_details', 'tbl_user_details.user_id', '=', 'tbl_user.id')
+            ->join('tbl_user_log', 'tbl_user_log.user_id', '=', 'tbl_user.id')
+            ->select(DB::raw(" {$s}-(({$t}-sessions.last_activity)/60)as total_time"), 'tbl_user.id', 'tbl_user.status', 'tbl_user.user_name', 'tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.email', 'tbl_user_log.last_login', 'tbl_user_log.user_status', 'tbl_user.status')
+            ;
 
 
         /*$users = DB::connection('hrm')->table('tbl_user')
@@ -226,7 +231,7 @@ class CustomQuery
         $total = $t->count();
 //        return $total;
 //        return $users->skip($offset)->take($limit)->get();
-        return ['total' => $total, 'users' => $users->skip($offset)->take($limit)->get()];
+        return ['total' => $total, 'users' => $users->orderBy('total_time','desc')->skip($offset)->take($limit)->get()];
     }
 
     public static function getNotVerifiedChunkAnsar($limit, $offset, $division = null, $unit = null, $thana = null,$from_ansar=null,$to_ansar=null)
