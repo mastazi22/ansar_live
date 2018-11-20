@@ -71,12 +71,14 @@ class CustomQuery
                 if (isset($d[$exclude_district])) {
                     $query->whereNotIn('pu.id', $d[$exclude_district]);
                 } else $query->where('pu.id', '!=', $exclude_district);
+                $fquery->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
             } else {
                 $query->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id')
                     ->where('pu.id', '!=', $exclude_district)->where('du.id', '=', $exclude_district);
+                $fquery->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id')
+                    ->where('du.id', '=', $exclude_district)->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
             }
-            $fquery->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id')
-                ->where('du.id', '=', $exclude_district)->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
+
         } else if ($user->type == 11 || $user->type == 33 || $user->type == 66) {
             if (is_array($unit_id)) {
                 $query = $query->whereIn('pu.id', $unit_id);
