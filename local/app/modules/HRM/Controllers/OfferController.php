@@ -20,6 +20,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
@@ -123,6 +124,19 @@ class OfferController extends Controller
                 $request->get('exclude_district'), Auth::user());
 //            return $data;
             Log::info($request->all());
+            $user = Auth::user();
+            if($user->type==22){
+
+                if(in_array($user->district_id,Config::get('app.DG'))){
+                   $offer_type = 'DG';
+                } else if(in_array($user->district_id,Config::get('app.CG'))){
+                    $offer_type = 'CG';
+                } else{
+                    $offer_type = 'RE';
+                }
+            } else{
+                $offer_type = '';
+            }
             RequestDumper::create([
                 'user_id' => auth()->user()->id,
                 'request_url' => $request->url(),
@@ -131,7 +145,7 @@ class OfferController extends Controller
             $quota = Helper::getOfferQuota(Auth::user());
             if ($quota !== false && $quota < count($data)) throw new \Exception("Your offer quota limit exit");
             PanelModel::whereIn('ansar_id', $data)->update(['locked' => 1]);
-            $this->dispatch(new OfferQueue($data, $district_id, Auth::user(), $userOffer));
+            $this->dispatch(new OfferQueue($data, $district_id, Auth::user(), $userOffer,$offer_type));
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();

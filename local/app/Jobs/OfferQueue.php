@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\modules\HRM\Models\ActionUserLog;
 use App\modules\HRM\Models\OfferSMS;
+use App\modules\HRM\Models\OfferSMSStatus;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PersonalInfo;
 use Carbon\Carbon;
@@ -26,14 +27,16 @@ class OfferQueue extends Job implements ShouldQueue
     private $user;
     private $district_id;
     private $userOffer;
+    private $offer_type;
 
-    public function __construct($data, $district_id, $user,$userOffer)
+    public function __construct($data, $district_id, $user,$userOffer,$offer_type='RE')
     {
         //$this->data = $request;
         $this->data = $data;
         $this->user = $user;
         $this->district_id = $district_id;
         $this->userOffer = $userOffer;
+        $this->offer_type = $offer_type;
     }
 
     /**
@@ -58,6 +61,19 @@ class OfferQueue extends Job implements ShouldQueue
             DB::connection('hrm')->beginTransaction();
             try {
                 $mos = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
+                $offer_status = OfferSMSStatus::firstOrCreate(['ansar_id'=>$ansar_ids[$i]]);
+                $t = $offer_status->offer_type;
+                if($t){
+                    if(count(explode(',',$t))>=2){
+                        $t = '';
+                    }
+                    else $t .= ",".$this->offer_type;
+                } else{
+                    $t = $this->offer_type;
+                }
+                $offer_status->offer_type = $t;
+                $offer_status->last_offer_unit = $this->district_id;
+                $offer_status->save();
                 $pa = $mos->panel;
                 if(!$pa) throw new \Exception("No Panel Available");
                 if (!$mos && !preg_match('/^(\+88)?0[0-9]{10}/', $mos->mobile_no_self)) throw new \Exception("Invalid mobile number :" . $mos->mobile_no_self);

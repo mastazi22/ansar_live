@@ -40,6 +40,7 @@ class CustomQuery
 //               $q->orWhere('job_category.category_type','pc_training');
 //            })->pluck('ansar_id');
         $query = DB::table('tbl_ansar_parsonal_info')
+            ->leftJoin('tbl_offer_status', 'tbl_offer_status.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
             ->join('tbl_panel_info', 'tbl_panel_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
@@ -52,6 +53,29 @@ class CustomQuery
             ->where('tbl_ansar_status_info.block_list_status', 0)
             ->where('tbl_ansar_status_info.offer_block_status', 0);
 //            ->whereNotIn('tbl_ansar_parsonal_info.ansar_id', $eid);
+        if($user->type==22){
+            $query->where(function($q) use ($user){
+                $q->where('tbl_offer_status.last_offer_unit', '!=',$user->district_id);
+                $q->orWhereNull("tbl_offer_status.last_offer_unit");
+            });
+
+            if(in_array($user->district_id,Config::get('app.DG'))){
+                $query->where(function($q){
+                    $q->whereRaw("NOT FIND_IN_SET('DG',tbl_offer_status.offer_type)");
+                    $q->orWhereNull("tbl_offer_status.offer_type");
+                });
+            } else if(in_array($user->district_id,Config::get('app.CG'))){
+                $query->where(function($q){
+                    $q->whereRaw("NOT FIND_IN_SET('CG',tbl_offer_status.offer_type)");
+                    $q->orWhereNull("tbl_offer_status.offer_type");
+                });
+            } else{
+                $query->where(function($q){
+                    $q->whereRaw("NOT FIND_IN_SET('RE',tbl_offer_status.offer_type)");
+                    $q->orWhereNull("tbl_offer_status.offer_type");
+                });
+            }
+        }
         if(auth()->user()->id==343){
             $edu = DB::table('tbl_ansar_education_info')->select(DB::raw('MAX(education_id) edu_id'),'ansar_id')
                 ->groupBy('ansar_id')->toSql();
@@ -82,6 +106,7 @@ class CustomQuery
                 $query = $query->whereIn('pu.id', $unit_id);
             }
         }
+
         $pc_male = clone $query;
         $pc_female = clone $fquery;
         $apc_male = clone $query;
@@ -124,7 +149,7 @@ class CustomQuery
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<' . $pc_apc_retirement_age)
             ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')->take($apc['female']);
-//            $b = $ansar_female->get();
+//            $b = $pc_male->get();
         $b = $pc_male->unionAll($pc_female)->unionAll($apc_male)->unionAll($apc_female)->unionAll($ansar_male)->unionAll($ansar_female)->pluck('ansar_id');
 //        return DB::getQueryLog();
         return $b;
