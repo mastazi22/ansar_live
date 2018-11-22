@@ -11,9 +11,14 @@
         <th>Ansar ID</th>
         <th>Rank</th>
         <th>Name</th>
+        <th>Father Name</th>
+        <th>Mother Name</th>
+        <th>National ID</th>
         <th>Birth Date</th>
         <th>Home District</th>
         <th>Thana</th>
+        <th>Post Office</th>
+        <th>Village</th>
         <th>Mobile no</th>
         <th>Panel Date</th>
         <th>Panel Id</th>
@@ -25,16 +30,21 @@
             <td><a href="{{URL::to('HRM/entryreport',['ansarid'=>$ansar->id])}}">{{$ansar->id}}</a></td>
             <td>{{$ansar->rank}}</td>
             <td>{{$ansar->name}}</td>
+            <td>{{$ansar->father_name_bng}}</td>
+            <td>{{$ansar->mother_name_bng}}</td>
+            <td>{{$ansar->national_id_no}}</td>
             <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
+            <td>{{$ansar->post_office_name}}</td>
+            <td>{{$ansar->village_name}}</td>
             <td>{{$ansar->mobile_no_self}}</td>
             <td>{{\Carbon\Carbon::parse($ansar->panel_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->memorandum_id}}</td>
         </tr>
     @empty
         <tr>
-            <td class="warning" colspan="9">No Ansar Found</td>
+            <td class="warning" colspan="14">No Ansar Found</td>
         </tr>
     @endforelse
 @elseif(isset($type) && strcasecmp($type,"embodied_ansar")==0)
@@ -175,9 +185,14 @@
         <th>Ansar ID</th>
         <th>Rank</th>
         <th>Name</th>
+        <th>Father Name</th>
+        <th>Mother Name</th>
+        <th>National ID</th>
         <th>Birth Date</th>
         <th>Home District</th>
         <th>Thana</th>
+        <th>Post Office</th>
+        <th>Village</th>
         <th>Mobile no</th>
         <th>Rest Date</th>
 
@@ -188,9 +203,14 @@
             <td><a href="{{URL::to('HRM/entryreport',['ansarid'=>$ansar->id])}}">{{$ansar->id}}</a></td>
             <td>{{$ansar->rank}}</td>
             <td>{{$ansar->name}}</td>
+            <td>{{$ansar->father_name_bng}}</td>
+            <td>{{$ansar->mother_name_bng}}</td>
+            <td>{{$ansar->national_id_no}}</td>
             <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
+            <td>{{$ansar->post_office_name}}</td>
+            <td>{{$ansar->village_name}}</td>
             <td>{{$ansar->mobile_no_self}}</td>
             <td>{{\Carbon\Carbon::parse($ansar->rest_date)->format('d-M-Y')}}</td>
         </tr>
@@ -237,9 +257,14 @@
         <th>Ansar ID</th>
         <th>Rank</th>
         <th>Name</th>
+        <th>Father Name</th>
+        <th>Mother Name</th>
+        <th>National ID</th>
         <th>Birth Date</th>
         <th>Home District</th>
         <th>Thana</th>
+        <th>Post Office</th>
+        <th>Village</th>
         <th>Mobile no</th>
         <th>Block Reason</th>
         <th>Block Date</th>
@@ -251,16 +276,21 @@
             <td><a href="{{URL::to('HRM/entryreport',['ansarid'=>$ansar->id])}}">{{$ansar->id}}</a></td>
             <td>{{$ansar->rank}}</td>
             <td>{{$ansar->name}}</td>
+            <td>{{$ansar->father_name_bng}}</td>
+            <td>{{$ansar->mother_name_bng}}</td>
+            <td>{{$ansar->national_id_no}}</td>
             <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
+            <td>{{$ansar->post_office_name}}</td>
+            <td>{{$ansar->village_name}}</td>
             <td>{{$ansar->mobile_no_self}}</td>
             <td>{{$ansar->comment_for_block}}</td>
             <td>{{\Carbon\Carbon::parse($ansar->date_for_block)->format('d-M-Y')}}</td>
         </tr>
     @empty
         <tr>
-            <td class="warning" colspan="9">No Ansar Found</td>
+            <td class="warning" colspan="14">No Ansar Found</td>
         </tr>
     @endforelse
 @elseif(isset($type) && strcasecmp($type,"blacked_ansar")==0)
@@ -300,9 +330,14 @@
         <th>Ansar ID</th>
         <th>Rank</th>
         <th>Name</th>
+        <th>Father Name</th>
+        <th>Mother Name</th>
+        <th>National ID</th>
         <th>Birth Date</th>
         <th>Home District</th>
         <th>Thana</th>
+        <th>Post Office</th>
+        <th>Village</th>
         <th>Mobile no</th>
 
     </tr>
@@ -312,9 +347,14 @@
             <td><a href="{{URL::to('HRM/entryreport',['ansarid'=>$ansar->id])}}">{{$ansar->id}}</a></td>
             <td>{{$ansar->rank}}</td>
             <td>{{$ansar->name}}</td>
+            <td>{{$ansar->father_name_bng}}</td>
+            <td>{{$ansar->mother_name_bng}}</td>
+            <td>{{$ansar->national_id_no}}</td>
             <td>{{\Carbon\Carbon::parse($ansar->birth_date)->format('d-M-Y')}}</td>
             <td>{{$ansar->unit}}</td>
             <td>{{$ansar->thana}}</td>
+            <td>{{$ansar->post_office_name}}</td>
+            <td>{{$ansar->village_name}}</td>
             <td>{{$ansar->mobile_no_self}}</td>
         </tr>
     @empty

@@ -71,7 +71,7 @@ class VDPInfoRepository implements VDPInfoInterface
             $thana_code = sprintf("%02d", Thana::find($request->thana_id)->thana_code);
             $union_code = sprintf("%02d", Unions::find($request->union_id)->code);
             $gender_code = $request->gender == 'Male' ? 1 : 2;
-            $word_code = '0' . $request->union_word_id;
+            $word_code = '0' . substr($request->union_word_id.'',0,1);
 //            $count += ($request->gender == 'Male' ? 1 : 33);
 //            $count = sprintf("%03d", $count);
             $geo_id = $division_code . $unit_code . $thana_code . $union_code . $gender_code . $word_code . $entry_unit . $count;
