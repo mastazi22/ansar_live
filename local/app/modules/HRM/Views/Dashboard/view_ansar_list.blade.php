@@ -185,7 +185,7 @@
                     </span>
                 </div>
                 <div class="box-body">
-                    @if($pageTitle=="Total Paneled Ansars")
+                    @if($pageTitle=="Total Paneled Ansars" || $pageTitle=="Total Embodied Ansars")
                         <filter-template
                                 show-item="['range','unit','thana','gender']"
                                 type="all"
@@ -198,18 +198,7 @@
                                 start-load="range"
                                 field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',gender:'col-sm-3'}"
                         ></filter-template>
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="form-group">
-                                    <label for="">
-                                        <input ng-change="loadPage()" ng-model="param.filter_mobile_no" ng-true-value="1" ng-false-value="0" style="vertical-align: top;" type="checkbox">&nbsp;Filter mobile number
-                                    </label>
-                                    <label for="" style="margin-left: 10px">
-                                        <input  ng-change="loadPage()" ng-model="param.filter_age" ng-true-value="1" ng-false-value="0" style="vertical-align: top;" type="checkbox">&nbsp;Filter age
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
+
                             @else
                                 <filter-template
                                         show-item="['range','unit','thana']"
@@ -224,6 +213,21 @@
                                 >
                                 </filter-template>
                                     @endif
+                        @if($pageTitle=="Total Paneled Ansars")
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="">
+                                            <input ng-change="loadPage()" ng-model="param.filter_mobile_no" ng-true-value="1" ng-false-value="0" style="vertical-align: top;" type="checkbox">&nbsp;Filter mobile number
+                                        </label>
+                                        <label for="" style="margin-left: 10px">
+                                            <input  ng-change="loadPage()" ng-model="param.filter_age" ng-true-value="1" ng-false-value="0" style="vertical-align: top;" type="checkbox">&nbsp;Filter age
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <div class="btn-group btn-group-sm pull-right">

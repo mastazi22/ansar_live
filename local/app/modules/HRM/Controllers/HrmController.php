@@ -319,7 +319,7 @@ class HrmController extends Controller
                 $data = CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank,$request->filter_mobile_no,$request->filter_age, $q);
                 break;
             case 'embodied_ansar':
-                $data = CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q,$sex);
                 break;
             case 'rest_ansar':
                 $data = CustomQuery::getTotalRestAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);

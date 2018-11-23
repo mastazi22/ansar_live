@@ -916,7 +916,7 @@ class CustomQuery
 
 
 // Dashboard embodied ansar list
-    public static function getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q)
+    public static function getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q,$gender=null)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::EMBODIED);
         if ($rank != 'all') {
@@ -930,6 +930,9 @@ class CustomQuery
         }
         if ($thana != 'all') {
             $ansarQuery->where('tbl_kpi_info.thana_id', $thana);
+        }
+        if ($gender&&$gender!='all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', $gender);
         }
         if ($time == self::RECENT) {
             $recentTime = Carbon::now();
