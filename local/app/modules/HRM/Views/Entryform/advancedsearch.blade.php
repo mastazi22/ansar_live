@@ -29,8 +29,21 @@
                 disease_id: {compare: '=', value: ''},
                 own_disease: {compare: 'LIKE', value: ''},
                 education: {compare: '=', value: ''},
-                sex: {compare: '=', value: ''}
+                sex: {compare: '=', value: ''},
+                status:{compare:'=',value:[]}
             }
+            $scope.ansarStatusList = [
+                {value:"free_status",label:'Free Status'},
+                {value:"pannel_status",label:'Panel Status'},
+                {value:"offer_sms_status",label:'Offer Status'},
+                {value:"embodied_status",label:'Embodied Status'},
+                {value:"offer_block_status",label:'Offer Block Status'},
+                {value:"freezing_status",label:'Freeze Status'},
+                {value:"block_list_status",label:'Block Status'},
+                {value:"black_list_status",label:'Black Status'},
+//                "retierment_status",
+//                "expired_status"
+            ]
             $scope.loading = false;
             $scope.itemPerPage = parseInt('{{config('app.item_per_page')}}')
             $scope.pages = [];
@@ -120,7 +133,8 @@
                     disease_id: {compare: '=', value: ''},
                     own_disease: {compare: 'LIKE', value: ''},
                     education: {compare: '=', value: ''},
-                    sex: {compare: '=', value: ''}
+                    sex: {compare: '=', value: ''},
+                    status:{compare:'=',value:[]}
                 }
                 $scope.district = [];
                 $scope.thana = [];
@@ -447,6 +461,24 @@
                                             <option value="">--Select an option--</option>
                                             <option ng-repeat="d in educations" value=[[d.id]]>[[d.education_deg_bng]]</option>
                                         </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Status</td>
+                                    <td>
+                                        <select class="ansaradvancedselect" name="status"
+                                                ng-model="searchOption.status.compare">
+                                            <option value="=">EQUAL</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div style="height: 150px;overflow-y: auto;width: 100%;border: 1px solid #cccccc;padding-left: 5px">
+                                            <ul style="list-style: none;padding: 0">
+                                                <li ng-repeat="s in ansarStatusList">
+                                                    <input type="checkbox" ng-true-value="'[[s.value]]'" ng-false-value="0" ng-model="searchOption.status.value[$index]"/>[[s.label]]
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </td>
                                 </tr>
                             </table>

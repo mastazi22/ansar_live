@@ -1021,6 +1021,34 @@ class FormSubmitHandler extends Controller
                     $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->value);
                 }
 
+            }else if ($key == "status") {
+                $selectedStatus = array_filter($value->value);
+                $allStatus = [
+                    "free_status",
+                    "pannel_status",
+                    "offer_sms_status",
+                    "offered_status",
+                    "embodied_status",
+                    "offer_block_status",
+                    "freezing_status",
+                    "early_retierment_status",
+                    "block_list_status",
+                    "black_list_status",
+                    "retierment_status",
+                    "expired_status"
+                ];
+                $noStatus = array_diff($allStatus,$selectedStatus);
+                if($selectedStatus&&count($selectedStatus)>0){
+                    $ansarAdvancedSearch->join('tbl_ansar_status_info','tbl_ansar_status_info.ansar_id','=','tbl_ansar_parsonal_info.ansar_id');
+                    foreach ($selectedStatus as $status){
+                        $ansarAdvancedSearch->where($status,1);
+                    }
+                    foreach ($noStatus as $status){
+                        $ansarAdvancedSearch->where($status,0);
+                    }
+                }
+
+
             } else {
                 if ($value->value) {
                     $ansarAdvancedSearch->where('tbl_ansar_parsonal_info.' . $key, $value->compare, $value->compare == 'LIKE' ? "%" . $value->value . "%" : $value->value);
