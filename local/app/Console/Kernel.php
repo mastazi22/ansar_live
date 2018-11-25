@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\NotificationServer;
+use App\Helper\Facades\GlobalParameterFacades;
 use App\Helper\SMSTrait;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\EmbodimentModel;
@@ -528,6 +529,51 @@ class Kernel extends ConsoleKernel
 
 
         })->everyThirtyMinutes()->name("offer_block_to_panel_6_month")->withoutOverlapping();
+        $schedule->call(function () {
+            Log::info("called : Ansar Retirement");
+            $ansars = PanelModel::whereHas('ansarInfo.status',function ($q){
+                $q->where('block_list_status',0);
+                $q->where('pannel_status',1);
+                $q->where('black_list_status',0);
+            })->with(['ansarInfo'=>function($q){
+                $q->select('ansar_id','data_of_birth','designation_id');
+                $q->with(['designation','status']);
+            }])->get();
+//            return $ansars;
+            $a = [];
+            DB::connection('hrm')->beginTransaction();
+            try {
+                foreach ($ansars as $ansar) {
+                    $info = $ansar->ansarInfo;
+                    $dob = $info->data_of_birth;
+                    $age = \Carbon\Carbon::parse($dob)->diffInYears(\Carbon\Carbon::now(), true);
+                    $ansarRe = GlobalParameterFacades::getValue('retirement_age_ansar') - 3;
+                    $pcApcRe = GlobalParameterFacades::getValue('retirement_age_pc_apc') - 3;
+                    if ($info->designation->code == "ANSAR" && $age >= $ansarRe) {
+                        $info->status->update([
+                            'pannel_status' => 0,
+                            'retierment_status' => 1
+                        ]);
+                        $ansar->saveLog('Retire', null, 'over aged');
+                        $ansar->delete();
+                    } else if (($info->designation->code == "PC" || $info->designation->code == "APC") && $age >= $pcApcRe) {
+                        $info->status->update([
+                            'pannel_status' => 0,
+                            'retierment_status' => 1
+                        ]);
+                        $ansar->saveLog('Retire', null, 'over aged');
+                        $ansar->delete();
+                    }
+                    //array_push($a, ['ansar_id' => $ansar->ansar_id, 'age' => $age, 'status' => $info->status->getStatus()]);
+
+                }
+                DB::connection('hrm')->commit();
+            }catch(\Exception $e){
+                DB::connection('hrm')->rollback();
+            }
+
+
+        })->everyThirtyMinutes()->name("ansar_retirement")->withoutOverlapping();
 
     }
 }

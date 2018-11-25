@@ -18,6 +18,7 @@ class AnsarStatusInfo extends Model
     const NOT_VERIFIED_STATUS = 'Not Verified';
     const RETIREMENT_STATUS = 'disembodied';
     const EARLY_RETIREMENT_STATUS = 'early_retierment_status';
+    const RETIRE_STATUS = 'Retire';
     protected $connection = 'hrm';
     protected $table="tbl_ansar_status_info";
     protected $guarded = ['id'];
@@ -46,9 +47,10 @@ class AnsarStatusInfo extends Model
             if($this->offer_sms_status) array_push($status,self::OFFER_STATUS);
             if($this->freezing_status) array_push($status,self::FREEZE_STATUS);
             if($this->rest_status) array_push($status,self::REST_STATUS);
-            if($this->retierment_status) array_push($status,self::RETIREMENT_STATUS);
+//            if($this->retierment_status) array_push($status,self::RETIREMENT_STATUS);
             if($this->offer_block_status) array_push($status,self::OFFER_BLOCK_STATUS);
             if($this->early_retierment_status) array_push($status,self::EARLY_RETIREMENT_STATUS);
+            if($this->retierment_status) array_push($status,self::RETIRE_STATUS);
             if(!$this->block_list_status&&!$this->black_list_status&&!$this->free_status&&!$this->pannel_status&&!$this->embodied_status&&!$this->offer_sms_status&&!$this->freezing_status&&!$this->rest_status&&!$this->retierment_status&&!$this->early_retierment_status) array_push($status,self::NOT_VERIFIED_STATUS);
 
 

@@ -813,6 +813,37 @@ class CustomQuery
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_rest_info.rest_date')->skip($offset)->limit($limit)->get();
         return ['total' => collect($total->get())->pluck('t', 'code'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'rest'];
     }
+    public static function getTotalRetireAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q)
+    {
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::RETIRE);
+        if ($rank != 'all') {
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', $division);
+        }
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_units.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if ($time == self::RECENT) {
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
+        }
+        if ($q) {
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+        }
+        $total = clone $ansarQuery;
+        $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        $ansars = $ansarQuery->distinct()->select('tbl_ansar_parsonal_info.ansar_id as id',
+            'tbl_ansar_parsonal_info.father_name_bng','tbl_ansar_parsonal_info.mother_name_bng','tbl_ansar_parsonal_info.mobile_no_self',
+            'post_office_name','village_name','union_name_bng','tbl_ansar_parsonal_info.national_id_no', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
+            'tbl_designations.name_bng as rank',DB::raw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW()) as age') ,'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_ansar_status_info.updated_at as retire_date')->skip($offset)->limit($limit)->get();
+        return ['total' => collect($total->get())->pluck('t', 'code'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'rest'];
+    }
 
 
 // Dashboard freezed ansar list

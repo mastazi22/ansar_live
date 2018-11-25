@@ -11,7 +11,7 @@ class PanelModel extends Model
     protected $table="tbl_panel_info";
     protected $guarded = ['id'];
     function ansarInfo(){
-        return $this->belongsTo(PersonalInfo::class,'ansar_id');
+        return $this->belongsTo(PersonalInfo::class,'ansar_id','ansar_id');
     }
     function division(){
         return $this->belongsTo(Division::class,'division_id');

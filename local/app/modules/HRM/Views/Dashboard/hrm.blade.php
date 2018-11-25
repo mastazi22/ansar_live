@@ -51,6 +51,7 @@
                     totalBlockList: response.data,
                     totalBlackList: response.data,
                     totalRest: response.data,
+                    totalRetire: response.data,
                     totalOfferBlock: response.data,
                 }
             })
@@ -87,6 +88,7 @@
                     recentBlockList: response.data,
                     recentBlackList: response.data,
                     recentRest: response.data,
+                    recentRetire: response.data,
                     recentOffered: response.data
 
                 }
@@ -527,6 +529,7 @@
         </div>
         <!-- /.col -->
         <div class="col-md-3 col-sm-6 col-xs-12">
+
         {{--<div class="info-box bg-aqua"> <span class="info-box-icon"><i class="fa fa-exclamation-circle"></i></span>--}}
         {{--<div class="info-box-content"> <span class="info-box-text">Total Not Verified (Status Free)</span> <span class="info-box-number">322</span>--}}
         {{--<div class="progress">--}}
@@ -537,6 +540,7 @@
         {{--</div>--}}
         <!-- /.info-box -->
         </div>
+
         <!-- /.col -->
         <!-- show line-->
         <div class="col-md-3 col-sm-6 col-xs-12">
@@ -562,6 +566,30 @@
                 <!-- /.info-box-content -->
             </div>
             <!-- /.info-box -->
+        </div>
+        <div class="col-md-3 line-bar-middle col-sm-6 col-xs-12">
+            <div class="info-box bg-aqua"><span class="info-box-icon"><img src="{{asset('dist/img/embodiment2.png')}}"></span>
+
+                <div class="info-box-content">
+                    <a href="{{URL::to('HRM/show_ansar_list')}}/retire_ansar"
+                       class="btn-link" style="color: #FFFFFF !important;">
+                        <span class="info-box-text">@lang('title.tre')</span>
+                        <span class="info-box-number" style="font-weight: normal">
+                       [[allAnsar.totalRetire]]
+                        <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar"></span>
+                    </a>
+
+                    <div class="progress">
+                        <div class="progress-bar" style="width: 70%"></div>
+                    </div>
+                    <a
+                            href="{{URL::to('HRM/show_recent_ansar_list')}}/retire_ansar" style="color:#FFFFFF"
+                            class="btn-link">
+                        <span class="progress-description">Recent-[[recentAnsar.recentRetire]]</span></a></div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+
         </div>
     </div>
     <!-- /.row -->
