@@ -9,6 +9,7 @@ use App\modules\HRM\Models\EmbodimentModel;
 use App\modules\HRM\Models\FreezingInfoModel;
 use App\modules\HRM\Models\KpiDetailsModel;
 use App\modules\HRM\Models\KpiGeneralModel;
+use App\modules\HRM\Models\OfferBlockedAnsar;
 use App\modules\HRM\Models\OfferCancel;
 use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\PanelInfoLogModel;
@@ -489,6 +490,44 @@ class Kernel extends ConsoleKernel
 
 
         })->dailyAt("00:05")->name("generate_attendance")->withoutOverlapping();
+        $schedule->call(function () {
+            Log::info("called : unblock panel locked");
+            PanelModel::where('locked',1)->update(['locked'=>0]);
+
+
+        })->everyThirtyMinutes()->name("panel_unlock")->withoutOverlapping();
+        $schedule->call(function () {
+            Log::info("called : offer block to panel");
+            DB::connection('hrm')->beginTransaction();
+            try{
+                $currentDate = Carbon::now()->format('Y-m-d');
+                $blocked_ansars = OfferBlockedAnsar::whereRaw("TIMESTAMPDIFF(MONTH,blocked_date,'$currentDate')>=6")->take(1000)->get();
+                foreach($blocked_ansars as $blocked_ansar){
+                    $now = Carbon::now();
+                    $panel_log = PanelInfoLogModel::where('ansar_id',$blocked_ansar->ansar_id)->orderBy('panel_date','desc')->first();
+                    PanelModel::create([
+                        'memorandum_id' => $panel_log&&isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
+                        'panel_date' => $now,
+                        'come_from' => 'Offer Cancel',
+                        'ansar_merit_list' => 1,
+                        'ansar_id' => $blocked_ansar->ansar_id,
+                    ]);
+                    AnsarStatusInfo::where('ansar_id',$blocked_ansar->ansar_id)->update(['offer_block_status'=>0,'pannel_status'=>1]);
+                    $blocked_ansar->status = "unblocked";
+                    $blocked_ansar->unblocked_date = Carbon::now()->format('Y-m-d');
+                    $blocked_ansar->save();
+                    $blocked_ansar->delete();
+                }
+
+                DB::commit();
+            }catch(\Exception $exception){
+                DB::rollback();
+                return ['status'=>false,'message'=>$exception->getMessage()];
+            }
+            return ['status'=>true,'message'=>'Sending to panel complete'];
+
+
+        })->everyThirtyMinutes()->name("offer_block_to_panel_6_month")->withoutOverlapping();
 
     }
 }
