@@ -71,6 +71,7 @@ class JobCircularController extends Controller
             $request['payment_status'] = !$request->payment_status ? 'off' : $request->payment_status;
             $request['application_status'] = !$request->application_status ? 'off' : $request->application_status;
             $request['login_status'] = !$request->login_status ? 'off' : $request->login_status;
+            $request['admit_card_print_status'] = !$request->admit_card_print_status ? 'off' : $request->admit_card_print_status;
             $request['circular_status'] = !$request->circular_status ? 'shutdown' : $request->circular_status;
             $request['quota_district_division'] = !$request->quota_district_division ? 'off' : $request->quota_district_division;
             $c = JobCategory::find($request->job_category_id)->circular()->create($request->except(['job_category_id', 'constraint']));

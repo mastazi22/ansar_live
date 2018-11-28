@@ -21,6 +21,13 @@
         @endif
     </div>
     <div class="form-group">
+        {!! Form::label('circular_code','Job Circular Code :',['class'=>'control-label']) !!}
+        {!! Form::text('circular_code',null,['class'=>'form-control','placeholder'=>'Enter circular code']) !!}
+        @if(isset($errors)&&$errors->first('circular_code'))
+            <p class="text text-danger">{{$errors->first('circular_code')}}</p>
+        @endif
+    </div>
+    <div class="form-group">
         {!! Form::label('start_date','Start Date :',['class'=>'control-label']) !!}
         {!! Form::text('start_date',null,['class'=>'form-control','placeholder'=>'Enter Start Date','date-picker'=>(isset($data)?"moment('{$data->start_date}').format('DD-MMM-YYYY')":"moment('".\Carbon\Carbon::parse(Request::old('start_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
         @if(isset($errors)&&$errors->first('start_date'))
@@ -79,6 +86,13 @@
                @if((isset($data)&&$data->application_status=='on')||Request::old('application_status')=='on')checked
                @endif id="application_status" class="switch-checkbox">
         <label for="application_status" class=""></label>
+    </div>
+    <div class="form-group">
+        {!! Form::label('test','Admit Card Print Status : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
+        <input type="checkbox" value="on" name="admit_card_print_status"
+               @if((isset($data)&&$data->admit_card_print_status=='on')||Request::old('admit_card_print_status')=='on')checked
+               @endif id="admit_card_print_status" class="switch-checkbox">
+        <label for="admit_card_print_status" class=""></label>
     </div>
     <div class="form-group">
         {!! Form::label('test','Quota applied for all divisions and districts : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
