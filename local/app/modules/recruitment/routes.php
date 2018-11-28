@@ -42,6 +42,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
         Route::any('/applicant/edit_for_hrm', ['as' => 'recruitment.edit_for_hrm', 'uses' => 'ApplicantScreeningController@editApplicantForHRM']);
         Route::any('/applicant/applicant_edit_for_hrm/{type}/{id}', ['as' => 'recruitment.applicant_edit_for_hrm', 'uses' => 'ApplicantScreeningController@applicantEditForHRM']);
         Route::post('/applicant/store_hrm_detail', ['as' => 'recruitment.store_hrm_detail', 'uses' => 'ApplicantScreeningController@storeApplicantHRmDetail']);
+        Route::any('/applicant/generate_roll_no', ['as' => 'recruitment.applicant.generate_roll_no', 'uses' => 'ApplicantScreeningController@generateApplicantRoll']);
 
 
         Route::any('/applicant/hrm', ['as' => 'recruitment.hrm.index', 'uses' => 'ApplicantHRMController@index']);

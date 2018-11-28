@@ -1093,5 +1093,41 @@ class ApplicantScreeningController extends Controller
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
+    public function generateApplicantRoll(Request $request)
+    {
+        if($request->ajax()&&strcasecmp($request->method(),'post')==0){
+//            return $request->all();
+            $rules = [
+                'job_circular_id' => 'required',
+                'status'=>'required'
+            ];
+            $this->validate($request, $rules);
+            DB::beginTransaction();
+            try{
+                $circular = JobCircular::with(['appliciant'=>function($q) use ($request){
+                    $q->whereIn('status',array_filter($request->status))->orderBy('id');
+                }])->find($request->job_circular_id);
+                $applicantCount = JobAppliciant::where('job_circular_id',$request->job_circular_id)
+                    ->whereIn('status',array_filter($request->status))->count();
+                $len = strlen("$applicantCount");
+                $i=1;
+                $rolls = [];
+                foreach ($circular->appliciant as $applicant){
+                    $roll_last_part = sprintf("%0".$len."d",$i);
+                    $roll_no = $circular->circular_code."".$roll_last_part;
+                    array_push($rolls,$roll_no);
+                    $i++;
+                    $applicant->update(compact('roll_no'));
+                }
+                DB::commit();
+            }catch(\Exception $e){
+                DB::rollBack();
+                return response()->json(['status'=>false,'message'=>$e->getMessage()],500);
+            }
+
+            return response()->json(['status'=>true]);
+        }
+        return view('recruitment::applicant.generate_applicant_roll');
+    }
 
 }
