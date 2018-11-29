@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => 'database',
+    'default' => 'hrm',
 
     /*
     |--------------------------------------------------------------------------
@@ -34,11 +34,18 @@ return [
             'driver' => 'sync',
         ],
 
-        'database' => [
+        'hrm' => [
             'connection' => 'hrm',
             'driver' => 'database',
             'table' => 'jobs',
             'queue' => 'default',
+            'expire' => 600,
+        ],
+        'recruitment' => [
+            'connection' => 'recruitment',
+            'driver' => 'database',
+            'table' => 'jobs',
+            'queue' => 'recruitment',
             'expire' => 600,
         ],
 

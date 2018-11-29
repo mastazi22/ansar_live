@@ -2,11 +2,10 @@
 
 namespace App\modules\recruitment\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Jobs\SmsQueueJob;
 use App\modules\recruitment\Models\JobAppliciant;
 use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 
 class SMSController extends Controller
@@ -32,61 +31,46 @@ class SMSController extends Controller
         $this->validate($request, $rules);
         $divisions = array_filter($request->divisions);
         $units = array_filter($request->units);
+        $message = $request->message;
+        $keys = [];
+        preg_match_all('/[^{\}]+(?=})/', $message, $keys);
+        $k = $keys[0];
+        $query = JobAppliciant::select('mobile_no_self', ...$k)
+            ->where('job_circular_id', $request->circular);
+        if (count($divisions) > 0) $query->whereIn('division_id', $divisions);
+        if (count($units) > 0) $query->whereIn('unit_id', $units);
         if ($request->status == 'sel') {
 
-            DB::beginTransaction();
-            try {
-                DB::statement("call send_sms_to_applicant(:message,:circular_id,:divisions,:units,:a_status)",[
-                    'message'=>$request->message,
-                    'circular_id'=>$request->circular,
-                    'divisions'=>count($divisions)>0?implode(',',$divisions):'',
-                    'units'=>count($units)>0?implode(',',$units):'',
-                    'a_status'=>'selected'
-                ]);
-                DB::commit();
-            } catch (\Exception $e) {
-                DB::rollback();
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
-            }
-            return response()->json(['status' => 'success', 'message' => 'Message send successfully']);
-        }
-        else if ($request->status == 'acc') {
+            $query->where('status', 'selected');
 
-            DB::beginTransaction();
-            try {
-                DB::statement("call send_sms_to_applicant(:message,:circular_id,:divisions,:units,:a_status)",[
-                    'message'=>$request->message,
-                    'circular_id'=>$request->circular,
-                    'divisions'=>count($divisions)>0?implode(',',$divisions):'',
-                    'units'=>count($units)>0?implode(',',$units):'',
-                    'a_status'=>'accepted'
-                ]);
-                DB::commit();
-            } catch (\Exception $e) {
-                DB::rollback();
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
-            }
-            return response()->json(['status' => 'success', 'message' => 'Message send successfully']);
-        }
-        else if ($request->status == 'app') {
+        } else if ($request->status == 'acc') {
 
-            DB::beginTransaction();
-            try {
-                DB::statement("call send_sms_to_applicant(:message,:circular_id,:divisions,:units,:a_status)",[
-                    'message'=>$request->message,
-                    'circular_id'=>$request->circular,
-                    'divisions'=>count($divisions)>0?implode(',',$divisions):'',
-                    'units'=>count($units)>0?implode(',',$units):'',
-                    'a_status'=>'applied'
-                ]);
-                DB::commit();
-            } catch (\Exception $e) {
-                DB::rollback();
-                return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
-            }
-            return response()->json(['status' => 'success', 'message' => 'Message send successfully']);
+            $query->where('status', 'accepted');
+        } else if ($request->status == 'app') {
+
+            $query->where('status', 'applied');
         }
-        return response()->json(['status' => 'error', 'message' => 'invalid request']);
+//        return $query->toSql();
+        DB::enableQueryLog();
+        $data = $query->get();
+//        return DB::getQueryLog();
+        $datas = [];
+        foreach ($data as $d) {
+            $m = $message;
+            foreach ($k as $key) {
+                $m = str_replace("{".$key."}", $d->{$key}, $m);
+            }
+            array_push($datas, [
+                'payload' => json_encode([
+                    'to' => $d->mobile_no_self,
+                    'body' => $m
+                ]),
+                'try' => 0
+            ]);
+        }
+//        return $datas;
+        $this->dispatch((new SmsQueueJob($datas))->onQueue('recruitment'));
+        return response()->json(['status' => 'success', 'message' => 'Message send successfully']);
 
     }
 }
