@@ -36,8 +36,9 @@ class SMSController extends Controller
         preg_match_all('/[^{\}]+(?=})/', $message, $keys);
         $k = $keys[0];
         $query = JobAppliciant::where('job_circular_id', $request->circular);
-        if(count($k)>0) $query->select('mobile_no_self', ...$k);
+        if(count($k)>0) $query->select('mobile_no_self', DB::raw(implode(',',$k)));
         else $query->select('mobile_no_self');
+//        return $query->toSql();
         if (count($divisions) > 0) $query->whereIn('division_id', $divisions);
         if (count($units) > 0) $query->whereIn('unit_id', $units);
         if ($request->status == 'sel') {
