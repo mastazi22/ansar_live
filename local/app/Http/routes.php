@@ -32,7 +32,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('sign_image/{id}', ['as'=>'sign_image','uses'=>'UserController@getSingImage']);
     Route::get('thumb_image/{id}', ['as'=>'thumb_image','uses'=>'UserController@getThumbImage']);
     Route::get('/logout', 'UserController@logout');
-
+    Route::get('/info', function () {
+        phpinfo();
+    });
     //user route
 
     Route::get('/view_profile/{id}', 'UserController@viewProfile');
