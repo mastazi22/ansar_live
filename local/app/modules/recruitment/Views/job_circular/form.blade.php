@@ -95,6 +95,13 @@
         <label for="admit_card_print_status" class=""></label>
     </div>
     <div class="form-group">
+        {!! Form::label('test','Submit Problem Status : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
+        <input type="checkbox" value="on" name="submit_problem_status"
+               @if((isset($data)&&$data->submit_problem_status=='on')||Request::old('submit_problem_status')=='on')checked
+               @endif id="submit_problem_status" class="switch-checkbox">
+        <label for="submit_problem_status" class=""></label>
+    </div>
+    <div class="form-group">
         {!! Form::label('test','Quota applied for all divisions and districts : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
         <input type="checkbox" value="on" name="quota_district_division"
                @if((isset($data)&&$data->quota_district_division=='on')||Request::old('quota_district_division')=='on')checked ng-init="apply_quota=1"
