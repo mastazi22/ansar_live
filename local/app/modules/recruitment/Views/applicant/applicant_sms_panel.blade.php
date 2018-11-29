@@ -154,8 +154,9 @@
                                 Add Aditional Number&nbsp;<button class="btn btn-primary btn-xs" ng-click="param.additional_number.push('')">
                                     <i class="fa fa-plus"></i>
                                 </button>
-                                <input type="text" class="form-control" style="margin-bottom: 5px" placeholder="Enter mobile no" ng-repeat="an in param.additional_number" ng-model="param.additional_number[$index]"/>
+
                             </label>
+                            <input type="text" class="form-control" style="margin-bottom: 5px" placeholder="Enter mobile no" ng-repeat="an in param.additional_number track by $index" ng-model="param.additional_number[$index]"/>
                         </div>
                         <div class="form-group">
                             <button ng-disabled="!(param.circular&&param.status&&param.message)" ng-click="submitData()" class="btn btn-primary btn-block">Send SMS</button>
