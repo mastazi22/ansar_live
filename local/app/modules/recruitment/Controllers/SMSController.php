@@ -51,6 +51,9 @@ class SMSController extends Controller
         } else if ($request->status == 'app') {
 
             $query->where('status', 'applied');
+        }else if ($request->status == 'pa') {
+
+            $query->where('status', 'paid');
         }
 //        return $query->toSql();
         DB::enableQueryLog();
@@ -66,6 +69,15 @@ class SMSController extends Controller
                 'payload' => json_encode([
                     'to' => $d->mobile_no_self,
                     'body' => $m
+                ]),
+                'try' => 0
+            ]);
+        }
+        foreach (array_filter($request->additional_number) as $ad) {
+            array_push($datas, [
+                'payload' => json_encode([
+                    'to' => $ad,
+                    'body' => $message
                 ]),
                 'try' => 0
             ]);

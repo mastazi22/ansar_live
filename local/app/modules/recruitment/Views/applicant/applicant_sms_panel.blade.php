@@ -120,6 +120,7 @@
                                 <option value="sel">Selected</option>
                                 <option value="acc">Accepted</option>
                                 <option value="app">Applied</option>
+                                <option value="pa">Paid</option>
                             </select>
                         </div>
                         <div class="form-group">
