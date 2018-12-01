@@ -338,7 +338,7 @@ class ApplicantScreeningController extends Controller
             }
             $applicants = $applicants->paginate(50);
         }
-        $circulars = JobCircular::where('status', 'active')->pluck('circular_name', 'id')->prepend('--Select a circular--', '');
+        $circulars = JobCircular::where('application_status', 'on')->pluck('circular_name', 'id')->prepend('--Select a circular--', '');
 //        return DB::getQueryLog();
         return view('recruitment::applicant.applicants_support', ['applicants' => $applicants, 'type' => $type, 'circulars' => $circulars, 'circular_id' => $request->circular_id]);
     }
