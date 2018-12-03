@@ -23,6 +23,7 @@ class LetterController extends Controller
     function getMemorandumIds(Request $requests)
     {
 //        return $requests->all();
+        DB::enableQueryLog();
         $t = DB::table('tbl_memorandum_id')
             ->join('tbl_transfer_ansar', 'tbl_transfer_ansar.transfer_memorandum_id', '=', 'tbl_memorandum_id.memorandum_id')
             ->join('tbl_kpi_info', 'tbl_transfer_ansar.transfered_kpi_id', '=', 'tbl_kpi_info.id')
@@ -35,6 +36,7 @@ class LetterController extends Controller
             ->join('tbl_rest_info', 'tbl_rest_info.memorandum_id', '=', 'tbl_memorandum_id.memorandum_id')
             ->join('tbl_embodiment_log', 'tbl_rest_info.ansar_id', '=', 'tbl_embodiment_log.ansar_id')
             ->join('tbl_kpi_info', 'tbl_embodiment_log.kpi_id', '=', 'tbl_kpi_info.id')
+            ->whereRaw("`tbl_rest_info`.`rest_date` = `tbl_embodiment_log`.`release_date`")
             ->select('tbl_memorandum_id.*')->groupBy('tbl_memorandum_id.memorandum_id');
         if($requests->unit){
             $e->where('tbl_kpi_info.unit_id',$requests->unit);
@@ -46,7 +48,8 @@ class LetterController extends Controller
             $t->where('tbl_memorandum_id.memorandum_id','LIKE','%'.$requests->q.'%');
             $d->where('tbl_memorandum_id.memorandum_id','LIKE','%'.$requests->q.'%');
         }
-        //return $t->toSql();
+        //$d->distinct('tbl_rest_info.memorandum_id')->paginate(20);
+        //return DB::getQueryLog();
         switch ($requests->type) {
             case 'TRANSFER':
                 //return $t->distinct()->paginate(20);
@@ -199,8 +202,8 @@ class LetterController extends Controller
             ->where('tbl_kpi_info.unit_id',$unit)
             ->select('tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'tbl_kpi_info.kpi_name as kpi_name', 'tbl_ansar_parsonal_info.village_name as village_name', 'tbl_ansar_parsonal_info.post_office_name as pon', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_embodiment_log.joining_date', 'tbl_embodiment_log.release_date')->orderBy('tbl_embodiment_log.id','DESC');
 
-        $r =  $result->get();
-        return DB::getQueryLog();
+//        $r =  $result->get();
+//        return DB::getQueryLog();
 
 //        return $result->toSql();
 
