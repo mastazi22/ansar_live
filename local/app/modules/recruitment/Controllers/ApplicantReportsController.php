@@ -207,4 +207,36 @@ class ApplicantReportsController extends Controller
             });
         })->download('xls');
     }
+    public function applicantDetailsReport(){
+        $circulars = JobCircular::pluck('circular_name','id');
+        $circulars->prepend('--Select a circular--','');
+        return view('recruitment::reports.applicant_details_report',compact('circulars'));
+    }
+    public function exportApplicantDetailReport(Request $request){
+        $applicants = JobAppliciant::with(['division', 'district', 'thana', 'circular.trainingDate', 'appliciantEducationInfo' => function ($q) {
+            $q->with('educationInfo');
+        }])->where('job_circular_id', $request->circular_id)->whereIn('status',$request->status)->get();
+        $path = storage_path('exports');
+        $files = [];
+        foreach ($applicants as $applicant ) {
+            $file_path = $path.'/'.($applicant->roll_no?$applicant->roll_no:$applicant->applicant_name_eng).'.pdf';
+            $pdf = SnappyPdf::loadView('recruitment::reports.applicant_details_download', ['ansarAllDetails' => $applicant])
+                ->setOption('encoding', 'UTF-8')
+                ->setOption('zoom', 0.73)
+                ->save($file_path);
+            array_push($files,['path'=>$file_path,'name'=>$applicant->roll_no.'.pdf']);
+        }
+        $zip_path = public_path('applicant_detail_'.$request->circular_id.'.zip');
+        $zip = new \ZipArchive();
+        $zip->open($zip_path,\ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+        foreach ($files as $file){
+            $zip->addFile($file['path'],$file['name']);
+        }
+        $zip->close();
+        foreach ($files as $file){
+            @unlink($file['path']);
+        }
+        return response()->download($zip_path)->deleteFileAfterSend(true);
+
+    }
 }
