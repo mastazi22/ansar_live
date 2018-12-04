@@ -7,7 +7,7 @@
 
 <div class="container-fluid">
     <h2 style="text-align: center;padding: 15px">
-        বাংলাদেশ আনসার এবং গ্রাম প্রতিরক্ষা বাহিনী<br>
+        বাংলাদেশ আনসার এবং গ্রাম প্রতিরক্ষা বাহিনী - {{LanguageConverter::engToBng(\Carbon\Carbon::parse($ansarAllDetails->circular->start_date)->year)}}<br>
         {{$ansarAllDetails->circular->category->category_name_bng}}
     </h2>
     <img class="pull-right profile-image"
@@ -30,25 +30,25 @@
     <table class="entry-table" style="width: 100%">
         <caption style="text-align: center;font-size: 1em;font-weight: bold"  class="bng-class">বাক্তিগত ও পারিবারিক তথ্য</caption>
         <tr>
-            <td>*Name<span class="pull-right">:</span></td>
+            <td>Name<span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->applicant_name_eng}}</div>
             </td>
         </tr>
         <tr>
-            <td  class="bng-class">*নাম<span class="pull-right">:</span></td>
+            <td  class="bng-class">নাম<span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->applicant_name_bng}}</div>
             </td>
         </tr>
         <tr>
-            <td  class="bng-class">*পিতার নাম <span class="pull-right">:</span></td>
+            <td  class="bng-class">পিতার নাম <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab"  class="bng-class">{{$ansarAllDetails->father_name_bng}}</div>
             </td>
         </tr>
         <tr>
-            <td  class="bng-class">*মাতার নাম <span class="pull-right">:</span></td>
+            <td  class="bng-class">মাতার নাম <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab" class="bng-class">{{$ansarAllDetails->mother_name_bng}}</div>
             </td>
@@ -100,20 +100,20 @@
             </td>
         </tr>
         <tr>
-            <td class="bng-class">*বিভাগ <span class="pull-right">:</span></td>
+            <td class="bng-class">বিভাগ <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab" class="bng-class">{{$ansarAllDetails->division->division_name_bng}}
                     &nbsp;</div>
             </td>
         </tr>
         <tr>
-            <td class="bng-class">*জেলা <span class="pull-right">:</span></td>
+            <td class="bng-class">জেলা <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab" class="bng-class">{{$ansarAllDetails->district->unit_name_bng}}</div>
             </td>
         </tr>
         <tr>
-            <td class="bng-class">*থানা <span class="pull-right">:</span></td>
+            <td class="bng-class">থানা <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab" class="bng-class">{{$ansarAllDetails->thana->thana_name_bng}}</div>
             </td>
@@ -122,7 +122,7 @@
     <table class="physical-table" style="width: 100%">
         <caption style="text-align: center;font-size: 1em;font-weight: bold">শারীরিক যোগ্যতার তথ্য</caption>
         <tr>
-            <td>*উচ্চতা<span class="bng-class">(উচ্চতা)</span><span class="pull-right">:</span></td>
+            <td>উচ্চতা<span class="bng-class">(উচ্চতা)</span><span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:0 5px;font-size:14px;border:1px solid #ababab">
                     <span style="padding: 5px 20px">{{LanguageConverter::engToBng($ansarAllDetails->height_feet)}}</span>
@@ -140,7 +140,7 @@
         </tr>
     </table>
     <table class="entry-table border-table">
-        <caption class="bng-class">শিক্ষাগত যোগ্যতার তথ্য*</caption>
+        <caption class="bng-class">শিক্ষাগত যোগ্যতার তথ্য</caption>
         <tbody>
         <tr>
             <td class="bng-class"><b>শিক্ষাগত যোগ্যতা</b></td>

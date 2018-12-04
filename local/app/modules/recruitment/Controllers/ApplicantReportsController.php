@@ -222,7 +222,7 @@ class ApplicantReportsController extends Controller
             "tribe"=>"উপজাতি"
         ];
         $applicants = JobAppliciant::with(['circular'=>function($q){
-            $q->select('id','circular_name','end_date','job_category_id');
+            $q->select('id','circular_name','end_date','job_category_id','start_date');
             $q->with('category');
         },'govQuota','division', 'district', 'thana', 'circular.trainingDate', 'appliciantEducationInfo' => function ($q) {
             $q->with('educationInfo');
