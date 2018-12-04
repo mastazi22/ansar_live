@@ -238,6 +238,10 @@ class ApplicantReportsController extends Controller
                 ->setOption('zoom', 0.73)
                 ->save($file_path);
             array_push($files,['path'=>$file_path,'name'=>$applicant->roll_no.'.pdf']);
+            echo $applicant->roll_no.'.pdf-->done<br>';
+//            sleep(1);
+            ob_flush();
+            flush();
         }
         $zip_path = public_path('applicant_detail_'.$request->circular_id.'.zip');
         $zip = new \ZipArchive();
