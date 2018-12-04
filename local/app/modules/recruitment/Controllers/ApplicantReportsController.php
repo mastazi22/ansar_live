@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ApplicantReportsController extends Controller
@@ -231,6 +232,7 @@ class ApplicantReportsController extends Controller
         $files = [];
         foreach ($applicants as $applicant ) {
             $file_path = $path.'/'.($applicant->roll_no?$applicant->roll_no:$applicant->applicant_name_eng).'.pdf';
+            if(File::exists($file_path)) continue;
             $pdf = SnappyPdf::loadView('recruitment::reports.applicant_details_download', ['ansarAllDetails' => $applicant,'quota'=>$quota])
                 ->setOption('encoding', 'UTF-8')
                 ->setOption('zoom', 0.73)
