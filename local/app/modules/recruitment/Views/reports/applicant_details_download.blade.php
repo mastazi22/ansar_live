@@ -15,16 +15,16 @@
          alt="">
     <table class="entry-table" style="margin-top: 20px;width: 100%">
         <tr>
-            <td>পদের নাম <span class="pull-right">:</span></td>
-            <td><div style="font-size:14px;">{{$ansarAllDetails->circular->circular_name}}</div></td>
+            <td style="padding-left: 20px">পদের নাম <span class="pull-right">:</span></td>
+            <td><div style="font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->circular->circular_name}}</div></td>
         </tr>
         <tr>
-            <td>রেফেরেন্স আইডি <span class="pull-right">:</span></td>
-            <td><div style="font-size:14px;">{{$ansarAllDetails->applicant_id}}</div></td>
+            <td style="padding-left: 20px">রেফেরেন্স আইডি <span class="pull-right">:</span></td>
+            <td><div style="font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->applicant_id}}</div></td>
         </tr>
         <tr>
-            <td>রোল নং <span class="pull-right">:</span></td>
-            <td><div style="font-size:14px;">{{LanguageConverter::engToBng($ansarAllDetails->roll_no)}}</div></td>
+            <td style="padding-left: 20px">রোল নং <span class="pull-right">:</span></td>
+            <td><div style="font-size:14px;border:1px solid #ababab">{{LanguageConverter::engToBng($ansarAllDetails->roll_no)}}</div></td>
         </tr>
     </table>
     <table class="entry-table" style="width: 100%">
