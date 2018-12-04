@@ -9,6 +9,20 @@
     <img class="pull-right profile-image"
          src="{{$ansarAllDetails->profile_pic}}"
          alt="">
+    <table class="entry-table other-table">
+        <tr>
+            <td>পদের নাম <span class="pull-right">:</span></td>
+            <td><div style="font-size:14px;">{{$ansarAllDetails->circular->circular_name}}</div></td>
+        </tr>
+        <tr>
+            <td>রেফেরেন্স আইডি <span class="pull-right">:</span></td>
+            <td><div style="font-size:14px;">{{$ansarAllDetails->applicant_id}}</div></td>
+        </tr>
+        <tr>
+            <td>রোল নং <span class="pull-right">:</span></td>
+            <td><div style="font-size:14px;">{{LanguageConverter::engToBng($ansarAllDetails->roll_no)}}</div></td>
+        </tr>
+    </table>
     <table class="entry-table" style="width: 100%">
         <caption style="text-align: center;font-size: 1em;font-weight: bold"  class="bng-class">বাক্তিগত ও পারিবারিক তথ্য</caption>
         <tr>
@@ -39,6 +53,12 @@
             <td>জন্ম তারিখ <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{LanguageConverter::engToBng(\Carbon\Carbon::parse($ansarAllDetails->date_of_birth)->format("d-m-Y"))}}</div>
+            </td>
+        </tr>
+        <tr>
+            <td>বয়স <span class="pull-right">:</span></td>
+            <td style="padding-left: 20px">
+                <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{LanguageConverter::engToBng(\Carbon\Carbon::parse($ansarAllDetails->date_of_birth)->diff($ansarAllDetails->circular->end_date,true)->format("Y বছর m মাস d দিন"))}}</div>
             </td>
         </tr>
         <tr>
