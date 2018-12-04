@@ -62,7 +62,7 @@
         <tr>
             <td>বয়স <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
-                <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{LanguageConverter::engToBng(\Carbon\Carbon::parse($ansarAllDetails->date_of_birth)->diff(\Carbon\Carbon::parse($ansarAllDetails->circular->end_date),true)->format("Y বছর m মাস d দিন"))}}</div>
+                <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{LanguageConverter::engToBng(\Carbon\Carbon::parse($ansarAllDetails->date_of_birth)->diff(\Carbon\Carbon::parse($ansarAllDetails->circular->end_date),true)->format("%y বছর %m মাস %d দিন"))}}</div>
             </td>
         </tr>
         <tr>
