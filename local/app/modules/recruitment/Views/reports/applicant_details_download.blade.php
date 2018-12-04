@@ -36,21 +36,21 @@
             </td>
         </tr>
         <tr>
-            <td>*Date of birth <span class="pull-right">:</span></td>
+            <td>জন্ম তারিখ <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
-                <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{\Carbon\Carbon::parse($ansarAllDetails->date_of_birth)->format("d-m-Y")}}</div>
+                <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{LanguageConverter::engToBng(\Carbon\Carbon::parse($ansarAllDetails->date_of_birth)->format("d-m-Y"))}}</div>
             </td>
         </tr>
         <tr>
-            <td>*Marital status <span class="pull-right">:</span></td>
+            <td>বৈবাহিক অবস্থা <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{strcasecmp($ansarAllDetails->marital_status,"married")==0?"বিবাহিত":(strcasecmp($ansarAllDetails->marital_status,"unmarried")==0?"অবিবাহিত":"তালাকপ্রাপ্ত")}}</div>
             </td>
         </tr>
         <tr>
-            <td>*National Id no <span class="pull-right">:</span></td>
+            <td>জাতীয় পরিচয় পত্র নং <span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
-                <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->national_id_no?$ansarAllDetails->national_id_no:'&nbsp;'}}</div>
+                <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{LanguageConverter::engToBng($ansarAllDetails->national_id_no?$ansarAllDetails->national_id_no:'&nbsp;')}}</div>
             </td>
         </tr>
     </table>
@@ -98,20 +98,20 @@
     <table class="physical-table" style="width: 100%">
         <caption style="text-align: center;font-size: 1em;font-weight: bold">শারীরিক যোগ্যতার তথ্য</caption>
         <tr>
-            <td>*Height<span class="bng-class">(উচ্চতা)</span><span class="pull-right">:</span></td>
+            <td>*উচ্চতা<span class="bng-class">(উচ্চতা)</span><span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
                 <div style="padding:0 5px;font-size:14px;border:1px solid #ababab">
-                    <span style="padding: 5px 20px">{{$ansarAllDetails->height_feet}}</span>
+                    <span style="padding: 5px 20px">{{LanguageConverter::engToBng($ansarAllDetails->height_feet)}}</span>
                     <span style="padding: 0 5px;border: 1px solid #ababab;border-top: none;border-bottom: none">ফিট</span>
-                    <span style="padding: 5px 20px">{{$ansarAllDetails->height_inch}}</span>
+                    <span style="padding: 5px 20px">{{LanguageConverter::engToBng($ansarAllDetails->height_inch)}}</span>
                     <span style="padding: 0 5px;border: 1px solid #ababab;border-top: none;border-bottom: none">ইঞ্চি</span>
                 </div>
             </td>
         </tr>
         <tr>
-            <td>*Gender<span class="pull-right">:</span></td>
+            <td>লিঙ্গ<span class="pull-right">:</span></td>
             <td style="padding-left: 20px">
-                <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->gender}}&nbsp;</div>
+                <div style="padding:5px;font-size:14px;border:1px solid #ababab">{{$ansarAllDetails->gender=='Male'?"পুরুষ":"মহিলা"}}&nbsp;</div>
             </td>
         </tr>
     </table>
@@ -147,8 +147,12 @@
     <table class="entry-table other-table">
         <caption>অন্যান্য তথ্য</caption>
         <tr>
-            <td>Mobile No. (Self) <span  class="bng-class">নিজ*</span> <span class="pull-right">:</span></td>
-            <td><div style="font-size:14px;">{{$ansarAllDetails->mobile_no_self}}</div></td>
+            <td>মোবাইল নম্বর <span class="pull-right">:</span></td>
+            <td><div style="font-size:14px;">{{LanguageConverter::engToBng($ansarAllDetails->mobile_no_self)}}</div></td>
+        </tr>
+        <tr>
+            <td>কোটা <span class="pull-right">:</span></td>
+            <td><div style="font-size:14px;">{{$ansarAllDetails->govQuota?$quota[$ansarAllDetails->govQuota->quota_type]:"----"}}</div></td>
         </tr>
     </table>
 </div>

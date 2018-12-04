@@ -213,14 +213,22 @@ class ApplicantReportsController extends Controller
         return view('recruitment::reports.applicant_details_report',compact('circulars'));
     }
     public function exportApplicantDetailReport(Request $request){
-        $applicants = JobAppliciant::with(['division', 'district', 'thana', 'circular.trainingDate', 'appliciantEducationInfo' => function ($q) {
+        $quota = [
+          "son_of_freedom_fighter"=>"মুক্তিযোদ্ধার সন্তান",
+            "grandson_of_freedom_fighter"=>"মুক্তিযোদ্ধার সন্তানের সন্তান",
+            "member_of_ansar_or_vdp"=>"আনসার - ভিডিপি সদস্য",
+            "orphan"=>"এতিম",
+            "physically_disabled"=>"শারীরিক প্রতিবন্ধী",
+            "tribe"=>"উপজাতি"
+        ];
+        $applicants = JobAppliciant::with(['govQuota','division', 'district', 'thana', 'circular.trainingDate', 'appliciantEducationInfo' => function ($q) {
             $q->with('educationInfo');
         }])->where('job_circular_id', $request->circular_id)->whereIn('status',$request->status)->get();
         $path = storage_path('exports');
         $files = [];
         foreach ($applicants as $applicant ) {
             $file_path = $path.'/'.($applicant->roll_no?$applicant->roll_no:$applicant->applicant_name_eng).'.pdf';
-            $pdf = SnappyPdf::loadView('recruitment::reports.applicant_details_download', ['ansarAllDetails' => $applicant])
+            $pdf = SnappyPdf::loadView('recruitment::reports.applicant_details_download', ['ansarAllDetails' => $applicant,'quota'=>$quota])
                 ->setOption('encoding', 'UTF-8')
                 ->setOption('zoom', 0.73)
                 ->save($file_path);
