@@ -221,7 +221,9 @@ class ApplicantReportsController extends Controller
             "physically_disabled"=>"শারীরিক প্রতিবন্ধী",
             "tribe"=>"উপজাতি"
         ];
-        $applicants = JobAppliciant::with(['govQuota','division', 'district', 'thana', 'circular.trainingDate', 'appliciantEducationInfo' => function ($q) {
+        $applicants = JobAppliciant::with(['circular'=>function($q){
+            $q->select('id','circular_name','end_date');
+        },'govQuota','division', 'district', 'thana', 'circular.trainingDate', 'appliciantEducationInfo' => function ($q) {
             $q->with('educationInfo');
         }])->where('job_circular_id', $request->circular_id)->whereIn('status',$request->status)->get();
         $path = storage_path('exports');
