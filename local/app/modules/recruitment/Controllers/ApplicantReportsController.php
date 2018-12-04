@@ -222,7 +222,8 @@ class ApplicantReportsController extends Controller
             "tribe"=>"উপজাতি"
         ];
         $applicants = JobAppliciant::with(['circular'=>function($q){
-            $q->select('id','circular_name','end_date');
+            $q->select('id','circular_name','end_date','job_category_id');
+            $q->with('category');
         },'govQuota','division', 'district', 'thana', 'circular.trainingDate', 'appliciantEducationInfo' => function ($q) {
             $q->with('educationInfo');
         }])->where('job_circular_id', $request->circular_id)->whereIn('status',$request->status)->get();
@@ -246,7 +247,7 @@ class ApplicantReportsController extends Controller
         foreach ($files as $file){
             @unlink($file['path']);
         }
-        return response()->download($zip_path)->deleteFileAfterSend(true);
+        return redirect()->back();
 
     }
 }
