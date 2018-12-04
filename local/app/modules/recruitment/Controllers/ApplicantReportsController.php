@@ -232,7 +232,10 @@ class ApplicantReportsController extends Controller
         $files = [];
         foreach ($applicants as $applicant ) {
             $file_path = $path.'/'.($applicant->roll_no?$applicant->roll_no:$applicant->applicant_name_eng).'.pdf';
-            if(File::exists($file_path)) continue;
+            if(File::exists($file_path)) {
+                array_push($files,['path'=>$file_path,'name'=>$applicant->roll_no.'.pdf']);
+                continue;
+            }
             $pdf = SnappyPdf::loadView('recruitment::reports.applicant_details_download', ['ansarAllDetails' => $applicant,'quota'=>$quota])
                 ->setOption('encoding', 'UTF-8')
                 ->setOption('zoom', 0.73)
@@ -248,10 +251,16 @@ class ApplicantReportsController extends Controller
         $zip->open($zip_path,\ZipArchive::CREATE | \ZipArchive::OVERWRITE);
         foreach ($files as $file){
             $zip->addFile($file['path'],$file['name']);
+            echo "adding to zip --".$file['name']."<br>";
+            ob_flush();
+            flush();
         }
         $zip->close();
         foreach ($files as $file){
             @unlink($file['path']);
+            echo "delete --".$file['name']."<br>";
+            ob_flush();
+            flush();
         }
         return redirect()->back();
 
