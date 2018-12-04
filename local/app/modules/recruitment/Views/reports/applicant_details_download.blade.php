@@ -6,14 +6,14 @@
 
 
 <div class="container-fluid">
-    <h2 style="text-align: center">
+    <h2 style="text-align: center;margin-top: 10px">
         বাংলাদেশ আনসার এবং গ্রাম প্রতিরক্ষা বাহিনী<br>
         {{$ansarAllDetails->circular->category->category_name_bng}}
     </h2>
     <img class="pull-right profile-image"
          src="{{$ansarAllDetails->profile_pic}}"
          alt="">
-    <table class="entry-table other-table">
+    <table class="entry-table" style="margin-top: 20px">
         <tr>
             <td>পদের নাম <span class="pull-right">:</span></td>
             <td><div style="font-size:14px;">{{$ansarAllDetails->circular->circular_name}}</div></td>
