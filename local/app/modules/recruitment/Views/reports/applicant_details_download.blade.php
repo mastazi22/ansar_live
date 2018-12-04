@@ -7,8 +7,8 @@
 
 <div class="container-fluid">
     <h2 style="text-align: center;padding: 15px">
-        বাংলাদেশ আনসার এবং গ্রাম প্রতিরক্ষা বাহিনী - {{LanguageConverter::engToBng(\Carbon\Carbon::parse($ansarAllDetails->circular->start_date)->year)}}<br>
-        {{$ansarAllDetails->circular->category->category_name_bng}}
+        বাংলাদেশ আনসার এবং গ্রাম প্রতিরক্ষা বাহিনী<br>
+        {{$ansarAllDetails->circular->category->category_name_bng}} - {{LanguageConverter::engToBng(\Carbon\Carbon::parse($ansarAllDetails->circular->start_date)->year)}}
     </h2>
     <img class="pull-right profile-image"
          src="{{$ansarAllDetails->profile_pic}}"
