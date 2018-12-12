@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ApplicantReportsController extends Controller
@@ -254,5 +255,62 @@ class ApplicantReportsController extends Controller
             return response()->download(public_path($zip_archive_name))->deleteFileAfterSend(true);
 
         }
+    }
+    public function applicantDetailsReport(){
+        $circulars = JobCircular::pluck('circular_name','id');
+        $circulars->prepend('--Select a circular--','');
+        return view('recruitment::reports.applicant_details_report',compact('circulars'));
+    }
+    public function exportApplicantDetailReport(Request $request){
+        $quota = [
+          "son_of_freedom_fighter"=>"মুক্তিযোদ্ধার সন্তান",
+            "grandson_of_freedom_fighter"=>"মুক্তিযোদ্ধার সন্তানের সন্তান",
+            "member_of_ansar_or_vdp"=>"আনসার - ভিডিপি সদস্য",
+            "orphan"=>"এতিম",
+            "physically_disabled"=>"শারীরিক প্রতিবন্ধী",
+            "tribe"=>"উপজাতি"
+        ];
+        $applicants = JobAppliciant::with(['circular'=>function($q){
+            $q->select('id','circular_name','end_date','job_category_id','start_date');
+            $q->with('category');
+        },'govQuota','division', 'district', 'thana', 'circular.trainingDate', 'appliciantEducationInfo' => function ($q) {
+            $q->with('educationInfo');
+        }])->where('job_circular_id', $request->circular_id)->whereIn('status',$request->status)->get();
+        $path = storage_path('exports');
+        $files = [];
+        foreach ($applicants as $applicant ) {
+            $file_path = $path.'/'.($applicant->roll_no?$applicant->roll_no:$applicant->applicant_name_eng).'.pdf';
+            if(File::exists($file_path)) {
+                array_push($files,['path'=>$file_path,'name'=>$applicant->roll_no.'.pdf']);
+                continue;
+            }
+            $pdf = SnappyPdf::loadView('recruitment::reports.applicant_details_download', ['ansarAllDetails' => $applicant,'quota'=>$quota])
+                ->setOption('encoding', 'UTF-8')
+                ->setOption('zoom', 0.73)
+                ->save($file_path);
+            array_push($files,['path'=>$file_path,'name'=>$applicant->roll_no.'.pdf']);
+            echo $applicant->roll_no.'.pdf-->done<br>';
+//            sleep(1);
+            ob_flush();
+            flush();
+        }
+        $zip_path = public_path('applicant_detail_'.$request->circular_id.'.zip');
+        $zip = new \ZipArchive();
+        $zip->open($zip_path,\ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+        foreach ($files as $file){
+            $zip->addFile($file['path'],$file['name']);
+            echo "adding to zip --".$file['name']."<br>";
+            ob_flush();
+            flush();
+        }
+        $zip->close();
+        foreach ($files as $file){
+            @unlink($file['path']);
+            echo "delete --".$file['name']."<br>";
+            ob_flush();
+            flush();
+        }
+        return redirect()->back();
+
     }
 }
