@@ -213,6 +213,7 @@ class ApplicantReportsController extends Controller
             echo "Start Processing....<br>";
             ob_flush();
             flush();
+            return "asaaass";
             $c = clone $applicants;
             $total = intval(ceil($c->count() / 300));
 
