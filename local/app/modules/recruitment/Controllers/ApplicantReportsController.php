@@ -180,7 +180,7 @@ class ApplicantReportsController extends Controller
         $rules=[
             'circular'=>'required|regex:/^[0-9]+$/',
             'status'=>'required',
-            'page'=>'required|regex:/^[0-9]+$/'
+            'page'=>'regex:/^[0-9]+$/'
         ];
         $this->validate($request,$rules);
         $category_type = JobCircular::find($request->circular)->category->category_type;
@@ -213,7 +213,6 @@ class ApplicantReportsController extends Controller
             echo "Start Processing....<br>";
             ob_flush();
             flush();
-            return "asaaass";
             $c = clone $applicants;
             $total = intval(ceil($c->count() / 300));
 
