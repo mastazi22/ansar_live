@@ -9,6 +9,9 @@
         <th>Thana</th>
         <th>Panel Date & Time</th>
         <th>Panel Id</th>
+        @if(Auth::user()->type==11)
+            <th>Last Offer Region</th>
+            @endif
 
     </tr>
     <tbody>
@@ -22,6 +25,9 @@
         <td>[[ansar.thana]]</td>
         <td>[[ansar.panel_date|dateformat:"DD-MMM-YYYY"]]</td>
         <td>[[ansar.memorandum_id]]</td>
+        @if(Auth::user()->type==11)
+            <td>[[ansar.offer_type]]</td>
+        @endif
     </tr>
     <tr ng-if="data.ansars.length<=0">
         <td class="warning" colspan="9">No Ansar Found</td>
