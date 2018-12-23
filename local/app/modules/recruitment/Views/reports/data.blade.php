@@ -11,7 +11,7 @@
                     <i class="fa fa-file-excel-o"></i>&nbsp; Export page
                 </button>
             </form>
-            <form action="{{URL::route('report.applicants.status_export')}}" method="post" target="_blank"
+            <form action="{{URL::route('report.applicants.status_export')}}" method="post" export-all-form
                   style="display: inline;margin-left:10px">
                 {!! csrf_field() !!}
                 <input type="hidden" ng-repeat="(k,v) in param" ng-if="k!='page'" name="[[k]]" value="[[v]]">

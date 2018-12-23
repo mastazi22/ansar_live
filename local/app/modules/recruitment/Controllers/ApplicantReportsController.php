@@ -210,49 +210,60 @@ class ApplicantReportsController extends Controller
             })->download('xls');
         }
         else{
-            echo "Start Processing....<br>";
-            ob_flush();
-            flush();
-            $c = clone $applicants;
-            $total = intval(ceil($c->count() / 300));
-
-            $counter = 1;
-            $file_path = storage_path('exports');
-            if (!File::exists($file_path)) File::makeDirectory($file_path);
-            $files = [];
-            $applicants->chunk(300, function ($applicant_list) use ($category_type, $request, $total, &$counter, $file_path, &$files) {
-
-                $file = Excel::create('applicant_list_' . $counter, function ($excel) use ($applicant_list, $request, $category_type, $counter) {
-
-                    $excel->sheet('sheet1', function ($sheet) use ($applicant_list, $category_type, $counter, $request) {
-                        $sheet->setColumnFormat(array(
-                            'G' => '@'
-                        ));
-                        $sheet->setAutoSize(false);
-                        $sheet->setWidth('A', 5);
-                        $sheet->loadView('recruitment::reports.excel_data', ['index' => ($counter * 300) + 1, 'applicants' => $applicant_list, 'status' => $request->status, 'ctype' => $category_type]);
-                    });
-                })->store('xls', $file_path, true);
-                array_push($files, $file);
-                echo "Processed $counter of $total<br>";
+            try{
+                ob_start();
+                echo "Start Processing....";
                 ob_flush();
                 flush();
-                $counter++;
-            });
-            $zip_archive_name = "applicant_list" . time() . ".zip";
-            $zip = new \ZipArchive();
-            if ($zip->open(public_path($zip_archive_name), \ZipArchive::CREATE) === true) {
-                foreach ($files as $file) {
-                    $zip->addFile($file["full"], $file["file"]);
+                $c = clone $applicants;
+                $total = intval(ceil($c->count() / 300));
+
+                $counter = 1;
+                $file_path = storage_path('exports');
+                if (!File::exists($file_path)) File::makeDirectory($file_path);
+                $files = [];
+                $applicants->chunk(300, function ($applicant_list) use ($category_type, $request, $total, &$counter, $file_path, &$files) {
+
+                    $file = Excel::create('applicant_list_' . $counter, function ($excel) use ($applicant_list, $request, $category_type, $counter) {
+
+                        $excel->sheet('sheet1', function ($sheet) use ($applicant_list, $category_type, $counter, $request) {
+                            $sheet->setColumnFormat(array(
+                                'G' => '@'
+                            ));
+                            $sheet->setAutoSize(false);
+                            $sheet->setWidth('A', 5);
+                            $sheet->loadView('recruitment::reports.excel_data', ['index' => ($counter * 300) + 1, 'applicants' => $applicant_list, 'status' => $request->status, 'ctype' => $category_type]);
+                        });
+                    })->store('xls', $file_path, true);
+                    array_push($files, $file);
+                    echo "Processed $counter of $total";
+                    ob_flush();
+                    flush();
+                    $counter++;
+                });
+                $zip_archive_name = "applicant_list" . time() . ".zip";
+                $zip = new \ZipArchive();
+                if ($zip->open(public_path($zip_archive_name), \ZipArchive::CREATE) === true) {
+                    foreach ($files as $file) {
+                        $zip->addFile($file["full"], $file["file"]);
+                    }
+                    $zip->close();
+                } else {
+                    throw new \Exception("Can`t create file");
                 }
-                $zip->close();
-            } else {
-                throw new \Exception("Can`t create file");
+                foreach ($files as $file) {
+                    unlink($file["full"]);
+                }
+                $data = ob_get_contents();
+                return $data;
+                return response()->json(['status'=>true,'message'=>$zip_archive_name]);
+            }catch(\Exception $e){
+
+                $data = ob_get_contents();
+                echo $data;
+//                return $data;
+                return response()->json(['status'=>false,'message'=>$e->getMessage()]);
             }
-            foreach ($files as $file) {
-                unlink($file["full"]);
-            }
-            return response()->download(public_path($zip_archive_name))->deleteFileAfterSend(true);
 
         }
     }
@@ -312,5 +323,8 @@ class ApplicantReportsController extends Controller
         }
         return redirect()->back();
 
+    }
+    public function download(Request $request){
+        return response()->download(public_path($request->file_name))->deleteFileAfterSend(true);
     }
 }

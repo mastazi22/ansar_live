@@ -77,13 +77,47 @@
                 }
             }
         })
+        GlobalApp.directive('exportAllForm',function () {
+            return {
+                restrict:'A',
+                link:function (scope,elem,attr) {
+                    $(elem).ajaxForm({
+                        beforeSubmit:function(){
+                          scope.param.allLoading  = true;
+                          scope.$apply();
+                        },
+                        success:function(response){
+                            scope.progressText = ""
+                            console.log(response);
+                            console.log(response.match(/{.+}/g))
+                            var p = JSON.parse(response.match(/{.+}/g)[0])
+                            if(p.status){
+                                window.location = '{{URL::route('report.download')}}?file_name='+p.message
+                            }
+                            scope.param.allLoading  = false;
+                            scope.$apply();
+                        },
+                        error:function(response){
+                            console.log(response)
+                        },uploadProgress:function (e) {
+                            var response = e.currentTarget.response;
+                            scope.param.progressText = response;
+                            scope.param.allLoading  = false;
+                            scope.$apply();
+                        }
+                    })
+
+                }
+            }
+        })
     </script>
     <section class="content" ng-controller="ApplicantsListController">
         <div class="box box-solid">
-            <div class="overlay" ng-if="allLoading">
+            <div class="overlay" ng-if="allLoading||param.allLoading">
                     <span class="fa">
                         <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
                     </span>
+                <p class="text-center">[[param.progressText]]</p>
             </div>
             <div class="box-body">
                 <div class="row" style="margin-bottom: 10px">
