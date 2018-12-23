@@ -240,6 +240,7 @@ class ApplicantReportsController extends Controller
                     ob_flush();
                     flush();
                     $counter++;
+                    sleep(1);
                 });
                 $zip_archive_name = "applicant_list" . time() . ".zip";
                 $zip = new \ZipArchive();
@@ -257,9 +258,6 @@ class ApplicantReportsController extends Controller
                 return response()->json(['status'=>true,'message'=>$zip_archive_name]);
             }catch(\Exception $e){
 
-                $data = ob_get_contents();
-                echo $data;
-//                return $data;
                 return response()->json(['status'=>false,'message'=>$e->getMessage()]);
             }
 

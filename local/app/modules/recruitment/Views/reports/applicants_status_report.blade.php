@@ -99,11 +99,16 @@
                         },
                         error:function(response){
                             console.log(response)
-                        },uploadProgress:function (e) {
-                            var response = e.currentTarget.response;
-                            scope.param.progressText = response;
-                            scope.param.allLoading  = false;
-                            scope.$apply();
+                        },
+                        processData: false,
+                        xhrFields: {
+                            // Getting on progress streaming response
+                            onprogress: function(e)
+                            {
+                                var progressResponse;
+                                var response = e.currentTarget.response;
+                                console.log(response);
+                            }
                         }
                     })
 
