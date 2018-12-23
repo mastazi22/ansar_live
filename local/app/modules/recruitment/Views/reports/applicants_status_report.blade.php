@@ -89,7 +89,7 @@
                         },
                         success:function(response){
                             ll = 0;
-                            scope.progressText = ""
+                            scope.param.progressText = ""
                             console.log(response);
                             console.log(response.match(/{.+}/g))
                             var p = JSON.parse(response.match(/{.+}/g)[0])
@@ -100,6 +100,10 @@
                             scope.$apply();
                         },
                         error:function(response){
+                            scope.param.progressText = ""
+                            scope.param.allLoading  = false;
+                            ll=0;
+                            scope.$apply();
                             console.log(response)
                         },
                         processData: false,
@@ -107,7 +111,6 @@
                             // Getting on progress streaming response
                             onprogress: function(e)
                             {
-                                var progressResponse;
                                 var response = e.currentTarget.response;
                                 scope.param.progressText = response.substr(ll,response.length-ll);
                                 console.log(response.substr(ll,response.length-ll))

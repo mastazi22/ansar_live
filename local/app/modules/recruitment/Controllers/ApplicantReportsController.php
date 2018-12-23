@@ -210,6 +210,10 @@ class ApplicantReportsController extends Controller
             })->download('xls');
         }
         else{
+            $unit = "";
+            if($request->exists('unit')&&$request->unit!='all'){
+                $unit = District::find($request->unit);
+            }
             try{
                 ob_implicit_flush(true);
                 ob_end_flush();
@@ -244,7 +248,7 @@ class ApplicantReportsController extends Controller
                     $counter++;
 
                 });
-                $zip_archive_name = "applicant_list" . time() . ".zip";
+                $zip_archive_name = !$unit?"applicant_list" . time() . ".zip":$unit->unit_name_bng . time() . ".zip";
                 $zip = new \ZipArchive();
                 if ($zip->open(public_path($zip_archive_name), \ZipArchive::CREATE) === true) {
                     foreach ($files as $file) {
