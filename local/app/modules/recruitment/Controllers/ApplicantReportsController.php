@@ -248,7 +248,7 @@ class ApplicantReportsController extends Controller
                     $counter++;
 
                 });
-                $zip_archive_name = !$unit?"applicant_list" . time() . ".zip":$unit->unit_name_bng . time() . ".zip";
+                $zip_archive_name = !$unit?"applicant_list" . time() . ".zip":$unit->unit_name_eng . time() . ".zip";
                 $zip = new \ZipArchive();
                 if ($zip->open(public_path($zip_archive_name), \ZipArchive::CREATE) === true) {
                     foreach ($files as $file) {
