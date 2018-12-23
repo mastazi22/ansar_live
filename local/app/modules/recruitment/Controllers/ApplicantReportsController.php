@@ -254,8 +254,6 @@ class ApplicantReportsController extends Controller
                 foreach ($files as $file) {
                     unlink($file["full"]);
                 }
-                $data = ob_get_contents();
-                return $data;
                 return response()->json(['status'=>true,'message'=>$zip_archive_name]);
             }catch(\Exception $e){
 
