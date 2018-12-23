@@ -81,12 +81,14 @@
             return {
                 restrict:'A',
                 link:function (scope,elem,attr) {
+                    var ll = 0
                     $(elem).ajaxForm({
                         beforeSubmit:function(){
                           scope.param.allLoading  = true;
                           scope.$apply();
                         },
                         success:function(response){
+                            ll = 0;
                             scope.progressText = ""
                             console.log(response);
                             console.log(response.match(/{.+}/g))
@@ -107,7 +109,10 @@
                             {
                                 var progressResponse;
                                 var response = e.currentTarget.response;
-                                console.log(response);
+                                scope.param.progressText = response.substr(ll,response.length-ll);
+                                console.log(response.substr(ll,response.length-ll))
+                                ll = response.length;
+                                scope.$apply();
                             }
                         }
                     })
@@ -122,7 +127,7 @@
                     <span class="fa">
                         <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
                     </span>
-                <p class="text-center">[[param.progressText]]</p>
+                <h3 class="text-center" style="position: absolute;top:130px;width: 100%">[[param.progressText]]</h3>
             </div>
             <div class="box-body">
                 <div class="row" style="margin-bottom: 10px">

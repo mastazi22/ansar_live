@@ -211,10 +211,12 @@ class ApplicantReportsController extends Controller
         }
         else{
             try{
-                ob_start();
+                ob_implicit_flush(true);
+                ob_end_flush();
                 echo "Start Processing....";
-                ob_flush();
-                flush();
+                //ob_flush();
+                //flush();
+//                sleep(10);
                 $c = clone $applicants;
                 $total = intval(ceil($c->count() / 300));
 
@@ -223,7 +225,7 @@ class ApplicantReportsController extends Controller
                 if (!File::exists($file_path)) File::makeDirectory($file_path);
                 $files = [];
                 $applicants->chunk(300, function ($applicant_list) use ($category_type, $request, $total, &$counter, $file_path, &$files) {
-
+                    sleep(1);
                     $file = Excel::create('applicant_list_' . $counter, function ($excel) use ($applicant_list, $request, $category_type, $counter) {
 
                         $excel->sheet('sheet1', function ($sheet) use ($applicant_list, $category_type, $counter, $request) {
@@ -237,10 +239,10 @@ class ApplicantReportsController extends Controller
                     })->store('xls', $file_path, true);
                     array_push($files, $file);
                     echo "Processed $counter of $total";
-                    ob_flush();
-                    flush();
+                    //ob_flush();
+                    //flush();
                     $counter++;
-                    sleep(1);
+
                 });
                 $zip_archive_name = "applicant_list" . time() . ".zip";
                 $zip = new \ZipArchive();
