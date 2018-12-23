@@ -234,7 +234,7 @@ class ApplicantReportsController extends Controller
                             ));
                             $sheet->setAutoSize(false);
                             $sheet->setWidth('A', 5);
-                            $sheet->loadView('recruitment::reports.excel_data', ['index' => ($counter * 300) + 1, 'applicants' => $applicant_list, 'status' => $request->status, 'ctype' => $category_type]);
+                            $sheet->loadView('recruitment::reports.excel_data', ['index' => (($counter-1) * 300) + 1, 'applicants' => $applicant_list, 'status' => $request->status, 'ctype' => $category_type]);
                         });
                     })->store('xls', $file_path, true);
                     array_push($files, $file);
