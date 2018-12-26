@@ -101,7 +101,7 @@
              <label for="" class="control-label">
                  Additional Fields <button class="btn btn-primary btn-xs" ng-click="$event.preventDefault();additionalFelds.push(0)"><i class="fa fa-plus"></i></button>
              </label>
-             <div ng-repeat="af in additionalFelds" style="margin-bottom: 10px">
+             <div ng-repeat="af in additionalFelds track by $index" style="margin-bottom: 10px">
                  <div class="row" style="margin-bottom: 10px">
                      <div class="col-sm-3">
                          <label for="" class="control-label">Title:</label>
