@@ -107,7 +107,7 @@
                          <label for="" class="control-label">Title:</label>
                      </div>
                      <div class="col-sm-9">
-                         <input type="text" class="form-control" name="additional_fields['[[$index]]'][label]">
+                         <input type="text" class="form-control" name="additional_fields[ [[$index]] ][label]">
                      </div>
                  </div>
                  <div class="row" style="margin-bottom: 5px">
