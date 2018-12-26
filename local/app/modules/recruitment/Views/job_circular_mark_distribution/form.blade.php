@@ -115,7 +115,7 @@
                          <label for="" class="control-label">Value:</label>
                      </div>
                      <div class="col-sm-9">
-                         <input type="text" class="form-control" name="additional_fields['[[$index]]'][value]">
+                         <input type="text" class="form-control" name="additional_fields[ [[$index]] ][value]">
                      </div>
                  </div>
                  <div class="row">
