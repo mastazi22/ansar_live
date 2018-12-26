@@ -43,7 +43,7 @@ class JobCircularMarkDistributionController extends Controller
      */
     public function store(Request $request)
     {
-	return $request->all();
+//	return $request->all();
         $this->validate($request, JobCircularMarkDistribution::rules());
         DB::beginTransaction();
         try {
@@ -125,9 +125,14 @@ class JobCircularMarkDistributionController extends Controller
             "viva" => null,
             "viva_pass_mark" => null,
             "physical_age" => null,
+            "additional_marks"=>null,
         );
         if ($formData == null || !is_array($formData)) return $defaultData;
         //set default value for disabled form fields
+        if(isset($formData['additional_fields'])){
+            $formData['additional_marks'] = serialize($formData['additional_fields']);
+            unset($formData['additional_fields']);
+        }
         foreach ($defaultData as $key => $value) {
             if (!array_key_exists($key, $formData)) {
                 $formData = array_merge($formData, array($key => $value));
