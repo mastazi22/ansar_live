@@ -74,6 +74,7 @@ class JobApplicantMarksController extends Controller
             }
             $applicants->where('job_circular_id', $request->circular);
             $mark_distribution = JobCircular::find($request->circular)->markDistribution;
+            return $mark_distribution;
 //            dd($applicants->get());
             $applicants->where('status', 'selected');
 //            $d = $applicants->get();
