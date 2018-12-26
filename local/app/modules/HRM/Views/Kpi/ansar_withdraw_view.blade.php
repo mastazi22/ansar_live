@@ -150,7 +150,7 @@
                 </div>
                 <div class="box-body">
                     <filter-template
-                            show-item="['range','unit','thana','kpi]"
+                            show-item="['range','unit','thana','kpi']"
                             type="single"
                             kpi-change="loadAnsar(param)"
                             range-change="reset()"
