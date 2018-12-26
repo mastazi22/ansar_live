@@ -43,6 +43,7 @@ class JobCircularMarkDistributionController extends Controller
      */
     public function store(Request $request)
     {
+	return $request->all();
         $this->validate($request, JobCircularMarkDistribution::rules());
         DB::beginTransaction();
         try {
