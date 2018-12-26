@@ -1,4 +1,10 @@
-<div>
+<script>
+    GlobalApp.controller('MarkDistribution',function($scope){
+        $scope.additionalFelds = [];
+    });
+</script>
+
+<div ng-controller="MarkDistribution">
     @if(isset($data))
         {!! Form::model($data,['route'=>['recruitment.mark_distribution.update',$data],'method'=>'patch']) !!}
     @else
@@ -90,6 +96,32 @@
             </div>
         </div>
     </div>
+        <div class="form-group">
+            {!! Form::label('additional_field','Additional Fields <button class="btn btn-primary btn-xs" ng-click="additionalFelds.push(0)"><i class="fa fa-plus"></i></button>',['class'=>'control-label']) !!}
+            <div ng-repeat="af in additionalFelds" style="margin-bottom: 10px">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label for="" class="control-label">Title:</label>
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="additional_fields['[[$index]]'][label]">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label for="" class="control-label">Value:</label>
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" name="additional_fields['[[$index]]'][value]">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <button class="btn btn-danger btn-xs pull-right" ng-click="additionalFelds.splice($index,1)">Remove</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     @if(isset($data))
         <button type="submit" class="btn btn-primary pull-right">
             <i class="fa fa-save"></i>&nbsp;Update
