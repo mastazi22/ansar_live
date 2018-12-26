@@ -72,6 +72,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
         Route::post('/reports/applicat_status/export', ['as' => 'report.applicants.status_export', 'uses' => 'ApplicantReportsController@exportData']);
         Route::get('/reports/applicant_details/', ['as' => 'report.applicant_details', 'uses' => 'ApplicantReportsController@applicantDetailsReport']);
         Route::post('/reports/applicant_details/export', ['as' => 'report.applicant_details.export', 'uses' => 'ApplicantReportsController@exportApplicantDetailReport']);
+        Route::get('/reports/download', ['as' => 'report.download', 'uses' => 'ApplicantReportsController@download']);
 
 //
         Route::get('/setting/instruction', ['as' => 'recruitment.instruction', 'uses' => 'RecruitmentController@aplicationInstruction']);
@@ -108,14 +109,10 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
 
         });
         Route::get('/testt', function () {
-            $a = \App\modules\recruitment\Models\JobAppliciant::with('marks')->where('job_circular_id',23)
-                ->whereHas('marks',function (){})->get();
-            foreach ($a as $e){
-                $p = $e->physicalPoint();
-                $e->marks->update([
-                    'physical'=>$p
-                ]);
-            }
+            $func = 'leftJoin';
+            $q = \Illuminate\Support\Facades\DB::table('job_applicant');
+            $q->$func('job_quota','job_applicant_id','=','job_applicant.id');
+            return $q->toSql();
         });
         Route::get('/send_sms_paid', ['as' => 'send_sms_paid', 'uses' => 'SupportController@sendUserNamePassword']);
     });

@@ -683,12 +683,12 @@ class CustomQuery
                 'tbl_ansar_parsonal_info.father_name_bng','tbl_ansar_parsonal_info.mother_name_bng','tbl_ansar_parsonal_info.mobile_no_self',
                 'post_office_name','village_name','union_name_bng','tbl_ansar_parsonal_info.national_id_no', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
                 'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_panel_info.panel_date',
-                'tbl_panel_info.memorandum_id', 'tbl_panel_info.id as panel_id', 'tbl_designations.id as designation_id', 'tbl_designations.code as designation_code');
+                'tbl_panel_info.memorandum_id', 'tbl_panel_info.id as panel_id', 'tbl_designations.id as designation_id', 'tbl_designations.code as designation_code','tbl_offer_status.offer_type');
             $pc_apc_query->select('tbl_ansar_parsonal_info.ansar_id as id',
                 'tbl_ansar_parsonal_info.father_name_bng','tbl_ansar_parsonal_info.mother_name_bng','tbl_ansar_parsonal_info.mobile_no_self',
                 'post_office_name','village_name','union_name_bng','tbl_ansar_parsonal_info.national_id_no', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
                 'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_panel_info.panel_date',
-                'tbl_panel_info.memorandum_id', 'tbl_panel_info.id as panel_id', 'tbl_designations.id as designation_id', 'tbl_designations.code as designation_code');
+                'tbl_panel_info.memorandum_id', 'tbl_panel_info.id as panel_id', 'tbl_designations.id as designation_id', 'tbl_designations.code as designation_code','tbl_offer_status.offer_type');
             $ansarQuery->unionAll($pc_apc_query);
             $ansars = DB::table(DB::raw('(' . $ansarQuery->toSql() . ') x'))->mergeBindings($ansarQuery)
                 ->orderBy('x.panel_date')->orderBy('x.panel_id')->skip($offset)->limit($limit)->get();
@@ -701,7 +701,8 @@ class CustomQuery
             $ansars = $ansarQuery->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')->select('tbl_ansar_parsonal_info.ansar_id as id',
                 'tbl_ansar_parsonal_info.father_name_bng','tbl_ansar_parsonal_info.mother_name_bng','tbl_ansar_parsonal_info.mobile_no_self',
                 'post_office_name','village_name','union_name_bng','tbl_ansar_parsonal_info.national_id_no', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
-                'tbl_designations.name_bng as rank', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_panel_info.panel_date', 'tbl_panel_info.memorandum_id')->skip($offset)->limit($limit)->get();
+                'tbl_designations.name_bng as rank', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_panel_info.panel_date', 'tbl_panel_info.memorandum_id',
+                'tbl_offer_status.offer_type')->skip($offset)->limit($limit)->get();
         }
         return ['total' => collect($total->get())->pluck('t', 'code'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'pannel'];
     }
@@ -1125,6 +1126,7 @@ class CustomQuery
     public static function ansarListWithFiftyYears($offset, $limit, $unit, $thana, $division, $q)
     {
         $ansarQuery = DB::table('tbl_ansar_parsonal_info')
+            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
             ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
@@ -1141,6 +1143,7 @@ class CustomQuery
         if ($q) {
             $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
         }
+        $ansarQuery->where('tbl_ansar_status_info.retierment_status',0);
         $total = clone $ansarQuery;
         $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_embodiment.ansar_id') as total"), 'tbl_designations.code');
         $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'tbl_ansar_parsonal_info.sex', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();

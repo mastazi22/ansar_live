@@ -115,9 +115,9 @@ class OfferBlockController extends Controller
             $now = Carbon::now();
             $endDate = Carbon::now()->addHours(24);
             OfferSMS::create([
-                'sms_send_datetime' => $now,
+                'sms_send_datetime' => $now->format('Y-m-d h:i:s'),
                 'ansar_id' => $blocked_ansar->ansar_id,
-                'sms_end_datetime' => $endDate,
+                'sms_end_datetime' => $endDate->format('Y-m-d h:i:s'),
 //                    'sms_end_datetime' => Carbon::now()->addMinute(),
                 'district_id' => $blocked_ansar->last_offer_unit,
                 'come_from' => 'Offer Block',
