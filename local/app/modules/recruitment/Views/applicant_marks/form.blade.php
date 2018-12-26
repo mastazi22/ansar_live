@@ -75,7 +75,20 @@
         </div>
     </div>
 @endif
-
+@if(isset($mark_distribution) && is_array($mark_distribution->additional_marks))
+    @php($i=0)
+    @foreach($mark_distribution->additional_marks as $key=>$am)
+    <div class="form-group">
+        {!! Form::label(implode('_',explode(' ',$am['label'])),$am['label'],['class'=>'control-label']) !!}<sup
+                style="color:red;font-size: 20px;top: 0;">*</sup>
+        <div class="input-group">
+            {!! Form::text("additional_marks[$i][".implode('_',explode(' ',$am['label']))."]",null,['class'=>'form-control','placeholder'=>'Enter '.$am['label'].' number','oninput'=>"validateInput(this,".($am['value']).")"]) !!}
+            <span class="input-group-addon">out of <strong>{{$am['value']}}</strong></span>
+        </div>
+    </div>
+        @php($i++)
+    @endforeach
+@endif
 <div class="row">
     <div class="col-sm-12">
         <button class="btn btn-primary pull-right" onclick="$('#mark-form').modal('hide')" type="submit"><i
