@@ -97,7 +97,9 @@
         </div>
     </div>
         <div class="form-group">
-            {!! Form::label('additional_field','Additional Fields <button class="btn btn-primary btn-xs" ng-click="additionalFelds.push(0)"><i class="fa fa-plus"></i></button>',['class'=>'control-label']) !!}
+            <label for="" class="control-label">
+                Additional Fields <button class="btn btn-primary btn-xs" ng-click="additionalFelds.push(0)"><i class="fa fa-plus"></i></button>
+            </label>
             <div ng-repeat="af in additionalFelds" style="margin-bottom: 10px">
                 <div class="row">
                     <div class="col-sm-3">
