@@ -23,6 +23,11 @@
                 <th>Physical & Age</th>
                 <th>Written</th>
                 <th>Viva</th>
+                @if($mark_distribution&&is_array($mark_distribution->additional_fields))
+                    @foreach($mark_distribution->additional_fields as $fields)
+                        <th>{{$fields['label']}}</th>
+                        @endforeach
+                @endif
                 <th>Total</th>
                 <th style="width: 150px;">Action</th>
             </tr>
@@ -66,7 +71,11 @@
                 </tr>
             @empty
                 <tr>
+                    @if($mark_distribution&&is_array($mark_distribution->additional_fields))
+                        <td class="bg-warning" colspan="{{11+count($mark_distribution->additional_fields)}}">No data available</td>
+                    @else
                     <td class="bg-warning" colspan="11">No data available</td>
+                    @endif
                 </tr>
             @endforelse
         </table>

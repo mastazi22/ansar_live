@@ -15,7 +15,10 @@ class JobCircularMarkDistribution extends Model
     {
         return $this->belongsTo(JobCircular::class, 'job_circular_id');
     }
-
+    public function getAdditionalMarksAttribute($value){
+        if($value)return unserialize($value);
+        else return null;
+    }
     public static function rules($id = '')
     {
         if ($id) {
