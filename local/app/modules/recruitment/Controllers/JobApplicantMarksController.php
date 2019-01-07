@@ -23,8 +23,6 @@ class JobApplicantMarksController extends Controller
     {
         if ($request->ajax()) {
             DB::enableQueryLog();
-            $applicants = DB::table('job_applicant');
-
             $applicants = JobAppliciant::with(['marks' => function ($q) {
                 $q->select(DB::raw('*,(ifnull(written,0)+ifnull(edu_training,0)+ifnull(edu_experience,0)+ifnull(physical,0)+ifnull(viva,0)+ifnull(physical_age,0)) as total'));
 
@@ -76,7 +74,7 @@ class JobApplicantMarksController extends Controller
             $mark_distribution = JobCircular::find($request->circular)->markDistribution;
 //            return $mark_distribution;
 //            dd($applicants->get());
-            $applicants->where('status', 'selected');
+            $applicants->where('status', 'selected')->select('job_applicant.*');
 //            $d = $applicants->get();
 //            return DB::getQueryLog();
             return view('recruitment::applicant_marks.part_mark', ['applicants' => $applicants->paginate($request->limit ? $request->limit : 50),'mark_distribution'=>$mark_distribution]);
@@ -233,10 +231,19 @@ class JobApplicantMarksController extends Controller
             "edu_training" => 0,
             "written" => 0,
             "viva" => 0,
+            'additional_marks'=>null,
+            'total_aditional_marks'=>0
         );
 
         if ($formData == null || !is_array($formData)) return $defaultData;
-
+        if(isset($formData['additional_marks'])){
+            $tadm = 0;
+            foreach ($formData['additional_marks'] as $key=>$adm){
+                $tadm+=floatval(array_values($adm)[0]);
+            }
+            $formData['additional_marks'] = serialize($formData['additional_marks']);
+            $formData['total_aditional_marks'] = $tadm;
+        }
         //set default value for disabled form fields
         foreach ($defaultData as $key => $value) {
             if (!array_key_exists($key, $formData)) {
