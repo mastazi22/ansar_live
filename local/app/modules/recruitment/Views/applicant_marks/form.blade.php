@@ -78,12 +78,19 @@
 @if(isset($mark_distribution) && is_array($mark_distribution->additional_marks))
     @php($i=0)
     @foreach($mark_distribution->additional_marks as $key=>$am)
+        <?php //var_dump($mark_distribution->additional_marks);?>
     <div class="form-group">
         {!! Form::label(implode('_',explode(' ',$am['label'])),$am['label'],['class'=>'control-label']) !!}<sup
                 style="color:red;font-size: 20px;top: 0;">*</sup>
-        <div class="input-group">
-            {!! Form::text("additional_marks[$i][".implode('_',explode(' ',$am['label']))."]",null,['class'=>'form-control','placeholder'=>'Enter '.$am['label'].' number','oninput'=>"validateInput(this,".($am['value']).")"]) !!}
-            <span class="input-group-addon">out of <strong>{{$am['value']}}</strong></span>
+        <div class="form-group">
+{{--            {!! Form::select("additional_marks[$i][".implode('_',explode(' ',$am['label']))."]",null,['class'=>'form-control','placeholder'=>'Enter '.$am['label'].' number','oninput'=>"validateInput(this,".(implode('_',explode(' ',$am['label'])).")"]) !!}--}}
+            {{--{!! Form::text("additional_marks[$i][".implode('_',explode(' ',$am['label']))."]",null,['class'=>'form-control','placeholder'=>'Enter '.$am['label'].' number','oninput'=>"validateInput(this,".($am['value']).")"]) !!}--}}
+            <select class="form-control" name="additional_marks[<?php echo $i;?>][<?php echo implode('_',explode(' ',$am['label']));?>]">
+                <option value="0">0</option>
+                <option value="<?php echo $am['value'];?>"><?php echo $am['value'];?></option>
+            </select>
+            <small>pass=5,fail=0</small>
+            {{--<span class="input-group-addon">out of <strong>{{$am['value']}}</strong></span>--}}
         </div>
     </div>
         @php($i++)
