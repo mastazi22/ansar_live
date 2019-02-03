@@ -3,6 +3,7 @@
 namespace App\modules\recruitment\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class JobApplicantMarks extends Model
 {
@@ -73,6 +74,20 @@ class JobApplicantMarks extends Model
             $written = floatval($this->written);
         }
         return round((floatval($this->written)*$written_convert)/$written,2);
+    }
+    public function failedApplicants(){
+        $q = $this->applicant()->whereHas('circular.markDistribution',function ($q){
+            $q->where(DB::raw('(convert_written_mark*written_pass_mark)/100'),'>',DB::raw('(job_applicant_marks.written*convert_written_mark)/job_circular_mark_distribution.written'));
+            $q->where(DB::raw('(viva*viva_pass_mark)/100'),'>',DB::raw('job_applicant_marks.viva'));
+        });
+        return $q;
+    }
+    public function passedApplicants(){
+        $q = $this->applicant()->whereHas('circular.markDistribution',function ($q){
+            $q->where(DB::raw('(convert_written_mark*written_pass_mark)/100'),'<=',DB::raw('(job_applicant_marks.written*convert_written_mark)/job_circular_mark_distribution.written'));
+            $q->where(DB::raw('(viva*viva_pass_mark)/100'),'<=',DB::raw('job_applicant_marks.viva'));
+        });
+        return $q;
     }
     public function fail(){
         $applicant = $this->applicant?$this->applicant:$this->applicant()->where('applicant_id', $this->applicant_id)->first();

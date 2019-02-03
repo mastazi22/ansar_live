@@ -508,6 +508,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
             }
             return $i;
         });
+//        Route::resource('retire_ansar_management','RetireAnsarManagementController')->only(['index','update']);
 
         Route::any('/bulk-upload-bank-info', ['as' => "bulk_upload_bank_file", 'uses' => "EntryFormController@bulkUploadBankInfo"]);
 

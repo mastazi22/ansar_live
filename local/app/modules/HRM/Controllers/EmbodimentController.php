@@ -363,6 +363,11 @@ class EmbodimentController extends Controller
         $status = array('success' => array('count' => 0, 'data' => array()), 'error' => array('count' => 0, 'data' => array()));
         DB::beginTransaction();
         try {
+            $kpi = KpiGeneralModel::find($kpi_id[1]);
+            $total_em = $kpi->embodiment->count();
+            $total_given = intval($kpi->details->total_ansar_given);
+            $total_ta = count($transferred_ansar);
+            if($total_given-$total_em<$total_ta) throw new \Exception("Number of transfer ansar exceed total number of given ansar");
             $tp = SystemSettingHelper::getValue(SystemSettingHelper::$TRANSFER_POLICY);
             Log::info($tp);
             $memorandum = new MemorandumModel;
