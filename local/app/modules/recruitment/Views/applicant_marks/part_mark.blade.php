@@ -41,6 +41,7 @@
                         <td>{{$a->marks?($a->marks->edu_training?$a->marks->edu_training:$a->educationTrainingPoint()):$a->educationTrainingPoint()}}</td>
                         <td>{{$a->marks?($a->marks->edu_experience?$a->marks->edu_experience:$a->educationExperiencePoint()):$a->educationExperiencePoint()}}</td>
                         <td>{{$a->marks?($a->marks->physical_age?$a->marks->physical_age:$a->physicalAgePoint()):$a->physicalAgePoint()}}</td>
+
                     @else
                         <td>--</td>
                         <td>--</td>
@@ -49,7 +50,17 @@
                     @endif
                     <td style="white-space: nowrap;">{{$a->marks?($a->marks->written?round($a->marks->convertedWrittenMark(),2)."(".$a->marks->showOriginalWrittenMark().")":'--'):'--'}}</td>
                     <td>{{$a->marks?($a->marks->viva?$a->marks->viva:'--'):'--'}}</td>
+                    @if($a->marks&&is_array($a->marks->additional_marks))
+                        @foreach($a->marks->additional_marks as $key=>$value)
+                            <td>{{array_values($value)[0]}}</td>
+                        @endforeach
+                    @elseif($mark_distribution&&is_array($mark_distribution->additional_marks))
+                        @foreach($mark_distribution->additional_marks as $key=>$fields)
+                            <td>--</td>
+                        @endforeach
+                    @endif
                     <td>{{$a->marks?(round($a->marks->totalMarks(),2)):'--'}}</td>
+
                     @if($a->marks)
                         <td>
                             <button ng-click="editMark('{{$a->applicant_id}}')" class="btn btn-primary btn-xs">
