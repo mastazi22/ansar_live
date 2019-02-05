@@ -34,8 +34,8 @@ class JobApplicantMarksController extends Controller
                 ->join('job_circular','job_circular.id','=','job_applicant.job_circular_id')
                     ->join('job_circular_mark_distribution','job_circular_mark_distribution.job_circular_id','=','job_circular.id')
                 ->where(function($q){
-                    $q->where(DB::raw('(convert_written_mark*written_pass_mark)/100'),'>',DB::raw('(job_applicant_marks.written*convert_written_mark)/job_circular_mark_distribution.written'));
-                    $q->where(DB::raw('(viva*viva_pass_mark)/100'),'>',DB::raw('job_applicant_marks.viva'));
+                    $q->where(DB::raw('(convert_written_mark*written_pass_mark)/100'),'>',DB::raw('job_applicant_marks.written'));
+                    $q->orWhere(DB::raw('(job_circular_mark_distribution.viva*viva_pass_mark)/100'),'>',DB::raw('job_applicant_marks.viva'));
                 });
             }
             else if($request->type=='pass'){
@@ -45,8 +45,8 @@ class JobApplicantMarksController extends Controller
                     ->join('job_circular','job_circular.id','=','job_applicant.job_circular_id')
                     ->join('job_circular_mark_distribution','job_circular_mark_distribution.job_circular_id','=','job_circular.id')
                     ->where(function($q){
-                        $q->where(DB::raw('(convert_written_mark*written_pass_mark)/100'),'<=',DB::raw('(job_applicant_marks.written*convert_written_mark)/job_circular_mark_distribution.written'));
-                        $q->where(DB::raw('(viva*viva_pass_mark)/100'),'<=',DB::raw('job_applicant_marks.viva'));
+                        $q->where(DB::raw('(convert_written_mark*written_pass_mark)/100'),'<=',DB::raw('job_applicant_marks.written'));
+                        $q->where(DB::raw('(job_circular_mark_distribution.viva*viva_pass_mark)/100'),'<=',DB::raw('job_applicant_marks.viva'));
                     });
             } else{
 //                $applicants->whereHas('selectedApplicant', function ($q) {
@@ -70,11 +70,11 @@ class JobApplicantMarksController extends Controller
                     $q->orWhere(DB::raw('CAST(ansar_id AS CHAR)'), '=', $request->q);
                 });
             }
-            $applicants->where('job_circular_id', $request->circular);
+            $applicants->where('job_applicant.job_circular_id', $request->circular);
             $mark_distribution = JobCircular::find($request->circular)->markDistribution;
 //            return $mark_distribution;
 //            dd($applicants->get());
-            $applicants->where('status', 'selected')->select('job_applicant.*');
+            $applicants->where('job_applicant.status', 'selected')->select('job_applicant.*');
 //            $d = $applicants->get();
 //            return DB::getQueryLog();
             return view('recruitment::applicant_marks.part_mark', ['applicants' => $applicants->paginate($request->limit ? $request->limit : 50),'mark_distribution'=>$mark_distribution]);
