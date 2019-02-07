@@ -48,7 +48,12 @@ class JobApplicantMarksController extends Controller
                         $q->where(DB::raw('(convert_written_mark*written_pass_mark)/100'),'<=',DB::raw('job_applicant_marks.written'));
                         $q->where(DB::raw('(job_circular_mark_distribution.viva*viva_pass_mark)/100'),'<=',DB::raw('job_applicant_marks.viva'));
                     });
-            } else{
+            } else if($request->type=="mark_not_entry"){
+                $applicants->whereNotIn('job_applicant.applicant_id',JobApplicantMarks::pluck('applicant_id'));
+//                $applicants->whereHas('selectedApplicant', function ($q) {
+//                });
+                $applicants->leftJoin('job_applicant_marks as marks','marks.applicant_id','=','job_applicant.applicant_id');
+            }else{
 //                $applicants->whereHas('selectedApplicant', function ($q) {
 //                });
                 $applicants->leftJoin('job_applicant_marks as marks','marks.applicant_id','=','job_applicant.applicant_id');

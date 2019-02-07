@@ -147,6 +147,7 @@
                             <option value="">--Select a type--</option>
                             <option value="fail">Fail</option>
                             <option value="pass">Pass</option>
+                            <option value="mark_not_entry">Mark Not Entry</option>
                         </select>
                     </div>
                 </div>
