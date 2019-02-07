@@ -180,6 +180,10 @@ class EmbodimentController extends Controller
                 if (!$sms_receive_info) {
                     throw new \Exception('Invalid request for Ansar ID: ' . $ansar_id);
                 }
+                if(Carbon::parse($sms_receive_info->sms_send_datetime)->gt(Carbon::parse($request->joining_date))){
+                    throw new \Exception('Offer date greater then 
+                    joining date for Ansar ID: ' . $ansar_id." .Offer date ".$sms_receive_info->sms_send_datetime);
+                }
                 if ($sms_receive_info->offered_district != $request->division_name_eng) {
                     throw new \Exception('Ansar ID: ' . $ansar_id . ' not offered for this district');
                 }
