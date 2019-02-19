@@ -19,5 +19,8 @@ class SharePurchaseHistory extends Model
     public function salaryDisburse(){
         return $this->belongsTo(SalaryDisburse::class,'salary_disburse_id');
     }
+    public function ansar(){
+        return $this->belongsTo(PersonalInfo::class,'ansar_id','ansar_id');
+    }
 
 }

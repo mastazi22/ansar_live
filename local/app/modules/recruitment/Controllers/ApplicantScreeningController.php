@@ -866,7 +866,7 @@ class ApplicantScreeningController extends Controller
 
     public function loadApplicantByQuota(Request $request)
     {
-        DB::enableQueryLog();
+        //DB::enableQueryLog();
         $rules = [
             'range' => 'regex:/^[0-9]+$/',
             'unit' => 'regex:/^[0-9]+$/',
@@ -943,7 +943,7 @@ class ApplicantScreeningController extends Controller
                 });
             })->download('xls');
         } else
-            return view('recruitment::applicant.data_accepted', ['applicants' => $applicants]);
+            return (String) view('recruitment::applicant.data_accepted', ['applicants' => $applicants]);
     }
 
 

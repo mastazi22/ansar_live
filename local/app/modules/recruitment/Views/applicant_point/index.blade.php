@@ -4,7 +4,42 @@
     {!! Breadcrumbs::render('recruitment.point.index') !!}
 @endsection
 @section('content')
-    <section class="content" ng-controller="applicantQuota">
+    <script>
+        GlobalApp.controller('circularPoint',function ($scope, httpService,$http,$sce) {
+            $scope.jobCategories = [];
+            $scope.jobCirculars = [];
+            $scope.loadType = 'web';
+            $scope.category_id = 'all'
+            $scope.circular_id = 'all'
+            $scope.pointsView = $sce.trustAsHtml('')
+            $scope.loadJobCategories = function () {
+                httpService.category({}).then(function (res) {
+                    console.log(res)
+                    $scope.jobCategories = res.data;
+                })
+            }
+            $scope.loadJobCirculars = function () {
+                httpService.circular({category_id:$scope.category_id}).then(function (res) {
+                    $scope.circular_id = 'all'
+                    $scope.jobCirculars = res.data;
+                })
+            }
+            $scope.loadSearchData = function () {
+                $http({
+                    method:'get',
+                    url:'{{URL::route('recruitment.marks_rules.index')}}',
+                    params:{circular_id:$scope.circular_id}
+                }).then(function (res) {
+                    $scope.loadType = 'ajax';
+                    $scope.pointsView = $sce.trustAsHtml(res.data);
+                },function (res) {
+
+                })
+            }
+            $scope.loadJobCategories();
+        })
+    </script>
+    <section class="content" ng-controller="circularPoint">
         <div class="box box-solid">
             @if(Session::has('session_error'))
                 <div class="alert alert-danger">
@@ -17,8 +52,25 @@
                     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 </div>
             @endif
+
             <div class="box-body">
-                <div class="table-responsive">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label class="control-label">Select Category</label>
+                        <select class="form-control" ng-model="category_id" ng-change="loadJobCirculars()">
+                            <option value="all">All</option>
+                            <option ng-repeat="category in jobCategories" value="[[category.id]]">[[category.category_name_bng]]</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="control-label">Select Circular</label>
+                        <select class="form-control" ng-model="circular_id" ng-change="loadSearchData()">
+                            <option value="all">All</option>
+                            <option ng-repeat="circular in jobCirculars" value="[[circular.id]]">[[circular.circular_name]]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-responsive" ng-if="loadType=='web'">
                     <table class="table table-bordered table-condensed">
                         <caption style="font-size: 20px">Mark Rules<a
                                     href="{{URL::route('recruitment.marks_rules.create')}}"
@@ -63,6 +115,9 @@
                             </tr>
                         @endforelse
                     </table>
+                </div>
+                <div class="table-responsive" ng-if="loadType=='ajax'" ng-bind-html="pointsView">
+
                 </div>
             </div>
         </div>

@@ -1,6 +1,11 @@
 <script>
-    GlobalApp.controller('MarkDistribution',function($scope){
-        $scope.additionalFelds = [];
+    GlobalApp.controller('MarkDistribution', function ($scope) {
+        @if(isset($data))
+            $scope.additionalFelds = JSON.parse('{!! !$data->additional_marks?json_encode('[]'):json_encode($data->additional_marks)!!}');
+            console.log($scope.additionalFelds)
+        @else
+            $scope.additionalFelds = [];
+        @endif
     });
 </script>
 
@@ -96,36 +101,40 @@
             </div>
         </div>
     </div>
-     <div class="well">
-         <div class="form-group">
-             <label for="" class="control-label">
-                 Additional Fields <button class="btn btn-primary btn-xs" ng-click="$event.preventDefault();additionalFelds.push(0)"><i class="fa fa-plus"></i></button>
-             </label>
-             <div ng-repeat="af in additionalFelds track by $index" style="margin-bottom: 10px">
-                 <div class="row" style="margin-bottom: 10px">
-                     <div class="col-sm-3">
-                         <label for="" class="control-label">Title:</label>
-                     </div>
-                     <div class="col-sm-9">
-                         <input type="text" class="form-control" name="additional_fields[ [[$index]] ][label]">
-                     </div>
-                 </div>
-                 <div class="row" style="margin-bottom: 5px">
-                     <div class="col-sm-3">
-                         <label for="" class="control-label">Value:</label>
-                     </div>
-                     <div class="col-sm-9">
-                         <input type="text" class="form-control" name="additional_fields[ [[$index]] ][value]">
-                     </div>
-                 </div>
-                 <div class="row">
-                     <div class="col-sm-12">
-                         <button class="btn btn-danger btn-xs pull-right" ng-click="$event.preventDefault();additionalFelds.splice($index,1)">Remove</button>
-                     </div>
-                 </div>
-             </div>
-         </div>
-     </div>
+    <div class="well">
+        <div class="form-group">
+            <label for="" class="control-label">
+                Additional Fields
+                <button class="btn btn-primary btn-xs" ng-click="$event.preventDefault();additionalFelds.push(0)"><i
+                            class="fa fa-plus"></i></button>
+            </label>
+            <div ng-repeat="af in additionalFelds track by $index" style="margin-bottom: 10px">
+                <div class="row" style="margin-bottom: 10px">
+                    <div class="col-sm-3">
+                        <label for="" class="control-label">Title:</label>
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" value="[[af?af.label:'']]" name="additional_fields[ [[$index]] ][label]">
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom: 5px">
+                    <div class="col-sm-3">
+                        <label for="" class="control-label">Value:</label>
+                    </div>
+                    <div class="col-sm-9">
+                        <input type="text" value="[[af?af.value:'']]" class="form-control" name="additional_fields[ [[$index]] ][value]">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <button class="btn btn-danger btn-xs pull-right"
+                                ng-click="$event.preventDefault();additionalFelds.splice($index,1)">Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     @if(isset($data))
         <button type="submit" class="btn btn-primary pull-right">
             <i class="fa fa-save"></i>&nbsp;Update

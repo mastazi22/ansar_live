@@ -16,10 +16,23 @@ class ApplicantMarksRuleController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if($request->ajax()){
+
+            if($request->circular_id!='all') {
+                $points = JobApplicantPoints::with('circular')->whereHas('circular', function ($q) use ($request) {
+                    $q->where('id', $request->circular_id);
+                })->get();
+                return view('recruitment::applicant_point.part_rules_view', compact('points'));
+            }
+            $points = JobApplicantPoints::with('circular')->get();
+            return view('recruitment::applicant_point.part_rules_view', compact('points'));
+
+        }
         $points = JobApplicantPoints::with('circular')->get();
         return view('recruitment::applicant_point.index', compact('points'));
     }

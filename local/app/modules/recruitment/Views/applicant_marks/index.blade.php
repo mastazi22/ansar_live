@@ -141,6 +141,16 @@
                         field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
                 >
                 </filter-template>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <select name="" id="" class="form-control" ng-model="param.type" ng-change="loadApplicant()">
+                            <option value="">--Select a type--</option>
+                            <option value="fail">Fail</option>
+                            <option value="pass">Pass</option>
+                            <option value="mark_not_entry">Mark Not Entry</option>
+                        </select>
+                    </div>
+                </div>
                 <div ng-bind-html="applicants" compile-html>
 
                 </div>
