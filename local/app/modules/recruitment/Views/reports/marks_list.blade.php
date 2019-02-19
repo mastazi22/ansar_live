@@ -23,6 +23,11 @@
         <th>শারীরিক যোগ্যতা ও বয়স</th>
         <th>লিখিত পরীক্ষা</th>
         <th>মৌখিক পরীক্ষা</th>
+        @if($markDistribution&&is_array($markDistribution->additional_marks))
+            @foreach($markDistribution->additional_marks as $key=>$fields)
+                <th>{{$fields['label']}}</th>
+            @endforeach
+        @endif
         <th>প্রাপ্ত নম্বর</th>
     </tr>
     @forelse($applicants as $a)
@@ -49,6 +54,11 @@
                         (out of {{$a->circular->markDistribution->written}})
                     </td>
                     <td>{{$marks->viva}}</td>
+                    @if($marks&&is_array($marks->additional_marks))
+                        @foreach($marks->additional_marks as $key=>$value)
+                            <td>{{array_values($value)[0]}}</td>
+                        @endforeach
+                    @endif
                     <td>{{$marks->totalMarks()}}</td>
                 @endif
             </tr>
@@ -73,6 +83,11 @@
                         (out of {{$a->circular->markDistribution->written}})
                     </td>
                     <td>{{$marks->viva}}</td>
+                    @if($marks&&is_array($marks->additional_marks))
+                        @foreach($marks->additional_marks as $key=>$value)
+                            <td>{{array_values($value)[0]}}</td>
+                        @endforeach
+                    @endif
                     <td>{{$marks->totalMarks()}}</td>
                 @endif
             </tr>

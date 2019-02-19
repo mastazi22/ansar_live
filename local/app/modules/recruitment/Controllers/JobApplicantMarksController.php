@@ -24,8 +24,6 @@ class JobApplicantMarksController extends Controller
 
         if ($request->ajax()) {
             DB::enableQueryLog();
-            $applicants = DB::table('job_applicant');
-
             $applicants = JobAppliciant::with(['marks' => function ($q) {
                 $q->select(DB::raw('*,(ifnull(written,0)+ifnull(edu_training,0)+ifnull(edu_experience,0)+ifnull(physical,0)+ifnull(viva,0)+ifnull(physical_age,0)) as total'));
 
@@ -77,7 +75,7 @@ class JobApplicantMarksController extends Controller
             $mark_distribution = JobCircular::find($request->circular)->markDistribution;
 //            return $mark_distribution;
 //            dd($applicants->get());
-            $applicants->where('status', 'selected');
+            $applicants->where('status', 'selected')->select('job_applicant.*');
 //            $d = $applicants->get();
 //            return DB::getQueryLog();
             return view('recruitment::applicant_marks.part_mark', ['applicants' => $applicants->paginate($request->limit ? $request->limit : 50),'mark_distribution'=>$mark_distribution]);

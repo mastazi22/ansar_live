@@ -248,6 +248,7 @@ class JobAppliciant extends Model
         $delta_height = $max_height - $min_height;
         $delta_point = $max_point - $min_point;
         if ($total_height >= $max_height) return $max_point;
+//        return number_format(($delta_point / $delta_height) * (($total_height - $min_height)) + $min_point,2);
         return ($delta_point / $delta_height) * (($total_height - $min_height)) + $min_point;
 
     }
