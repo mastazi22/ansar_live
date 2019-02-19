@@ -115,6 +115,7 @@ class ApplicantReportsController extends Controller
             ];
             $this->validate($request,$rules);
             DB::enableQueryLog();
+            $markDistribution = JobCircular::find($request->circular)->markDistribution;
             $applicants = JobAppliciant::with(['district','circular'=>function($q){
                 $q->select('id')->with('markDistribution');
             },'thana'])->whereHas('marks',function ($q){
@@ -161,11 +162,9 @@ class ApplicantReportsController extends Controller
                 return response()->download(public_path($zip_archive_name));
             }
             else {
-                $excel = Excel::create('applicant_marks', function ($excel) use ($applicants) {
-                    $excel->sheet('sheet1', function ($sheet) use ($applicants) {
-                        $sheet->loadView('recruitment::reports.marks_list', [
-                            'applicants' => $applicants
-                        ]);
+                $excel = Excel::create('applicant_marks', function ($excel) use ($applicants,$markDistribution) {
+                    $excel->sheet('sheet1', function ($sheet) use ($applicants,$markDistribution) {
+                        $sheet->loadView('recruitment::reports.marks_list', compact('applicants','markDistribution'));
                     });
                 });
                 return $excel->download('xls');

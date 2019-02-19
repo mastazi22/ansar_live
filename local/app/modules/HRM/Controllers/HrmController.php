@@ -50,7 +50,10 @@ class HrmController extends Controller
             ->where('tbl_ansar_status_info.block_list_status', 0)
             ->where('tbl_ansar_status_info.black_list_status', 0)
             ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)');
-        $arfyoa = DB::table("tbl_ansar_parsonal_info")->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
+        $arfyoa = DB::table("tbl_ansar_parsonal_info")
+            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->where('tbl_ansar_status_info.retierment_status',0)
+            ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
         $tnimutt = DB::table('tbl_sms_offer_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->havingRaw('count(tbl_sms_offer_info.ansar_id)>10')->groupBy('tbl_sms_offer_info.ansar_id');
         if (Input::exists('division_id')) {
             $tseity->where('tbl_kpi_info.division_id', Input::get('division_id'));
@@ -487,7 +490,7 @@ class HrmController extends Controller
 
     public function showAnsarForReachedFifty($count)
     {
-        $pages = ceil($count / 10);
+        $pages = ceil(intval($count) / 10);
         return View::make('HRM::Dashboard.ansar_fifty_age_list')->with(['total' => $count, 'pages' => $pages, 'item_per_page' => 10]);
     }
 

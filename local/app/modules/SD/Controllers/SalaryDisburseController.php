@@ -435,7 +435,7 @@ class SalaryDisburseController extends Controller
     }
     public function test()
     {
-        return $this->sendEmailRaw("hello, where are u?","arafat@shurjomukhi.com.bd","HELLO");
+        return $this->sendEmailRaw("hello, where are u?","musfiqur@shurjomukhi.com.bd","HELLO");
     }
 
 }

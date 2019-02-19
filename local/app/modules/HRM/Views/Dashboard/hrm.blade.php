@@ -567,30 +567,30 @@
             </div>
             <!-- /.info-box -->
         </div>
-        {{--<div class="col-md-3 line-bar-middle col-sm-6 col-xs-12">--}}
-            {{--<div class="info-box bg-aqua"><span class="info-box-icon"><img src="{{asset('dist/img/embodiment2.png')}}"></span>--}}
+        <div class="col-md-3 line-bar-middle col-sm-6 col-xs-12">
+            <div class="info-box bg-aqua"><span class="info-box-icon"><img src="{{asset('dist/img/embodiment2.png')}}"></span>
 
-                {{--<div class="info-box-content">--}}
-                    {{--<a href="{{URL::to('HRM/show_ansar_list')}}/retire_ansar"--}}
-                       {{--class="btn-link" style="color: #FFFFFF !important;">--}}
-                        {{--<span class="info-box-text">@lang('title.tre')</span>--}}
-                        {{--<span class="info-box-number" style="font-weight: normal">--}}
-                       {{--[[allAnsar.totalRetire]]--}}
-                        {{--<img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar"></span>--}}
-                    {{--</a>--}}
+                <div class="info-box-content">
+                    <a href="{{URL::to('HRM/show_ansar_list')}}/retire_ansar"
+                       class="btn-link" style="color: #FFFFFF !important;">
+                        <span class="info-box-text">@lang('title.tre')</span>
+                        <span class="info-box-number" style="font-weight: normal">
+                       [[allAnsar.totalRetire]]
+                        <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar"></span>
+                    </a>
 
-                    {{--<div class="progress">--}}
-                        {{--<div class="progress-bar" style="width: 70%"></div>--}}
-                    {{--</div>--}}
-                    {{--<a--}}
-                            {{--href="{{URL::to('HRM/show_recent_ansar_list')}}/retire_ansar" style="color:#FFFFFF"--}}
-                            {{--class="btn-link">--}}
-                        {{--<span class="progress-description">Recent-[[recentAnsar.recentRetire]]</span></a></div>--}}
-                {{--<!-- /.info-box-content -->--}}
-            {{--</div>--}}
-            {{--<!-- /.info-box -->--}}
+                    <div class="progress">
+                        <div class="progress-bar" style="width: 70%"></div>
+                    </div>
+                    <a
+                            href="{{URL::to('HRM/show_recent_ansar_list')}}/retire_ansar" style="color:#FFFFFF"
+                            class="btn-link">
+                        <span class="progress-description">Recent-[[recentAnsar.recentRetire]]</span></a></div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
 
-        {{--</div>--}}
+        </div>
     </div>
     <!-- /.row -->
     <!-- =========================================================== -->

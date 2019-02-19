@@ -33,8 +33,9 @@
             </div>
         </div>
     </section>
-    <script src="//cdn.ckeditor.com/4.8.0/standard/ckeditor.js"></script>
+    <script src="//cdn.ckeditor.com/4.10.1/full/ckeditor.js"></script>
     <script>
+        CKEDITOR.plugins.addExternal( 'youtubr', '{{asset('dist/js/youtube')}}', 'plugin.js' );
         CKEDITOR.replace('instruction');
     </script>
 @endsection

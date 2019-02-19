@@ -23,7 +23,7 @@ class AnsarStatusInfo extends Model
     protected $table="tbl_ansar_status_info";
     protected $guarded = ['id'];
     function ansar(){
-        return $this->belongsTo('App\models\PersonalInfo','ansar_id','ansar_id');
+        return $this->belongsTo(PersonalInfo::class,'ansar_id','ansar_id');
     }
     function panel(){
         return $this->hasOne(PanelModel::class,'ansar_id','ansar_id');

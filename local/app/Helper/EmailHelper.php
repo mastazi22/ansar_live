@@ -44,6 +44,10 @@ trait EmailHelper
                 if($attachment&&File::exists($attachment)){
                     $message->attach($attachment);
                 }
+                $headers =$message->getHeaders();
+                $headers->addTextHeader('MIME-Version', '1.0');
+                $headers->addTextHeader('X-Mailer', 'PHP v' . phpversion());
+                $headers->addParameterizedHeader('Content-type', 'text/html', ['charset' => 'utf-8']);
             });
         }
 }
