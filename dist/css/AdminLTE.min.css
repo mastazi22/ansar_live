@@ -4802,6 +4802,12 @@ ul.module-menu > li > a:hover {
     background: green;
 
 }
+.switch-checkbox:checked[readonly]+label{
+
+    background: #ababab !important;
+    cursor: not-allowed;
+
+}
 .box-checkbox{
     position: absolute;
     z-index: -99999999;

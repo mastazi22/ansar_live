@@ -25,7 +25,7 @@ class NotificationManager implements MessageComponentInterface
      * @param  ConnectionInterface $conn The socket/connection that just connected to your application
      * @throws \Exception
      */
-    function __construct()
+    function  __construct()
     {
         $this->connections = new \SplObjectStorage();
     }

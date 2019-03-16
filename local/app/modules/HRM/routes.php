@@ -1,4 +1,7 @@
 <?php
+use App\Helper\Facades\GlobalParameterFacades;
+use App\modules\HRM\Models\PanelModel;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 
 Route::group(['prefix' => 'HRM', 'middleware' => 'manageDatabase', 'namespace' => '\App\modules\HRM\Controllers'], function () {
@@ -419,98 +422,34 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::post('upload_original_info', ['as' => 'upload_original_info', 'uses' => 'GeneralSettingsController@uploadOriginalInfo']);
         Route::get('upload_original_info', ['as' => 'upload_original_info_view', 'uses' => 'GeneralSettingsController@uploadOriginalInfoView']);
         Route::get('test', function () {
-
-
-//            $datas = \Maatwebsite\Excel\Facades\Excel::Load(storage_path('need_to_transfer_panel.xlsx'),function ($e){
+            return (array)\Carbon\Carbon::parse("11-03-1991")->diff(\Carbon\Carbon::now(), true);
+        });
+//        Route::get('upload_union', function () {
+//            $datas = \Maatwebsite\Excel\Facades\Excel::Load(storage_path('union_name.xlsx'), function ($e) {
 //
 //            })->get()[0];
 ////            i=0;
-//            $status = [];
-//            $ansar_ids = [];
-//            $ea_ids = [];
-//            foreach ($datas as $data){
-//                $a = \App\modules\HRM\Models\PersonalInfo::where('ansar_id',$data[0])->first();
-//                if(in_array("freeze",$a->status->getStatus())){
-//                    array_push($ansar_ids,$data[0]);
+//            $i = 0;
+//            foreach ($datas as $data) {
+//                if ($i == 0) {
+//                    $i++;
+//                    continue;
 //                }
-//                if(in_array("Embodied",$a->status->getStatus())){
-//                    array_push($ea_ids,[
-//                        'ansarId'=>$data[0],
-//                        'disReason'=>8,
-//                    ]);
-//                }
-//                if(in_array("Block for offer",$a->status->getStatus())){
-//                    \App\modules\HRM\Models\CustomQuery::sendToPanel($data[0]);
-//                    $a->verified = 2;
-//                    $a->save();
-//                }
+//                $i++;
+//                $d = [
+//                    'thana_id' => $data[0],
+//                    'division_id' => $data[1],
+//                    'unit_id' => $data[2],
+//                    'code' => sprintf("%02d", $data[3]),
+//                    'union_name_eng' => $data[4],
+//                    'union_name_bng' => $data[5],
+//                    'id' => $data[6],
+//                ];
+//                \App\modules\HRM\Models\Unions::create($d);
 //            }
-//            $f_request = new \Illuminate\Http\Request();
-//            $e_request = new \Illuminate\Http\Request();
-//            $f_request->replace([
-//                'rest_date'=>\Carbon\Carbon::now()->format('Y-m-d'),
-//                'memorandum'=>'promotional_panel_'.\Carbon\Carbon::now()->format('Y-m-d'),
-//                'ansarId'=>$ansar_ids,
-//                'disembodiment_reason_id'=>8,
-//                'comment'=>"promotion from ansar to apc"
-//            ]);
-//            $e_request->replace([
-//                'disembodiment_date'=>\Carbon\Carbon::now()->format('Y-m-d'),
-//                'memorandum_id'=>'promotional_panel_'.\Carbon\Carbon::now()->format('Y-m-d'),
-//                'ansars'=>$ea_ids,
-//                'disembodiment_comment'=>"promotion from ansar to apc"
-//            ]);
-//            $e_request->headers->set('X-Requested-With','XMLHttpRequest');
-//            \App\modules\HRM\Models\CustomQuery::freezeDisEmbodied($f_request);
-//            \App\modules\HRM\Models\CustomQuery::disembodimentEntry($e_request);
-//            $r_ansars = [];
-//            foreach ($datas as $data){
-//                $a = \App\modules\HRM\Models\PersonalInfo::where('ansar_id',$data[0])->first();
-//                if(in_array("rest",$a->status->getStatus())){
-//                    array_push($r_ansars,$data[0]);
-//                }
-//            }
-//            $r_request = new \Illuminate\Http\Request();
-//            $r_request->replace([
-//                'panel_date'=>\Carbon\Carbon::now()->format('Y-m-d'),
-//                'memorandumId'=>'promotional_panel_'.\Carbon\Carbon::now()->format('Y-m-d'),
-//                'ansar_id'=>$r_ansars,
-//            ]);
-//            \App\modules\HRM\Models\CustomQuery::savePanelEntry($r_request);
-//            foreach ($datas as $data){
-//                $a = \App\modules\HRM\Models\PersonalInfo::where('ansar_id',$data[0])->first();
-//
-//                    array_push($status,$a->status->getStatus());
-//
-//            }
-//            return $status;
-        });
-        Route::get('upload_union', function () {
-            $datas = \Maatwebsite\Excel\Facades\Excel::Load(storage_path('union_name.xlsx'), function ($e) {
-
-            })->get()[0];
-//            i=0;
-            $i = 0;
-            foreach ($datas as $data) {
-                if ($i == 0) {
-                    $i++;
-                    continue;
-                }
-                $i++;
-                $d = [
-                    'thana_id' => $data[0],
-                    'division_id' => $data[1],
-                    'unit_id' => $data[2],
-                    'code' => sprintf("%02d", $data[3]),
-                    'union_name_eng' => $data[4],
-                    'union_name_bng' => $data[5],
-                    'id' => $data[6],
-                ];
-                \App\modules\HRM\Models\Unions::create($d);
-            }
-            return $i;
-        });
-//        Route::resource('retire_ansar_management','RetireAnsarManagementController')->only(['index','update']);
+//            return $i;
+//        });
+        Route::resource('retire_ansar_management','RetireAnsarManagementController',['only'=>['index','update']]);
 
         Route::any('/bulk-upload-bank-info', ['as' => "bulk_upload_bank_file", 'uses' => "EntryFormController@bulkUploadBankInfo"]);
 

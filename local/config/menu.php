@@ -608,6 +608,10 @@ return [
                 "HRM Training Date" => [
                     "route" => "recruitment.training.index",
                     "icon" => "fa-cog"
+                ],
+                "Applicant Quota Type" => [
+                    "route" => "recruitment.quota.index",
+                    "icon" => "fa-cog"
                 ]
 
             ]

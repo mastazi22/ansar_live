@@ -154,6 +154,13 @@ GlobalApp.filter('dateformat', function () {
         return moment(input).locale(local).format(format);
     }
 })
+GlobalApp.filter('calculateAge', function () {
+    return function (input, float, truncate) {
+        if (float == undefined) local = false
+        if (truncate == undefined) return moment().diff(input, 'years', float);
+        else return (moment().diff(input, 'years', float)).toFixed(truncate);
+    }
+})
 GlobalApp.directive('showAlert', function () {
     return {
         restrict: 'AEC',
@@ -958,7 +965,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                     }
                 }
             })
-            $scope.parseItem = function(){
+            $scope.parseItem = function () {
                 // alert(1);
                 $scope.showItem = JSON.parse($scope.showItem.replace(/\\n/g, "\\n")
                     .replace(/\'/g, "\""));
@@ -1112,7 +1119,7 @@ GlobalApp.directive('formSubmit', function (notificationService, $timeout) {
                 e.preventDefault();
                 // alert(2)
                 //
-                if(!scope.confirmBox) {
+                if (!scope.confirmBox) {
                     submitForm();
                 }
             })
@@ -1144,7 +1151,7 @@ GlobalApp.directive('formSubmit', function (notificationService, $timeout) {
                             $(element).resetForm();
                             scope.responseData = response;
                             scope.onReset();
-                            scope.afterSubmit({response:response});
+                            scope.afterSubmit({response: response});
                         }
                         else if (response.status === false) {
                             scope.status = false;
@@ -1197,7 +1204,7 @@ GlobalApp.directive('numericField', function () {
 })
 GlobalApp.controller('jobCircularConstraintController', function ($scope, $filter, $http) {
 
-    $scope.constraint = {
+    var constraint = {
         gender: {male: '', female: ''},
         age: {min: '0', max: '0', minDate: '', maxDate: ''},
         height: {male: {feet: '0', inch: '0'}, female: {feet: '0', inch: '0'}},
@@ -1206,14 +1213,41 @@ GlobalApp.controller('jobCircularConstraintController', function ($scope, $filte
         education: {min: '0', max: '0'}
 
     };
-    // $scope.$watch('apply_quota',function (n,o) {
-    //     console.log("apply_quota :"+n+" "+o)
-    // })
+    $scope.applicationRules = {}
+    $scope.applicationRules[0] = constraint;
+    $scope.circular = {
+        selectedQuota: [],
+        selected: []
+    }
+    $scope.initQuotaArray = (length) => {
+        $scope.circular.selectedQuota = new Array(3);
+        $scope.circular.selected = new Array(3);
+    }
+    $scope.initQuota = (index, data) => {
+        $scope.circular.selectedQuota[index] = JSON.parse(data);
+        $scope.circular.selected[index] = true;
+    }
+    $scope.changeQuota = (index, data) => {
+        // alert(index);
+        if (!$scope.circular.selected[index]) {
+            if ($scope.applicationRules[$scope.circular.selectedQuota[index].id]) {
+                delete $scope.applicationRules[$scope.circular.selectedQuota[index].id];
+            }
+            $scope.circular.selectedQuota[index] = null
+        } else {
+            $scope.circular.selectedQuota[index] = JSON.parse(data);
+        }
+    }
+    $scope.filterFunc = () => {
+        return $scope.circular.selectedQuota.filter((v) => {
+            return v != null;
+        });
+    }
     $scope.minEduList = {};
     $scope.maxEduList = {};
     $scope.onSave = function (elem) {
-        document.getElementsByName(elem)[0].value = angular.toJson($scope.constraint);
-        console.log(angular.toJson($scope.constraint))
+        document.getElementsByName(elem)[0].value = angular.toJson($scope.applicationRules);
+        console.log(angular.toJson($scope.applicationRules))
     }
     $http.get('/' + prefix + 'recruitment/educations').then(
         function (response) {
@@ -1227,24 +1261,52 @@ GlobalApp.controller('jobCircularConstraintController', function ($scope, $filte
     $scope.initConstraint = function (data) {
 
         var d = JSON.parse(data);
-        $scope.constraint = d;
+        console.log(d)
+        var keys1 = Object.keys(d);
+        var keys2 = Object.keys(constraint);
+        if (keys1.length === keys2.length && keys1.sort().every(function (value, index) {
+                return value === keys2.sort()[index]
+            })) {
+            $scope.applicationRules[0] = d;
+        }
+        else $scope.applicationRules = d;
         $scope.onSave('constraint')
 
     }
-    $scope.$watch('constraint', function (newVal) {
-
-        $scope.constraint.age.min = $filter('num')($scope.constraint.age.min + "", 0);
-        $scope.constraint.age.max = $filter('num')($scope.constraint.age.max + "", 0);
-        $scope.constraint.height.male.feet = $filter('num')($scope.constraint.height.male.feet + "", 0);
-        $scope.constraint.height.male.inch = $filter('num')($scope.constraint.height.male.inch + "", 0);
-        $scope.constraint.height.female.feet = $filter('num')($scope.constraint.height.female.feet + "", 0);
-        $scope.constraint.height.female.inch = $filter('num')($scope.constraint.height.female.inch + "", 0);
-        $scope.constraint.weight.male = $filter('num')($scope.constraint.weight.male + "", 0);
-        $scope.constraint.weight.female = $filter('num')($scope.constraint.weight.female + "", 0);
-        $scope.constraint.chest.male.min = $filter('num')($scope.constraint.chest.male.min + "", 0);
-        $scope.constraint.chest.male.max = $filter('num')($scope.constraint.chest.male.max + "", 0);
-        $scope.constraint.chest.female.min = $filter('num')($scope.constraint.chest.female.min + "", 0);
-        $scope.constraint.chest.female.max = $filter('num')($scope.constraint.chest.female.max + "", 0);
+    $scope.initRules = (key) => {
+        if(!$scope.applicationRules[key])$scope.applicationRules[key] = JSON.parse(JSON.stringify(constraint));
+    }
+    $scope.$watch('applicationRules', function (newVal) {
+        if ($scope.applicationRules) {
+            console.log(newVal)
+            Object.keys($scope.applicationRules).forEach((key) => {
+                // console.log(key)
+                $scope.applicationRules[key].age.min = $filter('num')($scope.applicationRules[key].age.min + "", 0);
+                $scope.applicationRules[key].age.max = $filter('num')($scope.applicationRules[key].age.max + "", 0);
+                $scope.applicationRules[key].height.male.feet = $filter('num')($scope.applicationRules[key].height.male.feet + "", 0);
+                $scope.applicationRules[key].height.male.inch = $filter('num')($scope.applicationRules[key].height.male.inch + "", 0);
+                $scope.applicationRules[key].height.female.feet = $filter('num')($scope.applicationRules[key].height.female.feet + "", 0);
+                $scope.applicationRules[key].height.female.inch = $filter('num')($scope.applicationRules[key].height.female.inch + "", 0);
+                $scope.applicationRules[key].weight.male = $filter('num')($scope.applicationRules[key].weight.male + "", 0);
+                $scope.applicationRules[key].weight.female = $filter('num')($scope.applicationRules[key].weight.female + "", 0);
+                $scope.applicationRules[key].chest.male.min = $filter('num')($scope.applicationRules[key].chest.male.min + "", 0);
+                $scope.applicationRules[key].chest.male.max = $filter('num')($scope.applicationRules[key].chest.male.max + "", 0);
+                $scope.applicationRules[key].chest.female.min = $filter('num')($scope.applicationRules[key].chest.female.min + "", 0);
+                $scope.applicationRules[key].chest.female.max = $filter('num')($scope.applicationRules[key].chest.female.max + "", 0);
+            })
+        }
+        // $scope.constraint.age.min = $filter('num')($scope.constraint.age.min + "", 0);
+        // $scope.constraint.age.max = $filter('num')($scope.constraint.age.max + "", 0);
+        // $scope.constraint.height.male.feet = $filter('num')($scope.constraint.height.male.feet + "", 0);
+        // $scope.constraint.height.male.inch = $filter('num')($scope.constraint.height.male.inch + "", 0);
+        // $scope.constraint.height.female.feet = $filter('num')($scope.constraint.height.female.feet + "", 0);
+        // $scope.constraint.height.female.inch = $filter('num')($scope.constraint.height.female.inch + "", 0);
+        // $scope.constraint.weight.male = $filter('num')($scope.constraint.weight.male + "", 0);
+        // $scope.constraint.weight.female = $filter('num')($scope.constraint.weight.female + "", 0);
+        // $scope.constraint.chest.male.min = $filter('num')($scope.constraint.chest.male.min + "", 0);
+        // $scope.constraint.chest.male.max = $filter('num')($scope.constraint.chest.male.max + "", 0);
+        // $scope.constraint.chest.female.min = $filter('num')($scope.constraint.chest.female.min + "", 0);
+        // $scope.constraint.chest.female.max = $filter('num')($scope.constraint.chest.female.max + "", 0);
 
     }, true)
     $scope.onChangeQuota = function () {
@@ -1300,9 +1362,9 @@ GlobalApp.directive("calender", function (notificationService) {
             disabledDates: '=?',
             enabledDates: '=?',
             monthRange: '@',
-            disableDateSelection:'=?',
-            disableNavigationBeforeMonth:'@',
-            disableDateBeforeCurrentDate:'@'
+            disableDateSelection: '=?',
+            disableNavigationBeforeMonth: '@',
+            disableDateBeforeCurrentDate: '@'
         },
         controller: function ($scope) {
             $scope.months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -1315,7 +1377,7 @@ GlobalApp.directive("calender", function (notificationService) {
             };
             $scope.currentMonth = {
                 totalDays: currentDate.daysInMonth(),
-                month: $scope.showOnlyMonth?$scope.showOnlyMonth:currentDate.get('month'),
+                month: $scope.showOnlyMonth ? $scope.showOnlyMonth : currentDate.get('month'),
                 year: currentDate.get('year'),
                 date: currentDate.get('date'),
             };
@@ -1333,7 +1395,7 @@ GlobalApp.directive("calender", function (notificationService) {
             };
             $scope.next = function (event) {
                 event.preventDefault();
-                var currentDate = moment().date(1).month($scope.nextMonth.month%12).year($scope.nextMonth.year+Math.floor($scope.nextMonth.month/12));
+                var currentDate = moment().date(1).month($scope.nextMonth.month % 12).year($scope.nextMonth.year + Math.floor($scope.nextMonth.month / 12));
                 $scope.currentMonth = {
                     totalDays: currentDate.daysInMonth(),
                     month: currentDate.get('month'),
@@ -1424,15 +1486,16 @@ GlobalApp.directive("calender", function (notificationService) {
                     }
                 }
             }
-            $scope.checkDate = function (d,m,y){
+
+            $scope.checkDate = function (d, m, y) {
                 var data = {
-                    day:+d,
-                    month:+m,
-                    year:+y,
+                    day: +d,
+                    month: +m,
+                    year: +y,
                 }
                 var t = false;
                 $scope.selectedDates.forEach(function (item) {
-                    if(item.day==+d&&item.month==+m&&item.year==+y) {
+                    if (item.day == +d && item.month == +m && item.year == +y) {
                         t = true;
                         return;
                     }
@@ -1440,46 +1503,46 @@ GlobalApp.directive("calender", function (notificationService) {
 //                        console.log(t)
                 return t;
             }
-            $scope.findIndex = function (d,m,y) {
+            $scope.findIndex = function (d, m, y) {
                 var t = -1;
-                $scope.selectedDates.forEach(function (item,index) {
-                    if(item.day==+d&&item.month==+m&&item.year==+y) {
+                $scope.selectedDates.forEach(function (item, index) {
+                    if (item.day == +d && item.month == +m && item.year == +y) {
                         t = index;
                         return;
                     }
                 })
                 return t;
             }
-            $scope.isEnabled = function (d,m,y) {
+            $scope.isEnabled = function (d, m, y) {
                 var t = -1;
-                if($scope.enabledDates==undefined) return true;
+                if ($scope.enabledDates == undefined) return true;
 
-                $scope.enabledDates.forEach(function (item,index) {
-                    if(item.day==+d&&item.month==+m&&item.year==+y) {
+                $scope.enabledDates.forEach(function (item, index) {
+                    if (item.day == +d && item.month == +m && item.year == +y) {
                         t = index;
                         return;
                     }
                 })
-                return t>=0;
+                return t >= 0;
             }
-            $scope.findDisabledIndex = function (d,m,y) {
-                if($scope.disabledDates!=undefined&&$scope.disabledDates.length>0) {
+            $scope.findDisabledIndex = function (d, m, y) {
+                if ($scope.disabledDates != undefined && $scope.disabledDates.length > 0) {
 //                            console.log($scope.disabledDates)
 //                            console.log(d+" "+m+" "+y)
                 }
                 var t = -1;
-                if($scope.disabledDates==undefined) return -1
-                $scope.disabledDates.forEach(function (item,index) {
-                    if(item.day==+d&&item.month==+m&&item.year==+y) {
+                if ($scope.disabledDates == undefined) return -1
+                $scope.disabledDates.forEach(function (item, index) {
+                    if (item.day == +d && item.month == +m && item.year == +y) {
                         t = index;
                         return;
                     }
                 })
                 return t;
             }
-            $scope.disableDate = function (d,m,y) {
+            $scope.disableDate = function (d, m, y) {
 //                        console.log(d)
-                return (+$scope.current.date>+d&&+$scope.current.month==+$scope.currentMonth.month&&+$scope.current.year==+$scope.currentMonth.year&&$scope.disableDateBeforeCurrentDate)||($scope.findDisabledIndex(d,m,y)>=0);
+                return (+$scope.current.date > +d && +$scope.current.month == +$scope.currentMonth.month && +$scope.current.year == +$scope.currentMonth.year && $scope.disableDateBeforeCurrentDate) || ($scope.findDisabledIndex(d, m, y) >= 0);
             }
         },
         link: function (scope, elem, attr) {
@@ -1488,11 +1551,11 @@ GlobalApp.directive("calender", function (notificationService) {
 
             var isMouseDown = false;
             var moveCount = 0;
-            $(elem).on("mousedown",".date-row",function (event) {
+            $(elem).on("mousedown", ".date-row", function (event) {
                 isMouseDown = true
                 console.log("down")
             })
-            $(elem).on("click",".date-row>.date:not(.cursor-disabled)",function (event) {
+            $(elem).on("click", ".date-row>.date:not(.cursor-disabled)", function (event) {
                 event.stopPropagation();
                 console.log("click")
                 isMouseDown = false;
@@ -1500,50 +1563,50 @@ GlobalApp.directive("calender", function (notificationService) {
                  isMouseMove = false;
                  return;
                  }*/
-                if($(this).hasClass("selected")&&$(event.target).attr("data-tag")==="cur"){
-                    var index = scope.findIndex($(event.target).attr("data-day"),$(event.target).attr("data-month"),$(event.target).attr("data-year"));
-                    scope.selectedDates.splice(index,1);
+                if ($(this).hasClass("selected") && $(event.target).attr("data-tag") === "cur") {
+                    var index = scope.findIndex($(event.target).attr("data-day"), $(event.target).attr("data-month"), $(event.target).attr("data-year"));
+                    scope.selectedDates.splice(index, 1);
 
 
-                } else if($(event.target).attr("data-tag")==="cur"){
-                    if(scope.disableDateSelection){
-                        notificationService.notify("error","you can`t select anymore date");
+                } else if ($(event.target).attr("data-tag") === "cur") {
+                    if (scope.disableDateSelection) {
+                        notificationService.notify("error", "you can`t select anymore date");
                         return;
                     }
                     var data = {
-                        day:+$(event.target).attr("data-day"),
-                        month:+$(event.target).attr("data-month"),
-                        year:+$(event.target).attr("data-year"),
+                        day: +$(event.target).attr("data-day"),
+                        month: +$(event.target).attr("data-month"),
+                        year: +$(event.target).attr("data-year"),
                     }
                     scope.selectedDates.push(data);
                 }
 
-                if($(event.target).attr("data-tag")==="cur") {
+                if ($(event.target).attr("data-tag") === "cur") {
                     $(this).toggleClass("selected")
 
                     scope.$apply();
                 }
             })
-            $(elem).on("mouseup",function (event) {
+            $(elem).on("mouseup", function (event) {
                 isMouseDown = false
                 console.log("up")
                 moveCount = 0;
             })
-            $(elem).on("mousemove",".date-row",function (event) {
-                console.log("isMouseDown : "+isMouseDown)
-                if(isMouseDown&&moveCount++>0){
+            $(elem).on("mousemove", ".date-row", function (event) {
+                console.log("isMouseDown : " + isMouseDown)
+                if (isMouseDown && moveCount++ > 0) {
 //                            alert(2)
                     isMouseMove = true;
-                    if(scope.disableDateSelection){
-                        notificationService.notify("error","you can`t select anymore date");
+                    if (scope.disableDateSelection) {
+                        notificationService.notify("error", "you can`t select anymore date");
                         return;
                     }
-                    if($(event.target).hasClass("date")&&!$(event.target).hasClass("selected")&&!$(event.target).hasClass("cursor-disabled")&&$(event.target).attr("data-tag")==="cur"){
+                    if ($(event.target).hasClass("date") && !$(event.target).hasClass("selected") && !$(event.target).hasClass("cursor-disabled") && $(event.target).attr("data-tag") === "cur") {
                         $(event.target).addClass("selected")
                         var data = {
-                            day:+$(event.target).attr("data-day"),
-                            month:+$(event.target).attr("data-month"),
-                            year:+$(event.target).attr("data-year"),
+                            day: +$(event.target).attr("data-day"),
+                            month: +$(event.target).attr("data-month"),
+                            year: +$(event.target).attr("data-year"),
                         }
                         scope.selectedDates.push(data);
                         scope.$apply();

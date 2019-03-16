@@ -115,6 +115,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
             return $q->toSql();
         });
         Route::get('/send_sms_paid', ['as' => 'send_sms_paid', 'uses' => 'SupportController@sendUserNamePassword']);
+        Route::resource('quota','JobCircularApplicantQuota');
     });
 
 

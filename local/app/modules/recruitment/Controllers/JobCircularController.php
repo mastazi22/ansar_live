@@ -4,6 +4,7 @@ namespace App\modules\recruitment\Controllers;
 
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
+use App\modules\recruitment\Models\CircularApplicantQuota;
 use App\modules\recruitment\Models\JobCategory;
 use App\modules\recruitment\Models\JobCircular;
 use Carbon\Carbon;
@@ -41,7 +42,8 @@ class JobCircularController extends Controller
         $job_categories = JobCategory::pluck('category_name_eng', 'id')->prepend('--Select a job category--', '0');
         $units = District::where('id', '!=', 0)->get();
         $range = Division::where('id', '!=', 0)->get();
-        return view('recruitment::job_circular.create', ['categories' => $job_categories, 'units' => $units, 'ranges' => $range]);
+        $circular_quota = CircularApplicantQuota::all();
+        return view('recruitment::job_circular.create', ['categories' => $job_categories, 'units' => $units, 'ranges' => $range,'circular_quota'=>$circular_quota]);
     }
 
     /**
@@ -75,8 +77,9 @@ class JobCircularController extends Controller
             $request['submit_problem_status'] = !$request->submit_problem_status ? 'off' : $request->submit_problem_status;
             $request['circular_status'] = !$request->circular_status ? 'shutdown' : $request->circular_status;
             $request['quota_district_division'] = !$request->quota_district_division ? 'off' : $request->quota_district_division;
-            $c = JobCategory::find($request->job_category_id)->circular()->create($request->except(['job_category_id', 'constraint']));
+            $c = JobCategory::find($request->job_category_id)->circular()->create($request->except(['job_category_id', 'constraint','quota_type']));
             $c->constraint()->create(['constraint' => $request->constraint]);
+            if($request['quota_type']&&count($request['quota_type'])>0)$c->applicantQuotaRelation()->attach($request['quota_type']);
             DB::commit();
 
         } catch (\Exception $e) {
@@ -107,10 +110,12 @@ class JobCircularController extends Controller
     public function edit($id)
     {
         $job_categories = JobCategory::pluck('category_name_eng', 'id')->prepend('--Select a job category--', '0');
-        $data = JobCircular::with('constraint')->find($id);
+        $data = JobCircular::with(['constraint','applicantQuotaRelation'])->find($id);
         $units = District::where('id', '!=', 0)->get();
         $range = Division::where('id', '!=', 0)->get();
-        return view('recruitment::job_circular.edit', ['categories' => $job_categories, 'data' => $data, 'units' => $units, 'ranges' => $range]);
+        $circular_quota = CircularApplicantQuota::all();
+//        return $circular_quota;
+        return view('recruitment::job_circular.edit', ['categories' => $job_categories, 'data' => $data, 'units' => $units, 'ranges' => $range,'circular_quota'=>$circular_quota]);
 
     }
 
@@ -123,6 +128,7 @@ class JobCircularController extends Controller
      */
     public function update(Request $request, $id)
     {
+//        return $request->all();
         $rules = [
             'circular_name' => 'required',
             'pay_amount' => 'required',
@@ -147,9 +153,11 @@ class JobCircularController extends Controller
             $request['submit_problem_status'] = !$request->submit_problem_status ? 'off' : $request->submit_problem_status;
             $request['quota_district_division'] = !$request->quota_district_division ? 'off' : $request->quota_district_division;
             $c = JobCircular::find($id);
-            $c->update($request->except('constraint'));
+            $c->update($request->except(['constraint','quota_type']));
             if ($c->constraint) $c->constraint()->update(['constraint' => $request->constraint]);
             else  $c->constraint()->create(['constraint' => $request->constraint]);
+            $c->applicantQuotaRelation()->detach();
+            if($request['quota_type']&&count($request['quota_type'])>0)$c->applicantQuotaRelation()->attach($request['quota_type']);
             DB::commit();
 
         } catch (\Exception $e) {

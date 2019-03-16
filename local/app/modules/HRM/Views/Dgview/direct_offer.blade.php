@@ -111,7 +111,7 @@
             }
             $scope.ppp = function(){
 //                alert(moment().format("DD-MMM-YYYY"))
-                $("input[name='offer_date']").val(moment().format("DD-MMM-YYYY"));
+                $("input[name='offer_date']").val(moment().format("DD-MMM-YYYY HH:mm:ss"));
             }
         })
     </script>
@@ -196,7 +196,8 @@
 
                     $('#date').val(dateText);
                 }
-            })()
+            })
+            $("input[name='offer_date']").val(moment().format("DD-MMM-YYYY HH:mm:ss"));
         })
     </script>
 @stop

@@ -106,7 +106,7 @@ class JobApplicantMarks extends Model
         if($this->written) $t+=$this->convertedWrittenMark();
         if($this->edu_training) $t+=$this->edu_training;
         if($this->edu_experience) $t+=$this->edu_experience;
-        if($this->applicant->physicalAgePoint()) $t+=$this->applicant->physicalAgePoint();
+        if($this->applicant->physicalAgePoint()>=0 && is_numeric($this->applicant->physicalAgePoint())) $t+=$this->applicant->physicalAgePoint();
         if($this->physical) $t+=$this->physical;
         if($this->viva) $t+=$this->viva;
         if(is_array($this->additional_marks)){

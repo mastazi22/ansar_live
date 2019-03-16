@@ -642,6 +642,27 @@
         ]
       },
       {
+        "text": "Applicant Quota Type",
+        "actions": [
+          {
+            "value": "recruitment.quota.index",
+            "name": "View Quota"
+          },
+          {
+            "value": "recruitment.quota.create,recruitment.quota.store",
+            "name": "Add Quota"
+          },
+          {
+            "value": "recruitment.quota.edit,recruitment.quota.update",
+            "name": "Edit Quota"
+          },
+          {
+            "value": "recruitment.quota.destroy",
+            "name": "Delete Quota"
+          }
+        ]
+      },
+      {
         "text": "Reports",
         "actions": [
           {

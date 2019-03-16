@@ -1,6 +1,6 @@
 <div ng-controller="jobCircularConstraintController"
      @if(isset($data)&&$data->constraint) ng-init="initConstraint('{{ $data->constraint->constraint}}')" @endif>
-
+    <?php $quota_list = isset($data)&&$data->applicantQuotaRelation ? $data->applicantQuotaRelation->pluck('id')->toArray() : [] ?>
     @if(isset($data))
         {!! Form::model($data,['route'=>['recruitment.circular.update',$data],'method'=>'patch']) !!}
     @else
@@ -102,12 +102,32 @@
         <label for="submit_problem_status" class=""></label>
     </div>
     <div class="form-group">
+
         {!! Form::label('test','Quota applied for all divisions and districts : ',['class'=>'control-label','style'=>'margin-right:15px']) !!}
-        <input type="checkbox" value="on" name="quota_district_division"
-               @if((isset($data)&&$data->quota_district_division=='on')||Request::old('quota_district_division')=='on')checked ng-init="apply_quota=1"
-               @endif id="quota_district_division" class="switch-checkbox" ng-model="apply_quota" ng-true-value="1"
+        <input type="checkbox" ng-readonly="quota_district_division==1&&filterFunc().length>0" value="on" name="quota_district_division" ng-model="quota_district_division"
+               @if((isset($data)&&$data->quota_district_division=='on')||Request::old('quota_district_division')=='on')checked
+               ng-init="quota_district_division=1"
+               @endif id="quota_district_division" class="switch-checkbox" ng-model="quota_district_division"
+               ng-true-value="1"
                ng-false-value="0">
         <label for="quota_district_division" class=""></label>
+        <div class="form-control" ng-if="quota_district_division"
+             style="height: 100px;overflow: auto;transition: all 1s">
+            <ul ng-init="initQuotaArray({{count($circular_quota)}})">
+                <?php $i = 0; ?>
+
+                @forelse($circular_quota as $quota)
+                    @if((count($quota_list)?in_array($quota->id,$quota_list):false)||(Request::old('quota_type')?in_array($quota->id,Request::old('quota_type')):false))
+                        <li style="list-style: none">{!! Form::checkbox('quota_type[]',$quota->id,true,["style"=>"vertical-align:sub","class"=>"range-app","ng-model"=>"circular.selected[".$i."]","ng-init"=>"initQuota(".$i.",'".json_encode($quota)."')","ng-change"=>"changeQuota(".$i.",'".json_encode($quota)."')"]) !!}{{$quota->quota_name_bng}}</li>
+                    @else
+                        <li style="list-style: none">{!! Form::checkbox('quota_type[]',$quota->id,false,["style"=>"vertical-align:sub","class"=>"range-app","ng-model"=>"circular.selected[".$i."]","ng-change"=>"changeQuota(".$i.",'".json_encode($quota)."')"]) !!}{{$quota->quota_name_bng}}</li>
+                    @endif
+                    <?php $i++; ?>
+                @empty
+                    <li style='list-style: none'>No Quota Available</li>
+                @endforelse
+            </ul>
+        </div>
     </div>
     <div class="form-group">
         {!! Form::label('Select applicant division','Select applicant division',['class'=>'control-label']) !!}
@@ -181,431 +201,438 @@
                     <h4 class="modal-title">Constraint</h4>
                 </div>
                 <div class="modal-body">
-                    <div class="constraint-rule">
-                        <fieldset>
-                            <legend>Gender</legend>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <input type="checkbox" ng-model="constraint.gender.male" ng-true-value="'male'"
-                                           ng-false-value="''" name="gender-male" value="male" id="gender-male"
-                                           class="box-checkbox">
-                                    <label for="gender-male">Male</label>
-                                </div>
-                                <div class="col-sm-6">
-                                    <input type="checkbox" ng-model="constraint.gender.female" ng-true-value="'female'"
-                                           ng-false-value="''" name="gender-female" value="female" id="gender-female"
-                                           class="box-checkbox">
-                                    <label for="gender-female">Female</label>
-                                </div>
+                    <div class="panel-group" id="accordine">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#common-rules" class="collapsed" aria-expanded="false">
+                                        Commom Rules
+                                    </a>
+                                </h4>
                             </div>
-                        </fieldset>
-                        <fieldset>
-                            <legend>
-                                Age
-                            </legend>
-                            {{--age validation rules--}}
-                            <div class="row">
+                            <div id="common-rules" class="panel-collapse collapse in" aria-expanded="false">
+                                <div class="panel-body">
+                                    <div class="constraint-rule">
+                                        <fieldset>
+                                            <legend>Gender</legend>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <input type="checkbox" ng-model="applicationRules[0].gender.male" ng-true-value="'male'"
+                                                           ng-false-value="''" name="gender-male" value="male" id="gender-male"
+                                                           class="box-checkbox">
+                                                    <label for="gender-male">Male</label>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <input type="checkbox" ng-model="applicationRules[0].gender.female" ng-true-value="'female'"
+                                                           ng-false-value="''" name="gender-female" value="female" id="gender-female"
+                                                           class="box-checkbox">
+                                                    <label for="gender-female">Female</label>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        {{--start age validation rules--}}
+                                        <fieldset>
+                                            <legend>
+                                                Age
+                                            </legend>
+                                            {{--age validation rules--}}
+                                            <div class="row">
 
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="control-label">Min age</label>
-                                        <input type="text" placeholder="Min age" class="form-control"
-                                               ng-disabled="(constraint.gender.male!='male'&&constraint.gender.female!='female')"
-                                               ng-model="constraint.age.min">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="control-label">Min age date</label>
-                                        <input type="text" placeholder="Min age date" date-picker=""
-                                               class="form-control"
-                                               ng-disabled="(constraint.gender.male!='male'&&constraint.gender.female!='female')"
-                                               ng-model="constraint.age.minDate">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <div class="form-group">
-                                            <label class="control-label">Max age</label>
-                                            <input type="text" placeholder="Max age" class="form-control"
-                                                   ng-disabled="(constraint.gender.male!='male'&&constraint.gender.female!='female')"
-                                                   ng-model="constraint.age.max">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="form-group">
-                                            <label class="control-label">Max age date</label>
-                                            <input type="text" placeholder="Max age date" date-picker=""
-                                                   class="form-control"
-                                                   ng-disabled="(constraint.gender.male!='male'&&constraint.gender.female!='female')"
-                                                   ng-model="constraint.age.maxDate">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12" ng-if="apply_quota">
-                                    <fieldset>
-                                            <input type="checkbox" ng-model="constraint.age.quota.enabled"
-                                                   ng-true-value="'1'"
-                                                   ng-false-value="''" name="quota-select" value="1" id="quota-select"
-                                                   class="box-checkbox"
-                                                   ng-disabled="(constraint.gender.male!='male'&&constraint.gender.female!='female')||constraint.age.quota.data.length>0">
-                                            <label for="quota-select">Rules for Quota</label>
-                                            <button class="btn btn-link btn-xs" ng-click="(constraint.age.quota.data = constraint.age.quota.data?constraint.age.quota.data:[]).push({minAge:'',maxAge:''})" ng-show="constraint.age.quota.enabled&&!(constraint.gender.male!='male'&&constraint.gender.female!='female')">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        <div ng-if="constraint.age.quota.enabled" style="padding-left: 10px">
-                                            <div ng-repeat="d in constraint.age.quota.data" style="display: flex;justify-content: center;flex-direction: row;margin-bottom: 5px">
-                                                <button class="btn btn-link btn-xs text-danger" style="flex-grow: .3" ng-click="constraint.age.quota.data.splice($index,1)">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
-                                                    <select ng-model="d.type" class="form-control">
-                                                        <option value="">--Select Quota--</option>
-                                                        <option value="son_of_freedom_fighter">Son of freedom fighter</option>
-                                                        <option value="grand_son_of_freedom_fighter">Grandson of freedom fighter</option>
-                                                        <option value="member_of_ansar_or_vdp">Member of ANSAR or VDP</option>
-                                                        <option value="orphan">Orphan</option>
-                                                        <option value="physically_disabled">Physically disabled</option>
-                                                        <option value="tribe">Tribe</option>
-                                                    </select>
-                                                </div>
-                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
-                                                    <input type="text" placeholder="min age" class="form-control" ng-model="d.minAge">
-                                                </div>
-                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
-                                                    <input type="text" placeholder="max age" class="form-control" ng-model="d.maxAge">
-                                                </div>
-                                            </div>
-                                            <p class="text text-danger" ng-if="!constraint.age.quota.data||constraint.age.quota.data.length<=0">
-                                                No rules available. click <strong>"<i class="fa fa-plus"></i>"</strong> to add rule
-                                            </p>
-                                        </div>
-
-                                    </fieldset>
-                                </div>
-                                {{--<div class="col-md-6">--}}
-                                {{--<div class="form-group">--}}
-                                {{--<div class="form-group">--}}
-                                {{--<label>Select Applicable Quotas</label>--}}
-                                {{--<select ng-model="quota_type" class="form-control"--}}
-                                {{--ng-change="onChangeQuota()">--}}
-                                {{--<option value="" selected>--Select Quota--</option>--}}
-                                {{--<option value="son_of_freedom_fighter">Son of freedom fighter</option>--}}
-                                {{--<option value="grand_son_of_freedom_fighter">Grandson of freedom--}}
-                                {{--fighter--}}
-                                {{--</option>--}}
-                                {{--<option value="member_of_ansar_or_vdp">Member of ANSAR or VDP</option>--}}
-                                {{--<option value="orphan">Orphan</option>--}}
-                                {{--<option value="physically_disabled">Physically disabled</option>--}}
-                                {{--<option value="tribe">Tribe</option>--}}
-                                {{--</select>--}}
-                                {{--</div>--}}
-                                {{--</div>--}}
-                                {{--</div>--}}
-                                {{--<div class="col-md-6">--}}
-                                {{--<div class="form-group">--}}
-                                {{--<div class="form-group">--}}
-                                {{--<label>Quota Based Max Age</label>--}}
-                                {{--<input type="text" placeholder="" class="form-control"--}}
-                                {{--ng-model="constraint.age.quota.maxAge">--}}
-                                {{--</div>--}}
-                                {{--</div>--}}
-                                {{--</div>--}}
-                                {{--<style>--}}
-                                {{--.selected-quota {--}}
-                                {{--padding: 1%;--}}
-                                {{--display: inline-block;--}}
-                                {{--background: green;--}}
-                                {{--color: #FFF;--}}
-                                {{--margin: 2px;--}}
-                                {{--cursor: pointer;--}}
-                                {{--}--}}
-                                {{--</style>--}}
-                                {{--<div class="col-md-12">--}}
-                                {{--<div class="well">--}}
-                                {{--<label style="width: 100%">Selected Quotas</label>--}}
-                                {{--<div id="selected-quota-type">--}}
-                                {{--append from angular--}}
-                                {{--</div>--}}
-                                {{--</div>--}}
-                                {{--</div>--}}
-                            </div>
-                            {{--end age validation rules--}}
-                        </fieldset>
-                        {{--start height validation rules--}}
-                        <fieldset>
-                            <legend>Height</legend>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="control-label">Male</label>
-                                        <div class="row">
-                                            <div class="col-md-6" style="padding-right: 0">
-                                                <input type="text" ng-disabled="constraint.gender.male!='male'"
-                                                       ng-model="constraint.height.male.feet" class="form-control"
-                                                       placeholder="Feet">
-                                            </div>
-                                            <div class="col-md-6" style="padding-right: 0">
-                                                <input type="text" ng-disabled="constraint.gender.male!='male'"
-                                                       ng-model="constraint.height.male.inch"
-                                                       class="form-control" placeholder="Inch">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="control-label">Female</label>
-                                        <div class="row">
-                                            <div class="col-md-6" style="padding-right: 0">
-                                                <input type="text" ng-disabled="constraint.gender.female!='female'"
-                                                       ng-model="constraint.height.female.feet" class="form-control"
-                                                       placeholder="Feet">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <input type="text" ng-disabled="constraint.gender.female!='female'"
-                                                       ng-model="constraint.height.female.inch" class="form-control"
-                                                       placeholder="Inch">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12" ng-if="apply_quota">
-                                    <fieldset>
-                                        <input type="checkbox" ng-model="constraint.height.quota.enabled"
-                                               ng-true-value="'1'"
-                                               ng-false-value="''" name="quota-select-height" value="1" id="quota-select-height"
-                                               class="box-checkbox"
-                                               ng-disabled="(constraint.gender.male!='male'&&constraint.gender.female!='female')||constraint.height.quota.data.length>0">
-                                        <label for="quota-select-height">Rules for Quota</label>
-                                        <button class="btn btn-link btn-xs" ng-click="(constraint.height.quota.data = constraint.height.quota.data?constraint.height.quota.data:[]).push({})" ng-show="constraint.height.quota.enabled&&!(constraint.gender.male!='male'&&constraint.gender.female!='female')">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                        <div ng-if="constraint.height.quota.enabled" style="padding-left: 10px">
-                                            <div ng-repeat="d in constraint.height.quota.data" style="display: flex;justify-content: center;flex-direction: row;margin-bottom: 5px">
-                                                <button class="btn btn-link btn-xs text-danger" style="flex-grow: .3" ng-click="constraint.height.quota.data.splice($index,1)">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
-                                                    <select ng-model="d.type" class="form-control">
-                                                        <option value="">--Select Quota--</option>
-                                                        <option value="son_of_freedom_fighter">Son of freedom fighter</option>
-                                                        <option value="grand_son_of_freedom_fighter">Grandson of freedom fighter</option>
-                                                        <option value="member_of_ansar_or_vdp">Member of ANSAR or VDP</option>
-                                                        <option value="orphan">Orphan</option>
-                                                        <option value="physically_disabled">Physically disabled</option>
-                                                        <option value="tribe">Tribe</option>
-                                                    </select>
-                                                </div>
-                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
-                                                    <input type="text" ng-disabled="constraint.gender.male!='male'" placeholder="feet(Male)" class="form-control" ng-model="d.male.feet">
-                                                </div>
-                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
-                                                    <input type="text" ng-disabled="constraint.gender.male!='male'" placeholder="inch(Male)" class="form-control" ng-model="d.male.inch">
-                                                </div>
-                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
-                                                    <input type="text" ng-disabled="constraint.gender.female!='female'" placeholder="feet(Female)" class="form-control" ng-model="d.female.feet">
-                                                </div>
-                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
-                                                    <input type="text" ng-disabled="constraint.gender.female!='female'" placeholder="inch(Female)" class="form-control" ng-model="d.female.inch">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Min age</label>
+                                                        <input type="text" placeholder="Min age" class="form-control"
+                                                               ng-disabled="(applicationRules[0].gender.male!='male'&&applicationRules[0].gender.female!='female')"
+                                                               ng-model="applicationRules[0].age.min">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label">Min age date</label>
+                                                        <input type="text" placeholder="Min age date" date-picker=""
+                                                               class="form-control"
+                                                               ng-disabled="(applicationRules[0].gender.male!='male'&&applicationRules[0].gender.female!='female')"
+                                                               ng-model="applicationRules[0].age.minDate">
+                                                    </div>
                                                 </div>
 
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <div class="form-group">
+                                                            <label class="control-label">Max age</label>
+                                                            <input type="text" placeholder="Max age" class="form-control"
+                                                                   ng-disabled="(applicationRules[0].gender.male!='male'&&applicationRules[0].gender.female!='female')"
+                                                                   ng-model="applicationRules[0].age.max">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="form-group">
+                                                            <label class="control-label">Max age date</label>
+                                                            <input type="text" placeholder="Max age date" date-picker=""
+                                                                   class="form-control"
+                                                                   ng-disabled="(applicationRules[0].gender.male!='male'&&applicationRules[0].gender.female!='female')"
+                                                                   ng-model="applicationRules[0].age.maxDate">
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <p class="text text-danger" ng-if="!constraint.height.quota.data||constraint.height.quota.data.length<=0">
-                                                No rules available. click <strong>"<i class="fa fa-plus"></i>"</strong> to add rule
-                                            </p>
-                                        </div>
-
-                                    </fieldset>
-                                </div>
-                            </div>
-                        </fieldset>
-                        {{--end height validation rules--}}
-                        {{--start weight validation rules--}}
-                        <fieldset>
-                            <legend>Weight</legend>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="control-label">Male</label>
-                                        <input type="text" ng-disabled="constraint.gender.male!='male'"
-                                               ng-model="constraint.weight.male" class="form-control"
-                                               placeholder="Weight in kg">
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="control-label">Female</label>
-                                        <input type="text" ng-disabled="constraint.gender.female!='female'"
-                                               ng-model="constraint.weight.female" class="form-control"
-                                               placeholder="Weight in kg">
-                                    </div>
-                                </div>
-                                <div class="col-md-12" ng-if="apply_quota">
-                                    <fieldset>
-                                        <input type="checkbox" ng-model="constraint.weight.quota.enabled"
-                                               ng-true-value="'1'"
-                                               ng-false-value="''" name="quota-select-weight" value="1" id="quota-select-weight"
-                                               class="box-checkbox"
-                                               ng-disabled="(constraint.gender.male!='male'&&constraint.gender.female!='female')||constraint.weight.quota.data.length>0">
-                                        <label for="quota-select-weight">Rules for Quota</label>
-                                        <button class="btn btn-link btn-xs" ng-click="(constraint.weight.quota.data = constraint.weight.quota.data?constraint.weight.quota.data:[]).push({})" ng-show="constraint.weight.quota.enabled&&!(constraint.gender.male!='male'&&constraint.gender.female!='female')">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                        <div ng-if="constraint.weight.quota.enabled" style="padding-left: 10px">
-                                            <div ng-repeat="d in constraint.weight.quota.data" style="display: flex;justify-content: center;flex-direction: row;margin-bottom: 5px">
-                                                <button class="btn btn-link btn-xs text-danger" style="flex-grow: .3" ng-click="constraint.weight.quota.data.splice($index,1)">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
-                                                    <select ng-model="d.type" class="form-control">
-                                                        <option value="">--Select Quota--</option>
-                                                        <option value="son_of_freedom_fighter">Son of freedom fighter</option>
-                                                        <option value="grand_son_of_freedom_fighter">Grandson of freedom fighter</option>
-                                                        <option value="member_of_ansar_or_vdp">Member of ANSAR or VDP</option>
-                                                        <option value="orphan">Orphan</option>
-                                                        <option value="physically_disabled">Physically disabled</option>
-                                                        <option value="tribe">Tribe</option>
-                                                    </select>
+                                            {{--end age validation rules--}}
+                                        </fieldset>
+                                        {{--end age validation rules--}}
+                                        {{--start height validation rules--}}
+                                        <fieldset>
+                                            <legend>Height</legend>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Male</label>
+                                                        <div class="row">
+                                                            <div class="col-md-6" style="padding-right: 0">
+                                                                <input type="text" ng-disabled="applicationRules[0].gender.male!='male'"
+                                                                       ng-model="applicationRules[0].height.male.feet" class="form-control"
+                                                                       placeholder="Feet">
+                                                            </div>
+                                                            <div class="col-md-6" style="padding-right: 0">
+                                                                <input type="text" ng-disabled="applicationRules[0].gender.male!='male'"
+                                                                       ng-model="applicationRules[0].height.male.inch"
+                                                                       class="form-control" placeholder="Inch">
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
-                                                    <input type="text" ng-disabled="constraint.gender.male!='male'" placeholder="weight(Male)" class="form-control" ng-model="d.male">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Female</label>
+                                                        <div class="row">
+                                                            <div class="col-md-6" style="padding-right: 0">
+                                                                <input type="text" ng-disabled="applicationRules[0].gender.female!='female'"
+                                                                       ng-model="applicationRules[0].height.female.feet" class="form-control"
+                                                                       placeholder="Feet">
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <input type="text" ng-disabled="applicationRules[0].gender.female!='female'"
+                                                                       ng-model="applicationRules[0].height.female.inch" class="form-control"
+                                                                       placeholder="Inch">
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
-                                                    <input type="text" ng-disabled="constraint.gender.female!='female'" placeholder="weight(Female)" class="form-control" ng-model="d.female">
-                                                </div>
-
                                             </div>
-                                            <p class="text text-danger" ng-if="!constraint.weight.quota.data||constraint.weight.quota.data.length<=0">
-                                                No rules available. click <strong>"<i class="fa fa-plus"></i>"</strong> to add rule
-                                            </p>
-                                        </div>
-
-                                    </fieldset>
-                                </div>
-                            </div>
-                        </fieldset>
-                        {{--end weight validation rules--}}
-                        {{--start chest validation rules--}}
-                        <fieldset>
-                            <legend>Chest</legend>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="control-label">Male</label>
-                                        <div class="row">
-                                            <div class="col-sm-6">
-                                                <input type="text" ng-disabled="constraint.gender.male!='male'"
-                                                       ng-model="constraint.chest.male.min" class="form-control"
-                                                       placeholder="">
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <input type="text" ng-disabled="constraint.gender.male!='male'"
-                                                       ng-model="constraint.chest.male.max" class="form-control"
-                                                       placeholder="">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label class="control-label">Female</label>
-                                        <div class="row">
-                                            <div class="col-sm-6">
-                                                <input type="text" ng-disabled="constraint.gender.female!='female'"
-                                                       ng-model="constraint.chest.female.min" class="form-control"
-                                                       placeholder="">
-                                            </div>
-                                            <div class="col-sm-6">
-                                                <input type="text" ng-disabled="constraint.gender.female!='female'"
-                                                       ng-model="constraint.chest.female.max" class="form-control"
-                                                       placeholder="">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12" ng-if="apply_quota">
-                                    <fieldset>
-                                        <input type="checkbox" ng-model="constraint.chest.quota.enabled"
-                                               ng-true-value="'1'"
-                                               ng-false-value="''" name="quota-select-chest" value="1" id="quota-select-chest"
-                                               class="box-checkbox"
-                                               ng-disabled="(constraint.gender.male!='male'&&constraint.gender.female!='female')||constraint.chest.quota.data.length>0">
-                                        <label for="quota-select-chest">Rules for Quota</label>
-                                        <button class="btn btn-link btn-xs" ng-click="(constraint.chest.quota.data = constraint.chest.quota.data?constraint.chest.quota.data:[]).push({})" ng-show="constraint.chest.quota.enabled&&!(constraint.gender.male!='male'&&constraint.gender.female!='female')">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                        <div ng-if="constraint.chest.quota.enabled" style="padding-left: 10px">
-                                            <div ng-repeat="d in constraint.chest.quota.data" style="display: flex;justify-content: center;flex-direction: row;margin-bottom: 5px">
-                                                <button class="btn btn-link btn-xs text-danger" style="flex-grow: .3" ng-click="constraint.chest.quota.data.splice($index,1)">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
-                                                    <select ng-model="d.type" class="form-control">
-                                                        <option value="">--Select Quota--</option>
-                                                        <option value="son_of_freedom_fighter">Son of freedom fighter</option>
-                                                        <option value="grand_son_of_freedom_fighter">Grandson of freedom fighter</option>
-                                                        <option value="member_of_ansar_or_vdp">Member of ANSAR or VDP</option>
-                                                        <option value="orphan">Orphan</option>
-                                                        <option value="physically_disabled">Physically disabled</option>
-                                                        <option value="tribe">Tribe</option>
-                                                    </select>
+                                        </fieldset>
+                                        {{--end height validation rules--}}
+                                        {{--start weight validation rules--}}
+                                        <fieldset>
+                                            <legend>Weight</legend>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Male</label>
+                                                        <input type="text" ng-disabled="applicationRules[0].gender.male!='male'"
+                                                               ng-model="applicationRules[0].weight.male" class="form-control"
+                                                               placeholder="Weight in kg">
+                                                    </div>
                                                 </div>
-                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
-                                                    <input type="text" ng-disabled="constraint.gender.male!='male'" placeholder="mormal(Male)" class="form-control" ng-model="d.male.min">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Female</label>
+                                                        <input type="text" ng-disabled="applicationRules[0].gender.female!='female'"
+                                                               ng-model="applicationRules[0].weight.female" class="form-control"
+                                                               placeholder="Weight in kg">
+                                                    </div>
                                                 </div>
-                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
-                                                    <input type="text" ng-disabled="constraint.gender.male!='male'" placeholder="expanded(Male)" class="form-control" ng-model="d.male.max">
-                                                </div>
-
-                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
-                                                    <input type="text" ng-disabled="constraint.gender.female!='female'" placeholder="mormal(Female)" class="form-control" ng-model="d.female.min">
-                                                </div>
-                                                <div class="from-group" style="flex-grow: 1;margin-right: 5px">
-                                                    <input type="text" ng-disabled="constraint.gender.female!='female'" placeholder="expanded(Female)" class="form-control" ng-model="d.female.max">
-                                                </div>
-
                                             </div>
-                                            <p class="text text-danger" ng-if="!constraint.chest.quota.data||constraint.chest.quota.data.length<=0">
-                                                No rules available. click <strong>"<i class="fa fa-plus"></i>"</strong> to add rule
-                                            </p>
-                                        </div>
-
-                                    </fieldset>
-                                </div>
-                            </div>
-                        </fieldset>
-                        {{--end chest validation rules--}}
-                        <fieldset>
-                            <legend>Education</legend>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="control-label">Min education</label>
-                                        <select name="" id=""
-                                                ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
-                                                ng-model="constraint.education.min" class="form-control">
-                                            <option value="">--Select a degree--</option>
-                                            <option ng-repeat="(key,value) in minEduList" value="[[key]]">[[value]]
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="control-label">Max education</label>
-                                        <select name="" id=""
-                                                ng-disabled="constraint.gender.male!='male'&&constraint.gender.female!='female'"
-                                                ng-model="constraint.education.max"
-                                                class="form-control">
-                                            <option value="">--Select a degree--</option>
-                                            <option ng-repeat="(key,value) in minEduList" value="[[key]]">[[value]]
-                                            </option>
-                                        </select>
+                                        </fieldset>
+                                        {{--end weight validation rules--}}
+                                        {{--start chest validation rules--}}
+                                        <fieldset>
+                                            <legend>Chest</legend>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Male</label>
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                <input type="text" ng-disabled="applicationRules[0].gender.male!='male'"
+                                                                       ng-model="applicationRules[0].chest.male.min" class="form-control"
+                                                                       placeholder="">
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <input type="text" ng-disabled="applicationRules[0].gender.male!='male'"
+                                                                       ng-model="applicationRules[0].chest.male.max" class="form-control"
+                                                                       placeholder="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Female</label>
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                <input type="text" ng-disabled="applicationRules[0].gender.female!='female'"
+                                                                       ng-model="applicationRules[0].chest.female.min" class="form-control"
+                                                                       placeholder="">
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <input type="text" ng-disabled="applicationRules[0].gender.female!='female'"
+                                                                       ng-model="applicationRules[0].chest.female.max" class="form-control"
+                                                                       placeholder="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        {{--end chest validation rules--}}
+                                        <fieldset>
+                                            <legend>Education</legend>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Min education</label>
+                                                        <select name="" id=""
+                                                                ng-disabled="applicationRules[0].gender.male!='male'&&applicationRules[0].gender.female!='female'"
+                                                                ng-model="applicationRules[0].education.min" class="form-control">
+                                                            <option value="">--Select a degree--</option>
+                                                            <option ng-repeat="(key,value) in minEduList" value="[[key]]">[[value]]
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Max education</label>
+                                                        <select name="" id=""
+                                                                ng-disabled="applicationRules[0].gender.male!='male'&&applicationRules[0].gender.female!='female'"
+                                                                ng-model="applicationRules[0].education.max"
+                                                                class="form-control">
+                                                            <option value="">--Select a degree--</option>
+                                                            <option ng-repeat="(key,value) in minEduList" value="[[key]]">[[value]]
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
                                     </div>
                                 </div>
                             </div>
-                        </fieldset>
+                        </div>
+
+                        <div class="panel panel-default" ng-repeat="q in filterFunc()" ng-init="initRules(q.id)">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#[[q.quota_name_eng.split(' ').join('_')]]" class="collapsed" aria-expanded="false">
+                                        [[q.quota_name_eng]]
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="[[q.quota_name_eng.split(' ').join('_')]]" class="panel-collapse collapse" aria-expanded="false">
+                                <div class="panel-body">
+                                    <div class="constraint-rule">
+                                        <fieldset>
+                                            <legend>Gender</legend>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <input type="checkbox" ng-model="applicationRules[q.id].gender.male" ng-true-value="'male'"
+                                                           ng-false-value="''" name="gender-male-[[$index]]" value="male" id="gender-male-[[$index]]"
+                                                           class="box-checkbox">
+                                                    <label for="gender-male-[[$index]]">Male</label>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <input type="checkbox" ng-model="applicationRules[q.id].gender.female" ng-true-value="'female'"
+                                                           ng-false-value="''" name="gender-female-[[$index]]" value="female" id="gender-female-[[$index]]"
+                                                           class="box-checkbox">
+                                                    <label for="gender-female-[[$index]]">Female</label>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        {{--start age validation rules--}}
+                                        <fieldset>
+                                            <legend>
+                                                Age
+                                            </legend>
+                                            {{--age validation rules--}}
+                                            <div class="row">
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Min age</label>
+                                                        <input type="text" placeholder="Min age" class="form-control"
+                                                               ng-disabled="(applicationRules[q.id].gender.male!='male'&&applicationRules[q.id].gender.female!='female')"
+                                                               ng-model="applicationRules[q.id].age.min">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="control-label">Min age date</label>
+                                                        <input type="text" placeholder="Min age date" date-picker=""
+                                                               class="form-control"
+                                                               ng-disabled="(applicationRules[q.id].gender.male!='male'&&applicationRules[q.id].gender.female!='female')"
+                                                               ng-model="applicationRules[q.id].age.minDate">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <div class="form-group">
+                                                            <label class="control-label">Max age</label>
+                                                            <input type="text" placeholder="Max age" class="form-control"
+                                                                   ng-disabled="(applicationRules[q.id].gender.male!='male'&&applicationRules[q.id].gender.female!='female')"
+                                                                   ng-model="applicationRules[q.id].age.max">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="form-group">
+                                                            <label class="control-label">Max age date</label>
+                                                            <input type="text" placeholder="Max age date" date-picker=""
+                                                                   class="form-control"
+                                                                   ng-disabled="(applicationRules[q.id].gender.male!='male'&&applicationRules[q.id].gender.female!='female')"
+                                                                   ng-model="applicationRules[q.id].age.maxDate">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {{--end age validation rules--}}
+                                        </fieldset>
+                                        {{--end age validation rules--}}
+                                        {{--start height validation rules--}}
+                                        <fieldset>
+                                            <legend>Height</legend>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Male</label>
+                                                        <div class="row">
+                                                            <div class="col-md-6" style="padding-right: 0">
+                                                                <input type="text" ng-disabled="applicationRules[q.id].gender.male!='male'"
+                                                                       ng-model="applicationRules[q.id].height.male.feet" class="form-control"
+                                                                       placeholder="Feet">
+                                                            </div>
+                                                            <div class="col-md-6" style="padding-right: 0">
+                                                                <input type="text" ng-disabled="applicationRules[q.id].gender.male!='male'"
+                                                                       ng-model="applicationRules[q.id].height.male.inch"
+                                                                       class="form-control" placeholder="Inch">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Female</label>
+                                                        <div class="row">
+                                                            <div class="col-md-6" style="padding-right: 0">
+                                                                <input type="text" ng-disabled="applicationRules[q.id].gender.female!='female'"
+                                                                       ng-model="applicationRules[q.id].height.female.feet" class="form-control"
+                                                                       placeholder="Feet">
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <input type="text" ng-disabled="applicationRules[q.id].gender.female!='female'"
+                                                                       ng-model="applicationRules[q.id].height.female.inch" class="form-control"
+                                                                       placeholder="Inch">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        {{--end height validation rules--}}
+                                        {{--start weight validation rules--}}
+                                        <fieldset>
+                                            <legend>Weight</legend>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Male</label>
+                                                        <input type="text" ng-disabled="applicationRules[q.id].gender.male!='male'"
+                                                               ng-model="applicationRules[q.id].weight.male" class="form-control"
+                                                               placeholder="Weight in kg">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Female</label>
+                                                        <input type="text" ng-disabled="applicationRules[q.id].gender.female!='female'"
+                                                               ng-model="applicationRules[q.id].weight.female" class="form-control"
+                                                               placeholder="Weight in kg">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        {{--end weight validation rules--}}
+                                        {{--start chest validation rules--}}
+                                        <fieldset>
+                                            <legend>Chest</legend>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Male</label>
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                <input type="text" ng-disabled="applicationRules[q.id].gender.male!='male'"
+                                                                       ng-model="applicationRules[q.id].chest.male.min" class="form-control"
+                                                                       placeholder="">
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <input type="text" ng-disabled="applicationRules[q.id].gender.male!='male'"
+                                                                       ng-model="applicationRules[q.id].chest.male.max" class="form-control"
+                                                                       placeholder="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Female</label>
+                                                        <div class="row">
+                                                            <div class="col-sm-6">
+                                                                <input type="text" ng-disabled="applicationRules[q.id].gender.female!='female'"
+                                                                       ng-model="applicationRules[q.id].chest.female.min" class="form-control"
+                                                                       placeholder="">
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <input type="text" ng-disabled="applicationRules[q.id].gender.female!='female'"
+                                                                       ng-model="applicationRules[q.id].chest.female.max" class="form-control"
+                                                                       placeholder="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        {{--end chest validation rules--}}
+                                        <fieldset>
+                                            <legend>Education</legend>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Min education</label>
+                                                        <select name="" id=""
+                                                                ng-disabled="applicationRules[q.id].gender.male!='male'&&applicationRules[q.id].gender.female!='female'"
+                                                                ng-model="applicationRules[q.id].education.min" class="form-control">
+                                                            <option value="">--Select a degree--</option>
+                                                            <option ng-repeat="(key,value) in minEduList" value="[[key]]">[[value]]
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Max education</label>
+                                                        <select name="" id=""
+                                                                ng-disabled="applicationRules[q.id].gender.male!='male'&&applicationRules[q.id].gender.female!='female'"
+                                                                ng-model="applicationRules[q.id].education.max"
+                                                                class="form-control">
+                                                            <option value="">--Select a degree--</option>
+                                                            <option ng-repeat="(key,value) in minEduList" value="[[key]]">[[value]]
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Close</button>

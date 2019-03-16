@@ -161,4 +161,7 @@ class PersonalInfo extends Model
     public function leave(){
         return $this->hasMany(Leave::class,'ansar_id','ansar_id');
     }
+    public function retireHistory(){
+        return $this->hasMany(AnsarRetireHistory::class,'ansar_id','ansar_id');
+    }
 }

@@ -76,4 +76,8 @@ class JobCircular extends Model
     {
         return $this->hasOne(JobApplicantPoints::class, 'job_circular_id');
     }
+    public function applicantQuotaRelation()
+    {
+        return $this->belongsToMany(CircularApplicantQuota::class,'job_circular_applicant_quota_relation','job_circular_id','job_circular_applicant_quota_id');
+    }
 }

@@ -7,6 +7,7 @@ use App\modules\HRM\Models\KpiGeneralModel;
 use App\modules\HRM\Models\PersonalInfo;
 use App\modules\HRM\Models\TransferAnsar;
 use App\modules\SD\Models\Attendance;
+use App\modules\SD\Models\SalarySheetHistory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -311,6 +312,12 @@ class AttendanceController extends Controller
             if ($valid->fails()) {
                 return "";
             }
+            $generated_for_month = Carbon::create($request->year,$request->month)->format('F, Y');
+            $generated_type = 'salary';
+            $disburst_status = 'done';
+            $kpi_id = $request->kpi;
+            $salary_disburst_status = SalarySheetHistory::where(compact('generated_type','generated_for_month','disburst_status','kpi_id'))->exists();
+//            return $salary_disburst_status?"true":'false';
             $kpi = KpiGeneralModel::find($request->kpi);
             $present_list = Attendance::with(['ansar' => function ($q) {
                 $q->with(["embodiment" => function ($qq) {
@@ -349,7 +356,7 @@ class AttendanceController extends Controller
                 ->where('is_present', 0)
                 ->get();
             $title = "Attendance of <br>" . $kpi->kpi_name . "<br> Date: " . Carbon::create($request->year, $request->month, $request->date)->format('d-M-Y');
-            return view('SD::attendance.view', compact('title', 'present_list', 'absent_list', 'leave_list'));
+            return view('SD::attendance.view', compact('title', 'present_list', 'absent_list', 'leave_list','kpi','salary_disburst_status'));
         }
         abort(401);
 

@@ -5,7 +5,7 @@
         <th>Rank</th>
         <th>Name</th>
         <th>Birth Date</th>
-        <th>Age</th>
+        <th>Age(current)</th>
         <th>Home District</th>
         <th>Thana</th>
         <th>Retire Date</th>
@@ -18,7 +18,7 @@
         <td>[[ansar.rank]]</td>
         <td>[[ansar.name]]</td>
         <td>[[ansar.birth_date|dateformat:"DD-MMM-YYYY"]]</td>
-        <td>[[ansar.age]]</td>
+        <td>[[ansar.birth_date|calculateAge:true:2]]</td>
         <td>[[ansar.unit]]</td>
         <td>[[ansar.thana]]</td>
         <td>[[ansar.retire_date|dateformat:"DD-MMM-YYYY"]]</td>
