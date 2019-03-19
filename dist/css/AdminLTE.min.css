@@ -4808,6 +4808,10 @@ ul.module-menu > li > a:hover {
     cursor: not-allowed;
 
 }
+.box-checkbox-sm{
+    width: 16px;
+    height:16px;
+}
 .box-checkbox{
     position: absolute;
     z-index: -99999999;

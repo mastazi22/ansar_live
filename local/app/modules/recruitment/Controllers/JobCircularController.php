@@ -189,6 +189,19 @@ class JobCircularController extends Controller
             return Response::json(['message' => 'invalid circular'], 404);
         }
     }
+    public function quotaList(Request $request,$id)
+    {
+        if($request->ajax()){
+            try {
+                $circular = JobCircular::findOrFail($id);
+                $quotaList = $circular->applicantQuotaRelation;
+                return \response()->json(\compact('quotaList'));
+            } catch (\Exception $e) {
+                return \response()->json(['message' => 'invalid circular'], 404);
+            }
+        }
+        return abort(403);
+    }
 
     private function searchData($request)
     {

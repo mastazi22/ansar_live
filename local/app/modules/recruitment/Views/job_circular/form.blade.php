@@ -232,8 +232,12 @@
                                         </fieldset>
                                         {{--start age validation rules--}}
                                         <fieldset>
-                                            <legend>
-                                                Age
+                                            <legend style="display: flex;align-items: center">
+                                                Age&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[0].age.enabled">
+                                                <span style="font-size: 15px;font-weight: bold">Enabled</span>&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[0].age.required">
+                                                <span style="font-size: 15px;font-weight: bold">Required</span>
                                             </legend>
                                             {{--age validation rules--}}
                                             <div class="row">
@@ -279,7 +283,14 @@
                                         {{--end age validation rules--}}
                                         {{--start height validation rules--}}
                                         <fieldset>
-                                            <legend>Height</legend>
+                                            <legend>
+                                                Height&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[0].height.enabled">
+                                                <span style="font-size: 15px;font-weight: bold">Enabled</span>&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[0].height.required">
+                                                <span style="font-size: 15px;font-weight: bold">Required</span>
+
+                                            </legend>
                                             <div class="row">
                                                 <div class="col-sm-6">
                                                     <div class="form-group">
@@ -320,7 +331,13 @@
                                         {{--end height validation rules--}}
                                         {{--start weight validation rules--}}
                                         <fieldset>
-                                            <legend>Weight</legend>
+                                            <legend>
+                                                Weight&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[0].weight.enabled">
+                                                <span style="font-size: 15px;font-weight: bold">Enabled</span>&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[0].weight.required">
+                                                <span style="font-size: 15px;font-weight: bold">Required</span>
+                                            </legend>
                                             <div class="row">
                                                 <div class="col-sm-6">
                                                     <div class="form-group">
@@ -343,7 +360,13 @@
                                         {{--end weight validation rules--}}
                                         {{--start chest validation rules--}}
                                         <fieldset>
-                                            <legend>Chest</legend>
+                                            <legend>
+                                                Chest&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[0].chest.enabled">
+                                                <span style="font-size: 15px;font-weight: bold">Enabled</span>&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[0].chest.required">
+                                                <span style="font-size: 15px;font-weight: bold">Required</span>
+                                            </legend>
                                             <div class="row">
                                                 <div class="col-sm-6">
                                                     <div class="form-group">
@@ -383,7 +406,13 @@
                                         </fieldset>
                                         {{--end chest validation rules--}}
                                         <fieldset>
-                                            <legend>Education</legend>
+                                            <legend>
+                                                Education&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[0].education.enabled">
+                                                <span style="font-size: 15px;font-weight: bold">Enabled</span>&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[0].education.required">
+                                                <span style="font-size: 15px;font-weight: bold">Required</span>
+                                            </legend>
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="form-group">
@@ -448,7 +477,11 @@
                                         {{--start age validation rules--}}
                                         <fieldset>
                                             <legend>
-                                                Age
+                                                Age&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[q.id].age.enabled">
+                                                <span style="font-size: 15px;font-weight: bold">Enabled</span>&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[q.id].age.required">
+                                                <span style="font-size: 15px;font-weight: bold">Required</span>
                                             </legend>
                                             {{--age validation rules--}}
                                             <div class="row">
@@ -494,7 +527,12 @@
                                         {{--end age validation rules--}}
                                         {{--start height validation rules--}}
                                         <fieldset>
-                                            <legend>Height</legend>
+                                            <legend>
+                                                Height&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[q.id].height.enabled">
+                                                <span style="font-size: 15px;font-weight: bold">Enabled</span>&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[q.id].height.required">
+                                                <span style="font-size: 15px;font-weight: bold">Required</span></legend>
                                             <div class="row">
                                                 <div class="col-sm-6">
                                                     <div class="form-group">
@@ -535,7 +573,12 @@
                                         {{--end height validation rules--}}
                                         {{--start weight validation rules--}}
                                         <fieldset>
-                                            <legend>Weight</legend>
+                                            <legend>Weight
+                                                &nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[q.id].weight.enabled">
+                                                <span style="font-size: 15px;font-weight: bold">Enabled</span>&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[q.id].weight.required">
+                                                <span style="font-size: 15px;font-weight: bold">Required</span></legend>
                                             <div class="row">
                                                 <div class="col-sm-6">
                                                     <div class="form-group">
@@ -558,7 +601,12 @@
                                         {{--end weight validation rules--}}
                                         {{--start chest validation rules--}}
                                         <fieldset>
-                                            <legend>Chest</legend>
+                                            <legend>
+                                                Chest&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[q.id].chest.enabled">
+                                                <span style="font-size: 15px;font-weight: bold">Enabled</span>&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[q.id].chest.required">
+                                                <span style="font-size: 15px;font-weight: bold">Required</span></legend>
                                             <div class="row">
                                                 <div class="col-sm-6">
                                                     <div class="form-group">
@@ -598,7 +646,13 @@
                                         </fieldset>
                                         {{--end chest validation rules--}}
                                         <fieldset>
-                                            <legend>Education</legend>
+                                            <legend>
+                                                Education&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[q.id].education.enabled">
+                                                <span style="font-size: 15px;font-weight: bold">Enabled</span>&nbsp;&nbsp;
+                                                <input type="checkbox"  style="margin: 2px 0 0" ng-model="applicationRules[q.id].education.required">
+                                                <span style="font-size: 15px;font-weight: bold">Required</span>
+                                            </legend>
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="form-group">

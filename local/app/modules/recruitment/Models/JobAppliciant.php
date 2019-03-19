@@ -98,6 +98,10 @@ class JobAppliciant extends Model
     {
         return $this->hasOne(JobApplicantMarks::class, 'applicant_id', 'applicant_id');
     }
+    public function circularQuota()
+    {
+        return $this->belongsTo(CircularApplicantQuota::class, 'circular_applicant_quota_id');
+    }
 
     public function hrmDetail()
     {

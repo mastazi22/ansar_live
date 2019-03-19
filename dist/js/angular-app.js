@@ -1206,11 +1206,11 @@ GlobalApp.controller('jobCircularConstraintController', function ($scope, $filte
 
     var constraint = {
         gender: {male: '', female: ''},
-        age: {min: '0', max: '0', minDate: '', maxDate: ''},
-        height: {male: {feet: '0', inch: '0'}, female: {feet: '0', inch: '0'}},
-        weight: {male: '0', female: '0'},
-        chest: {male: {min: '0', max: '0'}, female: {min: '0', max: '0'}},
-        education: {min: '0', max: '0'}
+        age: {required:1,enabled:1,min: '0', max: '0', minDate: '', maxDate: ''},
+        height: {required:1,enabled:1,male: {feet: '0', inch: '0'}, female: {feet: '0', inch: '0'}},
+        weight: {required:1,enabled:1,male: '0', female: '0'},
+        chest: {required:1,enabled:1,male: {min: '0', max: '0'}, female: {min: '0', max: '0'}},
+        education: {required:1,enabled:1,min: '0', max: '0'}
 
     };
     $scope.applicationRules = {}
