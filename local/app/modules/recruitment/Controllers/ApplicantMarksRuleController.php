@@ -34,6 +34,9 @@ class ApplicantMarksRuleController extends Controller
 
         }
         $points = JobApplicantPoints::with('circular')->get();
+//        foreach (\get_object_vars($points->rules->{'0'}) as $k=>$value){
+//            return $k;
+//        }
         return view('recruitment::applicant_point.index', compact('points'));
     }
 
@@ -46,7 +49,7 @@ class ApplicantMarksRuleController extends Controller
     {
         $rules_name = JobApplicantPoints::rulesName();
         $rules_for = JobApplicantPoints::rulesFor();
-        $circulars = JobCircular::pluck('circular_name', 'id')->prepend('--Select a circular', '');
+        $circulars = JobCircular::pluck('circular_name', 'id')->prepend('--Select a circular--', '');
         $educations = JobEducationInfo::select(DB::raw('GROUP_CONCAT(education_deg_bng) as education_name'), 'priority', 'id')
             ->groupBy('priority')->get();
 //        return $education;
@@ -62,33 +65,56 @@ class ApplicantMarksRuleController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            'job_circular_id' => 'required',
+            'job_circular_id' => 'required|exists:job_circular,id',
             'point_for' => 'required',
             'rule_name' => 'required',
         ];
+//        return $request->all();
         $this->validate($request, $rules);
+        $circular = JobCircular::find($request->job_circular_id);
+        $constraint = json_decode($circular->constraint->constraint);
         $rules['job_circular_id'] = 'required|unique:job_applicant_points,job_circular_id,NULL,id,rule_name,' . $request->rule_name;
         if ($request->rule_name === 'education') {
-            $rules['edu_point.*.priority'] = 'required';
-            $rules['edu_point.*.point'] = 'required';
-            $rules['edu_p_count'] = 'required';
+            $rules['quota.*.edu_point.*.priority'] = 'required';
+            $rules['quota.*edu_point.*.point'] = 'required';
+            $rules['quota.*edu_p_count'] = 'required';
+        }
+        if ($request->rule_name === 'age') {
+            foreach ($constraint as $key=>$value){
+                $rules["quota.$key.min_age_years"] = "required|in:".$value->age->min;
+                $rules["quota.$key.min_age_point"] = "required|numeric";
+                $rules["quota.$key.max_age_years"] = "required|in:".$value->age->max;
+                $rules["quota.$key.max_age_point"] = "required|numeric";
+            }
         }
         if ($request->rule_name === 'height') {
-            $rules['min_height_feet'] = 'required';
-            $rules['min_height_inch'] = 'required';
-            $rules['min_point'] = 'required';
-            $rules['max_height_feet'] = 'required';
-            $rules['max_height_inch'] = 'required';
-            $rules['max_point'] = 'required';
+            foreach ($constraint as $key=>$value){
+                if($value->gender->male) {
+                    $rules["quota.$key.male.min_height_feet"] = 'required|in:'.$value->height->male->feet;
+                    $rules["quota.$key.male.min_height_inch"] = "required|in:".$value->height->male->inch;
+                    $rules["quota.$key.male.min_point"] = "required";
+                    $rules["quota.$key.male.max_height_feet"] = "required";
+                    $rules["quota.$key.male.max_height_inch"] = "required";
+                    $rules["quota.$key.male.max_point"] = "required";
+                }
+                if($value->gender->female) {
+                    $rules["quota.*.$key.female.*.min_height_feet"] = 'required|in:'.$value->height->female->feet;
+                    $rules["quota.*.$key.female.*.min_height_inch"] = 'required|in:'.$value->height->male->inch;
+                    $rules["quota.*.$key.female.*.min_point"] = "required";
+                    $rules["quota.*.$key.female.*.max_height_feet"] = "required";
+                    $rules["quota.*.$key.female.*.max_height_inch"] = "required";
+                    $rules["quota.*.$key.female.*.max_point"] = "required";
+                }
+            }
         }
         if ($request->rule_name === 'training') {
-            $rules['training_point'] = 'required';
+            $rules['quota.*.training_point'] = 'required';
         }
         if ($request->rule_name === 'experience') {
-            $rules['min_experience_years'] = 'required|numeric';
-            $rules['min_exp_point'] = 'required|numeric';
-            $rules['max_experience_years'] = 'required|numeric';
-            $rules['max_exp_point'] = 'required|numeric';
+            $rules['quota.*.min_experience_years'] = 'required|numeric';
+            $rules['quota.*.min_exp_point'] = 'required|numeric';
+            $rules['quota.*.max_experience_years'] = 'required|numeric';
+            $rules['quota.*.max_exp_point'] = 'required|numeric';
         }
         $this->validate($request, $rules);
         $data = [];
@@ -96,32 +122,32 @@ class ApplicantMarksRuleController extends Controller
             $data['job_circular_id'] = $request->job_circular_id;
             $data['point_for'] = $request->point_for;
             $data['rule_name'] = $request->rule_name;
-            $data['rules'] = json_encode($request->only(['edu_point', 'edu_p_count']));
+            $data['rules'] = json_encode($request->only('quota'));
 
         }
         if ($request->rule_name === 'height') {
             $data['job_circular_id'] = $request->job_circular_id;
             $data['point_for'] = $request->point_for;
             $data['rule_name'] = $request->rule_name;
-            $data['rules'] = json_encode($request->only(['min_height_feet', 'min_height_inch', 'min_point', 'max_height_feet', 'max_height_inch', 'max_point']));
+            $data['rules'] = json_encode($request->only('quota'));
         }
         if ($request->rule_name === 'training') {
             $data['job_circular_id'] = $request->job_circular_id;
             $data['point_for'] = $request->point_for;
             $data['rule_name'] = $request->rule_name;
-            $data['rules'] = json_encode($request->only(['training_point']));
+            $data['rules'] = json_encode($request->only('quota'));
         }
         if ($request->rule_name === 'experience') {
             $data['job_circular_id'] = $request->job_circular_id;
             $data['point_for'] = $request->point_for;
             $data['rule_name'] = $request->rule_name;
-            $data['rules'] = json_encode($request->only(['min_experience_years', 'min_exp_point', 'max_experience_years', 'max_exp_point']));
+            $data['rules'] = json_encode($request->only('quota'));
         }
         if ($request->rule_name === 'age') {
             $data['job_circular_id'] = $request->job_circular_id;
             $data['point_for'] = $request->point_for;
             $data['rule_name'] = $request->rule_name;
-            $data['rules'] = json_encode($request->only(['min_age_years', 'min_age_point', 'max_age_years', 'max_age_point']));
+            $data['rules'] = json_encode($request->only('quota'));
         }
         DB::beginTransaction();
         try {
@@ -154,7 +180,10 @@ class ApplicantMarksRuleController extends Controller
     public function edit($id)
     {
         $data = JobApplicantPoints::find($id);
-        $data = collect($data)->merge($data->rules);
+        $quota = $data->rules;
+        $data = collect($data)->merge(compact('quota'));
+        unset($data['rules']);
+//        return $data;
         $rules_name = JobApplicantPoints::rulesName();
         $rules_for = JobApplicantPoints::rulesFor();
         $circulars = JobCircular::pluck('circular_name', 'id')->prepend('--Select a circular', '');

@@ -184,9 +184,9 @@ class JobCircularController extends Controller
         try {
             $circular = JobCircular::findOrFail($id);
             $constraint = $circular->constraint->constraint;
-            return $constraint;
+            return \response()->json(compact('constraint'));
         } catch (\Exception $e) {
-            return Response::json(['message' => 'invalid circular'], 404);
+            return \response()->json(['message' => 'invalid circular'], 404);
         }
     }
     public function quotaList(Request $request,$id)

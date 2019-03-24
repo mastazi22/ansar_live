@@ -415,6 +415,7 @@ class EmbodimentController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
+            return $e;
             $status['error']['count'] = count($transferred_ansar);
             //return Response::json(['status'=>false,'message'=>'Can`t transfer ansar. There is an error.Please try again later']);
         }

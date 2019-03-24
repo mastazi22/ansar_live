@@ -8,7 +8,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
         //job category route
         Route::resource('category', 'JobCategoryController', ['except' => ['destroy', 'show']]);
         Route::resource('circular', 'JobCircularController', ['except' => ['destroy', 'show']]);
-        Route::get('/circular_quota_list', ['as' => 'circular_quota_list', 'uses' => 'JobCircularController@quotaList']);
+        Route::get('/circular/quota_list/{id}', ['as' => 'recruitment.circular.quota_list', 'uses' => 'JobCircularController@quotaList']);
         Route::get('circular/constraint/{id}', ['as' => 'recruitment.circular.constraint', 'uses' => 'JobCircularController@constraint']);
         Route::resource('marks', 'JobApplicantMarksController', ['except' => ['show']]);
         //applicant management
