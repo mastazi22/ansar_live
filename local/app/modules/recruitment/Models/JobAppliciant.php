@@ -23,6 +23,9 @@ class JobAppliciant extends Model
     {
         return $this->belongsTo(JobCircular::class, 'job_circular_id');
     }
+    public function quotaType(){
+        return $this->belongsTo(CircularApplicantQuota::class,'circular_applicant_quota_id');
+    }
     public function ansar()
     {
         return $this->belongsTo(PersonalInfo::class, 'ansar_id','ansar_id');
@@ -139,11 +142,12 @@ class JobAppliciant extends Model
         }
         $rules = $this->circular->point()->where('point_for', 'edu_training')->get();
         $edu_point = 0;
+        $q = $this->circular_applicant_quota_id;
         foreach ($rules as $rule) {
             if ($rule->rule_name === 'education') {
-                $edu_point += $this->eduPoint(json_decode(json_encode($rule->rules), true));
+                $edu_point += $this->eduPoint(json_decode(json_encode($rule->rules->{$q}), true));
             } else if ($rule->rule_name === 'training'&&($this->training_info=="VDP training"||$this->training_info=="TDP training")) {
-                $edu_point += floatval($rule->rules->training_point);
+                $edu_point += floatval($rule->rules->{$q}->training_point);
             }
         }
         /*$point_table = [
@@ -172,15 +176,16 @@ class JobAppliciant extends Model
         $expRule = collect($rules)->where('rule_name', 'experience')->first();
         $eduRule = collect($rules)->where('rule_name', 'education')->first();
         $eduPoint = $point = 0;
+        $q = $this->circular_applicant_quota_id;
         if ($eduRule) {
-            $eduPoint = $this->eduPoint(json_decode(json_encode($eduRule->rules), true));
+            $eduPoint = $this->eduPoint(json_decode(json_encode($eduRule->rules->{$q}), true));
         }
         if ($expRule) {
             $exp = $this->expCalculation();
-            $min_exp_years = floatval($expRule->rules->min_experience_years);
-            $max_exp_years = floatval($expRule->rules->max_experience_years);
-            $min_point = floatval($expRule->rules->min_exp_point);
-            $max_point = floatval($expRule->rules->max_exp_point);
+            $min_exp_years = floatval($expRule->rules->{$q}->min_experience_years);
+            $max_exp_years = floatval($expRule->rules->{$q}->max_experience_years);
+            $min_point = floatval($expRule->rules->{$q}->min_exp_point);
+            $max_point = floatval($expRule->rules->{$q}->max_exp_point);
             $delta_height = $max_exp_years - $min_exp_years;
             $delta_point = $max_point - $min_point;
             if ($exp >= $max_exp_years) $point = $max_point;
@@ -200,19 +205,21 @@ class JobAppliciant extends Model
         $ageRule = collect($rules)->where('rule_name', 'age')->first();
         $physicalRule = collect($rules)->where('rule_name', 'height')->first();
         $physical = $point = 0;
+        $q = $this->circular_applicant_quota_id;
         if ($physicalRule) {
             $physical = $this->heightPoint($physicalRule->rules);
         }
         if ($ageRule) {
             $age = $this->yearDiff($this->date_of_birth,Carbon::now()->format('Y-m-d'));
-            $min_age_years = floatval($ageRule->rules->min_age_years);
-            $max_age_years = floatval($ageRule->rules->max_age_years);
-            $min_point = floatval($ageRule->rules->min_age_point);
-            $max_point = floatval($ageRule->rules->max_age_point);
+            $min_age_years = floatval($ageRule->rules->{$q}->min_age_years);
+            $max_age_years = floatval($ageRule->rules->{$q}->max_age_years);
+            $min_point = floatval($ageRule->rules->{$q}->min_age_point);
+            $max_point = floatval($ageRule->rules->{$q}->max_age_point);
             $delta_age = $max_age_years - $min_age_years;
             $delta_point = $max_point - $min_point;
-            if ($age >= $max_age_years) $point = $max_point;
-            else $point = number_format(($delta_point / $delta_age) * (($age - $min_age_years)) + $min_point, 2);
+            if ($age >= $max_age_years) $point = $ageRule->rules->{$q}->priority?$max_point:$min_point;
+            else if($ageRule->rules->{$q}->priority) $point = number_format(($delta_point / $delta_age) * (($age - $min_age_years)) + $min_point, 2);
+            else  $point = number_format(($delta_point / $delta_age) * (($max_age_years - $age)) + $min_point, 2);
         }
         return $point + $physical < 0 ? 0 : $point + $physical;
     }
@@ -244,10 +251,12 @@ class JobAppliciant extends Model
 
     }
     private function heightPoint($rules){
-        $min_height = floatval($rules->min_height_feet) * 12 + floatval($rules->min_height_inch);
-        $max_height = floatval($rules->max_height_feet) * 12 + floatval($rules->max_height_inch);
-        $min_point = floatval($rules->min_point);
-        $max_point = floatval($rules->max_point);
+        $gender = strtolower($this->gender);
+        $quota = $this->circular_applicant_quota_id;
+        $min_height = floatval($rules->{$quota}->{$gender}->min_height_feet) * 12 + floatval($rules->{$quota}->{$gender}->min_height_inch);
+        $max_height = floatval($rules->{$quota}->{$gender}->max_height_feet) * 12 + floatval($rules->{$quota}->{$gender}->max_height_inch);
+        $min_point = floatval($rules->{$quota}->{$gender}->min_point);
+        $max_point = floatval($rules->{$quota}->{$gender}->max_point);
         $total_height = floatval($this->height_feet) * 12 + floatval($this->height_inch);
         $delta_height = $max_height - $min_height;
         $delta_point = $max_point - $min_point;
@@ -277,6 +286,7 @@ class JobAppliciant extends Model
     {
         $d1 = new \DateTime($d1);
         $d2 = new \DateTime($d2);
-        return $d1->diff($d2)->y;
+        $diff = $d1->diff($d2);
+        return $diff->y+($diff->m/12)+($diff->d/365);
     }
 }

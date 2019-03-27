@@ -34,7 +34,7 @@
             @forelse($applicants as $a)
                 <tr>
                     <td>{{$i++}}</td>
-                    <td>{{$a->applicant_name_bng}}</td>
+                    <td>{{$a->applicant_name_bng}}{{$a->circular_applicant_quota_id?"(".$a->quotaType->quota_name_bng.")":''}}</td>
                     <td>{{$a->applicant_id}}</td>
                     @if(auth()->user()->type==11)
                         <td>{{$a->marks?($a->marks->physical?$a->marks->physical:$a->physicalPoint()):$a->physicalPoint()}}</td>

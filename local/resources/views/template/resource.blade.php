@@ -60,4 +60,6 @@
 <script src="{{asset('node_modules/angular-cookies/angular-cookies.js')}}"></script>
 <script src="{{asset('dist/js/jquery-ui.multidatespicker.js')}}" ></script>
 <script src="{{asset('dist/js/fileinput.min.js')}}" ></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 {{--<script src="https://cdn.rawgit.com/dubrox/Multiple-Dates-Picker-for-jQuery-UI/master/jquery-ui.multidatespicker.js"></script>--}}

@@ -7,11 +7,18 @@
                 $scope.selectedCircular = '{{$data['job_circular_id']}}'
                 $scope.pointFor = '{{$data['point_for']}}'
                 $scope.ruleName = '{{$data['rule_name']}}'
+                $scope.quota = JSON.parse('{{$data['rules']}}'.replace(/&quot;/g,'"'));
+//                console.log($scope.quota)
             });
         })
 
             @endif
-
+            @if(Session::has('json_error'))
+                $scope.errors = JSON.parse('{{Session::get("json_error")}}'.replace(/&quot;/g,'"'))
+            @endif
+                    @if(Session::has('json_input'))
+                $scope.quota = JSON.parse('{{Session::get("json_input")}}'.replace(/&quot;/g,'"'))
+                @endif
         const loadConstraint = (id) => {
             return $http({
                 url: '/recruitment/circular/constraint/' + id,
@@ -442,36 +449,29 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     {!! Form::text('quota[ [[q.id]] ][min_age_years]','[[constraint[q.id].age.min]]',['class'=>'form-control','placeholder'=>'Years','readonly'=>'readonly']) !!}
-                                    @if(isset($errors)&&$errors->first('quota.[[q.id]].min_age_years'))
-                                        <p class="text text-danger">{{$errors->first('quota.[[q.id]].min_age_years')}}</p>
-                                    @endif
+                                    <p ng-if="errors&&errors['quota.'+q.id+'.min_age_years']" class="text text-danger">[[errors['quota.'+q.id+'.min_age_years'][0] ]]</p>
+
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             {!! Form::label('min_age_point','Min Point :',['class'=>'control-label']) !!}
-                            {!! Form::text('quota[ [[q.id]] ][min_age_point]',null,['class'=>'form-control','placeholder'=>'Min Point']) !!}
-                            @if(isset($errors)&&$errors->first('quota.[[q.id]].min_age_point'))
-                                <p class="text text-danger">{{$errors->first('quota.[[q.id]].min_age_point')}}</p>
-                            @endif
+                            {!! Form::text('quota[ [[q.id]] ][min_age_point]',Request::old('quota[ [[q.id]] ][min_age_point]'),['class'=>'form-control','placeholder'=>'Min Point','ng-model'=>'quota[q.id].min_age_point']) !!}
+                            <p ng-if="errors&&errors['quota.'+q.id+'.min_age_point']" class="text text-danger">[[errors['quota.'+q.id+'.min_age_point'][0] ]]</p>
                         </div>
                         <div class="form-group">
                             {!! Form::label('','Max Age(in years):',['class'=>'control-label']) !!}
                             <div class="row">
                                 <div class="col-sm-12">
                                     {!! Form::text('quota[ [[q.id]] ][max_age_years]','[[constraint[q.id].age.max]]',['class'=>'form-control','placeholder'=>'Years','readonly'=>'readonly']) !!}
-                                    @if(isset($errors)&&$errors->first('quota.[[q.id]].max_age_years'))
-                                        <p class="text text-danger">{{$errors->first('quota.[[q.id]].max_age_years')}}</p>
-                                    @endif
+                                    <p ng-if="errors&&errors['quota.'+q.id+'.max_age_years']" class="text text-danger">[[errors['quota.'+q.id+'.max_age_years'][0] ]]</p>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             {!! Form::label('max_age_point','Max Point :',['class'=>'control-label']) !!}
-                            {!! Form::text('quota[ [[q.id]] ][max_age_point]',null,['class'=>'form-control','placeholder'=>'Max Point']) !!}
-                            @if(isset($errors)&&$errors->first('quota.[[q.id]].max_age_point'))
-                                <p class="text text-danger">{{$errors->first('quota.[[q.id]].max_age_point')}}</p>
-                            @endif
+                            {!! Form::text('quota[ [[q.id]] ][max_age_point]',Request::old('quota[ [[q.id]] ][max_age_point]'),['class'=>'form-control','placeholder'=>'Max Point','ng-model'=>'quota[q.id].max_age_point']) !!}
+                            <p ng-if="errors&&errors['quota.'+q.id+'.max_age_point']" class="text text-danger">[[errors['quota.'+q.id+'.max_age_point'][0] ]]</p>
                         </div>
                         <div class="form-group">
                             <label for="age_general_lower_better">
@@ -507,57 +507,45 @@
                                                         {!! Form::text('quota[ [[q.id]] ][male][min_height_feet]','[[constraint[q.id].height.male.feet]]',['class'=>'form-control','placeholder'=>'Feet','readonly'=>'readonly']) !!}
                                                         <span class="input-group-addon">Feet</span>
                                                     </div>
-                                                    @if(isset($errors)&&$errors->first('quota.[[q.id]].male.min_height_feet'))
-                                                        <p class="text text-danger">{{$errors->first('quota.[[q.id]].male.min_height_feet')}}</p>
-                                                    @endif
+                                                    <p ng-if="errors&&errors['quota.'+q.id+'.male.min_height_feet']" class="text text-danger">[[errors['quota.'+q.id+'.male.min_height_feet'][0] ]]</p>
                                                 </div>
                                                 <div class="col-sm-6">
                                                     <div class="input-group">
                                                         {!! Form::text('quota[ [[q.id]] ][male][min_height_inch]','[[constraint[q.id].height.male.inch]]',['class'=>'form-control','placeholder'=>'Inch','readonly'=>'readonly']) !!}
                                                         <span class="input-group-addon">Inch</span>
                                                     </div>
-                                                    @if(isset($errors)&&$errors->first('quota.[[q.id]].male.min_height_inch'))
-                                                        <p class="text text-danger">{{$errors->first('quota.[[q.id]].male.min_height_inch')}}</p>
-                                                    @endif
+                                                    <p ng-if="errors&&errors['quota.'+q.id+'.male.min_height_inch']" class="text text-danger">[[errors['quota.'+q.id+'.male.min_height_inch'][0] ]]</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             {!! Form::label('min_point','Min Point :',['class'=>'control-label']) !!}
-                                            {!! Form::text('quota[ [[q.id]] ][male][min_point]',null,['class'=>'form-control','placeholder'=>'Min Point']) !!}
-                                            @if(isset($errors)&&$errors->first('quota.[[q.id]].male.min_point'))
-                                                <p class="text text-danger">{{$errors->first('quota.[[q.id]].male.min_point')}}</p>
-                                            @endif
+                                            {!! Form::text('quota[ [[q.id]] ][male][min_point]',null,['class'=>'form-control','placeholder'=>'Min Point','ng-model'=>'quota[q.id].male.min_point']) !!}
+                                            <p ng-if="errors&&errors['quota.'+q.id+'.male.min_point']" class="text text-danger">[[errors['quota.'+q.id+'.male.min_point'][0] ]]</p>
                                         </div>
                                         <div class="form-group">
                                             {!! Form::label('','Max Height:',['class'=>'control-label']) !!}
                                             <div class="row">
                                                 <div class="col-sm-6">
                                                     <div class="input-group">
-                                                        {!! Form::text('quota[ [[q.id]] ][male][max_height_feet]',null,['class'=>'form-control','placeholder'=>'Feet']) !!}
+                                                        {!! Form::text('quota[ [[q.id]] ][male][max_height_feet]',null,['class'=>'form-control','placeholder'=>'Feet','ng-model'=>'quota[q.id].male.max_height_feet']) !!}
                                                         <span class="input-group-addon">Feet</span>
                                                     </div>
-                                                    @if(isset($errors)&&$errors->first('quota.[[q.id]].male.max_height_feet'))
-                                                        <p class="text text-danger">{{$errors->first('quota.[[q.id]].male.max_height_feet')}}</p>
-                                                    @endif
+                                                    <p ng-if="errors&&errors['quota.'+q.id+'.male.max_height_feet']" class="text text-danger">[[errors['quota.'+q.id+'.male.max_height_feet'][0] ]]</p>
                                                 </div>
                                                 <div class="col-sm-6">
                                                     <div class="input-group">
-                                                        {!! Form::text('quota[ [[q.id]] ][male][max_height_inch]',null,['class'=>'form-control','placeholder'=>'Inch']) !!}
+                                                        {!! Form::text('quota[ [[q.id]] ][male][max_height_inch]',null,['class'=>'form-control','placeholder'=>'Inch','ng-model'=>'quota[q.id].male.max_height_inch']) !!}
                                                         <span class="input-group-addon">Inch</span>
                                                     </div>
-                                                    @if(isset($errors)&&$errors->first('quota.[[q.id]].male.max_height_inch'))
-                                                        <p class="text text-danger">{{$errors->first('quota.[[q.id]].male.max_height_inch')}}</p>
-                                                    @endif
+                                                    <p ng-if="errors&&errors['quota.'+q.id+'.male.max_height_inch']" class="text text-danger">[[errors['quota.'+q.id+'.male.max_height_inch'][0] ]]</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             {!! Form::label('max_point','Max Point :',['class'=>'control-label']) !!}
-                                            {!! Form::text('quota[ [[q.id]] ][male][max_point]',null,['class'=>'form-control','placeholder'=>'Max Point']) !!}
-                                            @if(isset($errors)&&$errors->first('quota.[[q.id]].male.max_point'))
-                                                <p class="text text-danger">{{$errors->first('quota.[[q.id]].male.max_point')}}</p>
-                                            @endif
+                                            {!! Form::text('quota[ [[q.id]] ][male][max_point]',null,['class'=>'form-control','placeholder'=>'Max Point','ng-model'=>'quota[q.id].male.max_point']) !!}
+                                            <p ng-if="errors&&errors['quota.'+q.id+'.male.max_point']" class="text text-danger">[[errors['quota.'+q.id+'.male.max_point'][0] ]]</p>
                                         </div>
                                     </div>
                                 </div>
@@ -576,60 +564,48 @@
                                             <div class="row">
                                                 <div class="col-sm-6">
                                                     <div class="input-group">
-                                                        {!! Form::text('min_height_feet','[[constraint[q.id].height.female.feet]]',['class'=>'form-control','placeholder'=>'Feet','readonly'=>'readonly']) !!}
+                                                        {!! Form::text('quota[ [[q.id]] ][female][min_height_feet]','[[constraint[q.id].height.female.feet]]',['class'=>'form-control','placeholder'=>'Feet','readonly'=>'readonly']) !!}
                                                         <span class="input-group-addon">Feet</span>
                                                     </div>
-                                                    @if(isset($errors)&&$errors->first('quota.[[q.id]].female.min_height_feet'))
-                                                        <p class="text text-danger">{{$errors->first('quota.[[q.id]].female.min_height_feet')}}</p>
-                                                    @endif
+                                                    <p ng-if="errors&&errors['quota.'+q.id+'.female.min_height_feet']" class="text text-danger">[[errors['quota.'+q.id+'.female.min_height_feet'][0] ]]</p>
                                                 </div>
                                                 <div class="col-sm-6">
                                                     <div class="input-group">
-                                                        {!! Form::text('min_height_inch','[[constraint[q.id].height.female.inch]]',['class'=>'form-control','placeholder'=>'Inch','readonly'=>'readonly']) !!}
+                                                        {!! Form::text('quota[ [[q.id]] ][female][min_height_inch]','[[constraint[q.id].height.female.inch]]',['class'=>'form-control','placeholder'=>'Inch','readonly'=>'readonly']) !!}
                                                         <span class="input-group-addon">Inch</span>
                                                     </div>
-                                                    @if(isset($errors)&&$errors->first('quota.[[q.id]].female.min_height_inch'))
-                                                        <p class="text text-danger">{{$errors->first('quota.[[q.id]].female.min_height_inch')}}</p>
-                                                    @endif
+                                                    <p ng-if="errors&&errors['quota.'+q.id+'.female.min_height_inch']" class="text text-danger">[[errors['quota.'+q.id+'.female.min_height_inch'][0] ]]</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             {!! Form::label('min_point','Min Point :',['class'=>'control-label']) !!}
-                                            {!! Form::text('min_point',null,['class'=>'form-control','placeholder'=>'Min Point']) !!}
-                                            @if(isset($errors)&&$errors->first('quota.[[q.id]].female.min_point'))
-                                                <p class="text text-danger">{{$errors->first('quota.[[q.id]].female.min_point')}}</p>
-                                            @endif
+                                            {!! Form::text('quota[ [[q.id]] ][female][min_point]',null,['class'=>'form-control','placeholder'=>'Min Point','ng-model'=>'quota[q.id].female.min_point']) !!}
+                                            <p ng-if="errors&&errors['quota.'+q.id+'.female.min_point']" class="text text-danger">[[errors['quota.'+q.id+'.female.min_point'][0] ]]</p>
                                         </div>
                                         <div class="form-group">
                                             {!! Form::label('','Max Height:',['class'=>'control-label']) !!}
                                             <div class="row">
                                                 <div class="col-sm-6">
                                                     <div class="input-group">
-                                                        {!! Form::text('max_height_feet',null,['class'=>'form-control','placeholder'=>'Feet']) !!}
+                                                        {!! Form::text('quota[ [[q.id]] ][female][max_height_feet]',null,['class'=>'form-control','placeholder'=>'Feet','ng-model'=>'quota[q.id].female.max_height_feet']) !!}
                                                         <span class="input-group-addon">Feet</span>
                                                     </div>
-                                                    @if(isset($errors)&&$errors->first('quota.[[q.id]].female.max_height_feet'))
-                                                        <p class="text text-danger">{{$errors->first('quota.[[q.id]].female.max_height_feet')}}</p>
-                                                    @endif
+                                                    <p ng-if="errors&&errors['quota.'+q.id+'.female.max_height_feet']" class="text text-danger">[[errors['quota.'+q.id+'.female.max_height_feet'][0] ]]</p>
                                                 </div>
                                                 <div class="col-sm-6">
                                                     <div class="input-group">
-                                                        {!! Form::text('max_height_inch',null,['class'=>'form-control','placeholder'=>'Inch']) !!}
+                                                        {!! Form::text('quota[ [[q.id]] ][female][max_height_inch]',null,['class'=>'form-control','placeholder'=>'Inch','ng-model'=>'quota[q.id].female.max_height_inch']) !!}
                                                         <span class="input-group-addon">Inch</span>
                                                     </div>
-                                                    @if(isset($errors)&&$errors->first('quota.[[q.id]].female.max_height_inch'))
-                                                        <p class="text text-danger">{{$errors->first('quota.[[q.id]].female.max_height_inch')}}</p>
-                                                    @endif
+                                                    <p ng-if="errors&&errors['quota.'+q.id+'.female.max_height_inch']" class="text text-danger">[[errors['quota.'+q.id+'.female.max_height_inch'][0] ]]</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             {!! Form::label('max_point','Max Point :',['class'=>'control-label']) !!}
-                                            {!! Form::text('max_point',null,['class'=>'form-control','placeholder'=>'Max Point']) !!}
-                                            @if(isset($errors)&&$errors->first('quota.[[q.id]].female.max_point'))
-                                                <p class="text text-danger">{{$errors->first('quota.[[q.id]].female.max_point')}}</p>
-                                            @endif
+                                            {!! Form::text('quota[ [[q.id]] ][female][max_point]',null,['class'=>'form-control','placeholder'=>'Max Point','ng-model'=>'quota[q.id].female.max_point']) !!}
+                                            <p ng-if="errors&&errors['quota.'+q.id+'.female.max_point']" class="text text-danger">[[errors['quota.'+q.id+'.female.max_point'][0] ]]</p>
                                         </div>
                                     </div>
                                 </div>

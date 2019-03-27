@@ -21,7 +21,7 @@
                                 <th>Action</th>
                             </tr>
                             <tr>
-                                <td colspan="8" class="bg-warning">No applicant available
+                                <td colspan="11" class="bg-warning">No applicant available
                                 .Select <strong>Circular</strong> to load applicant
                                 </td>
                             </tr>
@@ -120,7 +120,7 @@
                     <div class="col-sm-4">
                         <div class="form-group">
                             <label for="" class="control-label">Select a circular</label>
-                            <select ng-model="param.circular" ng-change="loadApplicant()" class="form-control">
+                            <select ng-model="param.circular" ng-change="loadApplicant()" class="form-control" id="circular_list">
                                 <option value="">--Select a circular--</option>
                                 <option ng-repeat="c in circulars" value="[[c.id]]">[[c.circular_name]]</option>
                             </select>
@@ -173,4 +173,11 @@
             </div>
         </div>
     </section>
+    <script>
+        $(document).ready(()=>{
+            $('select',document).select2({
+                width:'100%'
+            });
+        })
+    </script>
 @endsection

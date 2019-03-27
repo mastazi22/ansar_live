@@ -86,19 +86,10 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
         //load image
         Route::get('/profile_image', ['as' => 'profile_image', 'uses' => 'ApplicantScreeningController@loadImage']);
         Route::get('/test', function () {
-            $e = \App\modules\recruitment\Models\JobApplicantEditHistory::whereDate('created_at', '>=', '2018-07-17')->get();
-            $z = [];
-            foreach ($e as $ee) {
-                $p = unserialize($ee->previous_data);
-
-                $a = \App\modules\recruitment\Models\JobAppliciant::find($p["id"]);
-                if ($a->training_info != $p["training_info"]) {
-                    $a->training_info = $p["training_info"];
-                    $a->save();
-                }
-                array_push($z, [$a->training_info == $p["training_info"], $p["training_info"], $p["applicant_id"], $a->applicant_id]);
-            }
-            return $z;
+            $d1 = new \DateTime('1999-02-04');
+            $d2 = new \DateTime('2019-03-27');
+            $diff = $d1->diff($d2);
+            return $diff->y+($diff->m/12)+($diff->d/365);
         });
         Route::get('/test1', function () {
             $applicants = \App\modules\recruitment\Models\JobAppliciant::whereHas('selectedApplicant',function(){

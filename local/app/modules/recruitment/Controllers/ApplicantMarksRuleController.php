@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class ApplicantMarksRuleController extends Controller
 {
@@ -116,39 +117,20 @@ class ApplicantMarksRuleController extends Controller
             $rules['quota.*.max_experience_years'] = 'required|numeric';
             $rules['quota.*.max_exp_point'] = 'required|numeric';
         }
-        $this->validate($request, $rules);
-        $data = [];
-        if ($request->rule_name === 'education') {
-            $data['job_circular_id'] = $request->job_circular_id;
-            $data['point_for'] = $request->point_for;
-            $data['rule_name'] = $request->rule_name;
-            $data['rules'] = json_encode($request->only('quota'));
-
+        $data = $request->all();
+        $keys = array_map('trim',array_keys($data['quota']));
+        $values = array_values($data['quota']);
+        $data['quota'] = array_combine($keys,$values);
+        $valid = Validator::make($data,$rules);
+        if($valid->fails()){
+            return redirect()->back()->withInput()->withErrors($valid->errors())->with(['json_error'=>json_encode($valid->errors()),'json_input'=>json_encode($data['quota'])]);
         }
-        if ($request->rule_name === 'height') {
-            $data['job_circular_id'] = $request->job_circular_id;
-            $data['point_for'] = $request->point_for;
-            $data['rule_name'] = $request->rule_name;
-            $data['rules'] = json_encode($request->only('quota'));
-        }
-        if ($request->rule_name === 'training') {
-            $data['job_circular_id'] = $request->job_circular_id;
-            $data['point_for'] = $request->point_for;
-            $data['rule_name'] = $request->rule_name;
-            $data['rules'] = json_encode($request->only('quota'));
-        }
-        if ($request->rule_name === 'experience') {
-            $data['job_circular_id'] = $request->job_circular_id;
-            $data['point_for'] = $request->point_for;
-            $data['rule_name'] = $request->rule_name;
-            $data['rules'] = json_encode($request->only('quota'));
-        }
-        if ($request->rule_name === 'age') {
-            $data['job_circular_id'] = $request->job_circular_id;
-            $data['point_for'] = $request->point_for;
-            $data['rule_name'] = $request->rule_name;
-            $data['rules'] = json_encode($request->only('quota'));
-        }
+        //$this->validate($request, $rules);
+//        $data = [];
+        unset($data['_token']);
+        $data['rules'] = json_encode($data['quota']);
+        unset($data['quota']);
+//        return $data;
         DB::beginTransaction();
         try {
             JobApplicantPoints::create($data);
@@ -182,7 +164,8 @@ class ApplicantMarksRuleController extends Controller
         $data = JobApplicantPoints::find($id);
         $quota = $data->rules;
         $data = collect($data)->merge(compact('quota'));
-        unset($data['rules']);
+        $data['rules'] = json_encode($data['rules']);
+//        unset($data['rules']);
 //        return $data;
         $rules_name = JobApplicantPoints::rulesName();
         $rules_for = JobApplicantPoints::rulesFor();
