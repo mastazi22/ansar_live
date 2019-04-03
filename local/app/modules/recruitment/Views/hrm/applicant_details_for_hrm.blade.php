@@ -1,7 +1,7 @@
 @extends('template.master')
 @section('title','View Applicant Detail for HRM')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('recruitment.applicant.search') !!}
+    {!! Breadcrumbs::render('recruitment.edit_applicants_details_for_hrm') !!}
 @endsection
 @section('content')
     <script>

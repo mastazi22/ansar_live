@@ -1,10 +1,10 @@
 @extends('template.master')
-@section('title','Job Circular')
+@section('title','Exam Center')
 @section('small_title')
     <a href="{{URL::route('recruitment.exam-center.create')}}" class="btn btn-primary btn-sm"><i class="fa fa-clipboard"></i>&nbsp;Add New Exam Center</a>
     @endsection
 @section('breadcrumb')
-    {!! Breadcrumbs::render('job_circular') !!}
+    {!! Breadcrumbs::render('recruitment.setting.exam_center') !!}
 @endsection
 @section('content')
     <script>

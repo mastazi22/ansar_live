@@ -1,7 +1,7 @@
 @extends('template.master')
-@section('title','Create Job Circular')
+@section('title','Create Mark Distribution')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('create_job_circular') !!}
+    {!! Breadcrumbs::render('recruitment') !!}
 @endsection
 @section('content')
 

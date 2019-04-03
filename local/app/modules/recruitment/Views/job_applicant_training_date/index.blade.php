@@ -5,7 +5,7 @@
                 class="fa fa-clipboard"></i>&nbsp;Add New Training Date</a>
 @endsection
 @section('breadcrumb')
-    {!! Breadcrumbs::render('job_circular') !!}
+    {!! Breadcrumbs::render('recruitment.setting.hrm_training_date') !!}
 @endsection
 @section('content')
     <div>

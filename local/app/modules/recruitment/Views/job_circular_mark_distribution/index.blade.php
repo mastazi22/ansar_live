@@ -5,7 +5,7 @@
                 class="fa fa-clipboard"></i>&nbsp;Add New Mark Distribution</a>
 @endsection
 @section('breadcrumb')
-    {!! Breadcrumbs::render('job_circular') !!}
+    {!! Breadcrumbs::render('recruitment.setting.mark_distribution') !!}
 @endsection
 @section('content')
     <div>

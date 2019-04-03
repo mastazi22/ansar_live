@@ -1,7 +1,7 @@
 @extends('template.master')
-@section('title','Final Applicant List')
+@section('title','Download Accepted Applicant Report')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('recruitment.applicant.search') !!}
+    {!! Breadcrumbs::render('recruitment.reports.download_accepted_applicant_report') !!}
 @endsection
 @section('content')
     <script>

@@ -1,7 +1,7 @@
 @extends('template.master')
 @section('title','Applicant Editable fields')
 @section('breadcrumb')
-    {{--{!! Breadcrumbs::render('recruitment') !!}--}}
+    {!! Breadcrumbs::render('recruitment.setting.applicant_editable_field') !!}
 @endsection
 @section('content')
     <script>

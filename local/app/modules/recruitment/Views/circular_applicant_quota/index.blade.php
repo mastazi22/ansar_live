@@ -1,7 +1,7 @@
 @extends('template.master')
 @section('title','Applicant Quota Type')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('recruitment.applicant.list') !!}
+    {!! Breadcrumbs::render('recruitment.setting.applicant_quota') !!}
 @endsection
 @section('content')
     <section class="content">

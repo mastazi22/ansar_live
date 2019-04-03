@@ -1,7 +1,7 @@
 @extends('template.master')
 @section('title','Print Applicant ID Card for HRM')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('recruitment.applicant.search') !!}
+    {!! Breadcrumbs::render('recruitment.print_applicants_id_card') !!}
 @endsection
 @section('content')
     <script>

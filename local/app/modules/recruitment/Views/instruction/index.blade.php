@@ -1,7 +1,7 @@
 @extends('template.master')
 @section('title','Application Instruction')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('recruitment') !!}
+    {!! Breadcrumbs::render('recruitment.setting.application_instruction') !!}
 @endsection
 @section('content')
     <section class="content">

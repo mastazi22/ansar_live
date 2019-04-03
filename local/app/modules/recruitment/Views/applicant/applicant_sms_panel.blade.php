@@ -2,7 +2,7 @@
 @section('title','Applicant SMS Panel')
 {{--@section('small_title','Add new ansar')--}}
 @section('breadcrumb')
-    {!! Breadcrumbs::render('entryform') !!}
+    {!! Breadcrumbs::render('recruitment.applicant.send_sms_to_applicant') !!}
 @endsection
 @section('content')
 

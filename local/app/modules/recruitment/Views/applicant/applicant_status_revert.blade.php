@@ -1,7 +1,7 @@
 @extends('template.master')
 @section('title','Revert Applicant Status')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('recruitment.applicant.search') !!}
+    {!! Breadcrumbs::render('recruitment.applicant.revert_application_status') !!}
 @endsection
 @section('content')
     <script>

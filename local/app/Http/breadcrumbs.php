@@ -562,6 +562,10 @@ Breadcrumbs::register('applicant_selection', function($breadcrumbs) {
     $breadcrumbs->parent('recruitment');
     $breadcrumbs->push('Applicant Management', '#');
 });
+Breadcrumbs::register('reports', function($breadcrumbs) {
+    $breadcrumbs->parent('recruitment');
+    $breadcrumbs->push('Reports', '#');
+});
 
 Breadcrumbs::register('recruitment.applicant.index', function($breadcrumbs) {
     $breadcrumbs->parent('applicant_selection');
@@ -575,15 +579,90 @@ Breadcrumbs::register('recruitment.applicant.search', function($breadcrumbs) {
     $breadcrumbs->parent('applicant_selection');
     $breadcrumbs->push('Search Applicant', URL::route('recruitment.applicant.search'));
 });
+Breadcrumbs::register('recruitment.applicant.edit_applicant', function($breadcrumbs) {
+    $breadcrumbs->parent('applicant_selection');
+    $breadcrumbs->push('Edit Applicant', '#');
+});
+Breadcrumbs::register('recruitment.applicant.revert_application_status', function($breadcrumbs) {
+    $breadcrumbs->parent('applicant_selection');
+    $breadcrumbs->push('Revert Application Status', '#');
+});
+Breadcrumbs::register('recruitment.applicant.applicant_mark_entry', function($breadcrumbs) {
+    $breadcrumbs->parent('applicant_selection');
+    $breadcrumbs->push('Applicant Mark Entry', '#');
+});
+Breadcrumbs::register('recruitment.applicant.send_sms_to_applicant', function($breadcrumbs) {
+    $breadcrumbs->parent('applicant_selection');
+    $breadcrumbs->push('Send SMS to Applicant', '#');
+});
+Breadcrumbs::register('recruitment.applicant.final_accepted_applicant', function($breadcrumbs) {
+    $breadcrumbs->parent('applicant_selection');
+    $breadcrumbs->push('Final Accepted Applicant', '#');
+});
+Breadcrumbs::register('recruitment.reports.view_applicant_status_report', function($breadcrumbs) {
+    $breadcrumbs->parent('reports');
+    $breadcrumbs->push('View Applicant Status Report', '#');
+});
+Breadcrumbs::register('recruitment.reports.download_accepted_applicant_report', function($breadcrumbs) {
+    $breadcrumbs->parent('reports');
+    $breadcrumbs->push('Download Accepted  Applicant Report', '#');
+});
+Breadcrumbs::register('recruitment.reports.download_applicant_marks_report', function($breadcrumbs) {
+    $breadcrumbs->parent('reports');
+    $breadcrumbs->push('Download Applicant Marks Report', '#');
+});
 Breadcrumbs::register('setting', function($breadcrumbs) {
     $breadcrumbs->parent('recruitment');
     $breadcrumbs->push('Settings', '#');
 });
-Breadcrumbs::register('recruitment.quota.index', function($breadcrumbs) {
+Breadcrumbs::register('recruitment.setting.applicant_quota', function($breadcrumbs) {
     $breadcrumbs->parent('setting');
     $breadcrumbs->push('Applicant Quota', URL::route('recruitment.quota.index'));
+   // $breadcrumbs->push('Applicant Quota', URL::route('recruitment.quota.index'));
 });
 Breadcrumbs::register('recruitment.point.index', function($breadcrumbs) {
     $breadcrumbs->parent('setting');
     $breadcrumbs->push('Applicant Marks Rules', URL::route('recruitment.marks_rules.index'));
+});
+
+Breadcrumbs::register('recruitment.setting.applicant_editable_field', function($breadcrumbs) {
+    $breadcrumbs->parent('setting');
+    $breadcrumbs->push('Applicant Editable Field', '#');
+});
+Breadcrumbs::register('recruitment.setting.application_instruction', function($breadcrumbs) {
+    $breadcrumbs->parent('setting');
+    $breadcrumbs->push('Application Instruction', '#');
+});
+Breadcrumbs::register('recruitment.setting.mark_distribution', function($breadcrumbs) {
+    $breadcrumbs->parent('setting');
+    $breadcrumbs->push('Mark Distribution', '#');
+});
+Breadcrumbs::register('recruitment.setting.hrm_training_date', function($breadcrumbs) {
+    $breadcrumbs->parent('setting');
+    $breadcrumbs->push('HRM Training Date', '#');
+});
+
+Breadcrumbs::register('recruitment.setting.exam_center', function($breadcrumbs) {
+    $breadcrumbs->parent('setting');
+    $breadcrumbs->push('Exam Center', '#');
+});
+
+Breadcrumbs::register('recruitment.download_form_for_hrm', function($breadcrumbs) {
+    $breadcrumbs->parent('recruitment');
+    $breadcrumbs->push('Download Form For HRM', '#');
+});
+
+Breadcrumbs::register('recruitment.edit_applicant_for_hrm', function($breadcrumbs) {
+    $breadcrumbs->parent('recruitment');
+    $breadcrumbs->push('Edit Applicants For HRM', '#');
+});
+
+Breadcrumbs::register('recruitment.edit_applicants_details_for_hrm', function($breadcrumbs) {
+    $breadcrumbs->parent('recruitment');
+    $breadcrumbs->push('View Applicants Detail for HRM', '#');
+});
+
+Breadcrumbs::register('recruitment.print_applicants_id_card', function($breadcrumbs) {
+    $breadcrumbs->parent('recruitment');
+    $breadcrumbs->push('Print Applicants ID Card', '#');
 });
