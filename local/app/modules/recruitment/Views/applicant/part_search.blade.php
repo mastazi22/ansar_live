@@ -4,16 +4,45 @@
         <table class="table table-bordered table-condensed">
             <caption style="font-size: 20px;color:#111111">All applied applicants({{$applicants->total()}})
                 <button class="btn btn-primary btn-xs" ng-click="selectAllApplicant()">Select all applicant</button>
-                <button class="btn btn-primary btn-xs" ng-disabled="selectedList.length<=0" ng-click="confirmSelectionOrRejection()">Confirm selection</button>
-                <button class="btn btn-danger btn-xs" ng-disabled="selectedList.length<=0" ng-click="selectApplicants('rejection')">Reject selection</button>
-            <div class="input-group" style="margin-top: 10px">
-                <input ng-keyup="$event.keyCode==13?loadApplicant():''" class="form-control" ng-model="param.q" type="text" placeholder="Search by national id">
-                <span class="input-group-btn">
-                    <button class="btn btn-primary" ng-click="loadApplicant()">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </span>
-            </div>
+                <button class="btn btn-primary btn-xs" ng-disabled="selectedList.length<=0"
+                        ng-click="confirmSelectionOrRejection()">Confirm selection
+                </button>
+                <button class="btn btn-danger btn-xs" ng-disabled="selectedList.length<=0"
+                        ng-click="selectApplicants('rejection')">Reject selection
+                </button>
+
+                <div class="row" style="margin-top: 10px">
+                    <h4 style="margin-left: 2%">Search</h4>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <input type="text" placeholder="Mobile Number" class="form-control" ng-model="param.q.mobNo"
+                                   ng-keyup="$event.keyCode==13?loadApplicant():''">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <input type="text" placeholder="Applicant ID" class="form-control" ng-model="param.q.appId"
+                                   ng-keyup="$event.keyCode==13?loadApplicant():''">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <input type="text" placeholder="National ID" class="form-control" ng-model="param.q.nId"
+                                   ng-keyup="$event.keyCode==13?loadApplicant():''">
+                        </div>
+                    </div>
+                    {{--<div class="col-md-4">--}}
+                        {{--<div class="form-group">--}}
+                            {{--<input type="text" placeholder="Date of Birth" class="form-control" ng-model="param.q.dob"--}}
+                                   {{--ng-keyup="$event.keyCode==13?loadApplicant():''">--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="loadApplicant()">
+                            <i class="fa fa-search"></i>&nbsp; Search
+                        </button>
+                    </div>
+                </div>
             </caption>
             <tr>
                 <th>Sl. No</th>
@@ -32,7 +61,9 @@
                 <tr>
                     <td>{{$i++}}</td>
                     <td>{{$a->applicant_name_bng}}
-                        <a href="#" ng-click="editApplicant('{{URL::route('recruitment.applicant.detail_view',['id'=>$a->applicant_id])}}')" class="">
+                        <a href="#"
+                           ng-click="editApplicant('{{URL::route('recruitment.applicant.detail_view',['id'=>$a->applicant_id])}}')"
+                           class="">
                             <i class="fa fa-edit"></i>
                         </a>
                     </td>
@@ -45,9 +76,17 @@
                     <td>{{$a->chest_normal.'-'.$a->chest_extended}} inch</td>
                     <td>{{$a->weight}} kg</td>
                     <td>
-                        <button ng-if="selectedList.indexOf('{{$a->applicant_id}}')<0" class="btn btn-primary btn-xs" ng-click="addToSelection('{{$a->applicant_id}}')"><i class="fa fa-plus"></i>&nbsp; Add To Selection </button>
-                        <button ng-if="selectedList.indexOf('{{$a->applicant_id}}')>=0" class="btn btn-danger btn-xs" ng-click="removeToSelection('{{$a->applicant_id}}')"><i class="fa fa-minus"></i>&nbsp; Remove Selection </button>
-                        <button class="btn btn-xs btn-primary" ng-click="acceptedAsSpecial('{{$a->applicant_id}}')">Accepted as special</button>
+                        <button ng-if="selectedList.indexOf('{{$a->applicant_id}}')<0" class="btn btn-primary btn-xs"
+                                ng-click="addToSelection('{{$a->applicant_id}}')"><i class="fa fa-plus"></i>&nbsp; Add
+                            To Selection
+                        </button>
+                        <button ng-if="selectedList.indexOf('{{$a->applicant_id}}')>=0" class="btn btn-danger btn-xs"
+                                ng-click="removeToSelection('{{$a->applicant_id}}')"><i class="fa fa-minus"></i>&nbsp;
+                            Remove Selection
+                        </button>
+                        <button class="btn btn-xs btn-primary" ng-click="acceptedAsSpecial('{{$a->applicant_id}}')">
+                            Accepted as special
+                        </button>
                     </td>
                 </tr>
             @empty
@@ -62,7 +101,7 @@
             <div class="col-sm-3">
                 <div class="form-group">
                     <label for="" class="control-label">Load limit</label>
-                    <select class="form-control"  ng-model="param.limit" ng-change="loadApplicant()">
+                    <select class="form-control" ng-model="param.limit" ng-change="loadApplicant()">
                         <option value="50">50</option>
                         <option value="100">100</option>
                         <option value="150">150</option>
