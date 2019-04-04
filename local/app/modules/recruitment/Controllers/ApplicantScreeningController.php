@@ -92,12 +92,12 @@ class ApplicantScreeningController extends Controller
             DB::enableQueryLog();
             $query = JobAppliciant::with('appliciantEducationInfo')->whereHas('circular', function ($q) use ($request) {
                 $q->where('circular_status', 'running');
-                if ($request->exists('circular') && $request->circular != 'all' &&$request->circular) {
+                if ($request->exists('circular') && $request->circular != 'all' && $request->circular) {
                     $q->where('id', $request->circular);
                 }
                 $q->whereHas('category', function ($q) use ($request) {
                     $q->where('status', 'active');
-                    if ($request->exists('category') && $request->category != 'all' &&$request->category) {
+                    if ($request->exists('category') && $request->category != 'all' && $request->category) {
                         $q->where('id', $request->category);
                     }
                 });
@@ -109,13 +109,22 @@ class ApplicantScreeningController extends Controller
             $query->join('db_amis.tbl_units as uu', 'uu.id', '=', 'job_applicant.unit_id');
             $query->join('db_amis.tbl_thana as tt', 'tt.id', '=', 'job_applicant.thana_id');
             if ($request->q) {
-//                return $request->all();
                 $query->where(function ($q) use ($request) {
-                    $q->where('national_id_no', '=', "{$request->q}");
-                    $q->orWhere('applicant_id', '=', "{$request->q}");
-//                    $q->orWhere('job_applicant.ansar_id', '=', "{$request->q}");
-                    if (strtotime($request->q)) {
-                        $q->orwhere('date_of_birth', Carbon::parse($request->q)->format('Y-m-d'));
+                    if (isset($request->q['mobNo']) && !empty($request->q['mobNo'])) {
+                        //mobile no search
+                        $q->orWhere('mobile_no_self', '=', "{$request->q['mobNo']}");
+                    }
+                    if (isset($request->q['appId']) && !empty($request->q['appId'])) {
+                        //applicant id search
+                        $q->orWhere('applicant_id', '=', "{$request->q['appId']}");
+                    }
+                    if (isset($request->q['nId']) && !empty($request->q['nId'])) {
+                        //national id search
+                        $q->orWhere('national_id_no', '=', "{$request->q['nId']}");
+                    }
+                    if (isset($request->q['dob']) && !empty($request->q['dob']) && strtotime($request->q['dob'])) {
+                        //date of birth search
+                        $q->orwhere('date_of_birth', Carbon::parse($request->q['dob'])->format('Y-m-d'));
                     }
                 });
             }
@@ -328,11 +337,11 @@ class ApplicantScreeningController extends Controller
             } else if ($type) {
                 $applicants->where('job_applicant.status', $type);
             }
-            if ($request->q){
-                $applicants->where('mobile_no_self','like', '%' . $request->q . '%');
-                $applicants->orWhere('job_payment_history.txID','like', '%' . $request->q . '%');
+            if ($request->q) {
+                $applicants->where('mobile_no_self', 'like', '%' . $request->q . '%');
+                $applicants->orWhere('job_payment_history.txID', 'like', '%' . $request->q . '%');
             }
-            $applicants=$applicants->select(
+            $applicants = $applicants->select(
                 'job_applicant.applicant_name_bng',
                 'job_applicant.applicant_id',
                 'job_applicant.applicant_password',
@@ -353,8 +362,8 @@ class ApplicantScreeningController extends Controller
             )->groupBy('job_applicant.applicant_id')->paginate(50);
 
             //dd($applicants);
-           // return $applicants;
-           // return DB::getQueryLog();
+            // return $applicants;
+            // return DB::getQueryLog();
         } else {
 
             $applicants = DB::table('job_applicant')
@@ -371,7 +380,7 @@ class ApplicantScreeningController extends Controller
             } else if ($type) {
                 $applicants->where('job_applicant.status', $type);
             }
-            $applicants=$applicants->select(
+            $applicants = $applicants->select(
                 'job_applicant.applicant_name_bng',
                 'job_applicant.applicant_id',
                 'job_applicant.applicant_password',
@@ -705,7 +714,7 @@ class ApplicantScreeningController extends Controller
                 foreach ($request->applicants as $applicant_id) {
                     $applicant = JobAppliciant::where('applicant_id', $applicant_id)->first();
                     if ($applicant) {
-                        $applicant->rejected()->create(['remark'=>$request->message,'action_user_id'=>$request->action_user_id]);
+                        $applicant->rejected()->create(['remark' => $request->message, 'action_user_id' => $request->action_user_id]);
                         $applicant->update(['status' => 'rejected']);
                     }
                 }
@@ -838,7 +847,7 @@ class ApplicantScreeningController extends Controller
         try {
             $applicant = JobAppliciant::where('applicant_id', $request->applicant_id)->first();
             if ($applicant) {
-                $job_quota = JobCircularQuota::where('job_circular_id',  $applicant->job_circular_id)->first();
+                $job_quota = JobCircularQuota::where('job_circular_id', $applicant->job_circular_id)->first();
                 if ($job_quota->type == "unit") {
                     $quota = $job_quota->quota()->where('district_id', $applicant->unit_id)->first();
                     $accepted = JobAppliciant::whereHas('accepted', function ($q) {
@@ -995,7 +1004,7 @@ class ApplicantScreeningController extends Controller
                 });
             })->download('xls');
         } else
-            return (String) view('recruitment::applicant.data_accepted', ['applicants' => $applicants]);
+            return (String)view('recruitment::applicant.data_accepted', ['applicants' => $applicants]);
     }
 
 
@@ -1147,39 +1156,40 @@ class ApplicantScreeningController extends Controller
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
+
     public function generateApplicantRoll(Request $request)
     {
-        if($request->ajax()&&strcasecmp($request->method(),'post')==0){
+        if ($request->ajax() && strcasecmp($request->method(), 'post') == 0) {
 //            return $request->all();
             $rules = [
                 'job_circular_id' => 'required',
-                'status'=>'required'
+                'status' => 'required'
             ];
             $this->validate($request, $rules);
             DB::beginTransaction();
-            try{
-                $circular = JobCircular::with(['appliciant'=>function($q) use ($request){
-                    $q->whereIn('status',array_filter($request->status))->orderBy('id');
+            try {
+                $circular = JobCircular::with(['appliciant' => function ($q) use ($request) {
+                    $q->whereIn('status', array_filter($request->status))->orderBy('id');
                 }])->find($request->job_circular_id);
-                $applicantCount = JobAppliciant::where('job_circular_id',$request->job_circular_id)
-                    ->whereIn('status',array_filter($request->status))->count();
+                $applicantCount = JobAppliciant::where('job_circular_id', $request->job_circular_id)
+                    ->whereIn('status', array_filter($request->status))->count();
                 $len = strlen("$applicantCount");
-                $i=1;
+                $i = 1;
                 $rolls = [];
-                foreach ($circular->appliciant as $applicant){
-                    $roll_last_part = sprintf("%0".$len."d",$i);
-                    $roll_no = $circular->circular_code."".$roll_last_part;
-                    array_push($rolls,$roll_no);
+                foreach ($circular->appliciant as $applicant) {
+                    $roll_last_part = sprintf("%0" . $len . "d", $i);
+                    $roll_no = $circular->circular_code . "" . $roll_last_part;
+                    array_push($rolls, $roll_no);
                     $i++;
                     $applicant->update(compact('roll_no'));
                 }
                 DB::commit();
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 DB::rollBack();
-                return response()->json(['status'=>false,'message'=>$e->getMessage()],500);
+                return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
             }
 
-            return response()->json(['status'=>true]);
+            return response()->json(['status' => true]);
         }
         return view('recruitment::applicant.generate_applicant_roll');
     }
