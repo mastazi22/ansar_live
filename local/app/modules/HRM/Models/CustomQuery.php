@@ -453,7 +453,7 @@ class CustomQuery
             ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
             ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
             ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-            ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.reporting_date',
+            ->select('tbl_ansar_parsonal_info.ansar_id','tbl_ansar_parsonal_info.father_name_bng', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_embodiment.reporting_date', 'tbl_embodiment.reporting_date',
                 'tbl_units.unit_name_bng','tbl_division.division_name_bng','tbl_thana.thana_name_bng','village_name','union_name_eng','village_name_bng','union_name_bng', 'tbl_designations.name_bng', 'tbl_freezing_info.*', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status');
         $freeze_emm = DB::table('tbl_freezing_info')
             ->join('tbl_ansar_parsonal_info', 'tbl_freezing_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
@@ -464,7 +464,7 @@ class CustomQuery
             ->join('tbl_freezed_ansar_embodiment_details', 'tbl_freezed_ansar_embodiment_details.ansar_id', '=', 'tbl_freezing_info.ansar_id')
             ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_freezed_ansar_embodiment_details.freezed_kpi_id')
             ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
-            ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_freezed_ansar_embodiment_details.reporting_date', 'tbl_freezed_ansar_embodiment_details.reporting_date',
+            ->select('tbl_ansar_parsonal_info.ansar_id','tbl_ansar_parsonal_info.father_name_bng', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_freezed_ansar_embodiment_details.reporting_date', 'tbl_freezed_ansar_embodiment_details.reporting_date',
                 'tbl_units.unit_name_bng','tbl_division.division_name_bng','tbl_thana.thana_name_bng','village_name','union_name_eng','village_name_bng','union_name_bng', 'tbl_designations.name_bng', 'tbl_freezing_info.*', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status');
         if ($division && $division != 'all') {
             $freeze_em->where('tbl_kpi_info.division_id', $division);

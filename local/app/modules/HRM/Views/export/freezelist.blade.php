@@ -4,6 +4,7 @@
         <th class="text-center">আইডি</th>
         <th class="text-center">পদবি</th>
         <th class="text-center">নাম</th>
+        <th class="text-center">বাবার নাম</th>
         <th class="text-center">নিজ বিভাগ</th>
         <th class="text-center">নিজ জেলা</th>
         <th class="text-center">নিজ থানা</th>
@@ -22,6 +23,7 @@
             <td>{{$freezeAnsar->ansar_id}}</td>
             <td>{{$freezeAnsar->name_bng}}</td>
             <td>{{$freezeAnsar->ansar_name_bng}}</td>
+            <td>{{$freezeAnsar->father_name_bng}}</td>
             <td>{{$freezeAnsar->division_name_bng}}</td>
             <td>{{$freezeAnsar->unit_name_bng}}</td>
             <td>{{$freezeAnsar->thana_name_bng}}</td>
