@@ -738,6 +738,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                 if (!$scope.show('range')) return;
                 $scope.loading.range = true;
                 httpService.range().then(function (data) {
+                    console.log(data);
                     $scope.loading.range = false;
                     if (data.status != undefined) {
                         $scope.errorKey = {range: 'range'};
@@ -899,7 +900,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
                         //$scope.loadKPI('all');
                     }
                 }
-                else if ($rootScope.user.usertype.type_name == 'Super Admin' || $rootScope.user.usertype.type_name == 'Admin' || $rootScope.user.usertype.type_name == 'DG') {
+                else if ($rootScope.user.usertype.type_name == 'Super Admin' || $rootScope.user.usertype.type_name == 'Admin' || $rootScope.user.usertype.type_name == 'DG'||$rootScope.user.type==111) {
                     if ($scope.type == 'all') {
                         $scope.loadRange();
                         $scope.loadUnit('all');

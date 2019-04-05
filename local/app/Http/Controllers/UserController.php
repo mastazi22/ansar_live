@@ -119,9 +119,8 @@ class UserController extends Controller
         return View::make('User.user_management')->with('total_user', $users);
     }
 
-    function handleRegister()
+    function handleRegister(Request $request)
     {
-
         $messages = [
             'user_name' => 'user name required',
             'password.required' => 'password required',
@@ -144,6 +143,17 @@ class UserController extends Controller
                 'r_password' => 'required|same:password',
                 'user_type' => 'required',
                 'division_name' => 'required'
+            );
+        }else if (Input::get('user_type') == 111) {
+            $rules = array(
+                'user_name' => 'required|unique:hrm.tbl_user',
+                'password' => 'required|min:6',
+                'r_password' => 'required|same:password',
+                'user_type' => 'required',
+                'divisions' => 'required',
+                'districts' => 'required',
+                'divisions.*' => 'integer',
+                'districts.*' => 'integer',
             );
         }else if (Input::get('user_type') == 88||Input::get('user_type') == 99) {
             $rules = array(
@@ -186,6 +196,10 @@ class UserController extends Controller
             $user_log->save();
             $user_permission->user_id = $user->id;
             $user_permission->save();
+            if (Input::get('user_type') == 111) {
+                $user->divisions()->attach($request->divisions);
+                $user->districts()->attach($request->districts);
+            }
             CustomQuery::addActionlog(['ansar_id' => $user->id, 'action_type' => 'CREATE USER', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]);
             return redirect()->route('edit_user_permission',['id'=>$user->id]);
         } else {

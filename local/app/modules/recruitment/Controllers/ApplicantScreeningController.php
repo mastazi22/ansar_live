@@ -130,12 +130,12 @@ class ApplicantScreeningController extends Controller
             }
 
 //            return response()->json($query->paginate(50));
-            if (auth()->user()->type == 66) {
-                $query->where('job_applicant.division_id', $request->range);
+            if (auth()->user()->type == 66||auth()->user()->type == 111) {
+                $query->whereEqualIn('job_applicant.division_id', $request->range);
 //                $query->whereIn('job_applicant.unit_id',$units);
             }
-            if (auth()->user()->type == 22) {
-                $query->where('job_applicant.unit_id', $request->unit);
+            if (auth()->user()->type == 22||auth()->user()->type == 111) {
+                $query->whereEqualIn('job_applicant.unit_id', $request->unit);
 //                $query->whereIn('job_applicant.unit_id',$units);
             }
             if ($request->select_all) {
@@ -182,10 +182,10 @@ class ApplicantScreeningController extends Controller
                 });
             }
             if ($request->range != 'all') {
-                $query->where('division_id', $request->range);
+                $query->whereEqualIn('division_id', $request->range);
             }
             if ($request->unit != 'all') {
-                $query->where('unit_id', $request->unit);
+                $query->whereEqualIn('unit_id', $request->unit);
             }
             if ($request->thana != 'all') {
                 $query->where('thana_id', $request->thana);
@@ -225,10 +225,10 @@ class ApplicantScreeningController extends Controller
                 });
             }
             if ($request->range != 'all') {
-                $query->where('division_id', $request->range);
+                $query->whereEqualIn('division_id', $request->range);
             }
             if ($request->unit != 'all') {
-                $query->where('unit_id', $request->unit);
+                $query->whereEqualIn('unit_id', $request->unit);
             }
             if ($request->thana != 'all') {
                 $query->where('thana_id', $request->thana);
@@ -305,11 +305,11 @@ class ApplicantScreeningController extends Controller
             $query->join('db_amis.tbl_division as dd', 'dd.id', '=', 'job_applicant.division_id');
             $query->join('db_amis.tbl_units as uu', 'uu.id', '=', 'job_applicant.unit_id');
             $query->join('db_amis.tbl_thana as tt', 'tt.id', '=', 'job_applicant.thana_id');
-            if (auth()->user()->type == 66) {
-                $query->where('job_applicant.division_id', auth()->user()->division_id);
+            if (auth()->user()->type == 66||auth()->user()->type == 111) {
+                $query->whereEqualIn('job_applicant.division_id', $request->range);
             }
-            if (auth()->user()->type == 22) {
-                $query->where('job_applicant.unit_id', $request->unit);
+            if (auth()->user()->type == 22||auth()->user()->type == 111) {
+                $query->whereEqualIn('job_applicant.unit_id', $request->unit);
             }
             $query->where('job_applicant.applicant_id', $request->applicant_id);
             return $query->first();
@@ -430,10 +430,10 @@ class ApplicantScreeningController extends Controller
                     }
                 }
                 if ($request->range && $request->range != 'all') {
-                    $applicants->where('division_id', $request->range);
+                    $applicants->whereEqualIn('division_id', $request->range);
                 }
                 if ($request->unit && $request->unit != 'all') {
-                    $applicants->where('unit_id', $request->unit);
+                    $applicants->whereEqualIn('unit_id', $request->unit);
                 }
                 if ($request->thana && $request->thana != 'all') {
                     $applicants->where('thana_id', $request->thana);
@@ -457,10 +457,10 @@ class ApplicantScreeningController extends Controller
                     }
                 }
                 if ($request->range && $request->range != 'all') {
-                    $applicants->where('division_id', $request->range);
+                    $applicants->whereEqualIn('division_id', $request->range);
                 }
                 if ($request->unit && $request->unit != 'all') {
-                    $applicants->where('unit_id', $request->unit);
+                    $applicants->whereEqualIn('unit_id', $request->unit);
                 }
                 if ($request->thana && $request->thana != 'all') {
                     $applicants->where('thana_id', $request->thana);

@@ -59,13 +59,13 @@ class JobApplicantMarksController extends Controller
                 $applicants->leftJoin('job_applicant_marks as marks','marks.applicant_id','=','job_applicant.applicant_id');
             }
             if ($request->exists('range') && $request->range != 'all') {
-                $applicants->where('division_id', $request->range);
+                $applicants->whereEqualIn('division_id', $request->range);
             }
             if ($request->exists('unit') && $request->unit != 'all') {
-                $applicants->where('unit_id', $request->unit);
+                $applicants->whereEqualIn('unit_id', $request->unit);
             }
             if ($request->exists('thana') && $request->thana != 'all') {
-                $applicants->where('thana_id', $request->thana);
+                $applicants->whereEqualIn('thana_id', $request->thana);
             }
             if ($request->exists('q') && $request->q) {
                 $applicants->where(function ($q) use ($request) {

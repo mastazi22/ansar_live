@@ -52,7 +52,7 @@ class DataRepository implements DataInterface
     {
         $division =  $this->division;
         if($id&&$id!='all'){
-            $division = $division->where('id', '=', $id);
+            $division = $division->whereEqualIn('id', $id);
         }
         return $division->where('id', '!=', 0)->orderBy('sort_by', 'asc')->get();
     }
@@ -66,10 +66,10 @@ class DataRepository implements DataInterface
     {
         $units = $this->unit;
         if($range_id&&$range_id!='all'){
-            $units = $units->where('division_id',$range_id);
+            $units = $units->whereEqualIn('division_id',$range_id);
         }
         if($id&&$id!='all'){
-            $units = $units->where('id', '=', $id);
+            $units = $units->whereEqualIn('id', $id);
         }
         return $units->where('id', '!=', 0)->get();
     }
@@ -84,10 +84,10 @@ class DataRepository implements DataInterface
     {
         $thanas = $this->thana;
         if($range_id&&$range_id!='all'){
-            $thanas = $thanas->where('division_id',$range_id);
+            $thanas = $thanas->whereEqualIn('division_id',$range_id);
         }
         if($unit_id&&$unit_id!='all'){
-            $thanas = $thanas->where('unit_id',$unit_id);
+            $thanas = $thanas->whereEqualIn('unit_id',$unit_id);
         }
         if($id&&$id!='all'){
             $thanas = $thanas->where('id', '=', $id);

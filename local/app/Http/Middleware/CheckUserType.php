@@ -65,6 +65,7 @@ class CheckUserType
         'HRM.api.thana'=>['range_id'=>'range','unit_id'=>'unit'],
         'HRM.api.unit'=>['range_id'=>'range','id'=>'unit'],
         'HRM.api.division'=>['id'=>'range'],
+        'getfreezelist'=>['range'=>'range','unit'=>'unit'],
         'AVURP.api.index'=>['range'=>'range','unit'=>'unit'],
         'AVURP.info.index'=>['range'=>'range','unit'=>'unit'],
         'HRM.union.showall'=>['division_id'=>'range','unit_id'=>'unit'],
@@ -93,6 +94,12 @@ class CheckUserType
                             }
                             else $input[$key] = $user->district->id;
                         }
+                        else if($user->type==111){
+                            if(Session::has('module')&&Session::get('module')==='recruitment') {
+                                $input[$key] = $user->districts->pluck('id')->toArray();
+//                                return $input;
+                            }
+                        }
                         else if($user->type==66){
                             $units = District::where('division_id',$user->division_id)->pluck('id');
                             if(isset($input[$key])&&$input[$key]!='all'&&$input[$key]&&!in_array($input[$key],$units->toArray())){
@@ -117,6 +124,11 @@ class CheckUserType
                         if($user->type==22){
                             if(Session::has('module')&&Session::get('module')==='recruitment'&&$user->recDistrict) $input[$key] = $user->recDistrict->division_id;
                             else $input[$key] = $user->district->division_id;
+                        }
+                        else if($user->type==111){
+//                            return $user->divisions;
+                            if(Session::has('module')&&Session::get('module')==='recruitment') $input[$key] = $user->divisions->pluck('id')->toArray();
+
                         }
                         else if($user->type==66){
                             $input[$key] = $user->division_id;

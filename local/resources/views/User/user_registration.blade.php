@@ -13,54 +13,73 @@
             $scope.allDivision = [];
             $scope.district = ''
             $scope.division = ''
+            $scope.divisions = []
+            $scope.districts = []
             @foreach($types as $type)
              $scope.userType.push({code: '{{$type->type_code}}', name: '{{$type->type_name}}'})
             @endforeach
             $scope.selectedUserType = '{{Request::old('user_type')}}'
+            var div = $http({
+                url: '{{URL::to('HRM/DivisionName')}}',
+                type: 'get'
+            });
+            var dis = $http({
+                url: '{{URL::to('HRM/DistrictName')}}',
+                type: 'get'
+            });
+            var user = $http({
+                url: '{{URL::to('load_user')}}',
+                type: 'get'
+            })
+            Promise.all([
+                div,dis,user
+            ]).then(function (response) {
+                console.log(response)
+                $scope.allDivision = response[0].data;
+                $scope.allDistrict = response[1].data;
+                $scope.allUsers = response[2].data;
+            })
             $scope.onUserTypeChange = function () {
                 if ($scope.selectedUserType == 22) {
                     $scope.showDistrict = true;
                     $scope.showDivision = false;
                     $scope.showUsers = false;
-                    $http({
-                        url: '{{URL::to('HRM/DistrictName')}}',
-                        type: 'get'
-                    }).then(function (response) {
-                        $scope.allDistrict = response.data;
-                        $scope.district = '{{Request::old('district_name')}}'
-                    })
+                    $scope.showDD = false;
+                    $scope.district = '{{Request::old('district_name')}}'
                 }
                 else if ($scope.selectedUserType == 66) {
                     $scope.showDivision = true
                     $scope.showDistrict = false;
                     $scope.showUsers = false;
-                    $http({
-                        url: '{{URL::to('HRM/DivisionName')}}',
-                        type: 'get'
-                    }).then(function (response) {
-                        $scope.allDivision = response.data;
-                        $scope.division = '{{Request::old('division_name')}}'
-                    })
+                    $scope.showDD = false;
+                    $scope.division = '{{Request::old('division_name')}}'
                 }
                 else if ($scope.selectedUserType == 88 ||$scope.selectedUserType == 99) {
                     $scope.showDivision = false
                     $scope.showDistrict = false;
+                    $scope.showDD = false;
                     $scope.showUsers = true;
-                    $http({
-                        url: '{{URL::to('load_user')}}',
-                        type: 'get'
-                    }).then(function (response) {
-                        $scope.allUsers = response.data;
-                        $scope.user_parent = '{{Request::old('user_parent')}}'
-                    })
+                    $scope.user_parent = '{{Request::old('user_parent')}}'
+                }
+                else if ($scope.selectedUserType == 111) {
+                    $scope.showDD = true
+                    $scope.showDivision = false
+                    $scope.showDistrict = false;
+                    $scope.showUsers = false;
+
                 }
                 else {
                     $scope.showDistrict = false;
                     $scope.showDivision = false;
                     $scope.showUsers = false;
+                    $scope.showDD = false;
                 }
             }
             $scope.onUserTypeChange();
+            $scope.isExists=(id)=>{
+                var r = $scope.divisions.find(dv=>dv==id);
+                return r!=undefined;
+            }
         })
     </script>
     <div ng-controller="userController">
@@ -172,6 +191,40 @@
                                     </select>
                                     @if($errors->has('user_parent'))
                                         <p class="text-danger">{{$errors->first('user_parent')}}</p>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback" ng-show="showDD">
+                                <label for="district_name" class="col-sm-3 control-label"
+                                       style="text-align: left;padding-top:0  ">Select Divisons</label>
+
+                                <div class="col-sm-9">
+                                    <div style="max-height: 150px;overflow-y: auto">
+                                        <div ng-repeat="d in allDivision">
+                                            <label  class="control-label">
+                                                <input type="checkbox" name="divisions[]" value="[[d.id]]" ng-true-value="[[d.id]]" ng-false-value="" ng-model="divisions[$index]">&nbsp;[[d.division_name_bng]]
+                                            </label>
+                                        </div>
+                                    </div>
+                                    @if($errors->has('divisions'))
+                                        <p class="text-danger">{{$errors->first('divisions')}}</p>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback" ng-show="showDD">
+                                <label for="district_name" class="col-sm-3 control-label"
+                                       style="text-align: left;padding-top:0  ">Select Units</label>
+
+                                <div class="col-sm-9">
+                                    <div style="max-height: 150px;overflow-y: auto">
+                                       <div ng-repeat="d in allDistrict" ng-if="isExists(d.division_id)">
+                                           <label class="control-label">
+                                               <input type="checkbox" name="districts[]" value="[[d.id]]" ng-true-value="[[d.id]]" ng-false-value="" ng-checked="isExists(d.division_id)" ng-model="districts[$index]">&nbsp;[[d.unit_name_bng]]
+                                           </label>
+                                       </div>
+                                    </div>
+                                    @if($errors->has('divisions'))
+                                        <p class="text-danger">{{$errors->first('divisions')}}</p>
                                     @endif
                                 </div>
                             </div>

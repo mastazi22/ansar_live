@@ -18,26 +18,31 @@
                 checkLength();
             })
             $("#all").on('change', function () {
-                if(this.checked) {
+                if (this.checked) {
                     $("input[type='checkbox']:not(#all)").each(function () {
                         $(this).prop('checked', true);
                     })
                 }
-                else{
+                else {
                     $("input[type='checkbox']:not(#all)").each(function () {
                         $(this).prop('checked', false);
                     })
                 }
             })
-            function checkLength(){
+            function checkLength() {
                 var checked = $("input[type='checkbox']:not(#all):checked").length;
-                if(checked==pLength) $("#all").prop('checked',true);
-                else $("#all").prop('checked',false);
+                if (checked == pLength) $("#all").prop('checked', true);
+                else $("#all").prop('checked', false);
             }
+
             $(".permission-group").each(function () {
                 var t = $(this).find("input[type='checkbox']").length;
                 var c = $(this).find("input[type='checkbox']:checked").length;
                 $(this).children('.legend').children('span').text(`(${c} of ${t})`);
+            })
+            $(".empty-class").each(function(){
+                var h = $(this).html();
+                if(!h.trim()) $(this).addClass("hide")
             })
         })
     </script>
@@ -47,7 +52,8 @@
             <section class="content">
                 <div class="box box-solid">
                     <div class="box-header">
-                        <p>Edit permission of : <strong>{{$user->user_name}}({{$user->usertype->type_name}})</strong></p>
+                        <p>Edit permission of : <strong>{{$user->user_name}}({{$user->usertype->type_name}})</strong>
+                        </p>
                         <label class="control-label">
                             Grant All Permission &nbsp;
                             <div class="styled-checkbox">
@@ -63,24 +69,49 @@
                     <div class="box-body">
                         <div class="row" style="">
                             @for($j=0;$j<3;$j++)
-                            <div class="col-lg-4">
-                                @for($i=$j;$i<count($routes);$i+=3)
-                                    <div style="margin-top: 5px" class="permission-group">
-                                        <div class="legend">
-                                            {{$routes[$i]->root}}<span style="color: black;font-weight:bold;font-size: 12px;margin-left: 10px"></span>
-                                            <button class="btn btn-default btn-xs pull-right toggle-view">
-                                                <img src="{{asset('dist/img/down_icon.png')}}" class="rotate-img-down"
-                                                     style="width: 18px;height: 20px;">
-                                            </button>
-                                        </div>
-                                        <div class="box-body p_continer" style="background-color: #FFFFFF;display: none">
-                                            <ul class="permission-list">
-                                                @include('User.permission_partial',['data'=>$routes[$i]->children])
-                                            </ul>
-                                        </div>
-                                    </div>
-                                @endfor
-                            </div>
+                                <div class="col-lg-4 empty-class">
+                                    @for($i=$j;$i<count($routes);$i+=3)
+                                        @if($user->type==111)
+                                            @if(!strcasecmp($routes[$i]->root,"Recruitment")||!strcasecmp($routes[$i]->root,"Common Permission"))
+                                                <div style="margin-top: 5px" class="permission-group">
+                                                    <div class="legend">
+                                                        {{$routes[$i]->root}}<span
+                                                                style="color: black;font-weight:bold;font-size: 12px;margin-left: 10px"></span>
+                                                        <button class="btn btn-default btn-xs pull-right toggle-view">
+                                                            <img src="{{asset('dist/img/down_icon.png')}}"
+                                                                 class="rotate-img-down"
+                                                                 style="width: 18px;height: 20px;">
+                                                        </button>
+                                                    </div>
+                                                    <div class="box-body p_continer"
+                                                         style="background-color: #FFFFFF;display: none">
+                                                        <ul class="permission-list">
+                                                            @include('User.permission_partial',['data'=>$routes[$i]->children])
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        @else
+                                            <div style="margin-top: 5px" class="permission-group">
+                                                <div class="legend">
+                                                    {{$routes[$i]->root}}<span
+                                                            style="color: black;font-weight:bold;font-size: 12px;margin-left: 10px"></span>
+                                                    <button class="btn btn-default btn-xs pull-right toggle-view">
+                                                        <img src="{{asset('dist/img/down_icon.png')}}"
+                                                             class="rotate-img-down"
+                                                             style="width: 18px;height: 20px;">
+                                                    </button>
+                                                </div>
+                                                <div class="box-body p_continer"
+                                                     style="background-color: #FFFFFF;display: none">
+                                                    <ul class="permission-list">
+                                                        @include('User.permission_partial',['data'=>$routes[$i]->children])
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endfor
+                                </div>
                             @endfor
 
                         </div>

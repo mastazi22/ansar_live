@@ -92,13 +92,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function district(){
         return $this->belongsTo(District::class, 'district_id');
     }
+    public function districts(){
+        return $this->belongsToMany(District::class, 'tbl_user_unit','user_id','unit_id');
+    }
     public function recDistrict(){
         return $this->belongsTo(District::class, 'rec_district_id');
     }
     public function division(){
         return $this->belongsTo(Division::class, 'division_id');
     }
-
+    public function divisions(){
+        return $this->belongsToMany(Division::class, 'tbl_user_range','user_id','range_id');
+    }
     public function actionLog(){
         return $this->hasMany(ActionUserLog::class,'action_by');
     }
