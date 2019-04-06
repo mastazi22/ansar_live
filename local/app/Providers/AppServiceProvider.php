@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
            if(is_array($data)){
                return $this->whereIn($column,$data);
            }else{
-               return $this->where($column,"sddsd");
+               return $this->where($column,$data);
            }
         });
     }

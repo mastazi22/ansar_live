@@ -17,46 +17,81 @@
     <section class="content">
         <!-- Small boxes (Stat box) -->
         <div class="row">
-            <a href="{{URL::to('HRM')}}" class="small-box-footer">
+            @if(auth()->user()->type!=111)
+                <a href="{{URL::to('HRM')}}" class="small-box-footer">
+                    <div class="col-lg-4 col-xs-6">
+                        <!-- small box -->
+                        <div class="small-box bg-aqua">
+                            <div class="inner">
+                                <h3 style="color: #ffffff">HRM</h3>
+
+                                <p style="color: #ffffff">Human Resource Management</p>
+                            </div>
+                            <div class="icon" style="color: #ffffff">
+                                <i class="fa fa-users"></i>
+                            </div>
+                            <div class="small-box-footer" style="height: 15px"></div>
+                        </div>
+                    </div>
+                </a>
+                <!-- ./col -->
+                {{--<div class="col-lg-4 col-xs-6">--}}
+                {{--<!-- small box -->--}}
+                {{--<div class="small-box bg-green">--}}
+                {{--<div class="inner">--}}
+                {{--<h3>PM</h3>--}}
+
+                {{--<p>Payroll Management</p>--}}
+                {{--</div>--}}
+                {{--<div class="icon">--}}
+                {{--<i class="fa fa-calculator"></i>--}}
+                {{--</div>--}}
+                {{--<a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>--}}
+                {{--</div>--}}
+                {{--</div>--}}
+            <!-- ./col -->
+                <a href="{{URL::to('SD')}}" class="small-box-footer">
+                    <div class="col-lg-4 col-xs-6">
+                        <!-- small box -->
+                        <div class="small-box bg-yellow">
+                            <div class="inner">
+                                <h3>PRSD</h3>
+
+                                <p>Salary Disbursement</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fa  fa-money"></i>
+                            </div>
+                            <div class="small-box-footer disable-module"
+                                 style="height: 15px; background: #ADADAD"></div>
+                            {{--<a href="{{URL::to('SD')}}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>--}}
+                        </div>
+                    </div>
+                </a>
                 <div class="col-lg-4 col-xs-6">
                     <!-- small box -->
-                    <div class="small-box bg-aqua">
+                    <div class="small-box bg-red disable-module">
                         <div class="inner">
-                            <h3 style="color: #ffffff">HRM</h3>
+                            <h3>ADAPS</h3>
 
-                            <p style="color: #ffffff">Human Resource Management</p>
+                            <p>Deployment Application Processing System</p>
                         </div>
-                        <div class="icon" style="color: #ffffff">
-                            <i class="fa fa-users"></i>
+                        <div class="icon">
+                            <i class="fa fa-gears"></i>
                         </div>
-                        <div class="small-box-footer" style="height: 15px"></div>
+                        <div class="small-box-footer disable-module" style="height: 15px; background: #ADADAD"></div>
+                        {{--<a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>--}}
                     </div>
                 </div>
-            </a>
-            <!-- ./col -->
-        {{--<div class="col-lg-4 col-xs-6">--}}
-        {{--<!-- small box -->--}}
-        {{--<div class="small-box bg-green">--}}
-        {{--<div class="inner">--}}
-        {{--<h3>PM</h3>--}}
-
-        {{--<p>Payroll Management</p>--}}
-        {{--</div>--}}
-        {{--<div class="icon">--}}
-        {{--<i class="fa fa-calculator"></i>--}}
-        {{--</div>--}}
-        {{--<a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>--}}
-        {{--</div>--}}
-        {{--</div>--}}
-        <!-- ./col -->
-            <a href="{{URL::to('SD')}}" class="small-box-footer">
+            @endif
+            <a href="{{URL::to('recruitment')}}" class="small-box-footer">
                 <div class="col-lg-4 col-xs-6">
                     <!-- small box -->
                     <div class="small-box bg-yellow">
                         <div class="inner">
-                            <h3>PRSD</h3>
+                            <h3>{{strtoupper("Recruitment")}}</h3>
 
-                            <p>Salary Disbursement</p>
+                            <p>Ansar Recruitment</p>
                         </div>
                         <div class="icon">
                             <i class="fa  fa-money"></i>
@@ -66,23 +101,6 @@
                     </div>
                 </div>
             </a>
-
-            <!-- ./col -->
-            <div class="col-lg-4 col-xs-6">
-                <!-- small box -->
-                <div class="small-box bg-red disable-module">
-                    <div class="inner">
-                        <h3>ADAPS</h3>
-
-                        <p>Deployment Application Processing System</p>
-                    </div>
-                    <div class="icon">
-                        <i class="fa fa-gears"></i>
-                    </div>
-                    <div class="small-box-footer disable-module" style="height: 15px; background: #ADADAD"></div>
-                    {{--<a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>--}}
-                </div>
-            </div>
             <!-- ./col -->
         </div>
         @if(Auth::user()->type==22)

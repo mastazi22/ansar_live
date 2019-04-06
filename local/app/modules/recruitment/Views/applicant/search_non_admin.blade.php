@@ -99,7 +99,7 @@
                 httpService.searchApplicant(url, {
                     category: $scope.category,
                     circular: $scope.circular,
-                    q:$scope.q,
+                    q:{mobNo:$scope.q,appId:$scope.q,nId:$scope.q,dob:$scope.q},
                     already_selected:$scope.selectedList
                 }).then(function (response) {
                     $scope.applicants = $sce.trustAsHtml(response.data);

@@ -9,6 +9,7 @@ use App\modules\HRM\Models\EmbodimentModel;
 use App\modules\HRM\Models\ExportDataJob;
 use App\modules\HRM\Models\KpiGeneralModel;
 use App\modules\HRM\Models\LoggedInUser;
+use App\modules\recruitment\Models\JobCategory;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -94,6 +95,9 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     }
     public function districts(){
         return $this->belongsToMany(District::class, 'tbl_user_unit','user_id','unit_id');
+    }
+    public function recruitmentCatagories(){
+        return $this->belongsToMany(JobCategory::class, 'db_amis.tbl_user_category','user_id','category_id');
     }
     public function recDistrict(){
         return $this->belongsTo(District::class, 'rec_district_id');

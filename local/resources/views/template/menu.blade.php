@@ -9,26 +9,27 @@
                 </a>
 
             </li>
-
-            <li>
-                <a href="{{URL::to('HRM')}}">
-                    <i class="fa fa-users"></i>
-                    <span>Human Resource Management</span>
-                </a>
-            </li>
-            <li class="disable_menu">
-                <a href="{{URL::to('SD')}}">
-                    <i class="fa  fa-money"></i>
-                    <span>Salary Disbursement</span>
-                </a>
-            </li>
-            <li class="disable_menu">
-                <a href="#">
-                    <i class="fa fa-gears"></i>
-                <span>Ansar Deployment Application<br/>
+            @if(auth()->user()->type!=111)
+                <li>
+                    <a href="{{URL::to('HRM')}}">
+                        <i class="fa fa-users"></i>
+                        <span>Human Resource Management</span>
+                    </a>
+                </li>
+                <li class="disable_menu">
+                    <a href="{{URL::to('SD')}}">
+                        <i class="fa  fa-money"></i>
+                        <span>Salary Disbursement</span>
+                    </a>
+                </li>
+                <li class="disable_menu">
+                    <a href="#">
+                        <i class="fa fa-gears"></i>
+                        <span>Ansar Deployment Application<br/>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Processing System</span>
-                </a>
-            </li>
+                    </a>
+                </li>
+            @endif
             <li>
                 <a href="{{URL::to('recruitment')}}">
                     <i class="fa fa-user"></i>
@@ -54,16 +55,16 @@
                 </li>
             @endif
             {{--<li>--}}
-                {{--<a href="pages/calendar.html">--}}
-                    {{--<i class="fa fa-calendar"></i> <span>Calendar</span>--}}
-                    {{--<small class="label pull-right bg-red">3</small>--}}
-                {{--</a>--}}
+            {{--<a href="pages/calendar.html">--}}
+            {{--<i class="fa fa-calendar"></i> <span>Calendar</span>--}}
+            {{--<small class="label pull-right bg-red">3</small>--}}
+            {{--</a>--}}
             {{--</li>--}}
             {{--<li>--}}
-                {{--<a href="pages/mailbox/mailbox.html">--}}
-                    {{--<i class="fa fa-envelope"></i> <span>Mailbox</span>--}}
-                    {{--<small class="label pull-right bg-yellow">12</small>--}}
-                {{--</a>--}}
+            {{--<a href="pages/mailbox/mailbox.html">--}}
+            {{--<i class="fa fa-envelope"></i> <span>Mailbox</span>--}}
+            {{--<small class="label pull-right bg-yellow">12</small>--}}
+            {{--</a>--}}
             {{--</li>--}}
         </ul>
     </section>

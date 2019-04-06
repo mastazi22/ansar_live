@@ -221,14 +221,26 @@ class JobCircularController extends Controller
             }
 
         }
+        $categories = auth()->user()->recruitmentCatagories->pluck('id');
         if ($request->exists('status') && $request->status != 'all') {
             if ($data) $data->where('circular_status', $request->status);
             else $data = JobCircular::with('category')->where('circular_status', $request->status);
         }
-        if ($request->exists('category_id') && $request->category_id) {
+        if(auth()->user()->type==111){
+
+            if ($request->exists('category_id') && $request->category_id&&in_array($request->category_id,$categories)) {
+                if ($data) $data->where('job_category_id', $request->category_id);
+                else $data = JobCircular::with('category')->where('job_category_id', $request->category_id);
+            }
+            else{
+                $data->whereIn('job_category_id',$categories);
+            }
+        }
+        else if ($request->exists('category_id') && $request->category_id) {
             if ($data) $data->where('job_category_id', $request->category_id);
             else $data = JobCircular::with('category')->where('job_category_id', $request->category_id);
         }
+
         if ($data) {
             $data = $data->get();
             return response()->json($data);

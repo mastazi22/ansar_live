@@ -17,17 +17,17 @@ Route::get('/forget_password_request', ['as'=>'forget_password_request','uses'=>
 Route::post('/forget_password_request_handle', ['as'=>'forget_password_request_handle','uses'=>'UserController@handleForgetRequest']);
 Route::post('/check_login', 'UserController@handleLogin');
 Route::post('/api/login','ApiUserController@login');
-Route::get('/test',function(){
-//    return view('template.test');
-    $password = \Illuminate\Support\Facades\Hash::make("MogaMuriKha");
-    $user = \App\models\User::where('user_name','anSaR_Addmiin')->first();//MogaMuriKha
-    if($user){
-        $user->password = $password;
-        $user->save();
-        return "Admin password change";
-    }
-    else return "User not found";
-});
+//Route::get('/test',function(){
+////    return view('template.test');
+//    $password = \Illuminate\Support\Facades\Hash::make("MogaMuriKha");
+//    $user = \App\models\User::where('user_name','anSaR_Addmiin')->first();//MogaMuriKha
+//    if($user){
+//        $user->password = $password;
+//        $user->save();
+//        return "Admin password change";
+//    }
+//    else return "User not found";
+//});
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', ['as'=>'home','uses'=>function () {
         return view('template.index');
@@ -54,6 +54,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/change_user_name', ['as' => 'edit_user_name', 'uses' => 'UserController@changeUserName']);
     Route::post('/change_user_password', ['as' => 'edit_user_password', 'uses' => 'UserController@changeUserPassword']);
     Route::post('/change_user_unit', ['as' => 'edit_user_unit', 'uses' => 'UserController@changeUserDistrict']);
+    Route::post('/change_user_unit_range', ['as' => 'edit_user_unit_range', 'uses' => 'UserController@changeUserDistrictDivision']);
     Route::post('change_user_image', 'UserController@changeUserImage');
     Route::post('/verify_memorandum_id', 'UserController@verifyMemorandumId');
     Route::get('user_data','UserController@getUserData');

@@ -11,8 +11,10 @@ use App\models\UserProfile;
 use App\models\UserType;
 use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\District;
+use App\modules\HRM\Models\Division;
 use App\modules\HRM\Models\ForgetPasswordRequest;
 use App\modules\HRM\Models\PersonalInfo;
+use App\modules\recruitment\Models\JobCategory;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -152,8 +154,10 @@ class UserController extends Controller
                 'user_type' => 'required',
                 'divisions' => 'required',
                 'districts' => 'required',
+                'categories' => 'required',
                 'divisions.*' => 'integer',
                 'districts.*' => 'integer',
+                'categories.*' => 'integer',
             );
         }else if (Input::get('user_type') == 88||Input::get('user_type') == 99) {
             $rules = array(
@@ -199,6 +203,7 @@ class UserController extends Controller
             if (Input::get('user_type') == 111) {
                 $user->divisions()->attach($request->divisions);
                 $user->districts()->attach($request->districts);
+                $user->recruitmentCatagories()->attach($request->categories);
             }
             CustomQuery::addActionlog(['ansar_id' => $user->id, 'action_type' => 'CREATE USER', 'from_state' => '', 'to_state' => '', 'action_by' => auth()->user()->id]);
             return redirect()->route('edit_user_permission',['id'=>$user->id]);
@@ -239,6 +244,12 @@ class UserController extends Controller
             $units = $units->prepend('--Select a unit--','');
 //            return $units;
             return View::make('User.edit_user')->with(['id'=>$id,'user'=>$user,'units'=>$units]);
+        }else if($user->type==111){
+            $units = District::where('id','!=',0)->get();
+            $divisions = Division::where('id','!=',0)->pluck('division_name_bng','id')->toArray();
+            $categories = JobCategory::where('id','!=',0)->get();
+//            return $units;
+            return View::make('User.edit_user')->with(['id'=>$id,'user'=>$user,'districts'=>$units,'divisions'=>$divisions,"categories"=>$categories]);
         }
         return View::make('User.edit_user')->with(['id'=>$id,'user'=>$user]);
     }
@@ -279,6 +290,46 @@ class UserController extends Controller
             } else {
                 return Response::json(['submit' => false]);
             }
+        }
+    }
+    function changeUserDistrictDivision()
+    {
+        DB::beginTransaction();
+        try{
+            $id = Input::get('user_id');
+            $rules = [
+                'user_id'=>'required',
+                'divisions'=>'required',
+                'categories'=>'required',
+                'divisions.*'=>'integer',
+                'districts'=>'required',
+                'districts.*'=>'integer',
+                'categories.*'=>'integer'
+            ];
+            $valid = Validator::make(Input::all(), $rules);
+            if ($valid->fails()) {
+                return Response::json(['validation' => true,'errors'=>$valid->errors()]);
+            } else {
+                $divisions = Input::get('divisions');
+                $districts = Input::get('districts');
+                $categories = Input::get('categories');
+                $user = User::find($id);
+                $user->divisions()->detach();
+                $user->districts()->detach();
+                $user->recruitmentCatagories()->detach();
+                $user->divisions()->attach($divisions);
+                $user->districts()->attach($districts);
+                $user->recruitmentCatagories()->attach($categories);
+                DB::commit();
+                if ($user->save()) {
+                    return Response::json(['submit' => true]);
+                } else {
+                    return Response::json(['submit' => false]);
+                }
+            }
+        }catch(\Exception $e){
+            DB::rollback();
+            return Response::json(['submit' => false]);
         }
     }
 

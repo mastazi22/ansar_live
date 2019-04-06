@@ -143,6 +143,10 @@ class JobCategoryController extends Controller
                 $data->where('status', $request->status);
             }
         }
+        if(auth()->user()->type==111){
+            $categories = auth()->user()->recruitmentCatagories->pluck('id');
+            $data->whereIn('id',$categories);
+        }
         if ($data) return response()->json($data->get());
         else return response()->json(JobCategory::all());
     }
