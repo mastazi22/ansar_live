@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
+use function PHPSTORM_META\type;
 
 class JobCircularApplicantQuota extends Controller
 {
@@ -46,18 +47,27 @@ class JobCircularApplicantQuota extends Controller
      */
     public function store(Request $request)
     {
+//        return $request->all();
         $rules = [
             'quota_name_eng'=>'required',
-            'quota_name_bng'=>'required'
+            'quota_name_bng'=>'required',
+            'customForm'=>'required_if:has_own_form,1'
         ];
         $messages = [
             'quota_name_eng'=>'Quota type name eng require',
             'quota_name_bng'=>'Quota type name bng require'
         ];
         $this->validate($request,$rules,$messages);
+        $data = $request->only(['quota_name_eng','quota_name_bng','has_own_form']);
+        $form_details = $request['customForm'];
+        $keys = array_map('trim',array_keys($form_details));
+//        return $keys;
+        $values = array_values($form_details);
+        $data['form_details'] = json_encode(array_combine($keys,$values));
+//        return $data;
         DB::beginTransaction();
         try{
-            CircularApplicantQuota::create($request->only(['quota_name_eng','quota_name_bng']));
+            CircularApplicantQuota::create($data);
             DB::commit();
         }catch(\Exception $e){
             DB::rollback();
@@ -86,6 +96,7 @@ class JobCircularApplicantQuota extends Controller
     public function edit($id)
     {
         $quota = CircularApplicantQuota::find($id);
+
         return view('recruitment::circular_applicant_quota.edit',compact('quota'));
     }
 
@@ -102,21 +113,29 @@ class JobCircularApplicantQuota extends Controller
         if(!$type) {
             $rules = [
                 'quota_name_eng' => 'required',
-                'quota_name_bng' => 'required'
+                'quota_name_bng' => 'required',
+                'customForm'=>'required_if:has_own_form,1'
             ];
             $messages = [
                 'quota_name_eng' => 'Quota type name eng require',
                 'quota_name_bng' => 'Quota type name bng require'
             ];
             $this->validate($request, $rules, $messages);
+
         }
+        $data = $request->only(['quota_name_eng','quota_name_bng','has_own_form']);
+        $form_details = $request['customForm'];
+        $keys = array_map('trim',array_keys($form_details));
+//        return $keys;
+        $values = array_values($form_details);
+        $data['form_details'] = json_encode(array_combine($keys,$values));
         DB::beginTransaction();
         try{
             $quota = CircularApplicantQuota::withTrashed()->find($id);
             if($quota->trashed()){
                 $quota->restore();
             }else{
-                $quota->update($request->only(['quota_name_eng','quota_name_bng']));
+                $quota->update($data);
             }
             DB::commit();
         }catch(\Exception $e){

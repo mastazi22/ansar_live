@@ -57,10 +57,12 @@ class JobCircularController extends Controller
         //
         $rules = [
             'circular_name' => 'required',
+            'memorandum_no' => 'required',
             'pay_amount' => 'required',
             'job_category_id' => 'required|regex:/^[1-9]?[1-9]+$/',
             'start_date' => ['required', 'regex:/^[0-9]{2}-[A-Za-z]{3}-[0-9]{4}$/'],
-            'end_date' => ['required', 'regex:/^[0-9]{2}-[A-Za-z]{3}-[0-9]{4}$/']
+            'end_date' => ['required', 'regex:/^[0-9]{2}-[A-Za-z]{3}-[0-9]{4}$/'],
+            'circular_publish_date' => ['required', 'regex:/^[0-9]{2}-[A-Za-z]{3}-[0-9]{4}$/']
         ];
 
         $this->validate($request, $rules);
@@ -68,6 +70,7 @@ class JobCircularController extends Controller
         try {
             $request['start_date'] = Carbon::parse($request->start_date)->format('Y-m-d');
             $request['end_date'] = Carbon::parse($request->end_date)->format('Y-m-d');
+            $request['circular_publish_date'] = Carbon::parse($request->end_date)->format('Y-m-d');
             $request['applicatn_units'] = implode(',', $request->applicatn_units);
             $request['applicatn_range'] = implode(',', $request->applicatn_range);
             $request['payment_status'] = !$request->payment_status ? 'off' : $request->payment_status;
@@ -131,15 +134,18 @@ class JobCircularController extends Controller
 //        return $request->all();
         $rules = [
             'circular_name' => 'required',
+            'memorandum_no' => 'required',
             'pay_amount' => 'required',
             'job_category_id' => 'required|regex:/^[1-9]?[1-9]+$/',
             'start_date' => ['required', 'regex:/^[0-9]{2}-[A-Za-z]{3}-[0-9]{4}$/'],
-            'end_date' => ['required', 'regex:/^[0-9]{2}-[A-Za-z]{3}-[0-9]{4}$/']
+            'end_date' => ['required', 'regex:/^[0-9]{2}-[A-Za-z]{3}-[0-9]{4}$/'],
+            'circular_publish_date' => ['required', 'regex:/^[0-9]{2}-[A-Za-z]{3}-[0-9]{4}$/']
         ];
         $this->validate($request, $rules);
         DB::beginTransaction();
         try {
             $request['start_date'] = Carbon::parse($request->start_date)->format('Y-m-d');
+            $request['circular_publish_date'] = Carbon::parse($request->circular_publish_date)->format('Y-m-d');
             $request['end_date'] = Carbon::parse($request->end_date)->format('Y-m-d');
             if (!$request->exists('status')) $request['status'] = 'inactive';
             if (!$request->exists('auto_terminate')) $request['auto_terminate'] = '0';

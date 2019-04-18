@@ -27,6 +27,20 @@
             <p class="text text-danger">{{$errors->first('circular_code')}}</p>
         @endif
     </div>
+        <div class="form-group">
+            {!! Form::label('memorandum_no','Circular Memorandum No :',['class'=>'control-label']) !!}
+            {!! Form::text('memorandum_no',null,['class'=>'form-control','placeholder'=>'Enter memorandum no']) !!}
+            @if(isset($errors)&&$errors->first('memorandum_no'))
+                <p class="text text-danger">{{$errors->first('memorandum_no')}}</p>
+            @endif
+        </div>
+        <div class="form-group">
+            {!! Form::label('circular_publish_date','Circular Publish Date :',['class'=>'control-label']) !!}
+            {!! Form::text('circular_publish_date',null,['class'=>'form-control','placeholder'=>'Enter publish date','date-picker'=>(isset($data)?"moment('{$data->circular_publish_date}').format('DD-MMM-YYYY')":"moment('".\Carbon\Carbon::parse(Request::old('circular_publish_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
+            @if(isset($errors)&&$errors->first('memorandum_no'))
+                <p class="text text-danger">{{$errors->first('memorandum_no')}}</p>
+            @endif
+        </div>
     <div class="form-group">
         {!! Form::label('start_date','Start Date :',['class'=>'control-label']) !!}
         {!! Form::text('start_date',null,['class'=>'form-control','placeholder'=>'Enter Start Date','date-picker'=>(isset($data)?"moment('{$data->start_date}').format('DD-MMM-YYYY')":"moment('".\Carbon\Carbon::parse(Request::old('start_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
