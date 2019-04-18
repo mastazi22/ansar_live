@@ -16,7 +16,11 @@
             var ss = {'running': 'active', 'shutdown': 'inactive'};
             var loadAll = function () {
                 $scope.circular = 'all';
-                $scope.category = 'all';
+                @if(Request::get('category'))
+                $scope.category = '{{Request::get('category')}}';
+                @else
+                    $scope.category = 'all';
+                @endif
                 $scope.allLoading = true;
                 $q.all([
                     httpService.category({status: ss[$scope.status]}),
@@ -29,7 +33,11 @@
                 ])
                     .then(function (response) {
                         $scope.circular = 'all';
-                        $scope.category = 'all';
+                        @if(Request::get('category'))
+                            $scope.category = '{{Request::get('category')}}';
+                        @else
+                            $scope.category = 'all';
+                        @endif
                         $scope.categories = response[0].data;
                         $scope.circulars = response[1].data;
                         $scope.circularSummery = response[2].data;
