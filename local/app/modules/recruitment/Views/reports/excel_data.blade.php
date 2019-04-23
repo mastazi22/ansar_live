@@ -24,7 +24,7 @@
         <th>Post Office</th>
         <th>Union</th>
         <th>Height</th>
-        <th>Education</th>
+        <th>Education(Max)</th>
         <th>Training Info</th>
         <th>Weight</th>
 
