@@ -11,4 +11,8 @@ class CircularApplicantQuota extends Model
     protected $table = 'job_circular_applicant_quota';
     protected $guarded = ['id'];
     protected $dates = ['deleted_at'];
+
+    public function getFormDetailsAttribute($value){
+        return json_decode($value);
+    }
 }

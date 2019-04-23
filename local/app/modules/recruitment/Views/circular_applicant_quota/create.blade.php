@@ -9,13 +9,15 @@
             $scope.customForm = [{
                 title:'',
                 type:'',
-                isRequired:''
+                isRequired:'',
+                name:''
             }];
             $scope.addNewField = ()=>{
                 $scope.customForm.push({
                     title:'',
                     type:'',
-                    validation:''
+                    isRequired:'',
+                    name:''
                 })
             }
             $scope.removeField = (i)=>{
@@ -61,9 +63,10 @@
                                 <legend>Custom Form<a class="btn btn-primary btn-xs" ng-click="addNewField()"><i class="fa fa-plus"></i>&nbsp;Add New Field</a></legend>
                                 <div class="form-group" ng-repeat="f in customForm">
                                     <label for="title" class="control-label">Field Title</label>
-                                    <input type="text" name="customForm[ [[$index]] ]['title']" ng-model="f.title" class="form-control" id="title" placeholder="Enter title">
+                                    <input type="text" name="customForm[ [[$index]] ][title]" ng-model="f.title" class="form-control" id="title" placeholder="Enter title">
+                                    <input type="hidden" name="customForm[ [[$index]] ][name]" ng-value="f.title.split(' ').join('_').toLowerCase()" class="form-control" id="title" placeholder="Enter title">
                                     <label for="type" class="control-label">Field Type</label>
-                                    <select ng-model="f.type"  name="customForm[ [[$index]] ]['type']" class="form-control" id="type" style="margin-bottom: 5px">
+                                    <select ng-model="f.type"  name="customForm[ [[$index]] ][type]" class="form-control" id="type" style="margin-bottom: 5px">
                                         <option value="">--Select a value--</option>
                                         <option value="text">Text</option>
                                         <option value="dropdown">Dropdown</option>
@@ -76,7 +79,7 @@
                                                 <span class="input-group-addon" style="background: transparent !important;">
                                                     [[$index+1]]
                                                 </span>
-                                                <input type="text"  name="customForm[ [[i]] ]['values'][ [[$index]] ]" class="form-control" ng-model="f.values[$index]">
+                                                <input type="text"  name="customForm[ [[i]] ][options]['[[f.values[$index].split(' ').join('_').toLowerCase()]]']" class="form-control" ng-model="f.values[$index]">
                                                 <span class="input-group-btn">
                                                 <button onclick="return false" class="btn btn-danger" ng-click="f.values.splice($index,1);">Remove</button>
                                             </span>
@@ -85,7 +88,7 @@
                                     </div>
                                     <label class="control-label">
                                         <div class="styled-checkbox">
-                                            <input id="is_required_[[$index]]"  name="customForm[ [[$index]] ]['isRequired']" type="checkbox" ng-model="f.isRequired" value="1">
+                                            <input id="is_required_[[$index]]"  name="customForm[ [[$index]] ][isRequired]" type="checkbox" ng-model="f.isRequired" value="1">
                                             <label for="is_required_[[$index]]"></label>
                                         </div>
                                         Is This Field Required?

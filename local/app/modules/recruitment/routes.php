@@ -4,6 +4,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
     Route::group(['middleware' => ['auth', 'manageDatabase', 'checkUserType', 'permission']], function () {
         Route::get('/', ['as' => 'recruitment', 'uses' => 'RecruitmentController@index']);
         Route::get('/educations', ['as' => 'educations', 'uses' => 'RecruitmentController@educationList']);
+        Route::get('/getRecruitmentSummary', ['uses' => 'RecruitmentController@getRecruitmentSummary']);
 
         //job category route
         Route::resource('category', 'JobCategoryController', ['except' => ['destroy', 'show']]);

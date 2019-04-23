@@ -5,12 +5,13 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('userController', function ($scope, $http) {
+        GlobalApp.controller('userController', function ($scope, $http,httpService) {
             $scope.showDistrict = false;
             $scope.userType = []
             $scope.selectedUserType = ""
             $scope.allDistrict = [];
             $scope.allDivision = [];
+            $scope.allCategory = [];
             $scope.district = ''
             $scope.division = ''
             $scope.divisions = []
@@ -31,13 +32,15 @@
                 url: '{{URL::to('load_user')}}',
                 type: 'get'
             })
+            var catagory = httpService.category({status:'active'})
             Promise.all([
-                div,dis,user
+                div,dis,user,catagory
             ]).then(function (response) {
                 console.log(response)
                 $scope.allDivision = response[0].data;
                 $scope.allDistrict = response[1].data;
                 $scope.allUsers = response[2].data;
+                $scope.allCategory = response[3].data;
             })
             $scope.onUserTypeChange = function () {
                 if ($scope.selectedUserType == 22) {
@@ -224,6 +227,23 @@
                                        </div>
                                     </div>
                                     @if($errors->has('divisions'))
+                                        <p class="text-danger">{{$errors->first('divisions')}}</p>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="form-group has-feedback" ng-show="showDD">
+                                <label for="district_name" class="col-sm-3 control-label"
+                                       style="text-align: left;padding-top:0  ">Select Circular Category</label>
+
+                                <div class="col-sm-9">
+                                    <div style="max-height: 150px;overflow-y: auto">
+                                       <div ng-repeat="d in allCategory">
+                                           <label class="control-label" style="text-align: left !important;">
+                                               <input type="checkbox" name="categories[]" value="[[d.id]]" >&nbsp;[[d.category_name_bng]]
+                                           </label>
+                                       </div>
+                                    </div>
+                                    @if($errors->has('categories'))
                                         <p class="text-danger">{{$errors->first('divisions')}}</p>
                                     @endif
                                 </div>

@@ -39,6 +39,7 @@
             };
             $scope.categories = [];
             $scope.q = '';
+            $scope.param={};
             $scope.selectMessage = '';
             $scope.educations = [];
             $scope.circulars = [];
@@ -99,7 +100,7 @@
                 httpService.searchApplicant(url, {
                     category: $scope.category,
                     circular: $scope.circular,
-                    q:$scope.q,
+                    q:$scope.param.q,
                     already_selected:$scope.selectedList
                 }).then(function (response) {
                     $scope.applicants = $sce.trustAsHtml(response.data);
@@ -442,15 +443,46 @@
                         </div>
                     </div>--}}
                 </div>
-                <h3 class="text-center">Search applicant</h3>
-                <div class="input-group" style="margin-top: 10px">
-                    <input ng-disabled="!category && !circular" ng-keyup="$event.keyCode==13?loadApplicant():''" class="form-control" ng-model="q" type="text" placeholder="Search by national id,applicant id or date of birth">
-                    <span class="input-group-btn">
-                    <button class="btn btn-primary" ng-click="loadApplicant()">
-                        <i class="fa fa-search"></i>
-                    </button>
-                </span>
+                <div class="row" style="margin-top: 10px">
+                    <h4 style="margin-left: 2%">Search applicant</h4>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <input ng-disabled="!category && !circular" type="text" placeholder="Mobile Number" class="form-control" ng-model="param.q.mobNo"
+                                   ng-keyup="$event.keyCode==13?loadApplicant():''">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <input ng-disabled="!category && !circular" type="text" placeholder="Applicant ID" class="form-control" ng-model="param.q.appId"
+                                   ng-keyup="$event.keyCode==13?loadApplicant():''">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <input ng-disabled="!category && !circular" type="text" placeholder="National ID" class="form-control" ng-model="param.q.nId"
+                                   ng-keyup="$event.keyCode==13?loadApplicant():''">
+                        </div>
+                    </div>
+                    {{--<div class="col-md-4">--}}
+                    {{--<div class="form-group">--}}
+                    {{--<input type="text" placeholder="Date of Birth" class="form-control" ng-model="param.q.dob"--}}
+                    {{--ng-keyup="$event.keyCode==13?loadApplicant():''">--}}
+                    {{--</div>--}}
+                    {{--</div>--}}
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="loadApplicant()">
+                            <i class="fa fa-search"></i>&nbsp; Search
+                        </button>
+                    </div>
                 </div>
+                {{--<div class="input-group" style="margin-top: 10px">--}}
+                    {{--<input ng-disabled="!category && !circular" ng-keyup="$event.keyCode==13?loadApplicant():''" class="form-control" ng-model="q" type="text" placeholder="Search by national id,applicant id or date of birth">--}}
+                    {{--<span class="input-group-btn">--}}
+                    {{--<button class="btn btn-primary" ng-click="loadApplicant()">--}}
+                        {{--<i class="fa fa-search"></i>--}}
+                    {{--</button>--}}
+                {{--</span>--}}
+                {{--</div>--}}
                 <h3 class="text-center">Applicant detail</h3>
                 <div ng-bind-html="applicants" compile-html>
 

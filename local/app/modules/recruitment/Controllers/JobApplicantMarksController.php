@@ -75,7 +75,7 @@ class JobApplicantMarksController extends Controller
                     $q->orWhere(DB::raw('CAST(ansar_id AS CHAR)'), '=', $request->q);
                 });
             }
-            $applicants->where('job_applicant.job_circular_id', $request->circular);
+            $applicants->whereEqualIn('job_applicant.job_circular_id', $request->circular);
             $mark_distribution = JobCircular::find($request->circular)->markDistribution;
 //            return $mark_distribution;
 //            dd($applicants->get());

@@ -54,12 +54,12 @@ class CheckUserType
         'entry_report'=>['unit'=>'unit','range'=>'range'],
         'new-embodiment-entry'=>['division_name_eng'=>'unit'],
         'report.applicants.status'=>['range'=>'range','unit'=>'unit'],
-        'recruitment.marks.index'=>['range'=>'range','unit'=>'unit'],
+        'recruitment.marks.index'=>['range'=>'range','unit'=>'unit','circular'=>'circular'],
         'recruitment.move_to_hrm'=>['range'=>'range','unit'=>'unit'],
         'recruitment.edit_for_hrm'=>['range'=>'range','unit'=>'unit'],
         'recruitment.hrm.index'=>['range'=>'range','unit'=>'unit'],
         'recruitment.hrm.card_print'=>['range'=>'range','unit'=>'unit'],
-        'recruitment.applicant.search_result'=>['range'=>'range','unit'=>'unit'],
+        'recruitment.applicant.search_result'=>['range'=>'range','unit'=>'unit','circular'=>'circular','category'=>'category'],
         'recruitment.applicant.selected_applicant'=>['range'=>'range','unit'=>'unit'],
         'HRM.api.union'=>['range_id'=>'range','unit_id'=>'unit'],
         'HRM.api.thana'=>['range_id'=>'range','unit_id'=>'unit'],
@@ -73,6 +73,8 @@ class CheckUserType
         'SD.attendance.load_datab'=>['range'=>'range','unit'=>'unit'],
         'SD.salary_management.index'=>['range'=>'range','unit'=>'unit'],
         'SD.salary_management.create'=>['range'=>'range','unit'=>'unit'],
+        'recruitment.applicant.info'=>['circular'=>'circular'],
+        'recruitment.applicant.revert'=>['circular'=>'circular'],
     ];
     public function handle($request, Closure $next)
     {
@@ -86,6 +88,32 @@ class CheckUserType
         foreach($this->urls as $url=>$params){
             if(!strcasecmp($url,$routeName)){
                 foreach($params as $key=>$type){
+                    if($key=='circular'){
+                        if($user->type==111){
+                            if(Session::has('module')&&Session::get('module')==='recruitment') {
+                                $circular = [];
+                                $category = $user->recruitmentCatagories;
+                                foreach ($category as $cat){
+                                    $c = $cat->circular?$cat->circular->pluck('id')->toArray():[];
+                                    $circular = array_merge($circular,$c);
+                                }
+                                if(!isset($input[$key])||!strcasecmp($input[$key],'all')) $input[$key] = $circular;
+                                else if(!in_array($input[$key],$circular)) return abort(403);
+//                                return $input;
+                            }
+                        }
+                    }
+                    else if($key=='category'){
+                        if($user->type==111){
+                            if(Session::has('module')&&Session::get('module')==='recruitment') {
+                                $circular = [];
+                                $category = $user->recruitmentCatagories->pluck('id')->toArray();
+                                if(!isset($input[$key])||!strcasecmp($input[$key],'all')) $input[$key] = $category;
+                                else if(!in_array($input[$key],$category)) return abort(403);
+//                                return $input;
+                            }
+                        }
+                    }
                     if($type=='unit'){
                         if($user->type==22){
                             if(Session::has('module')&&Session::get('module')==='recruitment'&&$user->recDistrict) {
@@ -96,7 +124,9 @@ class CheckUserType
                         }
                         else if($user->type==111){
                             if(Session::has('module')&&Session::get('module')==='recruitment') {
-                                $input[$key] = $user->districts->pluck('id')->toArray();
+                                $units = $user->districts->pluck('id')->toArray();
+                               if(!isset($input[$key])||!strcasecmp($input[$key],'all')) $input[$key] = $units;
+                               else if(!in_array($input[$key],$units)) return abort(403);
 //                                return $input;
                             }
                         }
@@ -127,7 +157,11 @@ class CheckUserType
                         }
                         else if($user->type==111){
 //                            return $user->divisions;
-                            if(Session::has('module')&&Session::get('module')==='recruitment') $input[$key] = $user->divisions->pluck('id')->toArray();
+                            if(Session::has('module')&&Session::get('module')==='recruitment') {
+                                $ranges = $user->divisions->pluck('id')->toArray();
+                                if (!isset($input[$key])||!strcasecmp($input[$key], 'all')) $input[$key] = $ranges;
+                                else if (!in_array($input[$key], $ranges)) return abort(403);
+                            }
 
                         }
                         else if($user->type==66){

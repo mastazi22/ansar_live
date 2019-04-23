@@ -89,9 +89,15 @@
                 </div>
                 <ul class="module-menu">
                     @foreach(config('app.modules') as $module)
-                        <li><a href="{{URL::to($module['route'])}}"
-                               @if(!is_null(request()->route())&&strcasecmp(request()->route()->getPrefix(),$module['name'])==0) class="active" @endif>{{$module['name']}}</a>
-                        </li>
+                        @if(auth()->user()->type==111&&!strcasecmp($module['name'],'recruitment'))
+                            <li><a href="{{URL::to($module['route'])}}"
+                                   @if(!is_null(request()->route())&&strcasecmp(request()->route()->getPrefix(),$module['name'])==0) class="active" @endif>{{$module['name']}}</a>
+                            </li>
+                        @elseif(auth()->user()->type!=111)
+                            <li><a href="{{URL::to($module['route'])}}"
+                                   @if(!is_null(request()->route())&&strcasecmp(request()->route()->getPrefix(),$module['name'])==0) class="active" @endif>{{$module['name']}}</a>
+                            </li>
+                        @endif
                     @endforeach
                 </ul>
             </div>
@@ -104,7 +110,8 @@
                                 <span class="label label-warning">{{Notification::getForgetPasswordNotificationTotal()}}</span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li class="header">You have {{Notification::getForgetPasswordNotificationTotal()}} forget password notifications
+                                <li class="header">You have {{Notification::getForgetPasswordNotificationTotal()}}
+                                    forget password notifications
                                 </li>
                                 <li>
                                     <!-- inner menu: contains the actual data -->
@@ -132,7 +139,8 @@
                                 <span class="label label-warning">{{Notification::getTotalUserRequest()}}</span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li class="header">You have {{Notification::getTotalUserRequest()}} user create notifications
+                                <li class="header">You have {{Notification::getTotalUserRequest()}} user create
+                                    notifications
                                 </li>
                                 <li>
                                     <!-- inner menu: contains the actual data -->
@@ -143,7 +151,8 @@
                                                    style="white-space: normal !important;overflow: auto !important;text-overflow: initial !important;display: block">
                                                     <i class="fa fa-users text-aqua"></i>
                                                     <span style="color: #000000;font-size: 1.3em;">{{$notification->user->user_name}}</span>
-                                                    make a user create request.<span class="label label-info">{{implode(" ",explode('_',$notification->user_type))}}</span>
+                                                    make a user create request.<span
+                                                            class="label label-info">{{implode(" ",explode('_',$notification->user_type))}}</span>
                                                 </a>
 
                                             </li>
