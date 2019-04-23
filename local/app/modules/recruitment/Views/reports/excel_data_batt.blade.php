@@ -43,7 +43,7 @@
 
     @if(count($applicants))
         @foreach($applicants as $a)
-            <?php $q = $a->govQuota; ?>
+            <?php $q = $a->govQuota;$pic =$a->profile_pic ?>
             <tr>
                 <td style="width: 10px">{{($index++).''}}</td>
                 <td>{{$a->applicant_id}}</td>
@@ -59,14 +59,14 @@
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
-                <td>image</td>
-                <td>image</td>
-                <td>image</td>
+                <td>@if($pic&&file_exists($pic)&&getimagesize($pic))<img src="{{$pic}}" width="100" height="100">@endif</td>
+                <td></td>
+                <td></td>
                 <td>{{$q?strtoupper(implode(" ",explode("_",$q->quota_type))):'n/a'}}</td>
-                {{--<td><img src="{{$a->profile_pic}}" width="100" height="100"></td>--}}
+
             </tr>
         @endforeach
-    @else
+        @elseZ
         <tr>
             <td colspan="12" class="bg-warning">
                 No applicants found

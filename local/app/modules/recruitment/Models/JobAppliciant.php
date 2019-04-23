@@ -11,6 +11,7 @@ use App\modules\HRM\Models\Thana;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Intervention\Image\Facades\Image;
 
 class JobAppliciant extends Model
 {
@@ -72,7 +73,30 @@ class JobAppliciant extends Model
         }
         return null;
     }
+    public function getProfilePicAttribute($value){
+        try{
+            $path = storage_path("receruitment");
+            if(!file_exists($path)){
+                if(mkdir($path)){
+                    $file_parts = explode("/",$value);
+                    $file_name = explode(".",$file_parts[count($file_parts)-1])[0].".jpg";
+                    Image::make($value)->resize(250,250)->encode("jpg")->save($path."/".$file_name);
+                    return $path."/".$file_name;
+                }
+                return $value;
 
+            }else{
+                $file_parts = explode("/",$value);
+                $file_name = explode(".",$file_parts[count($file_parts)-1])[0].".jpg";
+                if(file_exists($path."/".$file_name)) return $path."/".$file_name;
+                Image::make($value)->resize(250,250)->encode("jpg")->save($path."/".$file_name);
+                return $path."/".$file_name;
+            }
+            return $value;
+        }catch(\Exception $e){
+            return false;
+        }
+    }
     public function getColumns()
     {
         return $this->getConnection()->getSchemaBuilder()->getColumnListing($this->getTable());

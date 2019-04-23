@@ -195,6 +195,7 @@ class ApplicantReportsController extends Controller
         if($request->exists('thana')&&$request->thana!='all'){
             $applicants->where('thana_id',$request->thana);
         }
+//        return ();
 //        return view('recruitment::reports.excel_data_batt', ['index' => 1, 'applicants' => $applicants->skip(0)->limit(300)->get(), 'status' => $request->status, 'ctype' => $category_type]);
         if($request->exists('page')) {
             Excel::create('applicant_list(' . $request->status . ')', function ($excel) use ($applicants, $request, $category_type) {
@@ -211,8 +212,11 @@ class ApplicantReportsController extends Controller
         }
         else{
             $unit = "";
+            $range = "";
             if($request->exists('unit')&&$request->unit!='all'){
                 $unit = District::find($request->unit);
+            }if($request->exists('range')&&$request->range!='all'){
+                $range = Division::find($request->range);
             }
             try{
                 ob_implicit_flush(true);
@@ -221,14 +225,14 @@ class ApplicantReportsController extends Controller
                 //ob_flush();
                 //flush();
 //                sleep(10);
-                $c = clone $applicants;
-                $total = intval(ceil($c->count() / 300));
+                $c = $applicants->get()->groupBy('unit_id');
+                $total = count($c);
 
                 $counter = 1;
                 $file_path = storage_path('exports');
                 if (!File::exists($file_path)) File::makeDirectory($file_path);
                 $files = [];
-                $applicants->chunk(300, function ($applicant_list) use ($category_type, $request, $total, &$counter, $file_path, &$files) {
+                $c->each(function ($applicant_list,$key) use ($category_type, $request, $total, &$counter, $file_path, &$files) {
                     sleep(1);
                     $file = Excel::create('applicant_list_' . $counter, function ($excel) use ($applicant_list, $request, $category_type, $counter) {
                         $excel->getDefaultStyle()
@@ -257,7 +261,6 @@ class ApplicantReportsController extends Controller
                             $sheet->mergeCells("P1:P2");
                             $sheet->mergeCells("Q1:Q2");
                             $sheet->mergeCells("R1:R2");
-//                            $sheet->setAutoSize(false);
                             $sheet->setWidth('A', 5);
                             $sheet->loadView('recruitment::reports.excel_data_batt', ['index' => (($counter-1) * 300) + 1, 'applicants' => $applicant_list, 'status' => $request->status, 'ctype' => $category_type]);
                         });
@@ -269,7 +272,15 @@ class ApplicantReportsController extends Controller
                     $counter++;
 
                 });
-                $zip_archive_name = !$unit?"applicant_list" . time() . ".zip":$unit->unit_name_eng . time() . ".zip";
+                if($range){
+                    $zip_archive_name = $range->division_name_eng . time() . ".zip";
+                }
+                else if ($unit){
+                    $zip_archive_name = $unit->unit_name_eng . time() . ".zip";
+                }
+                else{
+                    $zip_archive_name = "applicant_list" . time() . ".zip";
+                }
                 $zip = new \ZipArchive();
                 if ($zip->open(public_path($zip_archive_name), \ZipArchive::CREATE) === true) {
                     foreach ($files as $file) {
@@ -297,7 +308,7 @@ class ApplicantReportsController extends Controller
     }
     public function exportApplicantDetailReport(Request $request){
         $quota = [
-          "son_of_freedom_fighter"=>"মুক্তিযোদ্ধার সন্তান",
+            "son_of_freedom_fighter"=>"মুক্তিযোদ্ধার সন্তান",
             "grandson_of_freedom_fighter"=>"মুক্তিযোদ্ধার সন্তানের সন্তান",
             "member_of_ansar_or_vdp"=>"আনসার - ভিডিপি সদস্য",
             "orphan"=>"এতিম",
