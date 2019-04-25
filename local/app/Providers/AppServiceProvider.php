@@ -18,7 +18,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        \Illuminate\Database\Query\Builder::macro("whereEqualIn",function($column,$data){
+           if(is_array($data)){
+               return $this->whereIn($column,$data);
+           }else{
+               return $this->where($column,$data);
+           }
+        });
     }
 
     /**
