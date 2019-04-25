@@ -63,7 +63,13 @@ class JobCircularApplicantQuota extends Controller
             $keys = array_map('trim',array_keys($form_details));
 //        return $keys;
             $values = array_values($form_details);
-            $data['form_details'] = json_encode(array_combine($keys,$values));
+            $form_details = array_combine($keys,$values);
+            for ($i=0;$i<count($form_details);$i++){
+                if(isset($form_details[$i]['options'])){
+                    $form_details[$i]['options'] = array_combine(array_map('trim',array_keys($form_details[$i]['options'])),array_values($form_details[$i]['options']));
+                }
+            }
+            $data['form_details'] = json_encode($form_details);
         }
 //        return $data;
         DB::beginTransaction();
@@ -126,16 +132,18 @@ class JobCircularApplicantQuota extends Controller
         }
         $data = $request->only(['quota_name_eng','quota_name_bng','has_own_form']);
         $form_details = $request['customForm'];
-        $keys = array_map('trim',array_keys($form_details));
+        if(is_array($form_details)){
+            $keys = array_map('trim',array_keys($form_details));
 //        return $keys;
-        $values = array_values($form_details);
-        $form_details = array_combine($keys,$values);
-        for ($i=0;$i<count($form_details);$i++){
-            if(isset($form_details[$i]['options'])){
-                $form_details[$i]['options'] = array_combine(array_map('trim',array_keys($form_details[$i]['options'])),array_values($form_details[$i]['options']));
+            $values = array_values($form_details);
+            $form_details = array_combine($keys,$values);
+            for ($i=0;$i<count($form_details);$i++){
+                if(isset($form_details[$i]['options'])){
+                    $form_details[$i]['options'] = array_combine(array_map('trim',array_keys($form_details[$i]['options'])),array_values($form_details[$i]['options']));
+                }
             }
+            $data['form_details'] = json_encode($form_details);
         }
-        $data['form_details'] = json_encode($form_details);
         DB::beginTransaction();
         try{
             $quota = CircularApplicantQuota::withTrashed()->find($id);
