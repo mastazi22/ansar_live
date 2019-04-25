@@ -128,7 +128,13 @@ class JobCircularApplicantQuota extends Controller
         $keys = array_map('trim',array_keys($form_details));
 //        return $keys;
         $values = array_values($form_details);
-        $data['form_details'] = json_encode(array_combine($keys,$values));
+        $form_details = array_combine($keys,$values);
+        for ($i=0;$i<count($form_details);$i++){
+            if(isset($form_details[$i]['options'])){
+                $form_details[$i]['options'] = array_combine(array_map('trim',array_keys($form_details[$i]['options'])),array_values($form_details[$i]['options']));
+            }
+        }
+        $data['form_details'] = json_encode($form_details);
         DB::beginTransaction();
         try{
             $quota = CircularApplicantQuota::withTrashed()->find($id);
