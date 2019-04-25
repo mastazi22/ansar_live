@@ -63,10 +63,10 @@
                 <td></td>
                 <td></td>
                 <td>{{$q?strtoupper(implode(" ",explode("_",$q->quota_type))):'n/a'}}</td>
-
+                
             </tr>
         @endforeach
-        @elseZ
+    @elseZ
         <tr>
             <td colspan="12" class="bg-warning">
                 No applicants found

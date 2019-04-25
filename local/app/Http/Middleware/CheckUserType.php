@@ -61,6 +61,7 @@ class CheckUserType
         'recruitment.hrm.card_print'=>['range'=>'range','unit'=>'unit'],
         'recruitment.applicant.search_result'=>['range'=>'range','unit'=>'unit','circular'=>'circular','category'=>'category'],
         'recruitment.applicant.selected_applicant'=>['range'=>'range','unit'=>'unit'],
+        'getfreezelist'=>['range'=>'range','unit'=>'unit'],
         'HRM.api.union'=>['range_id'=>'range','unit_id'=>'unit'],
         'HRM.api.thana'=>['range_id'=>'range','unit_id'=>'unit'],
         'HRM.api.unit'=>['range_id'=>'range','id'=>'unit'],

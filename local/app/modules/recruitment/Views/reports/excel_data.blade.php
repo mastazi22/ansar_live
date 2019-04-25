@@ -35,6 +35,7 @@
             <th>Total mark</th>
         @endif
         <th>Status</th>
+		<th>Photo</th>
 
     </tr>
 
@@ -76,6 +77,7 @@
                     <td>{{$a->marks->written+$a->marks->viva+$a->marks->physical+$a->marks->edu_training+$a->marks->physical_age}}</td>
                 @endif
                 <td>{{$a->status}}</td>
+				<td><img src="{{$a->profile_pic}}" width="100" height="100"></td>
             </tr>
         @endforeach
     @else

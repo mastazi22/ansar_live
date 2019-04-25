@@ -82,8 +82,12 @@ class SMSController extends Controller
                 'try' => 0
             ]);
         }
+		$dd = array_chunk($datas,10);
+		foreach($dd as $d){
+			$this->dispatch((new SmsQueueJob($d))->onQueue('recruitment'));
+		}
 //        return $datas;
-        $this->dispatch((new SmsQueueJob($datas))->onQueue('recruitment'));
+        
         return response()->json(['status' => 'success', 'message' => 'Message send successfully']);
 
     }

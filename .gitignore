@@ -17,3 +17,4 @@ local/app/modules/HRM/Views/Panel/panel_view_rough.blade.php___jb_bak___
 app/Jobs/OfferQueue.php
 database/migrations/2016_11_22_214412_create_jobs_table.php
 /local/.env
+local/config/snappy.php

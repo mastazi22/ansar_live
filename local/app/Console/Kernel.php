@@ -4,7 +4,9 @@ namespace App\Console;
 
 use App\Console\Commands\NotificationServer;
 use App\Helper\Facades\GlobalParameterFacades;
+use App\Helper\Helper;
 use App\Helper\SMSTrait;
+use App\modules\HRM\Models\AnsarRetireHistory;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\EmbodimentModel;
 use App\modules\HRM\Models\FreezingInfoModel;
@@ -55,17 +57,14 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function () {
             Log::info("called : send_offer");
-//            //return;
             /*$user = env('SSL_USER_ID', 'ansarapi');
             $pass = env('SSL_PASSWORD', 'x83A7Z96');
             $sid = env('SSL_SID', 'ANSARVDP');
             $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";*/
             $offered_ansar = OfferSMS::with(['ansar', 'district'])->where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
-//            Log::info($offered_ansar);
             foreach ($offered_ansar as $offer) {
                 DB::connection('hrm')->beginTransaction();
                 try {
-
                     $a = $offer->ansar;
                     $count = $offer->getOfferCount();
                     $dis = $offer->district->unit_name_eng;
@@ -395,47 +394,47 @@ class Kernel extends ConsoleKernel
             }
 
         })->dailyAt("23:50")->name("disable_circular")->withoutOverlapping();
-        $schedule->call(function () {
-            Log::info("called : send_sms_to_accepted_applicant");
-            $messID = uniqid('SB_');
-            $messageID = $messID;
-            $apiUser = 'join_ans_vdp';
-            $apiPass = 'shurjoSM123';
-
-            $applicants = JobAcceptedApplicant::with('applicant')->whereHas('applicant', function ($q) {
-                $q->where('status', 'accepted');
-            })->where('message_status', 'pending')->where('sms_status', 'on')->limit(10)->get();
-            foreach ($applicants as $a) {
 
 
-                if ($a->applicant) {
-                    $sms_data = http_build_query(
-                        array(
-                            'API_USER' => $apiUser,
-                            'API_PASSWORD' => $apiPass,
-                            'MOBILE' => $a->applicant->mobile_no_self,
-                            'MESSAGE' => $a->message,
-                            'MESSAGE_ID' => $messageID
-                        )
-                    );
+//        $schedule->call(function () {
+//            Log::info("called : send_sms_to_accepted_applicant");
+//            $messID = uniqid('SB_');
+//            $messageID = $messID;
+//            $apiUser = 'join_ans_vdp';
+//            $apiPass = 'shurjoSM123';
+//            $applicants = JobAcceptedApplicant::with('applicant')->whereHas('applicant', function ($q) {
+//                $q->where('status', 'accepted');
+//            })->where('message_status', 'pending')->where('sms_status', 'on')->limit(10)->get();
+//            foreach ($applicants as $a) {
+//                if ($a->applicant) {
+//                    $sms_data = http_build_query(
+//                        array(
+//                            'API_USER' => $apiUser,
+//                            'API_PASSWORD' => $apiPass,
+//                            'MOBILE' => $a->applicant->mobile_no_self,
+//                            'MESSAGE' => $a->message,
+//                            'MESSAGE_ID' => $messageID
+//                        )
+//                    );
+//
+//                    $ch = curl_init();
+//                    $url = "https://shurjobarta.shurjorajjo.com.bd/barta_api/api.php";
+//                    curl_setopt($ch, CURLOPT_URL, $url);
+//                    curl_setopt($ch, CURLOPT_POST, 1);                //0 for a get request
+//                    curl_setopt($ch, CURLOPT_POSTFIELDS, $sms_data);
+//                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+//                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+//                    $response = curl_exec($ch);
+//                    curl_close($ch);
+//                    var_dump($response);
+//                    $a->message_status = 'send';
+//                    $a->save();
+//                }
+//            }
+//
+//        })->everyMinute()->name("send_sms_to_selected_applicant")->withoutOverlapping();
 
-                    $ch = curl_init();
-                    $url = "https://shurjobarta.shurjorajjo.com.bd/barta_api/api.php";
-                    curl_setopt($ch, CURLOPT_URL, $url);
-                    curl_setopt($ch, CURLOPT_POST, 1);                //0 for a get request
-                    curl_setopt($ch, CURLOPT_POSTFIELDS, $sms_data);
-                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
-                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-                    $response = curl_exec($ch);
-                    curl_close($ch);
-                    var_dump($response);
-                    $a->message_status = 'send';
-                    $a->save();
-                }
-            }
-
-        })->everyMinute()->name("send_sms_to_selected_applicant")->withoutOverlapping();
 
         $schedule->call(function () {
             Log::info("called : generate attendance");
@@ -491,12 +490,14 @@ class Kernel extends ConsoleKernel
 
 
         })->dailyAt("00:05")->name("generate_attendance")->withoutOverlapping();
-        $schedule->call(function () {
-            Log::info("called : unblock panel locked");
-            PanelModel::where('locked',1)->update(['locked'=>0]);
 
 
-        })->everyThirtyMinutes()->name("panel_unlock")->withoutOverlapping();
+//        $schedule->call(function () {
+//            Log::info("called : unblock panel locked");
+//            PanelModel::where('locked',1)->update(['locked'=>0]);
+//        })->everyThirtyMinutes()->name("panel_unlock")->withoutOverlapping();
+
+
         $schedule->call(function () {
             Log::info("called : offer block to panel");
             DB::connection('hrm')->beginTransaction();
@@ -519,17 +520,13 @@ class Kernel extends ConsoleKernel
                     $blocked_ansar->save();
                     $blocked_ansar->delete();
                 }
-
                 DB::commit();
             }catch(\Exception $exception){
                 DB::rollback();
                 return ['status'=>false,'message'=>$exception->getMessage()];
             }
             return ['status'=>true,'message'=>'Sending to panel complete'];
-
-
         })->everyThirtyMinutes()->name("offer_block_to_panel_6_month")->withoutOverlapping();
-
 //        $schedule->call(function () {
 //            Log::info("called : Ansar Retirement");
 //            $ansars = PanelModel::whereHas('ansarInfo.status',function ($q){
