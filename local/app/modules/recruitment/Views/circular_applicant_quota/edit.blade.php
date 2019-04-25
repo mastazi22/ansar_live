@@ -14,7 +14,7 @@
                     @if($f->type=="dropdown")values: Object.values({!! json_encode($f->options) !!}), @endif
                     title: '{{$f->title}}',
                     type: '{{$f->type}}',
-                    isRequired: parseInt('{{$f->isRequired}}')?true:false,
+                    isRequired: parseInt('{{isset($f->isRequired)?$f->isRequired:0}}')?true:false,
                     name: '{{$f->name}}'
                 }
             )
