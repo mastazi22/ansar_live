@@ -59,12 +59,12 @@
                 var totalNotApply = 0;
                 var totalPaid = 0;
                 jQuery.each(circulars, function (key, circular) {
-                    totalApplicant += circular.appliciant_count;
-                    totalMaleApplicant += circular.appliciant_male_count;
-                    totalFemaleApplicant += circular.appliciant_female_count;
-                    totalInitialApplicant += circular.appliciant_initial_count;
-                    totalNotApply += circular.appliciant_paid_not_apply_count;
-                    totalPaid += circular.appliciant_paid_count;
+                    totalApplicant += +circular.appliciant_count;
+                    totalMaleApplicant += +circular.appliciant_male_count;
+                    totalFemaleApplicant += +circular.appliciant_female_count;
+                    totalInitialApplicant += +circular.appliciant_initial_count;
+                    totalNotApply += +circular.appliciant_paid_not_apply_count;
+                    totalPaid += +circular.appliciant_paid_count;
                 });
 
                 dataHTML += '<table class="table sm-table"><tbody>' +
