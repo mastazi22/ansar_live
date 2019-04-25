@@ -59,10 +59,12 @@ class JobCircularApplicantQuota extends Controller
         $this->validate($request,$rules,$messages);
         $data = $request->only(['quota_name_eng','quota_name_bng','has_own_form']);
         $form_details = $request['customForm'];
-        $keys = array_map('trim',array_keys($form_details));
+        if(is_array($form_details)){
+            $keys = array_map('trim',array_keys($form_details));
 //        return $keys;
-        $values = array_values($form_details);
-        $data['form_details'] = json_encode(array_combine($keys,$values));
+            $values = array_values($form_details);
+            $data['form_details'] = json_encode(array_combine($keys,$values));
+        }
 //        return $data;
         DB::beginTransaction();
         try{
