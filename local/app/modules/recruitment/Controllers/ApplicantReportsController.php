@@ -115,6 +115,7 @@ class ApplicantReportsController extends Controller
             ];
             $this->validate($request,$rules);
             DB::enableQueryLog();
+            $markDistribution = JobCircular::find($request->circular)->markDistribution;
             $applicants = JobAppliciant::with(['district','circular'=>function($q){
                 $q->select('id')->with('markDistribution');
             },'thana'])->whereHas('marks',function ($q){
@@ -161,11 +162,9 @@ class ApplicantReportsController extends Controller
                 return response()->download(public_path($zip_archive_name));
             }
             else {
-                $excel = Excel::create('applicant_marks', function ($excel) use ($applicants) {
-                    $excel->sheet('sheet1', function ($sheet) use ($applicants) {
-                        $sheet->loadView('recruitment::reports.marks_list', [
-                            'applicants' => $applicants
-                        ]);
+                $excel = Excel::create('applicant_marks', function ($excel) use ($applicants,$markDistribution) {
+                    $excel->sheet('sheet1', function ($sheet) use ($applicants,$markDistribution) {
+                        $sheet->loadView('recruitment::reports.marks_list', compact('applicants','markDistribution'));
                     });
                 });
                 return $excel->download('xls');
@@ -196,6 +195,8 @@ class ApplicantReportsController extends Controller
         if($request->exists('thana')&&$request->thana!='all'){
             $applicants->where('thana_id',$request->thana);
         }
+//        return ();
+//        return view('recruitment::reports.excel_data_batt', ['index' => 1, 'applicants' => $applicants->skip(0)->limit(300)->get(), 'status' => $request->status, 'ctype' => $category_type]);
         if($request->exists('page')) {
             Excel::create('applicant_list(' . $request->status . ')', function ($excel) use ($applicants, $request, $category_type) {
 
@@ -211,8 +212,11 @@ class ApplicantReportsController extends Controller
         }
         else{
             $unit = "";
+            $range = "";
             if($request->exists('unit')&&$request->unit!='all'){
                 $unit = District::find($request->unit);
+            }if($request->exists('range')&&$request->range!='all'){
+                $range = Division::find($request->range);
             }
             try{
                 ob_implicit_flush(true);
@@ -221,24 +225,44 @@ class ApplicantReportsController extends Controller
                 //ob_flush();
                 //flush();
 //                sleep(10);
-                $c = clone $applicants;
-                $total = intval(ceil($c->count() / 300));
+                $c = $applicants->get()->groupBy('unit_id');
+                $total = count($c);
 
                 $counter = 1;
                 $file_path = storage_path('exports');
                 if (!File::exists($file_path)) File::makeDirectory($file_path);
                 $files = [];
-                $applicants->chunk(300, function ($applicant_list) use ($category_type, $request, $total, &$counter, $file_path, &$files) {
+                $c->each(function ($applicant_list,$key) use ($category_type, $request, $total, &$counter, $file_path, &$files) {
                     sleep(1);
                     $file = Excel::create('applicant_list_' . $counter, function ($excel) use ($applicant_list, $request, $category_type, $counter) {
-
+                        $excel->getDefaultStyle()
+                            ->getAlignment()
+                            ->applyFromArray(array(
+                                'horizontal'   	=> \PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                                'vertical'     	=> \PHPExcel_Style_Alignment::VERTICAL_TOP,
+                                'wrap'	 	=> TRUE
+                            ));
                         $excel->sheet('sheet1', function ($sheet) use ($applicant_list, $category_type, $counter, $request) {
                             $sheet->setColumnFormat(array(
                                 'G' => '@'
                             ));
-                            $sheet->setAutoSize(false);
+                            $sheet->mergeCells("K1:N1");
+                            $sheet->mergeCells("A1:A2");
+                            $sheet->mergeCells("B1:B2");
+                            $sheet->mergeCells("C1:C2");
+                            $sheet->mergeCells("D1:D2");
+                            $sheet->mergeCells("E1:E2");
+                            $sheet->mergeCells("F1:F2");
+                            $sheet->mergeCells("G1:G2");
+                            $sheet->mergeCells("H1:H2");
+                            $sheet->mergeCells("I1:I2");
+                            $sheet->mergeCells("J1:J2");
+                            $sheet->mergeCells("O1:O2");
+                            $sheet->mergeCells("P1:P2");
+                            $sheet->mergeCells("Q1:Q2");
+                            $sheet->mergeCells("R1:R2");
                             $sheet->setWidth('A', 5);
-                            $sheet->loadView('recruitment::reports.excel_data', ['index' => (($counter-1) * 300) + 1, 'applicants' => $applicant_list, 'status' => $request->status, 'ctype' => $category_type]);
+                            $sheet->loadView('recruitment::reports.excel_data_batt', ['index' => (($counter-1) * 300) + 1, 'applicants' => $applicant_list, 'status' => $request->status, 'ctype' => $category_type]);
                         });
                     })->store('xls', $file_path, true);
                     array_push($files, $file);
@@ -248,7 +272,15 @@ class ApplicantReportsController extends Controller
                     $counter++;
 
                 });
-                $zip_archive_name = !$unit?"applicant_list" . time() . ".zip":$unit->unit_name_eng . time() . ".zip";
+                if($range){
+                    $zip_archive_name = $range->division_name_eng . time() . ".zip";
+                }
+                else if ($unit){
+                    $zip_archive_name = $unit->unit_name_eng . time() . ".zip";
+                }
+                else{
+                    $zip_archive_name = "applicant_list" . time() . ".zip";
+                }
                 $zip = new \ZipArchive();
                 if ($zip->open(public_path($zip_archive_name), \ZipArchive::CREATE) === true) {
                     foreach ($files as $file) {

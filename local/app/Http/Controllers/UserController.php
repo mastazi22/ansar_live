@@ -31,8 +31,11 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Intervention\Image\Facades\Image;
 
+use App\Helper\SMSTrait;///////////////////////////////////
+
 class UserController extends Controller
 {
+    use SMSTrait;////////////////////////////////////////////////////
     use AuthenticatesUsers, ThrottlesLogins;
 
     protected $maxLoginAttempts = 3; // Amount of bad attempts user can make

@@ -312,31 +312,83 @@ class ApplicantScreeningController extends Controller
     {
         DB::enableQueryLog();
         if ($request->q) {
-            $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment' => function ($p) use ($request) {
-                $p->with(['paymentHistory']);
-            }])->where('mobile_no_self', 'like', '%' . $request->q . '%');
+            
+            $applicants = DB::table('job_applicant')
+                ->leftJoin('db_amis.tbl_division', 'job_applicant.division_id', '=', 'tbl_division.id')
+                ->leftJoin('db_amis.tbl_units', 'job_applicant.unit_id', '=', 'tbl_units.id')
+                ->leftJoin('db_amis.tbl_thana', 'job_applicant.thana_id', '=', 'tbl_thana.id')
+                ->join('job_appliciant_payment_history', 'job_applicant.applicant_id', '=', 'job_appliciant_payment_history.job_appliciant_id')
+                ->join('job_payment_history', 'job_appliciant_payment_history.id', '=', 'job_payment_history.job_applicant_payment_id');
             if ($request->circular_id) {
                 $applicants->where('job_circular_id', $request->circular_id);
             }
             if ($type == 'Male' || $type == 'Female') {
                 $applicants->where('gender', $type);
             } else if ($type) {
-                $applicants->where('status', $type);
+                $applicants->where('job_applicant.status', $type);
             }
-            $applicants = $applicants->paginate(50);
+            if ($request->q){
+                $applicants->where('mobile_no_self','like', '%' . $request->q . '%');
+                $applicants->orWhere('job_payment_history.txID','like', '%' . $request->q . '%');
+            }
+            $applicants=$applicants->select(
+                'job_applicant.applicant_name_bng',
+                'job_applicant.applicant_id',
+                'job_applicant.applicant_password',
+                'job_applicant.gender',
+                'job_applicant.date_of_birth',
+                'tbl_division.division_name_bng',
+                'tbl_units.unit_name_bng',
+                'tbl_thana.thana_name_bng',
+                'height_feet',
+                'height_inch',
+                'chest_normal',
+                'chest_extended',
+                'weight',
+                'mobile_no_self',
+                'job_applicant.status',
+                'job_applicant.job_circular_id',
+                DB::raw("GROUP_CONCAT(job_payment_history.txID) as txID")
+            )->groupBy('job_applicant.applicant_id')->paginate(50);
+
+            //dd($applicants);
+           // return $applicants;
+           // return DB::getQueryLog();
         } else {
-            $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment' => function ($q) {
-                $q->with('paymentHistory');
-            }]);
+            
+            $applicants = DB::table('job_applicant')
+                ->leftJoin('db_amis.tbl_division', 'job_applicant.division_id', '=', 'tbl_division.id')
+                ->leftJoin('db_amis.tbl_units', 'job_applicant.unit_id', '=', 'tbl_units.id')
+                ->leftJoin('db_amis.tbl_thana', 'job_applicant.thana_id', '=', 'tbl_thana.id')
+                ->join('job_appliciant_payment_history', 'job_applicant.applicant_id', '=', 'job_appliciant_payment_history.job_appliciant_id')
+                ->join('job_payment_history', 'job_appliciant_payment_history.id', '=', 'job_payment_history.job_applicant_payment_id');
             if ($request->circular_id) {
                 $applicants->where('job_circular_id', $request->circular_id);
             }
             if ($type == 'Male' || $type == 'Female') {
                 $applicants->where('gender', $type);
             } else if ($type) {
-                $applicants->where('status', $type);
+                $applicants->where('job_applicant.status', $type);
             }
-            $applicants = $applicants->paginate(50);
+            $applicants=$applicants->select(
+                'job_applicant.applicant_name_bng',
+                'job_applicant.applicant_id',
+                'job_applicant.applicant_password',
+                'job_applicant.gender',
+                'job_applicant.date_of_birth',
+                'tbl_division.division_name_bng',
+                'tbl_units.unit_name_bng',
+                'tbl_thana.thana_name_bng',
+                'height_feet',
+                'height_inch',
+                'chest_normal',
+                'chest_extended',
+                'weight',
+                'mobile_no_self',
+                'job_applicant.status',
+                'job_applicant.job_circular_id',
+                DB::raw("GROUP_CONCAT(job_payment_history.txID) as txID")
+            )->groupBy('job_applicant.applicant_id')->paginate(50);
         }
         $circulars = JobCircular::where('application_status', 'on')->pluck('circular_name', 'id')->prepend('--Select a circular--', '');
 //        return DB::getQueryLog();
@@ -348,11 +400,9 @@ class ApplicantScreeningController extends Controller
         if ($request->ajax()) {
             DB::enableQueryLog();
             if ($request->q) {
-                $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment'])->where(function ($query) use ($request) {
-                    $query->whereHas('payment', function ($q) use ($request) {
-                        $q->where('txID', 'like', '%' . $request->q . '%');
-                    })->orWhere('mobile_no_self', 'like', '%' . $request->q . '%');
-                });
+                $applicants = JobAppliciant::with(['division', 'district', 'thana', 'payment.paymentHistory'])
+				->where('mobile_no_self', 'like', '%' . $request->q . '%');
+               
                 if ($type == 'Male' || $type == 'Female') {
                     $applicants->where('gender', $type);
                 } else if ($type == 'pending' || $type == 'applied' || $type == 'initial' || $type == 'paid' || $type == 'selected') {

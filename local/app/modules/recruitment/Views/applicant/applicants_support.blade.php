@@ -110,23 +110,15 @@
                                 <td>{{$a->applicant_id}}</td>
                                 <td>{{$a->applicant_password}}</td>
                                 <td>
-                                    @if($a->payment)
-                                        @if($a->payment->paymentHistory)
-                                            @foreach($a->payment->paymentHistory as $p)
-                                                {{$p->txID}}<br>
-                                            @endforeach
-                                        @else
-                                            {{$a->payment?$a->payment->txID:'n\a'}}
-                                        @endif
-                                    @else
-                                        n/a
-                                    @endif
+                                     @foreach(explode(',',$a->txID) as $value)
+                                        {{$value}}<br>
+                                        @endforeach
                                 </td>
                                 <td>{{$a->gender}}</td>
                                 <td>{{$a->date_of_birth}}</td>
-                                <td>{{$a->division?$a->division->division_name_bng:'n\a'}}</td>
-                                <td>{{$a->district?$a->district->unit_name_bng:'n\a'}}</td>
-                                <td>{{$a->thana?$a->thana->thana_name_bng:'n\a'}}</td>
+                                <td>{{$a->division_name_bng}}</td>
+                                <td>{{$a->unit_name_bng}}</td>
+                                <td>{{$a->thana_name_bng}}</td>
                                 <td>{{$a->height_feet}} feet {{$a->height_inch}} inch</td>
                                 <td>{{$a->chest_normal.'-'.$a->chest_extended}} inch</td>
                                 <td>{{$a->weight}} kg</td>
