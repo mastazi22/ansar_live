@@ -21,7 +21,6 @@ class JobApplicantMarksController extends Controller
      */
     public function index(Request $request)
     {
-
         if ($request->ajax()) {
             DB::enableQueryLog();
             $applicants = JobAppliciant::with(['marks' => function ($q) {
@@ -32,12 +31,12 @@ class JobApplicantMarksController extends Controller
                 /*$applicants->whereHas('marks.failedApplicants', function ($q) {
                 });*/
                 $applicants->join('job_applicant_marks','job_applicant_marks.applicant_id','=','job_applicant.applicant_id')
-                    ->join('job_circular','job_circular.id','=','job_applicant.job_circular_id')
+                ->join('job_circular','job_circular.id','=','job_applicant.job_circular_id')
                     ->join('job_circular_mark_distribution','job_circular_mark_distribution.job_circular_id','=','job_circular.id')
-                    ->where(function($q){
-                        $q->where(DB::raw('(convert_written_mark*written_pass_mark)/100'),'>',DB::raw('(job_applicant_marks.written*convert_written_mark)/job_circular_mark_distribution.written'));
-                        $q->where(DB::raw('(viva*viva_pass_mark)/100'),'>',DB::raw('job_applicant_marks.viva'));
-                    });
+                ->where(function($q){
+                    $q->where(DB::raw('(convert_written_mark*written_pass_mark)/100'),'>',DB::raw('job_applicant_marks.written'));
+                    $q->orWhere(DB::raw('(job_circular_mark_distribution.viva*viva_pass_mark)/100'),'>',DB::raw('job_applicant_marks.viva'));
+                });
             }
             else if($request->type=='pass'){
                 /*$applicants->whereHas('marks.passedApplicants', function ($q) {
@@ -46,42 +45,46 @@ class JobApplicantMarksController extends Controller
                     ->join('job_circular','job_circular.id','=','job_applicant.job_circular_id')
                     ->join('job_circular_mark_distribution','job_circular_mark_distribution.job_circular_id','=','job_circular.id')
                     ->where(function($q){
-                        $q->where(DB::raw('(convert_written_mark*written_pass_mark)/100'),'<=',DB::raw('(job_applicant_marks.written*convert_written_mark)/job_circular_mark_distribution.written'));
-                        $q->where(DB::raw('(viva*viva_pass_mark)/100'),'<=',DB::raw('job_applicant_marks.viva'));
+                        $q->where(DB::raw('(convert_written_mark*written_pass_mark)/100'),'<=',DB::raw('job_applicant_marks.written'));
+                        $q->where(DB::raw('(job_circular_mark_distribution.viva*viva_pass_mark)/100'),'<=',DB::raw('job_applicant_marks.viva'));
                     });
-            } else{
-                $applicants->whereHas('selectedApplicant', function ($q) {
-                });
+            } else if($request->type=="mark_not_entry"){
+                $applicants->whereNotIn('job_applicant.applicant_id',JobApplicantMarks::pluck('applicant_id'));
+//                $applicants->whereHas('selectedApplicant', function ($q) {
+//                });
+                $applicants->leftJoin('job_applicant_marks as marks','marks.applicant_id','=','job_applicant.applicant_id');
+            }else{
+//                $applicants->whereHas('selectedApplicant', function ($q) {
+//                });
                 $applicants->leftJoin('job_applicant_marks as marks','marks.applicant_id','=','job_applicant.applicant_id');
             }
             if ($request->exists('range') && $request->range != 'all') {
-                $applicants->where('division_id', $request->range);
+                $applicants->whereEqualIn('division_id', $request->range);
             }
             if ($request->exists('unit') && $request->unit != 'all') {
-                $applicants->where('unit_id', $request->unit);
+                $applicants->whereEqualIn('unit_id', $request->unit);
             }
             if ($request->exists('thana') && $request->thana != 'all') {
-                $applicants->where('thana_id', $request->thana);
+                $applicants->whereEqualIn('thana_id', $request->thana);
             }
             if ($request->exists('q') && $request->q) {
                 $applicants->where(function ($q) use ($request) {
                     $q->orWhere('mobile_no_self', $request->q);
-                    $q->orWhere('applicant_id', '=', $request->q);
+                    $q->orWhere('job_applicant.applicant_id', '=', $request->q);
                     $q->orWhere('national_id_no', '=', $request->q);
                     $q->orWhere(DB::raw('CAST(ansar_id AS CHAR)'), '=', $request->q);
                 });
             }
-            $applicants->where('job_circular_id', $request->circular);
+            $applicants->whereEqualIn('job_applicant.job_circular_id', $request->circular);
             $mark_distribution = JobCircular::find($request->circular)->markDistribution;
 //            return $mark_distribution;
 //            dd($applicants->get());
-            $applicants->where('status', 'selected')->select('job_applicant.*');
+            $applicants->where('job_applicant.status', 'selected')->select('job_applicant.*');
 //            $d = $applicants->get();
 //            return DB::getQueryLog();
             return view('recruitment::applicant_marks.part_mark', ['applicants' => $applicants->paginate($request->limit ? $request->limit : 50),'mark_distribution'=>$mark_distribution]);
         }
         return view('recruitment::applicant_marks.index');
-
     }
 
     /**
@@ -135,6 +138,43 @@ class JobApplicantMarksController extends Controller
 //            return $e;
             return response()->json(['status' => false, 'message' => $e->getMessage()]);
         }
+    }
+
+    private function sanitizeFormData($formData = array())
+    {
+        $defaultData = array(
+            "physical" => 0,
+            "edu_training" => 0,
+            "written" => 0,
+            "viva" => 0,
+            'additional_marks' => null,
+            'total_aditional_marks' => 0
+        );
+
+        if ($formData == null || !is_array($formData)) return $defaultData;
+        if (isset($formData['additional_marks'])) {
+            $tadm = 0;
+            foreach ($formData['additional_marks'] as $key => $adm) {
+                $tadm += floatval(array_values($adm)[0]);
+            }
+            $formData['additional_marks'] = serialize($formData['additional_marks']);
+            $formData['total_aditional_marks'] = $tadm;
+        }
+        //set default value for disabled form fields
+        foreach ($defaultData as $key => $value) {
+            if (!array_key_exists($key, $formData)) {
+                $formData = array_merge($formData, array($key => $value));
+            }
+        }
+
+        //bypass empty fields with null value
+        foreach ($formData as $key => $value) {
+            if (empty($formData[$key])) {
+                $formData[$key] = 0;
+            }
+        }
+
+        return $formData;
     }
 
     /**
@@ -224,42 +264,5 @@ class JobApplicantMarksController extends Controller
             DB::rollback();
             return response()->json(['status' => false, 'message' => $e->getMessage()]);
         }
-    }
-
-    private function sanitizeFormData($formData = array())
-    {
-        $defaultData = array(
-            "physical" => 0,
-            "edu_training" => 0,
-            "written" => 0,
-            "viva" => 0,
-            'additional_marks'=>null,
-            'total_aditional_marks'=>0
-        );
-
-        if ($formData == null || !is_array($formData)) return $defaultData;
-        if(isset($formData['additional_marks'])){
-            $tadm = 0;
-            foreach ($formData['additional_marks'] as $key=>$adm){
-                $tadm+=floatval(array_values($adm)[0]);
-            }
-            $formData['additional_marks'] = serialize($formData['additional_marks']);
-            $formData['total_aditional_marks'] = $tadm;
-        }
-        //set default value for disabled form fields
-        foreach ($defaultData as $key => $value) {
-            if (!array_key_exists($key, $formData)) {
-                $formData = array_merge($formData, array($key => $value));
-            }
-        }
-
-        //bypass empty fields with null value
-        foreach ($formData as $key => $value) {
-            if (empty($formData[$key])) {
-                $formData[$key] = 0;
-            }
-        }
-
-        return $formData;
     }
 }

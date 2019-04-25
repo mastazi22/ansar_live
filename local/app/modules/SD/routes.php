@@ -32,6 +32,7 @@ Route::group(['prefix' => 'SD', 'middleware' => [ 'auth','manageDatabase', 'chec
         Route::get('salary_disburse/download/{file_name}', ['as'=>'SD.salary_disburse.download','uses'=>'SalaryDisburseController@download']);
         Route::get('salary_disburse/test_email', ['as'=>'SD.salary_disburse.test_email','uses'=>'SalaryDisburseController@test']);
         Route::resource('salary_disburse', 'SalaryDisburseController',["only"=>["index","create","store","show"]]);
+        Route::any('reports/avub_share_report', ['as'=>'SD.reports.avub_share_report','uses'=>'ReportController@avubShareReport']);
         /*Route::get('/test', function () {
 //
             setlocale(LC_TIME,"bn_BD");

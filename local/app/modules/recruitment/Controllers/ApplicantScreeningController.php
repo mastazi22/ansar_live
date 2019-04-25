@@ -138,7 +138,8 @@ class ApplicantScreeningController extends Controller
             if (auth()->user()->type == 11) return view('recruitment::applicant.part_search', ['applicants' => $query->paginate($request->limit ? $request->limit : 50)]);
             else {
                 $data = $query->get();
-//                return $data->count();
+//                return $data;
+//                return DB::getQuerylog();
                 return view('recruitment::applicant.applicant_info', ['applicants' => ($data->count() > 1 ? $data : ($data->count() > 0 ? $data[0] : ''))]);
             }
 
@@ -915,7 +916,7 @@ class ApplicantScreeningController extends Controller
 
     public function loadApplicantByQuota(Request $request)
     {
-        DB::enableQueryLog();
+        //DB::enableQueryLog();
         $rules = [
             'range' => 'regex:/^[0-9]+$/',
             'unit' => 'regex:/^[0-9]+$/',
@@ -931,6 +932,7 @@ class ApplicantScreeningController extends Controller
         }
 //        return $written_pass_mark." ".$viva_pass_mark;
         $job_quota = JobCircularQuota::where('job_circular_id', $request->circular)->first();
+//        dd($job_quota);
         if ($job_quota->type == "unit") {
             $quota = $job_quota->quota()->where('district_id', $request->unit)->first();
             $accepted = JobAppliciant::whereHas('accepted', function ($q) {
@@ -958,7 +960,7 @@ class ApplicantScreeningController extends Controller
                 });
                 $q->whereHas('selectedApplicant', function () {
                 })->where('status', 'selected')->where('job_circular_id', $request->circular)->where('division_id', $request->range);
-            })->select(DB::raw('DISTINCT *,(IFNULL(written,0)+IFNULL(viva,0)+IFNULL(physical,0)+IFNULL(edu_training,0)+IFNULL(edu_experience,0)+IFNULL(physical_age,0)) as total_mark'))->havingRaw('total_mark>0')->orderBy('total_mark', 'desc');
+            })->select(DB::raw('DISTINCT *,(IFNULL(written,0)+IFNULL(viva,0)+IFNULL(physical,0)+IFNULL(edu_training,0)+IFNULL(edu_experience,0)+IFNULL(physical_age,0)+IFNULL(total_aditional_marks,0)) as total_mark'))->havingRaw('total_mark>0')->orderBy('total_mark', 'desc');
             $applicant_male->where('written', '>=', $written_pass_mark)->where('viva', '>=', $viva_pass_mark);
         }
         $applicants = [];
@@ -991,7 +993,7 @@ class ApplicantScreeningController extends Controller
                 });
             })->download('xls');
         } else
-            return view('recruitment::applicant.data_accepted', ['applicants' => $applicants]);
+            return (String) view('recruitment::applicant.data_accepted', ['applicants' => $applicants]);
     }
 
 

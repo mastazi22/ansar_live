@@ -180,6 +180,10 @@ class EmbodimentController extends Controller
                 if (!$sms_receive_info) {
                     throw new \Exception('Invalid request for Ansar ID: ' . $ansar_id);
                 }
+                if(Carbon::parse($sms_receive_info->sms_send_datetime)->gt(Carbon::parse($request->joining_date))){
+                    throw new \Exception('Offer date greater then 
+                    joining date for Ansar ID: ' . $ansar_id." .Offer date ".$sms_receive_info->sms_send_datetime);
+                }
                 if ($sms_receive_info->offered_district != $request->division_name_eng) {
                     throw new \Exception('Ansar ID: ' . $ansar_id . ' not offered for this district');
                 }
@@ -363,6 +367,11 @@ class EmbodimentController extends Controller
         $status = array('success' => array('count' => 0, 'data' => array()), 'error' => array('count' => 0, 'data' => array()));
         DB::beginTransaction();
         try {
+            $kpi = KpiGeneralModel::find($kpi_id[1]);
+            $total_em = $kpi->embodiment->count();
+            $total_given = intval($kpi->details->total_ansar_given);
+            $total_ta = count($transferred_ansar);
+            if($total_given-$total_em<$total_ta) throw new \Exception("Number of transfer ansar exceed total number of given ansar");
             $tp = SystemSettingHelper::getValue(SystemSettingHelper::$TRANSFER_POLICY);
             Log::info($tp);
             $memorandum = new MemorandumModel;
