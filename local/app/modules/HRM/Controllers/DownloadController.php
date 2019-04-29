@@ -100,7 +100,7 @@ class DownloadController extends Controller
         }
         $status = $dataJob->exportStatus()->where('status','pending')->first();
         $data = unserialize(gzuncompress($status->payload));
-//        return $data;
+        return $data;
         Excel::create($status->file_name,function ($excel) use ($data){
             $excel->sheet('sheet1',function ($sheet) use ($data){
                 $sheet->loadView($data['view'],$data['data']);
