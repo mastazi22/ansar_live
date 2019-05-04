@@ -48,7 +48,10 @@ class ApplicantScreeningController extends Controller
                 $cicular_summery->where('id', $request->circular);
             }
             if ($request->exists('status') && $request->status != 'all') {
-                $cicular_summery->where('circular_status', $request->status);
+                if($request->status=="active"){
+                    $cicular_summery->where('status', $request->status);
+                }
+                else $cicular_summery->where('circular_status', $request->status);
                 /*$cicular_summery->where(function($q) use($request){
                     $q->whereHas('category',function($q) use($request){
                         $q->where('status',$request->status);

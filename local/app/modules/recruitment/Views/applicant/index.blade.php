@@ -9,7 +9,7 @@
             $scope.categories = [];
             $scope.circulars = [];
             $scope.circularSummery = [];
-            $scope.allStatus = {'all': 'All', 'running': 'Running', 'shutdown': 'close'}
+            $scope.allStatus = {'all': 'All', 'running': 'Running', 'shutdown': 'close','active':'Active'}
             $scope.circular = 'all';
             $scope.category = 'all';
             $scope.status = 'running';
