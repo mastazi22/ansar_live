@@ -2,6 +2,8 @@
 
 namespace App\modules\HRM\Controllers;
 
+use App\Helper\Facades\GlobalParameterFacades;
+use App\Helper\GlobalParameter;
 use App\Helper\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
@@ -80,6 +82,7 @@ class SMSController extends Controller
 //        return $phone;
         $ansar = PersonalInfo::where('mobile_no_self', $phone)->pluck('ansar_id');
         $action_date = Carbon::now();
+        $maximum_offer_limit = (int)GlobalParameterFacades::getValue(GlobalParameter::MAXIMUM_OFFER_LIMIT);
         if (count($ansar)>0) {
             Log::info("SMS RECEIVE : ANSAR FOUND ".$ansar );
             switch ($type) {
@@ -122,7 +125,7 @@ class SMSController extends Controller
                         $offered_ansar = OfferSMS::whereIn('ansar_id', $ansar)->first();
                         if ($offered_ansar) {
                             $count = $offered_ansar->getOfferCount();
-                            if($count>=2){
+                            if($count>=$maximum_offer_limit){
                                 $offered_ansar->deleteCount();
                                 $offered_ansar->blockAnsarOffer();
                                 $offered_ansar->saveLog();

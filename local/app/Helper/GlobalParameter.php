@@ -13,6 +13,8 @@ class GlobalParameter
     const ALLOCATED_LEAVE = 'allocated_leave';
     const LAST_ANSAR_ID = "last_ansar_id";
     const OFFER_QUOTA_DAY = "offer_quota_day";
+    const OFFER_BLOCK_PERIOD = "offer_unblocked_period";
+    const MAXIMUM_OFFER_LIMIT = "maximum_offer_limit";
     private $globalParameter;
 
     /**
@@ -56,6 +58,11 @@ class GlobalParameter
             case Self::OFFER_QUOTA_DAY:
                 return $this->globalParameter->where('param_name', 'offer_quota_day')->first()->param_unit;
 
+            case Self::OFFER_BLOCK_PERIOD:
+                return $this->globalParameter->where('param_name', 'offer_unblocked_period')->first()->param_unit;
+            case Self::MAXIMUM_OFFER_LIMIT:
+                return $this->globalParameter->where('param_name', 'maximum_offer_limit')->first()->param_unit;
+
         }
     }
 
@@ -76,7 +83,10 @@ class GlobalParameter
                 return $this->globalParameter->where('param_name', 'last_ansar_id')->first()->param_value;
             case Self::OFFER_QUOTA_DAY:
                 return $this->globalParameter->where('param_name', 'offer_quota_day')->first()->param_value;
-
+            case Self::OFFER_BLOCK_PERIOD:
+                return $this->globalParameter->where('param_name', 'offer_unblocked_period')->first()->param_value;
+            case Self::MAXIMUM_OFFER_LIMIT:
+                return $this->globalParameter->where('param_name', 'maximum_offer_limit')->first()->param_value;
         }
     }
 
