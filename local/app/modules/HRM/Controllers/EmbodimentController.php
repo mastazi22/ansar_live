@@ -871,10 +871,10 @@ class EmbodimentController extends Controller
                     $e_ansar = EmbodimentModel::where('ansar_id', $ansar->ansarId)->where('kpi_id', $ansar->currentKpi)->first();
                     //print_r($ansar->ansarId); die;
                     if ($e_ansar) {
-                        if (in_array($e_ansar->kpi->unit_id, $tp['data']) && $tp['status'] == 1) {
+                        /*if (in_array($e_ansar->kpi->unit_id, $tp['data']) && $tp['status'] == 1) {
                             $t_history = $e_ansar->transfer()->pluck('present_kpi_id');
                             if (in_array($ansar->transferKpi, collect($t_history)->toArray())) throw new \Exception("Ansar(" . $e_ansar->ansar_id . ") previously transferred in this kpi");
-                        }
+                        }*/
                         $transfer = new TransferAnsar;
                         //print_r($ansar->id);die;
                         $transfer->ansar_id = $ansar->ansarId;
