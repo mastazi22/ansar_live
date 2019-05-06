@@ -5,6 +5,7 @@ namespace App\Console;
 use App\Console\Commands\NotificationServer;
 use App\Helper\Facades\GlobalParameterFacades;
 use App\Helper\Helper;
+use App\Helper\GlobalParameter;
 use App\Helper\SMSTrait;
 use App\modules\HRM\Models\AnsarRetireHistory;
 use App\modules\HRM\Models\AnsarStatusInfo;
@@ -57,18 +58,22 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function () {
             Log::info("called : send_offer");
+//            //return;
             /*$user = env('SSL_USER_ID', 'ansarapi');
             $pass = env('SSL_PASSWORD', 'x83A7Z96');
             $sid = env('SSL_SID', 'ANSARVDP');
             $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";*/
             $offered_ansar = OfferSMS::with(['ansar', 'district'])->where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
+//            Log::info($offered_ansar);
             foreach ($offered_ansar as $offer) {
                 DB::connection('hrm')->beginTransaction();
                 try {
+
                     $a = $offer->ansar;
+                    $maximum_offer_limit = (int)GlobalParameterFacades::getValue(GlobalParameter::MAXIMUM_OFFER_LIMIT);
                     $count = $offer->getOfferCount();
                     $dis = $offer->district->unit_name_eng;
-                    $dc = $dis=="DMA HSIA"?strtoupper("DHAKA AIRPORT"):strtoupper($dis);
+                    $dc = $dis == "DMA HSIA" ? strtoupper("DHAKA AIRPORT") : strtoupper($dis);
                     $sms_end_date = Carbon::parse($offer->sms_end_datetime)->format('d-m-Y h:i:s A');
                     $body = "Apni (ID:{$offer->ansar_id}, {$a->designation->name_eng}) aaj {$dis} theke offer peyesen. Please type (ans YES ) and send korun 26969 number e {$sms_end_date} tarikh er moddhey . Otherwise  offer ti cancel hoie jabe-DC {$dc}";
                     //Log::info($a);
@@ -85,7 +90,7 @@ class Kernel extends ConsoleKernel
                     curl_setopt($crl, CURLOPT_POST, 1);
                     curl_setopt($crl, CURLOPT_POSTFIELDS, $param);*/
 //                    $response = curl_exec($crl);
-                    $response = $this->sendSMS($phone,$body);
+                    $response = $this->sendSMS($phone, $body);
 //                    curl_close($crl);
                     $r = Parser::xml($response);
                     Log::info("SERVER RESPONSE : " . json_encode($r));
@@ -97,8 +102,8 @@ class Kernel extends ConsoleKernel
                         $offer->sms_status = 'Failed';
                         $offer->save();
                     }
-                    if($count==2){
-                        $this->sendSMS($phone,"Et apnaer 3rd offer. Ei offer YES na korle agami 6 mas  ar offer passen na. Sotorko houn");
+                    if ($count == $maximum_offer_limit) {
+                        $this->sendSMS($phone, "Et apnaer 3rd offer. Ei offer YES na korle agami 6 mas  ar offer passen na. Sotorko houn");
                     }
                     DB::connection('hrm')->commit();
                 } catch (\Exception $e) {
@@ -129,16 +134,16 @@ class Kernel extends ConsoleKernel
                     $sms_end_date = Carbon::parse($offer->sms_end_datetime)->format('d-m-Y h:i:s A');
                     $body = "Apni (ID:{$offer->ansar_id}, {$a->designation->name_eng}) aaj {$dis} theke offer peyesen. Please type (ans YES ) and send korun 6969 number e {$sms_end_date} tarikh er moddhey . Otherwise  offer ti cancel hoie jabe-DC {$dc}";
                     $phone = '88' . trim($a->mobile_no_self);
-                   /* $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
-                    $crl = curl_init();
-                    curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, FALSE);
-                    curl_setopt($crl, CURLOPT_SSL_VERIFYHOST, 2);
-                    curl_setopt($crl, CURLOPT_URL, $url);
-                    curl_setopt($crl, CURLOPT_HEADER, 0);
-                    curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
-                    curl_setopt($crl, CURLOPT_POST, 1);
-                    curl_setopt($crl, CURLOPT_POSTFIELDS, $param);*/
-                    $response = $this->sendSMS($phone,$body);
+                    /* $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
+                     $crl = curl_init();
+                     curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, FALSE);
+                     curl_setopt($crl, CURLOPT_SSL_VERIFYHOST, 2);
+                     curl_setopt($crl, CURLOPT_URL, $url);
+                     curl_setopt($crl, CURLOPT_HEADER, 0);
+                     curl_setopt($crl, CURLOPT_RETURNTRANSFER, 1);
+                     curl_setopt($crl, CURLOPT_POST, 1);
+                     curl_setopt($crl, CURLOPT_POSTFIELDS, $param);*/
+                    $response = $this->sendSMS($phone, $body);
 //                    curl_close($crl);
                     $r = Parser::xml($response);
                     Log::info("SERVER RESPONSE : " . json_encode($r));
@@ -151,8 +156,8 @@ class Kernel extends ConsoleKernel
                         $offer->save();
                     }
                     $count = $offer->getOfferCount();
-                    if($count==2){
-                        $this->sendSMS($phone,"Et apnaer 3rd offer. Ei offer YES na korle agami 6 mas  ar offer passen na. Sotorko houn");
+                    if ($count == 2) {
+                        $this->sendSMS($phone, "Et apnaer 3rd offer. Ei offer YES na korle agami 6 mas  ar offer passen na. Sotorko houn");
                     }
                     DB::connection('hrm')->commit();
                 } catch (\Exception $e) {
@@ -199,7 +204,8 @@ class Kernel extends ConsoleKernel
                 DB::beginTransaction();
                 try {
                     $count = $ansar->getOfferCount();
-                    if ($count >= 2) {
+                    $maximum_offer_limit = (int)GlobalParameterFacades::getValue(GlobalParameter::MAXIMUM_OFFER_LIMIT);
+                    if ($count >= $maximum_offer_limit) {
                         $ansar->deleteCount();
                         $ansar->blockAnsarOffer();
                         $ansar->saveLog('No Reply');
@@ -458,8 +464,8 @@ class Kernel extends ConsoleKernel
                 $inserts = [];
                 $bindings = [];
                 foreach ($datas as $data) {
-                    Log::info('KPI_ID : '.$data->id);
-                    foreach ($data->embodiment as $em){
+                    Log::info('KPI_ID : ' . $data->id);
+                    foreach ($data->embodiment as $em) {
                         $qs = [
                             '?',
                             '?',
@@ -479,7 +485,7 @@ class Kernel extends ConsoleKernel
                 $query = "INSERT IGNORE INTO tbl_attendance(kpi_id,ansar_id,day,month,year) VALUES " . implode(",", $inserts);
                 DB::connection('sd')->beginTransaction();
                 try {
-                    DB::connection('sd')->insert($query,$bindings);
+                    DB::connection('sd')->insert($query, $bindings);
                     DB::connection('sd')->commit();
                 } catch (\Exception $e) {
 
@@ -490,42 +496,57 @@ class Kernel extends ConsoleKernel
 
 
         })->dailyAt("00:05")->name("generate_attendance")->withoutOverlapping();
+        $schedule->call(function () {
+            Log::info("called : unblock panel locked");
+            PanelModel::where('locked', 1)->update(['locked' => 0]);
 
 
-//        $schedule->call(function () {
-//            Log::info("called : unblock panel locked");
-//            PanelModel::where('locked',1)->update(['locked'=>0]);
-//        })->everyThirtyMinutes()->name("panel_unlock")->withoutOverlapping();
-
-
+        })->everyThirtyMinutes()->name("panel_unlock")->withoutOverlapping();
         $schedule->call(function () {
             Log::info("called : offer block to panel");
             DB::connection('hrm')->beginTransaction();
-            try{
+            try {
                 $currentDate = Carbon::now()->format('Y-m-d');
-                $blocked_ansars = OfferBlockedAnsar::whereRaw("TIMESTAMPDIFF(MONTH,blocked_date,'$currentDate')>=6")->take(1000)->get();
-                foreach($blocked_ansars as $blocked_ansar){
+                $unit = GlobalParameterFacades::getUnit(GlobalParameter::OFFER_BLOCK_PERIOD);
+                $value = GlobalParameterFacades::getValue(GlobalParameter::OFFER_BLOCK_PERIOD);
+                switch (strtolower($unit)) {
+                    case 'year':
+                        $blocked_ansars = OfferBlockedAnsar::whereRaw("TIMESTAMPDIFF(YEAR,blocked_date,'$currentDate')>=$value")->take(1000)->get();
+                        break;
+                    case 'month':
+                        $blocked_ansars = OfferBlockedAnsar::whereRaw("TIMESTAMPDIFF(MONTH,blocked_date,'$currentDate')>=$value")->take(1000)->get();
+                        break;
+                    case 'day':
+                        $blocked_ansars = OfferBlockedAnsar::whereRaw("TIMESTAMPDIFF(DAY,blocked_date,'$currentDate')>=$value")->take(1000)->get();
+                        break;
+                    default:
+                        dd('Invalid Parameter');
+                }
+
+                foreach ($blocked_ansars as $blocked_ansar) {
                     $now = Carbon::now();
-                    $panel_log = PanelInfoLogModel::where('ansar_id',$blocked_ansar->ansar_id)->orderBy('panel_date','desc')->first();
+                    $panel_log = PanelInfoLogModel::where('ansar_id', $blocked_ansar->ansar_id)->orderBy('panel_date', 'desc')->first();
                     PanelModel::create([
-                        'memorandum_id' => $panel_log&&isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
+                        'memorandum_id' => $panel_log && isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
                         'panel_date' => $now,
                         'come_from' => 'Offer Cancel',
                         'ansar_merit_list' => 1,
                         'ansar_id' => $blocked_ansar->ansar_id,
                     ]);
-                    AnsarStatusInfo::where('ansar_id',$blocked_ansar->ansar_id)->update(['offer_block_status'=>0,'pannel_status'=>1]);
+                    AnsarStatusInfo::where('ansar_id', $blocked_ansar->ansar_id)->update(['offer_block_status' => 0, 'pannel_status' => 1]);
                     $blocked_ansar->status = "unblocked";
                     $blocked_ansar->unblocked_date = Carbon::now()->format('Y-m-d');
                     $blocked_ansar->save();
                     $blocked_ansar->delete();
                 }
                 DB::commit();
-            }catch(\Exception $exception){
+            } catch (\Exception $exception) {
                 DB::rollback();
-                return ['status'=>false,'message'=>$exception->getMessage()];
+                return ['status' => false, 'message' => $exception->getMessage()];
             }
-            return ['status'=>true,'message'=>'Sending to panel complete'];
+            return ['status' => true, 'message' => 'Sending to panel complete'];
+
+
         })->everyThirtyMinutes()->name("offer_block_to_panel_6_month")->withoutOverlapping();
 //        $schedule->call(function () {
 //            Log::info("called : Ansar Retirement");
