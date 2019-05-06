@@ -48,7 +48,10 @@ class ApplicantScreeningController extends Controller
                 $cicular_summery->where('id', $request->circular);
             }
             if ($request->exists('status') && $request->status != 'all') {
-                $cicular_summery->where('circular_status', $request->status);
+                if($request->status=="active"){
+                    $cicular_summery->where('status', $request->status);
+                }
+                else $cicular_summery->where('circular_status', $request->status);
                 /*$cicular_summery->where(function($q) use($request){
                     $q->whereHas('category',function($q) use($request){
                         $q->where('status',$request->status);
@@ -329,6 +332,13 @@ class ApplicantScreeningController extends Controller
                 ->join('db_amis.tbl_thana', 'job_applicant.thana_id', '=', 'tbl_thana.id')
                 ->join('job_appliciant_payment_history', 'job_applicant.applicant_id', '=', 'job_appliciant_payment_history.job_appliciant_id')
                 ->join('job_payment_history', 'job_appliciant_payment_history.id', '=', 'job_payment_history.job_applicant_payment_id');
+
+            $applicants = DB::table('job_applicant')
+                ->leftJoin('db_amis.tbl_division', 'job_applicant.division_id', '=', 'tbl_division.id')
+                ->leftJoin('db_amis.tbl_units', 'job_applicant.unit_id', '=', 'tbl_units.id')
+                ->leftJoin('db_amis.tbl_thana', 'job_applicant.thana_id', '=', 'tbl_thana.id')
+                ->join('job_appliciant_payment_history', 'job_applicant.applicant_id', '=', 'job_appliciant_payment_history.job_appliciant_id')
+                ->join('job_payment_history', 'job_appliciant_payment_history.id', '=', 'job_payment_history.job_applicant_payment_id');
             if ($request->circular_id) {
                 $applicants->where('job_circular_id', $request->circular_id);
             }
@@ -367,9 +377,9 @@ class ApplicantScreeningController extends Controller
         } else {
 
             $applicants = DB::table('job_applicant')
-                ->join('db_amis.tbl_division', 'job_applicant.division_id', '=', 'tbl_division.id')
-                ->join('db_amis.tbl_units', 'job_applicant.unit_id', '=', 'tbl_units.id')
-                ->join('db_amis.tbl_thana', 'job_applicant.thana_id', '=', 'tbl_thana.id')
+                ->leftJoin('db_amis.tbl_division', 'job_applicant.division_id', '=', 'tbl_division.id')
+                ->leftJoin('db_amis.tbl_units', 'job_applicant.unit_id', '=', 'tbl_units.id')
+                ->leftJoin('db_amis.tbl_thana', 'job_applicant.thana_id', '=', 'tbl_thana.id')
                 ->join('job_appliciant_payment_history', 'job_applicant.applicant_id', '=', 'job_appliciant_payment_history.job_appliciant_id')
                 ->join('job_payment_history', 'job_appliciant_payment_history.id', '=', 'job_payment_history.job_applicant_payment_id');
             if ($request->circular_id) {
@@ -380,7 +390,7 @@ class ApplicantScreeningController extends Controller
             } else if ($type) {
                 $applicants->where('job_applicant.status', $type);
             }
-            $applicants = $applicants->select(
+            $applicants=$applicants->select(
                 'job_applicant.applicant_name_bng',
                 'job_applicant.applicant_id',
                 'job_applicant.applicant_password',
@@ -1156,7 +1166,6 @@ class ApplicantScreeningController extends Controller
             return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
-
     public function generateApplicantRoll(Request $request)
     {
         if ($request->ajax() && strcasecmp($request->method(), 'post') == 0) {

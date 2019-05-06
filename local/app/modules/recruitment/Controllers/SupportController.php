@@ -19,7 +19,11 @@ class SupportController extends Controller
         if(!strcasecmp($request->method(),'post')){
             $applicants  = FeebBack::where('problem_type','payment')->where('status','pending')->where('mobile_no_self',$request->mobile_no_self)->paginate(50);
         }
-        else $applicants  = FeebBack::where('problem_type','payment')->where('status','pending')->paginate(50);
+        else $applicants  = FeebBack::where('problem_type','payment')
+		->whereHas('applicant',function($q){
+			$q->where('job_circular_id',26);
+		})
+		->where('status','pending')->orderBy('created_at','desc')->paginate(50);
         return view('recruitment::support.applicants_feedback',['applicants'=>$applicants]);
     }
 

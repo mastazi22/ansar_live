@@ -11,10 +11,10 @@
             @forelse($quota->form_details as $f)
                 $scope.customForm.push(
                 {
-                    @if($f->type=="dropdown")values: JSON.parse('{{$f->options}}'), @endif
+                    @if($f->type=="dropdown")values: Object.values({!! json_encode($f->options) !!}), @endif
                     title: '{{$f->title}}',
                     type: '{{$f->type}}',
-                    isRequired: parseInt('{{$f->isRequired}}')?true:false,
+                    isRequired: parseInt('{{isset($f->isRequired)?$f->isRequired:0}}')?true:false,
                     name: '{{$f->name}}'
                 }
             )
@@ -42,6 +42,7 @@
                     name: ''
                 })
             }
+            console.log($scope.customForm)
             $scope.has_own_form = parseInt('{{$quota->has_own_form}}')?true:false
             $scope.removeField = (i) => {
                 if ($scope.customForm.length > 1) $scope.customForm.splice(i, 1);
@@ -103,7 +104,7 @@
                                         <option value="textarea">Text Area</option>
                                     </select>
                                     <div style="margin-bottom: 5px;padding-left: 10px" ng-if="f.type=='dropdown'">
-                                        <h5 ng-init="f.values=[];i=$index">Value for drop down&nbsp;<a
+                                        <h5 ng-init="f.values=f.values?f.values:[];i=$index">Value for drop down&nbsp;<a
                                                     class="btn btn-primary btn-xs" ng-click="f.values.push('');"><i
                                                         class="fa fa-plus"></i>&nbsp;Add value</a></h5>
                                         <div style="padding: 20px;border: 1px solid #eee" ng-if="f.values.length>0">
@@ -114,7 +115,7 @@
                                                     [[$index+1]]
                                                 </span>
                                                 <input type="text"
-                                                       name="customForm[ [[i]] ][options]['[[f.values[$index].split(' ').join('_').toLowerCase()]]']"
+                                                       name="customForm[ [[i]] ][options][ [[f.values[$index].split(' ').join('_').toLowerCase()]] ]"
                                                        class="form-control" ng-model="f.values[$index]">
                                                 <span class="input-group-btn">
                                                 <button onclick="return false" class="btn btn-danger"

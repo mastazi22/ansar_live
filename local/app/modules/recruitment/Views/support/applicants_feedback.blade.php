@@ -77,19 +77,24 @@
                     <table class="table table-bordered">
                         <tr>
                             <th>Applicant Mobile no</th>
+                            <th>Circular</th>
                             <th>Problem type</th>
                             <th>Payment option</th>
                             <th>Sender no</th>
                             <th>bankTxId</th>
                             <th>Action</th>
+                            <th>Date</th>
                         </tr>
                         @foreach($applicants as $a)
+						<?php $aa = $a->applicant;?>
                         <tr>
                             <td>{{$a->mobile_no_self}}</td>
+                            <td>{{$aa?($aa->circular?$aa->circular->circular_name:'--'):'--'}}</td>
                             <td>{{$a->problem_type}}</td>
                             <td>{{$a->payment_option}}</td>
                             <td>{{$a->sender_no}}</td>
                             <td>{{$a->txid}}</td>
+                            <td>{{$a->created_at}}</td>
                             <td>
                                 <a href="#" data-action="{{URL::route('supports.feedback.submit',['id'=>$a->id])}}" data-type="verify" class="btn btn-primary btn-xs ddd">Verify</a>
                                 <a href="#" data-action="{{URL::route('supports.feedback.submit',['id'=>$a->id])}}" data-type="reject" class="btn btn-danger btn-xs ddd">Reject</a>
