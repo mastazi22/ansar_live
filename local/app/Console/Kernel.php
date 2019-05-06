@@ -496,12 +496,12 @@ class Kernel extends ConsoleKernel
 
 
         })->dailyAt("00:05")->name("generate_attendance")->withoutOverlapping();
-        $schedule->call(function () {
-            Log::info("called : unblock panel locked");
-            PanelModel::where('locked', 1)->update(['locked' => 0]);
-
-
-        })->everyThirtyMinutes()->name("panel_unlock")->withoutOverlapping();
+//        $schedule->call(function () {
+//            Log::info("called : unblock panel locked");
+//            PanelModel::where('locked', 1)->update(['locked' => 0]);
+//
+//
+//        })->everyThirtyMinutes()->name("panel_unlock")->withoutOverlapping();
         $schedule->call(function () {
             Log::info("called : offer block to panel");
             DB::connection('hrm')->beginTransaction();
