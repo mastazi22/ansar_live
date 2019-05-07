@@ -13,7 +13,7 @@ trait SMSTrait
 {
         public function sendSMS($mobile_no,$message){
             $user = env('SSL_USER_ID','ansarapi');
-            $pass = env('SSL_PASSWORD','x83A7Z96');
+            $pass = "21=5O77m";
             $sid = env('SSL_SID','ANSARVDP');
             $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
             $param = "user=$user&pass=$pass&sms[0][0]=$mobile_no&sms[0][1]=" . urlencode($message) . "&sid=$sid";
