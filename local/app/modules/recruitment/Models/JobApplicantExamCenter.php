@@ -17,13 +17,16 @@ class JobApplicantExamCenter extends Model
     {
         $rules = [
             'job_circular_id' => 'required|numeric|exists:job_circular,id',
-//            'selection_date' => 'required',
-//            'selection_time' => ['required', 'regex:/^(0[0-9]|1[0-2]):([0-5][0-9])\s?(AM|PM)$/'],
+            'selection_date' => 'required',
+            'selection_time' => ['required', 'regex:/^(0[0-9]|1[0-2]):([0-5][0-9])\s?(AM|PM)$/'],
             'selection_place' => 'required',
-//            'written_date' => 'required',
-//            'viva_date' => 'required',
-//            'written_time' => ['required', 'regex:/^(0[0-9]|1[0-2]):([0-5][0-9])\s?(AM|PM)$/'],
-//            'viva_time' => ['required', 'regex:/^(0[0-9]|1[0-2]):([0-5][0-9])\s?(AM|PM)$/'],
+            'written_date' => 'required',
+            'viva_date' => 'required',
+            'written_time' => ['required', 'regex:/^(0[0-9]|1[0-2]):([0-5][0-9])\s?(AM|PM)$/'],
+            'viva_time' => ['required', 'regex:/^(0[0-9]|1[0-2]):([0-5][0-9])\s?(AM|PM)$/'],
+            'viva_present_time' => ['regex:/^(0[0-9]|1[0-2]):([0-5][0-9])\s?(AM|PM)$/'],
+            'written_present_time' => ['regex:/^(0[0-9]|1[0-2]):([0-5][0-9])\s?(AM|PM)$/'],
+            'selection_present_time' => ['regex:/^(0[0-9]|1[0-2]):([0-5][0-9])\s?(AM|PM)$/'],
             'written_viva_place' => 'required',
             'units' => 'required',
         ];

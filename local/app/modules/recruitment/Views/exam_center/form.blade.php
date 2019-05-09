@@ -35,18 +35,25 @@
 
     <div class="form-group">
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 {!! Form::label('selection_date','Selection Date :',['class'=>'control-label']) !!}
                 {!! Form::text('selection_date',null,['class'=>'form-control','placeholder'=>'Enter Selection Date','date-picker'=>(isset($data)?"moment('".\Carbon\Carbon::parse($data->selection_date)->format('Y-m-d')."').format('DD-MMM-YYYY')":"moment('".\Carbon\Carbon::parse(Request::old('selection_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
                 @if(isset($errors)&&$errors->first('selection_date'))
                     <p class="text text-danger">{{$errors->first('selection_date')}}</p>
                 @endif
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 {!! Form::label('selection_time','Selection Time :',['class'=>'control-label']) !!}
                 {!! Form::text('selection_time',null,['class'=>'form-control time-set','placeholder'=>'HH:MM AM/PM']) !!}
                 @if(isset($errors)&&$errors->first('selection_time'))
                     <p class="text text-danger">{{$errors->first('selection_time')}}</p>
+                @endif
+            </div>
+            <div class="col-sm-4">
+                {!! Form::label('selection_present_time','Present Time :',['class'=>'control-label']) !!}
+                {!! Form::text('selection_present_time',null,['class'=>'form-control time-set','placeholder'=>'HH:MM AM/PM']) !!}
+                @if(isset($errors)&&$errors->first('selection_present_time'))
+                    <p class="text text-danger">{{$errors->first('selection_present_time')}}</p>
                 @endif
             </div>
         </div>
@@ -60,36 +67,50 @@
     </div>
     <div class="form-group">
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 {!! Form::label('viva_date','Viva Date :',['class'=>'control-label']) !!}
                 {!! Form::text('viva_date',null,['class'=>'form-control','placeholder'=>'Enter Viva Date','date-picker'=>(isset($data)?"moment('".\Carbon\Carbon::parse($data->viva_date)->format('Y-m-d')."').format('DD-MMM-YYYY')":"moment('".\Carbon\Carbon::parse(Request::old('viva_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
                 @if(isset($errors)&&$errors->first('viva_date'))
                     <p class="text text-danger">{{$errors->first('viva_date')}}</p>
                 @endif
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 {!! Form::label('viva_time','Viva Time :',['class'=>'control-label']) !!}
                 {!! Form::text('viva_time',null,['class'=>'form-control','placeholder'=>'HH:MM AM/PM']) !!}
                 @if(isset($errors)&&$errors->first('viva_time'))
                     <p class="text text-danger">{{$errors->first('viva_time')}}</p>
                 @endif
             </div>
+            <div class="col-sm-4">
+                {!! Form::label('viva_present_time','Present Time :',['class'=>'control-label']) !!}
+                {!! Form::text('viva_present_time',null,['class'=>'form-control time-set','placeholder'=>'HH:MM AM/PM']) !!}
+                @if(isset($errors)&&$errors->first('viva_present_time'))
+                    <p class="text text-danger">{{$errors->first('viva_present_time')}}</p>
+                @endif
+            </div>
         </div>
     </div>
     <div class="form-group">
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 {!! Form::label('written_date','Written Date :',['class'=>'control-label']) !!}
                 {!! Form::text('written_date',null,['class'=>'form-control','placeholder'=>'Enter Written Date','date-picker'=>(isset($data)?"moment('".\Carbon\Carbon::parse($data->written_date)->format('Y-m-d')."').format('DD-MMM-YYYY')":"moment('".\Carbon\Carbon::parse(Request::old('written_date'))->format('Y-m-d')."').format('DD-MMM-YYYY')")]) !!}
                 @if(isset($errors)&&$errors->first('written_date'))
                     <p class="text text-danger">{{$errors->first('written_date')}}</p>
                 @endif
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-4">
                 {!! Form::label('written_time','Written Time :',['class'=>'control-label']) !!}
                 {!! Form::text('written_time',null,['class'=>'form-control','placeholder'=>'HH:MM AM/PM']) !!}
                 @if(isset($errors)&&$errors->first('written_time'))
                     <p class="text text-danger">{{$errors->first('written_viva_time')}}</p>
+                @endif
+            </div>
+            <div class="col-sm-4">
+                {!! Form::label('written_present_time','Present Time :',['class'=>'control-label']) !!}
+                {!! Form::text('written_present_time',null,['class'=>'form-control time-set','placeholder'=>'HH:MM AM/PM']) !!}
+                @if(isset($errors)&&$errors->first('written_present_time'))
+                    <p class="text text-danger">{{$errors->first('written_present_time')}}</p>
                 @endif
             </div>
         </div>

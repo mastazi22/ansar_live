@@ -9,7 +9,7 @@
         <div class="box box-solid">
             <div class="box-body">
                 <div class="row">
-                    <div class="col-sm-6 col-centered">
+                    <div class="col-sm-8 col-centered">
                         @include('recruitment::exam_center.form')
                     </div>
                 </div>
