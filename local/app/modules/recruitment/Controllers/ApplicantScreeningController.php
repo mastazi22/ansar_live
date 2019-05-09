@@ -892,7 +892,15 @@ class ApplicantScreeningController extends Controller
         }
         return response()->json(['status' => 'success', 'message' => 'Applicant accepted successfully']);
     }
-
+    public function acceptApplicantByFile(Request $request){
+        $file = $request->file("applicant_id_list");
+        $applicant_ids = "";
+        Excel::load($file,function ($reader) use(&$applicant_ids){
+            $applicant_ids = array_flatten($reader->limitColumns(1)->first());
+        });
+        $mobile_nos = JobAppliciant::where('job_circular_id',$request->circular)->whereIn('applicant_id',$applicant_ids)->pluck('mobile_no_self');
+        return $mobile_nos;
+    }
     public function loadImage(Request $request)
     {
         $image = base64_decode($request->file);

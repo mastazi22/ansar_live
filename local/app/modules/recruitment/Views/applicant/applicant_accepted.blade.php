@@ -113,30 +113,62 @@
                                 <option ng-repeat="c in circulars" value="[[c.id]]">[[c.circular_name]]</option>
                             </select>
                         </div>
-                        <filter-template
-                                show-item="['range','unit']"
-                                type="single"
-                                data="param"
-                                start-load="range"
-
-                                unit-field-disabled="!param.circular"
-                                range-field-disabled="!param.circular"
-                                field-width="{unit:'col-sm-12',range:'col-sm-12'}"
-                        >
-                        </filter-template>
-                        <div class="form-group" ng-if="isCatOther">
-                            <label class="control-label" for="nra">No of required applicants</label>
-                            <input id="nra" type="text" ng-model="param.cat_other_no_applicant" class="form-control">
-                        </div>
                         <div class="form-group">
-                            <button ng-click="loadApplicant()" ng-disabled="!(param.circular&&(param.unit||param.range))"
-                                    class="btn btn-primary btn-block">
-                                Load short listed applicant
-                            </button>
+                            <label for="" class="control-label">Selection Process</label>
+                            <select name="" ng-model="param.selectionProcess"
+                                    class="form-control">
+                                <option value="">--Select a process--</option>
+                                <option value="manual">Manual</option>
+                                <option value="file">File</option>
+                            </select>
+                        </div>
+                        <div ng-if="param.selectionProcess=='manual'">
+                            <filter-template
+                                    show-item="['range','unit']"
+                                    type="single"
+                                    data="param"
+                                    start-load="range"
+
+                                    unit-field-disabled="!param.circular"
+                                    range-field-disabled="!param.circular"
+                                    field-width="{unit:'col-sm-12',range:'col-sm-12'}"
+                            >
+                            </filter-template>
+
+                            <div class="form-group" ng-if="isCatOther">
+                                <label class="control-label" for="nra">No of required applicants</label>
+                                <input id="nra" type="text" ng-model="param.cat_other_no_applicant"
+                                       class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <button ng-click="loadApplicant()"
+                                        ng-disabled="!(param.circular&&(param.unit||param.range))"
+                                        class="btn btn-primary btn-block">
+                                    Load short listed applicant
+                                </button>
+                            </div>
+                        </div>
+                        <div ng-if="param.selectionProcess=='file'">
+                            <form method="post" enctype="multipart/form-data" action="{{URL::route('recruitment.applicant.confirm_accepted_by_uploading_file')}}">
+                                {!! csrf_field() !!}
+                                <input type="hidden" name="circular" ng-value="param.circular">
+                                <div class="form-group">
+                                    <label for="" class="control-label">Upload File</label>
+                                    <input type="file" name="applicant_id_list" class="form-control">
+
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="control-label">Comment</label>
+                                    <input type="text" name="comment" class="form-control" placeholder="Enter comment">
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary pull-right">Upload file</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-                <div ng-bind-html="applicants" compile-html>
+                <div ng-if="param.selectionProcess=='manual'" ng-bind-html="applicants" compile-html>
 
                 </div>
             </div>

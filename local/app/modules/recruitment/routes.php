@@ -21,6 +21,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
         Route::post('/applicant/update', ['as' => 'recruitment.applicant.update', 'uses' => 'ApplicantScreeningController@updateApplicantData']);
         Route::post('/applicant/confirm_selection_or_rejection', ['as' => 'recruitment.applicant.confirm_selection_or_rejection', 'uses' => 'ApplicantScreeningController@confirmSelectionOrRejection']);
         Route::post('/applicant/confirm_accepted', ['as' => 'recruitment.applicant.confirm_accepted', 'uses' => 'ApplicantScreeningController@confirmAccepted']);
+        Route::post('/applicant/confirm_accepted_by_uploading_file', ['as' => 'recruitment.applicant.confirm_accepted_by_uploading_file', 'uses' => 'ApplicantScreeningController@acceptApplicantByFile']);
         Route::post('/applicant/confirm_accepted_bn_candidate', ['as' => 'recruitment.applicant.confirm_accepted_if_bn_candidate', 'uses' => 'ApplicantScreeningController@confirmAcceptedIfBncandidate']);
         Route::post('/applicant/confirm_accepted_special_candidate', ['as' => 'recruitment.applicant.confirm_accepted_special_candidate', 'uses' => 'ApplicantScreeningController@confirmAcceptedIfSpecialCandidate']);
         Route::get('/applicant/search', ['as' => 'recruitment.applicant.search', 'uses' => 'ApplicantScreeningController@searchApplicant']);
