@@ -922,7 +922,8 @@ class ApplicantScreeningController extends Controller
             DB::commit();
         }catch(\Exception $e){
             DB::rollback();
-            redirect()->back()->with("error_message",$e->getMessage());
+//            redirect()->back()->with("error_message",$e->getMessage());
+            return $e;
         }
         return redirect()->back()->with("success_message","Applicant Updated to accepted successfully");
     }
