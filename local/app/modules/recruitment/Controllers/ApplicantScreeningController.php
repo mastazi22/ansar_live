@@ -898,14 +898,14 @@ class ApplicantScreeningController extends Controller
         Excel::load($file,function ($reader) use(&$applicant_ids){
             $applicant_ids = array_flatten($reader->limitColumns(1)->first());
         });
-        $applicants = JobAppliciant::where('job_circular_id',$request->circular)->whereIn('applicant_id',$applicant_ids)->select('applicant_id')->get();
+        $applicants = JobAppliciant::where('job_circular_id',$request->circular)->whereIn('applicant_id',$applicant_ids)->select('applicant_id','status')->get();
 //        return $applicants;
         DB::beginTransaction();
         try{
-//            ob_implicit_flush(true);
-//            ob_end_flush();
-//            echo "Start Processing....";
-//            $i=1;
+            ob_implicit_flush(true);
+            ob_end_flush();
+            echo "Start Processing....";
+            $i=1;
             foreach ($applicants as $applicant){
                 $applicant->status = 'accepted';
                 $applicant->marks()->create([
@@ -916,8 +916,8 @@ class ApplicantScreeningController extends Controller
                     'comment'=>$request->comment
                 ]);
                 $applicant->save();
-//                echo "Processed $i of ".count($applicants);
-//                $i++;
+                echo "Processed $i of ".count($applicants);
+                $i++;
             }
             DB::commit();
         }catch(\Exception $e){

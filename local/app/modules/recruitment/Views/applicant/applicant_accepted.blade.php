@@ -56,16 +56,27 @@
                 });
             };
             $scope.uploadFileForm = function(){
+                var index = 0;
                 var fd = new FormData(document.getElementById("uploadFileForm"))
+                $scope.allLoading = true;
                 $http({
                     url:"{{URL::route('recruitment.applicant.confirm_accepted_by_uploading_file')}}",
                     data:fd,
                     method:'post',
                     headers:{
-                        "Content-Type":"multipart/form-data"
+                        "Content-Type":undefined
+                    },
+                    eventHandlers:{
+                        progress:function (event) {
+                            var response = event.currentTarget.response;
+                            scope.message = response.substr(index,response.length-index);
+                            console.log(response.substr(index,response.length-index))
+                            index = response.length;
+                        }
                     }
                 }).then(function (response) {
-                    console.log(response.data)
+                    $scope.message = response.data;
+                    $scope.allLoading = false;
                 },function (response) {
 
                 })
@@ -115,7 +126,8 @@
             <div class="overlay" ng-if="allLoading">
                     <span class="fa">
                         <i class="fa fa-refresh fa-spin"></i> <b>Loading...</b>
-                    </span>
+                    </span><br>
+                <span>[[message]]</span>
             </div>
             <div class="box-body">
                 <div class="row">
@@ -164,7 +176,7 @@
                             </div>
                         </div>
                         <div ng-if="param.selectionProcess=='file'">
-                            <form method="post" enctype="multipart/form-data" id="uploadFileForm" action="{{URL::route('recruitment.applicant.confirm_accepted_by_uploading_file')}}">
+                            <form method="post" enctype="multipart/form-data" id="uploadFileForm" ng-submit="uploadFileForm()">
                                 {!! csrf_field() !!}
                                 <input type="hidden" name="circular" ng-value="param.circular">
                                 <div class="form-group">
