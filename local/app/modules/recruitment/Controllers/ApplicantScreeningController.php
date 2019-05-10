@@ -898,8 +898,33 @@ class ApplicantScreeningController extends Controller
         Excel::load($file,function ($reader) use(&$applicant_ids){
             $applicant_ids = array_flatten($reader->limitColumns(1)->first());
         });
-        $mobile_nos = JobAppliciant::where('job_circular_id',$request->circular)->whereIn('applicant_id',$applicant_ids)->pluck('mobile_no_self');
-        return $mobile_nos;
+        $applicants = JobAppliciant::where('job_circular_id',$request->circular)->whereIn('applicant_id',$applicant_ids)->select('applicant_id')->get();
+//        return $applicants;
+        DB::beginTransaction();
+        try{
+//            ob_implicit_flush(true);
+//            ob_end_flush();
+//            echo "Start Processing....";
+//            $i=1;
+            foreach ($applicants as $applicant){
+                $applicant->status = 'accepted';
+                $applicant->marks()->create([
+                    'specialized' => 1
+                ]);
+                $applicant->accepted()->create([
+                    'action_user_id' => $request->action_user_id,
+                    'comment'=>$request->comment
+                ]);
+                $applicant->save();
+//                echo "Processed $i of ".count($applicants);
+//                $i++;
+            }
+            DB::commit();
+        }catch(\Exception $e){
+            DB::rollback();
+            redirect()->back()->with("error_message",$e->getMessage());
+        }
+        return redirect()->back()->with("success_message","Applicant Updated to accepted successfully");
     }
     public function loadImage(Request $request)
     {

@@ -55,6 +55,21 @@
                     }
                 });
             };
+            $scope.uploadFileForm = function(){
+                var fd = new FormData(document.getElementById("uploadFileForm"))
+                $http({
+                    url:"{{URL::route('recruitment.applicant.confirm_accepted_by_uploading_file')}}",
+                    data:fd,
+                    method:'post',
+                    headers:{
+                        "Content-Type":"multipart/form-data"
+                    }
+                }).then(function (response) {
+                    console.log(response.data)
+                },function (response) {
+
+                })
+            }
             //===========^^^^
 
         });
@@ -149,7 +164,7 @@
                             </div>
                         </div>
                         <div ng-if="param.selectionProcess=='file'">
-                            <form method="post" enctype="multipart/form-data" action="{{URL::route('recruitment.applicant.confirm_accepted_by_uploading_file')}}">
+                            <form method="post" enctype="multipart/form-data" id="uploadFileForm" action="{{URL::route('recruitment.applicant.confirm_accepted_by_uploading_file')}}">
                                 {!! csrf_field() !!}
                                 <input type="hidden" name="circular" ng-value="param.circular">
                                 <div class="form-group">
