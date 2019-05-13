@@ -11,6 +11,7 @@ use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\OfferCancel;
 use App\modules\HRM\Models\OfferQuota;
 use App\modules\HRM\Models\OfferSmsLog;
+use App\modules\HRM\Models\OfferZone;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\PersonalInfo;
@@ -116,15 +117,17 @@ class OfferController extends Controller
             $userOffer = UserOfferQueue::create([
                 'user_id' => Auth::user()->id
             ]);
+            $user = Auth::user();
+            $offerZone = OfferZone::where('unit_id',$user->district_id)->pluck('offer_zone_unit_id')->toArray();
             $data = CustomQuery::getAnsarInfo(
                 ['male' => $request->get('pc_male'), 'female' => $request->get('pc_female')],
                 ['male' => $request->get('apc_male'), 'female' => $request->get('apc_female')],
                 ['male' => $request->get('ansar_male'), 'female' => $request->get('ansar_female')],
                 $request->get('district'),
-                $request->get('exclude_district'), Auth::user());
-//            return $data;
+                $request->get('exclude_district'), $user,$offerZone);
+            return $data;
             Log::info($request->all());
-            $user = Auth::user();
+
             if($user->type==22){
 
                 if(in_array($user->district_id,Config::get('app.DG'))){

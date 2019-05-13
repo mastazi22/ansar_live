@@ -151,6 +151,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::any('/update_offer_quota', ['as' => 'update_offer_quota', 'uses' => 'OfferController@updateOfferQuota']);
         Route::get('rejected_offer_list', ['as' => 'rejected_offer_list', 'uses' => 'ReportController@rejectedOfferListView']);
         Route::get('get_rejected_ansar_list', ['as' => 'get_rejected_ansar_list', 'uses' => 'ReportController@getRejectedAnsarList']);
+        Route::resource('offer_zone','OfferZoneController');
         //END OFFER ROUTE
 
         Route::resource('offer_rollback', 'OfferBlockController');

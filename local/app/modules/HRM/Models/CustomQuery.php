@@ -27,8 +27,9 @@ class CustomQuery
     const RECENT = 2;
     protected $connection = 'hrm';
 
-    public static function getAnsarInfo($pc = array('male' => 0, 'female' => 0), $apc = array('male' => 0, 'female' => 0), $ansar = array('male' => 0, 'female' => 0), $unit_id = [], $exclude_district = null, $user)
+    public static function getAnsarInfo($pc = array('male' => 0, 'female' => 0), $apc = array('male' => 0, 'female' => 0), $ansar = array('male' => 0, 'female' => 0), $unit_id = [], $exclude_district = null, $user,$offerZone=[])
     {
+//        return $offerZone;
         $ansar_retirement_age = Helper::getAnsarRetirementAge() - 3;
         $pc_apc_retirement_age = Helper::getPcApcRetirementAge() - 3;
         DB::enableQueryLog();
@@ -54,6 +55,7 @@ class CustomQuery
             ->where('tbl_ansar_status_info.offer_block_status', 0);
 //            ->whereNotIn('tbl_ansar_parsonal_info.ansar_id', $eid);
         if($user->type==22){
+            $maximum_offer_limit = (int)GlobalParameterFacades::getValue(\App\Helper\GlobalParameter::MAXIMUM_OFFER_LIMIT);
             $query->where(function($q) use ($user){
                 $q->where('tbl_offer_status.last_offer_unit', '!=',$user->district_id);
                 $q->orWhereNull("tbl_offer_status.last_offer_unit");
@@ -95,12 +97,20 @@ class CustomQuery
                 if (isset($d[$exclude_district])) {
                     $query->whereNotIn('pu.id', $d[$exclude_district]);
                 } else $query->where('pu.id', '!=', $exclude_district);
+
                 $fquery->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
             } else {
-                $query->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id')
-                    ->where('pu.id', '!=', $exclude_district)->where('du.id', '=', $exclude_district);
-                $fquery->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id')
-                    ->where('du.id', '=', $exclude_district)->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
+                $query->where('pu.id', '!=', $exclude_district);
+                $fquery->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
+            }
+            if(is_array($offerZone)&&count($offerZone)>0){
+                $query->whereIn('pu.id', $offerZone);
+                $fquery->whereIn('pu.id', $offerZone);
+            } else{
+                $query->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id');
+                $fquery->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id');
+                $query->where('du.id', '=', $exclude_district);
+                $fquery->where('du.id', '=', $exclude_district);
             }
 
         } else if ($user->type == 11 || $user->type == 33 || $user->type == 66) {
@@ -152,6 +162,7 @@ class CustomQuery
             ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
             ->select('tbl_ansar_parsonal_info.ansar_id')->take($apc['female']);
 //            $b = $pc_male->get();
+//        $b = $ansar_male->get();
         $b = $pc_male->unionAll($pc_female)->unionAll($apc_male)->unionAll($apc_female)->unionAll($ansar_male)->unionAll($ansar_female)->pluck('ansar_id');
 //        return DB::getQueryLog();
         return $b;
