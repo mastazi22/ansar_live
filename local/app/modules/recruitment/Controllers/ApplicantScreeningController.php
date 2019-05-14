@@ -898,7 +898,7 @@ class ApplicantScreeningController extends Controller
         Excel::load($file,function ($reader) use(&$applicant_ids){
             $applicant_ids = array_flatten($reader->limitColumns(1)->first());
         });
-        $applicants = JobAppliciant::where('job_circular_id',$request->circular)->whereIn('applicant_id',$applicant_ids)->select('applicant_id','status')->get();
+        $applicants = JobAppliciant::where('job_circular_id',$request->circular)->whereIn('applicant_id',$applicant_ids)->get();
 //        return $applicants;
         DB::beginTransaction();
         try{
