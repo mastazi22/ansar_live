@@ -69,7 +69,7 @@
                     eventHandlers:{
                         progress:function (event) {
                             var response = event.currentTarget.response;
-                            scope.message = response.substr(index,response.length-index);
+                            $scope.message = response.substr(index,response.length-index);
                             console.log(response.substr(index,response.length-index))
                             index = response.length;
                         }
