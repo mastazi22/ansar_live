@@ -72,6 +72,12 @@ class OfferSMS extends Model
             $count->delete();
         }
     }
+    public function deleteOfferStatus(){
+        $offer_sms_status = OfferSMSStatus::where('ansar_id',$this->ansar_id)->first();
+        if($offer_sms_status) {
+            $offer_sms_status->delete();
+        }
+    }
     public function blockAnsarOffer(){
         $oba = new OfferBlockedAnsar;
         $oba->ansar_id = $this->ansar_id;

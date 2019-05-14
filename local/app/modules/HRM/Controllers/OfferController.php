@@ -123,14 +123,12 @@ class OfferController extends Controller
                 $request->get('district'),
                 $request->get('exclude_district'), Auth::user());
 //            return $data;
-            Log::info($request->all());
+//            Log::info($request->all());
             $user = Auth::user();
             if($user->type==22){
 
-                if(in_array($user->district_id,Config::get('app.DG'))){
-                   $offer_type = 'DG';
-                } else if(in_array($user->district_id,Config::get('app.CG'))){
-                    $offer_type = 'CG';
+                if(in_array($user->district_id,Config::get('app.offer'))){
+                   $offer_type = 'GB';
                 } else{
                     $offer_type = 'RE';
                 }

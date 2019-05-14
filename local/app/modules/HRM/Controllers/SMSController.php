@@ -82,7 +82,7 @@ class SMSController extends Controller
 //        return $phone;
         $ansar = PersonalInfo::where('mobile_no_self', $phone)->pluck('ansar_id');
         $action_date = Carbon::now();
-        $maximum_offer_limit = (int)GlobalParameterFacades::getValue(GlobalParameter::MAXIMUM_OFFER_LIMIT);
+        $maximum_offer_limit = (int)GlobalParameterFacades::getValue(GlobalParameter::MAXIMUM_OFFER_LIMIT)-1;
         if (count($ansar)>0) {
             Log::info("SMS RECEIVE : ANSAR FOUND ".$ansar );
             switch ($type) {
@@ -108,6 +108,9 @@ class SMSController extends Controller
                                     $this->removeFromRest($offered_ansar->ansar_id);
                                     break;
                             }
+                            $offered_ansar->deleteCount();
+                            $offered_ansar->deleteOfferStatus();
+                            $offered_ansar->saveLog();
                             $offered_ansar->delete();
                             $dis = District::find($offered_ansar->district_id)->unit_name_eng;
                             DB::commit();
@@ -127,6 +130,7 @@ class SMSController extends Controller
                             $count = $offered_ansar->getOfferCount();
                             if($count>=$maximum_offer_limit){
                                 $offered_ansar->deleteCount();
+                                $offered_ansar->deleteOfferStatus();
                                 $offered_ansar->blockAnsarOffer();
                                 $offered_ansar->saveLog();
                                 $offered_ansar->status()->update([

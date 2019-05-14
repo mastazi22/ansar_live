@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Helper\Facades\GlobalParameterFacades;
+use App\Helper\GlobalParameter;
 use App\modules\HRM\Models\ActionUserLog;
 use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\OfferSMSStatus;
@@ -63,8 +65,9 @@ class OfferQueue extends Job implements ShouldQueue
                 $mos = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
                 $offer_status = OfferSMSStatus::firstOrCreate(['ansar_id'=>$ansar_ids[$i]]);
                 $t = $offer_status->offer_type;
+                $offer_limit = +GlobalParameterFacades::getValue(GlobalParameter::MAXIMUM_OFFER_LIMIT)-1;
                 if($t){
-                    if(count(explode(',',$t))>=2){
+                    if(count(explode(',',$t))>=$offer_limit){
                         $t = '';
                     }
                     else $t .= ",".$this->offer_type;
@@ -73,6 +76,11 @@ class OfferQueue extends Job implements ShouldQueue
                 }
                 $offer_status->offer_type = $t;
                 $offer_status->last_offer_unit = $this->district_id;
+                if(!$offer_status->last_offer_units){
+                    $offer_status->last_offer_units = $this->district_id.'';
+                } else{
+                    $offer_status->last_offer_units .= ','.$this->district_id;
+                }
                 $offer_status->save();
                 $pa = $mos->panel;
                 if(!$pa) throw new \Exception("No Panel Available");
