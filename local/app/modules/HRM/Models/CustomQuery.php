@@ -57,23 +57,21 @@ class CustomQuery
         if($user->type==22){
             $maximum_offer_limit = (int)GlobalParameterFacades::getValue(\App\Helper\GlobalParameter::MAXIMUM_OFFER_LIMIT);
             $query->where(function($q) use ($user){
-                $q->where('tbl_offer_status.last_offer_unit', '!=',$user->district_id);
+//                $q->where('tbl_offer_status.last_offer_unit', '!=',$user->district_id);
+                $q->whereRaw("NOT FIND_IN_SET('".$user->district_id."',tbl_offer_status.last_offer_units)");
                 $q->orWhereNull("tbl_offer_status.last_offer_unit");
             });
 
-            if(in_array($user->district_id,Config::get('app.DG'))){
+            if(in_array($user->district_id,Config::get('app.offer'))){
                 $query->where(function($q){
-                    $q->whereRaw("NOT FIND_IN_SET('DG',tbl_offer_status.offer_type)");
+//                    $q->whereRaw("NOT FIND_IN_SET('DG',tbl_offer_status.offer_type)");
+                    $q->whereRaw("ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"DG\",\"\")))/CHAR_LENGTH(\"DG\"))+ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"CG\",\"\")))/CHAR_LENGTH(\"CG\"))+ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"GB\",\"\")))/CHAR_LENGTH(\"GB\"))<3");
                     $q->orWhereNull("tbl_offer_status.offer_type");
                 });
-            } else if(in_array($user->district_id,Config::get('app.CG'))){
+            }else{
                 $query->where(function($q){
-                    $q->whereRaw("NOT FIND_IN_SET('CG',tbl_offer_status.offer_type)");
-                    $q->orWhereNull("tbl_offer_status.offer_type");
-                });
-            } else{
-                $query->where(function($q){
-                    $q->whereRaw("NOT FIND_IN_SET('RE',tbl_offer_status.offer_type)");
+//                    $q->whereRaw("NOT FIND_IN_SET('RE',tbl_offer_status.offer_type)");
+                    $q->whereRaw("ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"RE\",\"\")))/CHAR_LENGTH(\"RE\"))<2");
                     $q->orWhereNull("tbl_offer_status.offer_type");
                 });
             }
