@@ -907,6 +907,7 @@ class ApplicantScreeningController extends Controller
             echo "Start Processing....";
             $i=1;
             foreach ($applicants as $applicant){
+				if($applicant->accepted) continue;
                 $applicant->status = 'accepted';
                 $applicant->marks()->create([
                     'specialized' => 1
