@@ -168,7 +168,7 @@ GlobalApp.directive('showAlert', function () {
             alerts: "=",
             close: "&"
         },
-        templateUrl: 'dist/template/alert_template.html'
+        templateUrl: '/dist/template/alert_template.html'
     }
 })
 GlobalApp.directive('templateList', function () {

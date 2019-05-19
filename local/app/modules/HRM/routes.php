@@ -422,8 +422,26 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
 //End KPI
         Route::post('upload_original_info', ['as' => 'upload_original_info', 'uses' => 'GeneralSettingsController@uploadOriginalInfo']);
         Route::get('upload_original_info', ['as' => 'upload_original_info_view', 'uses' => 'GeneralSettingsController@uploadOriginalInfoView']);
-        Route::get('test', function () {
-            return (array)\Carbon\Carbon::parse("11-03-1991")->diff(\Carbon\Carbon::now(), true);
+        Route::get('test/{s}/{l}', function ($s,$l) {
+            $panel_ansars = PanelModel::with(['ansarInfo'=>function($q){
+                $q->with('designation')->select('ansar_id','designation_id','division_id','unit_id');
+            }])->orderBy('panel_date','asc')->skip($s)->take($l)->get();
+            //$regional_ansars = collect($panel_ansars)->groupBy('ansarInfo.division_id');
+            $global_position = PanelModel::orderBy('global_position','desc')->first()->global_position+1;
+//            return $global_position;
+            foreach ($panel_ansars as $panel_ansar){
+                $panel_ansar->global_position = $global_position++;
+                $panel_ansar->save();
+            }
+//            foreach ($regional_ansars as $key=>$values){
+//                $regional_position = 1;
+//                foreach ($values as $panel_ansar){
+//                    $panel_ansar->regional_position = $regional_position++;
+//
+//                    $panel_ansar->save();
+//                }
+//            }
+            return "panel position updated successfully";
         });
 //        Route::get('upload_union', function () {
 //            $datas = \Maatwebsite\Excel\Facades\Excel::Load(storage_path('union_name.xlsx'), function ($e) {

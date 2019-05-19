@@ -104,11 +104,14 @@ class CustomQuery
             if(is_array($offerZone)&&count($offerZone)>0){
                 $query->whereIn('pu.id', $offerZone);
                 $fquery->whereIn('pu.id', $offerZone);
+                $fquery->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
             } else{
                 $query->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id');
                 $fquery->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id');
                 $query->where('du.id', '=', $exclude_district);
                 $fquery->where('du.id', '=', $exclude_district);
+                $fquery->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
+
             }
 
         } else if ($user->type == 11 || $user->type == 33 || $user->type == 66) {

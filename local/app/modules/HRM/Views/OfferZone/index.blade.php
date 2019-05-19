@@ -5,25 +5,29 @@
 @endsection
 @section('content')
     <style>
-        .tree-parent{
+        .tree-parent {
             position: relative;
         }
-        .tree-parent:before{
+
+        .tree-parent:before {
             content: '';
             position: absolute;
             left: 3px;
             bottom: 11px;
             top: 15px;
-            border-left:1px solid #ababab;
+            border-left: 1px solid #ababab;
         }
-        .tree-child{
+
+        .tree-child {
             list-style: none;
             position: relative;
         }
-        .tree-child>li{
+
+        .tree-child > li {
             position: relative;
         }
-        .tree-child>li:before{
+
+        .tree-child > li:before {
             content: '';
             position: absolute;
             left: -37px;
@@ -35,102 +39,28 @@
         }
     </style>
     <script>
-        GlobalApp.controller('circularPoint',function ($scope, httpService,$http,$q) {
-            $scope.form={
-                rangeId:'',
-                unitIds:[],
-                offerZoneRangeIds:[]
-            }
-            $scope.toggleClick = [];
-            var requests = [
-                httpService.range(),
-                httpService.unit()
-            ]
-            $q.all(requests).then(function (response) {
-                $scope.ranges = response[0];
-                $scope.units = response[1].reduce(function (u, d) {
-                    u[d.division_id] = u[d.division_id]||{division:'',units:[]};
-                    u[d.division_id].division = $scope.ranges.find(function(r){
-                        return r.id==d.division_id
-                    }).division_name_bng
-                    u[d.division_id].units.push(d);
-                    return u;
-                },{});
-                console.log($scope.units)
+        GlobalApp.controller('offerZoneController', function ($scope, $http,$sce) {
+            $scope.params={};
+            $scope.offerZones = [];
+            $scope.getUrl = function(u){
+                return $sce.trustAsResourceUrl(u)
+            };
 
-            },function (response) {
+            $scope.loadOfferZoneDetail = function () {
+                $http({
+                    url:'{{URL::route("HRM.offer_zone.index")}}',
+                    params:$scope.params,
+                    method:'get'
+                }).then(function(res){
+                    $scope.offerZones = res.data;
+                },function(res){
 
-            })
-            $scope.loadUnit = function () {
-                httpService.unit($scope.form.rangeId).then(function (response) {
-                    $scope.dcUnits = response;
-                },function (response) {
-                    $scope.dcUnits = [];
                 })
-            }
-            var filterEmptyOrFalseValue = function (value) {
-                return value!==undefined&&value;
-            }
-            $scope.$watch('form.offerZoneRangeIds',function(n,o){
-                $scope.form.offerZoneRangeIds.forEach(function (value,index) {
-                    $scope.form.offerZoneRangeIds[index].offerZoneRangeUnits = value.offerZoneRangeUnits.filter(filterEmptyOrFalseValue)
-                })
-                console.log($scope.form.offerZoneRangeIds)
-            },true)
-        })
-        GlobalApp.directive("checkBox",function(){
-            return{
-                restrict:'A',
-                require:'ngModel',
-                link:function (scope, elem, attrs, ngModel) {
-//                    console.log(elem)
-                    $(elem).on('change',function (e,external) {
-                        if(!external){
-                            var l = $(this).parents('ul').children('li').children('input[type=checkbox]:checked').length
-                            console.log(l)
-                            if(l<=0){
-                                $(this).parents('ul').parents('li').find('span input[type=checkbox]').prop('checked',false).trigger('change',[true])
-                            } else if(l===1){
-                                $(this).parents('ul').parents('li').find('span input[type=checkbox]').prop('checked',true).trigger('change',[true])
-                            }
-                        }
-                        if(this.checked){
-//                            console.log(n)
-
-                            ngModel.$setViewValue($(elem).val())
-                        }
-                        else{
-                            ngModel.$setViewValue(false)
-                        }
-//                        scope.$apply();
-                    })
-                }
-            }
-        })
-        GlobalApp.directive("checkBoxSelectAll",function(){
-            return{
-                restrict:'A',
-                require:'ngModel',
-                link:function (scope, elem, attrs, ngModel) {
-//                    console.log(elem)
-                    $(elem).on('change',function (e,external) {
-                        if(this.checked){
-//                            console.log(n)
-                            if(!external) $(elem).parents('li').find('ul input[type=checkbox]').prop('checked',true)
-                            ngModel.$setViewValue($(elem).val())
-                        }
-                        else{
-                            if(!external) $(elem).parents('li').find('ul input[type=checkbox]').prop('checked',false)
-                            ngModel.$setViewValue(false)
-                        }
-                        $(elem).parents('li').find('ul input[type=checkbox]').trigger('change',[true])
-                    })
-                }
             }
         })
     </script>
-    <section class="content" ng-controller="circularPoint">
-        <div class="box box-solid">
+    <section class="content" ng-controller="offerZoneController">
+        <div class="box box-solid" style="padding: 10px;">
             @if(Session::has('session_error'))
                 <div class="alert alert-danger">
                     <i class="fa fa-warning"></i>&nbsp;{{Session::get('session_error')}}
@@ -144,52 +74,70 @@
             @endif
 
             <div class="box-body">
-                <div class="row">
-                    <div class="col-sm-6 col-centered">
-                        <div class="form-group">
-                            <label class="control-label">Select Range</label>
-                            <select class="form-control" ng-model="form.rangeId" ng-change="loadUnit()">
-                                <option value="">--Select a range</option>
-                                <option ng-repeat="r in ranges" value="[[r.id]]">[[r.division_name_bng]]</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="" class="control-label">Select Offer Unit</label>
-                            <div class="form-control" style="min-height: 150px;max-height: 200px;overflow-y: auto">
-                                <span class="text text-gray" ng-if="!dcUnits||dcUnits.length==0">Please select range to load units</span>
-                                <ul style="list-style: none;padding: 0">
-                                    <li ng-repeat="d in dcUnits">
-                                        <input type="checkbox" ng-model="form.unitIds[$index]" ng-true-value="'[[d.id]]'" ng-init="form.unitIds[$index]=d.id+''">&nbsp[[d.unit_name_bng]]
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="" class="control-label">Select Offer Zone</label>
-                            <div class="form-control" style="min-height: 200px;max-height: 250px;overflow-y: auto">
-                                <span class="text text-gray" ng-if="!units">Please select range to load units</span>
-                                <ul style="list-style: none;padding: 0">
-                                    <li class="tree-parent" ng-repeat="(k,d) in units" ng-init="form.offerZoneRangeIds[$index]={offerZoneRangeId:'',offerZoneRangeUnits:[]};i=$index;toggleClick[$index]=false">
+                <filter-template
+                        show-item="['range','unit']"
+                        type="all"
+                        data="params"
+                        start-load="range"
+                        unit-load="resetData()"
+                        unit-change="loadOfferZoneDetail()"
+                        range-change="loadOfferZoneDetail()"
+                        on-load="loadOfferZoneDetail()"
+                        field-width="{range:'col-sm-4',unit:'col-sm-4'}"
+                >
+                </filter-template>
+                <table class="table table-bordered">
+                    <caption><h3>
+                            Offer Zone&nbsp;&nbsp;<a href="{{URL::route('HRM.offer_zone.create')}}" class="btn btn-xs btn-primary">
+                                <i class="fa fa-plus"></i>&nbsp;Create offer zone
+                            </a>
+                        </h3> </caption>
+                    <tr>
+                        <th>SL. No</th>
+                        <th>Range Name</th>
+                        <th>Unit Name</th>
+                        <th>Offer Zone Area</th>
+                        <th>Action</th>
+                    </tr>
+                    <tr ng-if="offerZones.length<=0">
+                        <td colspan="5" class="bg-warning">No Data Available</td>
+                    </tr>
+                    <tr ng-if="offerZones.length>0" ng-repeat="offerZone in offerZones">
+                        <td>[[$index+1]]</td>
+                        <td>[[offerZone.range]]</td>
+                        <td>[[offerZone.unit]]</td>
+                        <td>
+                            <ul style="list-style: none;padding: 0">
+                                <li class="tree-parent" ng-repeat="d in offerZone.areas" >
                                         <span style="display: flex;align-items: center">
-                                            <i ng-click="toggleClick[$index]=!toggleClick[$index]" class="fa fa-plus" style="font-size: 10px;font-weight: normal !important;cursor: pointer"></i>&nbsp;
-                                            <input type="checkbox" style="margin: 0 !important;" ng-model="form.offerZoneRangeIds[$index].offerZoneRangeId" check-box-select-all  ng-true-value="'[[k]]'">&nbsp[[d.division]]</span>
-                                        <ul class="tree-child" ng-if="toggleClick[$index]">
-                                            <li ng-repeat="u in d.units">
-                                                <input type="checkbox" check-box style="margin: 0 !important;" value="'[[u.id]]'" ng-model="form.offerZoneRangeIds[i].offerZoneRangeUnits[$index]"  ng-true-value="'[[u.id]]'">&nbsp[[u.unit_name_bng]]</span>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <button class="btn btn-primary">Create Offer Zone</button>
-                        </div>
-                    </div>
-                </div>
+                                            <i ng-click="toggleClick[$index]=!toggleClick[$index]" ng-class="{'fa fa-plus':!toggleClick[$index],'fa fa-minus':toggleClick[$index]}" style="font-size: 10px;font-weight: normal !important;cursor: pointer"></i>[[d.division.division_name_bng]]
+                                        </span>
+                                    <ul class="tree-child" ng-if="toggleClick[$index]">
+                                        <li ng-repeat="u in d.units">
+                                            <span>[[u.unit_name_bng]]</span>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </td>
+                        <td >
+                            <a href="/HRM/offer_zone/[[offerZone.unitId]]/edit" class="btn btn-xs btn-primary">
+                                <i class="fa fa-edit"></i>&nbsp;Edit
+                            </a>
+                            <form action="[[getUrl('/HRM/offer_zone'+'/'+offerZone.unitId)]]" method="post" style="display: inline">
+                                <input name="_method" type="hidden" value="DELETE" autocomplete="off">
+                                {!! csrf_field()!!}
+                                <button type="submit" class="btn btn-xs btn-danger">
+                                    <i class="fa fa-close"></i>&nbsp;Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
 
-                </div>
+                </table>
+
             </div>
+        </div>
         </div>
     </section>
 @endsection
