@@ -58,13 +58,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function () {
             Log::info("called : send_offer");
-//            //return;
-            /*$user = env('SSL_USER_ID', 'ansarapi');
-            $pass = env('SSL_PASSWORD', 'x83A7Z96');
-            $sid = env('SSL_SID', 'ANSARVDP');
-            $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";*/
             $offered_ansar = OfferSMS::with(['ansar', 'district'])->where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
-//            Log::info($offered_ansar);
             foreach ($offered_ansar as $offer) {
                 DB::connection('hrm')->beginTransaction();
                 try {
@@ -89,8 +83,8 @@ class Kernel extends ConsoleKernel
                         $offer->sms_status = 'Failed';
                         $offer->save();
                     }
-                    if ($count == $maximum_offer_limit) {
-                        $this->sendSMS($phone, "Et apnaer 3rd offer. Ei offer YES na korle agami 6 mas  ar offer passen na. Sotorko houn");
+                    if ($count == $maximum_offer_limit-1) {
+                        $this->sendSMS($phone, "Et apnaer $maximum_offer_limit no offer. Ei offer YES na korle apni er offer paben na. Sotorko houn");
                     }
                     DB::connection('hrm')->commit();
                 } catch (\Exception $e) {
@@ -125,9 +119,9 @@ class Kernel extends ConsoleKernel
                         $offer->save();
                     }
                     $count = $offer->getOfferCount();
-                    $offer_limit = +GlobalParameterFacades::getValue(GlobalParameter::MAXIMUM_OFFER_LIMIT)-1;
-                    if ($count == $offer_limit) {
-                        $this->sendSMS($phone, "Et apnaer 3rd offer. Ei offer YES na korle agami 6 mas  ar offer passen na. Sotorko houn");
+                    $offer_limit = +GlobalParameterFacades::getValue(GlobalParameter::MAXIMUM_OFFER_LIMIT);
+                    if ($count == $offer_limit-1) {
+                        $this->sendSMS($phone, "Et apnaer $offer_limit no offer. Ei offer YES na korle apni ar offer paben na. Sotorko houn");
                     }
                     DB::connection('hrm')->commit();
                 } catch (\Exception $e) {
@@ -137,6 +131,7 @@ class Kernel extends ConsoleKernel
             }
 
         })->everyMinute()->name("send_failed_offer")->withoutOverlapping();
+
         $schedule->call(function () {
             Log::info("called : offer_cancel");
             $offered_cancel = OfferCancel::where('sms_status', 0)->take(10)->get();
