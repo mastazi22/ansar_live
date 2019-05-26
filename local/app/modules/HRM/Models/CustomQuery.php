@@ -105,7 +105,7 @@ class CustomQuery
                 $query->whereIn('pu.id', $offerZone);
                 $fquery->whereIn('pu.id', $offerZone);
                 $fquery->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
-            } else{
+            } else if(!in_array($exclude_district, Config::get('app.offer'))){
                 $query->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id');
                 $fquery->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id');
                 $query->where('du.id', '=', $exclude_district);
