@@ -1790,7 +1790,8 @@ class CustomQuery
             ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_receive_info.offered_district')
             ->join('tbl_division as od', 'od.id', '=', 'ou.division_id')
             ->where('tbl_sms_receive_info.sms_status', 'ACCEPTED')
-            ->whereBetween('tbl_sms_receive_info.sms_send_datetime', [$next, $now]);
+            ->whereBetween('tbl_sms_receive_info.sms_send_datetime', [$next, $now])
+			->groupBy('tbl_ansar_parsonal_info.ansar_id');
         $ansarQuery2 = DB::table('tbl_ansar_parsonal_info')
             ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
             ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
@@ -1799,7 +1800,8 @@ class CustomQuery
             ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_send_log.offered_district')
             ->join('tbl_division as od', 'od.id', '=', 'ou.division_id')
             ->where('tbl_sms_send_log.reply_type', 'Yes')
-            ->whereBetween('tbl_sms_send_log.offered_date', [$next, $now]);
+            ->whereBetween('tbl_sms_send_log.offered_date', [$next, $now])
+			->groupBy('tbl_ansar_parsonal_info.ansar_id');
         if ($division != 'all') {
             $ansarQuery1->where('od.id', $division);
             $ansarQuery2->where('od.id', $division);
@@ -1831,16 +1833,20 @@ class CustomQuery
                 'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'ou.unit_name_bng as offer_unit', 'tbl_sms_receive_info.sms_send_datetime as offer_date');
             $ansarQuery2->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
                 'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'ou.unit_name_bng as offer_unit', 'tbl_sms_send_log.offered_date as offer_date');
-            $ansars = $ansarQuery1->unionAll($ansarQuery2)->skip($offset)->limit($limit)->get();
-            $t1->groupBy('tbl_designations.id')->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total'), 'tbl_designations.code');
-            $t2->groupBy('tbl_designations.id')->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total'), 'tbl_designations.code');
-            $total = $t1->unionAll($t2);
+            //$ansars = $ansarQuery1->unionAll($ansarQuery2)->groupBy('id')->skip($offset)->limit($limit)->get();
+			$q = $ansarQuery1->unionAll($ansarQuery2);
+			$ansars = DB::table(DB::raw("(".$q->toSql().") as t"))->mergeBindings($q)->groupBy('id')->skip($offset)->limit($limit)->get();
+            $t1->groupBy('tbl_designations.id')->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total'), 'tbl_designations.code','tbl_ansar_parsonal_info.ansar_id');
+            $t2->groupBy('tbl_designations.id')->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total'), 'tbl_designations.code','tbl_ansar_parsonal_info.ansar_id');
+            $tq = $t1->unionAll($t2);
+			$total = DB::table(DB::raw("(".$tq->toSql().") as t"))->mergeBindings($tq)->groupBy('ansar_id');
             return Response::json(['total' => collect($total->get())->groupBy('code'), 'index' => ((ceil($offset / ($limit == 0 ? 1 : $limit))) * $limit) + 1, 'ansars' => $ansars, 'type' => 'offer']);
 
         } else {
-            $ansarQuery1->groupBy('tbl_designations.id')->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total'), 'tbl_designations.code');
-            $ansarQuery2->groupBy('tbl_designations.id')->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total'), 'tbl_designations.code');
-            $total = $ansarQuery1->unionAll($ansarQuery2);
+            $ansarQuery1->groupBy('tbl_designations.id')->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total'), 'tbl_designations.code','tbl_ansar_parsonal_info.ansar_id');
+            $ansarQuery2->groupBy('tbl_designations.id')->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total'), 'tbl_designations.code','tbl_ansar_parsonal_info.ansar_id');
+			$tq = $ansarQuery1->unionAll($ansarQuery2);
+			$total = DB::table(DB::raw("(".$tq->toSql().") as t"))->mergeBindings($tq)->groupBy('ansar_id');
             return Response::json(['total' => collect($total->get())->groupBy('code')]);
         }
 //        return $b;
