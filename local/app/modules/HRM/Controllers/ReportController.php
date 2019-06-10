@@ -677,7 +677,7 @@ class ReportController extends Controller
                 ->where('tbl_sms_send_log.reply_type', 'No Reply')
                 ->select('tbl_ansar_parsonal_info.ansar_name_eng','tbl_units.unit_name_bng','tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.offered_date as sms_send_datetime'))->get();
 
-        $offer_received = DB::table('tbl_sms_receive_info')
+        $offer_received_query = DB::table('tbl_sms_receive_info')
             ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_receive_info.ansar_id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_receive_info.offered_district')
             ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
@@ -693,7 +693,9 @@ class ReportController extends Controller
                 ->where('tbl_units.id', $unit)
                 ->where('tbl_units.division_id', $division)
                 ->where('tbl_sms_send_log.reply_type', 'Yes')
-                ->select('tbl_sms_send_log.offered_date','tbl_ansar_parsonal_info.mobile_no_self','tbl_ansar_parsonal_info.ansar_name_eng','tbl_units.unit_name_bng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.action_date as sms_received_datetime'))->get();
+                ->select('tbl_sms_send_log.offered_date','tbl_ansar_parsonal_info.mobile_no_self','tbl_ansar_parsonal_info.ansar_name_eng','tbl_units.unit_name_bng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.action_date as sms_received_datetime'));
+
+        $offer_received = DB::table(DB::raw("(".$offer_received_query->toSql().") t"))->mergeBinding($offer_received_query)->groupBy('ansar_id')->get();
 
 
         $offer_reject = DB::table('tbl_sms_send_log')
