@@ -695,7 +695,7 @@ class ReportController extends Controller
                 ->where('tbl_sms_send_log.reply_type', 'Yes')
                 ->select('tbl_sms_send_log.offered_date','tbl_ansar_parsonal_info.mobile_no_self','tbl_ansar_parsonal_info.ansar_name_eng','tbl_units.unit_name_bng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.action_date as sms_received_datetime'));
 
-        $offer_received = DB::table(DB::raw("(".$offer_received_query->toSql().") t"))->mergeBinding($offer_received_query)->groupBy('ansar_id')->get();
+        $offer_received = DB::table(DB::raw("(".$offer_received_query->toSql().") t"))->mergeBindings($offer_received_query)->groupBy('ansar_id')->get();
 
 
         $offer_reject = DB::table('tbl_sms_send_log')
