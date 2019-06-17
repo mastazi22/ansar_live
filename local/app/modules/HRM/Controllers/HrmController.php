@@ -242,7 +242,7 @@ class HrmController extends Controller
         } elseif (strcasecmp($type, 'offer_block') == 0) {
             $pageTitle = "Total Offer Blocked";
         }elseif (strcasecmp($type, 'retire_ansar') == 0) {
-            $pageTitle = "Total Retire(Over Aged) Ansar";
+            $pageTitle = "Total Blocked For Aged Ansar";
         }
 
         return View::make('HRM::Dashboard.view_ansar_list')->with(['type' => $type, 'pageTitle' => $pageTitle]);
@@ -278,7 +278,7 @@ class HrmController extends Controller
         }elseif (strcasecmp($type, 'offer_block') == 0) {
             $pageTitle = "Total Offer Blocked(Recent)";
         }elseif (strcasecmp($type, 'retire') == 0) {
-            $pageTitle = "Total Retire(Over Aged) Ansar (Recent)";
+            $pageTitle = "Total Total Blocked For Aged Ansar (Recent)";
         }
         return View::make('HRM::Dashboard.view_recent_ansar_list')->with(['type' => $type, 'pageTitle' => $pageTitle]);
     }

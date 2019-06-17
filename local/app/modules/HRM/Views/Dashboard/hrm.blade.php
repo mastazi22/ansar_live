@@ -567,7 +567,7 @@
             </div>
             <!-- /.info-box -->
         </div>
-        {{--<div class="col-md-3 line-bar-middle col-sm-6 col-xs-12">
+        <div class="col-md-3 line-bar-middle col-sm-6 col-xs-12">
             <div class="info-box bg-aqua"><span class="info-box-icon"><img src="{{asset('dist/img/embodiment2.png')}}"></span>
 
                 <div class="info-box-content">
@@ -590,7 +590,7 @@
             </div>
             <!-- /.info-box -->
 
-        </div>--}}
+        </div>
     </div>
     <!-- /.row -->
     <!-- =========================================================== -->

@@ -175,7 +175,9 @@ class QueryHelper
                     ->where('tbl_ansar_status_info.block_list_status', 0);
                 break;
             case self::RETIRE:
-                $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+                $ansarQuery = DB::table('tbl_ansar_parsonal_info')
+                    ->join('tbl_ansar_retirement_history', 'tbl_ansar_retirement_history.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                    ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
                     ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
                     ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                     ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
