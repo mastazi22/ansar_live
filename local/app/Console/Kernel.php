@@ -553,7 +553,7 @@ class Kernel extends ConsoleKernel
                 }
                 DB::connection('hrm')->commit();
             }catch(\Exception $e){
-                console.log("ansar_block_for_age:".$e->getMessage());
+                Log::info("ansar_block_for_age:".$e->getMessage());
                 DB::connection('hrm')->rollback();
             }
 
