@@ -518,6 +518,7 @@ class Kernel extends ConsoleKernel
             try {
                 $now = \Carbon\Carbon::now();
                 foreach ($ansars as $ansar) {
+                    Log::info("called : Ansar Block For Age-".$ansar->ansar_id);
                     $info = $ansar->ansarInfo;
                     $dob = $info->data_of_birth;
 
