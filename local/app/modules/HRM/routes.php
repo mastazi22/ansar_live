@@ -422,26 +422,31 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
 //End KPI
         Route::post('upload_original_info', ['as' => 'upload_original_info', 'uses' => 'GeneralSettingsController@uploadOriginalInfo']);
         Route::get('upload_original_info', ['as' => 'upload_original_info_view', 'uses' => 'GeneralSettingsController@uploadOriginalInfoView']);
-        Route::get('test/{s}/{l}', function ($s,$l) {
-            $panel_ansars = PanelModel::with(['ansarInfo'=>function($q){
-                $q->with('designation')->select('ansar_id','designation_id','division_id','unit_id');
-            }])->orderBy('panel_date','asc')->skip($s)->take($l)->get();
-            //$regional_ansars = collect($panel_ansars)->groupBy('ansarInfo.division_id');
-            $global_position = PanelModel::orderBy('global_position','desc')->first()->global_position+1;
-//            return $global_position;
-            foreach ($panel_ansars as $panel_ansar){
-                $panel_ansar->global_position = $global_position++;
-                $panel_ansar->save();
-            }
-//            foreach ($regional_ansars as $key=>$values){
-//                $regional_position = 1;
-//                foreach ($values as $panel_ansar){
-//                    $panel_ansar->regional_position = $regional_position++;
-//
-//                    $panel_ansar->save();
-//                }
-//            }
-            return "panel position updated successfully";
+        Route::any('test', function (\Illuminate\Http\Request $request) {
+
+                if(!strcasecmp($request->method(),"get")){
+                    return view("HRM::bank.upload_ansar_avub_share_id");
+                }else if(!strcasecmp($request->method(),"post")){
+                    $file = $request->file("shareIdFile");
+                    $result = [];
+                    \Maatwebsite\Excel\Facades\Excel::load($file,function($reader) use(&$result){
+                       $result = collect($reader->limitColumns(2)->first())->toArray();
+                    });
+                    ob_implicit_flush(true);
+                    ob_end_flush();
+                    echo "Start Processing....</br>";
+                    $i=1;
+                    foreach($result as $r){
+                        echo "processed {$i}:{$r[1]}:{$r[0]}</br>";
+                        $ansar = \App\modules\HRM\Models\PersonalInfo::where('ansar_id',$r[1])->first();
+                        if($ansar){
+                            $ansar->avub_share_id = $r[0];
+                            $ansar->save();
+                        }
+                        $i++;
+                    }
+                    return $result;
+                }
         });
 //        Route::get('upload_union', function () {
 //            $datas = \Maatwebsite\Excel\Facades\Excel::Load(storage_path('union_name.xlsx'), function ($e) {
