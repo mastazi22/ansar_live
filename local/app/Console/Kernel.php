@@ -511,7 +511,7 @@ class Kernel extends ConsoleKernel
             })->with(['ansarInfo'=>function($q){
                 $q->select('ansar_id','data_of_birth','designation_id');
                 $q->with(['designation','status']);
-            }])->take(2000)->get();
+            }])->take(500)->get();
 //            return $ansars;
             $a = [];
             DB::connection('hrm')->beginTransaction();
@@ -558,7 +558,7 @@ class Kernel extends ConsoleKernel
             }
 
 
-        })->everyMinute()->name("ansar_block_for_age")->withoutOverlapping();
+        })->everyMinute()->name("ansar_block_for_age1")->withoutOverlapping();
 
     }
 }
