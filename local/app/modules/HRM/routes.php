@@ -449,62 +449,62 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
                     return $result;
                 }
         });
-        Route::get('block_for_age', function () {
-            Log::info("called : Ansar Block For Age");
-            $ansars = PanelModel::whereHas('ansarInfo.status',function ($q){
-                $q->where('block_list_status',0);
-                $q->where('pannel_status',1);
-                $q->where('black_list_status',0);
-            })->with(['ansarInfo'=>function($q){
-                $q->select('ansar_id','data_of_birth','designation_id');
-                $q->with(['designation','status']);
-            }])->take(500)->get();
-//            return $ansars;
-            $a = [];
-            DB::connection('hrm')->beginTransaction();
-            try {
-                $now = \Carbon\Carbon::now();
-                foreach ($ansars as $ansar) {
-                    echo("called : Ansar Block For Age-".$ansar->ansar_id);
-                    $info = $ansar->ansarInfo;
-                    $dob = $info->data_of_birth;
-
-                    $age = \Carbon\Carbon::parse($dob)->diff($now, true);
-                    $ansarRe = GlobalParameterFacades::getValue('retirement_age_ansar') - 3;
-                    $pcApcRe = GlobalParameterFacades::getValue('retirement_age_pc_apc') - 3;
-                    if ($info->designation->code == "ANSAR" && ($age->y >= $ansarRe&&($age->m>0||$age->d>0))) {
-                        $info->status->update([
-                            'pannel_status' => 0,
-                            'retierment_status' => 1
-                        ]);
-                        $info->retireHistory()->create([
-                            'retire_from'=>'panel',
-                            'retire_date'=>$now->format('Y-m-d')
-                        ]);
-                        $ansar->saveLog('Retire', null, 'over aged');
-                        $ansar->delete();
-                    } else if (($info->designation->code == "PC" || $info->designation->code == "APC") && ($age->y >= $pcApcRe&&($age->m>0||$age->d>0))) {
-                        $info->status->update([
-                            'pannel_status' => 0,
-                            'retierment_status' => 1
-                        ]);
-                        $info->retireHistory()->create([
-                            'retire_from'=>'panel',
-                            'retire_date'=>$now->format('Y-m-d')
-                        ]);
-                        $ansar->saveLog('Retire', null, 'over aged');
-                        $ansar->delete();
-                    }
-
-                    //array_push($a, ['ansar_id' => $ansar->ansar_id, 'age' => $age, 'status' => $info->status->getStatus()]);
-
-                }
-                DB::connection('hrm')->commit();
-            }catch(\Exception $e){
-                Log::info("ansar_block_for_age:".$e->getMessage());
-                DB::connection('hrm')->rollback();
-            }
-        });
+//        Route::get('block_for_age', function () {
+//            Log::info("called : Ansar Block For Age");
+//            $ansars = PanelModel::whereHas('ansarInfo.status',function ($q){
+//                $q->where('block_list_status',0);
+//                $q->where('pannel_status',1);
+//                $q->where('black_list_status',0);
+//            })->with(['ansarInfo'=>function($q){
+//                $q->select('ansar_id','data_of_birth','designation_id');
+//                $q->with(['designation','status']);
+//            }])->take(500)->get();
+////            return $ansars;
+//            $a = [];
+//            DB::connection('hrm')->beginTransaction();
+//            try {
+//                $now = \Carbon\Carbon::now();
+//                foreach ($ansars as $ansar) {
+//                    echo("called : Ansar Block For Age-".$ansar->ansar_id);
+//                    $info = $ansar->ansarInfo;
+//                    $dob = $info->data_of_birth;
+//
+//                    $age = \Carbon\Carbon::parse($dob)->diff($now, true);
+//                    $ansarRe = GlobalParameterFacades::getValue('retirement_age_ansar') - 3;
+//                    $pcApcRe = GlobalParameterFacades::getValue('retirement_age_pc_apc') - 3;
+//                    if ($info->designation->code == "ANSAR" && ($age->y >= $ansarRe&&($age->m>0||$age->d>0))) {
+//                        $info->status->update([
+//                            'pannel_status' => 0,
+//                            'retierment_status' => 1
+//                        ]);
+//                        $info->retireHistory()->create([
+//                            'retire_from'=>'panel',
+//                            'retire_date'=>$now->format('Y-m-d')
+//                        ]);
+//                        $ansar->saveLog('Retire', null, 'over aged');
+//                        $ansar->delete();
+//                    } else if (($info->designation->code == "PC" || $info->designation->code == "APC") && ($age->y >= $pcApcRe&&($age->m>0||$age->d>0))) {
+//                        $info->status->update([
+//                            'pannel_status' => 0,
+//                            'retierment_status' => 1
+//                        ]);
+//                        $info->retireHistory()->create([
+//                            'retire_from'=>'panel',
+//                            'retire_date'=>$now->format('Y-m-d')
+//                        ]);
+//                        $ansar->saveLog('Retire', null, 'over aged');
+//                        $ansar->delete();
+//                    }
+//
+//                    //array_push($a, ['ansar_id' => $ansar->ansar_id, 'age' => $age, 'status' => $info->status->getStatus()]);
+//
+//                }
+//                DB::connection('hrm')->commit();
+//            }catch(\Exception $e){
+//                Log::info("ansar_block_for_age:".$e->getMessage());
+//                DB::connection('hrm')->rollback();
+//            }
+//        });
         Route::resource('retire_ansar_management','RetireAnsarManagementController',['only'=>['index','update']]);
 
         Route::any('/bulk-upload-bank-info', ['as' => "bulk_upload_bank_file", 'uses' => "EntryFormController@bulkUploadBankInfo"]);
