@@ -559,7 +559,7 @@ class Kernel extends ConsoleKernel
             }
 
 
-        })->everyMinute()->name("ansar_block_for_age1")->withoutOverlapping();
+        })->everyMinute()->name("ansar_block_for_age2")->withoutOverlapping();
 
     }
 }
