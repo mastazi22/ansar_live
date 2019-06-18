@@ -56,8 +56,8 @@ class BlockForAge extends Job implements ShouldQueue
                 $age = \Carbon\Carbon::parse($dob)->diff($now, true);
                 $ansarRe = GlobalParameterFacades::getValue('retirement_age_ansar') - 3;
                 $pcApcRe = GlobalParameterFacades::getValue('retirement_age_pc_apc') - 3;
-                Log::info("called : Ansar Block For Age-".$ansar->ansar_id."Age:".$age->y."year ".$age->m."month ".$age->d." days");
-                if ($info->designation->code == "ANSAR" && ($age->y >= $ansarRe&&($age->m>0||$age->d>0))) {
+//                Log::info("called : Ansar Block For Age-".$ansar->ansar_id."Age:".$age->y."year ".$age->m."month ".$age->d." days");
+                if ($info->designation->code == "ANSAR" && (($age->y >= $ansarRe&&($age->m>0||$age->d>0))||$age->y > $ansarRe)) {
                     $info->status->update([
                         'pannel_status' => 0,
                         'retierment_status' => 1
@@ -68,7 +68,7 @@ class BlockForAge extends Job implements ShouldQueue
                     ]);
                     $ansar->saveLog('Retire', null, 'over aged');
                     $ansar->delete();
-                } else if (($info->designation->code == "PC" || $info->designation->code == "APC") && ($age->y >= $pcApcRe&&($age->m>0||$age->d>0))) {
+                } else if (($info->designation->code == "PC" || $info->designation->code == "APC") && (($age->y >= $pcApcRe&&($age->m>0||$age->d>0))||$age->y > $pcApcRe)) {
                     $info->status->update([
                         'pannel_status' => 0,
                         'retierment_status' => 1

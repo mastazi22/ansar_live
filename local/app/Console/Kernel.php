@@ -504,12 +504,13 @@ class Kernel extends ConsoleKernel
 //
 //        })->everyThirtyMinutes()->name("offer_block_to_panel_6_month")->withoutOverlapping();
         $schedule->call(function () {
-            Log::info("called : Ansar Block For Age");
+
             $count = PanelModel::whereHas('ansarInfo.status',function ($q){
                 $q->where('block_list_status',0);
                 $q->where('pannel_status',1);
                 $q->where('black_list_status',0);
             })->count();
+            Log::info("called : Ansar Block For Age".$count);
             for($i=0;$i<$count;$i+=500){
                 dispatch(new BlockForAge($i));
             }
