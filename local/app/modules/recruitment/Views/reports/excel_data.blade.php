@@ -6,7 +6,7 @@
         @endif
         <th>Applicant Name</th>
         @if($ctype=='other')
-            {{--<th>Roll No</th>--}}
+            <th>Roll No</th>
             <th>Signature</th>
             <th>Comment</th>
         @endif
@@ -54,7 +54,7 @@
                 @endif
                 <td>{{$a->applicant_name_bng}}</td>
                 @if($ctype=='other')
-                    {{--<th>{{$a->roll_no}}</th>--}}
+                    <th>{{$a->roll_no}}</th>
                     <th>--</th>
                     <th>--</th>
                 @endif
