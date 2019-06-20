@@ -6,10 +6,10 @@
 @endsection
 @section('content')
     <script>
-        $(document).ready(function () {
-            $('#r_date').datepicker({                dateFormat:'dd-M-yy'            })();
-            $('#j_date').datepicker({                dateFormat:'dd-M-yy'            })();
-        })
+//        $(document).ready(function () {
+//            $('#r_date').datepicker({                dateFormat:'dd-M-yy'            })();
+//            $('#j_date').datepicker({                dateFormat:'dd-M-yy'            })();
+//        })
         GlobalApp.controller('DirectEmbodimentController', function ($scope,$http) {
             $scope.ansarId = "";
             $scope.r_date = "";
@@ -79,12 +79,12 @@
                             </div>
                             <div class="form-group">
                                 <label for="r_date" class="control-label">Reporting Date</label>
-                                <input type="text" name="reporting_date" id="r_date" class="form-control" ng-model="r_date">
+                                <input type="text" date-picker name="reporting_date" id="r_date" class="form-control" ng-model="r_date">
                                 <p class="text text-danger" ng-if="errors.reporting_date!=undefined&&errors.reporting_date[0]">[[errors.reporting_date[0] ]]</p>
                             </div>
                             <div class="form-group">
                                 <label for="j_date" class="control-label">Joining Date</label>
-                                <input type="text" name="joining_date" id="j_date" class="form-control" ng-model="j_date">
+                                <input type="text" date-picker name="joining_date" id="j_date" class="form-control" ng-model="j_date">
                                 <p class="text text-danger" ng-if="errors.joining_date!=undefined&&errors.joining_date[0]">[[errors.joining_date[0] ]]</p>
                             </div>
                                 <filter-template
