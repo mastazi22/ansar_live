@@ -210,6 +210,20 @@ class ApplicantReportsController extends Controller
                 });
             })->download('xls');
         }
+        else if($category_type=="other"||!$category_type) {
+            Excel::create('applicant_list(' . $request->status . ')', function ($excel) use ($applicants, $request, $category_type) {
+
+                $excel->sheet('sheet1', function ($sheet) use ($applicants, $request, $category_type) {
+                    $sheet->setColumnFormat(array(
+                        'G' => '@'
+                    ));
+                    $sheet->setAutoSize(false);
+                    $sheet->setWidth('A', 5);
+                    $sheet->loadView('recruitment::reports.excel_data', ['index' => ((intval($request->page) - 1) * 300) + 1, 'applicants' => $applicants->skip((intval($request->page) - 1) * 300)->limit(300)->get(), 'status' => $request->status, 'ctype' => $category_type]);
+                });
+            })->save('xls',public_path(),true);
+            return response()->json(['status'=>true,'message'=>'applicant_list(' . $request->status . ')']);
+        }
         else{
             $unit = "";
             $range = "";

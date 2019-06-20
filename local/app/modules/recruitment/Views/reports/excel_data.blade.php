@@ -5,6 +5,11 @@
             <th>Ansar ID</th>
         @endif
         <th>Applicant Name</th>
+        @if($ctype=='other')
+            {{--<th>Roll No</th>--}}
+            <th>Signature</th>
+            <th>Comment</th>
+        @endif
         <th>Applicant ID</th>
         <th>Father Name</th>
         <th>Mother Name</th>
@@ -41,12 +46,18 @@
 
     @if(count($applicants))
         @foreach($applicants as $a)
+            <?php $pic =$a->profile_pic ?>
             <tr>
                 <td style="width: 10px">{{($index++).''}}</td>
                 @if($ctype=='apc_training')
                     <td>{{$a->ansar_id}}</td>
                 @endif
                 <td>{{$a->applicant_name_bng}}</td>
+                @if($ctype=='other')
+                    {{--<th>{{$a->roll_no}}</th>--}}
+                    <th>--</th>
+                    <th>--</th>
+                @endif
                 <td>{{$a->applicant_id}}</td>
                 <td>{{$a->father_name_bng}}</td>
                 <td>{{$a->mother_name_bng}}</td>
@@ -77,7 +88,7 @@
                     <td>{{$a->marks->written+$a->marks->viva+$a->marks->physical+$a->marks->edu_training+$a->marks->physical_age}}</td>
                 @endif
                 <td>{{$a->status}}</td>
-				<td><img src="{{$a->profile_pic}}" width="100" height="100"></td>
+				<td>@if($pic&&file_exists($pic)&&getimagesize($pic))<img src="{{$pic}}" width="100" height="100">@endif</td>
             </tr>
         @endforeach
     @else
