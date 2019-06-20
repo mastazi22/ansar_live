@@ -91,8 +91,13 @@
                             ll = 0;
                             scope.param.progressText = ""
                             console.log(response);
-                            console.log(response.match(/{.+}/g))
-                            var p = JSON.parse(response.match(/{.+}/g)[0])
+                            var p
+                            try{
+                                console.log(response.match(/{.+}/g))
+                                var p = JSON.parse(response.match(/{.+}/g)[0])
+                            }catch(e){
+                                p = response;
+                            }
                             if(p.status){
                                 window.location = '{{URL::route('report.download')}}?file_name='+p.message
                             }
