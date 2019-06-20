@@ -54,9 +54,9 @@
                 @endif
                 <td>{{$a->applicant_name_bng}}</td>
                 @if($ctype=='other')
-                    <th>{{$a->roll_no}}</th>
-                    <th>--</th>
-                    <th>--</th>
+                    <td>{{$a->roll_no}}</td>
+                    <td>--</td>
+                    <td>--</td>
                 @endif
                 <td>{{$a->applicant_id}}</td>
                 <td>{{$a->father_name_bng}}</td>
