@@ -182,7 +182,8 @@ class ApplicantReportsController extends Controller
             'page'=>'regex:/^[0-9]+$/'
         ];
         $this->validate($request,$rules);
-        $category_type = JobCircular::find($request->circular)->category->category_type;
+        $circular = JobCircular::find($request->circular);
+        $category_type = $circular->category->category_type;
 //        return $category_type;
         $applicants = JobAppliciant::with(['division','district','thana','marks'])->where('status',$request->status)
             ->where('job_circular_id',$request->circular);
@@ -197,32 +198,99 @@ class ApplicantReportsController extends Controller
         }
 //        return ();
 //        return view('recruitment::reports.excel_data_batt', ['index' => 1, 'applicants' => $applicants->skip(0)->limit(300)->get(), 'status' => $request->status, 'ctype' => $category_type]);
-        if($request->exists('page')) {
-            Excel::create('applicant_list(' . $request->status . ')', function ($excel) use ($applicants, $request, $category_type) {
+        if(!$category_type){
+            if($request->exists('page')) {
+                Excel::create('applicant_list(' . $request->status . ')', function ($excel) use ($applicants, $request, $category_type) {
 
-                $excel->sheet('sheet1', function ($sheet) use ($applicants, $request, $category_type) {
-                    $sheet->setColumnFormat(array(
-                        'G' => '@'
-                    ));
-                    $sheet->setAutoSize(false);
-                    $sheet->setWidth('A', 5);
-                    $sheet->loadView('recruitment::reports.excel_data', ['index' => ((intval($request->page) - 1) * 300) + 1, 'applicants' => $applicants->skip((intval($request->page) - 1) * 300)->limit(300)->get(), 'status' => $request->status, 'ctype' => $category_type]);
-                });
-            })->download('xls');
+                    $excel->sheet('sheet1', function ($sheet) use ($applicants, $request, $category_type) {
+                        $sheet->setColumnFormat(array(
+                            'G' => '@'
+                        ));
+                        $sheet->setAutoSize(false);
+                        $sheet->setWidth('A', 5);
+                        $sheet->loadView('recruitment::reports.excel_data', ['index' => ((intval($request->page) - 1) * 300) + 1, 'applicants' => $applicants->skip((intval($request->page) - 1) * 300)->limit(300)->get(), 'status' => $request->status, 'ctype' => $category_type]);
+                    });
+                })->download('xls');
+            }
         }
         else if($category_type=="other"||!$category_type) {
-            Excel::create('applicant_list(' . $request->status . ')', function ($excel) use ($applicants, $request, $category_type) {
+            if($request->exists('page')) {
+                Excel::create($circular->circular_name, function ($excel) use ($applicants, $request, $category_type) {
 
-                $excel->sheet('sheet1', function ($sheet) use ($applicants, $request, $category_type) {
-                    $sheet->setColumnFormat(array(
-                        'G' => '@'
-                    ));
-                    $sheet->setAutoSize(false);
-                    $sheet->setWidth('A', 5);
-                    $sheet->loadView('recruitment::reports.excel_data', ['index' => 1, 'applicants' => $applicants->skip((intval($request->page) - 1) * 300)->limit(300)->get(), 'status' => $request->status, 'ctype' => $category_type]);
-                });
-            })->save('xls',public_path(),true);
-            return response()->json(['status'=>true,'message'=>'applicant_list(' . $request->status . ').xls']);
+                    $excel->sheet('sheet1', function ($sheet) use ($applicants, $request, $category_type) {
+                        $sheet->setColumnFormat(array(
+                            'G' => '@'
+                        ));
+                        $sheet->setAutoSize(false);
+                        $sheet->setWidth('A', 5);
+                        $sheet->loadView('recruitment::reports.excel_data', ['index' => ((intval($request->page) - 1) * 300) + 1, 'applicants' => $applicants->skip((intval($request->page) - 1) * 300)->limit(300)->get(), 'status' => $request->status, 'ctype' => $category_type]);
+                    });
+                })->download('xls');
+            }
+            else{
+                $unit = "";
+                $range = "";
+                if($request->exists('unit')&&$request->unit!='all'){
+                    $unit = District::find($request->unit);
+                }if($request->exists('range')&&$request->range!='all'){
+                    $range = Division::find($request->range);
+                }
+                try{
+                    ob_implicit_flush(true);
+                    ob_end_flush();
+                    echo "Start Processing....";
+                    $c = $applicants->get()->groupBy('unit_id');
+                    $total = count($c);
+
+                    $counter = 1;
+                    $file_path = storage_path('exports');
+                    if (!File::exists($file_path)) File::makeDirectory($file_path);
+                    $files = [];
+                    $c->each(function ($applicant_list,$key) use ($category_type, $request, $total, &$counter, $file_path, &$files,$circular) {
+                        sleep(1);
+                        $file = Excel::create($circular->circular_name, function ($excel) use ($applicant_list, $request, $category_type) {
+
+                            $excel->sheet('sheet1', function ($sheet) use ($applicant_list, $request, $category_type) {
+                                $sheet->setColumnFormat(array(
+                                    'G' => '@'
+                                ));
+                                $sheet->setAutoSize(false);
+                                $sheet->setWidth('A', 5);
+                                $sheet->loadView('recruitment::reports.excel_data_other', ['index' => 1, 'applicants' => $applicant_list, 'status' => $request->status, 'ctype' => $category_type]);
+                            });
+                        })->save('xls',public_path(),true);
+                        array_push($files, $file);
+                        echo "Processed $counter of $total";
+                        $counter++;
+
+                    });
+                    if($range){
+                        $zip_archive_name = $range->division_name_eng . time() . ".zip";
+                    }
+                    else if ($unit){
+                        $zip_archive_name = $unit->unit_name_eng . time() . ".zip";
+                    }
+                    else{
+                        $zip_archive_name = "applicant_list" . time() . ".zip";
+                    }
+                    $zip = new \ZipArchive();
+                    if ($zip->open(public_path($zip_archive_name), \ZipArchive::CREATE) === true) {
+                        foreach ($files as $file) {
+                            $zip->addFile($file["full"], $file["file"]);
+                        }
+                        $zip->close();
+                    } else {
+                        throw new \Exception("Can`t create file");
+                    }
+                    foreach ($files as $file) {
+                        unlink($file["full"]);
+                    }
+                    return response()->json(['status'=>true,'message'=>$zip_archive_name]);
+                }catch(\Exception $e){
+
+                    return response()->json(['status'=>false,'message'=>$e->getMessage()]);
+                }
+            }
         }
         else{
             $unit = "";

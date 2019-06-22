@@ -35,6 +35,10 @@ class JobAppliciant extends Model
     {
         return $this->belongsTo(Division::class, 'division_id');
     }
+    public function present_division()
+    {
+        return $this->belongsTo(Division::class, 'present_division_id');
+    }
     public function govQuota()
     {
         return $this->hasOne(JobGovQuota::class, 'job_applicant_id');
@@ -44,10 +48,18 @@ class JobAppliciant extends Model
     {
         return $this->belongsTo(District::class, 'unit_id');
     }
+    public function present_district()
+    {
+        return $this->belongsTo(District::class, 'present_unit_id');
+    }
 
     public function thana()
     {
         return $this->belongsTo(Thana::class, 'thana_id');
+    }
+    public function present_thana()
+    {
+        return $this->belongsTo(Thana::class, 'present_thana_id');
     }
 
     public function appliciantEducationInfo()
