@@ -248,7 +248,8 @@ class ApplicantReportsController extends Controller
                     $files = [];
                     $c->each(function ($applicant_list,$key) use ($category_type, $request, $total, &$counter, $file_path, &$files,$circular) {
                         sleep(1);
-                        $file = Excel::create('applicant_list_' . $counter, function ($excel) use ($applicant_list, $request, $category_type) {
+                        $file_name = District::find($key)->unit_name_eng;
+                        $file = Excel::create($file_name, function ($excel) use ($applicant_list, $request, $category_type) {
 
                             $excel->sheet('sheet1', function ($sheet) use ($applicant_list, $request, $category_type) {
                                 $sheet->setColumnFormat(array(
