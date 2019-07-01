@@ -155,9 +155,7 @@
         function sum(t){
             var s = 0;
             for(var i in t){
-                for(var j =0 ;j<t[i].length;j++){
-                    s = parseInt(s)+ parseInt(t[i][j].total);
-                }
+                s+= t[i].length;
             }
             return s;
         }
