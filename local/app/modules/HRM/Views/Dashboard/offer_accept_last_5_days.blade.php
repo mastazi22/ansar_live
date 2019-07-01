@@ -98,11 +98,8 @@
                 $scope.gCount = [];
                 var s = 0;
                 for(var i in t){
-                    $scope.gCount[i] = 0;
-                    for(var j =0 ;j<t[i].length;j++){
-                        s += parseInt(t[i][j].total);
-                        $scope.gCount[i] += parseInt(t[i][j].total);
-                    }
+                    $scope.gCount[i] = t[i].length;
+                    s+= t[i].length;
                 }
                 return s;
             }

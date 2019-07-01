@@ -1840,6 +1840,7 @@ class CustomQuery
             $t2->groupBy('tbl_designations.id')->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total'), 'tbl_designations.code','tbl_ansar_parsonal_info.ansar_id');
             $tq = $t1->unionAll($t2);
 			$total = DB::table(DB::raw("(".$tq->toSql().") as t"))->mergeBindings($tq)->groupBy('ansar_id');
+//			return $total->get();
             return Response::json(['total' => collect($total->get())->groupBy('code'), 'index' => ((ceil($offset / ($limit == 0 ? 1 : $limit))) * $limit) + 1, 'ansars' => $ansars, 'type' => 'offer']);
 
         } else {
