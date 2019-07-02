@@ -239,7 +239,7 @@ class ApplicantReportsController extends Controller
                         $sheet->loadView('recruitment::reports.excel_data_other', ['index' => 1, 'applicants' => $applicants->get(), 'status' => $request->status, 'ctype' => $category_type]);
                     });
                 })->save('xls',$file_name,true);
-                return response()->json(['status'=>true,'message'=>$circular->circular_name.".xls"]);
+                return response()->json(['status'=>true,'message'=>str_replace("/","",implode("_",explode(" ",$circular->circular_name))).".xls"]);
             }
             else{
                 $unit = "";
