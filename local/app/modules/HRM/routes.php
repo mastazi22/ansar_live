@@ -454,11 +454,12 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
 
             DB::connection('hrm')->beginTransaction();
             try {
-                $ansars = \App\modules\HRM\Models\SmsReceiveInfoModel::whereIn('ansar_id',[4354,20172,24046,26377,35415]);
-                $s_ansar = \App\modules\HRM\Models\AnsarStatusInfo::whereIn('ansar_id',[4354,20172,24046,26377,35415]);
-                $p_ansars = \App\modules\HRM\Models\PanelInfoLogModel::whereIn('ansar_id',[4354,20172,24046,26377,35415])->groupBy('ansar_id')->orderBy('panel_date','desc')->get();
+                $ansars = \App\modules\HRM\Models\SmsReceiveInfoModel::whereIn('ansar_id',[2987, 11146, 14747, 16059, 31927, 45981, 50300, 62734, 67475])->get();
+                $s_ansar = \App\modules\HRM\Models\AnsarStatusInfo::whereIn('ansar_id',[2987, 11146, 14747, 16059, 31927, 45981, 50300, 62734, 67475])->get();
+                $p_ansars = \App\modules\HRM\Models\PanelInfoLogModel::whereIn('ansar_id',[2987, 11146, 14747, 16059, 31927, 45981, 50300, 62734, 67475])->groupBy('ansar_id')->orderBy('panel_date','desc')->get();
                 foreach ($p_ansars as $id){
-
+                    $p = PanelModel::where('ansar_id',$id->ansar_id);
+                    if($p->exists()) continue;
                     $panel_entry = new PanelModel;
                     $panel_entry->ansar_id = $id->ansar_id;
                     $panel_entry->come_from = "Offer";
