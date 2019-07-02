@@ -477,6 +477,51 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
                 foreach ($ansars as $id){
 
                     $id->saveLog();
+                    $id->delete();
+                }
+                echo "done!!!";
+                DB::connection('hrm')->commit();
+            }catch(\Exception $e){
+                Log::info("ansar_block_for_age:".$e->getMessage());
+                DB::connection('hrm')->rollback();
+            }
+        });
+        Route::get('manual_panel_to_rest', function () {
+            echo "manual_panel_to_rest<br>";
+
+            DB::connection('hrm')->beginTransaction();
+            try {
+                $ansars = \App\modules\HRM\Models\RestInfoLogModel::whereRaw("TIMESTAMPDIFF(MONTH,`tbl_rest_info_log`.`rest_date`,`tbl_rest_info_log`.`move_date`)=3 AND move_to = 'Panel' AND YEAR(created_at) = 2019")->get();
+                foreach ($ansars as $ansar){
+                    $rd = \Carbon\Carbon::parse($ansar->rest_date);
+                    echo $ansar->rest_date."   ".\Carbon\Carbon::now()."<br>";
+                    echo "ansar-id:".$ansar->ansar_id."   diff".$rd->diffInMonths(\Carbon\Carbon::now(),true)."<br>";
+                    if($rd->diffInMonths(\Carbon\Carbon::now(),true)>=6){
+
+                        continue;
+                    }
+                    $panel_entry = PanelModel::where('ansar_id',$ansar->ansar_id)->where('come_from','Rest')->first();
+                    if($panel_entry){
+                        $panel_entry->saveLog("Rest",\Carbon\Carbon::now(),"manual move to rest on request made by russel ahmed");
+                        $panel_entry->delete();
+                        $status = \App\modules\HRM\Models\AnsarStatusInfo::where('ansar_id',$ansar->ansar_id)->first();
+                        $status->pannel_status = 0;
+                        $status->rest_status = 1;
+                        $status->save();
+                        $r = new \App\modules\HRM\Models\RestInfoModel;
+                        $r->ansar_id = $ansar->ansar_id;
+                        $r->rest_date = $ansar->rest_date;
+                        $r->active_date = $rd->addMonths(6);
+                        $r->disembodiment_reason_id = $ansar->disembodiment_reason_id;
+                        $r->total_service_days = $ansar->total_service_days;
+                        $r->rest_form = $ansar->rest_type;
+                        $r->comment = $ansar->comment;
+                        $r->memorandum_id = $ansar->old_memorandum_id;
+                        $r->action_user_id = $ansar->action_user_id;
+                        $r->old_embodiment_id = $ansar->old_embodiment_id;
+                        $r->save();
+                        echo "done!!!!!!!!!!!<br>";
+                    }
                 }
                 echo "done!!!";
                 DB::connection('hrm')->commit();
