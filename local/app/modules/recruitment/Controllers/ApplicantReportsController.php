@@ -228,7 +228,7 @@ class ApplicantReportsController extends Controller
                 })->download('xls');
             } else if($applicants->count()<=5000){
                 $file_name = public_path();
-                Excel::create(addcslashes(implode("_",explode(" ",$circular->circular_name)),"/"), function ($excel) use ($applicants, $request, $category_type) {
+                Excel::create(str_replace("/","",implode("_",explode(" ",$circular->circular_name))), function ($excel) use ($applicants, $request, $category_type) {
 
                     $excel->sheet('sheet1', function ($sheet) use ($applicants, $request, $category_type) {
                         $sheet->setColumnFormat(array(
