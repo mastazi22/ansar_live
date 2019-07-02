@@ -44,7 +44,7 @@
                 <td>{{$a->mother_name_bng}}</td>
                 <td>{{$a->date_of_birth}}</td>
                 <td>{{$a->national_id_no}}</td>
-                <td>{{$a->sex}}</td>
+                <td>{{$a->gender}}</td>
                 <td>{{$a->present_division->division_name_bng}}</td>
                 <td>{{$a->present_district->unit_name_bng}}</td>
                 <td>{{$a->present_thana->thana_name_bng}}</td>

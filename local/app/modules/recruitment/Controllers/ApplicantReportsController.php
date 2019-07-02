@@ -226,6 +226,20 @@ class ApplicantReportsController extends Controller
                         $sheet->loadView('recruitment::reports.excel_data', ['index' => ((intval($request->page) - 1) * 300) + 1, 'applicants' => $applicants->skip((intval($request->page) - 1) * 300)->limit(300)->get(), 'status' => $request->status, 'ctype' => $category_type]);
                     });
                 })->download('xls');
+            } else if($applicants->count()<=5000){
+                $file_name = public_path();
+                Excel::create($circular->circular_name, function ($excel) use ($applicants, $request, $category_type) {
+
+                    $excel->sheet('sheet1', function ($sheet) use ($applicants, $request, $category_type) {
+                        $sheet->setColumnFormat(array(
+                            'G' => '@'
+                        ));
+                        $sheet->setAutoSize(false);
+                        $sheet->setWidth('A', 5);
+                        $sheet->loadView('recruitment::reports.excel_data_other', ['index' => 1, 'applicants' => $applicants->get(), 'status' => $request->status, 'ctype' => $category_type]);
+                    });
+                })->save('xls',$file_name,true);
+                return response()->json(['status'=>true,'message'=>$circular->circular_name.".xls"]);
             }
             else{
                 $unit = "";
