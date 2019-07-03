@@ -1,5 +1,5 @@
 @extends('template.master')
-@section('title','Total number of Ansars who accept the offer within last 5 days')
+@section('title','Total number of Ansars who have currently accepted the offer')
 {{--@section('small_title',ucfirst(implode(' ',explode('_',$type))))--}}
 {{--@section('small_title', $pageTitle)--}}
 @section('breadcrumb')
