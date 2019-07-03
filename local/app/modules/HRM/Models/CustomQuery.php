@@ -729,38 +729,53 @@ class CustomQuery
     {
         DB::enableQueryLog();
         $ansarQuery = QueryHelper::getQuery(QueryHelper::OFFER);
+
         $ansarQuery1 = QueryHelper::getQuery(QueryHelper::OFFER_RECEIVED);
         if ($rank != 'all') {
             $ansarQuery->where('tbl_designations.id', $rank);
-            $ansarQuery1->where('tbl_designations.id', $rank);
+
+//            $ansarQuery1->where('tbl_designations.id', $rank);
         }
         if ($division && $division != 'all') {
             $ansarQuery->where('ou.division_id', $division);
-            $ansarQuery1->where('ou.division_id', $division);
+
+//            $ansarQuery1->where('ou.division_id', $division);
         }
         if ($unit != 'all') {
             $ansarQuery->where('ou.id', $unit);
-            $ansarQuery1->where('ou.id', $unit);
+
+//            $ansarQuery1->where('ou.id', $unit);
         }
         if ($time == self::RECENT) {
             $recentTime = Carbon::now();
             $backTime = Carbon::now()->subDays(7);
             $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
-            $ansarQuery1->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
+
+//            $ansarQuery1->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
         }
         if ($q) {
             $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
-            $ansarQuery1->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+
+//            $ansarQuery1->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
         }
         $total = clone $ansarQuery;
-        $total1 = clone $ansarQuery1;
+
+//        $total1 = clone $ansarQuery1;
+
         $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_sms_offer_info.sms_send_datetime', 'ou.unit_name_eng as offer_unit');
-        $ansarQuery1->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_sms_receive_info.sms_send_datetime', 'ou.unit_name_eng as offer_unit');
+
+//        $ansarQuery1->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_sms_receive_info.sms_send_datetime', 'ou.unit_name_eng as offer_unit');
+
         $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
-        $total1->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
-        $ansars = $ansarQuery->unionAll($ansarQuery1)->distinct()->skip($offset)->limit($limit)->get();
-        $t = DB::table(DB::raw("({$total->unionAll($total1)->toSql()}) x"))->mergeBindings($total)->select(DB::raw('SUM(t) as t,code'))->groupBy('code')->get();
-        return ['total' => collect($t)->pluck('t', 'code'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'offer'];
+
+//        $total1->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+//        $ansars = $ansarQuery->unionAll($ansarQuery1)->distinct()->skip($offset)->limit($limit)->get();
+
+        $ansars = $ansarQuery->orderBy('tbl_sms_offer_info.sms_send_datetime')->skip($offset)->limit($limit)->get();
+
+//        $t = DB::table(DB::raw("({$total->unionAll($total1)->toSql()}) x"))->mergeBindings($total)->select(DB::raw('SUM(t) as t,code'))->groupBy('code')->get();
+
+        return ['total' => collect($total->get())->pluck('t', 'code'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'offer'];
     }
 
     public static function getTotalOfferBlockAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q)
@@ -1779,10 +1794,22 @@ class CustomQuery
 
     public static function ansarAcceptOfferLastFiveDays($division, $unit, $thana, $rank, $sex, $offset, $limit, $q, $type)
     {
-        DB::enableQueryLog();
-        $now = Carbon::now();
-        $next = Carbon::now()->subDays(5)->setTime(0, 0, 0);
-        $ansarQuery1 = DB::table('tbl_ansar_parsonal_info')
+        //DB::enableQueryLog();
+
+        /*$now = Carbon::now();
+        $next = Carbon::now()->subDays(5)->setTime(0, 0, 0);*/
+
+        $ansarQuery = DB::table('tbl_ansar_parsonal_info')
+            ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+            ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
+            ->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+            ->join('tbl_units as ou', 'ou.id', '=', 'tbl_sms_receive_info.offered_district')
+            ->join('tbl_division as od', 'od.id', '=', 'ou.division_id')
+            ->where('tbl_sms_receive_info.sms_status', 'ACCEPTED')
+            ->groupBy('tbl_ansar_parsonal_info.ansar_id');
+
+        /*$ansarQuery1 = DB::table('tbl_ansar_parsonal_info')
             ->join('tbl_units as pu', 'pu.id', '=', 'tbl_ansar_parsonal_info.unit_id')
             ->join('tbl_thana as pt', 'tbl_ansar_parsonal_info.thana_id', '=', 'pt.id')
             ->join('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
@@ -1801,56 +1828,80 @@ class CustomQuery
             ->join('tbl_division as od', 'od.id', '=', 'ou.division_id')
             ->where('tbl_sms_send_log.reply_type', 'Yes')
             ->whereBetween('tbl_sms_send_log.offered_date', [$next, $now])
-			->groupBy('tbl_ansar_parsonal_info.ansar_id');
+			->groupBy('tbl_ansar_parsonal_info.ansar_id');*/
+
         if ($division != 'all') {
-            $ansarQuery1->where('od.id', $division);
-            $ansarQuery2->where('od.id', $division);
+            /*$ansarQuery1->where('od.id', $division);
+            $ansarQuery2->where('od.id', $division);*/
+
+            $ansarQuery->where('od.id', $division);
         }
         if ($unit != 'all') {
-            $ansarQuery1->where('ou.id', $unit);
-            $ansarQuery2->where('ou.id', $unit);
+            /*$ansarQuery1->where('ou.id', $unit);
+            $ansarQuery2->where('ou.id', $unit);*/
+
+            $ansarQuery->where('ou.id', $unit);
         }
 //        if ($thana != 'all') {
 //            $ansarQuery1->where('ot.id', $division);
 //            $ansarQuery2->where('ot.id', $division);
 //        }
         if ($rank != 'all') {
-            $ansarQuery1->where('tbl_designations.id', $rank);
-            $ansarQuery2->where('tbl_designations.id', $rank);
+            /*$ansarQuery1->where('tbl_designations.id', $rank);
+            $ansarQuery2->where('tbl_designations.id', $rank);*/
+
+            $ansarQuery->where('tbl_designations.id', $rank);
         }
         if ($sex != 'all') {
-            $ansarQuery1->where('tbl_ansar_parsonal_info.sex', $sex);
-            $ansarQuery2->where('tbl_ansar_parsonal_info.sex', $sex);
+            /*$ansarQuery1->where('tbl_ansar_parsonal_info.sex', $sex);
+            $ansarQuery2->where('tbl_ansar_parsonal_info.sex', $sex);*/
+
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
         }
         if ($q) {
-            $ansarQuery1->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
-            $ansarQuery2->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            /*$ansarQuery1->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery2->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');*/
+
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
         }
+        $totalQuery = clone $ansarQuery;
         if ($type == 'view') {
-            $t1 = clone $ansarQuery1;
+            /*$t1 = clone $ansarQuery1;
             $t2 = clone $ansarQuery2;
+
             $ansarQuery1->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
                 'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'ou.unit_name_bng as offer_unit', 'tbl_sms_receive_info.sms_send_datetime as offer_date');
             $ansarQuery2->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
-                'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'ou.unit_name_bng as offer_unit', 'tbl_sms_send_log.offered_date as offer_date');
+                'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'ou.unit_name_bng as offer_unit', 'tbl_sms_send_log.offered_date as offer_date');*/
+
+            $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
+                'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'ou.unit_name_bng as offer_unit', 'tbl_sms_receive_info.sms_send_datetime as offer_date')->orderBy('offer_date');
+
             //$ansars = $ansarQuery1->unionAll($ansarQuery2)->groupBy('id')->skip($offset)->limit($limit)->get();
-			$q = $ansarQuery1->unionAll($ansarQuery2);
-			$ansars = DB::table(DB::raw("(".$q->toSql().") as t"))->mergeBindings($q)->groupBy('id')->skip($offset)->limit($limit)->get();
-            $t1->groupBy('tbl_designations.id')->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total'), 'tbl_designations.code','tbl_ansar_parsonal_info.ansar_id');
+			//$q = $ansarQuery1->unionAll($ansarQuery2);
+//			$ansars = DB::table(DB::raw("(".$q->toSql().") as t"))->mergeBindings($q)->groupBy('id')->skip($offset)->limit($limit)->get();
+
+            $ansars = $ansarQuery->skip($offset)->limit($limit)->get();
+
+           /* $t1->groupBy('tbl_designations.id')->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total'), 'tbl_designations.code','tbl_ansar_parsonal_info.ansar_id');
             $t2->groupBy('tbl_designations.id')->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total'), 'tbl_designations.code','tbl_ansar_parsonal_info.ansar_id');
-            $tq = $t1->unionAll($t2);
-			$total = DB::table(DB::raw("(".$tq->toSql().") as t"))->mergeBindings($tq)->groupBy('ansar_id');
+           */
+           $totalQuery->groupBy('tbl_designations.id')->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total'), 'tbl_designations.code','tbl_ansar_parsonal_info.ansar_id');
+
+           // $tq = $t1->unionAll($t2);
+//			$total = DB::table(DB::raw("(".$tq->toSql().") as t"))->mergeBindings($tq)->groupBy('ansar_id');
 //			return $total->get();
-            return Response::json(['total' => collect($total->get())->groupBy('code'), 'index' => ((ceil($offset / ($limit == 0 ? 1 : $limit))) * $limit) + 1, 'ansars' => $ansars, 'type' => 'offer']);
+            return Response::json(['total' => collect($totalQuery->get())->groupBy('code'), 'index' => ((ceil($offset / ($limit == 0 ? 1 : $limit))) * $limit) + 1, 'ansars' => $ansars, 'type' => 'offer']);
 
         } else {
-            $ansarQuery1->groupBy('tbl_designations.id')->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total'), 'tbl_designations.code','tbl_ansar_parsonal_info.ansar_id');
-            $ansarQuery2->groupBy('tbl_designations.id')->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total'), 'tbl_designations.code','tbl_ansar_parsonal_info.ansar_id');
-			$tq = $ansarQuery1->unionAll($ansarQuery2);
-			$total = DB::table(DB::raw("(".$tq->toSql().") as t"))->mergeBindings($tq)->groupBy('ansar_id');
-            return Response::json(['total' => collect($total->get())->groupBy('code')]);
+            $totalQuery->groupBy('tbl_designations.id')->select(DB::raw('count(tbl_ansar_parsonal_info.ansar_id) as total'), 'tbl_designations.code','tbl_ansar_parsonal_info.ansar_id');
+
+            //$tq = $ansarQuery1->unionAll($ansarQuery2);
+
+			//$total = DB::table(DB::raw("(".$tq->toSql().") as t"))->mergeBindings($tq)->groupBy('ansar_id');
+
+            return Response::json(['total' => collect($totalQuery->get())->groupBy('code')]);
         }
-//        return $b;
     }
     public static function freezeDisEmbodied(Request $request)
     {

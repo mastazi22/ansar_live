@@ -287,7 +287,8 @@
                        class="btn-link" style="color: #FFFFFF !important;">
                         <span class="info-box-text">@lang('title.to')</span>
                     <span class="info-box-number" style="font-weight: normal">
-                       [[(allAnsar.totalOffered|num)+(allAnsar.totalOfferedReceived|num)]]
+                       {{--[[(allAnsar.totalOffered|num)+(allAnsar.totalOfferedReceived|num)]]--}}
+                       [[(allAnsar.totalOffered|num)]]
                         <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
                     </span>
                     </a>
@@ -298,7 +299,8 @@
                     <a href="{{URL::to('HRM/show_recent_ansar_list')}}/offerred_ansar" style="color:#FFFFFF"
                        class="btn-link">
                     <span class="progress-description" style="color:#FFFFFF">
-                       Recent-[[(recentAnsar.recentOffered|num)+(recentAnsar.recentOfferedReceived|num)]]
+                       {{--Recent-[[(recentAnsar.recentOffered|num)+(recentAnsar.recentOfferedReceived|num)]]--}}
+                       Recent-[[(recentAnsar.recentOffered|num)]]
                     </span>
                     </a>
                 </div>
@@ -649,7 +651,7 @@
                     <div class="label-hrm">
                         <div class="label-hrm-title">
                             <span class="info-box-text"
-                                  style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial">Total number of Ansars who accepted the offer within last 5 days </span>
+                                  style="color: #000000;white-space: normal;overflow: auto;text-overflow: initial">Total number of Ansars who have currently accepted the offer</span>
                         </div>
 
                         <div class="label-hrm-calculation">
