@@ -153,6 +153,7 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             Log::info("REVERT OFFER");
             $offeredAnsars = OfferSMS::where('sms_end_datetime', '<=', Carbon::now())->get();
+            $c = OfferSMS::where('sms_end_datetime', '<=', Carbon::now())->count();
             foreach ($offeredAnsars as $ansar) {
                 Log::info("CALLED START: OFFER NO REPLY" . $ansar->ansar_id);
                 DB::beginTransaction();
@@ -204,7 +205,7 @@ class Kernel extends ConsoleKernel
                     Log::info("ERROR: " . $e->getMessage());
                 }
             }
-            if(count($offeredAnsars)>0){
+            if($c>0){
                dispatch(new RearrangePanelPositionLocal());
                dispatch(new RearrangePanelPositionGlobal());
             }
@@ -213,8 +214,10 @@ class Kernel extends ConsoleKernel
 
             $offeredAnsars = SmsReceiveInfoModel::all();
             $now = Carbon::now();
+            $c = 0;
             foreach ($offeredAnsars as $ansar) {
                 if ($now->diffInDays(Carbon::parse($ansar->sms_received_datetime)) >= 7) {
+                    $c++;
                     Log::info("CALLED START: OFFER ACCEPTED" . $ansar->ansar_id);
                     DB::beginTransaction();
                     try {
@@ -253,7 +256,7 @@ class Kernel extends ConsoleKernel
                 }
 
             }
-            if(count($offeredAnsars)>0){
+            if($c>0){
                 dispatch(new RearrangePanelPositionLocal());
                 dispatch(new RearrangePanelPositionGlobal());
             }
