@@ -1214,6 +1214,7 @@ class ApplicantScreeningController extends Controller
             try {
                 $circular = JobCircular::with(['appliciant' => function ($q) use ($request) {
                     $q->whereIn('status', array_filter($request->status))->orderBy('id');
+                    $q->select('applicant_id','job_circular_id','roll_no','status');
                 }])->find($request->job_circular_id);
                 $applicantCount = JobAppliciant::where('job_circular_id', $request->job_circular_id)
                     ->whereIn('status', array_filter($request->status))->count();

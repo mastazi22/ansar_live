@@ -531,6 +531,120 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
                 DB::connection('hrm')->rollback();
             }
         });
+        Route::get('set_panel_position_global', function () {
+            //echo "set_panel_position<br>";
+
+            DB::connection('hrm')->beginTransaction();
+            try {
+                $data = \App\modules\HRM\Models\PanelModel::with(['ansarInfo'=>function($q){
+                    $q->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"');
+                    $q->select('ansar_id','sex','designation_id');
+                    $q->with('designation');
+                }])->whereHas('ansarInfo.status',function($q){
+                    $q->where('pannel_status',1);
+                    $q->where('block_list_status',0);
+                    $q->where('black_list_status',0);
+                })->select('ansar_id','panel_date')->orderBy('panel_date','asc')->get();
+//                return $ansars;
+                $ansars =  collect($data)->groupBy('ansarInfo.designation.code',true)->toArray();
+                $globalPosition = [];
+                ob_implicit_flush(true);
+                ob_end_flush();
+                foreach ($ansars as $k=>$ansar){
+                    $values = collect(array_values($ansar))->groupBy('ansar_info.sex',true)->toArray();
+                    if(!isset($globalPosition[$k])){
+                        $globalPosition[$k] = [];
+                    }
+                    foreach ($values as $key=>$v){
+                        if(!isset($globalPosition[$k][$key])){
+                            $globalPosition[$k][$key] = [];
+                        }
+                        $value = array_values($v);
+                        $i=1;
+                        foreach ($value as $p){
+                            $globalPosition[$k][$key][$p['ansar_id']] = $i++;
+                        }
+
+                    }
+                }
+                foreach ($globalPosition as $k=>$v){
+                    foreach ($v as $k1=>$v1){
+                        foreach ($v1 as $key=>$value){
+                            $p = PanelModel::where('ansar_id',$key)->first();
+                            if($p){
+                                $p->go_panel_position = $value;
+                                $p->save();
+                            }
+                        }
+                    }
+                }
+
+//                return $globalPosition;
+                DB::connection('hrm')->commit();
+                echo "done";
+            }catch(\Exception $e){
+                echo $e;
+                Log::info("ansar_block_for_age:".$e->getMessage());
+                DB::connection('hrm')->rollback();
+            }
+        });
+        Route::get('set_panel_position_regional', function () {
+            //echo "set_panel_position<br>";
+
+            DB::connection('hrm')->beginTransaction();
+            try {
+                $data = \App\modules\HRM\Models\PanelModel::with(['ansarInfo'=>function($q){
+                    $q->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"');
+                    $q->select('ansar_id','sex','designation_id');
+                    $q->with('designation');
+                }])->whereHas('ansarInfo.status',function($q){
+                    $q->where('pannel_status',1);
+                    $q->where('block_list_status',0);
+                    $q->where('black_list_status',0);
+                })->select('ansar_id','panel_date')->orderBy('panel_date','asc')->get();
+//                return $ansars;
+                $ansars =  collect($data)->groupBy('ansarInfo.designation.code',true)->toArray();
+                $globalPosition = [];
+                ob_implicit_flush(true);
+                ob_end_flush();
+                foreach ($ansars as $k=>$ansar){
+                    $values = collect(array_values($ansar))->groupBy('ansar_info.sex',true)->toArray();
+                    if(!isset($globalPosition[$k])){
+                        $globalPosition[$k] = [];
+                    }
+                    foreach ($values as $key=>$v){
+                        if(!isset($globalPosition[$k][$key])){
+                            $globalPosition[$k][$key] = [];
+                        }
+                        $value = array_values($v);
+                        $i=1;
+                        foreach ($value as $p){
+                            $globalPosition[$k][$key][$p['ansar_id']] = $i++;
+                        }
+
+                    }
+                }
+                foreach ($globalPosition as $k=>$v){
+                    foreach ($v as $k1=>$v1){
+                        foreach ($v1 as $key=>$value){
+                            $p = PanelModel::where('ansar_id',$key)->first();
+                            if($p){
+                                $p->go_panel_position = $value;
+                                $p->save();
+                            }
+                        }
+                    }
+                }
+
+//                return $globalPosition;
+                DB::connection('hrm')->commit();
+                echo "done";
+            }catch(\Exception $e){
+                echo $e;
+                Log::info("ansar_block_for_age:".$e->getMessage());
+                DB::connection('hrm')->rollback();
+            }
+        });
         Route::resource('retire_ansar_management','RetireAnsarManagementController',['only'=>['index','update']]);
 
         Route::any('/bulk-upload-bank-info', ['as' => "bulk_upload_bank_file", 'uses' => "EntryFormController@bulkUploadBankInfo"]);

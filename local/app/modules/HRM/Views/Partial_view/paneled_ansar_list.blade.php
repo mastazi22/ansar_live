@@ -10,6 +10,8 @@
         <th>Panel Date & Time</th>
         <th>Panel Id</th>
         @if(Auth::user()->type==11)
+            <th>Global Position</th>
+            <th>Regional Position</th>
             <th>Last Offer Region</th>
             @endif
 
@@ -26,6 +28,8 @@
         <td>[[ansar.panel_date|dateformat:"DD-MMM-YYYY"]]</td>
         <td>[[ansar.memorandum_id]]</td>
         @if(Auth::user()->type==11)
+            <td>[[ansar.go_panel_position]]</td>
+            <td>[[ansar.re_panel_position]]</td>
             <td>[[ansar.offer_type]]</td>
         @endif
     </tr>
