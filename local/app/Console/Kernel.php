@@ -8,6 +8,8 @@ use App\Helper\Helper;
 use App\Helper\GlobalParameter;
 use App\Helper\SMSTrait;
 use App\Jobs\BlockForAge;
+use App\Jobs\RearrangePanelPositionGlobal;
+use App\Jobs\RearrangePanelPositionLocal;
 use App\modules\HRM\Models\AnsarRetireHistory;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\EmbodimentModel;
@@ -202,6 +204,10 @@ class Kernel extends ConsoleKernel
                     Log::info("ERROR: " . $e->getMessage());
                 }
             }
+            if(count($offeredAnsars)>0){
+               dispatch(new RearrangePanelPositionLocal());
+               dispatch(new RearrangePanelPositionGlobal());
+            }
         })->everyMinute()->name("revert_offer_2")->withoutOverlapping();
         $schedule->call(function () {
 
@@ -246,6 +252,10 @@ class Kernel extends ConsoleKernel
                     }
                 }
 
+            }
+            if(count($offeredAnsars)>0){
+                dispatch(new RearrangePanelPositionLocal());
+                dispatch(new RearrangePanelPositionGlobal());
             }
         })->dailyAt("23:50")->name("revert_offer_accepted")->withoutOverlapping();
         $schedule->call(function () {

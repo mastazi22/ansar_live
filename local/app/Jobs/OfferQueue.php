@@ -136,6 +136,7 @@ class OfferQueue extends Job implements ShouldQueue
 
         $this->delete();
         $this->userOffer->delete();
-
+        dispatch(new RearrangePanelPositionGlobal());
+        dispatch(new RearrangePanelPositionLocal());
     }
 }

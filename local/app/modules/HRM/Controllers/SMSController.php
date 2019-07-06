@@ -7,6 +7,8 @@ use App\Helper\GlobalParameter;
 use App\Helper\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use App\Jobs\RearrangePanelPositionGlobal;
+use App\Jobs\RearrangePanelPositionLocal;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\OfferSMS;
@@ -174,6 +176,10 @@ class SMSController extends Controller
                     }
                     return "No Ansar found with this id in offer list";
                     break;
+            }
+            if($type=="NO"){
+                dispatch(new RearrangePanelPositionLocal());
+                dispatch(new RearrangePanelPositionGlobal());
             }
         }
         else {
