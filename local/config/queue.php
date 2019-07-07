@@ -39,7 +39,7 @@ return [
             'driver' => 'database',
             'table' => 'jobs',
             'queue' => 'default',
-            'expire' => 600,
+            'expire' => 600000000,
         ],
         'recruitment' => [
             'connection' => 'recruitment',
