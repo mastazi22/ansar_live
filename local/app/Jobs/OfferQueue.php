@@ -87,7 +87,7 @@ class OfferQueue extends Job implements ShouldQueue
                 if (!$mos && !preg_match('/^(\+88)?0[0-9]{10}/', $mos->mobile_no_self)) throw new \Exception("Invalid mobile number :" . $mos->mobile_no_self);
                 $offer = new OfferSMS([
                     'sms_send_datetime' => Carbon::now(),
-                    'sms_end_datetime' => Carbon::now()->addHours(24),
+                    'sms_end_datetime' => Carbon::now()->addHours(48),
 //                    'sms_end_datetime' => Carbon::now()->addMinute(),
                     'district_id' => $district_id,
                     'come_from' => 'Panel',
