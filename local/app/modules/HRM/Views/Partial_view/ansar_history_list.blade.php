@@ -39,6 +39,10 @@
                         <td style="background: #ffffff">[[data.apid.unit_name_bng]]</td>
                     </tr>
                     <tr>
+                        <th style="background: #ffffff">Home Thana</th>
+                        <td style="background: #ffffff">[[data.apid.thana_name_bng]]</td>
+                    </tr>
+                    <tr>
                         <th style="background: #ffffff">Date of birth</th>
                         <td style="background: #ffffff">[[data.apid.dob]]</td>
                     </tr>
