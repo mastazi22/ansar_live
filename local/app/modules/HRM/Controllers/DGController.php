@@ -133,7 +133,7 @@ class DGController extends Controller
                     ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
                     ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
                     ->where('tbl_embodiment_log.ansar_id', $ansar_id)->orderBy('tbl_embodiment_log.id', 'desc')
-                    ->select('tbl_embodiment_log.joining_date', 'tbl_embodiment_log.old_memorandum_id as memorandum_id', 'tbl_kpi_info.kpi_name', 'tbl_units.unit_name_bng')->first();
+                    ->select('tbl_embodiment_log.joining_date', 'tbl_embodiment_log.old_memorandum_id as memorandum_id', 'tbl_kpi_info.kpi_name', 'tbl_units.unit_name_bng', 'tbl_thana.thana_name_bng')->first();
             } else {
                 $ansarEmbodimentInfo = $ansarEmbodimentInfo
                     ->select('tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id as memorandum_id', 'tbl_kpi_info.kpi_name', 'tbl_units.unit_name_bng', 'tbl_thana.thana_name_bng')
