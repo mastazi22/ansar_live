@@ -492,7 +492,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
 
             DB::connection('hrm')->beginTransaction();
             try {
-                $ansars = \App\modules\HRM\Models\RestInfoLogModel::whereRaw("TIMESTAMPDIFF(MONTH,`tbl_rest_info_log`.`rest_date`,`tbl_rest_info_log`.`move_date`)=3 AND move_to = 'Panel' AND YEAR(created_at) = 2019")->get();
+                $ansars = \App\modules\HRM\Models\RestInfoLogModel::whereRaw("TIMESTAMPDIFF(MONTH,`tbl_rest_info_log`.`rest_date`,`tbl_rest_info_log`.`move_date`)<6 AND move_to = 'Panel' AND YEAR(created_at) = 2019")->get();
                 foreach ($ansars as $ansar){
                     $rd = \Carbon\Carbon::parse($ansar->rest_date);
                     echo $ansar->rest_date."   ".\Carbon\Carbon::now()."<br>";
@@ -503,7 +503,9 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
                     }
                     $panel_entry = PanelModel::where('ansar_id',$ansar->ansar_id)->where('come_from','Rest')->first();
                     if($panel_entry){
-                        $panel_entry->saveLog("Rest",\Carbon\Carbon::now(),"manual move to rest on request made by russel ahmed");
+                        $log = \App\modules\HRM\Models\PanelInfoLogModel::where('ansar_id',$ansar->ansar_id)->orderBy('panel_date','desc')->first();
+                        $date = $log?$log->panel_date:\Carbon\Carbon::now();
+                        $panel_entry->saveLog("Rest",$date,"manual move to rest on request made by russel ahmed");
                         $panel_entry->delete();
                         $status = \App\modules\HRM\Models\AnsarStatusInfo::where('ansar_id',$ansar->ansar_id)->first();
                         $status->pannel_status = 0;
