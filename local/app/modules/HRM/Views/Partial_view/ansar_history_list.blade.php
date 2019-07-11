@@ -14,7 +14,7 @@
             <div class="table-responsive">
                 <table class="table table-bordered" style="margin: 0 auto;width: auto !important;">
                     <tr>
-                        <td rowspan="10"  style="vertical-align: middle;width: 130px;height: 150px;background: #ffffff">
+                        <td rowspan="11"  style="vertical-align: middle;width: 130px;height: 150px;background: #ffffff">
                             <img  style="width: 120px;height: 150px" src="{{URL::to('image').'?file='}}[[data.apid.profile_pic]]" alt="">
                         </td>
                         <th style="background: #ffffff">ID</th>
@@ -103,12 +103,14 @@
                                     <td>অঙ্গিভুতির  তারিখ</td>
                                     <td>অঙ্গিভুতির আইডি নং</td>
                                     <td>জেলার নাম</td>
+                                    <td>থানার নাম</td>
                                     <td>অঙ্গিভুতির সংস্থা</td>
                                 </tr>
                                 <tr>
                                     <td>[[data.aei.joining_date?(data.aei.joining_date|dateformat:'DD-MMMM-YYYY':'bn'):"--"]]</td>
                                     <td>[[data.aei.memorandum_id?data.aei.memorandum_id:"--"]]</td>
                                     <td>[[data.aei.unit_name_bng?data.aei.unit_name_bng:"--"]]</td>
+                                    <td>[[data.aei.thana_name_bng?data.aei.thana_name_bng:"--"]]</td>
                                     <td>[[data.aei.kpi_name?data.aei.kpi_name:"--"]]</td>
                                 </tr>
                             </table>

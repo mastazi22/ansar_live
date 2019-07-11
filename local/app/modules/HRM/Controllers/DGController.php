@@ -125,16 +125,18 @@ class DGController extends Controller
             $ansarEmbodimentInfo = DB::table('tbl_embodiment')
                 ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
+                ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
                 ->where('tbl_embodiment.ansar_id', Input::get('ansar_id'));
             if (!$ansarEmbodimentInfo->exists()) {
                 $ansarEmbodimentInfo = DB::table('tbl_embodiment_log')
                     ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment_log.kpi_id')
                     ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
+                    ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
                     ->where('tbl_embodiment_log.ansar_id', $ansar_id)->orderBy('tbl_embodiment_log.id', 'desc')
                     ->select('tbl_embodiment_log.joining_date', 'tbl_embodiment_log.old_memorandum_id as memorandum_id', 'tbl_kpi_info.kpi_name', 'tbl_units.unit_name_bng')->first();
             } else {
                 $ansarEmbodimentInfo = $ansarEmbodimentInfo
-                    ->select('tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id as memorandum_id', 'tbl_kpi_info.kpi_name', 'tbl_units.unit_name_bng')
+                    ->select('tbl_embodiment.joining_date', 'tbl_embodiment.memorandum_id as memorandum_id', 'tbl_kpi_info.kpi_name', 'tbl_units.unit_name_bng', 'tbl_thana.thana_name_bng')
                     ->first();
             }
             $ansarDisEmbodimentInfo = '';
