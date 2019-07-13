@@ -16,4 +16,18 @@ class ActionUserLog extends Model
     public function user(){
         return $this->belongsTo(User::class,'action_by','id');
     }
+    public function getFromKpi(){
+        $kpi = KpiGeneralModel::find($this->from_state);
+        if($kpi){
+            return $kpi->kpi_name;
+        }
+        return "n\a";
+    }
+    public function getToKpi(){
+        $kpi = KpiGeneralModel::find($this->to_state);
+        if($kpi){
+            return $kpi->kpi_name;
+        }
+        return "n\a";
+    }
 }

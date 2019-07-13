@@ -16,10 +16,16 @@
 
                         <h3 class="timeline-header" style="background: rgba(0, 120, 112, 0.15);"><a
                                     href="#">{{$item->action_type or 'UNDEFINED'}}</a></h3>
-
-                        <div class="timeline-body">
-                            Ansar({{$item->ansar_id}}) transferred to status {{$item->to_state}}
-                        </div>
+                        @if($item->action_type=="TRANSFER")
+                            <div class="timeline-body">
+                                Ansar({{$item->ansar_id}}) transferred from <b>{{$item->getFromKpi()}}</b> kpi to
+                                <b>{{$item->getToKpi()}}</b>
+                            </div>
+                        @else
+                            <div class="timeline-body">
+                                Ansar({{$item->ansar_id}}) transferred to status {{$item->to_state}}
+                            </div>
+                        @endif
                     </div>
                 </li>
             @endforeach
