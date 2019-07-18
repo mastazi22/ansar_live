@@ -50,10 +50,16 @@ class HrmController extends Controller
             ->where('tbl_ansar_status_info.block_list_status', 0)
             ->where('tbl_ansar_status_info.black_list_status', 0)
             ->whereRaw('service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL 2 MONTH)');
-        $arfyoa = DB::table("tbl_ansar_parsonal_info")
+        $ansarQuery = DB::table("tbl_ansar_parsonal_info")
             ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
-            ->where('tbl_ansar_status_info.retierment_status',0)
-            ->where(DB::raw("TIMESTAMPDIFF(YEAR,DATE_ADD(data_of_birth,INTERVAL 3 MONTH),NOW())"), ">=", 50);
+            ->where('tbl_ansar_status_info.retierment_status',0)->select('tbl_ansar_parsonal_info.ansar_id');
+        $pcQuery = clone $ansarQuery;
+        $apcQuery = clone $ansarQuery;
+        $ansarQuery->where('designation_id',1)->where(DB::raw("TIMESTAMPDIFF(YEAR,data_of_birth,DATE_ADD(NOW(),INTERVAL 3 MONTH))"), ">=", 47);
+        $pcQuery->where('designation_id',3)->where(DB::raw("TIMESTAMPDIFF(YEAR,data_of_birth,DATE_ADD(NOW(),INTERVAL 3 MONTH))"), ">=", 52);
+        $apcQuery->where('designation_id',2)->where(DB::raw("TIMESTAMPDIFF(YEAR,data_of_birth,DATE_ADD(NOW(),INTERVAL 3 MONTH))"), ">=", 52);
+
+        $arfyoa = $ansarQuery->unionAll($pcQuery)->unionAll($apcQuery);
         $tnimutt = DB::table('tbl_sms_offer_info')->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')->havingRaw('count(tbl_sms_offer_info.ansar_id)>10')->groupBy('tbl_sms_offer_info.ansar_id');
         if (Input::exists('division_id')) {
             $tseity->where('tbl_kpi_info.division_id', Input::get('division_id'));
@@ -67,7 +73,7 @@ class HrmController extends Controller
 
         }
         $tseity = $tseity->count('tbl_embodiment.ansar_id');
-        $arfyoa = $arfyoa->count('tbl_ansar_parsonal_info.ansar_id');
+        $arfyoa = DB::table(DB::raw("(".$arfyoa->toSql().") t"))->mergeBindings($arfyoa)->count('ansar_id');
         $tnimutt = $tnimutt->get();
         //return $tnimutt;
         $i = 0;
@@ -496,6 +502,7 @@ class HrmController extends Controller
 
     public function ansarReachedFiftyDetails(Request $request)
     {
+//        return $request->all();
         $limit = Input::get('limit');
         $offset = Input::get('offset');
         $unit = Input::get('unit');
@@ -515,7 +522,7 @@ class HrmController extends Controller
             //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         }
-        $data =  CustomQuery::ansarListWithFiftyYears($offset, $limit, $unit, $thana, $division, $q);
+        $data =  CustomQuery::ansarListWithFiftyYears($offset, $limit, $unit, $thana, $division, $q,$request->selected_date,$request->custom_date,$request->rank);
         if($request->exists('export')){
             $data = collect($data['ansars'])->chunk(2000)->toArray();
             return $this->exportData($data,'HRM::export.ansar_fifty_age_report');
