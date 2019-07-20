@@ -1352,6 +1352,19 @@ GlobalApp.directive('paginate', function () {
         }
     }
 })
+GlobalApp.directive('compileGHtml',function ($compile) {
+    return {
+        restrict:'A',
+        link:function (scope,elem,attr) {
+            scope.$watch('view', function (n) {
+                if (attr.ngBindHtml) {
+                    $compile(elem[0].children)(scope)
+                }
+            })
+
+        }
+    }
+})
 GlobalApp.directive("calender", function (notificationService) {
     return {
         restrict: 'AE',

@@ -145,7 +145,7 @@ class FreezeController extends Controller
         if ($valid->fails()) {
             return response($valid->messages()->toJson(), 422, ['Content-Type' => 'application/json']);
         }
-        $data = CustomQuery::getFreezeList($request->range, $request->unit, $request->thana, $request->kpi);
+        $data = CustomQuery::getFreezeList($request->range, $request->unit, $request->thana, $request->kpi,($request->limit?$request->limit:50),$request->q,$request->export);
         if($request->exists('export')&&$request->export==1){
             return  Excel::create('freeze_report',function ($excel) use($data){
                 $excel->sheet('sheet1',function ($sheet) use ($data){
@@ -153,7 +153,7 @@ class FreezeController extends Controller
                 });
             })->export('xlsx');
         }
-        return response()->json($data);
+        return $data;
     }
 
     public function freezeRembodied(Request $request)

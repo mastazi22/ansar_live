@@ -185,49 +185,38 @@
                     </span>
                 </div>
                 <div class="box-body">
-                    @if($pageTitle=="Total Paneled Ansars" || $pageTitle=="Total Embodied Ansars")
-                        <filter-template
-                                show-item="['range','unit','thana','gender']"
-                                type="all"
-                                range-change="loadPage()"
-                                unit-change="loadPage()"
-                                thana-change="loadPage()"
-                                gender-change="loadPage()"
-                                on-load="loadPage()"
-                                data="param"
-                                start-load="range"
-                                field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',gender:'col-sm-3'}"
-                        ></filter-template>
+                    {{--@if($pageTitle=="Total Paneled Ansars" || $pageTitle=="Total Embodied Ansars")--}}
+                        {{--<filter-template--}}
+                                {{--show-item="['range','unit','thana','gender']"--}}
+                                {{--type="all"--}}
+                                {{--range-change="loadPage()"--}}
+                                {{--unit-change="loadPage()"--}}
+                                {{--thana-change="loadPage()"--}}
+                                {{--gender-change="loadPage()"--}}
+                                {{--on-load="loadPage()"--}}
+                                {{--data="param"--}}
+                                {{--start-load="range"--}}
+                                {{--field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',gender:'col-sm-3'}"--}}
+                        {{--></filter-template>--}}
 
-                            @else
-                                <filter-template
-                                        show-item="['range','unit','thana']"
-                                        type="all"
-                                        range-change="loadPage()"
-                                        unit-change="loadPage()"
-                                        thana-change="loadPage()"
-                                        on-load="loadPage()"
-                                        data="param"
-                                        start-load="range"
-                                        field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
-                                >
-                                </filter-template>
-                                    @endif
-                        @if($pageTitle=="Total Paneled Ansars")
-
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        <label for="">
-                                            <input ng-change="loadPage()" ng-model="param.filter_mobile_no" ng-true-value="1" ng-false-value="0" style="vertical-align: top;" type="checkbox">&nbsp;Filter mobile number
-                                        </label>
-                                        <label for="" style="margin-left: 10px">
-                                            <input  ng-change="loadPage()" ng-model="param.filter_age" ng-true-value="1" ng-false-value="0" style="vertical-align: top;" type="checkbox">&nbsp;Filter age
-                                        </label>
-                                    </div>
+                            {{--@else--}}
+                                {{--<filter-template--}}
+                                        {{--show-item="['range','unit','thana']"--}}
+                                        {{--type="all"--}}
+                                        {{--range-change="loadPage()"--}}
+                                        {{--unit-change="loadPage()"--}}
+                                        {{--thana-change="loadPage()"--}}
+                                        {{--on-load="loadPage()"--}}
+                                        {{--data="param"--}}
+                                        {{--start-load="range"--}}
+                                        {{--field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"--}}
+                                {{-->--}}
+                                {{--</filter-template>--}}
+                                    {{--@endif--}}
+                                {!! $custom_filter !!}
+                                <div>
+                                    {!! $custom_view !!}
                                 </div>
-                            </div>
-                        @endif
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <div class="btn-group btn-group-sm pull-right">
@@ -286,7 +275,7 @@
                                         </select>
                                     </div>
                                     <div class="col-sm-8">
-                                        <div class="table_pagination" ng-if="pages.length>1">
+                                        <div class="table_pagination pull-right" ng-if="pages.length>1">
                                             <ul class="pagination" style="margin: 0">
                                                 <li ng-class="{disabled:currentPage == 0}">
                                                     <a href="#" ng-click="loadPage(pages[0],$event)">&laquo;&laquo;</a>

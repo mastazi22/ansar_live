@@ -19,7 +19,7 @@
     </style>
     <script>
 
-        GlobalApp.controller('freezeController', function ($scope, $http, notificationService) {
+        GlobalApp.controller('freezeController', function ($scope, $http, notificationService,$sce) {
 //        $scope.filter_name = "0";
             $scope.allLoading = false;
             $scope.allFreezeAnsar = [];
@@ -122,18 +122,18 @@
                     $scope.loadUnit();
                     break;
             }
-            $scope.getFreezeList = function () {
+            $scope.getFreezeList = function (url) {
                 var data = $scope.params;
                 $scope.allLoading = true;
                 $http({
-                    url: "{{URL::route('getfreezelist')}}",
+                    url: url || "{{URL::route('getfreezelist')}}",
                     method: 'get',
                     params: data
                 }).then(function (response) {
-//            alert(JSON.stringify(response.data));
-                    $scope.allFreezeAnsar = response.data;
+                    $scope.response = response.data.data
+                    $scope.allFreezeAnsar = response.data.data.data;
+                    $scope.view = $sce.trustAsHtml(response.data.view)
                     $scope.checked = Array.apply(null, Array($scope.allFreezeAnsar.length)).map(Boolean.prototype.valueOf, false);
-                    console.log($scope.checked)
                     $scope.allLoading = false;
                 }, function (response) {
                     $scope.allLoading = false;
@@ -141,13 +141,13 @@
             }
 //        $scope.getFreezeList();
 
-            $scope.reEmbodied = function (ansarids, date,ifd) {
+            $scope.reEmbodied = function (ansarids, date, ifd) {
                 console.log(ansarids)
                 $scope.submitting = true;
                 $http({
                     url: "{{URL::to('HRM/freezeRembodied')}}",
                     method: 'post',
-                    data: angular.toJson({ansarId: ansarids, unfreeze_date: date,include_freeze_date:ifd})
+                    data: angular.toJson({ansarId: ansarids, unfreeze_date: date, include_freeze_date: ifd})
                 }).then(function (response) {
                     console.log(response.data);
                     $scope.submitting = false;
@@ -491,12 +491,28 @@
                             <div class="table-responsive">
                                 <table class="table  table-bordered table-striped" id="ansar-table">
                                     <caption>
-                                        <span class="text text-bold" style="color:#000000;font-size: 1.1em">Total : [[results==undefined?0:results.length]]</span>
-                                        <a class="btn btn-primary btn-xs" href="{{URL::route('getfreezelist',['export'=>1])}}">
+                                        <div class="row">
+                                            <div class="col-sm-8">
+                                                <span class="text text-bold" style="color:#000000;font-size: 1.1em">Total : [[response?response.total:0]]</span>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" ng-model="params.q"
+                                                           placeholder="Search here by ansar id">
+                                                    <span class="input-group-btn">
+                                                        <button class="btn btn-primary" type="button" ng-click="getFreezeList()">
+                                                            <i class="fa fa-search"></i>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <a class="btn btn-primary btn-xs"
+                                           href="{{URL::route('getfreezelist',['export'=>1])}}">
                                             <i class="fa fa-file-excel-o"></i> Export
                                         </a>
-                                        <input type="text" class="pull-right" ng-model="q"
-                                               placeholder="Search in this table">
+
                                     </caption>
                                     <tr>
                                         <th class="text-center"><input type="checkbox" ng-model="checkedAll"
@@ -515,14 +531,14 @@
 
                                     </tr>
                                     <tr ng-show="allFreezeAnsar.length>0"
-                                        ng-repeat="freezeAnsar in allFreezeAnsar|filter:q as results">
+                                        ng-repeat="freezeAnsar in allFreezeAnsar">
                                         <td>
                                             <input type="checkbox" ng-true-value="[[$index]]" ng-false-value="false"
                                                    ng-model="checked[$index]">
                                         </td>
-                                        <td>[[$index+1]]</td>
+                                        <td>[[(response.current_page-1)*response.per_page+$index+1]]</td>
                                         <td>
-                                            <a href="{{ URL::to('/entryreport/') }}/[[freezeAnsar.ansar_id]]">[[freezeAnsar.ansar_id]]</a>
+                                            <a href="{{ URL::to('/HRM/entryreport/') }}/[[freezeAnsar.ansar_id]]">[[freezeAnsar.ansar_id]]</a>
                                         </td>
                                         <td>[[freezeAnsar.name_bng]]</td>
                                         <td>[[freezeAnsar.ansar_name_bng]]</td>
@@ -589,6 +605,23 @@
                                             <option ng-repeat="a in actions" value="[[a.value]]">[[a.text]]</option>
                                         </select>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="row" ng-if="response.total>response.per_page">
+                                <div class="col-sm-3">
+                                    <div class="form-group" ng-init="params.limit = '50'">
+                                        <label for="" class="control-label">Load limit</label>
+                                        <select class="form-control" ng-model="params.limit" ng-change="getFreezeList()">
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                            <option value="150">150</option>
+                                            <option value="200">200</option>
+                                            <option value="300">300</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-9">
+                                    <div ng-bind-html="view" compile-g-html></div>
                                 </div>
                             </div>
                         </div>

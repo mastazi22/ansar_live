@@ -215,6 +215,19 @@ class HrmController extends Controller
     public function showAnsarList($type)
     {
         $pageTitle = '';
+        $view = '';
+        $custom_filter = '<filter-template
+                                        show-item="[\'range\',\'unit\',\'thana\']"
+                                        type="all"
+                                        range-change="loadPage()"
+                                        unit-change="loadPage()"
+                                        thana-change="loadPage()"
+                                        on-load="loadPage()"
+                                        data="param"
+                                        start-load="range"
+                                        field-width="{range:\'col-sm-4\',unit:\'col-sm-4\',thana:\'col-sm-4\'}"
+                                >
+                                </filter-template>';
         if (strcasecmp($type, 'all_ansar') == 0) {
             $pageTitle = "Total Ansars";
         } elseif (strcasecmp($type, 'not_verified_ansar') == 0) {
@@ -227,6 +240,30 @@ class HrmController extends Controller
             $pageTitle = "Total Free Ansars";
         } elseif (strcasecmp($type, 'paneled_ansar') == 0) {
             $pageTitle = "Total Paneled Ansars";
+            $custom_filter = '<filter-template
+                                show-item="[\'range\',\'unit\',\'thana\',\'gender\']"
+                                type="all"
+                                range-change="loadPage()"
+                                unit-change="loadPage()"
+                                thana-change="loadPage()"
+                                gender-change="loadPage()"
+                                on-load="loadPage()"
+                                data="param"
+                                start-load="range"
+                                field-width="{range:\'col-sm-3\',unit:\'col-sm-3\',thana:\'col-sm-3\',gender:\'col-sm-3\'}"
+                        ></filter-template>';
+            $view = ' <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label for="">
+                                            <input ng-change="loadPage()" ng-model="param.filter_mobile_no" ng-true-value="1" ng-false-value="0" style="vertical-align: top;" type="checkbox">&nbsp;Filter mobile number
+                                        </label>
+                                        <label for="" style="margin-left: 10px">
+                                            <input  ng-change="loadPage()" ng-model="param.filter_age" ng-true-value="1" ng-false-value="0" style="vertical-align: top;" type="checkbox">&nbsp;Filter age
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>';
         } elseif (strcasecmp($type, 'rest_ansar') == 0) {
             $pageTitle = "Total Resting Ansars";
         } elseif (strcasecmp($type, 'blocked_ansar') == 0) {
@@ -234,6 +271,18 @@ class HrmController extends Controller
         } elseif (strcasecmp($type, 'blacked_ansar') == 0) {
             $pageTitle = "Total Blacklisted Ansars";
         } elseif (strcasecmp($type, 'embodied_ansar') == 0) {
+            $custom_filter = '<filter-template
+                                show-item="[\'range\',\'unit\',\'thana\',\'gender\']"
+                                type="all"
+                                range-change="loadPage()"
+                                unit-change="loadPage()"
+                                thana-change="loadPage()"
+                                gender-change="loadPage()"
+                                on-load="loadPage()"
+                                data="param"
+                                start-load="range"
+                                field-width="{range:\'col-sm-3\',unit:\'col-sm-3\',thana:\'col-sm-3\',gender:\'col-sm-3\'}"
+                        ></filter-template>';
             $pageTitle = "Total Embodied Ansars";
         } elseif (strcasecmp($type, 'own_embodied_ansar') == 0) {
             $pageTitle = "Own Embodied Ansars";
@@ -245,7 +294,7 @@ class HrmController extends Controller
             $pageTitle = "Total Blocked For Aged Ansar";
         }
 
-        return View::make('HRM::Dashboard.view_ansar_list')->with(['type' => $type, 'pageTitle' => $pageTitle]);
+        return View::make('HRM::Dashboard.view_ansar_list')->with(['type' => $type, 'pageTitle' => $pageTitle,'custom_view'=>$view,'custom_filter'=>$custom_filter]);
     }
 
     public function showRecentAnsarList($type)
@@ -524,15 +573,13 @@ class HrmController extends Controller
         return Response::json($data);
     }
 
-    public
-    function showAnsarForNotInterested($count)
+    public function showAnsarForNotInterested($count)
     {
         $pages = ceil($count / 10);
         return View::make('HRM::Dashboard.ansar_not_interested')->with(['total' => $count, 'pages' => $pages, 'item_per_page' => 10]);
     }
 
-    public
-    function notInterestedInfoDetails()
+    public function notInterestedInfoDetails()
     {
         $limit = Input::get('limit');
         $offset = Input::get('offset');
@@ -557,8 +604,7 @@ class HrmController extends Controller
         return CustomQuery::ansarListForNotInterested($offset, $limit, $unit, $thana, $division, $q);
     }
 
-    public
-    function getTotalAnsar(Request $request)
+    public function getTotalAnsar(Request $request)
     {
 //        return "pppp";
         DB::enableQueryLog();
