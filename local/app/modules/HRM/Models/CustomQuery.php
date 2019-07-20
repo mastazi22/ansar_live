@@ -1195,8 +1195,8 @@ class CustomQuery
         $ansarQuery->where('tbl_designations.id',1);
         $value = 3;
         $interval = "MONTH";
-        if($selected_date>-1){
-            $value = $selected_date;
+        if($selected_date>-1 || !$selected_date){
+            $value = $selected_date?$selected_date:3;
             $interval = "MONTH";
         }else{
             $custom = json_decode($custom_date,true);
