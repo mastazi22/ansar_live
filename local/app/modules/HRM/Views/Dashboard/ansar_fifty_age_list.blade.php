@@ -2,11 +2,11 @@
 {{--Date: 12/24/2015--}}
 {{--Time: 5:43 PM--}}
 @extends('template.master')
-@section('title','Total number of Ansars who will reach 50 years of age within the next 3 months')
+@section('title','Total number of pc/apc/ansar who will reach age limit within next 3 month')
 {{--@section('small_title','Total number of Ansars who will reach 50 years of age within next 3 months')--}}
-@section('breadcrumb')
-    {!! Breadcrumbs::render('dashboard_menu_50_year',$total) !!}
-@endsection
+{{--@section('breadcrumb')--}}
+    {{--{!! Breadcrumbs::render('dashboard_menu_50_year',$total) !!}--}}
+{{--@endsection--}}
 @section('content')
     <script>
         GlobalApp.controller('AnsarFiftyYearsReachedListController', function ($scope, $http,$sce,$compile) {
@@ -21,6 +21,20 @@
             $scope.loadingPage = [];
             $scope.allLoading = true;
             $scope.errorFound=0;
+            $scope.unit = {
+                selectedDistrict: "",
+                custom: "",
+                type:"1"
+            };
+            $scope.customData = {
+                "Next 3 month":3,
+                "Next 4 month":4,
+                "Next 5 month":5,
+                "Next 6 month":6,
+                "Next 7 month":7,
+                "Custom":-1,
+            }
+            $scope.param.selectedDate = '3'
             $scope.loadPagination = function(){
                 $scope.pages = [];
                 for (var i = 0; i < $scope.numOfPage; i++) {
@@ -47,7 +61,10 @@
                         unit:$scope.param.unit,
                         thana:$scope.param.thana,
                         division:$scope.param.range,
-                        q:$scope.q
+                        selected_date:$scope.param.custom,
+                        custom_date:$scope.param.selected,
+                        q:$scope.q,
+                        rank:$scope.param.rank||'all'
                     }
                 }).then(function (response) {
                     $scope.ansars = response.data;
@@ -60,6 +77,10 @@
                     $scope.numOfPage = Math.ceil($scope.total/$scope.itemPerPage);
                     $scope.loadPagination();
                 })
+            }
+            $scope.changeRank = function (rank) {
+                $scope.param.rank = rank;
+                $scope.loadPage();
             }
             $scope.exportData = function (type) {
                 var page = $scope.exportPage;
@@ -147,10 +168,37 @@
                             on-load="loadPage()"
                             start-load="range"
                             data="param"
-                            field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
+                            custom-field="true"
+                            custom-model="param.selectedDate"
+                            custom-label="Select an Option"
+                            custom-data="customData"
+                            field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',custom:'col-sm-3'}"
                     >
 
                     </filter-template>
+                    <div class="row">
+                        <div class="col-sm-4 col-sm-offset-8">
+                            <div class="form-group row" ng-if="param.selectedDate==-1">
+                                <div class="col-xs-5">
+                                    <input type="text" class="form-control" ng-model="param.selected.custom"
+                                           placeholder="No of day,month or year">
+                                </div>
+                                <div class="col-xs-5" style="padding-left: 0;" ng-init="param.selected.type='1'">
+                                    <select class="form-control" ng-model="param.selected.type">
+                                        <option value="1">Days</option>
+                                        <option value="2">Week</option>
+                                        <option value="3">Months</option>
+                                        <option value="4">Years</option>
+                                    </select>
+                                </div>
+                                <div class="col-xs-2" style="padding-left: 0;">
+                                    <button class="btn btn-primary pull-right" ng-click="loadPage()">
+                                        <i class="fa fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-sm-12" style="margin-bottom: 5px">
                             <div class="btn-group btn-group-sm pull-right">
@@ -168,7 +216,12 @@
                     </div>
                     <div class="row">
                         <div class="col-md-8">
-                            <h4 class="text text-bold">Total Ansars :PC([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])&nbsp;APC([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])&nbsp;Ansar([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</h4>
+                            <h4 class="text text-bold">
+                                <button class="btn btn-primary" ng-click="changeRank('all')">Total Ansars</button>
+                                <button class="btn btn-primary" ng-click="changeRank('PC')">PC([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])</button>
+                                <button class="btn btn-primary" ng-click="changeRank('APC')">&nbsp;APC([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])</button>
+                                <button class="btn btn-primary" ng-click="changeRank('Ansar')">&nbsp;Ansar([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</button>
+                            </h4>
                         </div>
                         <div class="col-md-4">
                             <database-search q="q" queue="queue" on-change="loadPage()"></database-search>
