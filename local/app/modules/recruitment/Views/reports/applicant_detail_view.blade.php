@@ -276,19 +276,7 @@
                 <tr>
                     <th class="serial">২৩.</th>
                     <th style="width: 150px">কোটা</th>
-                    <th>{{$applicant->quotaType?$applicant->quotaType->quota_name_bng:''}}
-                        <?php $quota_data = json_decode($applicant->quota_details,true); ?>
-                        @if(count($quota_data)>0)
-                            <div >
-                                <strong>Additional Informtion:</strong><br>
-                                @foreach($quota_data as $gd)
-                                    <p style="margin: 0" *ngFor="let qd of quotaDetails">
-                                        <strong>{{$gd['key']}} :</strong>{{$gd['value']}}
-                                    </p>
-                                @endforeach
-                            </div>
-                        @endif
-                    </th>
+                    <th>{{$applicant->quotaType?$applicant->quotaType->quota_name_bng:''}}</th>
                 </tr>
             </table><br>
             <table style="width: 100%;margin-top: 5px" border="1" cellpadding="0" cellspacing="0">
