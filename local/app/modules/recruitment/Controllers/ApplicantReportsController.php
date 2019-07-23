@@ -428,14 +428,14 @@ class ApplicantReportsController extends Controller
         $files = [];
         $counter = 1;
         $total = collect($applicants)->count();
+        $path = storage_path('temp'.Carbon::now()->timestamp);
+        if (!File::exists($path)) File::makeDirectory($path, 0775, true);
         foreach ($applicants as $applicant){
-            $path = storage_path('temp'.Carbon::now()->timestamp);
             $file_name = $applicant->applicant_id . '.pdf';
-            if (!File::exists($path)) File::makeDirectory($path, 0775, true);
 
             SnappyPdf::loadView('recruitment::reports.applicant_detail_view', compact('applicant'))->save($path . '/' . $file_name);
             $zip->addFile($path . '/' . $file_name,$file_name);
-            array_push($files,$path . '/' . $file_name,$file_name);
+            array_push($files,$path . '/' . $file_name);
             echo "Processed $counter of $total";
             $counter++;
         }
@@ -443,6 +443,7 @@ class ApplicantReportsController extends Controller
         foreach ($files as $file){
             unlink($file);
         }
+        rmdir($path);
         return response()->json(['status'=>true,'message'=>$zip_name]);
     }
     public function applicantDetailsReport(){
