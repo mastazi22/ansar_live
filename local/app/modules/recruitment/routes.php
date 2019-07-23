@@ -102,8 +102,10 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                 $bang = ['0'=>'০','1'=>'১','2'=>'২','3'=>'৩','4'=>'৪','5'=>'৫','6'=>'৬','7'=>'৭','8'=>'৮','9'=>'৯'];
                 $date_array = str_split(\Carbon\Carbon::parse($d->selection_date)->format('d/m/Y'));
                 $time_array = str_split($d->selection_time);
+                $roll_array = str_split($d->roll_no);
                 $date = "";
                 $time = "";
+                $roll_no = "";
                 foreach ($date_array as $da){
                     if(isset($bang[$da])){
                         $date .= $bang[$da];
@@ -118,7 +120,14 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                         $time .= $da;
                     }
                 }
-                array_push($datas,[$d->mobile_no_self,"নামঃ ".$d->applicant_name_bng.",  আইডিঃ ".$d->applicant_id.",  রোল নংঃ ".$d->roll_no." , পদবীঃ ".explode("|",$d->circular_name)[0]." , পরীক্ষার তারিখঃ $date,  সময়ঃ $time । প্রবেশপত্র ও বিস্তারিত  তথ্যের জন্য ভিজিট করুনঃ  www.ansarvdp.gov.bd"]);
+                foreach ($roll_array as $da){
+                    if(isset($bang[$da])){
+                        $roll_no .= $bang[$da];
+                    }else{
+                        $roll_no .= $da;
+                    }
+                }
+                array_push($datas,[$d->mobile_no_self,"নামঃ ".$d->applicant_name_bng.",  আইডিঃ ".$d->applicant_id.",  রোল নংঃ $roll_no , পদবীঃ ".explode("|",$d->circular_name)[0]." , পরীক্ষার তারিখঃ $date,  সময়ঃ $time । প্রবেশপত্র ও বিস্তারিত  তথ্যের জন্য ভিজিট করুনঃ  www.ansarvdp.gov.bd"]);
             }
             return \Maatwebsite\Excel\Facades\Excel::create('sms_file_download',function($excel) use($datas){
                 $excel->sheet('Sheet1', function($sheet) use($datas) {
