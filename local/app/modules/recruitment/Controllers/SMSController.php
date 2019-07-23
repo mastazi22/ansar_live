@@ -102,13 +102,13 @@ class SMSController extends Controller
         Excel::load($request->file('sms_file'), function ($reader) use(&$data) {
             $data = $reader->toArray()[0];
         });
-        return $data;
+//        return $data;
         $datas = [];
         foreach ($data as $d) {
-            $m = $d['sms_body'];
+            $m = $d[1];
             array_push($datas, [
                 'payload' => json_encode([
-                    'to' => $d['mobile_no_self'],
+                    'to' => $d[0],
                     'body' => $m
                 ]),
                 'try' => 0
@@ -120,7 +120,7 @@ class SMSController extends Controller
         }
 //        return $datas;
 
-        return response()->json(['status' => 'success', 'message' => 'Message send successfully']);
+        return redirect()->back()->with("success_message","sms send successfully");
 
     }
 }
