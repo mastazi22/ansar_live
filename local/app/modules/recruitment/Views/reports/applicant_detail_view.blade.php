@@ -33,7 +33,10 @@
 <div style="width: 70%;margin: auto;padding: 20px 0px;">
     <div id="print_box">
         <div style="width: 100%;margin: auto;">
-            <?php $pic =$applicant->profile_pic ?>
+            <?php
+            $pic =$applicant->profile_pic;
+            $sig =$applicant->signature_pic;
+            ?>
             <div style="display: flex;justify-content: space-between;margin-bottom: 10px">
                 <img src="{{public_path('dist/img/ansar-vdp.png')}}" style="width: 100px;height: 100px;align-self: flex-start">
                 <div style="align-self: center;text-align: center;font-size: 14px">
@@ -278,10 +281,11 @@
                         @if(count($quota_data)>0)
                             <div >
                                 <strong>Additional Informtion:</strong><br>
-                                @foreach($quota_detail as $gd)
-                                <p style="margin: 0" *ngFor="let qd of quotaDetails">
-                                    <strong>{{qd.key}} :</strong>{{qd.value}}
-                                </p>
+                                @foreach($quota_data as $gd)
+                                    <p style="margin: 0" *ngFor="let qd of quotaDetails">
+                                        <strong>{{$gd['key']}} :</strong>{{$gd['value']}}
+                                    </p>
+                                @endforeach
                             </div>
                         @endif
                     </th>
@@ -315,15 +319,20 @@
                         <th class="date">র</th>
                     </tr>
                     <tr>
-                        <th class="date" *ngFor="let d of currentDate;let i = index">{{d}}</th>
+                        @foreach($date as $d)
+                            @if(isset($bang[$d]))
+                                <th class="date" >{{$bang[$d]}}</th>
+                            @else
+                                <th class="date" >{{$d}}</th>
+                            @endif
+                        @endforeach
                     </tr>
                 </table>
                 <div style="float: right">
-                    <img src="{{signatureImage}}" style="width: 150px;height: 50px;display: block">
+                    <img src="@if($sig&&file_exists($sig)&&getimagesize($sig)){{$sig}}@endif" style="width: 150px;height: 50px;display: block">
                     <span style="font-size: 14px;font-weight: bold">প্রার্থীর স্বাক্ষর</span>
                 </div>
             </div>
         </div>
-    </div><br>
-    <button class="btn btn-primary btn-block text-center" (click)="printInvoice()">Print</button>
+    </div>
 </div>

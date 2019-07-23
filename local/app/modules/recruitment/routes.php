@@ -74,6 +74,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
         Route::any('/reports/applicat_accepted_list', ['as' => 'report.applicants.applicat_accepted_list', 'uses' => 'ApplicantReportsController@applicantAcceptedListReport']);
         Route::any('/reports/applicat_marks_list', ['as' => 'report.applicants.applicat_marks_list', 'uses' => 'ApplicantReportsController@applicantMarksReport']);
         Route::post('/reports/applicat_status/export', ['as' => 'report.applicants.status_export', 'uses' => 'ApplicantReportsController@exportData']);
+        Route::post('/reports/applicat_status/export_pdf', ['as' => 'report.applicants.status_export_pdf', 'uses' => 'ApplicantReportsController@exportDataAsPdf']);
         Route::get('/reports/applicant_details/', ['as' => 'report.applicant_details', 'uses' => 'ApplicantReportsController@applicantDetailsReport']);
         Route::post('/reports/applicant_details/export', ['as' => 'report.applicant_details.export', 'uses' => 'ApplicantReportsController@exportApplicantDetailReport']);
         Route::get('/reports/download', ['as' => 'report.download', 'uses' => 'ApplicantReportsController@download']);

@@ -128,6 +128,57 @@
                 }
             }
         })
+        GlobalApp.directive('exportAllFormPdf',function () {
+            return {
+                restrict:'A',
+                link:function (scope,elem,attr) {
+                    var ll = 0
+                    $(elem).ajaxForm({
+                        beforeSubmit:function(){
+                          scope.param.allLoading  = true;
+                          scope.$apply();
+                        },
+                        success:function(response){
+                            ll = 0;
+                            scope.param.progressText = ""
+                            console.log(response);
+                            var p
+                            try{
+                                console.log(response.match(/{.+}/g))
+                                var p = JSON.parse(response.match(/{.+}/g)[0])
+                            }catch(e){
+                                p = response;
+                            }
+                            if(p.status){
+                                window.location = '{{URL::route('report.download')}}?file_name='+p.message
+                            }
+                            scope.param.allLoading  = false;
+                            scope.$apply();
+                        },
+                        error:function(response){
+                            scope.param.progressText = ""
+                            scope.param.allLoading  = false;
+                            ll=0;
+                            scope.$apply();
+                            console.log(response)
+                        },
+                        processData: false,
+                        xhrFields: {
+                            // Getting on progress streaming response
+                            onprogress: function(e)
+                            {
+                                var response = e.currentTarget.response;
+                                scope.param.progressText = response.substr(ll,response.length-ll);
+                                console.log(response.substr(ll,response.length-ll))
+                                ll = response.length;
+                                scope.$apply();
+                            }
+                        }
+                    })
+
+                }
+            }
+        })
     </script>
     <section class="content" ng-controller="ApplicantsListController">
         <div class="box box-solid">

@@ -107,6 +107,29 @@ class JobAppliciant extends Model
             return false;
         }
     }
+	public function getSignaturePicAttribute($value){
+		try{
+			$path = storage_path("receruitment");
+			if(!file_exists($path)){
+				if(mkdir($path)){
+					$file_parts = explode("/",$value);
+					$file_name = explode(".",$file_parts[count($file_parts)-1])[0].".jpg";
+					Image::make($value)->resize(250,250)->encode("jpg")->save($path."/".$file_name);
+					return $path."/".$file_name;
+				}
+				return $value;
+
+			}else{
+				$file_parts = explode("/",$value);
+				$file_name = explode(".",$file_parts[count($file_parts)-1])[0].".jpg";
+				if(file_exists($path."/".$file_name)) return $path."/".$file_name;
+				Image::make($value)->resize(250,250)->encode("jpg")->save($path."/".$file_name);
+				return $path."/".$file_name;
+			}
+		}catch(\Exception $e){
+            return false;
+        }
+    }
     public function getColumns()
     {
         return $this->getConnection()->getSchemaBuilder()->getColumnListing($this->getTable());
