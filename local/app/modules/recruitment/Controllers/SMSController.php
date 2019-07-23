@@ -7,6 +7,7 @@ use App\Jobs\SmsQueueJob;
 use App\modules\recruitment\Models\JobAppliciant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SMSController extends Controller
 {
@@ -88,6 +89,37 @@ class SMSController extends Controller
 		}
 //        return $datas;
         
+        return response()->json(['status' => 'success', 'message' => 'Message send successfully']);
+
+    }
+    public function sendSMSToApplicantByUploadFile(Request $request)
+    {
+        $rules = [
+            'sms_file' => 'required',
+        ];
+        $this->validate($request, $rules);
+        $data = [];
+        Excel::load($request->file('sms_file'), function ($reader) use(&$data) {
+            $data = $reader->toArray()[0];
+        });
+        return $data;
+        $datas = [];
+        foreach ($data as $d) {
+            $m = $d['sms_body'];
+            array_push($datas, [
+                'payload' => json_encode([
+                    'to' => $d['mobile_no_self'],
+                    'body' => $m
+                ]),
+                'try' => 0
+            ]);
+        }
+        $dd = array_chunk($datas,10);
+        foreach($dd as $d){
+            $this->dispatch((new SmsQueueJob($d))->onQueue('recruitment'));
+        }
+//        return $datas;
+
         return response()->json(['status' => 'success', 'message' => 'Message send successfully']);
 
     }

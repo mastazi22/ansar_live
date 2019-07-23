@@ -16,6 +16,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
         Route::any('/applicant', ['as' => 'recruitment.applicant.index', 'uses' => 'ApplicantScreeningController@index']);
         Route::any('/applicant/sms', ['as' => 'recruitment.applicant.sms', 'uses' => 'SMSController@index']);
         Route::post('/applicant/sms', ['as' => 'recruitment.applicant.sms_send', 'uses' => 'SMSController@sendSMSToApplicant']);
+        Route::post('/applicant/sms_upload_file', ['as' => 'recruitment.applicant.sms_send_file', 'uses' => 'SMSController@sendSMSToApplicantByUploadFile']);
         Route::get('/applicant/detail/view/{id}', ['as' => 'recruitment.applicant.detail_view', 'uses' => 'ApplicantScreeningController@applicantDetailView']);
         Route::get('/applicant/detail/{id}', ['as' => 'recruitment.applicant.detail', 'uses' => 'ApplicantScreeningController@getApplicantData']);
         Route::post('/applicant/update', ['as' => 'recruitment.applicant.update', 'uses' => 'ApplicantScreeningController@updateApplicantData']);

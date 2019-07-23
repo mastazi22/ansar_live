@@ -163,6 +163,19 @@
                             <button ng-disabled="!(param.circular&&param.status&&param.message)" ng-click="submitData()" class="btn btn-primary btn-block">Send SMS</button>
                         </div>
                     </div>
+                    <div class="col-sm-6 col-centered">
+                        <p style="text-align: center;margin: 20px;font-size: 16px"><strong>OR</strong></p>
+                        <form method="post" action="{{URL::route('recruitment.applicant.sms_send_file')}}" enctype="multipart/form-data">
+                            {!! csrf_field() !!}
+                            <div class="form-group">
+                                <label style="display: block">Select file to send sms</label>
+                                <input type="file" name="sms_file">
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Upload File</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
