@@ -89,10 +89,45 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
         //load image
         Route::get('/profile_image', ['as' => 'profile_image', 'uses' => 'ApplicantScreeningController@loadImage']);
         Route::get('/test', function () {
-            $d1 = new \DateTime('1999-02-04');
-            $d2 = new \DateTime('2019-03-27');
-            $diff = $d1->diff($d2);
-            return $diff->y+($diff->m/12)+($diff->d/365);
+            $data = \Illuminate\Support\Facades\DB::table('job_applicant')
+                ->join('job_circular','job_circular.id','=','job_applicant.job_circular_id')
+                ->join('job_applicant_exam_center','job_circular.id','=','job_applicant_exam_center.job_circular_id')
+                ->where('job_applicant.status','selected')
+                ->select('job_applicant.applicant_id','job_applicant.applicant_name_bng','job_applicant.roll_no','job_circular.circular_name','job_applicant.applicant_password',
+                    'job_applicant_exam_center.selection_date','job_applicant_exam_center.selection_time','mobile_no_self')
+                ->get();
+            $datas = [];
+            array_push($datas,['mobile_no_self','sms_body']);
+            foreach ($data as $d){
+                $bang = ['0'=>'০','1'=>'১','2'=>'২','3'=>'৩','4'=>'৪','5'=>'৫','6'=>'৬','7'=>'৭','8'=>'৮','9'=>'৯'];
+                $date_array = str_split(\Carbon\Carbon::parse($d->selection_date)->format('d/m/Y'));
+                $time_array = str_split($d->selection_time);
+                $date = "";
+                $time = "";
+                foreach ($date_array as $da){
+                    if(isset($bang[$da])){
+                        $date .= $bang[$da];
+                    }else{
+                        $date .= $da;
+                    }
+                }
+                foreach ($time_array as $da){
+                    if(isset($bang[$da])){
+                        $time .= $bang[$da];
+                    }else{
+                        $time .= $da;
+                    }
+                }
+                array_push($datas,[$d->mobile_no_self,"নামঃ ".$d->applicant_name_bng.",  আইডিঃ ".$d->applicant_id.",  রোল নংঃ ".$d->roll_no." , পদবীঃ ".explode("|",$d->circular_name)[0]." , পরীক্ষার তারিখঃ $date,  সময়ঃ $time । 
+                প্রবেশপত্র ও বিস্তারিত  তথ্যের জন্য ভিজিট করুনঃ  www.ansarvdp.gov.bd"]);
+            }
+            return \Maatwebsite\Excel\Facades\Excel::create('sms_file_download',function($excel) use($datas){
+                $excel->sheet('Sheet1', function($sheet) use($datas) {
+
+                    $sheet->fromArray($datas);
+
+                });
+            })->export('xls');
         });
         Route::get('/test1', function () {
             $applicants = \App\modules\recruitment\Models\JobAppliciant::whereHas('selectedApplicant',function(){
