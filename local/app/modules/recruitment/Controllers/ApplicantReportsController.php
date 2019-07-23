@@ -444,7 +444,7 @@ class ApplicantReportsController extends Controller
             unlink($file);
         }
         rmdir($path);
-        return response()->json(['status'=>true,'message'=>$zip_name]);
+        return response()->json(['status'=>true,'message'=>"applicant_list_pdf.zip"]);
     }
     public function applicantDetailsReport(){
         $circulars = JobCircular::pluck('circular_name','id');
