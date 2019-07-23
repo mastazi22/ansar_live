@@ -97,7 +97,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                     'job_applicant_exam_center.selection_date','job_applicant_exam_center.selection_time','mobile_no_self')
                 ->get();
             $datas = [];
-            array_push($datas,['mobile_no_self','sms_body']);
+//            array_push($datas,['mobile_no_self','sms_body']);
             foreach ($data as $d){
                 $bang = ['0'=>'০','1'=>'১','2'=>'২','3'=>'৩','4'=>'৪','5'=>'৫','6'=>'৬','7'=>'৭','8'=>'৮','9'=>'৯'];
                 $date_array = str_split(\Carbon\Carbon::parse($d->selection_date)->format('d/m/Y'));
@@ -118,8 +118,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                         $time .= $da;
                     }
                 }
-                array_push($datas,[$d->mobile_no_self,"নামঃ ".$d->applicant_name_bng.",  আইডিঃ ".$d->applicant_id.",  রোল নংঃ ".$d->roll_no." , পদবীঃ ".explode("|",$d->circular_name)[0]." , পরীক্ষার তারিখঃ $date,  সময়ঃ $time । 
-                প্রবেশপত্র ও বিস্তারিত  তথ্যের জন্য ভিজিট করুনঃ  www.ansarvdp.gov.bd"]);
+                array_push($datas,[$d->mobile_no_self,"নামঃ ".$d->applicant_name_bng.",  আইডিঃ ".$d->applicant_id.",  রোল নংঃ ".$d->roll_no." , পদবীঃ ".explode("|",$d->circular_name)[0]." , পরীক্ষার তারিখঃ $date,  সময়ঃ $time । প্রবেশপত্র ও বিস্তারিত  তথ্যের জন্য ভিজিট করুনঃ  www.ansarvdp.gov.bd"]);
             }
             return \Maatwebsite\Excel\Facades\Excel::create('sms_file_download',function($excel) use($datas){
                 $excel->sheet('Sheet1', function($sheet) use($datas) {
