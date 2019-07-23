@@ -105,6 +105,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                 $roll_array = str_split($d->roll_no);
                 $date = "";
                 $time = "";
+                $time_a = "";
                 $roll_no = "";
                 foreach ($date_array as $da){
                     if(isset($bang[$da])){
@@ -115,9 +116,9 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                 }
                 foreach ($time_array as $da){
                     if(isset($bang[$da])){
-                        $time .= $bang[$da];
+                        $time_a .= $bang[$da];
                     }else{
-                        $time .= $da;
+                        $time_a .= $da;
                     }
                 }
                 foreach ($roll_array as $da){
@@ -126,6 +127,12 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                     }else{
                         $roll_no .= $da;
                     }
+                }
+                $rr = explode(" ",$time_a);
+                if(!strcasecmp($rr[1],'am')){
+                    $time = "সকাল $rr[0]";
+                }else{
+                    $time = "বিকাল $rr[0]";
                 }
                 array_push($datas,[$d->mobile_no_self,"নামঃ ".$d->applicant_name_bng.",  আইডিঃ ".$d->applicant_id.", পাসওয়ার্ডঃ ".$d->applicant_password.", রোল নংঃ $roll_no , পদবীঃ ".explode("|",$d->circular_name)[0]." , পরীক্ষার তারিখঃ $date,  সময়ঃ $time । প্রবেশপত্র ও বিস্তারিত  তথ্যের জন্য ভিজিট করুনঃ  www.ansarvdp.gov.bd"]);
             }
