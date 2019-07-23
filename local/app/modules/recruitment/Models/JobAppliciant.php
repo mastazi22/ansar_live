@@ -103,7 +103,6 @@ class JobAppliciant extends Model
 				Image::make($value)->resize(250,250)->encode("jpg")->save($path."/".$file_name);
 				return $path."/".$file_name;
 			}
-			return $value;
 		}catch(\Exception $e){
             return false;
         }
@@ -152,7 +151,8 @@ class JobAppliciant extends Model
 
     public function education()
     {
-        return $this->belongsToMany(JobEducationInfo::class, 'job_appliciant_education_info', 'job_applicant_id', 'job_education_id');
+        return $this->belongsToMany(JobEducationInfo::class, 'job_appliciant_education_info', 'job_applicant_id', 'job_education_id')
+            ->withPivot('subject','institute_name','passing_year','board_university','gade_divission');
     }
 
     public function physicalPoint()

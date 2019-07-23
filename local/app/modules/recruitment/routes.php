@@ -93,8 +93,9 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                 ->join('job_circular','job_circular.id','=','job_applicant.job_circular_id')
                 ->join('job_applicant_exam_center','job_circular.id','=','job_applicant_exam_center.job_circular_id')
                 ->where('job_applicant.status','selected')
+                ->where('job_circular.id','!=',36)
                 ->select('job_applicant.applicant_id','job_applicant.applicant_name_bng','job_applicant.roll_no','job_circular.circular_name','job_applicant.applicant_password',
-                    'job_applicant_exam_center.selection_date','job_applicant_exam_center.selection_time','mobile_no_self')
+                    'job_applicant_exam_center.selection_date','job_applicant_exam_center.selection_time','job_applicant_exam_center.selection_place','mobile_no_self')
                 ->get();
             $datas = [];
 //            array_push($datas,['mobile_no_self','sms_body']);
@@ -134,7 +135,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                 }else{
                     $time = "বিকাল $rr[0]";
                 }
-                array_push($datas,[$d->mobile_no_self,"নামঃ ".$d->applicant_name_bng.",  আইডিঃ ".$d->applicant_id.", পাসওয়ার্ডঃ ".$d->applicant_password.", রোল নংঃ $roll_no , পদবীঃ ".explode("|",$d->circular_name)[0]." , পরীক্ষার তারিখঃ $date,  সময়ঃ $time । প্রবেশপত্র ও বিস্তারিত  তথ্যের জন্য ভিজিট করুনঃ  www.ansarvdp.gov.bd"]);
+                array_push($datas,[$d->mobile_no_self,"নামঃ ".$d->applicant_name_bng.",  আইডিঃ ".$d->applicant_id.", পাসওয়ার্ডঃ ".$d->applicant_password.", রোল নংঃ $roll_no , পদবীঃ ".explode("|",$d->circular_name)[0]." , পরীক্ষার তারিখঃ $date,  সময়ঃ $time, স্থানঃ ".$d->selection_place." । প্রবেশপত্র ও বিস্তারিত  তথ্যের জন্য ভিজিট করুনঃ  www.ansarvdp.gov.bd"]);
             }
             return \Maatwebsite\Excel\Facades\Excel::create('sms_file_download',function($excel) use($datas){
                 $excel->sheet('Sheet1', function($sheet) use($datas) {
