@@ -76,7 +76,8 @@ class CustomQuery
                 });
             }
         }
-        if(auth()->user()->id==343){
+        // as per request RUSSEL VAI(24-07-2019)
+/*        if(auth()->user()->id==343){
             $edu = DB::table('tbl_ansar_education_info')->select(DB::raw('MAX(education_id) edu_id'),'ansar_id')
                 ->groupBy('ansar_id')->toSql();
             $query->join('tbl_ansar_education_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_ansar_education_info.ansar_id')
@@ -87,7 +88,8 @@ class CustomQuery
                 });
             $query->where('tbl_education_info.id','>=',7);
             $query->whereRaw('tbl_ansar_parsonal_info.hight_feet*12+tbl_ansar_parsonal_info.hight_inch>=66');
-        }
+        }*/
+
         $fquery = clone $query;
         if ($user->type == 22) {
             if (in_array($exclude_district, Config::get('app.offer'))) {
