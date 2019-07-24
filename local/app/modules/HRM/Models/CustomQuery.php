@@ -128,12 +128,14 @@ class CustomQuery
         $apc_female = clone $fquery;
         $ansar_male = clone $query;
         $ansar_female = clone $fquery;
-        if(auth()->user()->id==343){
+
+        // as per request RUSSEL VAI(24-07-2019)
+        /*if(auth()->user()->id==343){
             $ansar_male->whereRaw('tbl_ansar_parsonal_info.hight_feet*12+tbl_ansar_parsonal_info.hight_inch>=66');
             $ansar_male->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<36');
             $ansar_female->whereRaw('tbl_ansar_parsonal_info.hight_feet*12+tbl_ansar_parsonal_info.hight_inch>=64');
             $ansar_female->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<33');
-        }
+        }*/
         $pc_male->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
             ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<' . $pc_apc_retirement_age)
             ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
