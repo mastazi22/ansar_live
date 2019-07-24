@@ -95,7 +95,6 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                 ->join('job_applicant_exam_center','job_circular.id','=','job_applicant_exam_center.job_circular_id')
                 ->where('job_applicant.status','selected')
                 ->where('job_circular.id','!=',36)
-                ->where('job_applicant_exam_center.selection_date','2019-08-02')
                 ->select('job_applicant.applicant_id','job_applicant.applicant_name_bng','job_applicant.roll_no','job_circular.circular_name','job_applicant.applicant_password',
                     'job_applicant_exam_center.selection_date','job_applicant_exam_center.selection_time','job_applicant_exam_center.selection_place','mobile_no_self')
                 ->get();
