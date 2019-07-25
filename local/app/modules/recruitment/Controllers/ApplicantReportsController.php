@@ -227,7 +227,7 @@ class ApplicantReportsController extends Controller
                     });
                 })->download('xls');
             }
-            else if($applicants->count()<=5000){
+            else if($applicants->count()<=10000){
                 $file_name = public_path();
                 Excel::create(str_replace("/","",implode("_",explode(" ",$circular->circular_name))), function ($excel) use ($applicants, $request, $category_type) {
 
