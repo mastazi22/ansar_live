@@ -29,7 +29,6 @@
         <th>Experience</th>
         <th>Computer Knowledge</th>
         <th>Weight</th>
-		<th>Photo</th>
 
     </tr>
 
@@ -71,7 +70,6 @@
                 <th>{{$a->experience}}</th>
                 <th>{{$a->computer_knowledge}}</th>
                 <td>{{$a->weight}} kg</td>
-				<td>@if($pic&&file_exists($pic)&&getimagesize($pic))<img src="{{$pic}}" width="100" height="100">@endif</td>
             </tr>
         @endforeach
     @else
