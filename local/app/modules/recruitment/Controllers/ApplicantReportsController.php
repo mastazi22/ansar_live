@@ -231,14 +231,17 @@ class ApplicantReportsController extends Controller
                 $file_name = public_path();
                 Excel::create(str_replace("/","",implode("_",explode(" ",$circular->circular_name))), function ($excel) use ($applicants, $request, $category_type) {
 
-                    $excel->sheet('sheet1', function ($sheet) use ($applicants, $request, $category_type) {
-                        $sheet->setColumnFormat(array(
-                            'G' => '@'
-                        ));
-                        $sheet->setAutoSize(false);
-                        $sheet->setWidth('A', 5);
-                        $sheet->loadView('recruitment::reports.excel_data_other', ['index' => 1, 'applicants' => $applicants->get(), 'status' => $request->status, 'ctype' => $category_type]);
-                    });
+                    $applicants->chunk(3000,function($data) use($excel,$request, $category_type){
+							$excel->sheet('sheet1', function ($sheet) use ($data, $request, $category_type) {
+							$sheet->setColumnFormat(array(
+								'G' => '@'
+							));
+							$sheet->setAutoSize(false);
+							$sheet->setWidth('A', 5);
+							$sheet->loadView('recruitment::reports.excel_data_other', ['index' => 1, 'applicants' => $data, 'status' => $request->status, 'ctype' => $category_type]);
+						});
+					});
+					
                 })->save('xls',$file_name,true);
                 return response()->json(['status'=>true,'message'=>str_replace("/","",implode("_",explode(" ",$circular->circular_name))).".xls"]);
             }
