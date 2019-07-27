@@ -232,7 +232,7 @@ class ApplicantReportsController extends Controller
                 Excel::create(str_replace("/","",implode("_",explode(" ",$circular->circular_name))), function ($excel) use ($applicants, $request, $category_type) {
 					$i=1;
                     $applicants->chunk(3000,function($data) use($excel,$request, $category_type,$i){
-							$excel->sheet('sheet'+$i, function ($sheet) use ($data, $request, $category_type) {
+							$excel->sheet('sheet'.$i, function ($sheet) use ($data, $request, $category_type) {
 							$sheet->setColumnFormat(array(
 								'G' => '@'
 							));
