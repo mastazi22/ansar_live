@@ -28,6 +28,7 @@
         <th>Education(Max)</th>
         <th>Experience</th>
         <th>Computer Knowledge</th>
+        <th>Weight</th>
 		<th>Photo</th>
 
     </tr>
