@@ -10,6 +10,7 @@ use App\Helper\SMSTrait;
 use App\Jobs\BlockForAge;
 use App\Jobs\RearrangePanelPositionGlobal;
 use App\Jobs\RearrangePanelPositionLocal;
+use App\Jobs\UnblockRetireAnsar;
 use App\modules\HRM\Models\AnsarRetireHistory;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\EmbodimentModel;
@@ -530,6 +531,12 @@ class Kernel extends ConsoleKernel
 
 
         })->everyMinute()->name("ansar_block_for_age3")->withoutOverlapping();
+        $schedule->call(function () {
+
+            dispatch(new UnblockRetireAnsar());
+
+
+        })->everyMinute()->name("UnblockRetireAnsar")->withoutOverlapping();
 
     }
 }
