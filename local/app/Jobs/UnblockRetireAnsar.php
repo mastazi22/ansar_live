@@ -53,7 +53,7 @@ class UnblockRetireAnsar extends Job implements ShouldQueue
                 $ansarRe = GlobalParameterFacades::getValue('retirement_age_ansar') - 3;
                 $pcApcRe = GlobalParameterFacades::getValue('retirement_age_pc_apc') - 3;
 //                Log::info("called : Ansar Block For Age-".$ansar->ansar_id."Age:".$age->y."year ".$age->m."month ".$age->d." days");
-                if ($info->designation->code == "ANSAR" && (($age->y >= $ansarRe&&($age->m>0||$age->d>0))||$age->y > $ansarRe)) {
+                if ($info->designation->code == "ANSAR" && $age->y < $ansarRe) {
                     $pl = PanelInfoLogModel::where('ansar_id',$info->ansar_id)->orderBy('panel_date','desc')->first();
                     $info->panel()->create([
                        'ansar_merit_list'=>$pl->merit_list,
@@ -66,7 +66,7 @@ class UnblockRetireAnsar extends Job implements ShouldQueue
                         'retierment_status' => 0
                     ]);
                     $ansar->delete();
-                } else if (($info->designation->code == "PC" || $info->designation->code == "APC") && (($age->y >= $pcApcRe&&($age->m>0||$age->d>0))||$age->y > $pcApcRe)) {
+                } else if (($info->designation->code == "PC" || $info->designation->code == "APC") && $age->y < $pcApcRe) {
                     $info->panel()->create([
                         'ansar_merit_list'=>$pl->merit_list,
                         'panel_date'=>Carbon::now()->format('Y-m-d'),
