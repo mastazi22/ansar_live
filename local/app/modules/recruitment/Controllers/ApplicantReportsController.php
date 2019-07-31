@@ -429,8 +429,8 @@ class ApplicantReportsController extends Controller
         ob_end_flush();
         echo "Start Processing....";
         $zip = new \ZipArchive();
-        $file_name = str_replace("/","",implode("_",explode(" ",$circular->circular_name))).".zip";
-        $zip_name = public_path($file_name);
+        $z_file_name = str_replace("/","",implode("_",explode(" ",$circular->circular_name))).".zip";
+        $zip_name = public_path($z_file_name);
         $zip->open($zip_name,\ZipArchive::CREATE);
         $files = [];
         $counter = 1;
@@ -451,7 +451,7 @@ class ApplicantReportsController extends Controller
             unlink($file);
         }
         rmdir($path);
-        return response()->json(['status'=>true,'message'=>$file_name]);
+        return response()->json(['status'=>true,'message'=>$z_file_name]);
     }
     public function applicantDetailsReport(){
         $circulars = JobCircular::pluck('circular_name','id');
