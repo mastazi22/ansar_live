@@ -1505,7 +1505,7 @@ class DGController extends Controller
 
                 case AnsarStatusInfo::REST_STATUS:
                     $rest_info = RestInfoModel::where('ansar_id', $ansar_id)->first();
-                    $rest_info->saveLog("Panel", $direct_panel_date, $direct_panel_comment);
+                    $rest_info->saveLog("Panel", $modified_direct_panel_date, $direct_panel_comment);
                     PanelModel::create([
                         'ansar_id' => $ansar_id,
                         'panel_date' => $modified_direct_panel_date,
