@@ -430,7 +430,11 @@ class ApplicantReportsController extends Controller
         echo "Start Processing....";
         $zip = new \ZipArchive();
         $z_file_name = str_replace("/","",implode("_",explode(" ",$circular->circular_name))).".zip";
-        $zip_name = public_path($z_file_name);
+        $downloaded_folder = "download";
+        if(!File::exists(public_path($downloaded_folder))){
+            File::makeDirectory(public_path($downloaded_folder), 0775, true);
+        }
+        $zip_name = public_path($downloaded_folder."/".$z_file_name);
         $zip->open($zip_name,\ZipArchive::CREATE);
         $files = [];
         $counter = 1;
@@ -451,7 +455,7 @@ class ApplicantReportsController extends Controller
             unlink($file);
         }
         rmdir($path);
-        return response()->json(['status'=>true,'message'=>$z_file_name]);
+        return response()->json(['status'=>false,'message'=>$z_file_name]);
     }
     public function applicantDetailsReport(){
         $circulars = JobCircular::pluck('circular_name','id');
