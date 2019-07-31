@@ -263,13 +263,13 @@
                     </tr>
                     <tr>
                         <th>উপজেলা&nbsp;&nbsp;&nbsp;&nbsp;:</th>
-                        <td>{{$applicant->present_thana->thana_name_bng}}</td>
-                        <td>{{$applicant->thana->thana_name_bng}}</td>
+                        <td>{{$applicant->present_thana?$applicant->present_thana->thana_name_bng:'--'}}</td>
+                        <td>{{$applicant->thana?$applicant->thana->thana_name_bng:'--'}}</td>
                     </tr>
                     <tr>
                         <th>জেলা&nbsp;&nbsp;&nbsp;&nbsp;:</th>
-                        <td>{{$applicant->present_district->unit_name_bng}}</td>
-                        <td>{{$applicant->district->unit_name_bng}}</td>
+                        <td>{{$applicant->present_district?$applicant->present_district->unit_name_bng:'--'}}</td>
+                        <td>{{$applicant->district?$applicant->district->unit_name_bng:'--'}}</td>
                     </tr>
                 </table><br>
                 <table style="width: 100%;margin-top: 5px" border="1" cellpadding="0" cellspacing="0">
