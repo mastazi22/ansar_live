@@ -411,6 +411,7 @@ class ApplicantReportsController extends Controller
             'page'=>'regex:/^[0-9]+$/'
         ];
         $this->validate($request,$rules);
+        $circular = JobCircular::find($request->circular);
         $applicants = JobAppliciant::where('status',$request->status)
             ->where('job_circular_id',$request->circular);
         if($request->exists('range')&&$request->range!='all'){
@@ -428,7 +429,8 @@ class ApplicantReportsController extends Controller
         ob_end_flush();
         echo "Start Processing....";
         $zip = new \ZipArchive();
-        $zip_name = public_path("applicant_list_pdf.zip");
+        $file_name = str_replace("/","",implode("_",explode(" ",$circular->circular_name))).".zip";
+        $zip_name = public_path($file_name);
         $zip->open($zip_name,\ZipArchive::CREATE);
         $files = [];
         $counter = 1;
