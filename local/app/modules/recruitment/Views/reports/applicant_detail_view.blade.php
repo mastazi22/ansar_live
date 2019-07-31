@@ -1,6 +1,7 @@
+<!DOCTYPE html>
 <html>
     <head>
-        <meta charset="UTF-8">
+        <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
         <style>
             table th, table td {
                 white-space: nowrap;
@@ -8,6 +9,7 @@
                 line-break: normal;
                 vertical-align: top;
                 font-size: 14px;
+                text-align: left;
             }
 
             table {
@@ -36,23 +38,30 @@
 
     </head>
     <body>
-        <div style="width: 70%;margin: auto;padding: 20px 0px;">
+        <div style="padding: 20px 0px;">
         <div id="print_box">
             <div style="width: 100%;margin: auto;">
                 <?php
                 $pic =$applicant->profile_pic;
                 $sig =$applicant->signature_pic;
                 ?>
-                <div style="display: flex;justify-content: space-between;margin-bottom: 10px">
-                    <img src="{{public_path('dist/img/ansar-vdp.png')}}" style="width: 100px;height: 100px;align-self: flex-start">
-                    <div style="align-self: center;text-align: center;font-size: 14px">
+                <div style="margin-bottom: 10px">
+                    <div style="float: left;width: 20%">
+                        <img src="{{public_path('dist/img/ansar-vdp.png')}}" style="width: 100px;height: 100px;align-self: flex-start">
+                    </div>
+                    <div style="float: left;text-align: center;font-size: 14px;width: 60%">
                         <strong>গণপ্রজাতন্ত্রী বাংলাদেশ সরকার</strong><br>
                         <strong>বাংলাদেশ আনসার ও গ্রাম প্রতিরক্ষা বাহিনী</strong><br>
                         <strong>সদর দপ্তর, খিলগাঁও, ঢাকা-১২১৯</strong><br>
-                        <h2 style="text-decoration: underline; color:blue;margin-top: 5px !important;">www.ansarvdp.gov.bd</h2>
+                        <h2 style="text-align: center;text-decoration: underline; color:blue;margin-top: 5px !important;">www.ansarvdp.gov.bd</h2>
                         <h4 style="text-align: center;margin: 5px"><strong>তৃতীয় ও চতুর্থ শ্রেণী কর্মচারী নিয়োগ-{{\Carbon\Carbon::now()->year}}</strong></h4>
                     </div>
-                    <img src="@if($pic&&file_exists($pic)&&getimagesize($pic)){{$pic}}@endif" style="width: 100px;height: 150px;align-self: end">
+                    <div style="float: left;width: 20%">
+                        <img src="@if($pic&&file_exists($pic)&&getimagesize($pic)){{$pic}}@endif" style="width: 100px;height: 150px;float: right">
+                    </div>
+                    <div style="clear: both">
+
+                    </div>
                 </div>
 
                 <table style="width: 100%" border="1" cellpadding="0" cellspacing="0">
@@ -90,6 +99,7 @@
                         $nids = count(str_split($applicant->national_id_no))==0?array_fill(0,17,''):str_split($applicant->national_id_no);
                         $bcs = count(str_split($applicant->birth_certificate_no))==0?array_fill(0,17,''):str_split($applicant->birth_certificate_no);
                         $dob = \Carbon\Carbon::parse($applicant->date_of_birth)->diff(\Carbon\Carbon::now());
+                        $loop_length = 22;
                         ?>
                         @foreach($date as $d)
                             @if(isset($bang[$d]))
@@ -113,41 +123,45 @@
                     </tr>
                     <tr>
                         <th class="serial">৬.</th>
-                        <th colspan="2">পিতার নাম&nbsp;&nbsp;&nbsp;:{{$applicant->father_name_bng}}</th>
+                        <th colspan="2">পিতার নাম&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:{{$applicant->father_name_bng}}</th>
                     </tr>
                     <tr>
                         <th class="serial">৭.</th>
-                        <th colspan="2">মাতার নাম&nbsp;&nbsp;&nbsp;:{{$applicant->mother_name_bng}}</th>
+                        <th colspan="2">মাতার নাম&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:{{$applicant->mother_name_bng}}</th>
                     </tr>
                     <tr>
                         <th class="serial">৮.</th>
-                        <th colspan="2">জন্ম তারিখ&nbsp;&nbsp;&nbsp;:{{$applicant->date_of_birth}}<br><span style="font-size: 10px">(শিক্ষা সনদ অনুযায়ী)</span></th>
+                        <th colspan="2">জন্ম তারিখ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:{{$applicant->date_of_birth}}<br><span style="font-size: 10px">(শিক্ষা সনদ অনুযায়ী)</span></th>
                     </tr>
                 </table><br>
                 <table style="width: 100%;margin-top: 5px" border="1" cellpadding="0" cellspacing="0">
                     <tr>
                         <th class="serial" rowspan="2">৯.</th>
                         <th style="width:250px">জাতীয় পরিচয়পত্র নম্বর&nbsp;&nbsp;&nbsp;:</th>
-                        @foreach($nids as $d)
-                            @if(isset($bang[$d]))
-                                <th class="country-id-type" >{{$bang[$d]}}</th>
-                            @else
-                                <th class="country-id-type" >{{$d}}</th>
+                        @for($i=0;$i<$loop_length;$i++)
+                            @if(isset($nids[$i])&&isset($bang[$nids[$i]]))
+                                <th class="country-id-type" >{{$bang[$nids[$i]]}}</th>
+                            @elseif(isset($nids[$i]))
+                                <th class="country-id-type" >{{$nids[$i]}}</th>
+                                @else
+                                <th class="country-id-type" >&nbsp;</th>
                             @endif
-                        @endforeach
+                            @endfor
                         <th rowspan="2">
                             (যে কোন<br>একটি)
                         </th>
                     </tr>
                     <tr>
                         <th style="width:250px">জন্ম নিবন্ধন নম্বর&nbsp;&nbsp;&nbsp;:</th>
-                        @foreach($bcs as $d)
-                            @if(isset($bang[$d]))
-                                <th class="country-id-type" >{{$bang[$d]}}</th>
+                        @for($i=0;$i<$loop_length;$i++)
+                            @if(isset($bcs[$i])&&isset($bang[$bcs[$i]]))
+                                <th class="country-id-type" >{{$bang[$bcs[$i]]}}</th>
+                            @elseif(isset($bcs[$i]))
+                                <th class="country-id-type" >{{$bcs[$i]}}</th>
                             @else
-                                <th class="country-id-type" >{{$d}}</th>
+                                <th class="country-id-type" >&nbsp;</th>
                             @endif
-                        @endforeach
+                        @endfor
                     </tr>
                 </table><br>
                 <table style="width: 100%;margin-top: 5px" border="1" cellpadding="0" cellspacing="0">
