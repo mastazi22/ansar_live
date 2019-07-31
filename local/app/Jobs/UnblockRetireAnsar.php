@@ -52,11 +52,11 @@ class UnblockRetireAnsar extends Job implements ShouldQueue
                 $age = \Carbon\Carbon::parse($dob)->diff($now, true);
                 $ansarRe = GlobalParameterFacades::getValue('retirement_age_ansar') - 3;
                 $pcApcRe = GlobalParameterFacades::getValue('retirement_age_pc_apc') - 3;
-//                Log::info("called : Ansar Block For Age-".$ansar->ansar_id."Age:".$age->y."year ".$age->m."month ".$age->d." days");
+                //echo("called : Ansar Block For Age-".$ansar->ansar_id."Age:".$age->y."year ".$age->m."month ".$age->d." days");
                 if ($info->designation->code == "ANSAR" && $age->y < $ansarRe) {
                     $pl = PanelInfoLogModel::where('ansar_id',$info->ansar_id)->orderBy('panel_date','desc')->first();
                     $info->panel()->create([
-                       'ansar_merit_list'=>$pl->merit_list,
+                        'ansar_merit_list'=>$pl->merit_list,
                         'panel_date'=>Carbon::now()->format('Y-m-d'),
                         'memorandum_id'=>$pl->old_memorandum_id,
                         'come_from'=>'After Retier'

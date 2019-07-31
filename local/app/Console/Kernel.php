@@ -531,12 +531,12 @@ class Kernel extends ConsoleKernel
 
 
         })->everyMinute()->name("ansar_block_for_age3")->withoutOverlapping();
-//        $schedule->call(function () {
-//
-//            dispatch(new UnblockRetireAnsar());
-//
-//
-//        })->everyMinute()->name("UnblockRetireAnsar")->withoutOverlapping();
+        $schedule->call(function () {
+
+            dispatch(new UnblockRetireAnsar());
+
+
+        })->dailyAt("00:00")->name("UnblockRetireAnsar")->withoutOverlapping();
 
     }
 }

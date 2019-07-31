@@ -440,7 +440,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
                     $age = \Carbon\Carbon::parse($dob)->diff($now, true);
                     $ansarRe = GlobalParameterFacades::getValue('retirement_age_ansar') - 3;
                     $pcApcRe = GlobalParameterFacades::getValue('retirement_age_pc_apc') - 3;
-                echo("called : Ansar Block For Age-".$ansar->ansar_id."Age:".$age->y."year ".$age->m."month ".$age->d." days");
+                //echo("called : Ansar Block For Age-".$ansar->ansar_id."Age:".$age->y."year ".$age->m."month ".$age->d." days");
                     if ($info->designation->code == "ANSAR" && $age->y < $ansarRe) {
                         $pl = PanelInfoLogModel::where('ansar_id',$info->ansar_id)->orderBy('panel_date','desc')->first();
                         $info->panel()->create([
@@ -471,7 +471,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
 
                 DB::connection('hrm')->commit();
             }catch(\Exception $e){
-                echo("ansar_unblock_for_age:".$e->getMessage());
+                Log::info("ansar_unblock_for_age:".$e->getMessage());
                 DB::connection('hrm')->rollback();
             }
             dispatch(new RearrangePanelPositionGlobal());

@@ -26,6 +26,9 @@ class AppServiceProvider extends ServiceProvider
                return $this->where($column,$data);
            }
         });
+        PersonalInfo::updated(function(){
+
+        });
     }
 
     /**
