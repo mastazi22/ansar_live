@@ -182,7 +182,8 @@ class QueryHelper
                     ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                     ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
                     ->where('tbl_ansar_status_info.retierment_status',1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0);
+                    ->where('tbl_ansar_status_info.block_list_status', 0)
+                    ->whereNull('tbl_ansar_retirement_history.deleted_at');
                 break;
         }
         return $ansarQuery;
