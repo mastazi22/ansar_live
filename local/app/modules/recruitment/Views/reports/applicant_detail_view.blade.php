@@ -3,6 +3,10 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
         <style>
+            @font-face{
+                font-family: syamrupali;
+                src: url('{{asset('dist/fonts/Siyamrupali.ttf')}}');
+            }
             table th, table td {
                 white-space: nowrap;
                 word-break: normal;
@@ -37,7 +41,7 @@
         </style>
 
     </head>
-    <body>
+    <body style="font-family: syamrupali">
         <div style="padding: 20px 0px;">
         <div id="print_box">
             <div style="width: 100%;margin: auto;">
