@@ -532,7 +532,7 @@ class Kernel extends ConsoleKernel
 
         })->everyMinute()->name("ansar_block_for_age3")->withoutOverlapping();
         $schedule->call(function () {
-
+            Log::info("ansar_unblock_for_age:");
             $ansars = AnsarRetireHistory::all();
             DB::connection('hrm')->beginTransaction();
             try {
