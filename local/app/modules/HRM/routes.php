@@ -428,54 +428,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::get('upload_original_info', ['as' => 'upload_original_info_view', 'uses' => 'GeneralSettingsController@uploadOriginalInfoView']);
         Route::any('test', function (\Illuminate\Http\Request $request) {
 
-            $ansars = AnsarRetireHistory::all();
-            DB::connection('hrm')->beginTransaction();
-            try {
-                $now = \Carbon\Carbon::now();
-                foreach ($ansars as $ansar) {
 
-                    $info = $ansar->ansar;
-                    $dob = $info->data_of_birth;
-
-                    $age = \Carbon\Carbon::parse($dob)->diff($now, true);
-                    $ansarRe = GlobalParameterFacades::getValue('retirement_age_ansar') - 3;
-                    $pcApcRe = GlobalParameterFacades::getValue('retirement_age_pc_apc') - 3;
-                //echo("called : Ansar Block For Age-".$ansar->ansar_id."Age:".$age->y."year ".$age->m."month ".$age->d." days");
-                    if ($info->designation->code == "ANSAR" && $age->y < $ansarRe) {
-                        $pl = PanelInfoLogModel::where('ansar_id',$info->ansar_id)->orderBy('panel_date','desc')->first();
-                        $info->panel()->create([
-                            'ansar_merit_list'=>$pl->merit_list,
-                            'panel_date'=>Carbon::now()->format('Y-m-d'),
-                            'memorandum_id'=>$pl->old_memorandum_id,
-                            'come_from'=>'After Retier'
-                        ]);
-                        $info->status->update([
-                            'pannel_status' => 1,
-                            'retierment_status' => 0
-                        ]);
-                        $ansar->delete();
-                    } else if (($info->designation->code == "PC" || $info->designation->code == "APC") && $age->y < $pcApcRe) {
-                        $info->panel()->create([
-                            'ansar_merit_list'=>$pl->merit_list,
-                            'panel_date'=>Carbon::now()->format('Y-m-d'),
-                            'memorandum_id'=>$pl->old_memorandum_id,
-                            'come_from'=>'After Retier'
-                        ]);
-                        $info->status->update([
-                            'pannel_status' => 1,
-                            'retierment_status' => 0
-                        ]);
-                        $ansar->delete();
-                    }
-                }
-
-                DB::connection('hrm')->commit();
-            }catch(\Exception $e){
-                Log::info("ansar_unblock_for_age:".$e->getMessage());
-                DB::connection('hrm')->rollback();
-            }
-            dispatch(new RearrangePanelPositionGlobal());
-            dispatch(new RearrangePanelPositionLocal());
         });
         Route::get('manual_offer_to_panel', function () {
             Log::info("called : Ansar Block For Age");
@@ -668,6 +621,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
                             foreach ($value as $key1=>$value1){
                                 $p = PanelModel::where('ansar_id',$key1)->first();
                                 if($p){
+                                    echo "ansar id: ".$p->ansar_id;
                                     $p->re_panel_position = $value1;
                                     $p->save();
                                 }
