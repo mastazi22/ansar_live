@@ -172,6 +172,7 @@
                             custom-model="param.selectedDate"
                             custom-label="Select an Option"
                             custom-data="customData"
+                            custom-change="loadPage()"
                             field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',custom:'col-sm-3'}"
                     >
 
