@@ -102,7 +102,7 @@ class OfferQueue extends Job implements ShouldQueue
                     'pannel_status' => 0,
                     'offer_sms_status' => 1,
                 ]);
-                $pa->panelLog()->save(new PanelInfoLogModel([
+                /*$pa->panelLog()->save(new PanelInfoLogModel([
                     'ansar_id' => $pa->ansar_id,
                     'merit_list' => $pa->ansar_merit_list,
                     'panel_date' => $pa->panel_date,
@@ -111,7 +111,7 @@ class OfferQueue extends Job implements ShouldQueue
                     'come_from' => $pa->come_from,
                     'move_to' => 'Offer',
                 ]));
-                $mos->panel()->delete();
+                $mos->panel()->delete();*/
                 $user->actionLog()->save(new ActionUserLog([
                     'ansar_id' => $ansar_ids[$i],
                     'action_type' => 'SEND OFFER',
