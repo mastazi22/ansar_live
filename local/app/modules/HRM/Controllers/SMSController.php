@@ -13,6 +13,7 @@ use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\OfferSmsLog;
+use App\modules\HRM\Models\OfferSMSStatus;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\PersonalInfo;
@@ -92,6 +93,7 @@ class SMSController extends Controller
                     DB::beginTransaction();
                     try {
                         $offered_ansar = OfferSMS::whereIn('ansar_id', $ansar)->first();
+
 //                        return $offered_ansar->ansar_id;
                         if ($offered_ansar) {
                             $yes = new SmsReceiveInfoModel;
@@ -102,14 +104,14 @@ class SMSController extends Controller
                             $yes->sms_send_datetime = $offered_ansar->sms_send_datetime;
                             $yes->sms_end_datetime = $offered_ansar->sms_end_datetime;
                             $yes->save();
-                            switch (strtolower($offered_ansar->come_from)) {
+                            /*switch (strtolower($offered_ansar->come_from)) {
                                 case 'panel':
                                     $this->removeFromPanel($offered_ansar->ansar_id);
                                     break;
                                 case 'rest':
                                     $this->removeFromRest($offered_ansar->ansar_id);
                                     break;
-                            }
+                            }*/
                             $offered_ansar->deleteCount();
                             $offered_ansar->deleteOfferStatus();
                             $offered_ansar->saveLog();
@@ -129,6 +131,8 @@ class SMSController extends Controller
                     try {
                         $offered_ansar = OfferSMS::whereIn('ansar_id', $ansar)->first();
                         if ($offered_ansar) {
+                            $ansar = $offered_ansar->ansar;
+                            $pa =$ansar->panel;
                             $count = $offered_ansar->getOfferCount();
                             if($count>=$maximum_offer_limit){
                                 $offered_ansar->deleteCount();
@@ -139,18 +143,52 @@ class SMSController extends Controller
                                     'offer_sms_status' => 0,
                                     'offer_block_status' => 1,
                                 ]);
-                            }else{
+                                if($pa){
+                                    $pa->panelLog()->save(new PanelInfoLogModel([
+                                        'ansar_id' => $pa->ansar_id,
+                                        'merit_list' => $pa->ansar_merit_list,
+                                        'panel_date' => $pa->panel_date,
+                                        're_panel_date' => $pa->re_panel_date,
+                                        'old_memorandum_id' => !$pa->memorandum_id ? "N\A" : $pa->memorandum_id,
+                                        'movement_date' => Carbon::today(),
+                                        'come_from' => $pa->come_from,
+                                        'move_to' => 'Offer',
+                                        'go_panel_position' => $pa->go_panel_position,
+                                        're_panel_position' => $pa->re_panel_position
+                                    ]));
+                                    $pa->delete();
+                                }
+                            }
+                            else{
                                 $offered_ansar->saveCount();
+                                $offer_status = OfferSMSStatus::where(['ansar_id'=>$offered_ansar->ansar_id])->first();
                                 switch ($offered_ansar->come_from) {
                                     case 'Panel':
-                                        $panel_log = PanelInfoLogModel::where('ansar_id', $offered_ansar->ansar_id)->select('old_memorandum_id')->first();
-                                        $panel_info = new PanelModel;
-                                        $panel_info->ansar_id = $offered_ansar->ansar_id;
-                                        $panel_info->panel_date = Carbon::now();
-                                        $panel_info->come_from = 'Offer';
-                                        $panel_info->ansar_merit_list = 1;
-                                        $panel_info->memorandum_id = $panel_log->old_memorandum_id;
-                                        $panel_info->save();
+                                        if($pa){
+                                            $t = explode(",",$offer_status->offer_type);
+                                            if(is_array($t)){
+                                                $len = count($t);
+                                                if($len>0&&strcasecmp($t[$len-1],"RE")==0){
+                                                    $pa->re_panel_date = Carbon::now()->format('Y-m-d');
+                                                }else if($len>0&&(strcasecmp($t[$len-1],"GB")==0||strcasecmp($t[$len-1],"DG")==0||strcasecmp($t[$len-1],"CG")==0)){
+                                                    $pa->panel_date = Carbon::now()->format('Y-m-d');
+                                                }
+
+                                            }
+                                            $pa->locked = 0;
+                                            $pa->save();
+                                        }
+                                        else{
+                                            $panel_log = PanelInfoLogModel::where('ansar_id', $offered_ansar->ansar_id)->select('old_memorandum_id')->first();
+                                            $panel_info = new PanelModel;
+                                            $panel_info->ansar_id = $offered_ansar->ansar_id;
+                                            $panel_info->panel_date = Carbon::now();
+                                            $panel_info->re_panel_date = Carbon::now();
+                                            $panel_info->come_from = 'Offer';
+                                            $panel_info->ansar_merit_list = 1;
+                                            $panel_info->memorandum_id = $panel_log->old_memorandum_id;
+                                            $panel_info->save();
+                                        }
                                         $offered_ansar->status()->update([
                                             'offer_sms_status' => 0,
                                             'pannel_status' => 1,
