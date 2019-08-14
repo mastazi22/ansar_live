@@ -125,7 +125,7 @@ class OfferController extends Controller
                 ['male' => $request->get('ansar_male'), 'female' => $request->get('ansar_female')],
                 $request->get('district'),
                 $request->get('exclude_district'), $user,$offerZone);
-//            return $data;
+            return $data;
             Log::info($request->all());
             $user = Auth::user();
             if($user->type==22){
