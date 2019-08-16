@@ -432,99 +432,10 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::post('upload_original_info', ['as' => 'upload_original_info', 'uses' => 'GeneralSettingsController@uploadOriginalInfo']);
         Route::get('upload_original_info', ['as' => 'upload_original_info_view', 'uses' => 'GeneralSettingsController@uploadOriginalInfoView']);
         Route::any('test', function (\Illuminate\Http\Request $request) {
-            $offeredAnsars = SmsReceiveInfoModel::all();
-            $now = Carbon::now();
-            $c = 0;
-            foreach ($offeredAnsars as $ansar) {
-                if ($now->diffInDays(Carbon::parse($ansar->sms_received_datetime)) >= 7) {
-                    $c++;
-                    Log::info("CALLED START: OFFER ACCEPTED" . $ansar->ansar_id);
 
-                    DB::beginTransaction();
-                    try {
-//                        $pi = $ansar->ansar;
-                        $pa = $ansar->panel;
-                        $count = $ansar->getOfferCount();
-                        $maximum_offer_limit = (int)GlobalParameterFacades::getValue(GlobalParameter::MAXIMUM_OFFER_LIMIT)-1;
-                        if ($count >= $maximum_offer_limit) {
-                            $ansar->deleteCount();
-                            $ansar->deleteOfferStatus();
-                            $ansar->blockAnsarOffer();
-                            $ansar->saveLog();
-                            $ansar->status()->update([
-                                'offer_sms_status' => 0,
-                                'offer_block_status' => 1,
-                            ]);
-                            if($pa){
-                                $pa->panelLog()->save(new PanelInfoLogModel([
-                                    'ansar_id' => $pa->ansar_id,
-                                    'merit_list' => $pa->ansar_merit_list,
-                                    'panel_date' => $pa->panel_date,
-                                    're_panel_date' => $pa->re_panel_date,
-                                    'old_memorandum_id' => !$pa->memorandum_id ? "N\A" : $pa->memorandum_id,
-                                    'movement_date' => Carbon::today(),
-                                    'come_from' => $pa->come_from,
-                                    'move_to' => 'Offer',
-                                    'go_panel_position' => $pa->go_panel_position,
-                                    're_panel_position' => $pa->re_panel_position
-                                ]));
-                                $pa->delete();
-                            }
-                        } else {
-                            $ansar->saveCount();
-                            $offer_status = OfferSMSStatus::where(['ansar_id'=>$ansar->ansar_id])->first();
-                            if($pa){
-                                $t = explode(",",$offer_status->offer_type);
-                                if(is_array($t)){
-                                    $len = count($t);
-                                    if($len>0&&strcasecmp($t[$len-1],"RE")==0){
-                                        $pa->re_panel_date = Carbon::now()->format('Y-m-d');
-                                    }else if($len>0&&(strcasecmp($t[$len-1],"GB")==0||strcasecmp($t[$len-1],"DG")==0||strcasecmp($t[$len-1],"CG")==0)){
-                                        $pa->panel_date = Carbon::now()->format('Y-m-d');
-                                    }
-
-                                }
-                                $pa->locked = 0;
-                                $pa->save();
-                                $ansar->status()->update([
-                                    'pannel_status' => 1,
-                                    'offer_sms_status' => 0,
-                                ]);
-                            }
-                            else{
-                                $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
-                                $ansar->saveLog();
-                                $ansar->status()->update([
-                                    'offer_sms_status' => 0,
-                                    'pannel_status' => 1,
-                                ]);
-                                $ansar->panel()->save(new PanelModel([
-                                    'memorandum_id' => isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
-                                    'panel_date' => Carbon::now(),
-                                    'come_from' => 'Offer',
-                                    'ansar_merit_list' => 1,
-                                    're_panel_date' => Carbon::now(),
-                                    'go_panel_position' => 0,
-                                    're_panel_position' => 0
-                                ]));
-                            }
-                        }
-                        $ansar->delete();
-                        DB::commit();
-                    } catch (\Exception $e) {
-                        DB::rollback();
-                        return $e;
-                    }
-                }
-
-            }
-            if($c>0){
-                dispatch(new RearrangePanelPositionLocal());
-                dispatch(new RearrangePanelPositionGlobal());
-            }
 
         });
-        Route::get('manual_offer_to_panel', function () {
+       /* Route::get('manual_offer_to_panel', function () {
             Log::info("called : Ansar Block For Age");
 
             DB::connection('hrm')->beginTransaction();
@@ -732,7 +643,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
                 Log::info("ansar_block_for_age:".$e->getMessage());
                 DB::connection('hrm')->rollback();
             }
-        });
+        });*/
         Route::resource('retire_ansar_management','RetireAnsarManagementController',['only'=>['index','update']]);
 
         Route::any('/bulk-upload-bank-info', ['as' => "bulk_upload_bank_file", 'uses' => "EntryFormController@bulkUploadBankInfo"]);
