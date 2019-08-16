@@ -1,6 +1,8 @@
 <?php
 use App\Helper\Facades\GlobalParameterFacades;
 use App\Helper\GlobalParameter;
+use App\Jobs\RearrangePanelPositionGlobal;
+use App\Jobs\RearrangePanelPositionLocal;
 use App\modules\HRM\Models\AnsarRetireHistory;
 use App\modules\HRM\Models\OfferSMSStatus;
 use App\modules\HRM\Models\PanelInfoLogModel;
