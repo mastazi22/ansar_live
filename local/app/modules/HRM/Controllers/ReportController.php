@@ -100,7 +100,7 @@ class ReportController extends Controller
 
     function localizeReport()
     {
-        $s = file_get_contents(asset("report_" . Input::get('type') . ".json"));
+        $s = file_get_contents(urlencode(asset("report_" . Input::get('type') . ".json")));
         return json_encode(json_decode($s, true)[Input::get('name')]);
     }
 
