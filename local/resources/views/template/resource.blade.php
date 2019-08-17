@@ -39,7 +39,8 @@
 <script src="{{asset('bootstrap/js/bootstrap.min.js')}}" type="text/javascript"></script>
 <script src="{{asset('plugins/iCheck/icheck.min.js')}}" type="text/javascript"></script>
 {{--<script src="{{asset('dist/js/angular.js')}}" type="text/javascript"></script>--}}
-<script src="{{asset('node_modules/angular/angular.js')}}" type="text/javascript"></script>
+{{--<script src="{{asset('node_modules/angular/angular.js')}}" type="text/javascript"></script>--}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.6/angular.js" type="text/javascript"></script>
 <script src="{{asset('dist/js/jquery-ui.min.js')}}" type="text/javascript"></script>
 <script src="{{asset('dist/js/sortTable.js')}}" type="text/javascript"></script>
 <script src="{{asset('dist/js/notify.js')}}" type="text/javascript"></script>
