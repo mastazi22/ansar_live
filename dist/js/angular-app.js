@@ -9,6 +9,8 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
     $httpProvider.useApplyAsync(true)
     var retryCount = 0;
     $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
+    $httpProvider.defaults.headers.common['Cache-Control'] = 'no-cache';
+    $httpProvider.defaults.headers.common['Pragma'] = 'no-cache';
     $httpProvider.interceptors.push(function ($q, $injector, notificationService) {
         return {
             response: function (response) {
