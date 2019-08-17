@@ -37,6 +37,7 @@ var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], funct
                         response.data = "Not found(404)"
                         break;
                     case 500:
+                    case -1:
                         var d = $q.defer();
                         if (retryCount < 4) {
                             retryHttpRequest(response.config, d);
