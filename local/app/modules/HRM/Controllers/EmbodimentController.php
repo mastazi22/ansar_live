@@ -101,16 +101,19 @@ class EmbodimentController extends Controller
         $detail = $ansarPersonalDetail->get();
         $ansar_ids = collect($detail)->pluck('ansar_id');
         $q = DB::table('tbl_panel_info_log')->whereIn('ansar_id', $ansar_ids)->orderBy('id', 'desc')
-            ->select('panel_date', 'old_memorandum_id as memorandum_id', 'ansar_id');
+            ->select('panel_date', 'old_memorandum_id as memorandum_id', 'ansar_id','re_panel_date');
         $ansarPanelInfo = collect(DB::table(DB::raw("(" . $q->toSql() . ") as t"))->mergeBindings($q)
             ->groupBy('t.ansar_id')
             ->select('t.panel_date', 't.memorandum_id', 't.ansar_id')->get());
         $apd = [];
         foreach ($detail as $d) {
-            $data = $ansarPanelInfo->where('ansar_id', $d->ansar_id)->first();
+            $data = PanelModel::where('ansar_id', $d->ansar_id)->first();
+            if(!$data){
+                $data = $ansarPanelInfo->where('ansar_id', $d->ansar_id)->first();
+            }
             if ($data) {
                 $pi = (array)$d;
-                $pi['panel_date'] = $data->panel_date;
+                $pi['panel_date'] = in_array($request->unit,Config::get('app.offer'))?$data->panel_date:$data->re_panel_date;
                 $pi['memorandum_id'] = $data->memorandum_id;
                 array_push($apd, $pi);
             }
