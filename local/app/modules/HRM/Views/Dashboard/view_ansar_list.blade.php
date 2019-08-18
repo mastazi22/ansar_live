@@ -29,6 +29,7 @@
             $scope.pages = [];
             $scope.loadingPage = []
             $scope.allLoading = true;
+            $scope.orderBy = [];
 //Start pagination
             $scope.loadPagination = function () {
                 $scope.pages = [];
@@ -40,6 +41,25 @@
                     })
                     $scope.loadingPage[i] = false;
                 }
+            }
+            $scope.sortList = function(key){
+
+                var f = $scope.orderBy.find(function(v){
+                    return v[key]
+                })
+                if(f){
+                    var i = $scope.orderBy.indexOf(f);
+                    if($scope.orderBy[i][key]=="desc"){
+                        $scope.orderBy[i][key] = "asc"
+                    }else{
+                        $scope.orderBy[i][key]="desc"
+                    }
+                }else{
+                    var b = {};
+                    b[key] = "asc";
+                    $scope.orderBy.push(b)
+                }
+                $scope.loadPage()
             }
             $scope.loadPage = function (page, $event) {
                 if ($event != undefined)  $event.preventDefault();
@@ -62,6 +82,7 @@
                         filter_age: $scope.param.filter_age == undefined ? 0 : $scope.param.filter_age,
                         q: $scope.q,
                         rank: $scope.rank,
+                        sortBy:$scope.orderBy
                     }
                 }).then(function (response) {
                     console.log(response.data);

@@ -354,6 +354,7 @@ class HrmController extends Controller
         $rank = Input::get('rank');
         $sex = Input::get('gender');
         $q = Input::get('q');
+        $sort = Input::get('sortBy');
         $rules = [
             'type' => 'regex:/[a-z]+/',
             'limit' => 'numeric',
@@ -381,7 +382,7 @@ class HrmController extends Controller
                 $data = CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
                 break;
             case 'paneled_ansar':
-                $data = CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank,$request->filter_mobile_no,$request->filter_age, $q);
+                $data = CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank,$request->filter_mobile_no,$request->filter_age, $q,$sort);
                 break;
             case 'embodied_ansar':
                 $data = CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q,$sex);
