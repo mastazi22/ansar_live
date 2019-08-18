@@ -7,7 +7,8 @@
         <th>Birth Date</th>
         <th>Home District</th>
         <th>Thana</th>
-        <th>Panel Date & Time</th>
+        <th>Global Panel Date & Time</th>
+        <th>Regional Panel Date & Time</th>
         <th>Panel Id</th>
         @if(Auth::user()->type==11)
             <th>Global Position</th>
@@ -26,6 +27,7 @@
         <td>[[ansar.unit]]</td>
         <td>[[ansar.thana]]</td>
         <td>[[ansar.panel_date|dateformat:"DD-MMM-YYYY"]]</td>
+        <td>[[ansar.re_panel_date|dateformat:"DD-MMM-YYYY"]]</td>
         <td>[[ansar.memorandum_id]]</td>
         @if(Auth::user()->type==11)
             <td>[[ansar.go_panel_position]]</td>
