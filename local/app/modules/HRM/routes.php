@@ -434,7 +434,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::any('test', function (\Illuminate\Http\Request $request) {
 
             $data = DB::connection('hrm')->raw("SELECT `tbl_panel_info`.* FROM `tbl_panel_info`
-INNER JOIN `tbl_embodiment` ON `tbl_embodiment`.`ansar_id` = tbl_panel_info.`ansar_id`")->get();
+INNER JOIN `tbl_embodiment` ON `tbl_embodiment`.`ansar_id` = tbl_panel_info.`ansar_id`");
             return $data;
 
         });
