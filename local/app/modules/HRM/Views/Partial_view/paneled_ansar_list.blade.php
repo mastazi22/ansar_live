@@ -7,8 +7,8 @@
         <th>Birth Date</th>
         <th>Home District</th>
         <th>Thana</th>
-        <th>Global Panel Date & Time</th>
-        <th>Regional Panel Date & Time</th>
+        <th ng-click="sortList('panel_date')">Global Panel Date & Time</th>
+        <th ng-click="sortList('re_panel_date')">Regional Panel Date & Time</th>
         <th>Panel Id</th>
         @if(Auth::user()->type==11)
             <th>Global Position</th>
