@@ -433,7 +433,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::get('upload_original_info', ['as' => 'upload_original_info_view', 'uses' => 'GeneralSettingsController@uploadOriginalInfoView']);
         Route::any('test', function (\Illuminate\Http\Request $request) {
 
-            $data = DB::connection('hrm')->raw("SELECT `tbl_panel_info`.* FROM `tbl_panel_info`
+            $data = DB::connection('hrm')->select("SELECT `tbl_panel_info`.* FROM `tbl_panel_info`
 INNER JOIN `tbl_embodiment` ON `tbl_embodiment`.`ansar_id` = tbl_panel_info.`ansar_id`");
             return $data;
 
