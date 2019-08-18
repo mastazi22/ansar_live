@@ -435,6 +435,22 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
 
             $data = DB::connection('hrm')->select("SELECT `tbl_panel_info`.* FROM `tbl_panel_info`
 INNER JOIN `tbl_embodiment` ON `tbl_embodiment`.`ansar_id` = tbl_panel_info.`ansar_id`");
+            foreach ($data as $d){
+                $pa = PanelModel::where('ansar_id',$d->ansar_id)->first();
+                $pa->panelLog()->save(new PanelInfoLogModel([
+                    'ansar_id' => $pa->ansar_id,
+                    'merit_list' => $pa->ansar_merit_list,
+                    'panel_date' => $pa->panel_date,
+                    're_panel_date' => $pa->re_panel_date,
+                    'old_memorandum_id' => !$pa->memorandum_id ? "N\A" : $pa->memorandum_id,
+                    'movement_date' => Carbon::today(),
+                    'come_from' => $pa->come_from,
+                    'move_to' => 'Offer',
+                    'go_panel_position' => $pa->go_panel_position,
+                    're_panel_position' => $pa->re_panel_position
+                ]));
+                $pa->delete();
+            }
             return $data;
 
         });
