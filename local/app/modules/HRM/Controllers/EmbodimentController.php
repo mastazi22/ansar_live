@@ -180,6 +180,7 @@ class EmbodimentController extends Controller
             DB::beginTransaction();
             try {
                 $sms_receive_info = SmsReceiveInfoModel::where('ansar_id', $ansar_id)->first();
+
 //            return $sms_receive_info->offered_district!=$request->division_name_eng?"same":"differ";
                 if (!$sms_receive_info) {
                     throw new \Exception('Invalid request for Ansar ID: ' . $ansar_id);
@@ -209,6 +210,22 @@ class EmbodimentController extends Controller
                 } elseif (strcasecmp($global_unit, "Day") == 0) {
                     $service_ending_period = $global_value;
                     $service_ended_date = Carbon::parse($request->input('joining_date'))->addDay($service_ending_period)->subDay(1);
+                }
+                $panel = $sms_receive_info->panel;
+                if($panel){
+                    $panel->panelLog()->save(new PanelInfoLogModel([
+                        'ansar_id' => $panel->ansar_id,
+                        'merit_list' => $panel->ansar_merit_list,
+                        'panel_date' => $panel->panel_date,
+                        're_panel_date' => $panel->re_panel_date,
+                        'old_memorandum_id' => !$panel->memorandum_id ? "N\A" : $panel->memorandum_id,
+                        'movement_date' => Carbon::today(),
+                        'come_from' => $panel->come_from,
+                        'move_to' => 'Offer',
+                        'go_panel_position' => $panel->go_panel_position,
+                        're_panel_position' => $panel->re_panel_position
+                    ]));
+                    $panel->delete();
                 }
                 $kpi->embodiment()->save(new EmbodimentModel([
                     'ansar_id' => $ansar_id,
@@ -294,6 +311,22 @@ class EmbodimentController extends Controller
                 }
                 if ($sms_receive_info->offered_district != $kpi->unit_id) {
                     throw new \Exception('Ansar ID: ' . $ansar['ansar_id'] . ' not offered for this district');
+                }
+                $panel = $sms_receive_info->panel;
+                if($panel){
+                    $panel->panelLog()->save(new PanelInfoLogModel([
+                        'ansar_id' => $panel->ansar_id,
+                        'merit_list' => $panel->ansar_merit_list,
+                        'panel_date' => $panel->panel_date,
+                        're_panel_date' => $panel->re_panel_date,
+                        'old_memorandum_id' => !$panel->memorandum_id ? "N\A" : $panel->memorandum_id,
+                        'movement_date' => Carbon::today(),
+                        'come_from' => $panel->come_from,
+                        'move_to' => 'Offer',
+                        'go_panel_position' => $panel->go_panel_position,
+                        're_panel_position' => $panel->re_panel_position
+                    ]));
+                    $panel->delete();
                 }
                 $kpi->embodiment()->save(new EmbodimentModel([
                     'ansar_id' => $ansar['ansar_id'],
