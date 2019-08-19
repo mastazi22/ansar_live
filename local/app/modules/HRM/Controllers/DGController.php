@@ -1559,9 +1559,12 @@ class DGController extends Controller
             ]));
             switch ($status[0]) {
                 case AnsarStatusInfo::PANEL_STATUS:
-                    $a->panel->saveLog('Offer', Carbon::today());
+                    //$a->panel->saveLog('Offer', Carbon::today());
                     $a->status->update(['pannel_status' => 0, 'offer_sms_status' => 1]);
-                    $a->panel->delete();
+                    $pa = $a->panel;
+                    $pa->locked = 1;
+                    $pa->save();
+                    //$a->panel->delete();
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DIRECT OFFER', 'from_state' => 'PANEL', 'to_state' => 'OFFER', 'action_by' => auth()->user()->id]);
 
                     break;
