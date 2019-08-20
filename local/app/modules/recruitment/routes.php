@@ -155,11 +155,86 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
             }
 
         });
-        Route::get('/testt', function () {
-            $func = 'leftJoin';
-            $q = \Illuminate\Support\Facades\DB::table('job_applicant');
-            $q->$func('job_quota','job_applicant_id','=','job_applicant.id');
-            return $q->toSql();
+        Route::get('/gr1', function () {
+            $divisions = [
+                "8"=>41,
+                "5"=>42,
+                "3"=>43,
+                "4"=>44,
+                "6"=>45,
+                "1"=>46,
+                "2"=>47,
+                "12"=>48,
+                "11"=>49,
+            ];
+            $applicant = \App\modules\recruitment\Models\JobAppliciant::where('job_circular_id',52)->where('status','selected')
+                ->select('applicant_id','roll_no','division_id')->get();
+            $datas = collect($applicant)->groupBy('division_id',true);
+            foreach ($datas as $k=>$data){
+                $count = 1;
+                foreach ($data as $d){
+                    echo($k."--->".sprintf($divisions[$k]."%05d",$count)."<br>");
+                    $a = \App\modules\recruitment\Models\JobAppliciant::where('applicant_id',$d->applicant_id)->where('job_circular_id',52)->first();
+                    $a->roll_no = sprintf($divisions[$k]."%05d",$count);
+                    $a->save();
+                    $count++;
+                }
+            }
+
+        });
+        Route::get('/gr2', function () {
+            $divisions = [
+                "8"=>51,
+                "5"=>52,
+                "3"=>53,
+                "4"=>54,
+                "6"=>55,
+                "1"=>56,
+                "2"=>57,
+                "12"=>58,
+                "11"=>59,
+            ];
+            $applicant = \App\modules\recruitment\Models\JobAppliciant::where('job_circular_id',51)->where('status','selected')
+                ->select('applicant_id','roll_no','division_id')->get();
+            $datas = collect($applicant)->groupBy('division_id',true);
+            foreach ($datas as $k=>$data){
+                $count = 1;
+                foreach ($data as $d){
+                    echo($k."--->".sprintf($divisions[$k]."%05d",$count)."<br>");
+                    $a = \App\modules\recruitment\Models\JobAppliciant::where('applicant_id',$d->applicant_id)
+                        ->where('job_circular_id',51)->first();
+                    $a->roll_no = sprintf($divisions[$k]."%05d",$count);
+                    $a->save();
+                    $count++;
+                }
+            }
+        });
+        Route::get('/gr3', function () {
+            $divisions = [
+                "8"=>61,
+                "5"=>62,
+                "3"=>63,
+                "4"=>64,
+                "6"=>65,
+                "1"=>66,
+                "2"=>67,
+                "12"=>68,
+                "11"=>69,
+            ];
+            $applicant = \App\modules\recruitment\Models\JobAppliciant::where('job_circular_id',48)->where('status','selected')
+                ->select('applicant_id','roll_no','division_id')->get();
+            $datas = collect($applicant)->groupBy('division_id',true);
+            foreach ($datas as $k=>$data){
+                $count = 1;
+                foreach ($data as $d){
+                    echo($k."--->".sprintf($divisions[$k]."%05d",$count)."<br>");
+                    $a = \App\modules\recruitment\Models\JobAppliciant::where('applicant_id',$d->applicant_id)
+                        ->where('job_circular_id',48)->first();
+                    $a->roll_no = sprintf($divisions[$k]."%05d",$count);
+                    $a->save();
+                    $count++;
+                }
+            }
         });
         Route::get('/send_sms_paid', ['as' => 'send_sms_paid', 'uses' => 'SupportController@sendUserNamePassword']);
 
