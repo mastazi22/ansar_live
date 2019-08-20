@@ -13,17 +13,17 @@ class Division extends Model
     protected $guarded = [];
     public $timestamps = false;
     function kpi(){
-        return $this->hasMany('App\models\KpiGeneralModel','division_id','division_id');
+        return $this->hasMany(KpiGeneralModel::class,'division_id','division_id');
     }
     
     public function personalinfo(){
-        return $this->hasMany('App\models\PersonalInfo','division_id');
+        return $this->hasMany(PersonalInfo::class,'division_id');
     }
     public function district(){
-        return $this->hasMany('App\models\District', 'division_id');
+        return $this->hasMany(District::class, 'division_id');
     }
     public function thana(){
-        return $this->hasMany('App\models\Thana', 'division_id');
+        return $this->hasMany(Thana::class, 'division_id');
     }
     public function applicantQuota(){
         return $this->hasOne(JobApplicantQuota::class,'range_id');

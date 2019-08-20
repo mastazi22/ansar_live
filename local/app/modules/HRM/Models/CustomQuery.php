@@ -59,7 +59,7 @@ class CustomQuery
             $query->where(function($q) use ($user){
 //                $q->where('tbl_offer_status.last_offer_unit', '!=',$user->district_id);
                 $q->whereRaw("NOT FIND_IN_SET('".$user->district_id."',tbl_offer_status.last_offer_units)");
-                $q->orWhereNull("tbl_offer_status.last_offer_unit");
+                $q->orWhereNull("tbl_offer_status.last_offer_units");
             });
 
             if(in_array($user->district_id,Config::get('app.offer'))){
@@ -104,10 +104,15 @@ class CustomQuery
                 $fquery->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
             }
             if(is_array($offerZone)&&count($offerZone)>0){
+                if(!in_array($exclude_district, Config::get('app.offer'))){
+                    $unit_ids = District::find($exclude_district)->division->district->pluck('id')->toArray();
+                    $offerZone = array_merge($offerZone,$unit_ids);
+                }
                 $query->whereIn('pu.id', $offerZone);
                 $fquery->whereIn('pu.id', $offerZone);
                 $fquery->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
-            } else if(!in_array($exclude_district, Config::get('app.offer'))){
+            }
+            else if(!in_array($exclude_district, Config::get('app.offer'))){
                 $query->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id');
                 $fquery->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id');
                 $query->where('du.id', '=', $exclude_district);
