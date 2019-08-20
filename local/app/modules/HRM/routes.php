@@ -33,7 +33,18 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::get('view_image/{type}/{file}', ['as' => 'view_image', 'uses' => 'FormSubmitHandler@getImage']);
         //DASHBOARD
         Route::get('/tesst', function () {
-            return (UserPermission::isPermissionExists(Input::get('q')) ? "found" : "not found");
+            $ansars = DB::connection("hrm")->select("SELECT * FROM (SELECT * FROM `tbl_panel_info_log` WHERE ansar_id IN (
+
+SELECT ansar_id FROM tbl_panel_info WHERE ansar_id IN (
+
+SELECT ansar_id FROM `tbl_sms_receive_info`
+
+) AND re_panel_date IS NULL
+
+) ORDER BY panel_date DESC) t GROUP BY t.ansar_id");
+            foreach ($ansars as $a){
+
+            }
         });
         Route::get('/', ['as' => '', 'uses' => 'HrmController@hrmDashboard']);
         Route::get('/getTotalAnsar', ['as' => 'dashboard_total_ansar', 'uses' => 'HrmController@getTotalAnsar']);

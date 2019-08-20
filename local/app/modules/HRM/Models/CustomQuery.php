@@ -136,7 +136,7 @@ class CustomQuery
             $ansar_female->whereRaw('tbl_ansar_parsonal_info.hight_feet*12+tbl_ansar_parsonal_info.hight_inch>=64');
             $ansar_female->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<33');
         }*/
-        if ($user->type == 22) {
+        if (($user->type == 22&&!in_array($exclude_district, Config::get('app.offer')))||!in_array($exclude_district, Config::get('app.offer'))) {
             $pc_male->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
                 ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<' . $pc_apc_retirement_age)
                 ->orderBy('tbl_panel_info.re_panel_date')->orderBy('tbl_panel_info.id')
