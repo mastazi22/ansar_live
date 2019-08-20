@@ -1612,14 +1612,22 @@ class DGController extends Controller
                 ]);
             }
             else{
-                $panel_log = $ansar->panelLog()->first();
-                $ansar->panel()->save(new PanelModel([
-                    'memorandum_id'=>$panel_log->old_memorandum_id,
-                    'panel_date'=>Carbon::now(),
-                    'come_from'=>'OfferCancel',
-                    'ansar_merit_list'=>1,
-                    'action_user_id'=>auth()->user()->id,
-                ]));
+                $pa = $ansar->panel;
+                if(!$pa){
+                    $panel_log = $ansar->panelLog()->first();
+                    $ansar->panel()->save(new PanelModel([
+                        'memorandum_id'=>$panel_log->old_memorandum_id,
+                        'panel_date'=>$panel_log->panel_date,
+                        're_panel_date'=>$panel_log->re_panel_date,
+                        'come_from'=>'OfferCancel',
+                        'ansar_merit_list'=>1,
+                        'action_user_id'=>auth()->user()->id,
+                    ]));
+
+                }else{
+                    $pa->locked = 0;
+                    $pa->save();
+                }
                 $ansar->status()->update([
                     'offer_sms_status'=>0,
                     'pannel_status'=>1,
