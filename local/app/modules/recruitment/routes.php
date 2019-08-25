@@ -92,18 +92,18 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
         Route::get('/test', function () {
             $data = \Illuminate\Support\Facades\DB::table('job_applicant')
                 ->join('job_circular','job_circular.id','=','job_applicant.job_circular_id')
-                ->join('job_applicant_exam_center','job_circular.id','=','job_applicant_exam_center.job_circular_id')
+                ->join('db_amis.tbl_units','db_amis.tbl_division.id','=','job_applicant.division_id')
                 ->where('job_applicant.status','selected')
-                ->where('job_circular.id','!=',36)
+                ->whereIn('job_circular.id',[51,52,48])
                 ->select('job_applicant.applicant_id','job_applicant.applicant_name_bng','job_applicant.roll_no','job_circular.circular_name','job_applicant.applicant_password',
-                    'job_applicant_exam_center.selection_date','job_applicant_exam_center.selection_time','job_applicant_exam_center.selection_place','mobile_no_self')
+                    'unit_name_bng','mobile_no_self')
                 ->get();
             $datas = [];
 //            array_push($datas,['mobile_no_self','sms_body']);
             foreach ($data as $d){
                 $bang = ['0'=>'০','1'=>'১','2'=>'২','3'=>'৩','4'=>'৪','5'=>'৫','6'=>'৬','7'=>'৭','8'=>'৮','9'=>'৯'];
-                $date_array = str_split(\Carbon\Carbon::parse($d->selection_date)->format('d/m/Y'));
-                $time_array = str_split($d->selection_time);
+                $date_array = "13/09/2019";
+                $time_array = "10:00 am";
                 $roll_array = str_split($d->roll_no);
                 $date = "";
                 $time = "";
@@ -136,7 +136,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                 }else{
                     $time = "বিকাল $rr[0]";
                 }
-                array_push($datas,[$d->mobile_no_self,"নামঃ ".$d->applicant_name_bng.",  আইডিঃ ".$d->applicant_id.", পাসওয়ার্ডঃ ".$d->applicant_password.", রোল নংঃ $roll_no , পদবীঃ ".explode("|",$d->circular_name)[0]." , পরীক্ষার তারিখঃ $date,  সময়ঃ $time, স্থানঃ ".$d->selection_place." । প্রবেশপত্র ও বিস্তারিত  তথ্যের জন্য ভিজিট করুনঃ  www.ansarvdp.gov.bd"]);
+                array_push($datas,[$d->mobile_no_self,"নামঃ ".$d->applicant_name_bng.",  আইডিঃ ".$d->applicant_id.", পাসওয়ার্ডঃ ".$d->applicant_password.", রোল নংঃ $roll_no , পদবীঃ ".explode("|",$d->circular_name)[0]." , পরীক্ষার তারিখঃ $date,  সময়ঃ $time, পরীক্ষার স্থান/ জেলাঃ ".$d->unit_name_bng." । আসন বিন্যাস, প্রবেশপত্র ও বিস্তারিত  তথ্যের জন্য ভিজিট করুনঃ  www.ansarvdp.gov.bd"]);
             }
             return \Maatwebsite\Excel\Facades\Excel::create('sms_file_download',function($excel) use($datas){
                 $excel->sheet('Sheet1', function($sheet) use($datas) {
