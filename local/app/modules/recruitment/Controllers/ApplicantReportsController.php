@@ -259,7 +259,7 @@ class ApplicantReportsController extends Controller
                     ob_implicit_flush(true);
                     ob_end_flush();
                     echo "Start Processing....";
-                    $c = $applicants->get()->groupBy('unit_id');
+                    $c = $applicants->get()->groupBy('division_id');
                     $total = count($c);
 
                     $counter = 1;
@@ -268,7 +268,7 @@ class ApplicantReportsController extends Controller
                     $files = [];
                     $c->each(function ($applicant_list,$key) use ($category_type, $request, $total, &$counter, $file_path, &$files,$circular) {
                         sleep(1);
-                        $file_name = District::find($key)->unit_name_eng;
+                        $file_name = Division::find($key)->division_name_eng;
                         $file = Excel::create($file_name, function ($excel) use ($applicant_list, $request, $category_type) {
 
                             $excel->sheet('sheet1', function ($sheet) use ($applicant_list, $request, $category_type) {
@@ -292,7 +292,7 @@ class ApplicantReportsController extends Controller
                         $zip_archive_name = $unit->unit_name_eng . time() . ".zip";
                     }
                     else{
-                        $zip_archive_name = "applicant_list" . time() . ".zip";
+                        $zip_archive_name = explode("|",$circular->circular_name) . ".zip";
                     }
                     $zip = new \ZipArchive();
                     if ($zip->open(public_path($zip_archive_name), \ZipArchive::CREATE) === true) {
