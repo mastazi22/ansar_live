@@ -292,7 +292,7 @@ class ApplicantReportsController extends Controller
                         $zip_archive_name = $unit->unit_name_eng . time() . ".zip";
                     }
                     else{
-                        $zip_archive_name = explode("|",$circular->circular_name)[0] . ".zip";
+                        $zip_archive_name = str_replace("/","",implode("_",explode(" ",explode("|",$circular->circular_name)[0]))) . ".zip";
                     }
                     $zip = new \ZipArchive();
                     if ($zip->open(public_path($zip_archive_name), \ZipArchive::CREATE) === true) {
