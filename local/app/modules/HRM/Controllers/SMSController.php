@@ -334,6 +334,12 @@ class SMSController extends Controller
                     ->where('tbl_ansar_parsonal_info.designation_id',$ansar->designation->id)
                     ->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<' . $pc_apc_retirement_age)
                     ->where('pannel_status', 1)->where('block_list_status', 0)->select('tbl_panel_info.ansar_id', 'tbl_panel_info.panel_date','tbl_panel_info.id');
+                $lquery = DB::table('tbl_ansar_status_info')
+                                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                                    ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
+                                    ->where('tbl_ansar_parsonal_info.designation_id',$ansar->designation->id)
+                                    ->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<' . $pc_apc_retirement_age)
+                                    ->where('pannel_status', 1)->where('block_list_status', 0)->select('tbl_panel_info.ansar_id', 'tbl_panel_info.re_panel_date','tbl_panel_info.id');
 
             } else {
                 $query = DB::table('tbl_ansar_status_info')
@@ -342,14 +348,21 @@ class SMSController extends Controller
                     ->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<' . $ansar_retirement_age)
                     ->where('tbl_ansar_parsonal_info.designation_id',$ansar->designation->id)
                     ->where('pannel_status', 1)->where('block_list_status', 0)->select('tbl_panel_info.ansar_id', 'tbl_panel_info.panel_date','tbl_panel_info.id');
+                $lquery = DB::table('tbl_ansar_status_info')
+                    ->join('tbl_ansar_parsonal_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                    ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
+                    ->where('tbl_ansar_parsonal_info.designation_id',$ansar->designation->id)
+                    ->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<' . $ansar_retirement_age)
+                    ->where('pannel_status', 1)->where('block_list_status', 0)->select('tbl_panel_info.ansar_id', 'tbl_panel_info.re_panel_date','tbl_panel_info.id');
             }
             $query->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"');
+            $lquery->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"');
             $g = DB::table(DB::raw("(" . $query->toSql() . ") x,(select @a:=0) a"))->mergeBindings($query)->select(DB::raw('x.*,@a:=@a+1 as gp'))->orderBy('x.panel_date')->orderBy('x.id');
 //            return $g->get();
             $gg = DB::table(DB::raw("(" . $g->toSql() . ") x"))->mergeBindings($g)->where('ansar_id', $id)->first();
             $division_id = $ansar->division_id;
-            $query->where('tbl_ansar_parsonal_info.division_id', $division_id);
-            $r = DB::table(DB::raw("(" . $query->toSql() . ") x,(select @a:=0) a"))->mergeBindings($query)->select(DB::raw('x.*,@a:=@a+1 as gp'))->orderBy('x.panel_date')->orderBy('x.id');
+            $lquery->where('tbl_ansar_parsonal_info.division_id', $division_id);
+            $r = DB::table(DB::raw("(" . $lquery->toSql() . ") x,(select @a:=0) a"))->mergeBindings($lquery)->select(DB::raw('x.*,@a:=@a+1 as gp'))->orderBy('x.re_panel_date')->orderBy('x.id');
             $rr = DB::table(DB::raw("(" . $r->toSql() . ") x"))->mergeBindings($r)->where('ansar_id', $id)->first();
 //                    return $r->get();
             if($gg&&$rr) return 'Global position : ' . $gg->gp . " Regional position : " . $rr->gp;
