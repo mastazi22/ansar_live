@@ -102,8 +102,8 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
 //            array_push($datas,['mobile_no_self','sms_body']);
             foreach ($data as $d){
                 $bang = ['0'=>'০','1'=>'১','2'=>'২','3'=>'৩','4'=>'৪','5'=>'৫','6'=>'৬','7'=>'৭','8'=>'৮','9'=>'৯'];
-                $date_array = "13/09/2019";
-                $time_array = "10:00 am";
+                $date_array = str_split("13/09/2019");
+                $time_array = str_split("10:00 am");
                 $roll_array = str_split($d->roll_no);
                 $date = "";
                 $time = "";
