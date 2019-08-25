@@ -280,7 +280,7 @@ class ApplicantReportsController extends Controller
                                 $sheet->loadView('recruitment::reports.excel_data_other', ['index' => 1, 'applicants' => $applicant_list, 'status' => $request->status, 'ctype' => $category_type]);
                             });
                         })->save('xls',$file_path,true);
-                        array_push($files, $file_path."/".$file_name);
+                        array_push($files, $file);
                         echo "Processed $counter of $total";
                         $counter++;
 
@@ -292,7 +292,7 @@ class ApplicantReportsController extends Controller
                         $zip_archive_name = $unit->unit_name_eng . time() . ".zip";
                     }
                     else{
-                        $zip_archive_name = explode("|",$circular->circular_name) . ".zip";
+                        $zip_archive_name = explode("|",$circular->circular_name)[0] . ".zip";
                     }
                     $zip = new \ZipArchive();
                     if ($zip->open(public_path($zip_archive_name), \ZipArchive::CREATE) === true) {
