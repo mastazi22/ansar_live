@@ -281,8 +281,6 @@ class ApplicantReportsController extends Controller
                             });
                         })->save('xls',$file_path,true);
                         array_push($files, $file);
-                        flush();
-                        ob_flush();
                         echo "Processed $counter of $total";
                         $counter++;
 
