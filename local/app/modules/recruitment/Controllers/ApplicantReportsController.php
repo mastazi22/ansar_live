@@ -280,7 +280,7 @@ class ApplicantReportsController extends Controller
                                 $sheet->loadView('recruitment::reports.excel_data_other', ['index' => 1, 'applicants' => $applicant_list, 'status' => $request->status, 'ctype' => $category_type]);
                             });
                         })->save('xls',$file_path,true);
-                        array_push($files, $file);
+                        array_push($files, $file_path."/".$file_name);
                         echo "Processed $counter of $total";
                         $counter++;
 
