@@ -209,6 +209,7 @@ class Kernel extends ConsoleKernel
                                 'pannel_status' => 1,
                                 'offer_sms_status' => 0,
                             ]);
+                            $ansar->saveLog('No Reply');
                         }
                         else{
                             $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
@@ -620,24 +621,29 @@ class Kernel extends ConsoleKernel
                     $pcApcRe = GlobalParameterFacades::getValue('retirement_age_pc_apc') - 3;
                     //echo("called : Ansar Block For Age-".$ansar->ansar_id."Age:".$age->y."year ".$age->m."month ".$age->d." days");
                     if ($info->designation->code == "ANSAR" && $age->y < $ansarRe) {
-                        $pl = PanelInfoLogModel::where('ansar_id',$info->ansar_id)->orderBy('panel_date','desc')->first();
-                        $info->panel()->create([
-                            'ansar_merit_list'=>$pl->merit_list,
-                            'panel_date'=>Carbon::now()->format('Y-m-d'),
-                            'memorandum_id'=>$pl->old_memorandum_id,
-                            'come_from'=>'After Retier'
-                        ]);
-                        $info->status->update([
-                            'pannel_status' => 1,
-                            'retierment_status' => 0
-                        ]);
+                        if($ansar->retire_from=='panel') {
+                            $pl = PanelInfoLogModel::where('ansar_id', $info->ansar_id)->orderBy('panel_date', 'desc')->first();
+                            $info->panel()->create([
+                                'ansar_merit_list' => $pl->merit_list,
+                                'panel_date' => $pl->panel_date,
+                                're_panel_date' => $pl->re_panel_date,
+                                'memorandum_id' => $pl->old_memorandum_id,
+                                'come_from' => 'After Retier'
+                            ]);
+                            $info->status->update([
+                                'pannel_status' => 1,
+                                'retierment_status' => 0
+                            ]);
+                        }
                         $ansar->delete();
                     } else if (($info->designation->code == "PC" || $info->designation->code == "APC") && $age->y < $pcApcRe) {
+                        $pl = PanelInfoLogModel::where('ansar_id', $info->ansar_id)->orderBy('panel_date', 'desc')->first();
                         $info->panel()->create([
-                            'ansar_merit_list'=>$pl->merit_list,
-                            'panel_date'=>Carbon::now()->format('Y-m-d'),
-                            'memorandum_id'=>$pl->old_memorandum_id,
-                            'come_from'=>'After Retier'
+                            'ansar_merit_list' => $pl->merit_list,
+                            'panel_date' => $pl->panel_date,
+                            're_panel_date' => $pl->re_panel_date,
+                            'memorandum_id' => $pl->old_memorandum_id,
+                            'come_from' => 'After Retier'
                         ]);
                         $info->status->update([
                             'pannel_status' => 1,
