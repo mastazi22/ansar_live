@@ -185,7 +185,7 @@ class ApplicantReportsController extends Controller
         $circular = JobCircular::find($request->circular);
         $category_type = $circular->category->category_type;
 //        return $category_type;
-        $applicants = JobAppliciant::with(['division','district','thana','marks'])->where('status',$request->status)
+        $applicants = JobAppliciant::with(['division','district','thana','present_division','present_district','present_thana'])->where('status',$request->status)
             ->where('job_circular_id',$request->circular);
         if($request->exists('range')&&$request->range!='all'){
             $applicants->where('division_id',$request->range);
@@ -256,11 +256,13 @@ class ApplicantReportsController extends Controller
                     $range = Division::find($request->range);
                 }
                 try{
+                    ini_set('memory_limit', '-1');
                     ob_implicit_flush(true);
                     ob_end_flush();
                     echo "Start Processing....";
                     $c = $applicants->get()->groupBy('division_id');
                     $total = count($c);
+
 
                     $counter = 1;
                     $file_path = storage_path('exports');
