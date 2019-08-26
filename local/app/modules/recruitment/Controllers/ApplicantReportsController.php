@@ -260,11 +260,7 @@ class ApplicantReportsController extends Controller
                     ob_implicit_flush(true);
                     ob_end_flush();
                     echo "Start Processing....";
-                    $c = $applicants->get(['applicant_id','roll_no','applicant_name_bng','father_name_bng','mother_name_bng','date_of_birth','national_id_no','gender'
-                    ,'present_division_id','present_unit_id','present_thana_id','division_id','unit_id','thana_id'
-                    ,'present_village_name_bng','present_post_office_name_bng','present_union_name_bng','village_name_bng','post_office_name_bng','union_name_bng'
-                    ,'height_feet','height_inch','chest_normal','chest_extended','mobile_no_self','circular_applicant_quota_id','experience'
-                    ,'computer_knowledge','weight','profile_pic'])->groupBy('division_id');
+                    $c = $applicants->get()->groupBy('division_id');
                     $total = count($c);
 
 
