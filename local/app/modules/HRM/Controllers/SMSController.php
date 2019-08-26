@@ -320,11 +320,14 @@ class SMSController extends Controller
     }
     function getPanelPosition($id)
     {
-
-        $ansar_retirement_age = Helper::getAnsarRetirementAge() - 3;
-        $pc_apc_retirement_age = Helper::getPcApcRetirementAge() - 3;
-        $ansar = \App\modules\HRM\Models\PersonalInfo::with('designation')->where('ansar_id', $id)->first();
-        if ($ansar) {
+        $ansar = \App\modules\HRM\Models\PersonalInfo::with(['designation','status','panel'])
+            ->where('ansar_id', $id)->first();
+        if($ansar&&$ansar->status->pannel_status==1&&$ansar->status->block_list_status==0&&preg_match("/^[0-9]{11}$/",$ansar->mobile_no_self)){
+            return 'Global position : ' . $ansar->panel->go_panel_position . " Regional position : " . $ansar->panel->re_panel_position;
+        }else{
+            return 'Your panel position not found. May be tou are over aged or invalid mobile no';
+        }
+        /*if ($ansar) {
             $status = true;
             $age = Carbon::parse($ansar->data_of_birth)->diffInYears(Carbon::now());
             if (strtolower($ansar->designation->code) == 'pc' || strtolower($ansar->designation->code) == 'apc') {
@@ -367,6 +370,6 @@ class SMSController extends Controller
 //                    return $r->get();
             if($gg&&$rr) return 'Global position : ' . $gg->gp . " Regional position : " . $rr->gp;
             else return 'Your panel position not found. May be tou are over aged or invalid mobile no';
-        }
+        }*/
     }
 }
