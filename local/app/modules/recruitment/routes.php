@@ -92,7 +92,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
         Route::get('/test', function () {
             $data = \Illuminate\Support\Facades\DB::table('job_applicant')
                 ->join('job_circular','job_circular.id','=','job_applicant.job_circular_id')
-                ->join('db_amis.tbl_division','db_amis.tbl_division.id','=','job_applicant.division_id')
+                ->join('db_amis.tbl_division','db_amis.tbl_division.id','=','job_applicant.present_division_id')
                 ->where('job_applicant.status','selected')
                 ->whereIn('job_circular.id',[52])
                 ->select('job_applicant.applicant_id','job_applicant.applicant_name_bng','job_applicant.roll_no','job_circular.circular_name','job_applicant.applicant_password',
@@ -136,7 +136,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                 }else{
                     $time = "বিকাল $rr[0]";
                 }
-                array_push($datas,[$d->mobile_no_self,"নামঃ ".$d->applicant_name_bng.",  আইডিঃ ".$d->applicant_id.", পাসওয়ার্ডঃ ".$d->applicant_password.", রোল নংঃ $roll_no , পদবীঃ ".explode("|",$d->circular_name)[0]." , পরীক্ষার তারিখঃ $date,  সময়ঃ $time, পরীক্ষার স্থান/ জেলাঃ ".$d->division_name_bng." । আসন বিন্যাস, প্রবেশপত্র ও বিস্তারিত  তথ্যের জন্য ভিজিট করুনঃ  www.ansarvdp.gov.bd"]);
+                array_push($datas,[$d->mobile_no_self,"নামঃ ".$d->applicant_name_bng.",  আইডিঃ ".$d->applicant_id.", পাসওয়ার্ডঃ ".$d->applicant_password.", রোল নংঃ $roll_no , পদবীঃ ".explode("|",$d->circular_name)[0]." , পরীক্ষার তারিখঃ $date,  সময়ঃ $time, পরীক্ষার স্থান/ জেলাঃ ".$d->division_name_bng." শহর । আসন বিন্যাস, প্রবেশপত্র ও বিস্তারিত  তথ্যের জন্য ভিজিট করুনঃ  www.ansarvdp.gov.bd"]);
             }
             return \Maatwebsite\Excel\Facades\Excel::create('sms_file_download',function($excel) use($datas){
                 $excel->sheet('Sheet1', function($sheet) use($datas) {
@@ -168,8 +168,8 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                 "11"=>49,
             ];
             $applicant = \App\modules\recruitment\Models\JobAppliciant::where('job_circular_id',52)->where('status','selected')
-                ->select('applicant_id','roll_no','division_id')->get();
-            $datas = collect($applicant)->groupBy('division_id',true);
+                ->select('applicant_id','roll_no','present_division_id')->get();
+            $datas = collect($applicant)->groupBy('present_division_id',true);
             foreach ($datas as $k=>$data){
                 $count = 1;
                 foreach ($data as $d){
@@ -195,8 +195,8 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                 "11"=>59,
             ];
             $applicant = \App\modules\recruitment\Models\JobAppliciant::where('job_circular_id',51)->where('status','selected')
-                ->select('applicant_id','roll_no','division_id')->get();
-            $datas = collect($applicant)->groupBy('division_id',true);
+                ->select('applicant_id','roll_no','present_division_id')->get();
+            $datas = collect($applicant)->groupBy('present_division_id',true);
             foreach ($datas as $k=>$data){
                 $count = 1;
                 foreach ($data as $d){
@@ -222,8 +222,8 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                 "11"=>69,
             ];
             $applicant = \App\modules\recruitment\Models\JobAppliciant::where('job_circular_id',48)->where('status','selected')
-                ->select('applicant_id','roll_no','division_id')->get();
-            $datas = collect($applicant)->groupBy('division_id',true);
+                ->select('applicant_id','roll_no','present_division_id')->get();
+            $datas = collect($applicant)->groupBy('present_division_id',true);
             foreach ($datas as $k=>$data){
                 $count = 1;
                 foreach ($data as $d){
