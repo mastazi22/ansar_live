@@ -260,7 +260,7 @@ class ApplicantReportsController extends Controller
                     ob_implicit_flush(true);
                     ob_end_flush();
                     echo "Start Processing....";
-                    $c = $applicants->get()->groupBy('division_id');
+                    $c = $applicants->get()->groupBy('present_division_id');
                     $total = count($c);
 
 
