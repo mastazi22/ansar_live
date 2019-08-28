@@ -188,7 +188,7 @@ class ApplicantReportsController extends Controller
         $applicants = JobAppliciant::with(['division','district','thana','present_division','present_district','present_thana'])->where('status',$request->status)
             ->where('job_circular_id',$request->circular);
         if($request->exists('range')&&$request->range!='all'){
-            $applicants->where('division_id',$request->range);
+            $applicants->where('present_division_id',$request->range);
         }
         if($request->exists('unit')&&$request->unit!='all'){
             $applicants->where('unit_id',$request->unit);
