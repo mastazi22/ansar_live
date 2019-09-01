@@ -532,6 +532,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
                         DB::commit();
                     } catch (\Exception $e) {
                         DB::rollback();
+                        echo "ERROR: " . $e->getMessage()."<br>";
                         Log::info("ERROR: " . $e->getMessage());
                     }
                 }
