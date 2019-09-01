@@ -454,6 +454,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
             $now = Carbon::now();
             $c = 0;
             foreach ($offeredAnsars as $ansar) {
+                echo $now->diffInDays(Carbon::parse($ansar->sms_received_datetime))."<br>";
                 if ($now->diffInDays(Carbon::parse($ansar->sms_received_datetime)) >= 7) {
                     $c++;
                     Log::info("CALLED START: OFFER ACCEPTED" . $ansar->ansar_id);
