@@ -257,6 +257,7 @@ class EmbodimentController extends Controller
                 $sms_log_save->action_user_id = Auth::user()->id;
                 $sms_log_save->save();
                 $sms_receive_info->deleteCount();
+                $sms_receive_info->deleteOfferStatus();
                 $sms_receive_info->delete();
 
                 AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['free_status' => 0, 'offer_block_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 0, 'embodied_status' => 1, 'pannel_status' => 0, 'freezing_status' => 0]);
@@ -453,7 +454,6 @@ class EmbodimentController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
-            return $e;
             $status['error']['count'] = count($transferred_ansar);
             //return Response::json(['status'=>false,'message'=>'Can`t transfer ansar. There is an error.Please try again later']);
         }

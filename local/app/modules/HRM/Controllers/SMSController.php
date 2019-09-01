@@ -112,8 +112,8 @@ class SMSController extends Controller
                                     $this->removeFromRest($offered_ansar->ansar_id);
                                     break;
                             }*/
-                            $offered_ansar->deleteCount();
-                            $offered_ansar->deleteOfferStatus();
+                            //$offered_ansar->deleteCount();
+                            //$offered_ansar->deleteOfferStatus();
                             $offered_ansar->saveLog();
                             $offered_ansar->delete();
                             $dis = District::find($offered_ansar->district_id)->unit_name_eng;

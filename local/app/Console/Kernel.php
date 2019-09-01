@@ -285,15 +285,21 @@ class Kernel extends ConsoleKernel
                             $ansar->saveCount();
                             $offer_status = OfferSMSStatus::where(['ansar_id'=>$ansar->ansar_id])->first();
                             if($pa){
-                                $t = explode(",",$offer_status->offer_type);
-                                if(is_array($t)){
-                                    $len = count($t);
-                                    if($len>0&&strcasecmp($t[$len-1],"RE")==0){
-                                        $pa->re_panel_date = Carbon::now()->format('Y-m-d');
-                                    }else if($len>0&&(strcasecmp($t[$len-1],"GB")==0||strcasecmp($t[$len-1],"DG")==0||strcasecmp($t[$len-1],"CG")==0)){
-                                        $pa->panel_date = Carbon::now()->format('Y-m-d');
-                                    }
+                                if($offer_status){
+                                    $t = explode(",",$offer_status->offer_type);
+                                    if(is_array($t)){
+                                        $len = count($t);
+                                        if($len>0&&strcasecmp($t[$len-1],"RE")==0){
+                                            $pa->re_panel_date = Carbon::now()->format('Y-m-d');
+                                        }else if($len>0&&(strcasecmp($t[$len-1],"GB")==0||strcasecmp($t[$len-1],"DG")==0||strcasecmp($t[$len-1],"CG")==0)){
+                                            $pa->panel_date = Carbon::now()->format('Y-m-d');
+                                        }
 
+                                    }
+                                }elseif(!in_array($ansar->offered_district, Config::get('app.offer'))){
+                                    $pa->re_panel_date = Carbon::now()->format('Y-m-d');
+                                }else{
+                                    $pa->panel_date = Carbon::now()->format('Y-m-d');
                                 }
                                 $pa->locked = 0;
                                 $pa->save();
@@ -304,7 +310,7 @@ class Kernel extends ConsoleKernel
                             }
                             else{
                                 $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
-                                $ansar->saveLog();
+
                                 $ansar->status()->update([
                                     'offer_sms_status' => 0,
                                     'pannel_status' => 1,
@@ -320,6 +326,7 @@ class Kernel extends ConsoleKernel
                                 ]));
                             }
                         }
+                        $ansar->saveLog();
                         $ansar->delete();
                         DB::commit();
                     } catch (\Exception $e) {
