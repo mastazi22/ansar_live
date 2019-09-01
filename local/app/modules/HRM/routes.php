@@ -9,6 +9,7 @@ use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\SmsReceiveInfoModel;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
@@ -493,15 +494,21 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
                             $ansar->saveCount();
                             $offer_status = OfferSMSStatus::where(['ansar_id'=>$ansar->ansar_id])->first();
                             if($pa){
-                                $t = explode(",",$offer_status->offer_type);
-                                if(is_array($t)){
-                                    $len = count($t);
-                                    if($len>0&&strcasecmp($t[$len-1],"RE")==0){
-                                        $pa->re_panel_date = Carbon::now()->format('Y-m-d');
-                                    }else if($len>0&&(strcasecmp($t[$len-1],"GB")==0||strcasecmp($t[$len-1],"DG")==0||strcasecmp($t[$len-1],"CG")==0)){
-                                        $pa->panel_date = Carbon::now()->format('Y-m-d');
-                                    }
+                                if($offer_status){
+                                    $t = explode(",",$offer_status->offer_type);
+                                    if(is_array($t)){
+                                        $len = count($t);
+                                        if($len>0&&strcasecmp($t[$len-1],"RE")==0){
+                                            $pa->re_panel_date = Carbon::now()->format('Y-m-d');
+                                        }else if($len>0&&(strcasecmp($t[$len-1],"GB")==0||strcasecmp($t[$len-1],"DG")==0||strcasecmp($t[$len-1],"CG")==0)){
+                                            $pa->panel_date = Carbon::now()->format('Y-m-d');
+                                        }
 
+                                    }
+                                }elseif(!in_array($ansar->offered_district, Config::get('app.offer'))){
+                                    $pa->re_panel_date = Carbon::now()->format('Y-m-d');
+                                }else{
+                                    $pa->panel_date = Carbon::now()->format('Y-m-d');
                                 }
                                 $pa->locked = 0;
                                 $pa->save();
@@ -532,7 +539,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
                         DB::commit();
                     } catch (\Exception $e) {
                         DB::rollback();
-                        echo "ERROR: " . $e->getMessage()."<br>";
+                        echo "ERROR: " . $e->getTraceAsString()."<br>";
                         Log::info("ERROR: " . $e->getMessage());
                     }
                 }
