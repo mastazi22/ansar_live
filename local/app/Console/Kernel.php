@@ -31,6 +31,7 @@ use App\modules\SD\Models\Attendance;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Nathanmac\Utilities\Parser\Facades\Parser;
@@ -340,7 +341,7 @@ class Kernel extends ConsoleKernel
                 dispatch(new RearrangePanelPositionLocal());
                 dispatch(new RearrangePanelPositionGlobal());
             }
-        })->dailyAt("23:50")->name("revert_offer_accepted")->withoutOverlapping();
+        })->dailyAt("23:55")->name("revert_offer_accepted")->withoutOverlapping();
         $schedule->call(function () {
             $withdraw_kpi_ids = KpiDetailsModel::where('kpi_withdraw_date', '<=', Carbon::now())->whereNotNull('kpi_withdraw_date')->get();
             foreach ($withdraw_kpi_ids as $withdraw_kpi_id) {
