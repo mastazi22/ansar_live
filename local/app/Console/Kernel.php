@@ -341,7 +341,7 @@ class Kernel extends ConsoleKernel
                 dispatch(new RearrangePanelPositionLocal());
                 dispatch(new RearrangePanelPositionGlobal());
             }
-        })->dailyAt("23:55")->name("revert_offer_accepted")->withoutOverlapping();
+        })->dailyAt("23:55")->name("revert_offer_accepted2")->withoutOverlapping();
         $schedule->call(function () {
             $withdraw_kpi_ids = KpiDetailsModel::where('kpi_withdraw_date', '<=', Carbon::now())->whereNotNull('kpi_withdraw_date')->get();
             foreach ($withdraw_kpi_ids as $withdraw_kpi_id) {
