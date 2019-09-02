@@ -451,103 +451,58 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::get('upload_original_info', ['as' => 'upload_original_info_view', 'uses' => 'GeneralSettingsController@uploadOriginalInfoView']);
         Route::any('test', function (\Illuminate\Http\Request $request) {
 
-            $offeredAnsars = SmsReceiveInfoModel::all();
-            $now = Carbon::now();
-            $c = 0;
-            foreach ($offeredAnsars as $ansar) {
-                echo $now->diffInDays(Carbon::parse($ansar->sms_received_datetime))."<br>";
-                if ($now->diffInDays(Carbon::parse($ansar->sms_received_datetime)) >= 7) {
-                    $c++;
-                    Log::info("CALLED START: OFFER ACCEPTED" . $ansar->ansar_id);
+            DB::connection('hrm')->beginTransaction();
+            try {
+                $data = $data = \App\modules\HRM\Models\PanelModel::with(['ansarInfo'=>function($q){
+                    $q->select('ansar_id','sex','designation_id','division_id');
+                    $q->with('designation');
+                }])->whereHas('ansarInfo',function($q){
+                    $q->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"');
+                    $q->whereHas('status',function($q){
+                        $q->where('pannel_status',1);
+                        $q->where('block_list_status',0);
+                        $q->where('black_list_status',0);
+                    });
+                })->select('ansar_id','panel_date','id')->orderBy('panel_date','asc')->orderBy('id','asc')->get();
+//                return $ansars;
+                $ansars =  collect($data)->groupBy('ansarInfo.designation.code',true)->toArray();
+                $globalPosition = [];
+                foreach ($ansars as $k=>$ansar){
+                    $values = collect(array_values($ansar))->groupBy('ansar_info.sex',true)->toArray();
+                    if(!isset($globalPosition[$k])){
+                        $globalPosition[$k] = [];
+                    }
+                    foreach ($values as $key=>$v){
+                        if(!isset($globalPosition[$k][$key])){
+                            $globalPosition[$k][$key] = [];
+                        }
+                        $value = array_values($v);
+                        $i=1;
+                        foreach ($value as $p){
+                            $globalPosition[$k][$key][$p['ansar_id']] = $i++;
+                        }
 
-                    DB::beginTransaction();
-                    try {
-//                        $pi = $ansar->ansar;
-                        $pa = $ansar->panel;
-                        $count = $ansar->getOfferCount();
-                        $maximum_offer_limit = (int)GlobalParameterFacades::getValue(GlobalParameter::MAXIMUM_OFFER_LIMIT)-1;
-                        if ($count >= $maximum_offer_limit) {
-                            $ansar->deleteCount();
-                            $ansar->deleteOfferStatus();
-                            $ansar->blockAnsarOffer();
-                            $ansar->saveLog();
-                            $ansar->status()->update([
-                                'offer_sms_status' => 0,
-                                'offer_block_status' => 1,
-                            ]);
-                            if($pa){
-                                $pa->panelLog()->save(new PanelInfoLogModel([
-                                    'ansar_id' => $pa->ansar_id,
-                                    'merit_list' => $pa->ansar_merit_list,
-                                    'panel_date' => $pa->panel_date,
-                                    're_panel_date' => $pa->re_panel_date,
-                                    'old_memorandum_id' => !$pa->memorandum_id ? "N\A" : $pa->memorandum_id,
-                                    'movement_date' => Carbon::today(),
-                                    'come_from' => $pa->come_from,
-                                    'move_to' => 'Offer',
-                                    'go_panel_position' => $pa->go_panel_position,
-                                    're_panel_position' => $pa->re_panel_position
-                                ]));
-                                $pa->delete();
-                            }
-                        } else {
-                            $ansar->saveCount();
-                            $offer_status = OfferSMSStatus::where(['ansar_id'=>$ansar->ansar_id])->first();
-                            if($pa){
-                                if($offer_status){
-                                    $t = explode(",",$offer_status->offer_type);
-                                    if(is_array($t)){
-                                        $len = count($t);
-                                        if($len>0&&strcasecmp($t[$len-1],"RE")==0){
-                                            $pa->re_panel_date = Carbon::now()->format('Y-m-d');
-                                        }else if($len>0&&(strcasecmp($t[$len-1],"GB")==0||strcasecmp($t[$len-1],"DG")==0||strcasecmp($t[$len-1],"CG")==0)){
-                                            $pa->panel_date = Carbon::now()->format('Y-m-d');
-                                        }
-
-                                    }
-                                }elseif(!in_array($ansar->offered_district, Config::get('app.offer'))){
-                                    $pa->re_panel_date = Carbon::now()->format('Y-m-d');
-                                }else{
-                                    $pa->panel_date = Carbon::now()->format('Y-m-d');
-                                }
-                                $pa->locked = 0;
-                                $pa->save();
-                                $ansar->status()->update([
-                                    'pannel_status' => 1,
-                                    'offer_sms_status' => 0,
-                                ]);
-                            }
-                            else{
-                                $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
-                                $ansar->saveLog();
-                                $ansar->status()->update([
-                                    'offer_sms_status' => 0,
-                                    'pannel_status' => 1,
-                                ]);
-                                $ansar->panel()->save(new PanelModel([
-                                    'memorandum_id' => isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
-                                    'panel_date' => Carbon::now(),
-                                    'come_from' => 'Offer',
-                                    'ansar_merit_list' => 1,
-                                    're_panel_date' => Carbon::now(),
-                                    'go_panel_position' => 0,
-                                    're_panel_position' => 0
-                                ]));
+                    }
+                }
+                foreach ($globalPosition as $k=>$v){
+                    foreach ($v as $k1=>$v1){
+                        foreach ($v1 as $key=>$value){
+                            $p = PanelModel::where('ansar_id',$key)->first();
+                            if($p){
+                                $p->go_panel_position = $value;
+                                $p->save();
                             }
                         }
-                        $ansar->delete();
-                        DB::commit();
-                    } catch (\Exception $e) {
-                        DB::rollback();
-                        echo "ERROR: " . $e->getTraceAsString()."<br>";
-                        Log::info("ERROR: " . $e->getMessage());
                     }
                 }
 
-            }
-            if($c>0){
-                dispatch(new RearrangePanelPositionLocal());
-                dispatch(new RearrangePanelPositionGlobal());
+//                return $globalPosition;
+                DB::connection('hrm')->commit();
+                echo "done";
+            }catch(\Exception $e){
+                echo $e;
+                Log::info("global panel rearr:".$e->getMessage());
+                DB::connection('hrm')->rollback();
             }
 
         });

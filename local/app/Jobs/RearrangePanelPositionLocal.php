@@ -39,13 +39,15 @@ class RearrangePanelPositionLocal extends Job implements ShouldQueue
         DB::connection('hrm')->beginTransaction();
         try {
             $data = \App\modules\HRM\Models\PanelModel::with(['ansarInfo'=>function($q){
-                $q->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"');
                 $q->select('ansar_id','sex','designation_id','division_id');
                 $q->with('designation');
-            }])->whereHas('ansarInfo.status',function($q){
-                $q->where('pannel_status',1);
-                $q->where('block_list_status',0);
-                $q->where('black_list_status',0);
+            }])->whereHas('ansarInfo',function($q){
+                $q->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"');
+                $q->whereHas('status',function($q){
+                    $q->where('pannel_status',1);
+                    $q->where('block_list_status',0);
+                    $q->where('black_list_status',0);
+                });
             })->select('ansar_id','re_panel_date','id')->orderBy('re_panel_date','asc')->orderBy('id','asc')->get();
 //                return $ansars;
             $ansars =  collect($data)->groupBy('ansarInfo.division_id',true)->toArray();
