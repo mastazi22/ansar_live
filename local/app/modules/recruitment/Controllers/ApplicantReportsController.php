@@ -191,7 +191,7 @@ class ApplicantReportsController extends Controller
             $applicants->where('present_division_id',$request->range);
         }
         if($request->exists('unit')&&$request->unit!='all'){
-            $applicants->where('unit_id',$request->unit);
+            $applicants->where('present_unit_id',$request->unit);
         }
         if($request->exists('thana')&&$request->thana!='all'){
             $applicants->where('thana_id',$request->thana);
