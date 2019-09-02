@@ -46,7 +46,7 @@ class RearrangePanelPositionLocal extends Job implements ShouldQueue
                 $q->where('pannel_status',1);
                 $q->where('block_list_status',0);
                 $q->where('black_list_status',0);
-            })->select('ansar_id','re_panel_date')->orderBy('re_panel_date','asc')->get();
+            })->select('ansar_id','re_panel_date','id')->orderBy('re_panel_date','asc')->orderBy('id','asc')->get();
 //                return $ansars;
             $ansars =  collect($data)->groupBy('ansarInfo.division_id',true)->toArray();
             $globalPosition = [];
