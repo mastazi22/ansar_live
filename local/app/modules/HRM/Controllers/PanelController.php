@@ -213,6 +213,7 @@ class PanelController extends Controller
                         $panel_entry->ansar_id = $selected_ansars[$i];
                         $panel_entry->come_from = "Rest";
                         $panel_entry->panel_date = $modified_panel_date;
+                        $panel_entry->re_panel_date = $modified_panel_date;
                         $panel_entry->memorandum_id = $mi;
                         $panel_entry->ansar_merit_list = $ansar_merit[$i];
                         $panel_entry->action_user_id = Auth::user()->id;
@@ -244,6 +245,7 @@ class PanelController extends Controller
                         $panel_entry->ansar_id = $selected_ansars[$i];
                         $panel_entry->come_from = "Entry";
                         $panel_entry->panel_date = $modified_panel_date;
+                        $panel_entry->re_panel_date = $modified_panel_date;
                         $panel_entry->memorandum_id = $mi;
                         $panel_entry->ansar_merit_list = $ansar_merit[$i];
                         $panel_entry->action_user_id = Auth::user()->id;
