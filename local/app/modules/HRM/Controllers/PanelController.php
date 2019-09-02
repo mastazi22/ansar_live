@@ -4,6 +4,8 @@ namespace App\modules\HRM\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use App\Jobs\RearrangePanelPositionGlobal;
+use App\Jobs\RearrangePanelPositionLocal;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\MemorandumModel;
@@ -260,6 +262,8 @@ class PanelController extends Controller
             }
             DB::commit();
             CustomQuery::addActionlog($user, true);
+            $this->dispatch(new RearrangePanelPositionGlobal());
+            $this->dispatch(new RearrangePanelPositionLocal());
         } catch (\Exception $e) {
             DB::rollback();
             return Response::json(['status' => false, 'message' => "Ansar/s not added to panel"]);
