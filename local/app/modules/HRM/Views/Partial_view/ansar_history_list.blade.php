@@ -85,7 +85,7 @@
                         <td>[[data.api.re_panel_date?(data.api.re_panel_date|dateformat:'DD-MMMM-YYYY':'bn'):"--"]]</td>
                         <td>[[data.api.memorandum_id?data.api.memorandum_id:"--"]]</td>
                         <td>[[data.status]]</td>
-                        <td>[[data.aod.offerDate?(data.aod.offerDate|dateformat:'DD-MMMM-YYYY':'bn'):'--']]</td>
+                        <td>[[data.aod.offerDate?(data.aod.offerDate|dateformat:'DD-MMMM-YYYY':'bn'):'--']] ([[data.offer_zone]])</td>
                         <td>[[data.aod.offerUnit?data.aod.offerUnit:'--']]</td>
                         <td>[[data.aoci.offerCancel?(data.aoci.offerCancel|dateformat:'DD-MMMM-YYYY':'bn'):'--']]</td>
                     </tr>

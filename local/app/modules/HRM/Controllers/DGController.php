@@ -29,6 +29,7 @@ use App\modules\HRM\Models\TransferAnsar;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Redirect;
@@ -112,13 +113,13 @@ class DGController extends Controller
                     ->where('tbl_sms_receive_info.ansar_id', '=', $ansar_id);
 
                 if ($ansarOfferInfo->exists()) {
-                    $ansarOfferInfo = $ansarOfferInfo->select('tbl_sms_receive_info.sms_send_datetime as offerDate', 'tbl_units.unit_name_bng as offerUnit')->first();
+                    $ansarOfferInfo = $ansarOfferInfo->select('tbl_sms_receive_info.sms_send_datetime as offerDate', 'tbl_units.unit_name_bng as offerUnit','tbl_units.id as unit_id')->first();
 
                 } else {
                     $ansarOfferInfo = DB::table('tbl_sms_send_log')
                         ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_send_log.offered_district')
                         ->where('tbl_sms_send_log.ansar_id', '=', $ansar_id)->orderBy('tbl_sms_send_log.id', 'desc')
-                        ->select('tbl_sms_send_log.offered_date as offerDate', 'tbl_units.unit_name_bng as offerUnit')->first();
+                        ->select('tbl_sms_send_log.offered_date as offerDate', 'tbl_units.unit_name_bng as offerUnit','tbl_units.id as unit_id')->first();
                 }
             }
             $offer_cancel = DB::table('tbl_offer_cancel')->where('ansar_id', $ansar_id)->orderBy('id', 'desc')->select('offer_cancel_date as offerCancel')->first();
@@ -147,8 +148,9 @@ class DGController extends Controller
                     ->select('tbl_embodiment_log.release_date as disembodiedDate', 'tbl_disembodiment_reason.reason_in_bng as disembodiedReason')->first();
 
             }
+            $a = !in_array($ansarOfferInfo->unit_id, Config::get('app.offer'))?"রিজিওনাল":"গ্লোবাল";
             return json_encode(['apid' => $ansarPersonalDetail, 'api' => $ansarPanelInfo, 'aod' => $ansarOfferInfo, 'aoci' => $offer_cancel, 'asi' => $ansarStatusInfo,
-                'aei' => $ansarEmbodimentInfo, 'adei' => $ansarDisEmbodimentInfo,'status'=>$ansarStatusInfo->getStatus()[0]]);
+                'aei' => $ansarEmbodimentInfo, 'adei' => $ansarDisEmbodimentInfo,'status'=>$ansarStatusInfo->getStatus()[0],"offer_zone"=>$a]);
         }catch(\Exception $e){
             return [];
         }
