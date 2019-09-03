@@ -72,7 +72,8 @@
                 <table class="table table-bordered">
                     <caption>পানেল্ভুক্তির ও অফারের বিবরণ</caption>
                     <tr>
-                        <td>প্যানেলভুক্তি তারিখ</td>
+                        <td>গ্লোবাল<br>প্যানেলভুক্তি তারিখ</td>
+                        <td>রিজিওনাল<br>প্যানেলভুক্তি তারিখ</td>
                         <td>প্যানেল আইডি নং</td>
                         <td>বর্তমান অবস্থা</td>
                         <td>অফারের তারিখ</td>
@@ -81,6 +82,7 @@
                     </tr>
                     <tr>
                         <td>[[data.api.panel_date?(data.api.panel_date|dateformat:'DD-MMMM-YYYY':'bn'):"--"]]</td>
+                        <td>[[data.api.re_panel_date?(data.api.re_panel_date|dateformat:'DD-MMMM-YYYY':'bn'):"--"]]</td>
                         <td>[[data.api.memorandum_id?data.api.memorandum_id:"--"]]</td>
                         <td>[[data.status]]</td>
                         <td>[[data.aod.offerDate?(data.aod.offerDate|dateformat:'DD-MMMM-YYYY':'bn'):'--']]</td>
