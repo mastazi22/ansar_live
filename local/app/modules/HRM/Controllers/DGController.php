@@ -96,9 +96,9 @@ class DGController extends Controller
             $ansarStatusInfo = AnsarStatusInfo::where('ansar_id', $ansar_id)->first();
             $ansarPanelInfo = DB::table('tbl_panel_info')->where('ansar_id', $ansar_id);
             if (!$ansarPanelInfo->exists()) {
-                $ansarPanelInfo = DB::table('tbl_panel_info_log')->where('ansar_id', $ansar_id)->orderBy('id', 'desc')->select('panel_date', 'old_memorandum_id as memorandum_id')->first();
+                $ansarPanelInfo = DB::table('tbl_panel_info_log')->where('ansar_id', $ansar_id)->orderBy('id', 'desc')->select('panel_date','re_panel_date', 'old_memorandum_id as memorandum_id')->first();
             } else {
-                $ansarPanelInfo = $ansarPanelInfo->select('panel_date', 'memorandum_id')->first();
+                $ansarPanelInfo = $ansarPanelInfo->select('panel_date','re_panel_date', 'memorandum_id')->first();
             }
             $ansarOfferInfo = DB::table('tbl_sms_offer_info')
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_offer_info.district_id')
