@@ -106,7 +106,7 @@ class DGController extends Controller
                 ->where('tbl_sms_offer_info.ansar_id', '=', $ansar_id);
 
             if ($ansarOfferInfo->exists()) {
-                $ansarOfferInfo = $ansarOfferInfo->select('tbl_sms_offer_info.sms_send_datetime as offerDate', 'tbl_units.unit_name_bng as offerUnit')->first();
+                $ansarOfferInfo = $ansarOfferInfo->select('tbl_sms_offer_info.sms_send_datetime as offerDate', 'tbl_units.unit_name_bng as offerUnit','tbl_units.id as unit_id')->first();
             } else {
                 $ansarOfferInfo = DB::table('tbl_sms_receive_info')
                     ->join('tbl_units', 'tbl_units.id', '=', 'tbl_sms_receive_info.offered_district')
@@ -148,9 +148,9 @@ class DGController extends Controller
                     ->select('tbl_embodiment_log.release_date as disembodiedDate', 'tbl_disembodiment_reason.reason_in_bng as disembodiedReason')->first();
 
             }
-//            $a = $ansarOfferInfo?!in_array($ansarOfferInfo->unit_id, Config::get('app.offer'))?"রিজিওনাল":"গ্লোবাল":"";
+            $a = $ansarOfferInfo?!in_array($ansarOfferInfo->unit_id, Config::get('app.offer'))?"রিজিওনাল":"গ্লোবাল":"";
             return json_encode(['apid' => $ansarPersonalDetail, 'api' => $ansarPanelInfo, 'aod' => $ansarOfferInfo, 'aoci' => $offer_cancel, 'asi' => $ansarStatusInfo,
-                'aei' => $ansarEmbodimentInfo, 'adei' => $ansarDisEmbodimentInfo,'status'=>$ansarStatusInfo->getStatus()[0],"offer_zone"=>""]);
+                'aei' => $ansarEmbodimentInfo, 'adei' => $ansarDisEmbodimentInfo,'status'=>$ansarStatusInfo->getStatus()[0],"offer_zone"=>$a]);
         }catch(\Exception $e){
             return [$e->getTraceAsString()];
         }
