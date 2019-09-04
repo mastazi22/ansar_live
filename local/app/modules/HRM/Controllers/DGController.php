@@ -152,7 +152,7 @@ class DGController extends Controller
             return json_encode(['apid' => $ansarPersonalDetail, 'api' => $ansarPanelInfo, 'aod' => $ansarOfferInfo, 'aoci' => $offer_cancel, 'asi' => $ansarStatusInfo,
                 'aei' => $ansarEmbodimentInfo, 'adei' => $ansarDisEmbodimentInfo,'status'=>$ansarStatusInfo->getStatus()[0],"offer_zone"=>$a]);
         }catch(\Exception $e){
-            return [$e->getMessage()];
+            return [$e->getTraceAsString()];
         }
 
 
