@@ -148,9 +148,9 @@ class DGController extends Controller
                     ->select('tbl_embodiment_log.release_date as disembodiedDate', 'tbl_disembodiment_reason.reason_in_bng as disembodiedReason')->first();
 
             }
-            $a = $ansarOfferInfo?!in_array($ansarOfferInfo->unit_id, Config::get('app.offer'))?"রিজিওনাল":"গ্লোবাল":"";
+//            $a = $ansarOfferInfo?!in_array($ansarOfferInfo->unit_id, Config::get('app.offer'))?"রিজিওনাল":"গ্লোবাল":"";
             return json_encode(['apid' => $ansarPersonalDetail, 'api' => $ansarPanelInfo, 'aod' => $ansarOfferInfo, 'aoci' => $offer_cancel, 'asi' => $ansarStatusInfo,
-                'aei' => $ansarEmbodimentInfo, 'adei' => $ansarDisEmbodimentInfo,'status'=>$ansarStatusInfo->getStatus()[0],"offer_zone"=>$a]);
+                'aei' => $ansarEmbodimentInfo, 'adei' => $ansarDisEmbodimentInfo,'status'=>$ansarStatusInfo->getStatus()[0],"offer_zone"=>""]);
         }catch(\Exception $e){
             return [$e->getTraceAsString()];
         }
