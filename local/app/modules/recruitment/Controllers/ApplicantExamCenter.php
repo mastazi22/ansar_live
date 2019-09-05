@@ -64,11 +64,14 @@ class ApplicantExamCenter extends Controller
      */
     public function store(Request $request)
     {
+//        return $request->all();
         $this->validate($request, JobApplicantExamCenter::rules());
 
         DB::beginTransaction();
         try{
-            $input = $request->except(['search_unit','units']);
+            $input = $request->except(['search_unit','units','exam_roll_place']);
+            $exam_roll_place = $request->exam_roll_place?json_encode(array_values($request->exam_roll_place)):null;
+            $input['exam_place_roll_wise'] = $exam_roll_place;
             $jec = JobApplicantExamCenter::where('job_circular_id',$request->job_circular_id)
                 ->whereHas('examUnits',function ($q) use($request){
                     $q->whereIn('unit_id',$request->units);
@@ -132,7 +135,9 @@ class ApplicantExamCenter extends Controller
 
         DB::beginTransaction();
         try{
-            $input = $request->except(['search_unit','units']);
+            $input = $request->except(['search_unit','units','exam_roll_place']);
+            $exam_roll_place = $request->exam_roll_place?json_encode(array_values($request->exam_roll_place)):null;
+            $input['exam_place_roll_wise'] = $exam_roll_place;
             $jec = JobApplicantExamCenter::where('job_circular_id',$request->job_circular_id)
                 ->where('id','!=',$id)
                 ->whereHas('examUnits',function ($q) use($request){

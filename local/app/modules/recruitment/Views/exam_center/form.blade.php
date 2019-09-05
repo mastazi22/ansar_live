@@ -115,6 +115,28 @@
             </div>
         </div>
     </div>
+        <div class="form-group" id="roll_exam_center">
+            <label style="margin-bottom: 10px">Add Roll Based Exam center&nbsp;<button type="button" class="btn btn-primary btn-sm" id="add-roll-exam">Add</button></label>
+            @if($data)
+                <?php $exam_roll_place = $data->exam_place_roll_wise?json_decode($data->exam_place_roll_wise,true):[];$i=0; ?>
+                @foreach($exam_roll_place as $ex)
+                        <div class="row eeee" style="margin-bottom: 10px">
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" placeholder="Min Roll" name="exam_roll_place[{{$i}}][min_roll]">
+                            </div>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" placeholder="Max Roll" name="exam_roll_place[{{$i}}][max_roll]">
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="Exam place" name="exam_roll_place[{{$i++}}][exam_place]">
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-danger pull-write rm-exam">Remove</button>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+        </div>
     <div class="form-group">
         {!! Form::label('Select applicant district','Select Unit',['class'=>'control-label']) !!}
         <div id="selected-items">
@@ -157,6 +179,29 @@
 </div>
 <script>
     $(document).ready(function () {
+        $("#add-roll-exam").on('click',function (e) {
+            e.preventDefault();
+            var i= $("#roll_exam_center").find(".eeee").length
+            var html = `<div class="row eeee" style="margin-bottom: 10px">
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" placeholder="Min Roll" name="exam_roll_place[${i}][min_roll]">
+                </div>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" placeholder="Max Roll" name="exam_roll_place[${i}][max_roll]">
+                </div>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" placeholder="Exam place" name="exam_roll_place[${i}][exam_place]">
+                </div>
+                <div class="col-sm-2">
+                    <button type="button" class="btn btn-danger pull-write rm-exam">Remove</button>
+                </div>
+            </div>`;
+            $("#roll_exam_center").append(html)
+        })
+        $("body").on('click',".rm-exam",function(e){
+            e.preventDefault();
+            $(this).parents(".eeee").remove();
+        })
         $("input[name='search_unit']").on('input', function (event) {
             var value = $(this).val();
             var s = $(this).siblings('div').find('ul');
