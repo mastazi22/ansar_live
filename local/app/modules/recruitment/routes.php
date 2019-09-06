@@ -93,9 +93,11 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
             $data = \Illuminate\Support\Facades\DB::table('job_applicant')
                 ->join('job_circular','job_circular.id','=','job_applicant.job_circular_id')
                 ->join('job_applicant_exam_center','job_circular.id','=','job_applicant_exam_center.job_circular_id')
+                ->join('job_applicant_exam_center_units','job_applicant_exam_center_units.exam_center_id','=','job_applicant_exam_center.id')
                 ->join('db_amis.tbl_division','db_amis.tbl_division.id','=','job_applicant.present_division_id')
                 ->where('job_applicant.status','selected')
-                ->whereIn('job_circular.id',[48])
+                ->whereIn('job_circular.id',[52])
+                ->where('job_applicant_exam_center_units.unit_id',13)
                 ->select('job_applicant.applicant_id','job_applicant.applicant_name_bng','job_applicant.roll_no','job_circular.circular_name','job_applicant.applicant_password',
                     'division_name_bng','mobile_no_self','job_applicant_exam_center.selection_place','job_applicant_exam_center.exam_place_roll_wise',
                     'job_applicant_exam_center.selection_date','job_applicant_exam_center.selection_time')
