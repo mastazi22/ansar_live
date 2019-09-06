@@ -101,6 +101,7 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                     'division_name_bng','mobile_no_self','job_applicant_exam_center.selection_place','job_applicant_exam_center.exam_place_roll_wise',
                     'job_applicant_exam_center.selection_date','job_applicant_exam_center.selection_time')
                 ->get();
+            return $data;
             $datas = [];
 //            array_push($datas,['mobile_no_self','sms_body']);
             foreach ($data as $d){
