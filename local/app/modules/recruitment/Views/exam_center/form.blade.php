@@ -122,13 +122,13 @@
                 @foreach($exam_roll_place as $ex)
                         <div class="row eeee" style="margin-bottom: 10px">
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" placeholder="Min Roll" name="exam_roll_place[{{$i}}][min_roll]">
+                                <input type="text" class="form-control" value="{{$ex['min_roll']}}" placeholder="Min Roll" name="exam_roll_place[{{$i}}][min_roll]">
                             </div>
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" placeholder="Max Roll" name="exam_roll_place[{{$i}}][max_roll]">
+                                <input type="text" class="form-control" value="{{$ex['max_roll']}}" placeholder="Max Roll" name="exam_roll_place[{{$i}}][max_roll]">
                             </div>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control" placeholder="Exam place" name="exam_roll_place[{{$i++}}][exam_place]">
+                                <input type="text" class="form-control" value="{{$ex['exam_place']}}" placeholder="Exam place" name="exam_roll_place[{{$i++}}][exam_place]">
                             </div>
                             <div class="col-sm-2">
                                 <button type="button" class="btn btn-danger pull-write rm-exam">Remove</button>
