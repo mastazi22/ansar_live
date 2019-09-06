@@ -91,21 +91,20 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
         Route::get('/profile_image', ['as' => 'profile_image', 'uses' => 'ApplicantScreeningController@loadImage']);
         Route::get('/test', function () {
             $data = \Illuminate\Support\Facades\DB::table('job_applicant')
-                ->join('job_circular','job_circular.id','=','job_applicant.job_circular_id')
-                ->join('job_applicant_exam_center','job_circular.id','=','job_applicant_exam_center.job_circular_id')
-                ->join('job_applicant_exam_center_units','job_applicant_exam_center_units.exam_center_id','=','job_applicant_exam_center.id')
-                ->join('db_amis.tbl_division','db_amis.tbl_division.id','=','job_applicant.present_division_id')
+                ->join('job_circular','job_circular.id','=','job_applicant.job_circular_id')->join('db_amis.tbl_division','db_amis.tbl_division.id','=','job_applicant.present_division_id')
                 ->where('job_applicant.status','selected')
                 ->whereIn('job_circular.id',[52])
-                ->where('job_applicant_exam_center_units.unit_id',13)
-                ->select('job_applicant.applicant_id','job_applicant.applicant_name_bng','job_applicant.roll_no','job_circular.circular_name','job_applicant.applicant_password',
-                    'division_name_bng','mobile_no_self','job_applicant_exam_center.selection_place','job_applicant_exam_center.exam_place_roll_wise',
-                    'job_applicant_exam_center.selection_date','job_applicant_exam_center.selection_time')
+                ->select('job_applicant.applicant_id','job_applicant.present_unit_id','job_circular.id as cid','job_applicant.applicant_name_bng','job_applicant.roll_no','job_circular.circular_name','job_applicant.applicant_password',
+                    'division_name_bng','mobile_no_self')
                 ->get();
 //            return $data;
             $datas = [];
 //            array_push($datas,['mobile_no_self','sms_body']);
             foreach ($data as $d){
+                $exam_center = \App\modules\recruitment\Models\JobApplicantExamCenter::where('job_circular_id',$d->cid)
+                    ->whereHas('examUnits',function($q) use($d){
+                        $q->where('unit_id',$d->present_unit_id);
+                    })->first();
                 $bang = ['0'=>'০','1'=>'১','2'=>'২','3'=>'৩','4'=>'৪','5'=>'৫','6'=>'৬','7'=>'৭','8'=>'৮','9'=>'৯'];
                 $date_array = str_split("13/09/2019");
                 $time_array = str_split("10:00 am");
@@ -117,12 +116,14 @@ Route::group(['prefix' => 'recruitment', 'middleware' => ['recruitment'], 'names
                 $time_a = "";
                 $roll_no = "";
                 $exam_place = "";
-                $exam_place_roll_wise = $d->exam_place_roll_wise?json_decode($d->exam_place_roll_wise,true):'';
-                if($exam_place_roll_wise){
-                    foreach ($exam_place_roll_wise as $ex){
-                        if($ri>=intval($ex['min_roll'])&&$ri<=intval($ex['max_roll'])){
-                            $exam_place = $ex['exam_place'];
-                            break;
+                if($exam_center){
+                    $exam_place_roll_wise = $exam_center->exam_place_roll_wise?json_decode($exam_center->exam_place_roll_wise,true):'';
+                    if($exam_place_roll_wise){
+                        foreach ($exam_place_roll_wise as $ex){
+                            if($ri>=intval($ex['min_roll'])&&$ri<=intval($ex['max_roll'])){
+                                $exam_place = $ex['exam_place'];
+                                break;
+                            }
                         }
                     }
                 }
