@@ -636,7 +636,7 @@ class CustomQuery
     }
 
 // Dashboard all ansar list
-    public static function getAllAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q)
+    public static function getAllAnsarList($offset, $limit, $unit, $thana, $division = null, $sex='all', $time, $rank, $q)
     {
         //DB::enableQueryLog();
         $ansarQuery = QueryHelper::getQuery(QueryHelper::ALL_ANSARS);
@@ -651,6 +651,9 @@ class CustomQuery
         }
         if ($thana != 'all') {
             $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if ($sex != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
         }
         if ($time == self::RECENT) {
             $recentTime = Carbon::now();
@@ -671,7 +674,7 @@ class CustomQuery
 
 
 // Dashboard free ansar list
-    public static function getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q)
+    public static function getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division = null, $sex='all', $time, $rank, $q)
     {
         DB::enableQueryLog();
         $ansarQuery = QueryHelper::getQuery(QueryHelper::FREE);
@@ -686,6 +689,9 @@ class CustomQuery
         }
         if ($thana != 'all') {
             $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if ($sex != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
         }
         if ($time == self::RECENT) {
             $recentTime = Carbon::now();
@@ -778,7 +784,7 @@ class CustomQuery
 
 
 // Dashboard offered ansar list
-    public static function getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q)
+    public static function getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division = null, $sex='all', $time, $rank, $q)
     {
         DB::enableQueryLog();
         $ansarQuery = QueryHelper::getQuery(QueryHelper::OFFER);
@@ -798,6 +804,9 @@ class CustomQuery
             $ansarQuery->where('ou.id', $unit);
 
 //            $ansarQuery1->where('ou.id', $unit);
+        }
+        if ($sex != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
         }
         if ($time == self::RECENT) {
             $recentTime = Carbon::now();
@@ -831,7 +840,7 @@ class CustomQuery
         return ['total' => collect($total->get())->pluck('t', 'code'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'offer'];
     }
 
-    public static function getTotalOfferBlockAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q)
+    public static function getTotalOfferBlockAnsarList($offset, $limit, $unit, $thana, $division = null, $sex='all', $time, $rank, $q)
     {
         DB::enableQueryLog();
         $ansarQuery = QueryHelper::getQuery(QueryHelper::OFFER_BLOCK);
@@ -843,6 +852,9 @@ class CustomQuery
         }
         if ($unit != 'all') {
             $ansarQuery->where('ou.id', $unit);
+        }
+        if ($sex != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
         }
         if ($time == self::RECENT) {
             $recentTime = Carbon::now();
@@ -867,7 +879,7 @@ class CustomQuery
 
 
 // Dashboard rested ansar list
-    public static function getTotalRestAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q)
+    public static function getTotalRestAnsarList($offset, $limit, $unit, $thana, $division = null, $sex='all', $time, $rank, $q)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::REST);
         if ($rank != 'all') {
@@ -881,6 +893,9 @@ class CustomQuery
         }
         if ($thana != 'all') {
             $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if ($sex != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
         }
         if ($time == self::RECENT) {
             $recentTime = Carbon::now();
@@ -898,7 +913,7 @@ class CustomQuery
             'tbl_designations.name_bng as rank', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_rest_info.rest_date')->skip($offset)->limit($limit)->get();
         return ['total' => collect($total->get())->pluck('t', 'code'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'rest'];
     }
-    public static function getTotalRetireAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q)
+    public static function getTotalRetireAnsarList($offset, $limit, $unit, $thana, $division = null, $sex='all', $time, $rank, $q)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::RETIRE);
         if ($rank != 'all') {
@@ -912,6 +927,9 @@ class CustomQuery
         }
         if ($thana != 'all') {
             $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if ($sex != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
         }
         if ($time == self::RECENT) {
             $recentTime = Carbon::now();
@@ -932,7 +950,7 @@ class CustomQuery
 
 
 // Dashboard freezed ansar list
-    public static function getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q)
+    public static function getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division = null, $sex='all', $time, $rank, $q)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::FREEZE);
         if ($rank != 'all') {
@@ -946,6 +964,9 @@ class CustomQuery
         }
         if ($thana != 'all') {
             $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if ($sex != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
         }
         if ($time == self::RECENT) {
             $recentTime = Carbon::now();
@@ -964,7 +985,7 @@ class CustomQuery
 
 
 // Dashboard blocked ansar list
-    public static function getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q)
+    public static function getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division = null, $sex='all', $time, $rank, $q)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::BLOCK);
         if ($rank != 'all') {
@@ -978,6 +999,9 @@ class CustomQuery
         }
         if ($thana != 'all') {
             $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if ($sex != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
         }
         if ($time == self::RECENT) {
             $recentTime = Carbon::now();
@@ -998,7 +1022,7 @@ class CustomQuery
 
 
 // Dashboard blacked ansar list
-    public static function getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q)
+    public static function getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division = null, $sex='all', $time, $rank, $q)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::BLACK);
         if ($rank != 'all') {
@@ -1012,6 +1036,9 @@ class CustomQuery
         }
         if ($thana != 'all') {
             $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if ($sex != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
         }
         if ($time == self::RECENT) {
             $recentTime = Carbon::now();
@@ -1070,7 +1097,7 @@ class CustomQuery
 
 
 // Dashboard own embodied ansar list(DC,RC)
-    public static function getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q)
+    public static function getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null, $sex='all', $time, $rank, $q)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::OWN_EMBODIED);
         if ($rank != 'all') {
@@ -1084,6 +1111,9 @@ class CustomQuery
         }
         if ($thana != 'all') {
             $ansarQuery->where('kt.id', $thana);
+        }
+        if ($sex != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
         }
         if ($time == self::RECENT) {
             $recentTime = Carbon::now();
@@ -1102,7 +1132,7 @@ class CustomQuery
 
 
 // Dashboard diff embodied ansar list(DC,RC)
-    public static function getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q)
+    public static function getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division = null, $sex='all', $time, $rank, $q)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::DIFF_EMBODIED);
         if ($rank != 'all') {
@@ -1118,6 +1148,9 @@ class CustomQuery
         if ($thana != 'all') {
 //            $ansarQuery->where('kt.id', '!=', $thana);
             $ansarQuery->where('pt.id', '=', $thana);
+        }
+        if ($sex != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
         }
         if ($time == self::RECENT) {
             $recentTime = Carbon::now();
@@ -1137,7 +1170,7 @@ class CustomQuery
 
 
 // Dashboard not verified ansar list
-    public static function getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division = null, $time, $rank, $q)
+    public static function getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division = null, $sex='all', $time, $rank, $q)
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::UNVERIFIED);
         if ($rank != 'all') {
@@ -1151,6 +1184,9 @@ class CustomQuery
         }
         if ($thana != 'all') {
             $ansarQuery->where('tbl_thana.id', $thana);
+        }
+        if ($sex != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
         }
         if ($q) {
             $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');

@@ -223,17 +223,17 @@ class HrmController extends Controller
         $pageTitle = '';
         $view = '';
         $custom_filter = '<filter-template
-                                        show-item="[\'range\',\'unit\',\'thana\']"
-                                        type="all"
-                                        range-change="loadPage()"
-                                        unit-change="loadPage()"
-                                        thana-change="loadPage()"
-                                        on-load="loadPage()"
-                                        data="param"
-                                        start-load="range"
-                                        field-width="{range:\'col-sm-4\',unit:\'col-sm-4\',thana:\'col-sm-4\'}"
-                                >
-                                </filter-template>';
+                                show-item="[\'range\',\'unit\',\'thana\',\'gender\']"
+                                type="all"
+                                range-change="loadPage()"
+                                unit-change="loadPage()"
+                                thana-change="loadPage()"
+                                gender-change="loadPage()"
+                                on-load="loadPage()"
+                                data="param"
+                                start-load="range"
+                                field-width="{range:\'col-sm-3\',unit:\'col-sm-3\',thana:\'col-sm-3\',gender:\'col-sm-3\'}"
+                        ></filter-template>';
         if (strcasecmp($type, 'all_ansar') == 0) {
             $pageTitle = "Total Ansars";
         } elseif (strcasecmp($type, 'not_verified_ansar') == 0) {
@@ -246,7 +246,7 @@ class HrmController extends Controller
             $pageTitle = "Total Free Ansars";
         } elseif (strcasecmp($type, 'paneled_ansar') == 0) {
             $pageTitle = "Total Paneled Ansars";
-            $custom_filter = '<filter-template
+            /*$custom_filter = '<filter-template
                                 show-item="[\'range\',\'unit\',\'thana\',\'gender\']"
                                 type="all"
                                 range-change="loadPage()"
@@ -257,7 +257,7 @@ class HrmController extends Controller
                                 data="param"
                                 start-load="range"
                                 field-width="{range:\'col-sm-3\',unit:\'col-sm-3\',thana:\'col-sm-3\',gender:\'col-sm-3\'}"
-                        ></filter-template>';
+                        ></filter-template>';*/
         } elseif (strcasecmp($type, 'rest_ansar') == 0) {
             $pageTitle = "Total Resting Ansars";
         } elseif (strcasecmp($type, 'blocked_ansar') == 0) {
@@ -265,7 +265,7 @@ class HrmController extends Controller
         } elseif (strcasecmp($type, 'blacked_ansar') == 0) {
             $pageTitle = "Total Blacklisted Ansars";
         } elseif (strcasecmp($type, 'embodied_ansar') == 0) {
-            $custom_filter = '<filter-template
+            /*$custom_filter = '<filter-template
                                 show-item="[\'range\',\'unit\',\'thana\',\'gender\']"
                                 type="all"
                                 range-change="loadPage()"
@@ -276,7 +276,7 @@ class HrmController extends Controller
                                 data="param"
                                 start-load="range"
                                 field-width="{range:\'col-sm-3\',unit:\'col-sm-3\',thana:\'col-sm-3\',gender:\'col-sm-3\'}"
-                        ></filter-template>';
+                        ></filter-template>';*/
             $pageTitle = "Total Embodied Ansars";
         } elseif (strcasecmp($type, 'own_embodied_ansar') == 0) {
             $pageTitle = "Own Embodied Ansars";
@@ -361,13 +361,13 @@ class HrmController extends Controller
         $data = [];
         switch ($type) {
             case 'all_ansar':
-                $data = CustomQuery::getAllAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getAllAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank, $q);
                 break;
             case 'not_verified_ansar':
-                $data = CustomQuery::getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank, $q);
                 break;
             case 'free_ansar':
-                $data = CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank, $q);
                 break;
             case 'paneled_ansar':
                 $data = CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank,$request->filter_mobile_no,$request->filter_age, $q,$sort);
@@ -376,31 +376,31 @@ class HrmController extends Controller
                 $data = CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q,$sex);
                 break;
             case 'rest_ansar':
-                $data = CustomQuery::getTotalRestAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalRestAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank, $q);
                 break;
             case 'retire_ansar':
-                $data = CustomQuery::getTotalRetireAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalRetireAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank, $q);
                 break;
             case 'freezed_ansar':
-                $data = CustomQuery::getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank, $q);
                 break;
             case 'blocked_ansar':
-                $data = CustomQuery::getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank, $q);
                 break;
             case 'blacked_ansar':
-                $data = CustomQuery::getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank, $q);
                 break;
             case 'offerred_ansar':
-                $data = CustomQuery::getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank, $q);
                 break;
             case 'offer_block':
-                $data = CustomQuery::getTotalOfferBlockAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalOfferBlockAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank, $q);
                 break;
             case 'own_embodied_ansar':
-                $data = CustomQuery::getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank, $q);
                 break;
             case 'embodied_ansar_in_different_district':
-                $data = CustomQuery::getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q);
+                $data = CustomQuery::getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank, $q);
                 break;
 
         }
