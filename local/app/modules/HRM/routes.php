@@ -603,7 +603,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
                         $q->where('black_list_status',0);
                     });
                 })->get();
-                return $ansars;
+//                return $ansars;
                 foreach ($ansars as $ansar){
                     $ansar->ansarInfo->status->update([
                         'pannel_status'=>0
