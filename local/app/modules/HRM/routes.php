@@ -595,7 +595,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
                 }])->whereHas('ansarInfo',function($q){
                     $q->where(function($q){
                         $q->whereNull('mobile_no_self');
-                        $q->orWhereRaw('LENGTH(mobile_no_self)>11');
+                        $q->orWhereRaw('mobile_no_self REGEXP "^(/+88)?01[0-9]{9}$"=0');
                     });
                     $q->whereHas('status',function($q){
                         $q->where('block_list_status',0);
@@ -603,7 +603,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
                         $q->where('black_list_status',0);
                     });
                 })->get();
-//                return $ansars;
+                return $ansars;
                 foreach ($ansars as $ansar){
                     $ansar->ansarInfo->status->update([
                         'pannel_status'=>0
