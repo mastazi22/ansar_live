@@ -30,9 +30,9 @@
         <td>[[ansar.re_panel_date|dateformat:"DD-MMM-YYYY"]]</td>
         <td>[[ansar.memorandum_id]]</td>
         @if(Auth::user()->type==11)
-            <td>[[ansar.go_panel_position]]</td>
-            <td>[[ansar.re_panel_position]]</td>
-            <td>[[ansar.offer_type]]</td>
+            <td>[[ansar.offer_type.split('DG').join('GB').split('CG').join('GB').split('GB').length-1>=3?'NIL':ansar.go_panel_position]]</td>
+            <td>[[ansar.offer_type.split('RE').length-1>=3?'NIL':ansar.re_panel_position]]</td>
+            <td>[[ansar.offer_type.split('DG').join('GB').split('CG').join('GB')]]</td>
         @endif
     </tr>
     <tr ng-if="data.ansars.length<=0">

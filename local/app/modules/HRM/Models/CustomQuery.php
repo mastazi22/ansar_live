@@ -71,7 +71,7 @@ class CustomQuery
             }else{
                 $query->where(function($q){
 //                    $q->whereRaw("NOT FIND_IN_SET('RE',tbl_offer_status.offer_type)");
-                    $q->whereRaw("ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"RE\",\"\")))/CHAR_LENGTH(\"RE\"))<2");
+                    $q->whereRaw("ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"RE\",\"\")))/CHAR_LENGTH(\"RE\"))<3");
                     $q->orWhereNull("tbl_offer_status.offer_type");
                 });
             }
