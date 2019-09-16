@@ -42,13 +42,12 @@ class RearrangePanelPositionGlobal extends Job implements ShouldQueue
                 $q->select('ansar_id','sex','designation_id','division_id');
                 $q->with('designation');
             }])->whereHas('ansarInfo',function($q){
-                $q->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"');
+                $q->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^(/+88)?01[0-9]{9}$"');
                 $q->whereHas('status',function($q){
-                    $q->where('pannel_status',1);
                     $q->where('block_list_status',0);
                     $q->where('black_list_status',0);
                 });
-            })->select('ansar_id','panel_date','id')->orderBy('panel_date','asc')->orderBy('id','asc')->get();
+            })->select('ansar_id','panel_date','id','locked')->orderBy('panel_date','asc')->orderBy('id','asc')->get();
 //                return $ansars;
             $ansars =  collect($data)->groupBy('ansarInfo.designation.code',true)->toArray();
             $globalPosition = [];
@@ -64,7 +63,13 @@ class RearrangePanelPositionGlobal extends Job implements ShouldQueue
                     $value = array_values($v);
                     $i=1;
                     foreach ($value as $p){
-                        $globalPosition[$k][$key][$p['ansar_id']] = $i++;
+                        $offerStatus = OfferSMSStatus::where('ansar_id',$p['ansar_id'])
+                            ->select(DB::raw('SUBSTRING_INDEX(SUBSTRING_INDEX(offer_type,\',\',LENGTH(offer_type)-LENGTH(REPLACE(offer_type,\',\',\'\'))+1),\',\',-1) as last_offer_region'))
+                            ->first();
+                        if((!$offerStatus||strcasecmp($offerStatus->last_offer_region,'GB')||strcasecmp($offerStatus->last_offer_region,'DG')||strcasecmp($offerStatus->last_offer_region,'CG'))&&!$p['locked']){
+                            $globalPosition[$k][$key][$p['ansar_id']] = $i;
+                        }
+                        $i++;
                     }
 
                 }
