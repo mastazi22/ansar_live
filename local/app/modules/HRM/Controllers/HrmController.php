@@ -258,18 +258,6 @@ class HrmController extends Controller
                                 start-load="range"
                                 field-width="{range:\'col-sm-3\',unit:\'col-sm-3\',thana:\'col-sm-3\',gender:\'col-sm-3\'}"
                         ></filter-template>';
-            $view = ' <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        <label for="">
-                                            <input ng-change="loadPage()" ng-model="param.filter_mobile_no" ng-true-value="1" ng-false-value="0" style="vertical-align: top;" type="checkbox">&nbsp;Filter mobile number
-                                        </label>
-                                        <label for="" style="margin-left: 10px">
-                                            <input  ng-change="loadPage()" ng-model="param.filter_age" ng-true-value="1" ng-false-value="0" style="vertical-align: top;" type="checkbox">&nbsp;Filter age
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>';
         } elseif (strcasecmp($type, 'rest_ansar') == 0) {
             $pageTitle = "Total Resting Ansars";
         } elseif (strcasecmp($type, 'blocked_ansar') == 0) {
