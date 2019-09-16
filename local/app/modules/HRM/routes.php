@@ -593,14 +593,17 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
                 $ansars = \App\modules\HRM\Models\PanelModel::with(['ansarInfo'=>function($q){
                     $q->with('status');
                 }])->whereHas('ansarInfo',function($q){
-                    $q->whereNull('tbl_ansar_parsonal_info.mobile_no_self');
+                    $q->where(function($q){
+                        $q->whereNull('mobile_no_self');
+                        $q->orWhereRaw('LENGTH(mobile_no_self)>11');
+                    });
                     $q->whereHas('status',function($q){
                         $q->where('block_list_status',0);
                         $q->where('pannel_status',1);
                         $q->where('black_list_status',0);
                     });
                 })->get();
-//                return $ansars;
+                return $ansars;
                 foreach ($ansars as $ansar){
                     $ansar->ansarInfo->status->update([
                         'pannel_status'=>0
