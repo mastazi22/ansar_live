@@ -202,22 +202,28 @@ GlobalApp.directive('confirm', function () {
         restrict: 'A',
         scope: {
             callback: '&',
+            spMessage:"=",
             data: '=',
             message: '@',
             event: '@'
         },
         link: function (scope, element, attrs) {
-            //alert(scope.event)
-            $(element).confirmDialog({
-                message: scope.message,
-                ok_button_text: 'Confirm',
-                cancel_button_text: 'Cancel',
-                event: scope.event || 'click',
-                ok_callback: function (element) {
-                    scope.callback(scope.data)
-                },
-                cancel_callback: function (element) {
-                }
+            //alert(scope.spMessage)
+            var i=0
+            scope.$watch('spMessage',function(n){
+                // alert(n)
+                $(element).unbind().removeData();
+                $(element).confirmDialog({
+                    message: scope.message||n,
+                    ok_button_text: 'Confirm',
+                    cancel_button_text: 'Cancel',
+                    event: scope.event || 'click',
+                    ok_callback: function (element) {
+                        scope.callback(scope.data)
+                    },
+                    cancel_callback: function (element) {
+                    }
+                })
             })
 
         }

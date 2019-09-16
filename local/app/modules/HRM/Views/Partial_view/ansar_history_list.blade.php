@@ -14,7 +14,7 @@
             <div class="table-responsive">
                 <table class="table table-bordered" style="margin: 0 auto;width: auto !important;">
                     <tr>
-                        <td rowspan="11"  style="vertical-align: middle;width: 130px;height: 150px;background: #ffffff">
+                        <td rowspan="12"  style="vertical-align: middle;width: 130px;height: 150px;background: #ffffff">
                             <img  style="width: 120px;height: 150px" src="{{URL::to('image').'?file='}}[[data.apid.profile_pic]]" alt="">
                         </td>
                         <th style="background: #ffffff">ID</th>
@@ -28,6 +28,10 @@
                     <tr>
                         <th style="background: #ffffff">Rank</th>
                         <td style="background: #ffffff">[[data.apid.name_bng]]</td>
+                    </tr>
+                    <tr>
+                        <th style="background: #ffffff">Blood Group</th>
+                        <td style="background: #ffffff">[[data.apid.blood_group_name_bng]]</td>
                     </tr>
                     <tr>
                         <th style="background: #ffffff">Mobile No.</th>

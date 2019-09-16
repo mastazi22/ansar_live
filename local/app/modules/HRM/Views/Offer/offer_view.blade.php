@@ -4,6 +4,11 @@
     {!! Breadcrumbs::render('offer_information') !!}
 @endsection
 @section('content')
+    <style>
+        #offer-view *{
+            font-size: 20px !important;
+        }
+    </style>
     <script>
 
         GlobalApp.controller('OfferController', function ($scope, $http, $interval,notificationService) {
@@ -198,11 +203,33 @@
             $scope.closeAlert = function(){
                 $scope.alerts = [];
             }
+            $scope.message=`
+            Are you sure to send offer.<span style='color: red;font-size: 20px;display: block;'>
+                        PC(Male):${$scope.kpiPCMale}<br>
+                        PC(Female):${$scope.kpiPCFemale}<br>
+                        APC(Male):${$scope.kpiAPCMale}<br>
+                        APC(Female):${$scope.kpiAPCFemale}<br>
+                        Ansar(Male):${$scope.kpiAnsarMale}<br>
+                        Ansar(Female):${$scope.kpiAnsarFemale}
+                    </span>
+            `
+            $scope.$watch("[kpiPCMale,kpiPCFemale,kpiAPCMale,kpiAPCFemale,kpiAnsarMale,kpiAnsarFemale]",function(n,o){
 
+                $scope.message=`
+            Are you sure to send offer.<span style='color: red;font-size: 20px;display: block;'>
+                        PC(Male):${$scope.kpiPCMale}<br>
+                        PC(Female):${$scope.kpiPCFemale}<br>
+                        APC(Male):${$scope.kpiAPCMale}<br>
+                        APC(Female):${$scope.kpiAPCFemale}<br>
+                        Ansar(Male):${$scope.kpiAnsarMale}<br>
+                        Ansar(Female):${$scope.kpiAnsarFemale}
+                    </span>
+            `
+            },true)
         })
 
     </script>
-    <div ng-controller="OfferController">
+    <div ng-controller="OfferController" id="offer-view">
         {{--<div class="breadcrumbplace">--}}
         {{--{!! Breadcrumbs::render('offer_information') !!}--}}
         {{--</div>--}}
@@ -331,7 +358,7 @@
 
                             </div>
                         </div>
-                        <button class="btn btn-primary pull-right" confirm  callback="sendOffer()" message="Are you sure to send offer." ng-disabled="(isAdmin&&!data.offeredDistrict)||quotaLoading">
+                        <button class="btn btn-primary pull-right" confirm  callback="sendOffer()" sp-message="message" ng-disabled="(isAdmin&&!data.offeredDistrict)||quotaLoading">
                             <i ng-show="showLoadScreen" class="fa fa-send"></i><i ng-hide="showLoadScreen" class="fa fa-spinner fa-pulse"></i>
                             [[buttonText]]
                         </button>
