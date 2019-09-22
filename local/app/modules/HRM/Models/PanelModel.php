@@ -25,6 +25,9 @@ class PanelModel extends Model
     function panelLog(){
         return $this->hasMany(PanelInfoLogModel::class,'panel_id_old');
     }
+    public function panelInfoLog(){
+        return $this->hasMany(PanelInfoLogModel::class,'ansar_id','ansar_id');
+    }
     function saveLog($move_to="Offer",$date=null,$comment=''){
         $this->panelLog()->save(new PanelInfoLogModel([
             'ansar_id'=>$this->ansar_id,

@@ -666,3 +666,7 @@ Breadcrumbs::register('recruitment.print_applicants_id_card', function($breadcru
     $breadcrumbs->parent('recruitment');
     $breadcrumbs->push('Print Applicants ID Card', '#');
 });
+Breadcrumbs::register('view_ansar_history', function($breadcrumbs) {
+    $breadcrumbs->parent('report');
+    $breadcrumbs->push('View Ansar History', URL::route('view_ansar_history'));
+});
