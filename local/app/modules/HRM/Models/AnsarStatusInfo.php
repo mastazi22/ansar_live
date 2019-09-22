@@ -51,7 +51,7 @@ class AnsarStatusInfo extends Model
             if($this->offer_block_status) array_push($status,self::OFFER_BLOCK_STATUS);
             if($this->early_retierment_status) array_push($status,self::EARLY_RETIREMENT_STATUS);
             if($this->retierment_status) array_push($status,self::RETIRE_STATUS);
-            if(!$this->block_list_status&&!$this->black_list_status&&!$this->free_status&&!$this->pannel_status&&!$this->embodied_status&&!$this->offer_sms_status&&!$this->freezing_status&&!$this->rest_status&&!$this->retierment_status&&!$this->early_retierment_status) array_push($status,self::NOT_VERIFIED_STATUS);
+            if(!$this->offer_block_status&&!$this->block_list_status&&!$this->black_list_status&&!$this->free_status&&!$this->pannel_status&&!$this->embodied_status&&!$this->offer_sms_status&&!$this->freezing_status&&!$this->rest_status&&!$this->retierment_status&&!$this->early_retierment_status) array_push($status,self::NOT_VERIFIED_STATUS);
 
 
         return $status;
