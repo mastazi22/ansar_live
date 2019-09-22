@@ -291,12 +291,34 @@
                     </div>
                 </div>
             </div>
-            <div class="box box-solid">
+            <div class="box box-solid" ng-if="ansarDetail && ansarDetail['transfer']">
                 <div class="box-title"><h3 style="margin: 1%;">Transfer Log</h3></div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-12">
-
+                            <p ng-if="!Array.isArray(ansarDetail['transfer']) && ansarDetail['transfer'].length<=0">
+                                No Data</p>
+                            <table class="table table-bordered table-striped"
+                                   ng-if="ansarDetail['transfer'] && ansarDetail['transfer'].length>0">
+                                <thead>
+                                <tr>
+                                    <th>Present KPI</th>
+                                    <th>Present KPI Joining Date</th>
+                                    <th>Transfer KPI</th>
+                                    <th>Transfer KPI Joining Date</th>
+                                    <th>Memorandum Id</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="transfer in ansarDetail['transfer']">
+                                    <td>[[getKPIInfo(transfer.present_kpi)]]</td>
+                                    <td>[[transfer.present_kpi_join_date]]</td>
+                                    <td>[[getKPIInfo(transfer.transfer_kpi)]]</td>
+                                    <td>[[transfer.transfered_kpi_join_date]]</td>
+                                    <td>[[transfer.transfer_memorandum_id]]</td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

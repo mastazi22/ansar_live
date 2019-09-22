@@ -851,10 +851,10 @@ class ReportController extends Controller
         //offer information
         $result["cOffer"] = $ansar->offer_sms_info()->with("district.division")->first();
         $result["lOffer"] = $ansar->offerLog()->with("district.division")->orderBy("offered_date", "desc")->get();
-        $result["bOffer"] = OfferBlockedAnsar::where('ansar_id', $ansar_id)->withTrashed()->orderBy("id","desc")->get();
+        $result["bOffer"] = OfferBlockedAnsar::where('ansar_id', $ansar_id)->withTrashed()->orderBy("id", "desc")->get();
 
         //Transfer information
-        $result["transfer"] = TransferAnsar::where('ansar_id', $ansar_id)->withTrashed()->orderBy("id","desc")->get();
+        $result["transfer"] = TransferAnsar::where('ansar_id', $ansar_id)->with("presentKpi.unit", "presentKpi.division", "presentKpi.thana", "transferKpi.unit", "transferKpi.division", "transferKpi.thana")->orderBy("id", "desc")->get();
 
 //        dd(DB::getQueryLog());
         return Response::json($result);
