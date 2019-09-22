@@ -145,7 +145,7 @@ class DGController extends Controller
             if ($ansarStatusInfo->getStatus()[0] != AnsarStatusInfo::EMBODIMENT_STATUS) {
                 $ansarDisEmbodimentInfo = DB::table('tbl_embodiment_log')
                     ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_embodiment_log.disembodiment_reason_id')
-                    ->where('tbl_embodiment_log.ansar_id', $ansar_id)->orderBy('tbl_embodiment_log.release_date', 'desc')
+                    ->where('tbl_embodiment_log.ansar_id', $ansar_id)->orderBy('tbl_embodiment_log.release_date', 'desc')->orderBy('tbl_embodiment_log.id','desc')
                     ->select('tbl_embodiment_log.release_date as disembodiedDate', 'tbl_disembodiment_reason.reason_in_bng as disembodiedReason')->first();
 
             }
