@@ -136,7 +136,11 @@ class OfferController extends Controller
                     $offer_type = 'RE';
                 }
             } else{
-                $offer_type = '';
+                if(in_array($request->get('district'),Config::get('app.offer'))){
+                    $offer_type = 'GB';
+                } else{
+                    $offer_type = 'RE';
+                }
             }
             RequestDumper::create([
                 'user_id' => auth()->user()->id,
