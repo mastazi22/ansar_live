@@ -194,9 +194,10 @@ class PanelController extends Controller
         DB::beginTransaction();
         $user = [];
         try {
+            $n = Carbon::now();
             $mi = $request->input('memorandumId');
             $pd = $request->input('panel_date');
-            $modified_panel_date = Carbon::parse($pd)->format('Y-m-d');
+            $modified_panel_date = Carbon::parse($pd)->addHours($n->hour)->addMinutes($n->minute)->addSeconds($n->second);
             $come_from_where = $request->input('come_from_where');
             $ansar_merit = $request->input('merit');
             $memorandum_entry = new MemorandumModel();

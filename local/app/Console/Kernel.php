@@ -198,9 +198,9 @@ class Kernel extends ConsoleKernel
                             if(is_array($t)){
                                 $len = count($t);
                                 if(strcasecmp($t[$len-1],"RE")==0){
-                                    $pa->re_panel_date = Carbon::now()->format('Y-m-d');
+                                    $pa->re_panel_date = Carbon::now();
                                 }else if(strcasecmp($t[$len-1],"GB")==0||strcasecmp($t[$len-1],"DG")==0||strcasecmp($t[$len-1],"CG")==0){
-                                    $pa->panel_date = Carbon::now()->format('Y-m-d');
+                                    $pa->panel_date = Carbon::now();
                                 }
 
                             }
@@ -291,16 +291,16 @@ class Kernel extends ConsoleKernel
                                     if(is_array($t)){
                                         $len = count($t);
                                         if($len>0&&strcasecmp($t[$len-1],"RE")==0){
-                                            $pa->re_panel_date = Carbon::now()->format('Y-m-d');
+                                            $pa->re_panel_date = Carbon::now();
                                         }else if($len>0&&(strcasecmp($t[$len-1],"GB")==0||strcasecmp($t[$len-1],"DG")==0||strcasecmp($t[$len-1],"CG")==0)){
-                                            $pa->panel_date = Carbon::now()->format('Y-m-d');
+                                            $pa->panel_date = Carbon::now();
                                         }
 
                                     }
                                 }elseif(!in_array($ansar->offered_district, Config::get('app.offer'))){
-                                    $pa->re_panel_date = Carbon::now()->format('Y-m-d');
+                                    $pa->re_panel_date = Carbon::now();
                                 }else{
-                                    $pa->panel_date = Carbon::now()->format('Y-m-d');
+                                    $pa->panel_date = Carbon::now();
                                 }
                                 $pa->locked = 0;
                                 $pa->save();

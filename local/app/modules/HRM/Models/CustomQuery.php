@@ -1280,7 +1280,13 @@ class CustomQuery
                     $interval = "YEAR";
                     break;
             }
-            $value= $custom['custom'];
+            if(!isset($custom['custom'])){
+                $interval = "MONTH";
+                $value = 3;
+            }
+            else{
+                $value= $custom['custom'];
+            }
         }
         $ansarQuery->where(DB::raw("TIMESTAMPDIFF(YEAR,data_of_birth,DATE_ADD(NOW(),INTERVAL $value $interval))"), ">=", 47);
         $pcQuery->where(DB::raw("TIMESTAMPDIFF(YEAR,data_of_birth,DATE_ADD(NOW(),INTERVAL $value $interval))"), ">=", 52);
