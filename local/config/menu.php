@@ -251,6 +251,10 @@ return [
                     "route" => "offer_report",
                     "icon" => "fa-file-pdf-o",
                 ],
+                "View Ansar History"=>[
+                    "route" => "view_ansar_history",
+                    "icon" => "fa-file-pdf-o",
+                ]
             ]
         ],
         "DG Forms" => [

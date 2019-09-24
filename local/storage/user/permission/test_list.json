@@ -384,6 +384,10 @@
       {
         "value": "offer_report",
         "name": "Offer Report"
+      },
+      {
+        "value": "view_ansar_history",
+        "name": "View Ansar History"
       }
     ]
   },
