@@ -58,13 +58,21 @@ class BlockForAge extends Job implements ShouldQueue
                 $pcApcRe = GlobalParameterFacades::getValue('retirement_age_pc_apc') - 3;
 //                Log::info("called : Ansar Block For Age-".$ansar->ansar_id."Age:".$age->y."year ".$age->m."month ".$age->d." days");
                 if ($info->designation->code == "ANSAR" && (($age->y >= $ansarRe&&($age->m>0||$age->d>0))||$age->y > $ansarRe)) {
+                    $data = (array)$ansar;
+                    unset($data['id']);
+                    unset($data['updated_at']);
+                    unset($data['created_at']);
+                    unset($data['go_panel_position']);
+                    unset($data['re_panel_position']);
+                    $data['come_from']='After Retier';
                     $info->status->update([
                         'pannel_status' => 0,
                         'retierment_status' => 1
                     ]);
                     $info->retireHistory()->create([
                         'retire_from'=>'panel',
-                        'retire_date'=>$now->format('Y-m-d')
+                        'retire_date'=>$now->format('Y-m-d'),
+                        'data'=>json_encode($data)
                     ]);
                     $ansar->saveLog('Retire', null, 'over aged');
                     $ansar->delete();

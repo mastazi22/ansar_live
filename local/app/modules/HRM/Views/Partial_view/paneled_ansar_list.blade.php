@@ -9,7 +9,7 @@
         <th>Thana</th>
         <th ng-click="sortList('panel_date')">Global Panel Date & Time</th>
         <th ng-click="sortList('re_panel_date')">Regional Panel Date & Time</th>
-        <th>Panel Id</th>
+        {{--<th>Panel Id</th>--}}
         @if(Auth::user()->type==11)
             <th>Global Position</th>
             <th>Regional Position</th>
@@ -28,7 +28,7 @@
         <td>[[ansar.thana]]</td>
         <td>[[ansar.panel_date|dateformat:"DD-MMM-YYYY"]]</td>
         <td>[[ansar.re_panel_date|dateformat:"DD-MMM-YYYY"]]</td>
-        <td>[[ansar.memorandum_id]]</td>
+        {{--<td>[[ansar.memorandum_id]]</td>--}}
         @if(Auth::user()->type==11)
             <td>[[ansar.offer_type.split('DG').join('GB').split('CG').join('GB').split('GB').length-1>=3?'NIL':ansar.go_panel_position]]</td>
             <td>[[ansar.offer_type.split('RE').length-1>=3?'NIL':ansar.re_panel_position]]</td>

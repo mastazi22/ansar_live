@@ -378,10 +378,12 @@ GlobalApp.directive('modalShow', function ($timeout) {
 GlobalApp.factory('httpService', function ($http) {
 
     return {
-        range: function () {
+        range: function (id,oz=0) {
+
             return $http({
                 method: 'get',
-                url: '/' + prefix + 'HRM/DivisionName'
+                url: '/' + prefix + 'HRM/DivisionName',
+                params: {oz: oz}
             }).then(function (response) {
                 return response.data
             }, function (response) {
@@ -407,6 +409,7 @@ GlobalApp.factory('httpService', function ($http) {
             return http.then(function (response) {
                 return response.data
             }, function (response) {
+
                 return response
             })
 
@@ -648,6 +651,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
             getShortKpiName: '=?',
             getUnitName: '=?',
             getThanaName: '=?',
+            enableOfferZone:'@',
             data: '=?',
             errorKey: '=?',
             reset: '=?',
@@ -749,7 +753,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
 
                 if (!$scope.show('range')) return;
                 $scope.loading.range = true;
-                httpService.range().then(function (data) {
+                httpService.range('',$scope.enableOfferZone).then(function (data) {
                     console.log(data);
                     $scope.loading.range = false;
                     if (data.status != undefined) {

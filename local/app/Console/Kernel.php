@@ -62,7 +62,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
 
-        $schedule->call(function () {
+        /*$schedule->call(function () {
             Log::info("called : send_offer");
             $offered_ansar = OfferSMS::with(['ansar', 'district'])->where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
             foreach ($offered_ansar as $offer) {
@@ -152,11 +152,11 @@ class Kernel extends ConsoleKernel
                 $offer->save();
             }
 
-        })->everyMinute()->name("offer_cancel")->withoutOverlapping();
+        })->everyMinute()->name("offer_cancel")->withoutOverlapping();*/
         $schedule->call(function () {
             Log::info("REVERT OFFER");
-            $offeredAnsars = OfferSMS::where('sms_end_datetime', '<=', Carbon::now())->get();
-            $c = OfferSMS::where('sms_end_datetime', '<=', Carbon::now())->count();
+            $offeredAnsars = OfferSMS::whereDate('sms_send_datetime', '<=', Carbon::now()->toDateString())->get();
+            $c = OfferSMS::whereDate('sms_send_datetime', '<=', Carbon::now()->toDateString())->count();
             foreach ($offeredAnsars as $ansar) {
                 Log::info("CALLED START: OFFER NO REPLY" . $ansar->ansar_id);
                 DB::beginTransaction();
@@ -248,7 +248,7 @@ class Kernel extends ConsoleKernel
             $now = Carbon::now();
             $c = 0;
             foreach ($offeredAnsars as $ansar) {
-                if ($now->diffInDays(Carbon::parse($ansar->sms_received_datetime)) >= 7) {
+                if ($now->diffInDays(Carbon::parse($ansar->sms_received_datetime)) >= 1) {
                     $c++;
                     Log::info("CALLED START: OFFER ACCEPTED" . $ansar->ansar_id);
 
@@ -341,8 +341,8 @@ class Kernel extends ConsoleKernel
                 dispatch(new RearrangePanelPositionLocal());
                 dispatch(new RearrangePanelPositionGlobal());
             }
-        })->dailyAt("23:55")->name("revert_offer_accepted2")->withoutOverlapping();
-        $schedule->call(function () {
+        })->everyMinute()->name("revert_offer_accepted2")->withoutOverlapping();
+       /* $schedule->call(function () {
             $withdraw_kpi_ids = KpiDetailsModel::where('kpi_withdraw_date', '<=', Carbon::now())->whereNotNull('kpi_withdraw_date')->get();
             foreach ($withdraw_kpi_ids as $withdraw_kpi_id) {
                 $kpi_info = KpiGeneralModel::find($withdraw_kpi_id->kpi_id);
@@ -450,50 +450,50 @@ class Kernel extends ConsoleKernel
                 DB::connection('recruitment')->rollback();
             }
 
-        })->dailyAt("23:50")->name("disable_circular")->withoutOverlapping();
+        })->dailyAt("23:50")->name("disable_circular")->withoutOverlapping();*/
 
 
-//        $schedule->call(function () {
-//            Log::info("called : send_sms_to_accepted_applicant");
-//            $messID = uniqid('SB_');
-//            $messageID = $messID;
-//            $apiUser = 'join_ans_vdp';
-//            $apiPass = 'shurjoSM123';
-//            $applicants = JobAcceptedApplicant::with('applicant')->whereHas('applicant', function ($q) {
-//                $q->where('status', 'accepted');
-//            })->where('message_status', 'pending')->where('sms_status', 'on')->limit(10)->get();
-//            foreach ($applicants as $a) {
-//                if ($a->applicant) {
-//                    $sms_data = http_build_query(
-//                        array(
-//                            'API_USER' => $apiUser,
-//                            'API_PASSWORD' => $apiPass,
-//                            'MOBILE' => $a->applicant->mobile_no_self,
-//                            'MESSAGE' => $a->message,
-//                            'MESSAGE_ID' => $messageID
-//                        )
-//                    );
-//
-//                    $ch = curl_init();
-//                    $url = "https://shurjobarta.shurjorajjo.com.bd/barta_api/api.php";
-//                    curl_setopt($ch, CURLOPT_URL, $url);
-//                    curl_setopt($ch, CURLOPT_POST, 1);                //0 for a get request
-//                    curl_setopt($ch, CURLOPT_POSTFIELDS, $sms_data);
-//                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
-//                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-//                    $response = curl_exec($ch);
-//                    curl_close($ch);
-//                    var_dump($response);
-//                    $a->message_status = 'send';
-//                    $a->save();
-//                }
-//            }
-//
-//        })->everyMinute()->name("send_sms_to_selected_applicant")->withoutOverlapping();
+     /*   $schedule->call(function () {
+            Log::info("called : send_sms_to_accepted_applicant");
+            $messID = uniqid('SB_');
+            $messageID = $messID;
+            $apiUser = 'join_ans_vdp';
+            $apiPass = 'shurjoSM123';
+            $applicants = JobAcceptedApplicant::with('applicant')->whereHas('applicant', function ($q) {
+                $q->where('status', 'accepted');
+            })->where('message_status', 'pending')->where('sms_status', 'on')->limit(10)->get();
+            foreach ($applicants as $a) {
+                if ($a->applicant) {
+                    $sms_data = http_build_query(
+                        array(
+                            'API_USER' => $apiUser,
+                            'API_PASSWORD' => $apiPass,
+                            'MOBILE' => $a->applicant->mobile_no_self,
+                            'MESSAGE' => $a->message,
+                            'MESSAGE_ID' => $messageID
+                        )
+                    );
+
+                    $ch = curl_init();
+                    $url = "https://shurjobarta.shurjorajjo.com.bd/barta_api/api.php";
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    curl_setopt($ch, CURLOPT_POST, 1);                //0 for a get request
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $sms_data);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+                    $response = curl_exec($ch);
+                    curl_close($ch);
+                    var_dump($response);
+                    $a->message_status = 'send';
+                    $a->save();
+                }
+            }
+
+        })->everyMinute()->name("send_sms_to_selected_applicant")->withoutOverlapping();*/
 
 
-        $schedule->call(function () {
+        /*$schedule->call(function () {
             Log::info("called : generate attendance");
             //            DB::enableQueryLog();
             $kpis = KpiGeneralModel::with(['embodiment' => function ($q) {
@@ -546,7 +546,7 @@ class Kernel extends ConsoleKernel
             });
 
 
-        })->dailyAt("00:05")->name("generate_attendance")->withoutOverlapping();
+        })->dailyAt("00:05")->name("generate_attendance")->withoutOverlapping();*/
 //        $schedule->call(function () {
 //            Log::info("called : unblock panel locked");
 //            PanelModel::where('locked', 1)->update(['locked' => 0]);
@@ -599,7 +599,7 @@ class Kernel extends ConsoleKernel
 //
 //
 //        })->everyThirtyMinutes()->name("offer_block_to_panel_6_month")->withoutOverlapping();
-        $schedule->call(function () {
+        /*$schedule->call(function () {
 
             $count = PanelModel::whereHas('ansarInfo.status',function ($q){
                 $q->where('block_list_status',0);
@@ -670,7 +670,7 @@ class Kernel extends ConsoleKernel
             dispatch(new RearrangePanelPositionLocal());
 
 
-        })->everyTenMinutes()->name("UnblockRetireAnsar")->withoutOverlapping();
+        })->everyTenMinutes()->name("UnblockRetireAnsar")->withoutOverlapping();*/
 
     }
 }

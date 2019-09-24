@@ -323,7 +323,19 @@ class SMSController extends Controller
         $ansar = \App\modules\HRM\Models\PersonalInfo::with(['designation','status','panel'])
             ->where('ansar_id', $id)->first();
         if($ansar&&$ansar->status->pannel_status==1&&$ansar->status->block_list_status==0&&preg_match("/^[0-9]{11}$/",$ansar->mobile_no_self)){
-            return 'Global position : ' . $ansar->panel->go_panel_position . " Regional position : " . $ansar->panel->re_panel_position;
+            $go_offer_count = +GlobalParameterFacades::getValue('ge_offer_count');
+            $re_offer_count = +GlobalParameterFacades::getValue('re_offer_count');
+            $offerStatus = OfferSMSStatus::where('ansar_id',$id)->first();
+            $re_panel_pos = "NIL";
+            $go_panel_pos = "NIL";
+            if($offerStatus&&substr_count($offerStatus->offer_type,'RE')<$re_offer_count){
+                $re_panel_pos = $ansar->panel->re_panel_position;
+            }
+            if($offerStatus&&
+                (substr_count($offerStatus->offer_type,'GB')+substr_count($offerStatus->offer_type,'DG')+substr_count($offerStatus->offer_type,'CG'))<$go_offer_count){
+                $go_panel_pos = $ansar->panel->go_panel_position;
+            }
+            return 'Global position : ' . $go_panel_pos . " Regional position : " . $re_panel_pos;
         }else{
             return 'Your panel position not found. May be tou are over aged or invalid mobile no';
         }

@@ -3,8 +3,11 @@
 namespace App\modules\HRM\Controllers;
 
 use App\Helper\Facades\GlobalParameterFacades;
+use App\Helper\GlobalParameter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use App\Jobs\RearrangePanelPositionGlobal;
+use App\Jobs\RearrangePanelPositionLocal;
 use App\models\User;
 use App\modules\HRM\Models\ActionUserLog;
 use App\modules\HRM\Models\AnsarStatusInfo;
@@ -19,6 +22,7 @@ use App\modules\HRM\Models\MemorandumModel;
 use App\modules\HRM\Models\OfferCancel;
 use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\OfferSmsLog;
+use App\modules\HRM\Models\OfferSMSStatus;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\PersonalInfo;
@@ -1553,6 +1557,11 @@ class DGController extends Controller
             $status = $a->status->getStatus();
             if ((!in_array(AnsarStatusInfo::PANEL_STATUS, $status) && !in_array(AnsarStatusInfo::REST_STATUS, $status)) || in_array(AnsarStatusInfo::BLOCK_STATUS, $status) || in_array(AnsarStatusInfo::BLACK_STATUS, $status)||in_array(AnsarStatusInfo::OFFER_BLOCK_STATUS, $status)) throw new \Exception("This ansar not eligible for offer");
             if (!$a && !preg_match('/^(\+88)?0[0-9]{10}/', $a->mobile_no_self)) throw new Exception("Invalid mobile number");
+            $offer_status = OfferSMSStatus::firstOrCreate(['ansar_id'=>$request->ansar_id]);
+            $offer_limit = +GlobalParameterFacades::getValue(GlobalParameter::MAXIMUM_OFFER_LIMIT);
+            if($offer_status->offer_type&&count(explode(",",$offer_status->offer_type))>=$offer_limit){
+                throw new Exception("Offer limit already exceed");
+            }
             $a->offer_sms_info()->save(new OfferSMS([
                 'sms_send_datetime' => Carbon::parse($request->offer_date)->format("y-m-d H:i:s"),
                 'sms_end_datetime' => Carbon::parse($request->offer_date)->addHours(24)->format("y-m-d H:i:s"),
@@ -1560,6 +1569,26 @@ class DGController extends Controller
                 'action_user_id' => auth()->user()->id,
                 'come_from' => $status[0]
             ]));
+            if(in_array($request->unit_id,Config::get('app.offer'))){
+                $offer_type = 'GB';
+            } else{
+                $offer_type = 'RE';
+            }
+            $t = $offer_status->offer_type;
+            if($t){
+                $t .= ",".$offer_type;
+            } else{
+                $t = $offer_type;
+            }
+            $offer_status->offer_type = $t;
+            $offer_status->last_offer_unit = $request->unit_id;
+            if(!$offer_status->last_offer_units){
+                $offer_status->last_offer_units = $request->unit_id.'';
+            } else{
+                $offer_status->last_offer_units .= ','.$request->unit_id;
+            }
+            $offer_status->save();
+
             switch ($status[0]) {
                 case AnsarStatusInfo::PANEL_STATUS:
                     //$a->panel->saveLog('Offer', Carbon::today());
@@ -1567,7 +1596,20 @@ class DGController extends Controller
                     $pa = $a->panel;
                     $pa->locked = 1;
                     $pa->save();
-                    //$a->panel->delete();
+                    $pa->panelLog()->save(new PanelInfoLogModel([
+                        'ansar_id' => $pa->ansar_id,
+                        'merit_list' => $pa->ansar_merit_list,
+                        'panel_date' => $pa->panel_date,
+                        're_panel_date' => $pa->re_panel_date,
+                        're_panel_position' => $pa->re_panel_position,
+                        'go_panel_position' => $pa->go_panel_position,
+                        'old_memorandum_id' => !$pa->memorandum_id ? "N\A" : $pa->memorandum_id,
+                        'movement_date' => Carbon::today(),
+                        'come_from' => $pa->come_from,
+                        'move_to' => 'Offer',
+                    ]));
+                    $this->dispatch(new RearrangePanelPositionLocal());
+                    $this->dispatch(new RearrangePanelPositionGlobal());
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DIRECT OFFER', 'from_state' => 'PANEL', 'to_state' => 'OFFER', 'action_by' => auth()->user()->id]);
 
                     break;

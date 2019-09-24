@@ -234,6 +234,7 @@ class HrmController extends Controller
                                 start-load="range"
                                 field-width="{range:\'col-sm-3\',unit:\'col-sm-3\',thana:\'col-sm-3\',gender:\'col-sm-3\'}"
                         ></filter-template>';
+        $view='';
         if (strcasecmp($type, 'all_ansar') == 0) {
             $pageTitle = "Total Ansars";
         } elseif (strcasecmp($type, 'not_verified_ansar') == 0) {
@@ -246,18 +247,49 @@ class HrmController extends Controller
             $pageTitle = "Total Free Ansars";
         } elseif (strcasecmp($type, 'paneled_ansar') == 0) {
             $pageTitle = "Total Paneled Ansars";
-            /*$custom_filter = '<filter-template
+            $custom_filter = '<filter-template
                                 show-item="[\'range\',\'unit\',\'thana\',\'gender\']"
                                 type="all"
                                 range-change="loadPage()"
                                 unit-change="loadPage()"
                                 thana-change="loadPage()"
                                 gender-change="loadPage()"
+                                enable-offer-zone="1"
                                 on-load="loadPage()"
                                 data="param"
                                 start-load="range"
                                 field-width="{range:\'col-sm-3\',unit:\'col-sm-3\',thana:\'col-sm-3\',gender:\'col-sm-3\'}"
-                        ></filter-template>';*/
+                        ></filter-template>';
+            $view='<div class="row">
+                    <div class="col-sm-3">
+                        <label>Order by</label>
+                        <select class="form-control" ng-model="orderBy" ng-change="loadPage()">
+                            <option value="">--select a value--</option>
+                            <option value="panel_date">Global Panel Date</option>
+                            <option value="re_panel_date">Regional Panel Date</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <label style="display:block">&nbsp</label>
+                        <label class="control-label">
+                            <div class="styled-checkbox">
+                                <input id="global_available_ansar"  type="checkbox" ng-model="param.filter_mobile_no" ng-true-value="1" ng-false-value="0" ng-change="loadPage()">
+                                <label for="global_available_ansar"></label>
+                            </div>
+                            &nbsp;Available global ansar
+                        </label>
+                    </div>
+                    <div class="col-sm-3">
+                        <label style="display:block">&nbsp</label>
+                        <label class="control-label">
+                            <div class="styled-checkbox">
+                                <input id="regional_available_ansar"  type="checkbox" ng-model="param.filter_age" ng-true-value="1" ng-false-value="0" ng-change="loadPage()">
+                                <label for="regional_available_ansar"></label>
+                            </div>
+                            &nbsp;Available regional ansar
+                        </label>
+                    </div>
+                </div>';
         } elseif (strcasecmp($type, 'rest_ansar') == 0) {
             $pageTitle = "Total Resting Ansars";
         } elseif (strcasecmp($type, 'blocked_ansar') == 0) {
@@ -349,7 +381,7 @@ class HrmController extends Controller
             'offset' => 'numeric',
             'thana' => ['regex:/^(all)$|^[0-9]+$/'],
             'unit' => ['regex:/^(all)$|^[0-9]+$/'],
-            'division' => ['regex:/^(all)$|^[0-9]+$/'],
+            'division' => ['regex:/^(all)$|^[0-9,]+$/'],
             'rank' => ['regex:/^(all)$|^[0-9]+$/'],
         ];
         $valid = Validator::make(Input::all(), $rules);
