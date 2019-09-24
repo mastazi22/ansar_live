@@ -14,6 +14,7 @@ use App\modules\HRM\Models\PersonalInfo;
 use App\modules\HRM\Models\RestInfoLogModel;
 use App\modules\HRM\Models\RestInfoModel;
 use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -197,7 +198,7 @@ class PanelController extends Controller
             $n = Carbon::now();
             $mi = $request->input('memorandumId');
             $pd = $request->input('panel_date');
-            $modified_panel_date = Carbon::parse($pd)->addHours($n->hour)->addMinutes($n->minute)->addSeconds($n->second);
+            $modified_panel_date = Carbon::parse($pd)->addHours($n->hour)->addMinutes($n->minute)->addSeconds($n->second)->format('Y-m-d H:i:s.u');
             $come_from_where = $request->input('come_from_where');
             $ansar_merit = $request->input('merit');
             $memorandum_entry = new MemorandumModel();
