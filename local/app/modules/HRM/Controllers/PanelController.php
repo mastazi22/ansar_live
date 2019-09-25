@@ -189,7 +189,7 @@ class PanelController extends Controller
         ];
         $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {
-            return Response::json(['status' => false, 'message' => $valid]);
+            return Response::json(['status' => false, 'message' => 'Invalid request']);
         }
         $selected_ansars = $request->input('ansar_id');
         DB::beginTransaction();

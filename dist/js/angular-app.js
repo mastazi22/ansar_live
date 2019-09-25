@@ -414,8 +414,8 @@ GlobalApp.directive('modalShow', function ($timeout) {
 GlobalApp.factory('httpService', function ($http) {
 
     return {
-        range: function (id,oz=0) {
-
+        range: function (id,oz) {
+            oz = oz?oz:0;
             return $http({
                 method: 'get',
                 url: '/' + prefix + 'HRM/DivisionName',
