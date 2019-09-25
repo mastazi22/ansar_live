@@ -11,7 +11,25 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#direct_panel_date').datepicker({                dateFormat:'dd-M-yy'            })();
+            $('#direct_panel_date').datepicker({
+                dateFormat:'dd-M-yy',
+                onSelect: function(datetext) {
+                    var d = new Date(); // for now
+
+                    var h = d.getHours();
+                    h = (h < 10) ? ("0" + h) : h ;
+
+                    var m = d.getMinutes();
+                    m = (m < 10) ? ("0" + m) : m ;
+
+                    var s = d.getSeconds();
+                    s = (s < 10) ? ("0" + s) : s ;
+
+                    datetext = datetext + " " + h + ":" + m + ":" + s;
+
+                    $('#direct_panel_date').val(datetext);
+                }
+            });
         })
         GlobalApp.controller('DGPanelController', function ($scope, $http, $sce) {
             $scope.ansarId = "";

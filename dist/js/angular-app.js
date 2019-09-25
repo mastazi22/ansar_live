@@ -1,7 +1,7 @@
 /**
  * Created by arafat on 10/25/2016.
  */
-var prefix = '';
+var prefix = '/ansarerp';
 var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], function ($interpolateProvider, $httpProvider, $sceProvider, $routeProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
@@ -232,19 +232,55 @@ GlobalApp.directive('confirm', function () {
 GlobalApp.directive('datePicker', function () {
     return {
         restrict: 'AC',
-        link: function (scope, element, attrs) {
+        require:"?ngModel",
+        link: function (scope, element, attrs,ngModel) {
             //alert(scope.event)
             var data = attrs.datePicker
             var format = attrs.dateFormat || 'dd-M-yy';
+            var addTime=+attrs.addTime===1
             console.log(data)
             if (data) {
                 $(element).val(eval(data));
+                if(ngModel){
+                    ngModel.$setViewValue(eval(data))
+                }
 
             }
 
-            $(element).datepicker({
-                dateFormat: format
-            })
+            if(addTime){
+                $(element).datepicker({
+                    dateFormat: format,
+                    onSelect: function(datetext) {
+                        var d = new Date(); // for now
+
+                        var h = d.getHours();
+                        h = (h < 10) ? ("0" + h) : h ;
+
+                        var m = d.getMinutes();
+                        m = (m < 10) ? ("0" + m) : m ;
+
+                        var s = d.getSeconds();
+                        s = (s < 10) ? ("0" + s) : s ;
+
+                        datetext = datetext + " " + h + ":" + m + ":" + s;
+
+                        $(element).val(datetext);
+                        if(ngModel){
+                            ngModel.$setViewValue(datetext)
+                        }
+                    }
+                })
+            }else{
+                $(element).datepicker({
+                    dateFormat: format,
+                    onSelect: function(datetext) {
+                        $(element).val(datetext);
+                        if(ngModel){
+                            ngModel.$setViewValue(datetext)
+                        }
+                    }
+                })
+            }
 
         }
     }

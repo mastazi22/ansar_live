@@ -198,9 +198,9 @@ class Kernel extends ConsoleKernel
                             if(is_array($t)){
                                 $len = count($t);
                                 if(strcasecmp($t[$len-1],"RE")==0){
-                                    $pa->re_panel_date = Carbon::now()->format('Y-m-d H:i:s.u');
+                                    $pa->re_panel_date = Carbon::now()->format('Y-m-d H:i:s');
                                 }else if(strcasecmp($t[$len-1],"GB")==0||strcasecmp($t[$len-1],"DG")==0||strcasecmp($t[$len-1],"CG")==0){
-                                    $pa->panel_date = Carbon::now()->format('Y-m-d H:i:s.u');
+                                    $pa->panel_date = Carbon::now()->format('Y-m-d H:i:s');
                                 }
 
                             }
@@ -221,8 +221,8 @@ class Kernel extends ConsoleKernel
                             ]);
                             $ansar->panel()->save(new PanelModel([
                                 'memorandum_id' => isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
-                                'panel_date' => Carbon::now()->format('Y-m-d H:i:s.u'),
-                                're_panel_date' => Carbon::now()->format('Y-m-d H:i:s.u'),
+                                'panel_date' => Carbon::now()->format('Y-m-d H:i:s'),
+                                're_panel_date' => Carbon::now()->format('Y-m-d H:i:s'),
                                 'come_from' => 'Offer',
                                 'ansar_merit_list' => 1,
                                 'go_panel_position' => 0,
@@ -291,16 +291,16 @@ class Kernel extends ConsoleKernel
                                     if(is_array($t)){
                                         $len = count($t);
                                         if($len>0&&strcasecmp($t[$len-1],"RE")==0){
-                                            $pa->re_panel_date = Carbon::now()->format('Y-m-d H:i:s.u');
+                                            $pa->re_panel_date = Carbon::now()->format('Y-m-d H:i:s');
                                         }else if($len>0&&(strcasecmp($t[$len-1],"GB")==0||strcasecmp($t[$len-1],"DG")==0||strcasecmp($t[$len-1],"CG")==0)){
-                                            $pa->panel_date = Carbon::now()->format('Y-m-d H:i:s.u');
+                                            $pa->panel_date = Carbon::now()->format('Y-m-d H:i:s');
                                         }
 
                                     }
                                 }elseif(!in_array($ansar->offered_district, Config::get('app.offer'))){
-                                    $pa->re_panel_date = Carbon::now()->format('Y-m-d H:i:s.u');
+                                    $pa->re_panel_date = Carbon::now()->format('Y-m-d H:i:s');
                                 }else{
-                                    $pa->panel_date = Carbon::now()->format('Y-m-d H:i:s.u');
+                                    $pa->panel_date = Carbon::now()->format('Y-m-d H:i:s');
                                 }
                                 $pa->locked = 0;
                                 $pa->save();
@@ -318,10 +318,10 @@ class Kernel extends ConsoleKernel
                                 ]);
                                 $ansar->panel()->save(new PanelModel([
                                     'memorandum_id' => isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
-                                    'panel_date' => Carbon::now()->format('Y-m-d H:i:s.u'),
+                                    'panel_date' => Carbon::now()->format('Y-m-d H:i:s'),
                                     'come_from' => 'Offer',
                                     'ansar_merit_list' => 1,
-                                    're_panel_date' => Carbon::now()->format('Y-m-d H:i:s.u'),
+                                    're_panel_date' => Carbon::now()->format('Y-m-d H:i:s'),
                                     'go_panel_position' => 0,
                                     're_panel_position' => 0
                                 ]));

@@ -1483,7 +1483,7 @@ class DGController extends Controller
         $ansar_id = $request->input('ansar_id');
         $memorandum_id = $request->input('memorandum_id');
         $direct_panel_date = $request->input('direct_panel_date');
-        $modified_direct_panel_date = Carbon::parse($direct_panel_date)->format('Y-m-d');
+        $modified_direct_panel_date = Carbon::parse($direct_panel_date)->format('Y-m-d H:i:s');
         $direct_panel_comment = $request->input('direct_panel_comment');
 
         DB::beginTransaction();
@@ -1499,6 +1499,7 @@ class DGController extends Controller
                     PanelModel::create([
                         'ansar_id' => $ansar_id,
                         'panel_date' => $modified_direct_panel_date,
+                        're_panel_date' => $modified_direct_panel_date,
                         'memorandum_id' => $memorandum_id,
                         'come_from' => "Free",
                         'action_user_id' => Auth::user()->id,
@@ -1516,6 +1517,7 @@ class DGController extends Controller
                     PanelModel::create([
                         'ansar_id' => $ansar_id,
                         'panel_date' => $modified_direct_panel_date,
+                        're_panel_date' => $modified_direct_panel_date,
                         'memorandum_id' => $memorandum_id,
                         'come_from' => "Rest",
                         'action_user_id' => Auth::user()->id,
@@ -1532,6 +1534,8 @@ class DGController extends Controller
                     break;
             }
             DB::commit();
+            dispatch(new RearrangePanelPositionGlobal());
+            dispatch(new RearrangePanelPositionLocal());
         } catch (\Exception $e) {
             return Redirect::back()->with('error_message', $e->getMessage());
         }

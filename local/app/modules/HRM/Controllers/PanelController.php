@@ -180,16 +180,16 @@ class PanelController extends Controller
 
     public function savePanelEntry(Request $request)
     {
-        $date = Carbon::yesterday()->format('d-M-Y');
+        $date = Carbon::yesterday()->format('d-M-Y H:i:s');
         $rules = [
             'memorandumId' => 'required',
             'ansar_id' => 'required|is_array|array_type:int',
             'merit' => 'required|is_array|array_type:int|array_length_same:ansar_id',
-            'panel_date' => ["required", "after:{$date}", "regex:/^[0-9]{2}\-((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec))\-[0-9]{4}$/"],
+            'panel_date' => ["required", "after:{$date}", "date_format:d-M-Y H:i:s"],
         ];
         $valid = Validator::make($request->all(), $rules);
         if ($valid->fails()) {
-            return Response::json(['status' => false, 'message' => 'Invalid request']);
+            return Response::json(['status' => false, 'message' => $valid]);
         }
         $selected_ansars = $request->input('ansar_id');
         DB::beginTransaction();
@@ -198,7 +198,7 @@ class PanelController extends Controller
             $n = Carbon::now();
             $mi = $request->input('memorandumId');
             $pd = $request->input('panel_date');
-            $modified_panel_date = Carbon::parse($pd)->addHours($n->hour)->addMinutes($n->minute)->addSeconds($n->second)->format('Y-m-d H:i:s.u');
+            $modified_panel_date = Carbon::parse($pd)->format('Y-m-d H:i:s');
             $come_from_where = $request->input('come_from_where');
             $ansar_merit = $request->input('merit');
             $memorandum_entry = new MemorandumModel();
