@@ -1,7 +1,7 @@
 /**
  * Created by arafat on 10/25/2016.
  */
-var prefix = '/ansarerp';
+var prefix = 'ansarerp/';
 var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], function ($interpolateProvider, $httpProvider, $sceProvider, $routeProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
