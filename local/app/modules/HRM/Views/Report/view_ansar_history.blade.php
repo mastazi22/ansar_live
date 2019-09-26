@@ -17,7 +17,6 @@
                     url: '{{URL::route('view_ansar_history_report')}}',
                     params: {ansar_id: id}
                 }).then(function (response) {
-                    console.log(Array.isArray(response.data['lPanel']) && response.data['lPanel'].length > 0)
                     $scope.ansarDetail = response.data;
                     $scope.allLoading = false;
                 }, function (response) {
@@ -87,7 +86,8 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td><a href="/HRM/entryreport/[[ansarDetail['ansar'].ansar_id]]">[[ansarDetail['ansar'].ansar_name_bng]]</a></td>
+                                    <td><a href="/HRM/entryreport/[[ansarDetail['ansar'].ansar_id]]">[[ansarDetail['ansar'].ansar_name_bng]]</a>
+                                    </td>
                                     <td>[[ansarDetail['ansar'].designation.name_bng]]</td>
                                     <td>[[ansarDetail['status'].join()]]</td>
                                     <td>[[ansarDetail['ansar'].mobile_no_self]]</td>
@@ -131,8 +131,10 @@
                         </div>
                         <div class="col-md-12">
                             <h4>History</h4>
-                            <p ng-if="!Array.isArray(ansarDetail['lOffer']) && ansarDetail['lOffer'].length<=0">No data</p>
-                            <table class="table table-bordered table-striped" ng-if="ansarDetail['lOffer'] && ansarDetail['lOffer'].length>0">
+                            <p ng-if="!Array.isArray(ansarDetail['lOffer']) && ansarDetail['lOffer'].length<=0">No
+                                data</p>
+                            <table class="table table-bordered table-striped"
+                                   ng-if="ansarDetail['lOffer'] && ansarDetail['lOffer'].length>0">
                                 <thead>
                                 <tr>
                                     <th>Offer date</th>
@@ -153,8 +155,10 @@
                         </div>
                         <div class="col-md-12">
                             <h4>Offer Block</h4>
-                            <p ng-if="!Array.isArray(ansarDetail['bOffer']) && ansarDetail['bOffer'].length<=0">No data</p>
-                            <table class="table table-bordered table-striped" ng-if="ansarDetail['bOffer'] && ansarDetail['bOffer'].length>0">
+                            <p ng-if="!Array.isArray(ansarDetail['bOffer']) && ansarDetail['bOffer'].length<=0">No
+                                data</p>
+                            <table class="table table-bordered table-striped"
+                                   ng-if="ansarDetail['bOffer'] && ansarDetail['bOffer'].length>0">
                                 <thead>
                                 <tr>
                                     <th>Status</th>
@@ -291,6 +295,65 @@
                     </div>
                 </div>
             </div>
+            <div class="box box-solid" ng-if="ansarDetail && (ansarDetail['cFreeze'] || ansarDetail['lFreeze'])">
+                <div class="box-title"><h3 style="margin: 1%;">Freeze Status Information</h3></div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4>Current</h4>
+                            <p ng-if="!ansarDetail['cFreeze']">No Data</p>
+                            <table class="table table-bordered table-striped" ng-if="ansarDetail['cFreeze']">
+                                <thead>
+                                <tr>
+                                    <th>Freeze Date</th>
+                                    <th>Freeze Reason</th>
+                                    <th>Comment On Freeze</th>
+                                    <th>KPI</th>
+                                    <th>Memorandum Id</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>[[ansarDetail['cFreeze'].freez_date]]</td>
+                                    <td>[[ansarDetail['cFreeze'].freez_reason]]</td>
+                                    <td>[[ansarDetail['cFreeze'].comment_on_freez]]</td>
+                                    <td>[[getKPIInfo(ansarDetail['cFreeze'].kpi)]]</td>
+                                    <td>[[ansarDetail['cFreeze'].memorandum_id]]</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-12">
+                            <h4>History</h4>
+                            <p ng-if="!Array.isArray(ansarDetail['lFreeze']) && ansarDetail['lFreeze'].length<=0">
+                                No Data</p>
+                            <table class="table table-bordered table-striped"
+                                   ng-if="ansarDetail['lFreeze'] && ansarDetail['lFreeze'].length>0">
+                                <thead>
+                                <tr>
+                                    <th>Unfreeze Date</th>
+                                    <th>Unfreeze Comment</th>
+                                    <th>Unfreeze To</th>
+                                    <th>Freeze Date</th>
+                                    <th>Freeze Reason</th>
+                                    <th>Freeze Comment</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="lfreeze in ansarDetail['lFreeze']">
+                                    <td>[[lfreeze.move_frm_freez_date]]</td>
+                                    <td>[[lfreeze.comment_on_move]]</td>
+                                    <td>[[lfreeze.move_to]]</td>
+                                    <td>[[lfreeze.freez_date]]</td>
+                                    <td>[[lfreeze.freez_reason]]</td>
+                                    <td>[[lfreeze.comment_on_freez]]</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="box box-solid" ng-if="ansarDetail && ansarDetail['transfer']">
                 <div class="box-title"><h3 style="margin: 1%;">Transfer Log</h3></div>
                 <div class="box-body">
@@ -316,6 +379,95 @@
                                     <td>[[getKPIInfo(transfer.transfer_kpi)]]</td>
                                     <td>[[transfer.transfered_kpi_join_date]]</td>
                                     <td>[[transfer.transfer_memorandum_id]]</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box box-solid" ng-if="ansarDetail && ansarDetail['block']">
+                <div class="box-title"><h3 style="margin: 1%;">Block Status Information</h3></div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p ng-if="!Array.isArray(ansarDetail['block']) && ansarDetail['block'].length<=0">
+                                No Data</p>
+                            <table class="table table-bordered table-striped"
+                                   ng-if="ansarDetail['block'] && ansarDetail['block'].length>0">
+                                <thead>
+                                <tr>
+                                    <th>Block Status Date</th>
+                                    <th>Come From</th>
+                                    <th>Block Reason</th>
+                                    <th>Unblock Date</th>
+                                    <th>Unblock Reason</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="block in ansarDetail['block']">
+                                    <td>[[block.date_for_block]]</td>
+                                    <td>[[block.block_list_from]]</td>
+                                    <td>[[block.comment_for_block]]</td>
+                                    <td>[[block.date_for_unblock]]</td>
+                                    <td>[[block.comment_for_unblock]]</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box box-solid" ng-if="ansarDetail && (ansarDetail['cBlack'] || ansarDetail['lBlack'])">
+                <div class="box-title"><h3 style="margin: 1%;">Black Status Information</h3></div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4>Current</h4>
+                            <p ng-if="!ansarDetail['cBlack']">No Data</p>
+                            <table class="table table-bordered table-striped" ng-if="ansarDetail['cBlack']">
+                                <thead>
+                                <tr>
+                                    <th>Black Status Date</th>
+                                    <th>Come From</th>
+                                    <th>Comment</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>[[ansarDetail['cBlack'].black_listed_date]]</td>
+                                    <td>[[ansarDetail['cBlack'].black_list_from]]</td>
+                                    <td>[[ansarDetail['cBlack'].black_list_comment]]</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-12">
+                            <h4>History</h4>
+                            <p ng-if="!Array.isArray(ansarDetail['lBlack']) && ansarDetail['lBlack'].length<=0">
+                                No Data</p>
+                            <table class="table table-bordered table-striped"
+                                   ng-if="ansarDetail['lBlack'] && ansarDetail['lBlack'].length>0">
+                                <thead>
+                                <tr>
+                                    <th>Black Status Date</th>
+                                    <th>Come From</th>
+                                    <th>Reason</th>
+                                    <th>Unblack Status Date</th>
+                                    <th>Unblack Reason</th>
+                                    <th>Move Date</th>
+                                    <th>Move To</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="lblack in ansarDetail['lBlack']">
+                                    <td>[[lblack.black_listed_date]]</td>
+                                    <td>[[lblack.black_list_from]]</td>
+                                    <td>[[lblack.black_list_comment]]</td>
+                                    <td>[[lblack.unblacklist_date]]</td>
+                                    <td>[[lblack.unblacklist_comment]]</td>
+                                    <td>[[lblack.move_date]]</td>
+                                    <td>[[lblack.move_to]]</td>
                                 </tr>
                                 </tbody>
                             </table>

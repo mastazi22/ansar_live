@@ -840,6 +840,11 @@ class ReportController extends Controller
         $result["status"] = $ansar->status->getStatus();
         $result["designation"] = $ansar->designation;
 
+        //offer information
+        $result["cOffer"] = $ansar->offer_sms_info()->with("district.division")->first();
+        $result["lOffer"] = $ansar->offerLog()->with("district.division")->orderBy("offered_date", "desc")->get();
+        $result["bOffer"] = OfferBlockedAnsar::where('ansar_id', $ansar_id)->withTrashed()->orderBy("id", "desc")->get();
+
         //panel information
         $result["cPanel"] = $ansar->panel()->first();
         $result["lPanel"] = $ansar->panelLog()->orderBy("panel_date", "desc")->get();
@@ -848,13 +853,19 @@ class ReportController extends Controller
         $result["cEmbodiment"] = $ansar->embodiment()->with("kpi.unit", "kpi.division", "kpi.thana")->first();
         $result["lEmbodiment"] = $ansar->embodiment_log()->with("disembodimentReason", "kpi.unit", "kpi.division", "kpi.thana")->orderBy("joining_date", "desc")->get();
 
-        //offer information
-        $result["cOffer"] = $ansar->offer_sms_info()->with("district.division")->first();
-        $result["lOffer"] = $ansar->offerLog()->with("district.division")->orderBy("offered_date", "desc")->get();
-        $result["bOffer"] = OfferBlockedAnsar::where('ansar_id', $ansar_id)->withTrashed()->orderBy("id", "desc")->get();
+        //freeze information
+        $result["cFreeze"] = $ansar->freezing_info()->with("kpi.unit", "kpi.division", "kpi.thana")->first();
+        $result["lFreeze"] = $ansar->freezingInfoLog()->orderBy("freez_date", "desc")->get();
 
         //Transfer information
         $result["transfer"] = TransferAnsar::where('ansar_id', $ansar_id)->with("presentKpi.unit", "presentKpi.division", "presentKpi.thana", "transferKpi.unit", "transferKpi.division", "transferKpi.thana")->orderBy("id", "desc")->get();
+
+        //block information
+        $result["block"] = $ansar->block()->orderBy("date_for_block", "desc")->get();
+
+        //black information
+        $result["cBlack"] = $ansar->black()->first();
+        $result["lBlack"] = $ansar->blackLog()->orderBy("black_listed_date", "desc")->get();
 
 //        dd(DB::getQueryLog());
         return Response::json($result);
