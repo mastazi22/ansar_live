@@ -18,7 +18,7 @@ class PersonalInfo extends Model
 
     public function status()
     {
-      return $this->hasOne(AnsarStatusInfo::class,'ansar_id','ansar_id');
+        return $this->hasOne(AnsarStatusInfo::class, 'ansar_id', 'ansar_id');
     }
 
     public function blood()
@@ -58,7 +58,7 @@ class PersonalInfo extends Model
 
     function panel()
     {
-        return $this->hasOne(PanelModel::class, 'ansar_id','ansar_id');
+        return $this->hasOne(PanelModel::class, 'ansar_id', 'ansar_id');
     }
 
     public function user()
@@ -85,6 +85,7 @@ class PersonalInfo extends Model
     {
         return $this->hasOne(FreezingInfoModel::class, 'ansar_id', 'ansar_id');
     }
+
     function freezing_info_log()
     {
         return $this->hasOne(FreezingInfoLog::class, 'ansar_id', 'ansar_id');
@@ -107,61 +108,108 @@ class PersonalInfo extends Model
     function receiveSMS(){
         return $this->hasOne(SmsReceiveInfoModel::class,'ansar_id','ansar_id');
     }
-    function panelLog(){
-        return $this->hasMany(PanelInfoLogModel::class,'ansar_id','ansar_id');
-    }
-    function offerCancel(){
 
-        return $this->hasMany(OfferCancel::class,'ansar_id','ansar_id');
-
-    }
-    function offerLog(){
-        return $this->hasMany(OfferSmsLog::class,'ansar_id','ansar_id');
-    }
-    function rest(){
-        return $this->hasOne(RestInfoModel::class,'ansar_id','ansar_id');
+    function panelLog()
+    {
+        return $this->hasMany(PanelInfoLogModel::class, 'ansar_id', 'ansar_id');
     }
 
-    function getMobileNoSelfAttribute($value){
+    function offerCancel()
+    {
 
-        return UserPermissionFacades::userPermissionExists('view_mobile_no')||UserPermissionFacades::isAnsarEmbodied($this->ansar_id)?$value:"";
-    }
-    function getMobileNoRequestAttribute($value){
+        return $this->hasMany(OfferCancel::class, 'ansar_id', 'ansar_id');
 
-        return UserPermissionFacades::userPermissionExists('view_mobile_no')||UserPermissionFacades::isAnsarEmbodied($this->ansar_id)?$value:"";
     }
-    function getMobileNo(){
+
+    function offerLog()
+    {
+        return $this->hasMany(OfferSmsLog::class, 'ansar_id', 'ansar_id');
+    }
+
+    function rest()
+    {
+        return $this->hasOne(RestInfoModel::class, 'ansar_id', 'ansar_id');
+    }
+
+    function getMobileNoSelfAttribute($value)
+    {
+
+        return UserPermissionFacades::userPermissionExists('view_mobile_no') || UserPermissionFacades::isAnsarEmbodied($this->ansar_id) ? $value : "";
+    }
+
+    function getMobileNoRequestAttribute($value)
+    {
+
+        return UserPermissionFacades::userPermissionExists('view_mobile_no') || UserPermissionFacades::isAnsarEmbodied($this->ansar_id) ? $value : "";
+    }
+
+    function getMobileNo()
+    {
 
         return $this->mobile_no_self;
     }
-    function account(){
-        return $this->hasOne(AnsarBankAccountInfoDetails::class,'ansar_id','ansar_id');
+
+    function account()
+    {
+        return $this->hasOne(AnsarBankAccountInfoDetails::class, 'ansar_id', 'ansar_id');
     }
+
     public function getExperience()
     {
         if (!$this->ansar_id) return 0;
         $currentExp = $prevExp = 0;
         $currentEmbodiment = EmbodimentModel::where("ansar_id", $this->ansar_id)->first();
         if ($currentEmbodiment) {
-            $currentExp = Carbon::parse($currentEmbodiment->joining_date)->diffInYears(Carbon::now(),true);
+            $currentExp = Carbon::parse($currentEmbodiment->joining_date)->diffInYears(Carbon::now(), true);
         }
         $embodimentHistory = EmbodimentLogModel::where("ansar_id", $this->ansar_id)->get();
         if ($embodimentHistory->count() > 0) {
             foreach ($embodimentHistory as $history) {
-                $prevExp += Carbon::parse($history->joining_date)->diffInYears(Carbon::parse($history->release_date),true);;
+                $prevExp += Carbon::parse($history->joining_date)->diffInYears(Carbon::parse($history->release_date), true);;
             }
         }
         return $currentExp + $prevExp;
     }
-    public function calculateAge(){
+
+    public function calculateAge()
+    {
         $last_date_of_month = Carbon::now()->daysInMonth;
         $current_date = Carbon::now()->day($last_date_of_month);
         return Carbon::parse($this->data_of_birth)->diff($current_date)->format("%yy %mm %dd");
     }
-    public function leave(){
-        return $this->hasMany(Leave::class,'ansar_id','ansar_id');
+
+    public function leave()
+    {
+        return $this->hasMany(Leave::class, 'ansar_id', 'ansar_id');
     }
-    public function retireHistory(){
-        return $this->hasMany(AnsarRetireHistory::class,'ansar_id','ansar_id');
+
+    public function retireHistory()
+    {
+        return $this->hasMany(AnsarRetireHistory::class, 'ansar_id', 'ansar_id');
+    }
+
+    public function block()
+    {
+        return $this->hasMany(BlockListModel::class, 'ansar_id', 'ansar_id');
+    }
+
+    public function blockLog()
+    {
+        return $this->hasMany(BlockListInfoLogModel::class, 'ansar_id', 'ansar_id');
+    }
+
+    public function black()
+    {
+        return $this->hasOne(BlackListModel::class, 'ansar_id', 'ansar_id');
+    }
+
+    public function blackLog()
+    {
+        return $this->hasOne(BlackListInfoModel::class, 'ansar_id', 'ansar_id');
+    }
+
+    public function freezingInfoLog()
+    {
+        return $this->hasMany(FreezingInfoLog::class, 'ansar_id', 'ansar_id');
     }
 }
