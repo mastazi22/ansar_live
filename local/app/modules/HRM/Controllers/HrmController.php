@@ -475,46 +475,46 @@ class HrmController extends Controller
         }
         switch ($type) {
             case 'all_ansar':
-                $data = CustomQuery::getAllAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getAllAnsarList($offset, $limit, $unit, $thana, $division, $sex,CustomQuery::RECENT, $rank, $q);
                 break;
             case 'not_verified_ansar':
-                $data = CustomQuery::getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalNotVerifiedAnsarList($offset, $limit, $unit, $thana, $division, $sex,CustomQuery::RECENT, $rank, $q);
                 break;
             case 'free_ansar':
-                $data = CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division, $sex,CustomQuery::RECENT, $rank, $q);
                 break;
             case 'paneled_ansar':
                 $data = CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::RECENT, $rank,$request->filter_mobile_no,$request->filter_age, $q);
                 break;
             case 'embodied_ansar':
-                $data = CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, $sex,CustomQuery::RECENT, $rank, $q);
                 break;
             case 'embodied_ansar_in_different_district':
-                $data = CustomQuery::getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalDiffEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, $sex,CustomQuery::RECENT, $rank, $q);
                 break;
             case 'own_embodied_ansar':
-                $data = CustomQuery::getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalOwnEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, $sex,CustomQuery::RECENT, $rank, $q);
                 break;
             case 'retire_ansar':
-                $data = CustomQuery::getTotalRetireAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalRetireAnsarList($offset, $limit, $unit, $thana, $division, $sex,CustomQuery::RECENT, $rank, $q);
                 break;
             case 'rest_ansar':
-                $data = CustomQuery::getTotalRestAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalRestAnsarList($offset, $limit, $unit, $thana, $division, $sex,CustomQuery::RECENT, $rank, $q);
                 break;
             case 'freezed_ansar':
-                $data = CustomQuery::getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalFreezedAnsarList($offset, $limit, $unit, $thana, $division, $sex,CustomQuery::RECENT, $rank, $q);
                 break;
             case 'blocked_ansar':
-                $data = CustomQuery::getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division, $sex,CustomQuery::RECENT, $rank, $q);
                 break;
             case 'blacked_ansar':
-                $data = CustomQuery::getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalBlackedAnsarList($offset, $limit, $unit, $thana, $division, $sex,CustomQuery::RECENT, $rank, $q);
                 break;
             case 'offerred_ansar':
-                $data = CustomQuery::getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalOfferedAnsarList($offset, $limit, $unit, $thana, $division, $sex,CustomQuery::RECENT, $rank, $q);
                 break;
             case 'offer_block':
-                $data = CustomQuery::getTotalOfferBlockAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::RECENT, $rank, $q);
+                $data = CustomQuery::getTotalOfferBlockAnsarList($offset, $limit, $unit, $thana, $division, $sex,CustomQuery::RECENT, $rank, $q);
                 break;
         }
         if ($request->exists('export')) {

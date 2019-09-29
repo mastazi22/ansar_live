@@ -105,7 +105,7 @@ class PersonalInfo extends Model
         return $this->belongsTo(AllSkill::class, 'skill_id');
     }
     function receiveSMS(){
-        return $this->hasOne(ReceiveSMSModel::class,'ansar_id','ansar_id');
+        return $this->hasOne(SmsReceiveInfoModel::class,'ansar_id','ansar_id');
     }
     function panelLog(){
         return $this->hasMany(PanelInfoLogModel::class,'ansar_id','ansar_id');

@@ -15,6 +15,7 @@ use App\modules\HRM\Models\EmbodimentLogModel;
 use App\modules\HRM\Models\EmbodimentModel;
 use App\modules\HRM\Models\FreezedAnsarEmbodimentDetail;
 use App\modules\HRM\Models\FreezingInfoModel;
+use App\modules\HRM\Models\OfferBlockedAnsar;
 use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\RestInfoModel;
@@ -166,25 +167,53 @@ class BlockBlackController extends Controller
                     break;
 
                 case AnsarStatusInfo::FREE_STATUS:
+                     $ansar->update(['block_list_status' => 1,'free_status'=>0]);
                      CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'FREE', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                     break;
 
                 case AnsarStatusInfo::PANEL_STATUS:
+                    $ansar->ansar->panel->saveLog("Block",$modified_block_date,$block_comment);
+                    $ansar->ansar->panel->delete();
+                    $ansar->update(['block_list_status' => 1,'pannel_status'=>0]);
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'PANEL', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                     break;
 
                 case AnsarStatusInfo::OFFER_STATUS:
+                    $offer = $ansar->ansar->offer_sms_info;
+                    if(!$offer){
+                        $offer = $ansar->ansar->receiveSMS;
+                        $offer->saveLog();
+                        $offer->deleteCount();
+                        $offer->deleteOfferStatus();
+                        $offer->delete();
+                    }
+                    else{
+                        $offer->saveLog("No Reply");
+                        $offer->deleteCount();
+                        $offer->deleteOfferStatus();
+                        $offer->delete();
+                    }
+                    $ansar->update(['block_list_status' => 1,'offer_sms_status'=>0]);
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'OFFER', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                     break;
 
                 case AnsarStatusInfo::EMBODIMENT_STATUS:
+                    $ansar->ansar->embodiment->saveLog("Blocklist",$modified_block_date,8);
+                    $ansar->ansar->embodiment->delete();
+                    $ansar->update(['block_list_status' => 1,'embodied_status'=>0]);
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'EMBODIED', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                     break;
 
                 case AnsarStatusInfo::REST_STATUS:
+                    $ansar->ansar->rest->saveLog("Blocklist",$modified_block_date,$block_comment);
+                    $ansar->ansar->rest->delete();
+                    $ansar->update(['block_list_status' => 1,'rest_status'=>0]);
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'REST', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                     break;
                 case AnsarStatusInfo::OFFER_BLOCK_STATUS:
+                    $offer_blocked = OfferBlockedAnsar::where('ansar_id',$ansar->ansar_id)->first();
+                    $offer_blocked->delete();
+                    $ansar->update(['block_list_status' => 1,'offer_block_status'=>0]);
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'OFFER BLOCK', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                     break;
                 default:
@@ -192,7 +221,7 @@ class BlockBlackController extends Controller
                     break;
 
             }
-            $ansar->update(['block_list_status' => 1]);
+
             $this->dispatch(new BlockStatusSms($ansar_id,$block_comment));
             DB::commit();
         } catch (\Exception $e) {
@@ -221,6 +250,7 @@ class BlockBlackController extends Controller
         foreach ($ansar as $a) {
             //return $a;
             $ansar_id = $a['ansar_id'];
+            $ansar = AnsarStatusInfo::where('ansar_id', $ansar_id)->first();
             try {
                 switch ($a['status']) {
 
@@ -246,6 +276,7 @@ class BlockBlackController extends Controller
                         $blocklist_entry->comment_for_block = $block_comment;
                         $blocklist_entry->action_user_id = Auth::user()->id;
                         $blocklist_entry->save();
+                        $ansar->update(['block_list_status' => 1,'free_status'=>0]);
 //                    Event::fire(new ActionUserEvent(['ansar_id'=>$ansar_id,'action_type'=>'BLOCKED','from_state'=>'FREE','to_state'=>'BLOCKED','action_by'=>auth()->user()->id]));
                         CustomQuery::addActionlog(['ansar_id' => $ansar_id, 'action_type' => 'BLOCKED', 'from_state' => 'FREE', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                         break;
@@ -259,6 +290,9 @@ class BlockBlackController extends Controller
                         $blocklist_entry->comment_for_block = $block_comment;
                         $blocklist_entry->action_user_id = Auth::user()->id;
                         $blocklist_entry->save();
+                        $ansar->ansar->panel->saveLog("Block",$modified_block_date,$block_comment);
+                        $ansar->ansar->panel->delete();
+                        $ansar->update(['block_list_status' => 1,'pannel_status'=>0]);
 //                    Event::fire(new ActionUserEvent(['ansar_id'=>$ansar_id,'action_type'=>'BLOCKED','from_state'=>'PANEL','to_state'=>'BLOCKED','action_by'=>auth()->user()->id]));
                         CustomQuery::addActionlog(['ansar_id' => $ansar_id, 'action_type' => 'BLOCKED', 'from_state' => 'PANEL', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                         break;
@@ -272,6 +306,21 @@ class BlockBlackController extends Controller
                         $blocklist_entry->comment_for_block = $block_comment;
                         $blocklist_entry->action_user_id = Auth::user()->id;
                         $blocklist_entry->save();
+                        $offer = $ansar->ansar->offer_sms_info;
+                        if(!$offer){
+                            $offer = $ansar->ansar->receiveSMS;
+                            $offer->saveLog();
+                            $offer->deleteCount();
+                            $offer->deleteOfferStatus();
+                            $offer->delete();
+                        }
+                        else{
+                            $offer->saveLog("No Reply");
+                            $offer->deleteCount();
+                            $offer->deleteOfferStatus();
+                            $offer->delete();
+                        }
+                        $ansar->update(['block_list_status' => 1,'offer_sms_status'=>0]);
 //                    Event::fire(new ActionUserEvent(['ansar_id'=>$ansar_id,'action_type'=>'BLOCKED','from_state'=>'OFFER','to_state'=>'BLOCKED','action_by'=>auth()->user()->id]));
                         CustomQuery::addActionlog(['ansar_id' => $ansar_id, 'action_type' => 'BLOCKED', 'from_state' => 'OFFER', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                         break;
@@ -286,6 +335,9 @@ class BlockBlackController extends Controller
                         $blocklist_entry->comment_for_block = $block_comment;
                         $blocklist_entry->action_user_id = Auth::user()->id;
                         $blocklist_entry->save();
+                        $ansar->ansar->embodiment->saveLog("Blocklist",$modified_block_date,8);
+                        $ansar->ansar->embodiment->delete();
+                        $ansar->update(['block_list_status' => 1,'embodied_status'=>0]);
 //                    Event::fire(new ActionUserEvent(['ansar_id'=>$ansar_id,'action_type'=>'BLOCKED','from_state'=>'EMBODIED','to_state'=>'BLOCKED','action_by'=>auth()->user()->id]));
                         CustomQuery::addActionlog(['ansar_id' => $ansar_id, 'action_type' => 'BLOCKED', 'from_state' => 'EMBODIED', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                         break;
@@ -299,6 +351,9 @@ class BlockBlackController extends Controller
                         $blocklist_entry->comment_for_block = $block_comment;
                         $blocklist_entry->action_user_id = Auth::user()->id;
                         $blocklist_entry->save();
+                        $ansar->ansar->rest->saveLog("Blocklist",$modified_block_date,$block_comment);
+                        $ansar->ansar->rest->delete();
+                        $ansar->update(['block_list_status' => 1,'rest_status'=>0]);
 //                    Event::fire(new ActionUserEvent(['ansar_id'=>$ansar_id,'action_type'=>'BLOCKED','from_state'=>'REST','to_state'=>'BLOCKED','action_by'=>auth()->user()->id]));
                         CustomQuery::addActionlog(['ansar_id' => $ansar_id, 'action_type' => 'BLOCKED', 'from_state' => 'REST', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
                         break;
@@ -308,7 +363,7 @@ class BlockBlackController extends Controller
                         }
 
                 }
-                AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['block_list_status' => 1]);
+
             } catch (\Exception $e) {
                 DB::rollBack();
                 return Response::json(['status' => false, 'message' => $e->getMessage()]);
@@ -378,48 +433,8 @@ class BlockBlackController extends Controller
 
             $ansar->block_list_status = 0;
             $ansar->save();
-            switch ($ansar->getStatus()[0]) {
-                case AnsarStatusInfo::FREE_STATUS;
-                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'UNBLOCKED', 'from_state' => 'BLOCKED', 'to_state' => 'FREE', 'action_by' => auth()->user()->id]);
-                    break;
-                case AnsarStatusInfo::PANEL_STATUS;
-                    $el = EmbodimentLogModel::where('ansar_id',$ansar_id)->orderBy('release_date','desc')->first();
-                    if($el&&Carbon::now()->lt(Carbon::parse($el->release_date)->addMonths(6))) {
-                        Log::info("ddd:".Carbon::parse($el->release_date)->addMonths(6)->format("d-m-Y"));
-                        $p = PanelModel::where('ansar_id', $ansar_id)->first();
-                        $p->saveLog("Rest");
-                        $p->delete();
-                        RestInfoModel::create([
-                            'ansar_id' => $ansar_id,
-                            'old_embodiment_id' => $el->old_embodiment_id,
-                            'memorandum_id' => 'n\a',
-                            'rest_date' => $el->release_date,
-                            'active_date' => GlobalParameterFacades::getActiveDate($el->release_date),
-                            'total_service_days' => Carbon::parse($el->release_date)->diffInDays(Carbon::parse($el->joining_date)),
-                            'disembodiment_reason_id' => $el->disembodiment_reason_id,
-                            'rest_form' => 'Regular',
-                            'action_user_id' => Auth::user()->id,
-                            'comment' => $el->comment,
-                        ]);
-                        $ansar->rest_status = 1;
-                        $ansar->pannel_status = 0;
-                        $ansar->save();
-                    }
-                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'UNBLOCKED', 'from_state' => 'BLOCKED', 'to_state' => 'PANEL', 'action_by' => auth()->user()->id]);
-                    break;
-                case AnsarStatusInfo::OFFER_STATUS;
-                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'UNBLOCKED', 'from_state' => 'BLOCKED', 'to_state' => 'OFFER', 'action_by' => auth()->user()->id]);
-                    break;
-                case AnsarStatusInfo::EMBODIMENT_STATUS;
-                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'UNBLOCKED', 'from_state' => 'BLOCKED', 'to_state' => 'EMBODIED', 'action_by' => auth()->user()->id]);
-                    break;
-                case AnsarStatusInfo::REST_STATUS;
-                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'UNBLOCKED', 'from_state' => 'BLOCKED', 'to_state' => 'REST', 'action_by' => auth()->user()->id]);
-                    break;
-                default:
-                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'UNBLOCKED', 'from_state' => 'BLOCKED', 'to_state' => 'ENTRY', 'action_by' => auth()->user()->id]);
-                    break;
-            }
+            $ansar->ansar->update(['verified'=>0]);
+            CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'UNBLOCKED', 'from_state' => 'BLOCKED', 'to_state' => 'UNVERIFIED', 'action_by' => auth()->user()->id]);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
