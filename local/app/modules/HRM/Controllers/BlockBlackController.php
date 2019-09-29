@@ -172,7 +172,7 @@ class BlockBlackController extends Controller
                     break;
 
                 case AnsarStatusInfo::PANEL_STATUS:
-                    $ansar->ansar->panel->saveLog("Block",$modified_block_date,$block_comment);
+                    $ansar->ansar->panel->saveLog("Blocklist",$modified_block_date,$block_comment);
                     $ansar->ansar->panel->delete();
                     $ansar->update(['block_list_status' => 1,'pannel_status'=>0]);
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'PANEL', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
