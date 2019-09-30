@@ -51,7 +51,7 @@ class RearrangePanelPositionLocal extends Job implements ShouldQueue
                 ->where('tbl_ansar_status_info.block_list_status', 0)
                 ->where('tbl_ansar_status_info.black_list_status', 0)
                 ->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^(/+88)?01[0-9]{9}$"')
-                ->select('tbl_panel_info.ansar_id','re_panel_date','tbl_panel_info.id','locked','sex','division_id','tbl_designations.code',
+                ->select('tbl_panel_info.ansar_id','tbl_panel_info.come_from','re_panel_date','tbl_panel_info.id','locked','sex','division_id','tbl_designations.code',
                     DB::raw('SUBSTRING_INDEX(SUBSTRING_INDEX(offer_type,\',\',LENGTH(offer_type)-LENGTH(REPLACE(offer_type,\',\',\'\'))+1),\',\',-1) as last_offer_region'),'offer_type')
                 ->get();
 //                return $data;
@@ -111,7 +111,7 @@ class RearrangePanelPositionLocal extends Job implements ShouldQueue
                     $query = "UPDATE tbl_panel_info SET re_panel_position = (CASE ansar_id ";
                     foreach ($value as $p){
                         $p = (array)$p;
-                        if((!$p['offer_type']||strcasecmp($p['last_offer_region'],'RE')||!$p['locked'])&&(!$p['offer_type']||substr_count($p['offer_type'],'RE')<$re_offer_count)){
+                        if((!$p['offer_type']||strcasecmp($p['last_offer_region'],'RE')||!$p['locked'])&&(!$p['offer_type']||substr_count($p['offer_type'],'RE')<$re_offer_count)&&(strcasecmp(implode("",explode(" ",$p['come_from'])),"offerCancel"))){
                             // echo $key." : ".$k." : ".$kk." : ".$p['ansar_id." : ".$p['re_panel_date." : ".$i."<br>";
                             $query .= "WHEN ".$p['ansar_id']." THEN $i ";
                             //DB::table('tbl_panel_info')->where('ansar_id',$p['ansar_id'])->update(['re_panel_position'=>$i]);
@@ -123,7 +123,7 @@ class RearrangePanelPositionLocal extends Job implements ShouldQueue
                             }*/
                         }
                     }
-                    $query .= "END) WHERE ansar_id IN (".implode(",",array_column($value,'ansar_id')).")";
+                    $query .= "ELSE re_panel_position END) WHERE ansar_id IN (".implode(",",array_column($value,'ansar_id')).")";
                     DB::statement($query);
 
                 }

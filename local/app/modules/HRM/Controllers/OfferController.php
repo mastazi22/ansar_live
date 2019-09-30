@@ -11,6 +11,7 @@ use App\modules\HRM\Models\CustomQuery;
 use App\modules\HRM\Models\OfferCancel;
 use App\modules\HRM\Models\OfferQuota;
 use App\modules\HRM\Models\OfferSmsLog;
+use App\modules\HRM\Models\OfferSMSStatus;
 use App\modules\HRM\Models\OfferZone;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
@@ -269,6 +270,7 @@ class OfferController extends Controller
 
                     }else{
                         $pa->locked = 0;
+                        $pa->come_from = 'OfferCancel';
                         $pa->save();
                     }
                     $ansar->status()->update([
@@ -279,6 +281,17 @@ class OfferController extends Controller
                 $ansar->offerCancel()->save(new OfferCancel([
                     'offer_cancel_date' => Carbon::now()
                 ]));
+                $os = OfferSMSStatus::where('ansar_id',$ansar_ids[$i])->first();
+                if($os){
+                    $ot = explode(",",$os->offer_type);
+                    $ou = explode(",",$os->last_offer_units);
+                    $ot = array_slice($ot,0,count($ot)-1);
+                    $ou = array_slice($ou,0,count($ou)-1);
+                    $os->offer_type = implode(",",$ot);
+                    $os->last_offer_units = implode(",",$ou);
+                    $os->last_offer_unit = $ou[count($ou)?count($ou)-1:0];
+                    $os->save();
+                }
                 if ($offered_ansar) {
                     $ansar->offerLog()->save(new OfferSmsLog([
                         'offered_date' => $offered_ansar->sms_send_datetime,
