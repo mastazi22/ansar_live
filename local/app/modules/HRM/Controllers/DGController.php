@@ -1675,6 +1675,7 @@ class DGController extends Controller
 
                 }else{
                     $pa->locked = 0;
+                    $pa->come_from = 'OfferCancel';
                     $pa->save();
                 }
                 $ansar->status()->update([
