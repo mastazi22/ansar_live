@@ -1683,6 +1683,17 @@ class DGController extends Controller
                     'pannel_status'=>1,
                 ]);
             }
+            $os = OfferSMSStatus::where('ansar_id',$ansar_ids)->first();
+            if($os){
+                $ot = explode(",",$os->offer_type);
+                $ou = explode(",",$os->last_offer_units);
+                $ot = array_slice($ot,0,count($ot)-1);
+                $ou = array_slice($ou,0,count($ou)-1);
+                $os->offer_type = implode(",",$ot);
+                $os->last_offer_units = implode(",",$ou);
+                $os->last_offer_unit = !count($ou)?"":$ou[count($ou)-1];
+                $os->save();
+            }
             $ansar->offerCancel()->save(new OfferCancel([
                 'offer_cancel_date'=>Carbon::now()
             ]));

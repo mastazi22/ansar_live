@@ -289,7 +289,7 @@ class OfferController extends Controller
                     $ou = array_slice($ou,0,count($ou)-1);
                     $os->offer_type = implode(",",$ot);
                     $os->last_offer_units = implode(",",$ou);
-                    $os->last_offer_unit = $ou[count($ou)?count($ou)-1:0];
+                    $os->last_offer_unit = !count($ou)?"":$ou[count($ou)-1];
                     $os->save();
                 }
                 if ($offered_ansar) {
