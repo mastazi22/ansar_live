@@ -37,7 +37,10 @@
                     return unit.unit_name_bng + ", " + unit.division.division_name_bng;
                 }
                 return "";
-            }
+            };
+            $scope.convertDateObj = function(dateStr){
+                return new Date(dateStr);
+            };
         });
     </script>
     <style></style>
@@ -120,7 +123,7 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>[[ansarDetail['cOffer'].sms_send_datetime]]</td>
+                                    <td>[[convertDateObj(ansarDetail['cOffer'].sms_send_datetime) | date:'mediumDate']]</td>
                                     <td>[[getUnitAddress(ansarDetail['cOffer'].district)]]</td>
                                     <td>[[ansarDetail['cOffer'].offerType]]</td>
                                     <td>[[ansarDetail['cOffer'].come_from]]</td>
@@ -145,7 +148,7 @@
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="loffer in ansarDetail['lOffer']">
-                                    <td>[[loffer.offered_date]]</td>
+                                    <td>[[convertDateObj(loffer.offered_date) | date:'mediumDate']]</td>
                                     <td>[[getUnitAddress(loffer.district)]]</td>
                                     <td>[[loffer.offerType]]</td>
                                     <td>[[loffer.reply_type]]</td>
@@ -198,9 +201,9 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>[[ansarDetail['cPanel'].panel_date]]</td>
+                                    <td>[[convertDateObj(ansarDetail['cPanel'].panel_date) | date:'mediumDate']]</td>
                                     <td>[[ansarDetail['cPanel'].go_panel_position]]</td>
-                                    <td>[[ansarDetail['cPanel'].re_panel_date]]</td>
+                                    <td>[[convertDateObj(ansarDetail['cPanel'].re_panel_date) | date:'mediumDate']]</td>
                                     <td>[[ansarDetail['cPanel'].re_panel_position]]</td>
                                     <td>[[ansarDetail['cPanel'].come_from]]</td>
                                     <td>[[ansarDetail['cPanel'].memorandum_id]]</td>
@@ -226,9 +229,9 @@
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="lpanel in ansarDetail['lPanel']">
-                                    <td>[[lpanel.panel_date]]</td>
+                                    <td>[[convertDateObj(lpanel.panel_date) | date:'mediumDate']]</td>
                                     <td>[[lpanel.go_panel_position]]</td>
-                                    <td>[[lpanel.re_panel_date]]</td>
+                                    <td>[[convertDateObj(lpanel.re_panel_date) | date:'mediumDate']]</td>
                                     <td>[[lpanel.re_panel_position]]</td>
                                     <td>[[lpanel.come_from]]</td>
                                     <td>[[lpanel.old_memorandum_id]]</td>
@@ -258,8 +261,8 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>[[ansarDetail['cEmbodiment'].joining_date]]</td>
-                                    <td>[[ansarDetail['cEmbodiment'].service_ended_date]]</td>
+                                    <td>[[convertDateObj(ansarDetail['cEmbodiment'].joining_date) | date:'mediumDate']]</td>
+                                    <td>[[convertDateObj(ansarDetail['cEmbodiment'].service_ended_date) | date:'mediumDate']]</td>
                                     <td>[[getKPIInfo(ansarDetail['cEmbodiment'].kpi)]]</td>
                                     <td>[[ansarDetail['cEmbodiment'].memorandum_id]]</td>
                                 </tr>
@@ -277,15 +280,17 @@
                                     <th>Embodiment Date</th>
                                     <th>Disembodiment Date</th>
                                     <th>Disembodiment Reason</th>
+                                    <th>Comment</th>
                                     <th>KPI</th>
                                     <th>Memorandum Id</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="lembodiment in ansarDetail['lEmbodiment']">
-                                    <td>[[lembodiment.joining_date]]</td>
-                                    <td>[[lembodiment.release_date]]</td>
+                                    <td>[[convertDateObj(lembodiment.joining_date) | date:'mediumDate']]</td>
+                                    <td>[[convertDateObj(lembodiment.release_date) | date:'mediumDate']]</td>
                                     <td>[[lembodiment.disembodiment_reason.reason_in_bng]]</td>
+                                    <td>[[lembodiment.comment]]</td>
                                     <td>[[getKPIInfo(lembodiment.kpi)]]</td>
                                     <td>[[lembodiment.old_memorandum_id]]</td>
                                 </tr>
@@ -314,7 +319,7 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>[[ansarDetail['cFreeze'].freez_date]]</td>
+                                    <td>[[convertDateObj(ansarDetail['cFreeze'].freez_date) | date:'mediumDate']]</td>
                                     <td>[[ansarDetail['cFreeze'].freez_reason]]</td>
                                     <td>[[ansarDetail['cFreeze'].comment_on_freez]]</td>
                                     <td>[[getKPIInfo(ansarDetail['cFreeze'].kpi)]]</td>
@@ -341,10 +346,10 @@
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="lfreeze in ansarDetail['lFreeze']">
-                                    <td>[[lfreeze.move_frm_freez_date]]</td>
+                                    <td>[[convertDateObj(lfreeze.move_frm_freez_date) | date:'mediumDate']]</td>
                                     <td>[[lfreeze.comment_on_move]]</td>
                                     <td>[[lfreeze.move_to]]</td>
-                                    <td>[[lfreeze.freez_date]]</td>
+                                    <td>[[convertDateObj(lfreeze.freez_date) | date:'mediumDate']]</td>
                                     <td>[[lfreeze.freez_reason]]</td>
                                     <td>[[lfreeze.comment_on_freez]]</td>
                                 </tr>
@@ -375,9 +380,9 @@
                                 <tbody>
                                 <tr ng-repeat="transfer in ansarDetail['transfer']">
                                     <td>[[getKPIInfo(transfer.present_kpi)]]</td>
-                                    <td>[[transfer.present_kpi_join_date]]</td>
+                                    <td>[[convertDateObj(transfer.present_kpi_join_date) | date:'mediumDate']]</td>
                                     <td>[[getKPIInfo(transfer.transfer_kpi)]]</td>
-                                    <td>[[transfer.transfered_kpi_join_date]]</td>
+                                    <td>[[convertDateObj(transfer.transfered_kpi_join_date) | date:'mediumDate']]</td>
                                     <td>[[transfer.transfer_memorandum_id]]</td>
                                 </tr>
                                 </tbody>
@@ -406,10 +411,10 @@
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="block in ansarDetail['block']">
-                                    <td>[[block.date_for_block]]</td>
+                                    <td>[[convertDateObj(block.date_for_block) | date:'mediumDate']]</td>
                                     <td>[[block.block_list_from]]</td>
                                     <td>[[block.comment_for_block]]</td>
-                                    <td>[[block.date_for_unblock]]</td>
+                                    <td>[[convertDateObj(block.date_for_unblock) | date:'mediumDate']]</td>
                                     <td>[[block.comment_for_unblock]]</td>
                                 </tr>
                                 </tbody>
@@ -435,7 +440,7 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>[[ansarDetail['cBlack'].black_listed_date]]</td>
+                                    <td>[[convertDateObj(ansarDetail['cBlack'].black_listed_date) | date:'mediumDate']]</td>
                                     <td>[[ansarDetail['cBlack'].black_list_from]]</td>
                                     <td>[[ansarDetail['cBlack'].black_list_comment]]</td>
                                 </tr>
@@ -461,12 +466,12 @@
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="lblack in ansarDetail['lBlack']">
-                                    <td>[[lblack.black_listed_date]]</td>
+                                    <td>[[convertDateObj(lblack.black_listed_date) | date:'mediumDate']]</td>
                                     <td>[[lblack.black_list_from]]</td>
                                     <td>[[lblack.black_list_comment]]</td>
-                                    <td>[[lblack.unblacklist_date]]</td>
+                                    <td>[[convertDateObj(lblack.unblacklist_date) | date:'mediumDate']]</td>
                                     <td>[[lblack.unblacklist_comment]]</td>
-                                    <td>[[lblack.move_date]]</td>
+                                    <td>[[convertDateObj(lblack.move_date) | date:'mediumDate']]</td>
                                     <td>[[lblack.move_to]]</td>
                                 </tr>
                                 </tbody>
