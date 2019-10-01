@@ -38,7 +38,7 @@
                 }
                 return "";
             };
-            $scope.convertDateObj = function(dateStr){
+            $scope.convertDateObj = function (dateStr) {
                 return new Date(dateStr);
             };
         });
@@ -123,7 +123,9 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>[[convertDateObj(ansarDetail['cOffer'].sms_send_datetime) | date:'mediumDate']]</td>
+                                    <td>[[convertDateObj(ansarDetail['cOffer'].sms_send_datetime) |
+                                        date:'mediumDate']]
+                                    </td>
                                     <td>[[getUnitAddress(ansarDetail['cOffer'].district)]]</td>
                                     <td>[[ansarDetail['cOffer'].offerType]]</td>
                                     <td>[[ansarDetail['cOffer'].come_from]]</td>
@@ -196,7 +198,7 @@
                                     <th>Regional Panel Date</th>
                                     <th>Regional Panel Position</th>
                                     <th>Come From</th>
-                                    <th>Memorandum Id</th>
+                                    <th>Memorandum</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -224,7 +226,7 @@
                                     <th>Regional Panel Date</th>
                                     <th>Regional Panel Position</th>
                                     <th>Come From</th>
-                                    <th>Memorandum Id</th>
+                                    <th>Memorandum</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -235,6 +237,71 @@
                                     <td>[[lpanel.re_panel_position]]</td>
                                     <td>[[lpanel.come_from]]</td>
                                     <td>[[lpanel.old_memorandum_id]]</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box box-solid" ng-if="ansarDetail && (ansarDetail['cRest'] || ansarDetail['lRest'])">
+                <div class="box-title"><h3 style="margin: 1%;">Rest Information</h3></div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4>Current</h4>
+                            <p ng-if="!ansarDetail['cRest']">No Data</p>
+                            <table class="table table-bordered table-striped" ng-if="ansarDetail['cRest']">
+                                <thead>
+                                <tr>
+                                    <th>Rest Date</th>
+                                    <th>Rest Type</th>
+                                    <th>Total Service(In Days)</th>
+                                    <th>Reason</th>
+                                    <th>Memorandum</th>
+                                    <th>Comment</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>[[convertDateObj(ansarDetail['cRest'].rest_date) | date:'mediumDate']]</td>
+                                    <td>[[ansarDetail['cRest'].rest_form]]</td>
+                                    <td>[[ansarDetail['cRest'].total_service_days]]</td>
+                                    <td>[[ansarDetail['cRest'].reason.reason_in_bng]]</td>
+                                    <td>[[ansarDetail['cRest'].memorandum_id]]</td>
+                                    <td>[[ansarDetail['cRest'].comment]]</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-12">
+                            <h4>History</h4>
+                            <p ng-if="!Array.isArray(ansarDetail['lRest']) && ansarDetail['lRest'].length<=0">No
+                                Data</p>
+                            <table class="table table-bordered table-striped"
+                                   ng-if="ansarDetail['lRest'] && ansarDetail['lRest'].length>0">
+                                <thead>
+                                <tr>
+                                    <th>Rest Date</th>
+                                    <th>Rest Type</th>
+                                    <th>Total Service(In Days)</th>
+                                    <th>Reason</th>
+                                    <th>Move Date</th>
+                                    <th>Move To</th>
+                                    <th>Memorandum</th>
+                                    <th>Comment</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="lrest in ansarDetail['lRest']">
+                                    <td>[[convertDateObj(lrest.rest_date) | date:'mediumDate']]</td>
+                                    <td>[[lrest.rest_type]]</td>
+                                    <td>[[lrest.total_service_days]]</td>
+                                    <td>[[lrest.reason.reason_in_bng]]</td>
+                                    <td>[[convertDateObj(lrest.move_date) | date:'mediumDate']]</td>
+                                    <td>[[lrest.move_to]]</td>
+                                    <td>[[lrest.old_memorandum_id]]</td>
+                                    <td>[[lrest.comment]]</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -256,13 +323,17 @@
                                     <th>Embodiment Date</th>
                                     <th>Service End Date</th>
                                     <th>KPI</th>
-                                    <th>Memorandum Id</th>
+                                    <th>Memorandum</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>[[convertDateObj(ansarDetail['cEmbodiment'].joining_date) | date:'mediumDate']]</td>
-                                    <td>[[convertDateObj(ansarDetail['cEmbodiment'].service_ended_date) | date:'mediumDate']]</td>
+                                    <td>[[convertDateObj(ansarDetail['cEmbodiment'].joining_date) |
+                                        date:'mediumDate']]
+                                    </td>
+                                    <td>[[convertDateObj(ansarDetail['cEmbodiment'].service_ended_date) |
+                                        date:'mediumDate']]
+                                    </td>
                                     <td>[[getKPIInfo(ansarDetail['cEmbodiment'].kpi)]]</td>
                                     <td>[[ansarDetail['cEmbodiment'].memorandum_id]]</td>
                                 </tr>
@@ -282,7 +353,7 @@
                                     <th>Disembodiment Reason</th>
                                     <th>Comment</th>
                                     <th>KPI</th>
-                                    <th>Memorandum Id</th>
+                                    <th>Memorandum</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -314,7 +385,7 @@
                                     <th>Freeze Reason</th>
                                     <th>Comment On Freeze</th>
                                     <th>KPI</th>
-                                    <th>Memorandum Id</th>
+                                    <th>Memorandum</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -374,7 +445,7 @@
                                     <th>Present KPI Joining Date</th>
                                     <th>Transfer KPI</th>
                                     <th>Transfer KPI Joining Date</th>
-                                    <th>Memorandum Id</th>
+                                    <th>Memorandum</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -440,7 +511,9 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>[[convertDateObj(ansarDetail['cBlack'].black_listed_date) | date:'mediumDate']]</td>
+                                    <td>[[convertDateObj(ansarDetail['cBlack'].black_listed_date) |
+                                        date:'mediumDate']]
+                                    </td>
                                     <td>[[ansarDetail['cBlack'].black_list_from]]</td>
                                     <td>[[ansarDetail['cBlack'].black_list_comment]]</td>
                                 </tr>
