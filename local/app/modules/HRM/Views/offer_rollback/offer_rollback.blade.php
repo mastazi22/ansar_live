@@ -39,8 +39,7 @@
                 $scope.allLoading = true;
                 $http({
                     method:'get',
-                    url:url||'{{URL::route('HRM.offer_rollback.index')}}',
-                    params:$scope.param
+                    url:url||'{{URL::route('HRM.offer_rollback.index')}}'
                 }).then(function (response) {
                     $scope.template = $sce.trustAsHtml(response.data);
                     $scope.allLoading = false;
@@ -71,12 +70,14 @@
                     url:'{{URL::to('/HRM/offer_rollback')}}/'+id
                 }).then(function (response) {
                     if(response.data.status){
+                        $scope.allLoading = false;
                         notificationService.notify("success",response.data.message);
                         $scope.loadData();
                     } else{
+                        $scope.allLoading = false;
                         notificationService.notify("error",response.data.message);
                     }
-                    $scope.allLoading = false;
+
                 },function (response) {
                     $scope.allLoading = false;
                 })
