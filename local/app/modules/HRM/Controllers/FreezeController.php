@@ -168,6 +168,9 @@ class FreezeController extends Controller
                 try {
                     $frezeInfo = FreezingInfoModel::where('ansar_id', $ansarid)->first();
                     if (!$frezeInfo) throw new \Exception("{$ansarid} is invalid");
+                    $kpi = $frezeInfo->kpi;
+                    if(!$kpi) throw new \Exception("invalid kpi");
+                    if($kpi&&$kpi->withdraw_status==1&&$kpi->status_of_kpi==0&&!$kpi->details->kpi_withdraw_date)throw new \Exception("{$kpi->kpi_name} already withdrawn");
                     $updateEmbodiment = $frezeInfo->embodiment;
                     $freezed_ansar_embodiment_detail = $frezeInfo->freezedAnsarEmbodiment;
 //                    return $updateEmbodiment;
