@@ -131,6 +131,11 @@ class PersonalInfo extends Model
         return $this->hasOne(RestInfoModel::class, 'ansar_id', 'ansar_id');
     }
 
+    function restLog()
+    {
+        return $this->hasMany(RestInfoLogModel::class, 'ansar_id', 'ansar_id');
+    }
+
     function getMobileNoSelfAttribute($value)
     {
 

@@ -849,6 +849,10 @@ class ReportController extends Controller
         $result["cPanel"] = $ansar->panel()->first();
         $result["lPanel"] = $ansar->panelLog()->orderBy("panel_date", "desc")->get();
 
+        //rest information
+        $result["cRest"] = $ansar->rest()->with("reason")->first();
+        $result["lRest"] = $ansar->restLog()->with("reason")->orderBy("rest_date", "desc")->get();
+
         //embodiment information
         $result["cEmbodiment"] = $ansar->embodiment()->with("kpi.unit", "kpi.division", "kpi.thana")->first();
         $result["lEmbodiment"] = $ansar->embodiment_log()->with("disembodimentReason", "kpi.unit", "kpi.division", "kpi.thana")->orderBy("joining_date", "desc")->get();
