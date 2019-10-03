@@ -262,14 +262,6 @@ class HrmController extends Controller
                         ></filter-template>';
             $view='<div class="row">
                     <div class="col-sm-3">
-                        <label>Order by</label>
-                        <select class="form-control" ng-model="orderBy" ng-change="loadPage()">
-                            <option value="">--select a value--</option>
-                            <option value="panel_date">Global Panel Date</option>
-                            <option value="re_panel_date">Regional Panel Date</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-3">
                         <label style="display:block">&nbsp</label>
                         <label class="control-label">
                             <div class="styled-checkbox">
@@ -374,7 +366,6 @@ class HrmController extends Controller
         $rank = Input::get('rank');
         $sex = Input::get('gender');
         $q = Input::get('q');
-        $sort = Input::get('sortBy');
         $rules = [
             'type' => 'regex:/[a-z]+/',
             'limit' => 'numeric',
@@ -402,7 +393,7 @@ class HrmController extends Controller
                 $data = CustomQuery::getTotalFreeAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank, $q);
                 break;
             case 'paneled_ansar':
-                $data = CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank,$request->filter_mobile_no,$request->filter_age, $q,$sort);
+                $data = CustomQuery::getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division, $sex, CustomQuery::ALL_TIME, $rank,$request->filter_mobile_no,$request->filter_age, $q);
                 break;
             case 'embodied_ansar':
                 $data = CustomQuery::getTotalEmbodiedAnsarList($offset, $limit, $unit, $thana, $division, CustomQuery::ALL_TIME, $rank, $q,$sex);

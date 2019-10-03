@@ -1653,6 +1653,8 @@ class DGController extends Controller
                 throw new \Exception("This Ansar is not in offer status");
             }
             $offered_ansar = $ansar->offer_sms_info;
+            $os = OfferSMSStatus::where('ansar_id',$ansar_ids)->first();
+            $panel_date = Carbon::now()->format("Y-m-d H:i:s");
             if (!$offered_ansar) $received_ansar = $ansar->receiveSMS;
             if($offered_ansar&&$offered_ansar->come_from=='rest'){
                 $ansar->status()->update([
@@ -1666,8 +1668,8 @@ class DGController extends Controller
                     $panel_log = $ansar->panelLog()->first();
                     $ansar->panel()->save(new PanelModel([
                         'memorandum_id'=>$panel_log->old_memorandum_id,
-                        'panel_date'=>$panel_log->panel_date,
-                        're_panel_date'=>$panel_log->re_panel_date,
+                        'panel_date'=>$os&&$os->isGlobalOfferRegion()?$panel_date:$panel_log->panel_date,
+                        're_panel_date'=>$os&&$os->isRegionalOfferRegion()?$panel_date:$panel_log->re_panel_date,
                         'come_from'=>'OfferCancel',
                         'ansar_merit_list'=>1,
                         'action_user_id'=>auth()->user()->id,
@@ -1676,6 +1678,11 @@ class DGController extends Controller
                 }else{
                     $pa->locked = 0;
                     $pa->come_from = 'OfferCancel';
+                    if($os&&$os->isGlobalOfferRegion()){
+                        $pa->panel_date = $panel_date;
+                    }elseif($os&&$os->isRegionalOfferRegion()){
+                        $pa->re_panel_date = $panel_date;
+                    }
                     $pa->save();
                 }
                 $ansar->status()->update([
@@ -1683,7 +1690,6 @@ class DGController extends Controller
                     'pannel_status'=>1,
                 ]);
             }
-            $os = OfferSMSStatus::where('ansar_id',$ansar_ids)->first();
             if($os){
                 $ot = explode(",",$os->offer_type);
                 $ou = explode(",",$os->last_offer_units);
@@ -1704,6 +1710,7 @@ class DGController extends Controller
                     'offered_district'=>$offered_ansar->district_id,
                     'action_user_id'=>auth()->user()->id,
                     'reply_type'=>'No Reply',
+                    'comment'=>'Offer Cancel'
                 ]));
                 $offered_ansar->delete();
             } else {
@@ -1711,7 +1718,9 @@ class DGController extends Controller
                     'offered_date'=>$received_ansar->sms_send_datetime,
                     'offered_district'=>$received_ansar->offered_district,
                     'action_user_id'=>auth()->user()->id,
+                    'action_date'=>Carbon::now(),
                     'reply_type'=>'Yes',
+                    'comment'=>'Offer Cancel'
                 ]));
                 $received_ansar->delete();
             }
@@ -1726,6 +1735,8 @@ class DGController extends Controller
             DB::rollback();
             return Response::json(['status' => false, 'message' =>$e->getMessage()]);
         }
+        $this->dispatch(new RearrangePanelPositionGlobal());
+        $this->dispatch(new RearrangePanelPositionLocal());
         return Response::json(['status' => true, 'message' => 'Offer cancel successfully']);
     }
 

@@ -111,7 +111,7 @@ class RearrangePanelPositionLocal extends Job implements ShouldQueue
                     $query = "UPDATE tbl_panel_info SET re_panel_position = (CASE ansar_id ";
                     foreach ($value as $p){
                         $p = (array)$p;
-                        if((!$p['offer_type']||strcasecmp($p['last_offer_region'],'RE')||!$p['locked'])&&(!$p['offer_type']||substr_count($p['offer_type'],'RE')<$re_offer_count)&&(strcasecmp(implode("",explode(" ",$p['come_from'])),"offerCancel"))){
+                        if((!$p['offer_type']||strcasecmp($p['last_offer_region'],'RE')||!$p['locked'])&&(!$p['offer_type']||substr_count($p['offer_type'],'RE')<$re_offer_count)){
                             // echo $key." : ".$k." : ".$kk." : ".$p['ansar_id." : ".$p['re_panel_date." : ".$i."<br>";
                             $query .= "WHEN ".$p['ansar_id']." THEN $i ";
                             //DB::table('tbl_panel_info')->where('ansar_id',$p['ansar_id'])->update(['re_panel_position'=>$i]);

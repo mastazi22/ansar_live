@@ -88,7 +88,7 @@ class RearrangePanelPositionGlobal extends Job implements ShouldQueue
                 foreach ($value as $p){
                     $p = (array)$p;
                     if((!$p['offer_type']||strcasecmp($p['last_offer_region'],'GB')||!$p['locked'])
-                        &&(!$p['offer_type']||(substr_count($p['offer_type'],'GB')+substr_count($p['offer_type'],'DG')+substr_count($p['offer_type'],'CG'))<$go_offer_count)&&(strcasecmp(implode("",explode(" ",$p['come_from'])),"offerCancel"))){
+                        &&(!$p['offer_type']||(substr_count($p['offer_type'],'GB')+substr_count($p['offer_type'],'DG')+substr_count($p['offer_type'],'CG'))<$go_offer_count)){
 //                        DB::table('tbl_panel_info')->where('ansar_id',$p['ansar_id'])->update(['go_panel_position'=>$i]);
                         $query .= "WHEN ".$p['ansar_id']." THEN $i ";
                         $i++;

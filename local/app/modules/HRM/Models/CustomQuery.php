@@ -725,12 +725,14 @@ class CustomQuery
         }
         if ($division && $division != 'all') {
             $ansarQuery->whereEqualIn('tbl_ansar_parsonal_info.division_id', explode(',',$division));
+            $sort = "re_panel_date";
         }
         if ($unit != 'all') {
             $ansarQuery->where('tbl_units.id', $unit);
         }
         if ($thana != 'all') {
             $ansarQuery->where('tbl_thana.id', $thana);
+            $sort = "re_panel_date";
         }
         if ($sex != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);

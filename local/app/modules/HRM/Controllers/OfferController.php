@@ -5,6 +5,8 @@ namespace App\modules\HRM\Controllers;
 use App\Helper\Helper;
 use App\Http\Controllers\Controller;
 use App\Jobs\OfferQueue;
+use App\Jobs\RearrangePanelPositionGlobal;
+use App\Jobs\RearrangePanelPositionLocal;
 use App\modules\HRM\Models\ActionUserLog;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\CustomQuery;
@@ -248,7 +250,9 @@ class OfferController extends Controller
             DB::beginTransaction();
             try {
                 $ansar = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
+                $panel_date = Carbon::now()->format("Y-m-d H:i:s");
                 $offered_ansar = $ansar->offer_sms_info;
+                $os = OfferSMSStatus::where('ansar_id',$ansar_ids[$i])->first();
                 if (!$offered_ansar) $received_ansar = $ansar->receiveSMS;
                 if ($offered_ansar && $offered_ansar->come_from == 'rest') {
                     $ansar->status()->update([
@@ -261,8 +265,8 @@ class OfferController extends Controller
                         $panel_log = $ansar->panelLog()->first();
                         $ansar->panel()->save(new PanelModel([
                             'memorandum_id'=>$panel_log->old_memorandum_id,
-                            'panel_date'=>$panel_log->panel_date,
-                            're_panel_date'=>$panel_log->re_panel_date,
+                            'panel_date'=>$os&&$os->isGlobalOfferRegion()?$panel_date:$panel_log->panel_date,
+                            're_panel_date'=>$os&&$os->isRegionalOfferRegion()?$panel_date:$panel_log->re_panel_date,
                             'come_from'=>'OfferCancel',
                             'ansar_merit_list'=>1,
                             'action_user_id'=>auth()->user()->id,
@@ -271,6 +275,11 @@ class OfferController extends Controller
                     }else{
                         $pa->locked = 0;
                         $pa->come_from = 'OfferCancel';
+                        if($os&&$os->isGlobalOfferRegion()){
+                            $pa->panel_date = $panel_date;
+                        }elseif($os&&$os->isRegionalOfferRegion()){
+                            $pa->re_panel_date = $panel_date;
+                        }
                         $pa->save();
                     }
                     $ansar->status()->update([
@@ -281,7 +290,7 @@ class OfferController extends Controller
                 $ansar->offerCancel()->save(new OfferCancel([
                     'offer_cancel_date' => Carbon::now()
                 ]));
-                $os = OfferSMSStatus::where('ansar_id',$ansar_ids[$i])->first();
+
                 if($os){
                     $ot = explode(",",$os->offer_type);
                     $ou = explode(",",$os->last_offer_units);
@@ -299,6 +308,7 @@ class OfferController extends Controller
                         'offered_district' => $offered_ansar->district_id,
                         'action_user_id' => auth()->user()->id,
                         'reply_type' => 'No Reply',
+                        'comment'=>'Offer Cancel'
                     ]));
                     $offered_ansar->delete();
                 } else {
@@ -308,6 +318,7 @@ class OfferController extends Controller
                         'action_user_id' => auth()->user()->id,
                         'action_date' => Carbon::now(),
                         'reply_type' => 'Yes',
+                        'comment'=>'Offer Cancel'
                     ]));
                     $received_ansar->delete();
                 }
@@ -323,6 +334,10 @@ class OfferController extends Controller
                 DB::rollback();
                 return response(collect(['type' => 'error', 'message' => $e->getMessage()]), 400, ['Content-Type' => 'application\json']);
             }
+        }
+        if(count($ansar_ids)){
+            $this->dispatch(new RearrangePanelPositionGlobal());
+            $this->dispatch(new RearrangePanelPositionLocal());
         }
         return Response::json(['type' => 'success', 'message' => 'Offer cancel successfully']);
     }
