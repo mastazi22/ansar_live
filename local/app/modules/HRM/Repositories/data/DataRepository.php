@@ -84,7 +84,21 @@ class DataRepository implements DataInterface
                     array_push($datas,$div[0]);
                 }
             }
-            return $datas;
+            $resultDatas = $datas;
+            $removed=[];
+            foreach($datas as $key=>$value){
+                if(is_array($datas[$key]) && !in_array($key,$removed)){
+                    $temp = explode(',',$datas[$key]["id"]);
+                    foreach($resultDatas as $tkey=>$tvalue){
+                        if(is_array($resultDatas[$tkey]) && $tvalue["id"] == $temp[1].",".$temp[0]){
+                            array_push($removed, $tkey);
+                            unset($resultDatas[$tkey]);
+                            break;
+                        }
+                    }
+                }
+            }
+            return $resultDatas;
         }
 
         return $division->where('id', '!=', 0)->orderBy('sort_by', 'asc')->get();
