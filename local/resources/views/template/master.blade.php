@@ -213,12 +213,12 @@
             <div class="row">
                 <div class="col-md-8">
                     <h3 class="header-title">@yield('title')</h3>
-                    <h1 class="small-title">
-                        <small class="small-title">@yield('small_title')</small>
-                    </h1>
                 </div>
                 <div class="col-md-4">
                     @yield('breadcrumb')
+                    <h1 class="small-title">
+                        <small class="small-title">@yield('small_title')</small>
+                    </h1>
                 </div>
             </div>
         </section>
