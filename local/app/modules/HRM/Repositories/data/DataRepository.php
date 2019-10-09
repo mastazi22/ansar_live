@@ -72,19 +72,27 @@ class DataRepository implements DataInterface
                     $division_name_bng = $div[0]->division_name_bng;
                     $division_name_eng = $div[0]->division_name_eng;
                     $id = $div[0]->id;
+                    $ids  = [$id];
                     foreach ($r as $rr){
                         $rv = $divisions[$rr];
                         $division_name_bng .= " + ".$rv[0]->division_name_bng;
                         $division_name_eng .= " + ".$rv[0]->division_name_eng;
-                        $id .= ",".$rv[0]->id;
+                        array_push($ids,$rv[0]->id);
                     }
+                    sort($ids);
+                    $id = implode(",",$ids);
                     array_push($datas,compact('id','division_name_bng','division_name_eng'));
                 }
                 else{
                     array_push($datas,$div[0]);
                 }
             }
-            return $datas;
+            $divisions = [];
+            $datas= collect($datas)->groupBy('id')->values()->toArray();
+            foreach ($datas as $d){
+                array_push($divisions,$d[0]);
+            }
+            return $divisions;
         }
 
         return $division->where('id', '!=', 0)->orderBy('sort_by', 'asc')->get();

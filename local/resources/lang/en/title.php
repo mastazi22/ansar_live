@@ -18,6 +18,8 @@ return [
   'tar'=>'Total Ansars (Own Range)',
   'tp'=>'Total Paneled',
   'tob'=>'Total Offer Blocked',
+  'tobd'=>'Total Offer Blocked (Own District)',
+  'tobr'=>'Total Offer Blocked (Own Range)',
   'tpd'=>'Total Paneled (Own District)',
   'tpr'=>'Total Paneled (Own Range)',
   'tf'=>'Total Free',

@@ -6,6 +6,7 @@ use App\Helper\Facades\GlobalParameterFacades;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Jobs\BlockStatusSms;
+use App\modules\HRM\Models\AnsarFutureState;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\BlackListInfoModel;
 use App\modules\HRM\Models\BlackListModel;
@@ -152,77 +153,146 @@ class BlockBlackController extends Controller
         try {
             $ansar = AnsarStatusInfo::where('ansar_id', $ansar_id)->first();
             if(!$ansar) throw new\Exception('This Ansar doesn`t exists');
-            BlockListModel::create([
-               'ansar_id'=>$ansar_id,
-               'block_list_from'=>$ansar->getStatus()[0]=="Embodied"?"Embodiment":$ansar->getStatus()[0],
-               'from_id'=>$from_id,
-               'date_for_block'=>$modified_block_date,
-               'comment_for_block'=>$block_comment,
-               'action_user_id'=>Auth::user()->id,
-            ]);
-            switch ($ansar->getStatus()[0]) {
+            $ansar_block_details = [
+                'ansar_id'=>$ansar_id,
+                'block_list_from'=>$ansar->getStatus()[0]=="Embodied"?"Embodiment":$ansar->getStatus()[0],
+                'from_id'=>$from_id,
+                'date_for_block'=>$modified_block_date,
+                'comment_for_block'=>$block_comment,
+                'action_user_id'=>Auth::user()->id,
+            ];
+            if(Carbon::parse($block_date)->lte(Carbon::now())) {
+                BlockListModel::create($ansar_block_details);
 
-                case AnsarStatusInfo::NOT_VERIFIED_STATUS:
-                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'ENTRY', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
-                    break;
+                switch ($ansar->getStatus()[0]) {
 
-                case AnsarStatusInfo::FREE_STATUS:
-                     $ansar->update(['block_list_status' => 1,'free_status'=>0]);
-                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'FREE', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
-                    break;
+                    case AnsarStatusInfo::NOT_VERIFIED_STATUS:
+                        CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'ENTRY', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
 
-                case AnsarStatusInfo::PANEL_STATUS:
-                    $ansar->ansar->panel->saveLog("Blocklist",$modified_block_date,$block_comment);
-                    $ansar->ansar->panel->delete();
-                    $ansar->update(['block_list_status' => 1,'pannel_status'=>0]);
-                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'PANEL', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
-                    break;
+                    case AnsarStatusInfo::FREE_STATUS:
+                        $ansar->update(['block_list_status' => 1,'free_status'=>0]);
+                        CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'FREE', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
 
-                case AnsarStatusInfo::OFFER_STATUS:
-                    $offer = $ansar->ansar->offer_sms_info;
-                    if(!$offer){
-                        $offer = $ansar->ansar->receiveSMS;
-                        $offer->saveLog();
-                        $offer->deleteCount();
-                        $offer->deleteOfferStatus();
-                        $offer->delete();
-                    }
-                    else{
-                        $offer->saveLog("No Reply");
-                        $offer->deleteCount();
-                        $offer->deleteOfferStatus();
-                        $offer->delete();
-                    }
-                    $ansar->update(['block_list_status' => 1,'offer_sms_status'=>0]);
-                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'OFFER', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
-                    break;
+                    case AnsarStatusInfo::PANEL_STATUS:
+                        $ansar->ansar->panel->saveLog("Blocklist",$modified_block_date,$block_comment);
+                        $ansar->ansar->panel->delete();
+                        $ansar->update(['block_list_status' => 1,'pannel_status'=>0]);
+                        CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'PANEL', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
 
-                case AnsarStatusInfo::EMBODIMENT_STATUS:
-                    $ansar->ansar->embodiment->saveLog("Blocklist",$modified_block_date,8);
-                    $ansar->ansar->embodiment->delete();
-                    $ansar->update(['block_list_status' => 1,'embodied_status'=>0]);
-                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'EMBODIED', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
-                    break;
+                    case AnsarStatusInfo::OFFER_STATUS:
+                        $offer = $ansar->ansar->offer_sms_info;
+                        if(!$offer){
+                            $offer = $ansar->ansar->receiveSMS;
+                            $offer->saveLog();
+                            $offer->deleteCount();
+                            $offer->deleteOfferStatus();
+                            $offer->delete();
+                        }
+                        else{
+                            $offer->saveLog("No Reply");
+                            $offer->deleteCount();
+                            $offer->deleteOfferStatus();
+                            $offer->delete();
+                        }
+                        $ansar->update(['block_list_status' => 1,'offer_sms_status'=>0]);
+                        CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'OFFER', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
 
-                case AnsarStatusInfo::REST_STATUS:
-                    $ansar->ansar->rest->saveLog("Blocklist",$modified_block_date,$block_comment);
-                    $ansar->ansar->rest->delete();
-                    $ansar->update(['block_list_status' => 1,'rest_status'=>0]);
-                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'REST', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
-                    break;
-                case AnsarStatusInfo::OFFER_BLOCK_STATUS:
-                    $offer_blocked = OfferBlockedAnsar::where('ansar_id',$ansar->ansar_id)->first();
-                    $offer_blocked->delete();
-                    $ansar->update(['block_list_status' => 1,'offer_block_status'=>0]);
-                    CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'OFFER BLOCK', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
-                    break;
-                default:
-                    throw new \Exception('This Ansar can`t be blocked.Because he is BLACKED');
-                    break;
+                    case AnsarStatusInfo::EMBODIMENT_STATUS:
+                        $ansar->ansar->embodiment->saveLog("Blocklist",$modified_block_date,8);
+                        $ansar->ansar->embodiment->delete();
+                        $ansar->update(['block_list_status' => 1,'embodied_status'=>0]);
+                        CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'EMBODIED', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
 
+                    case AnsarStatusInfo::REST_STATUS:
+                        $ansar->ansar->rest->saveLog("Blocklist",$modified_block_date,$block_comment);
+                        $ansar->ansar->rest->delete();
+                        $ansar->update(['block_list_status' => 1,'rest_status'=>0]);
+                        CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'REST', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
+                    case AnsarStatusInfo::OFFER_BLOCK_STATUS:
+                        $offer_blocked = OfferBlockedAnsar::where('ansar_id',$ansar->ansar_id)->first();
+                        $offer_blocked->delete();
+                        $ansar->update(['block_list_status' => 1,'offer_block_status'=>0]);
+                        CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'OFFER BLOCK', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
+                    default:
+                        throw new \Exception('This Ansar can`t be blocked.Because he is BLACKED');
+                        break;
+
+                }
+
+                $this->dispatch(new BlockStatusSms($ansar_id,$block_comment));
+            }else{
+                $ansar_future_state = [
+                    'ansar_id'=>$request->ansar_id,
+                    'data'=>serialize($ansar_block_details),
+                    'action_date'=>Carbon::now()->format("y-m-d H:i:s"),
+                    'activation_date'=>Carbon::parse($block_date)->format("Y-m-d"),
+                    'action_by'=>Auth::user()->id,
+                    'from_status'=>'Embodiment',
+                    'to_status'=>'Block',
+                ];
+                switch ($ansar->getStatus()[0]) {
+
+                    case AnsarStatusInfo::NOT_VERIFIED_STATUS:
+                        $ansar_future_state['from_status'] = 'Unverified';
+                        CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'ENTRY', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
+
+                    case AnsarStatusInfo::FREE_STATUS:
+                        $ansar_future_state['from_status'] = 'Free';
+                        CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'FREE', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
+
+                    case AnsarStatusInfo::PANEL_STATUS:
+                        $ansar_future_state['from_status'] = 'Panel';
+                        CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'PANEL', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
+
+                    case AnsarStatusInfo::OFFER_STATUS:
+                        $offer = $ansar->ansar->offer_sms_info;
+                        if(!$offer){
+                            $offer = $ansar->ansar->receiveSMS;
+                            $offer->saveLog();
+                            $offer->deleteCount();
+                            $offer->deleteOfferStatus();
+                            $offer->delete();
+                        }
+                        else{
+                            $offer->saveLog("No Reply");
+                            $offer->deleteCount();
+                            $offer->deleteOfferStatus();
+                            $offer->delete();
+                        }
+                        $ansar->update(['block_list_status' => 1,'offer_sms_status'=>0]);
+                        CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'OFFER', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
+
+                    case AnsarStatusInfo::EMBODIMENT_STATUS:
+                        $ansar_future_state['from_status'] = 'Embodiment';
+                        CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'EMBODIED', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
+
+                    case AnsarStatusInfo::REST_STATUS:
+                        $ansar_future_state['from_status'] = 'Rest';
+                        CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'REST', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
+                    case AnsarStatusInfo::OFFER_BLOCK_STATUS:
+                        $ansar_future_state['from_status'] = 'Offer_blocked';
+                        CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'BLOCKED', 'from_state' => 'OFFER BLOCK', 'to_state' => 'BLOCKED', 'action_by' => auth()->user()->id]);
+                        break;
+                    default:
+                        throw new \Exception('This Ansar can`t be blocked.Because he is BLACKED');
+                        break;
+
+                }
+                AnsarFutureState::create($ansar_future_state);
             }
-
-            $this->dispatch(new BlockStatusSms($ansar_id,$block_comment));
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -425,20 +495,33 @@ class BlockBlackController extends Controller
 
                 throw new \Exception("This ansar is not in block list");
             }
-            $blocklist_entry = BlockListModel::where('ansar_id', $ansar_id)->orderBy('id','desc')->first();
-            $blocklist_entry->ansar_id = $ansar_id;
-            $blocklist_entry->date_for_unblock = $modified_unblock_date;
-            $blocklist_entry->comment_for_unblock = $unblock_comment;
-            $blocklist_entry->save();
+            $ansar_unblock_details = [
+                'date_for_unblock'=>$modified_unblock_date,
+                'comment_for_unblock'=>$unblock_comment
+            ];
+            if(Carbon::parse($unblock_date)->lte(Carbon::now())){
+                $blocklist_entry = BlockListModel::where('ansar_id', $ansar_id)->orderBy('id','desc')->first();
+                $blocklist_entry->update($ansar_unblock_details);
+                $blocklist_entry->save();
 
-            $ansar->block_list_status = 0;
-            $ansar->save();
-            $ansar->ansar->update(['verified'=>0]);
+                $ansar->block_list_status = 0;
+                $ansar->save();
+                $ansar->ansar->update(['verified'=>0]);
+            }else{
+                AnsarFutureState::create([
+                    'ansar_id'=>$ansar_id,
+                    'data'=>serialize($ansar_unblock_details),
+                    'action_date'=>Carbon::now()->format("y-m-d H:i:s"),
+                    'activation_date'=>$modified_unblock_date,
+                    'action_by'=>Auth::user()->id,
+                    'from_status'=>'Block',
+                    'to_status'=>'Unverified'
+                ]);
+            }
             CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'UNBLOCKED', 'from_state' => 'BLOCKED', 'to_state' => 'UNVERIFIED', 'action_by' => auth()->user()->id]);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            return $e->getMessage();
             return Redirect::back()->with('error_message',$e->getMessage());
         }
         return Redirect::route('unblocklist_entry_view')->with('success_message', 'Ansar Removed from Blocklist Successfully');
@@ -533,10 +616,14 @@ class BlockBlackController extends Controller
 
                         $sms_offer_info->saveLog('No Reply');
                         $sms_offer_info->delete();
+                        $sms_offer_info->deleteCount();
+                        $sms_offer_info->deleteOfferStatus();
 
                     } elseif (!is_null($sms_receive_info)) {
                         $sms_receive_info->saveLog();
                         $sms_receive_info->delete();
+                        $sms_receive_info->deleteCount();
+                        $sms_receive_info->deleteOfferStatus();
                     }
 
                     $ansar_status->update(['free_status' => 0, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 1, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 0]);
@@ -688,23 +775,39 @@ class BlockBlackController extends Controller
         DB::beginTransaction();
         try {
             $blacklist_info = BlackListModel::where('ansar_id', $ansar_id)->first();
-            $blacklist_log_entry = new BlackListInfoModel();
-            $blacklist_log_entry->old_blacklist_id = $blacklist_info->id;
-            $blacklist_log_entry->ansar_id = $ansar_id;
-            $blacklist_log_entry->black_list_from = $blacklist_info->black_list_from;
-            $blacklist_log_entry->from_id = $blacklist_info->from_id;
-            $blacklist_log_entry->black_listed_date = $blacklist_info->black_listed_date;
-            $blacklist_log_entry->black_list_comment = $blacklist_info->black_list_comment;
-            $blacklist_log_entry->unblacklist_date = $modified_unblack_date;
-            $blacklist_log_entry->unblacklist_comment = $unblack_comment;
-            $blacklist_log_entry->move_to = "Free";
-            $blacklist_log_entry->move_date = $modified_unblack_date;
-            $blacklist_log_entry->action_user_id = Auth::user()->id;
-            $blacklist_log_entry->save();
+            $ansar_unblack_detail = [
+                'old_blacklist_id'=> $blacklist_info->id,
+                'ansar_id'=> $ansar_id,
+                'black_list_from'=> $blacklist_info->black_list_from,
+                'from_id'=> $blacklist_info->from_id,
+                'black_listed_date'=> $blacklist_info->black_listed_date,
+                'black_list_comment'=> $blacklist_info->black_list_comment,
+                'unblacklist_date'=> $modified_unblack_date,
+                'unblacklist_comment'=> $unblack_comment,
+                'move_to'=> "Free",
+                'move_date'=> $modified_unblack_date,
+                'action_user_id'=> Auth::user()->id,
+            ];
+            if(Carbon::parse($unblack_date)->lte(Carbon::now())){
 
-            $blacklist_info->delete();
+                BlackListInfoModel::create($ansar_unblack_detail);
 
-            AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['free_status' => 1, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 0]);
+                $blacklist_info->delete();
+                AnsarStatusInfo::where('ansar_id', $ansar_id)->update(['free_status' => 1, 'offer_sms_status' => 0, 'offered_status' => 0, 'block_list_status' => 0, 'black_list_status' => 0, 'rest_status' => 0, 'embodied_status' => 0, 'pannel_status' => 0, 'freezing_status' => 0]);
+            }else{
+                AnsarFutureState::create([
+                    'ansar_id'=>$ansar_id,
+                    'data'=>serialize($ansar_unblack_detail),
+                    'action_date'=>Carbon::now()->format("y-m-d H:i:s"),
+                    'activation_date'=>$modified_unblack_date,
+                    'action_by'=>Auth::user()->id,
+                    'from_status'=>'Black',
+                    'to_status'=>'Free'
+                ]);
+            }
+
+
+
 //            Event::fire(new ActionUserEvent(['ansar_id'=>$ansar_id,'action_type'=>'FREE','from_state'=>'BLACKED','to_state'=>'FREE','action_by'=>auth()->user()->id]));
             CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'UNBLACKED', 'from_state' => 'BLACKED', 'to_state' => 'FREE', 'action_by' => auth()->user()->id]);
 

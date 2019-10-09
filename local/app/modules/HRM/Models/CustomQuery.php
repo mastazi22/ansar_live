@@ -101,10 +101,10 @@ class CustomQuery
                     $query->whereNotIn('pu.id', $d[$exclude_district]);
                 } else $query->where('pu.id', '!=', $exclude_district);
 
-                $fquery->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
+//                $fquery->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
             } else {
                 $query->where('pu.id', '!=', $exclude_district);
-                $fquery->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
+//                $fquery->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
             }
             if(is_array($offerZone)&&count($offerZone)>0){
                 if(!in_array($exclude_district, Config::get('app.offer'))){
@@ -113,14 +113,14 @@ class CustomQuery
                 }
                 $query->whereIn('pu.id', $offerZone);
                 $fquery->whereIn('pu.id', $offerZone);
-                $fquery->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
+//                $fquery->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
             }
             else if(!in_array($exclude_district, Config::get('app.offer'))){
                 $query->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id');
                 $fquery->join('tbl_units as du', 'tbl_division.id', '=', 'du.division_id');
                 $query->where('du.id', '=', $exclude_district);
                 $fquery->where('du.id', '=', $exclude_district);
-                $fquery->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
+//                $fquery->orderBy(DB::raw("FIELD(pu.id,$exclude_district)"),'DESC');
 
             }
 
@@ -844,6 +844,42 @@ class CustomQuery
         }
         if ($unit != 'all') {
             $ansarQuery->where('ou.id', $unit);
+        }
+        if ($sex != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
+        }
+        if ($time == self::RECENT) {
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
+        }
+        if ($q) {
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+        }
+        $currentDate = Carbon::now()->format('Y-m-d');
+        $total = clone $ansarQuery;
+        $ansarQuery->select(DB::raw('MAX(tbl_sms_send_log.offered_date) as offered_date'),'tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'pu.unit_name_bng as unit', 'pt.thana_name_bng as thana', 'tbl_offer_blocked_ansar.blocked_date', 'ou.unit_name_eng as offer_unit')->orderBy(DB::raw("tbl_offer_blocked_ansar.blocked_date = '{$currentDate}'"),'desc')->orderBy('tbl_offer_blocked_ansar.blocked_date');
+
+        $total->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        $ansars = $ansarQuery->skip($offset)->limit($limit)->get();
+//        return $ansars;
+        //return $total->get();
+        $t = DB::table(DB::raw("( {$total->toSql()}) x"))->mergeBindings($total)->groupBy('x.code')->select(DB::raw("count(*) as t"), 'x.code')->get();
+//        return $t;
+        return ['total' => collect($t)->pluck('t', 'code'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'offer_block'];
+    }
+    public static function getTotalOfferBlockAnsarListOwnDistrict($offset, $limit, $unit, $thana, $division = null, $sex='all', $time, $rank, $q)
+    {
+        DB::enableQueryLog();
+        $ansarQuery = QueryHelper::getQuery(QueryHelper::OFFER_BLOCK);
+        if ($rank != 'all') {
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
+        if ($division && $division != 'all') {
+            $ansarQuery->where('pu.division_id', $division);
+        }
+        if ($unit != 'all') {
+            $ansarQuery->where('pu.id', $unit);
         }
         if ($sex != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
