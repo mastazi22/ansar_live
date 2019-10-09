@@ -56,11 +56,13 @@
                     <div class="row">
                         <div class="col-md-6 col-centered">
                             <div class="col-md-6 col-sm-12 col-xs-12">
-                                <div class="form-group">
-                                    <input type="text" ng-model="ansar_id" class="form-control"
-                                           placeholder="Enter Ansar ID">
-                                    <span class="text-danger" ng-if="errorFound==1">[[errorMessage]]</span>
-                                </div>
+                                <form ng-submit="loadAnsarDetail(ansar_id)" class="row">
+                                    <div class="form-group">
+                                        <input type="text" ng-model="ansar_id" class="form-control"
+                                               placeholder="Enter Ansar ID">
+                                        <span class="text-danger" ng-if="errorFound==1">[[errorMessage]]</span>
+                                    </div>
+                                </form>
                             </div>
                             <div class="col-md-6 col-sm-12 col-xs-12">
                                 <button class="btn btn-primary" ng-click="loadAnsarDetail(ansar_id)">Generate Ansar

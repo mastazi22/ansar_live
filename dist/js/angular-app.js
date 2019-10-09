@@ -2,6 +2,7 @@
  * Created by arafat on 10/25/2016.
  */
 var prefix = '';
+// var prefix = 'ansarerp/';
 var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], function ($interpolateProvider, $httpProvider, $sceProvider, $routeProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
@@ -1120,22 +1121,36 @@ GlobalApp.directive('tableSearch', function () {
 })
 GlobalApp.directive('databaseSearch', function () {
     return {
+        //<input type="text" ng-model="q" class="form-control" style="margin-bottom: 10px" ng-change="queue.push(1)" placeholder="[[placeHolder?placeHolder:'Search by Ansar ID']]">
         restrict: 'ACE',
-        template: '<input type="text" ng-model="q" class="form-control" style="margin-bottom: 10px" ng-change="queue.push(1)" placeholder="[[placeHolder?placeHolder:\'Search by Ansar ID\']]">',
+        template: '<div class="input-group"><input type="text" ng-model="q" class="form-control" ng-change="resetSearchResult()" ng-keydown="searchOnKeyDown($event)" placeholder="[[placeHolder?placeHolder:\'Search by Ansar ID\']]">' +
+            '<span class="input-group-addon" style="cursor: pointer" ng-click="onChange()"><i class="fa fa-search"></i></span></div>',
         scope: {
             queue: '=',
             q: '=',
             placeHolder: '@',
             onChange: '&'
         },
-        controller: function ($scope) {
-            $scope.$watch('queue', function (n, o) {
-                //alert(n)
-                if (n.length === 1) {
+        controller: function ($scope, $timeout) {
+            $scope.searchOnKeyDown = function(event){
+                if(event.which === 13){
                     $scope.onChange();
                 }
-
-            }, true)
+            };
+            $scope.resetSearchResult = function(){
+                if(!$scope.q){
+                    $timeout(function(){
+                        $scope.onChange();
+                    });
+                }
+            };
+            // $scope.$watch('queue', function (n, o) {
+            //     //alert(n)
+            //     if (n.length === 1) {
+            //         $scope.onChange();
+            //     }
+            //
+            // }, true)
         }
     }
 })
