@@ -121,12 +121,12 @@
                 $http({
                     url: '{{URL::to('HRM/send_offer')}}',
                     data: angular.toJson({
-                        pc_male: $scope.kpiPCMale,
-                        pc_female: $scope.kpiPCFemale,
-                        apc_male: $scope.kpiAPCMale,
-                        apc_female: $scope.kpiAPCFemale,
-                        ansar_male: $scope.kpiAnsarMale,
-                        ansar_female: $scope.kpiAnsarFemale,
+                        pc_male: $scope.kpiPCMale || 0,
+                        pc_female: $scope.kpiPCFemale || 0,
+                        apc_male: $scope.kpiAPCMale || 0,
+                        apc_female: $scope.kpiAPCFemale || 0,
+                        ansar_male: $scope.kpiAnsarMale || 0,
+                        ansar_female: $scope.kpiAnsarFemale || 0,
                         district: $scope.selectedDistrict.filter(function (v) {
                             return v != undefined;
                         }),
@@ -297,6 +297,7 @@
                                                                         style="color: black;"></i>&nbsp;Male/পুরুষ
                                                             </label>
                                                             <input type="number" ng-model="kpiPCMale" min="0"
+                                                                   placeholder="Put your number here"
                                                                    max="[[offerQuota]]" class="form-control"
                                                                    ng-disabled="!kpiPCMaleStatus" pattern="[0-9]+"
                                                                    onkeydown="return event.keyCode !== 69 && event.keyCode !== 101"
@@ -313,6 +314,7 @@
                                                                         style="color: black;"></i>&nbsp;Female/মহিলা
                                                             </label>
                                                             <input type="number" ng-model="kpiPCFemale" min="0"
+                                                                   placeholder="Put your number here"
                                                                    max="[[offerQuota]]" class="form-control"
                                                                    ng-disabled="!kpiPCFemaleStatus"
                                                                    onkeydown="return event.keyCode !== 69 && event.keyCode !== 101"
@@ -334,6 +336,7 @@
                                                                         style="color: black;"></i>&nbsp;Male/পুরুষ
                                                             </label>
                                                             <input type="number" ng-model="kpiAPCMale" min="0"
+                                                                   placeholder="Put your number here"
                                                                    max="[[offerQuota]]" class="form-control"
                                                                    ng-disabled="!kpiAPCMaleStatus"
                                                                    onkeydown="return event.keyCode !== 69 && event.keyCode !== 101"
@@ -349,6 +352,7 @@
                                                                         style="color: black;"></i>&nbsp;Female/মহিলা
                                                             </label>
                                                             <input type="number" ng-model="kpiAPCFemale" min="0"
+                                                                   placeholder="Put your number here"
                                                                    max="[[offerQuota]]" class="form-control"
                                                                    onkeydown="return event.keyCode !== 69 && event.keyCode !== 101"
                                                                    ng-change="kpiAPCFemale=kpiAPCFemale==''?0:getInt(kpiAPCFemale)"
@@ -370,6 +374,7 @@
                                                                         style="color: black;"></i>&nbsp;Male/পুরুষ
                                                             </label>
                                                             <input type="number" ng-model="kpiAnsarMale" min="0"
+                                                                   placeholder="Put your number here"
                                                                    max="[[offerQuota]]" class="form-control"
                                                                    onkeydown="return event.keyCode !== 69 && event.keyCode !== 101"
                                                                    ng-change="kpiAnsarMale=kpiAnsarMale==''?0:getInt(kpiAnsarMale)"
@@ -385,6 +390,7 @@
                                                                         style="color: black;"></i>&nbsp;Female/মহিলা
                                                             </label>
                                                             <input type="number" ng-model="kpiAnsarFemale" min="0"
+                                                                   placeholder="Put your number here"
                                                                    max="[[offerQuota]]" class="form-control"
                                                                    onkeydown="return event.keyCode !== 69 && event.keyCode !== 101"
                                                                    ng-change="kpiAnsarFemale=kpiAnsarFemale==''?0:getInt(kpiAnsarFemale)"
