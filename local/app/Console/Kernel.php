@@ -11,6 +11,7 @@ use App\Jobs\BlockForAge;
 use App\Jobs\RearrangePanelPositionGlobal;
 use App\Jobs\RearrangePanelPositionLocal;
 use App\Jobs\UnblockRetireAnsar;
+use App\modules\HRM\Models\AnsarFutureState;
 use App\modules\HRM\Models\AnsarRetireHistory;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\EmbodimentModel;
@@ -205,6 +206,7 @@ class Kernel extends ConsoleKernel
 
                             }
                             $pa->locked = 0;
+                            $pa->come_from = "Offer";
                             $pa->save();
                             $pi->status()->update([
                                 'pannel_status' => 1,
@@ -248,7 +250,7 @@ class Kernel extends ConsoleKernel
             $now = Carbon::now();
             $c = 0;
             foreach ($offeredAnsars as $ansar) {
-                if ($now->diffInDays(Carbon::parse($ansar->sms_received_datetime)) >= 7) {
+                if ($now->diffInSeconds(Carbon::parse($ansar->sms_received_datetime)) >= 1) {
                     $c++;
                     Log::info("CALLED START: OFFER ACCEPTED" . $ansar->ansar_id);
 
@@ -303,6 +305,7 @@ class Kernel extends ConsoleKernel
                                     $pa->panel_date = Carbon::now()->format('Y-m-d H:i:s');
                                 }
                                 $pa->locked = 0;
+                                $pa->come_from = "Offer";
                                 $pa->save();
                                 $ansar->status()->update([
                                     'pannel_status' => 1,
@@ -671,6 +674,49 @@ class Kernel extends ConsoleKernel
 
 
         })->everyTenMinutes()->name("UnblockRetireAnsar")->withoutOverlapping();*/
-
+        $schedule->call(function(){
+            $ansars = AnsarFutureState::where('activation_date',"<=",Carbon::now())->get();
+            $panel_count = 0;
+            DB::beginTransaction();
+            try{
+                foreach ($ansars as $ansar){
+                    switch ($ansar->to_status){
+                        case "Panel":
+                            $panel_count++;
+                            $ansar->moveToPanel();
+                            $ansar->delete();
+                            break;
+                        case "Embodiment":
+                            $ansar->moveToEmbodiment();
+                            $ansar->delete();
+                            break;
+                        case "Rest":
+                            $ansar->moveToRest();
+                            $ansar->delete();
+                            break;
+                        case "Unverified":
+                            $ansar->moveToUnverified();
+                            $ansar->delete();
+                            break;
+                        case "Free":
+                            $ansar->moveToFree();
+                            $ansar->delete();
+                            break;
+                        case "Block":
+                            $ansar->moveToBlock();
+                            $ansar->delete();
+                            break;
+                    }
+                }
+                if($panel_count>0){
+                    dispatch(new RearrangePanelPositionLocal());
+                    dispatch(new RearrangePanelPositionGlobal());
+                }
+                DB::commit();
+            }catch(\Exception $e){
+                DB::rollBack();
+                echo $e->getTraceAsString();
+            }
+        })->dailyAt("00:05")->name("ansar_future_state_execute")->withoutOverlapping();
     }
 }
