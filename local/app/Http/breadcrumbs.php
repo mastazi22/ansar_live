@@ -670,3 +670,7 @@ Breadcrumbs::register('view_ansar_history', function($breadcrumbs) {
     $breadcrumbs->parent('report');
     $breadcrumbs->push('View Ansar History', URL::route('view_ansar_history'));
 });
+Breadcrumbs::register('ansar_scheduled_jobs', function($breadcrumbs) {
+    $breadcrumbs->parent('report');
+    $breadcrumbs->push('Scheduled Jobs', URL::route('ansar_scheduled_jobs'));
+});

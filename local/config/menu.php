@@ -254,6 +254,10 @@ return [
                 "View Ansar History"=>[
                     "route" => "view_ansar_history",
                     "icon" => "fa-file-pdf-o",
+                ],
+                "Scheduled Jobs"=>[
+                    "route" => "ansar_scheduled_jobs",
+                    "icon" => "fa-file-pdf-o",
                 ]
             ]
         ],

@@ -106,8 +106,8 @@
         ]
       },
       {
-        "value":"kpi-withdraw-view,kpi-withdraw-update,kpi-withdraw-action-view",
-        "name":"Withdraw KPI"
+        "value": "kpi-withdraw-view,kpi-withdraw-update,kpi-withdraw-action-view",
+        "name": "Withdraw KPI"
       },
       {
         "text": "KPI Withdraw Cancel",
@@ -222,12 +222,12 @@
         "text": "Offer Rollback",
         "actions": [
           {
-            "value":"HRM.offer_rollback.index",
-            "name":"View All Offer Blocked"
+            "value": "HRM.offer_rollback.index",
+            "name": "View All Offer Blocked"
           },
           {
-            "value":"HRM.offer_rollback.update",
-            "name":"Edit Offer Blocked"
+            "value": "HRM.offer_rollback.update",
+            "name": "Edit Offer Blocked"
           }
         ]
       },
@@ -388,6 +388,10 @@
       {
         "value": "view_ansar_history",
         "name": "View Ansar History"
+      },
+      {
+        "value": "ansar_scheduled_jobs",
+        "name": "Scheduled Jobs"
       }
     ]
   },
@@ -533,7 +537,6 @@
           }
         ]
       }
-
     ]
   },
   {
@@ -882,8 +885,6 @@
               }
             ]
           }
-
-
         ]
       },
       {

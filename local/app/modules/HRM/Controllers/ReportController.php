@@ -881,4 +881,14 @@ class ReportController extends Controller
 //        dd(DB::getQueryLog());
         return Response::json($result);
     }
+
+    public function viewAnsarScheduleJobs(Request $request)
+    {
+        return View::make('HRM::Report.view_schedule_jobs');
+    }
+
+    public function viewAnsarScheduleJobsReport(Request $request)
+    {
+        return Response::json(['error' => 'not_complete']);
+    }
 }
