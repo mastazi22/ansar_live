@@ -11,15 +11,15 @@
             $scope.unit = {
                 selectedDistrict: "",
                 custom: "",
-                type:"1"
+                type: "1"
             };
             $scope.customData = {
-                "Today":1,
-                "Past 2 days":2,
-                "Past 3 days":3,
-                "Past 5 days":5,
-                "Past 7 days":7,
-                "Custom":-1,
+                "Today": 1,
+                "Past 2 days": 2,
+                "Past 3 days": 3,
+                "Past 5 days": 5,
+                "Past 7 days": 7,
+                "Custom": -1,
             }
             $scope.ansars = [];
             $scope.onr = [];
@@ -39,26 +39,27 @@
                         unit: $scope.params.unit,
                         division: $scope.params.range,
                         report_past: isNaN(parseInt($scope.unit.custom)) ? 0 : $scope.unit.custom,
-                        type: $scope.unit.type
+                        type: $scope.unit.type,
+                        gender: $scope.params.gender
                     }
-                }
-                else {
+                } else {
                     data = {
                         unit: $scope.params.unit,
                         division: $scope.params.range,
                         report_past: $scope.selectedDate,
-                        type: 0
+                        type: 0,
+                        gender: $scope.params.gender
                     }
                 }
-                data['export'] = t||false
+                data['export'] = t || false
                 $http({
                     method: 'get',
                     url: '{{URL::route('get_offered_ansar')}}',
                     params: data
                 }).then(function (response) {
                     $scope.allLoading = false;
-                    if(response.data.status){
-                        window.open(response.data.url,'_blank');
+                    if (response.data.status) {
+                        window.open(response.data.url, '_blank');
                         return;
                     }
                     $scope.errorFind = 0;
@@ -66,12 +67,12 @@
                     $scope.or = response.data.or
                     $scope.orj = response.data.orj
 
-                },function(response){
+                }, function (response) {
                     $scope.errorFind = 1;
                     $scope.onr = []
                     $scope.or = []
                     $scope.orj = []
-                    $scope.errorMessage = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
+                    $scope.errorMessage = $sce.trustAsHtml("<tr class='warning'><td colspan='" + $('.table').find('tr').find('th').length + "'>" + response.data + "</td></tr>");
                     $scope.allLoading = false;
                 })
             }
@@ -130,13 +131,14 @@
                                              class="radio-inline" style="margin: 0 !important;" value="bng"
                                              ng-model="reportType">&nbsp;<b>বাংলা</b>
                             </span>
-                    </div><br>
+                    </div>
+                    <br>
                     <filter-template
-                            show-item="['range','unit']"
+                            show-item="['range','unit','gender']"
                             type="single"
                             start-load="range"
-                            field-width="{range:'col-sm-4',unit:'col-sm-4',custom:'col-sm-4'}"
-                            data = "params"
+                            field-width="{range:'col-sm-3',unit:'col-sm-3',gender:'col-sm-3',custom:'col-sm-3'}"
+                            data="params"
                             custom-field="true"
                             custom-model="selectedDate"
                             custom-label="Select an Option"
@@ -159,12 +161,13 @@
                             </div>
                         </div>
                         <div class="col-sm-4 col-sm-offset-8">
-
                             <div class="form-control" style="padding: 0;border:none;">
                                 <button class="btn btn-primary pull-right" ng-click="loadAnsar(false)"><i
-                                            class="fa fa-eye"></i>&nbsp;View Offer Report</button>
+                                            class="fa fa-eye"></i>&nbsp;View Offer Report
+                                </button>
                                 <button class="btn btn-primary pull-right" ng-click="loadAnsar(true)"><i
-                                            class="fa fa-download"></i>&nbsp;Download Offer Report</button>
+                                            class="fa fa-download"></i>&nbsp;Download Offer Report
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -184,7 +187,8 @@
                             <div class="tab-content">
                                 <div id="offer_not_respond" class="tab-pane active">
                                     <h4 class="text text-bold">
-                                        PC([[onr.count.PC? onr.count.PC:0]]) APC([[onr.count.APC?onr.count.APC:0]]) Ansar([[onr.count.ANSAR?onr.count.ANSAR:0]])
+                                        PC([[onr.count.PC? onr.count.PC:0]]) APC([[onr.count.APC?onr.count.APC:0]])
+                                        Ansar([[onr.count.ANSAR?onr.count.ANSAR:0]])
                                     </h4>
                                     <div class="table-responsive">
                                         <table class="table table-bordered">
@@ -199,7 +203,8 @@
                                             <tr ng-if="onr.data.length<=0&&errorFind==0">
                                                 <th class="warning" colspan="5">No Ansar Found</th>
                                             </tr>
-                                            <tbody ng-if="errorFind==1&&onr.length<=0" ng-bind-html="errorMessage"></tbody>
+                                            <tbody ng-if="errorFind==1&&onr.length<=0"
+                                                   ng-bind-html="errorMessage"></tbody>
                                             <tr ng-if="onr.data.length>0&&errorFind==0" ng-repeat="a in onr.data">
                                                 <td>[[$index+1]]</td>
                                                 <td>[[a.ansar_id]]</td>
@@ -213,7 +218,8 @@
                                 </div>
                                 <div id="offer_send" class="tab-pane">
                                     <h4 class="text text-bold">
-                                        PC([[or.count.PC?or.count.PC:0]]) APC([[or.count.APC?or.count.APC:0]]) Ansar([[or.count.ANSAR?or.count.ANSAR:0]])
+                                        PC([[or.count.PC?or.count.PC:0]]) APC([[or.count.APC?or.count.APC:0]])
+                                        Ansar([[or.count.ANSAR?or.count.ANSAR:0]])
                                     </h4>
                                     <div class="table-responsive">
                                         <table class="table table-bordered">
@@ -228,7 +234,8 @@
                                             <tr ng-if="or.data.length<=0&&errorFind==0">
                                                 <th class="warning" colspan="5">No Ansar Found</th>
                                             </tr>
-                                            <tbody ng-if="errorFind==1&&or.length<=0" ng-bind-html="errorMessage"></tbody>
+                                            <tbody ng-if="errorFind==1&&or.length<=0"
+                                                   ng-bind-html="errorMessage"></tbody>
                                             <tr ng-if="or.data.length>0&&errorFind==0" ng-repeat="a in or.data">
                                                 <td>[[$index+1]]</td>
                                                 <td>[[a.ansar_id]]</td>
@@ -242,7 +249,8 @@
                                 </div>
                                 <div id="offer_reject" class="tab-pane">
                                     <h4 class="text text-bold">
-                                        PC([[orj.count.PC?orj.count.PC:0]]) APC([[orj.count.APC?orj.count.APC:0]]) Ansar([[orj.count.ANSAR?orj.count.ANSAR:0]])
+                                        PC([[orj.count.PC?orj.count.PC:0]]) APC([[orj.count.APC?orj.count.APC:0]])
+                                        Ansar([[orj.count.ANSAR?orj.count.ANSAR:0]])
                                     </h4>
                                     <div class="table-responsive">
                                         <table class="table table-bordered">
@@ -257,7 +265,8 @@
                                             <tr ng-if="orj.length<=0&&errorFind==0">
                                                 <th class="warning" colspan="5">No Ansar Found</th>
                                             </tr>
-                                            <tbody ng-if="errorFind==1&&orj.data.length<=0" ng-bind-html="errorMessage"></tbody>
+                                            <tbody ng-if="errorFind==1&&orj.data.length<=0"
+                                                   ng-bind-html="errorMessage"></tbody>
                                             <tr ng-if="orj.data.length>0&&errorFind==0" ng-repeat="a in orj.data">
                                                 <td>[[$index+1]]</td>
                                                 <td>[[a.ansar_id]]</td>

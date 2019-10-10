@@ -645,11 +645,13 @@ class ReportController extends Controller
         $division = Input::get('division');
         $past = Input::get('report_past');
         $type = Input::get('type');
+        $gender = Input::get('gender');
         $rules = [
             'unit' => 'numeric',
             'division' => 'numeric',
             'report_past' => 'numeric',
             'type' => 'numeric',
+            'gender' => 'in:Male,Female,Other'
         ];
         $valid = Validator::make(Input::all(), $rules);
         if ($valid->fails()) {
@@ -676,6 +678,7 @@ class ReportController extends Controller
             ->whereDate('tbl_sms_offer_info.sms_send_datetime', '>=', $c_date)
             ->where('tbl_units.id', $unit)
             ->where('tbl_units.division_id', $division)
+            ->where('tbl_ansar_parsonal_info.sex', $gender)
             ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_units.unit_name_bng', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_offer_info.sms_send_datetime')
             ->unionAll(DB::table('tbl_sms_send_log')
                 ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_send_log.ansar_id')
@@ -684,6 +687,7 @@ class ReportController extends Controller
                 ->whereDate('tbl_sms_send_log.offered_date', '>=', $c_date)
                 ->where('tbl_units.id', $unit)
                 ->where('tbl_units.division_id', $division)
+                ->where('tbl_ansar_parsonal_info.sex', $gender)
                 ->where('tbl_sms_send_log.reply_type', 'No Reply')
                 ->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_units.unit_name_bng', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.offered_date as sms_send_datetime'))->get();
 
@@ -694,6 +698,7 @@ class ReportController extends Controller
             ->whereDate('tbl_sms_receive_info.sms_send_datetime', '>=', $c_date)
             ->where('tbl_units.id', $unit)
             ->where('tbl_units.division_id', $division)
+            ->where('tbl_ansar_parsonal_info.sex', $gender)
             ->select('tbl_sms_receive_info.sms_send_datetime as offered_date', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_units.unit_name_bng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_receive_info.sms_received_datetime')
             ->unionAll(DB::table('tbl_sms_send_log')
                 ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_send_log.ansar_id')
@@ -702,6 +707,7 @@ class ReportController extends Controller
                 ->whereDate('tbl_sms_send_log.offered_date', '>=', $c_date)
                 ->where('tbl_units.id', $unit)
                 ->where('tbl_units.division_id', $division)
+                ->where('tbl_ansar_parsonal_info.sex', $gender)
                 ->where('tbl_sms_send_log.reply_type', 'Yes')
                 ->select('tbl_sms_send_log.offered_date', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_units.unit_name_bng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.action_date as sms_received_datetime'));
 
@@ -715,6 +721,7 @@ class ReportController extends Controller
             ->whereDate('tbl_sms_send_log.offered_date', '>=', $c_date)
             ->where('tbl_units.id', $unit)
             ->where('tbl_units.division_id', $division)
+            ->where('tbl_ansar_parsonal_info.sex', $gender)
             ->where('tbl_sms_send_log.reply_type', 'No')
             ->select('tbl_sms_send_log.offered_date', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_units.unit_name_bng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_designations.code', 'tbl_sms_send_log.action_date as reject_date')->get();
         if (Input::exists('export') && Input::get('export') == 'true') {
