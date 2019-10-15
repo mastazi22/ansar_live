@@ -322,6 +322,7 @@
                             <table class="table table-bordered table-striped" ng-if="ansarDetail['cEmbodiment']">
                                 <thead>
                                 <tr>
+                                    <th>Reporting Date</th>
                                     <th>Embodiment Date</th>
                                     <th>Service End Date</th>
                                     <th>KPI</th>
@@ -330,8 +331,8 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>[[convertDateObj(ansarDetail['cEmbodiment'].joining_date) |
-                                        date:'mediumDate']]
+                                    <td>[[convertDateObj(ansarDetail['cEmbodiment'].reporting_date) | date:'mediumDate']]
+                                    <td>[[convertDateObj(ansarDetail['cEmbodiment'].joining_date) | date:'mediumDate']]
                                     </td>
                                     <td>[[convertDateObj(ansarDetail['cEmbodiment'].service_ended_date) |
                                         date:'mediumDate']]
@@ -350,6 +351,7 @@
                                    ng-if="ansarDetail['lEmbodiment'] && ansarDetail['lEmbodiment'].length>0">
                                 <thead>
                                 <tr>
+                                    <th>Reporting Date</th>
                                     <th>Embodiment Date</th>
                                     <th>Disembodiment Date</th>
                                     <th>Disembodiment Reason</th>
@@ -360,6 +362,7 @@
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="lembodiment in ansarDetail['lEmbodiment']">
+                                    <td>[[convertDateObj(lembodiment.reporting_date) | date:'mediumDate']]</td>
                                     <td>[[convertDateObj(lembodiment.joining_date) | date:'mediumDate']]</td>
                                     <td>[[convertDateObj(lembodiment.release_date) | date:'mediumDate']]</td>
                                     <td>[[lembodiment.disembodiment_reason.reason_in_bng]]</td>

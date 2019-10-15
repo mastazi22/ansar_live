@@ -6,6 +6,7 @@ use App\Helper\ExportDataToExcel;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\modules\HRM\Models\ActionUserLog;
+use App\modules\HRM\Models\AnsarFutureState;
 use App\modules\HRM\Models\AnsarIdCard;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\CustomQuery;
@@ -889,6 +890,12 @@ class ReportController extends Controller
 
     public function viewAnsarScheduleJobsReport(Request $request)
     {
-        return Response::json(['error' => 'not_complete']);
+        $result = array();
+        $input = $request->all();
+        $result = AnsarFutureState::with("personalInfo.designation");
+        if (isset($input["q"]) && !empty($input["q"]) && is_numeric($input["q"])) {
+            $result = $result->where('ansar_id', '=', $input["q"]);
+        }
+        return Response::json($result->get());
     }
 }
