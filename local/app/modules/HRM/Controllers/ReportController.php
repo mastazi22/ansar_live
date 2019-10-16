@@ -891,11 +891,27 @@ class ReportController extends Controller
     public function viewAnsarScheduleJobsReport(Request $request)
     {
         $result = array();
+        $counts = DB::select('SELECT COUNT(tbl_ansar_future_state.id) AS total, SUM(IF (`tbl_ansar_parsonal_info`.`designation_id` = 1,1,0)) AS  AnsarCount,
+SUM(IF (`tbl_ansar_parsonal_info`.`designation_id` = 2,1,0)) AS  apcCount, SUM(IF (`tbl_ansar_parsonal_info`.`designation_id` = 3,1,0)) AS  pcCount
+FROM `tbl_ansar_future_state` INNER JOIN `tbl_ansar_parsonal_info` ON `tbl_ansar_future_state`.`ansar_id` = `tbl_ansar_parsonal_info`.`ansar_id`');
+        $result["total"] = $counts[0]->total;
+        $result["ansarTotal"] = $counts[0]->AnsarCount;
+        $result["apcCount"] = $counts[0]->apcCount;
+        $result["pcCount"] = $counts[0]->pcCount;
         $input = $request->all();
-        $result = AnsarFutureState::with("personalInfo.designation");
+        $ansarList = DB::table('tbl_ansar_future_state')
+            ->join("tbl_ansar_parsonal_info", "tbl_ansar_future_state.ansar_id", "=", "tbl_ansar_parsonal_info.ansar_id")
+            ->join("tbl_designations", "tbl_designations.id", "=", "tbl_ansar_parsonal_info.designation_id");
         if (isset($input["q"]) && !empty($input["q"]) && is_numeric($input["q"])) {
-            $result = $result->where('ansar_id', '=', $input["q"]);
+            $ansarList = $ansarList->where('tbl_ansar_future_state.ansar_id', '=', $input["q"]);
         }
-        return Response::json($result->get());
+        if (isset($input["rank"]) && !empty($input["rank"]) && is_numeric($input["rank"])) {
+            $ansarList = $ansarList->where('tbl_ansar_parsonal_info.designation_id', '=', $input["rank"]);
+        }
+        if (isset($input["gender"]) && ($input["gender"] === 'Male' || $input["gender"] === 'Female')) {
+            $ansarList = $ansarList->where('tbl_ansar_parsonal_info.sex', '=', $input["gender"]);
+        }
+        $result["list"] = $ansarList->get();
+        return Response::json($result);
     }
 }

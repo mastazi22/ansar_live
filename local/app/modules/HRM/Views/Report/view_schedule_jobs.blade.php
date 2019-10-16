@@ -9,6 +9,11 @@
             $scope.allLoading = false;
             $scope.ansarList = {};
             $scope.param = {};
+            $scope.rank = 'all';
+            $scope.total = 0;
+            $scope.ansarCount = 0;
+            $scope.apcCount = 0;
+            $scope.pcCount = 0;
             //methods
             $scope.loadPage = function () {
                 $scope.allLoading = true;
@@ -18,11 +23,17 @@
                     method: 'get',
                     url: '{{URL::route('ansar_scheduled_jobs_report')}}',
                     params: {
-                        q: $scope.q
+                        q: $scope.q,
+                        rank: $scope.rank,
+                        // gender:'Female'
                         // gender: $scope.param.gender == undefined ? 'all' : $scope.param.gender
                     }
                 }).then(function (response) {
-                    $scope.ansarList = response.data;
+                    $scope.ansarList = response.data["list"];
+                    $scope.total = response.data["total"];
+                    $scope.ansarCount = response.data["ansarTotal"];
+                    $scope.apcCount = response.data["apcCount"];
+                    $scope.pcCount = response.data["pcCount"];
                     $scope.allLoading = false;
                 }, function (response) {
                     $scope.ansarList = {};
@@ -34,13 +45,17 @@
             $scope.convertDateObj = function (dateStr) {
                 return new Date(dateStr);
             };
+            $scope.changeRank = function (i) {
+                $scope.rank = i;
+                $scope.loadPage()
+            }
         });
     </script>
     <div ng-controller="AnsarScheduleJobViewController" ng-init="loadPage()" style="position: relative;">
         <section class="content">
             <div class="box box-solid">
                 <div class="box-title" style="margin-top: 1%;padding-right: 1%;">
-                    <div class="row" style="margin: 0;padding: 1%">
+                    <div class="row" style="margin: 0;padding: 0 1%">
                         <!--<filter-template
                                 show-item="['gender']"
                                 type="all"
@@ -51,7 +66,19 @@
                                 field-width="{gender:'col-sm-3'}"
                         ></filter-template>-->
                     </div>
-                    <div class="row">
+                    <div class="row" style="margin: 0;padding: 0 1%">
+                        <div class="col-md-8">
+                            <h4 class="text text-bold">
+                                <a class="btn btn-primary text-bold" href="#" ng-click="changeRank('all')">Total
+                                    Ansars ([[total!=undefined?total:0]])</a>&nbsp;
+                                <a class="btn btn-primary text-bold" href="#" ng-click="changeRank(3)">PC
+                                    ([[pcCount!=undefined?pcCount:0]])</a>
+                                <a class="btn btn-primary text-bold" href="#" ng-click="changeRank(2)">APC
+                                    ([[apcCount!=undefined?apcCount:0]])</a>&nbsp;
+                                <a class="btn btn-primary text-bold" href="#" ng-click="changeRank(1)">Ansar
+                                    ([[ansarCount!=undefined?ansarCount:0]])</a>&nbsp;
+                            </h4>
+                        </div>
                         <div class="col-md-4" style="float: right">
                             <database-search q="q" queue="queue" on-change="loadPage()"></database-search>
                         </div>
@@ -79,9 +106,9 @@
                             <tbody>
                             <tr ng-repeat="ansar in ansarList">
                                 <td>[[ansar.ansar_id]]</td>
-                                <td>[[ansar.personal_info.ansar_name_bng]]</td>
-                                <td>[[ansar.personal_info.designation.name_bng]]</td>
-                                <td>[[ansar.personal_info.sex]]</td>
+                                <td>[[ansar.ansar_name_bng]]</td>
+                                <td>[[ansar.name_bng]]</td>
+                                <td>[[ansar.sex]]</td>
                                 <td>[[ansar.from_status]]</td>
                                 <td>[[ansar.to_status]]</td>
                                 <td>[[convertDateObj(ansar.activation_date) | date:'mediumDate']]</td>
