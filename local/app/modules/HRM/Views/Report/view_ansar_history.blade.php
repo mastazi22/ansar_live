@@ -39,7 +39,10 @@
                 return "";
             };
             $scope.convertDateObj = function (dateStr) {
-                return new Date(dateStr);
+                if (dateStr) {
+                    return new Date(dateStr);
+                }
+                return '';
             };
         });
     </script>
@@ -176,8 +179,8 @@
                                 <tbody>
                                 <tr ng-repeat="boffer in ansarDetail['bOffer']">
                                     <td>[[boffer.status]]</td>
-                                    <td>[[boffer.blocked_date]]</td>
-                                    <td>[[boffer.unblocked_date]]</td>
+                                    <td>[[convertDateObj(boffer.blocked_date) | date:'mediumDate']]</td>
+                                    <td>[[convertDateObj(boffer.unblocked_date) | date:'mediumDate']]</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -257,7 +260,7 @@
                                 <thead>
                                 <tr>
                                     <th>Rest Date</th>
-                                    <th>Rest Type</th>
+                                    <th>Come From</th>
                                     <th>Total Service(In Days)</th>
                                     <th>Reason</th>
                                     <th>Memorandum</th>
@@ -285,7 +288,7 @@
                                 <thead>
                                 <tr>
                                     <th>Rest Date</th>
-                                    <th>Rest Type</th>
+                                    <th>Come From</th>
                                     <th>Total Service(In Days)</th>
                                     <th>Reason</th>
                                     <th>Move Date</th>
@@ -331,7 +334,8 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>[[convertDateObj(ansarDetail['cEmbodiment'].reporting_date) | date:'mediumDate']]
+                                    <td>[[convertDateObj(ansarDetail['cEmbodiment'].reporting_date) |
+                                        date:'mediumDate']]
                                     <td>[[convertDateObj(ansarDetail['cEmbodiment'].joining_date) | date:'mediumDate']]
                                     </td>
                                     <td>[[convertDateObj(ansarDetail['cEmbodiment'].service_ended_date) |
@@ -447,9 +451,9 @@
                                 <thead>
                                 <tr>
                                     <th>Present KPI</th>
-                                    <th>Present KPI Joining Date</th>
+                                    <th>Present KPI Embodiment Date</th>
                                     <th>Transfer KPI</th>
-                                    <th>Transfer KPI Joining Date</th>
+                                    <th>Transfer KPI Embodiment Date</th>
                                     <th>Memorandum</th>
                                 </tr>
                                 </thead>
