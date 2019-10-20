@@ -455,7 +455,7 @@
                                             <th>Ansar ID</th>
                                             <th>Name</th>
                                             <th>Rank</th>
-                                            <th>Joining Date</th>
+                                            <th>Embodiment Date</th>
                                             <th>KPI Name</th>
                                             <th>Action</th>
                                         </tr>

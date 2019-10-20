@@ -7,7 +7,7 @@
         <th>Current KPI Name</th>
         <th>KPI Unit</th>
         <th>KPI Thana</th>
-        <th>Joining Date</th>
+        <th>Embodiment Date</th>
         <th>Service Ended Date</th>
     </tr>
     <tbody>

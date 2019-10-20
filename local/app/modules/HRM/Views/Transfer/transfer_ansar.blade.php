@@ -267,7 +267,7 @@
                                 <th>Division</th>
                                 <th>District</th>
                                 <th>KPI Name</th>
-                                <th>Joining Date</th>
+                                <th>Embodiment Date</th>
                                 <th>
                                     <div class="styled-checkbox">
                                         <input ng-disabled="ansars.length<=0" type="checkbox" id="all"
@@ -358,7 +358,7 @@
                                         </div>
                                         <div class="col-sm-4">
                                             <div class="form-group">
-                                                <label class="control-label">Joining date in transfered kpi.</label>
+                                                <label class="control-label">Embodiment date in transferred kpi.</label>
                                                 <input type="text" ng-model="joinDate" id="join_date_in_tk"
                                                        class="form-control"
                                                        name="memorandum_id">
@@ -375,7 +375,7 @@
                                                 <th>Division</th>
                                                 <th>District</th>
                                                 <th>KPI Name</th>
-                                                <th>Joining Date</th>
+                                                <th>Embodiment Date</th>
                                             </tr>
                                             <tr class="warning" ng-if="selectedAnsar.length<=0">
                                                 <td colspan="8">No Ansar Found to Transfer</td>

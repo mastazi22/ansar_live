@@ -94,8 +94,8 @@
                             </filter-template>
 
                             <div class="form-group">
-                                <label for="j_date" class="control-label">Joining Date</label>
-                                <input type="text" name="transfer_date" placeholder="Joining Date" date-picker id="j_date" class="form-control" ng-model="j_date">
+                                <label for="j_date" class="control-label">Embodiment Date</label>
+                                <input type="text" name="transfer_date" placeholder="Embodiment Date" date-picker id="j_date" class="form-control" ng-model="j_date">
                                 <p class="text text-danger" ng-if="errors.transfer_date!=undefined">[[errors.transfer_date[0] ]]</p>
                             </div>
                             <button class="btn btn-primary" ng-disabled="loadingSubmit||ansarDetail.kpi_id==undefined">
@@ -142,7 +142,7 @@
                                     </p>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label">Joining Date</label>
+                                    <label class="control-label">Embodiment Date</label>
                                     <p>
                                         [[ansarDetail.join_date|dateformat:'DD-MMM-YYYY']]
                                     </p>

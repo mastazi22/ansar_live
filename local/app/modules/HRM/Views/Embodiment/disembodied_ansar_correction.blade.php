@@ -166,7 +166,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label">Joining date</label>
+                                        <label class="control-label">Embodiment date</label>
                                         <input type="text" date-picker ng-model="embodimentData.joinDate" id="join_date_in_tk"
                                                class="form-control"
                                                name="memorandum_id">

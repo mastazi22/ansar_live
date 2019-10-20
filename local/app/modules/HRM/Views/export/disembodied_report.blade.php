@@ -7,7 +7,7 @@
         <th>KPI Name</th>
         <th>District</th>
         <th>Reporting Date</th>
-        <th>Joining Date</th>
+        <th>Embodiment Date</th>
         <th>Disembodiment Reason</th>
         <th>Disembodiment Date</th>
     </tr>

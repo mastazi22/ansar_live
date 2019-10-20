@@ -148,7 +148,7 @@ class EmbodimentController extends Controller
             'ansar_id.is_eligible' => 'This Ansar Cannot be Embodied. Because the total number of Ansars in this KPI already exceed. First Transfer or Disembodied Ansar from this selected KPI.',
             'memorandum_id.required' => 'Memorandum ID is required',
             'reporting_date.required' => 'Reporting Date is required',
-            'joining_date.required' => 'Joining Date is required',
+            'joining_date.required' => 'Embodiment Date is required',
             'division_name_eng.required' => 'Division  is required',
             'thana_name_eng.required' => 'Thana is required',
             'kpi_id.required' => 'KPI is required',
@@ -156,7 +156,7 @@ class EmbodimentController extends Controller
             'ansar_id.regex' => 'Ansar ID must be numeric',
             'memorandum_id.unique' => 'Memorandum ID has already been taken',
             'reporting_date.regex' => 'Reporting Date format is invalid',
-            'joining_date.regex' => 'Joining Date format is invalid',
+            'joining_date.regex' => 'Embodiment Date format is invalid',
             'division_name_eng.numeric' => 'Division format is invalid',
             'division_name_eng.regex' => 'Division format is invalid',
             'thana_name_eng.numeric' => 'Thana format is invalid',
@@ -188,7 +188,7 @@ class EmbodimentController extends Controller
                 }
                 if(Carbon::parse($sms_receive_info->sms_send_datetime)->gt(Carbon::parse($request->joining_date))){
                     throw new \Exception('Offer date greater then 
-                    joining date for Ansar ID: ' . $ansar_id." .Offer date ".$sms_receive_info->sms_send_datetime);
+                    embodiment date for Ansar ID: ' . $ansar_id." .Offer date ".$sms_receive_info->sms_send_datetime);
                 }
                 if ($sms_receive_info->offered_district != $request->division_name_eng) {
                     throw new \Exception('Ansar ID: ' . $ansar_id . ' not offered for this district');

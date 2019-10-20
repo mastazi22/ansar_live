@@ -30,7 +30,7 @@ class CustomValidation extends Validator
         'array_length_same' => ':attribute length does not match with :other',
         'date_validity' => ':attribute date is not valid',
         'offer_date_validate' => ':attribute date is not valid',
-        'joining_date_validate' => 'joining date must be within 1 month after reporting date',
+        'joining_date_validate' => 'embodiment date must be within 1 month after reporting date',
     ];
 
     public function __construct(TranslatorInterface $translator, array $data, array $rules, array $messages = [], array $customAttributes = [])

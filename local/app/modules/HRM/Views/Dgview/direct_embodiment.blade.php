@@ -83,7 +83,7 @@
                                 <p class="text text-danger" ng-if="errors.reporting_date!=undefined&&errors.reporting_date[0]">[[errors.reporting_date[0] ]]</p>
                             </div>
                             <div class="form-group">
-                                <label for="j_date" class="control-label">Joining Date</label>
+                                <label for="j_date" class="control-label">Embodiment Date</label>
                                 <input type="text" date-picker name="joining_date" id="j_date" class="form-control" ng-model="j_date">
                                 <p class="text text-danger" ng-if="errors.joining_date!=undefined&&errors.joining_date[0]">[[errors.joining_date[0] ]]</p>
                             </div>

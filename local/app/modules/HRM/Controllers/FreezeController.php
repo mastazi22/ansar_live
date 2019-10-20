@@ -91,7 +91,7 @@ class FreezeController extends Controller
             if ($request->exists('unit') && $embodiment_info->kpi->unit_id != $request->unit) throw new \Exception("Invalid Ansar for freeze");
             if ($request->exists('range') && $embodiment_info->kpi->division_id != $request->range) throw new \Exception("Invalid Ansar for freeze");
             if (!$embodiment_info && $embodiment_info->emboded_status == "freeze") throw new \Exception("Invalid Ansar for freeze");
-            if (Carbon::parse($embodiment_info->joining_date)->gt($modifed_freeze_date)) throw new \Exception("Freeze date must be greater then joining date");
+            if (Carbon::parse($embodiment_info->joining_date)->gt($modifed_freeze_date)) throw new \Exception("Freeze date must be greater then embodiment date");
             $freeze_info = new FreezingInfoModel();
             $freeze_info->ansar_id = $ansar_id;
             $freeze_info->freez_reason = $request->freeze_reason;

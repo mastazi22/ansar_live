@@ -201,7 +201,7 @@
                                         [[data.data.thana_name_eng]]
                                     </li>
                                     <li>
-                                        <h4 style="text-decoration: underline">Joining Date</h4>
+                                        <h4 style="text-decoration: underline">Embodiment Date</h4>
                                         [[data.data.joining_date|dateformat:"DD-MMM-YYYY"]]
                                     </li>
                                 </ul>
@@ -247,10 +247,10 @@
                             {{--</div>--}}
                             <div class="form-group">
                                 <lable class="control-label"
-                                       style="font-weight: bold;margin-bottom: 5px;display: block">Joining Date
+                                       style="font-weight: bold;margin-bottom: 5px;display: block">Embodiment Date
                                 </lable>
                                 <input type="text" date-picker ng-disabled="data==undefined||!data.status"
-                                       ng-model="formData.joining_date" placeholder="Joining Date"
+                                       ng-model="formData.joining_date" placeholder="Embodiment Date"
                                        class="form-control" name="joining_date">
                             </div>
                             <div class="form-group">
@@ -272,7 +272,7 @@
                                         <th>Current Kpi Name</th>
                                         <th>Transfer Kpi Name</th>
                                         <th>Transfer Kpi Thana</th>
-                                        <th>Transfer Kpi Joining Date</th>
+                                        <th>Transfer Kpi Embodiment Date</th>
                                         <th>Action</th>
                                     </tr>
                                     <tr ng-if="tAnsars.length>0" ng-repeat="t in tAnsars">

@@ -198,7 +198,7 @@
                                     </p>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label status-check">Joining Date</label>
+                                    <label class="control-label status-check">Embodiment Date</label>
 
                                     <p>
                                         [[convertDate(ansarDetail.j_date)]]

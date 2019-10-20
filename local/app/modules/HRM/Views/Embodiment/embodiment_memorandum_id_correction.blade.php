@@ -160,7 +160,7 @@
                                     </p>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label">Joining Date</label>
+                                    <label class="control-label">Embodiment Date</label>
                                     <p>
                                         [[ansarDetail.j_date]]
                                     </p>
