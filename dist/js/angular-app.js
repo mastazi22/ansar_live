@@ -1855,3 +1855,84 @@ GlobalApp.directive("calender", function (notificationService) {
                         `
     }
 })
+GlobalApp.directive('datepickerSeparateFields',function(){
+    return {
+        restrict: 'E',
+        scope: {
+            label: '@',
+            notify: '=',
+            rdata: '='
+        },
+        controller: function ($scope) {
+            $scope.months = {
+                'Jan': 'January',
+                'Feb': 'February',
+                'Mar': 'March',
+                'Apr': 'April',
+                'May': 'May',
+                'Jun': 'June',
+                'Jul': 'July',
+                'Aug': 'August',
+                'Sep': 'September',
+                'Oct': 'October',
+                'Nov': 'November',
+                'Dec': 'December'
+            };
+
+            $scope.picker_day = new Date().getDate() + "";
+            $scope.picker_month = Object.keys($scope.months)[new Date().getMonth()];
+            $scope.picker_year = new Date().getFullYear() + "";
+            $scope.rdata = $scope.picker_day + '-' + $scope.picker_month + '-' + $scope.picker_year;
+            $scope.getYears = function () {
+                var years = [];
+                var endYear = new Date().getFullYear() + 10;
+                for (var startYear = new Date().getFullYear() - 20; startYear <= endYear; startYear++) {
+                    years.push(startYear);
+                }
+                return years;
+            };
+            $scope.getDates = function () {
+                var days = [];
+                for (var start = 1; start <= 31; start++) {
+                    days.push(start);
+                }
+                return days;
+            };
+
+            $scope.dateChangeEvent = function ($event) {
+                var selectedDateStr = $scope.picker_day + '-' + $scope.picker_month + '-' + $scope.picker_year;
+                var d = new Date(selectedDateStr);
+                var month = Object.keys($scope.months)[d.getMonth()];
+                if (d.getFullYear() == $scope.picker_year && month == $scope.picker_month && d.getDate() == $scope.picker_day) {
+                    $scope.rdata = selectedDateStr;
+                    $scope.notify = false;
+                } else {
+                    $scope.rdata = '';
+                    $scope.notify = true;
+                }
+            };
+        },
+        template: '<div class="row"><div class="col-md-12"><label class="control-label">{{label}}' +
+            '                        <span class="text-danger" ng-if="notify">&nbsp;Invalid Date</span></label></div>' +
+            '                <div class="col-md-4"><div class="form-group"><label for="daySelect">Day</label>' +
+            '                        <select ng-model="picker_day" ng-change="dateChangeEvent($event)"' +
+            '                                class="form-control" id="daySelect" required>' +
+            '                            <option ng-repeat="day in getDates()" value="{{day}}">{{day}}</option>' +
+            '                        </select></div>' +
+            '                </div>' +
+            '                <div class="col-md-4" style="padding: 0"><div class="form-group">' +
+            '                        <label for="monthSelect">Month</label>' +
+            '                        <select ng-model="picker_month" ng-change="dateChangeEvent($event)"' +
+            '                                class="form-control" id="monthSelect" required>' +
+            '                            <option ng-repeat="(Key, value) in months" value="{{Key}}">{{value}}' +
+            '                            </option>' +
+            '                        </select></div>' +
+            '                </div>' +
+            '                <div class="col-md-4"><div class="form-group"><label for="yearSelect">Year</label>' +
+            '                        <select ng-model="picker_year" ng-change="dateChangeEvent($event)"' +
+            '                                class="form-control" id="yearSelect" required>' +
+            '                            <option ng-repeat="year in getYears()" value="{{year}}">{{year}}</option>' +
+            '                        </select></div>' +
+            '                </div></div>'
+    };
+});
