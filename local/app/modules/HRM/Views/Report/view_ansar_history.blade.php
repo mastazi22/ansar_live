@@ -106,6 +106,25 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="col-md-12" ng-if="ansarDetail['future']">
+                            <h4>Schedule Job&nbsp;<span class="small">(N.B.: Action take in future)</span></h4>
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Form Status</th>
+                                    <th>To Status</th>
+                                    <th>Active Date</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>[[ansarDetail['future'].from_status]]</td>
+                                    <td>[[ansarDetail['future'].to_status]]</td>
+                                    <td>[[convertDateObj(ansarDetail['future'].activation_date) | date:'mediumDate']]</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

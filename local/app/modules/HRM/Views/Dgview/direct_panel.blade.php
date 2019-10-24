@@ -30,6 +30,7 @@
                     $('#direct_panel_date').val(datetext);
                 }
             });
+            $("input[name='direct_panel_date']").val(moment().format("DD-MMM-YYYY HH:mm:ss"));
         })
         GlobalApp.controller('DGPanelController', function ($scope, $http, $sce) {
             $scope.ansarId = "";

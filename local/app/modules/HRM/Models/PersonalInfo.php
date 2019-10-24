@@ -16,6 +16,11 @@ class PersonalInfo extends Model
     protected $table = 'db_amis.tbl_ansar_parsonal_info';
     protected $guarded = ['id'];
 
+    public function future()
+    {
+        return $this->hasOne(AnsarFutureState::class, 'ansar_id', 'ansar_id');
+    }
+
     public function status()
     {
         return $this->hasOne(AnsarStatusInfo::class, 'ansar_id', 'ansar_id');
@@ -105,8 +110,10 @@ class PersonalInfo extends Model
     {
         return $this->belongsTo(AllSkill::class, 'skill_id');
     }
-    function receiveSMS(){
-        return $this->hasOne(SmsReceiveInfoModel::class,'ansar_id','ansar_id');
+
+    function receiveSMS()
+    {
+        return $this->hasOne(SmsReceiveInfoModel::class, 'ansar_id', 'ansar_id');
     }
 
     function panelLog()

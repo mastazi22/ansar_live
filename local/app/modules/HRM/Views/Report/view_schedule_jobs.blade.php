@@ -10,10 +10,7 @@
             $scope.ansarList = {};
             $scope.param = {};
             $scope.rank = 'all';
-            $scope.total = 0;
-            $scope.ansarCount = 0;
-            $scope.apcCount = 0;
-            $scope.pcCount = 0;
+            $scope.gCount = {};
             //methods
             $scope.loadPage = function () {
                 $scope.allLoading = true;
@@ -25,15 +22,12 @@
                     params: {
                         q: $scope.q,
                         rank: $scope.rank,
-                        // gender:'Female'
-                        // gender: $scope.param.gender == undefined ? 'all' : $scope.param.gender
+                        gender: $scope.param.gender == undefined ? 'all' : $scope.param.gender
                     }
                 }).then(function (response) {
-                    $scope.ansarList = response.data["list"];
-                    $scope.total = response.data["total"];
-                    $scope.ansarCount = response.data["ansarTotal"];
-                    $scope.apcCount = response.data["apcCount"];
-                    $scope.pcCount = response.data["pcCount"];
+                    $scope.ansarList = response.data.list;
+                    $scope.gCount = response.data.tCount;
+                    $scope.gCount['total'] = sum(response.data.tCount);
                     $scope.allLoading = false;
                 }, function (response) {
                     $scope.ansarList = {};
@@ -49,14 +43,22 @@
                 $scope.rank = i;
                 $scope.loadPage()
             }
+
+            function sum(t) {
+                var s = 0;
+                for (var i in t) {
+                    s += parseInt(t[i])
+                }
+                return s;
+            }
         });
     </script>
-    <div ng-controller="AnsarScheduleJobViewController" ng-init="loadPage()" style="position: relative;">
+    <div ng-controller="AnsarScheduleJobViewController" style="position: relative;">
         <section class="content">
             <div class="box box-solid">
                 <div class="box-title" style="margin-top: 1%;padding-right: 1%;">
                     <div class="row" style="margin: 0;padding: 0 1%">
-                        <!--<filter-template
+                        <filter-template
                                 show-item="['gender']"
                                 type="all"
                                 gender-change="loadPage()"
@@ -64,19 +66,19 @@
                                 on-load="loadPage()"
                                 data="param"
                                 field-width="{gender:'col-sm-3'}"
-                        ></filter-template>-->
+                        ></filter-template>
                     </div>
                     <div class="row" style="margin: 0;padding: 0 1%">
-                        <div class="col-md-8">
+                        <div class="col-md-8" style="padding: 0;">
                             <h4 class="text text-bold">
                                 <a class="btn btn-primary text-bold" href="#" ng-click="changeRank('all')">Total
-                                    Ansars ([[total!=undefined?total:0]])</a>&nbsp;
+                                    Ansars ([[gCount.total!=undefined?gCount.total:0]])</a>&nbsp;
                                 <a class="btn btn-primary text-bold" href="#" ng-click="changeRank(3)">PC
-                                    ([[pcCount!=undefined?pcCount:0]])</a>
+                                    ([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])</a>
                                 <a class="btn btn-primary text-bold" href="#" ng-click="changeRank(2)">APC
-                                    ([[apcCount!=undefined?apcCount:0]])</a>&nbsp;
+                                    ([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])</a>&nbsp;
                                 <a class="btn btn-primary text-bold" href="#" ng-click="changeRank(1)">Ansar
-                                    ([[ansarCount!=undefined?ansarCount:0]])</a>&nbsp;
+                                    ([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</a>&nbsp;
                             </h4>
                         </div>
                         <div class="col-md-4" style="float: right">

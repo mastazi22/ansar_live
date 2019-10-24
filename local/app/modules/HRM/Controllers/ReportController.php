@@ -248,7 +248,6 @@ class ReportController extends Controller
     public function ansarDisembodimentReportView()
     {
         return view('HRM::Report.ansar_disembodiment_report_view');
-        //return view('report.disembodiment_rough');
     }
 
     public function disembodedAnsarInfo(Request $request)
@@ -260,7 +259,9 @@ class ReportController extends Controller
         $thana = $request->input('thana_id');
         $limit = Input::get('limit');
         $offset = Input::get('offset');
-
+        $rank = Input::get('rank');
+        $gender = Input::get('gender');
+        $q = Input::get('q');
         $rules = [
             'limit' => 'numeric',
             'offset' => 'numeric',
@@ -271,22 +272,18 @@ class ReportController extends Controller
             'division_id' => ['required', 'regex:/^(all)$|^[0-9]+$/'],
         ];
         $valid = Validator::make(Input::all(), $rules);
-
         if ($valid->fails()) {
-            //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         }
         if (!is_null($from) && !is_null($to) && !is_null($unit) && !is_null($thana)) {
             $from_date = Carbon::parse($from)->format('Y-m-d');
             $to_date = Carbon::parse($to)->format('Y-m-d');
-            $data = CustomQuery::disembodedAnsarListforReport($offset, $limit, $from_date, $to_date, $division, $unit, $thana);
+            $data = CustomQuery::disembodedAnsarListforReportWithRankGender($offset, $limit, $from_date, $to_date, $division, $unit, $thana, $rank, $gender, $q);
             if (Input::exists('export')) {
                 return $this->exportData(collect($data['ansars'])->chunk(2000)->toArray(), 'HRM::export.disembodied_report');
             }
             return response()->json($data);
         }
-
-
     }
 
     public function blockListView()
@@ -301,7 +298,8 @@ class ReportController extends Controller
         $thana = Input::get('thana');
         $unit = Input::get('unit');
         $division = Input::get('division');
-
+        $rank = Input::get('rank');
+        $gender = Input::get('gender');
         $rules = [
             'view' => 'regex:/^[a-z]+/',
             'limit' => 'numeric',
@@ -311,15 +309,11 @@ class ReportController extends Controller
             'division' => ['regex:/^(all)$|^[0-9]+$/'],
         ];
         $valid = Validator::make(Input::all(), $rules);
-
         if ($valid->fails()) {
-            //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         }
-        $data = CustomQuery::getBlocklistedAnsar($offset, $limit, $division, $unit, $thana, $request->q);
-//        return $data;
+        $data = CustomQuery::getBlocklistedAnsarWithRankGender($offset, $limit, $division, $unit, $thana, $rank, $gender, $request->q);
         if (Input::exists('export')) {
-
             return $this->exportData(collect($data['ansars'])->chunk(2000)->toArray(), 'HRM::export.blocklist_report');
         }
         return response()->json($data);
@@ -337,6 +331,8 @@ class ReportController extends Controller
         $thana = Input::get('thana');
         $unit = Input::get('unit');
         $division = Input::get('division');
+        $rank = Input::get('rank');
+        $gender = Input::get('gender');
         $rules = [
             'view' => 'regex:/^[a-z]+/',
             'limit' => 'numeric',
@@ -345,12 +341,10 @@ class ReportController extends Controller
             'thana' => ['regex:/^(all)$|^[0-9]+$/'],
         ];
         $valid = Validator::make(Input::all(), $rules);
-
         if ($valid->fails()) {
-            //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         }
-        $data = CustomQuery::getBlacklistedAnsar($offset, $limit, $division, $unit, $thana, $request->q);
+        $data = CustomQuery::getBlacklistedAnsarWithRankGender($offset, $limit, $division, $unit, $thana, $rank, $gender, $request->q);
         if (Input::exists('export')) {
             return $this->exportData(collect($data['ansars'])->chunk(2000)->toArray(), 'HRM::export.blacklist_report');
         }
@@ -395,7 +389,6 @@ class ReportController extends Controller
     public function ansarEmbodimentReportView()
     {
         return view('HRM::Report.ansar_embodiment_report_view');
-//        return view('report.embodiment_rough');
     }
 
     public function embodedAnsarInfo()
@@ -407,6 +400,9 @@ class ReportController extends Controller
         $to = Input::get('to_date');
         $unit = Input::get('unit_id');
         $thana = Input::get('thana_id');
+        $rank = Input::get('rank');
+        $gender = Input::get('gender');
+        $q = Input::get('q');
         $rules = [
             'view' => 'regex:/^[a-z]+/',
             'limit' => 'numeric',
@@ -418,15 +414,13 @@ class ReportController extends Controller
             'division_id' => ['regex:/^(all)$|^[0-9]+$/'],
         ];
         $valid = Validator::make(Input::all(), $rules);
-
         if ($valid->fails()) {
-//            return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         } else {
             if (!is_null($from) && !is_null($to) && !is_null($unit) && !is_null($thana)) {
                 $from_date = Carbon::parse($from)->format('Y-m-d');
                 $to_date = Carbon::parse($to)->format('Y-m-d');
-                $data = CustomQuery::embodedAnsarListforReport($offset, $limit, $from_date, $to_date, $division, $unit, $thana);
+                $data = CustomQuery::embodedAnsarListforReportWithRankGender($offset, $limit, $from_date, $to_date, $division, $unit, $thana, $rank, $gender, $q);
                 if (Input::exists('export')) {
                     return $this->exportData(collect($data['ansars'])->chunk(2000)->toArray(), 'HRM::export.embodiment_report');
                 }
@@ -437,7 +431,6 @@ class ReportController extends Controller
 
     public function threeYearsOverListView()
     {
-
         return view('HRM::Report.three_years_over_report');
     }
 
@@ -445,16 +438,11 @@ class ReportController extends Controller
     {
         $limit = Input::get('limit');
         $offset = Input::get('offset');
-//        if ((Auth::user()->type) == 22) {
-//            $unit = Auth::user()->district_id;
-//        } else {
         $unit = Input::get('unit');
         $division = Input::get('division');
         $thana = Input::get('thana');
-//        }
         $ansar_rank = Input::get('ansar_rank');
         $ansar_sex = Input::get('ansar_sex');
-        //$thana = Input::get('thana');
         $view = Input::get('view');
         $rules = [
             'limit' => 'numeric',
@@ -466,7 +454,6 @@ class ReportController extends Controller
         $valid = Validator::make(Input::all(), $rules);
 
         if ($valid->fails()) {
-            //return print_r($valid->messages());
             return response("Invalid Request(400)", 400);
         }
         $data = CustomQuery::threeYearsOverAnsarList($offset, $limit, $division, $unit, $ansar_rank, $ansar_sex);
@@ -481,16 +468,11 @@ class ReportController extends Controller
         if ($request->ajax()) {
             $limit = Input::get('limit');
             $offset = Input::get('offset');
-//        if ((Auth::user()->type) == 22) {
-//            $unit = Auth::user()->district_id;
-//        } else {
             $unit = Input::get('unit');
             $division = Input::get('range');
             $thana = Input::get('thana');
-//        }
-            $ansar_rank = Input::get('ansar_rank');
-            $ansar_sex = Input::get('ansar_sex');
-            //$thana = Input::get('thana');
+            $rank = Input::get('rank');
+            $gender = Input::get('gender');
             $view = Input::get('view');
             $rules = [
                 'limit' => 'numeric',
@@ -498,12 +480,10 @@ class ReportController extends Controller
                 'unit' => 'required',
             ];
             $valid = Validator::make(Input::all(), $rules);
-
             if ($valid->fails()) {
-                //return print_r($valid->messages());
                 return response("Invalid Request(400)", 400);
             }
-            $data = CustomQuery::ansarListOveraged($offset, $limit, $unit, $thana, $division);
+            $data = CustomQuery::ansarListOverAgedWithRankGender($offset, $limit, $unit, $thana, $division, $rank, $gender);
             if (Input::exists('export')) {
                 return $this->exportData(collect($data['ansars'])->chunk(2000)->toArray(), 'HRM::export.ansar_over_age_report');
             }
@@ -847,6 +827,7 @@ class ReportController extends Controller
         $result["ansar"] = $ansar;
         $result["status"] = $ansar->status->getStatus();
         $result["designation"] = $ansar->designation;
+        $result["future"] = $ansar->future;
 
         //offer information
         $result["cOffer"] = $ansar->offer_sms_info()->with("district.division")->first();
@@ -890,28 +871,22 @@ class ReportController extends Controller
 
     public function viewAnsarScheduleJobsReport(Request $request)
     {
-        $result = array();
-        $counts = DB::select('SELECT COUNT(tbl_ansar_future_state.id) AS total, SUM(IF (`tbl_ansar_parsonal_info`.`designation_id` = 1,1,0)) AS  AnsarCount,
-SUM(IF (`tbl_ansar_parsonal_info`.`designation_id` = 2,1,0)) AS  apcCount, SUM(IF (`tbl_ansar_parsonal_info`.`designation_id` = 3,1,0)) AS  pcCount
-FROM `tbl_ansar_future_state` INNER JOIN `tbl_ansar_parsonal_info` ON `tbl_ansar_future_state`.`ansar_id` = `tbl_ansar_parsonal_info`.`ansar_id`');
-        $result["total"] = $counts[0]->total;
-        $result["ansarTotal"] = $counts[0]->AnsarCount;
-        $result["apcCount"] = $counts[0]->apcCount;
-        $result["pcCount"] = $counts[0]->pcCount;
         $input = $request->all();
         $ansarList = DB::table('tbl_ansar_future_state')
             ->join("tbl_ansar_parsonal_info", "tbl_ansar_future_state.ansar_id", "=", "tbl_ansar_parsonal_info.ansar_id")
             ->join("tbl_designations", "tbl_designations.id", "=", "tbl_ansar_parsonal_info.designation_id");
-        if (isset($input["q"]) && !empty($input["q"]) && is_numeric($input["q"])) {
-            $ansarList = $ansarList->where('tbl_ansar_future_state.ansar_id', '=', $input["q"]);
+        if (isset($input["gender"]) && ($input["gender"] == 'Male' || $input["gender"] == 'Female' || $input["gender"] == 'Other')) {
+            $ansarList = $ansarList->where('tbl_ansar_parsonal_info.sex', '=', $input["gender"]);
         }
         if (isset($input["rank"]) && !empty($input["rank"]) && is_numeric($input["rank"])) {
             $ansarList = $ansarList->where('tbl_ansar_parsonal_info.designation_id', '=', $input["rank"]);
         }
-        if (isset($input["gender"]) && ($input["gender"] === 'Male' || $input["gender"] === 'Female')) {
-            $ansarList = $ansarList->where('tbl_ansar_parsonal_info.sex', '=', $input["gender"]);
+        if (isset($input["q"]) && !empty($input["q"]) && is_numeric($input["q"])) {
+            $ansarList = $ansarList->where('tbl_ansar_future_state.ansar_id', '=', $input["q"]);
         }
-        $result["list"] = $ansarList->get();
-        return Response::json($result);
+        $dataForCount = clone $ansarList;
+        $rankCount = $dataForCount->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        $rankCount = collect($rankCount->get())->pluck('t', 'code');
+        return Response::json(['list' => $ansarList->get(), 'tCount' => $rankCount]);
     }
 }

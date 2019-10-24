@@ -121,27 +121,27 @@ class OfferController extends Controller
                 'user_id' => Auth::user()->id
             ]);
             $user = Auth::user();
-            $offerZone = OfferZone::where('unit_id',$user->district_id)->pluck('offer_zone_unit_id')->toArray();
+            $offerZone = OfferZone::where('unit_id', $user->district_id)->pluck('offer_zone_unit_id')->toArray();
             $data = CustomQuery::getAnsarInfo(
                 ['male' => $request->get('pc_male'), 'female' => $request->get('pc_female')],
                 ['male' => $request->get('apc_male'), 'female' => $request->get('apc_female')],
                 ['male' => $request->get('ansar_male'), 'female' => $request->get('ansar_female')],
                 $request->get('district'),
-                $request->get('exclude_district'), $user,$offerZone);
+                $request->get('exclude_district'), $user, $offerZone);
 //            return $data;
             Log::info($request->all());
             $user = Auth::user();
-            if($user->type==22){
+            if ($user->type == 22) {
 
-                if(in_array($user->district_id,Config::get('app.offer'))){
-                   $offer_type = 'GB';
-                } else{
+                if (in_array($user->district_id, Config::get('app.offer'))) {
+                    $offer_type = 'GB';
+                } else {
                     $offer_type = 'RE';
                 }
-            } else{
-                if(in_array($request->get('district'),Config::get('app.offer'))){
+            } else {
+                if (in_array($request->get('district'), Config::get('app.offer'))) {
                     $offer_type = 'GB';
-                } else{
+                } else {
                     $offer_type = 'RE';
                 }
             }
@@ -153,7 +153,7 @@ class OfferController extends Controller
             $quota = Helper::getOfferQuota(Auth::user());
             if ($quota !== false && $quota < count($data)) throw new \Exception("Your offer quota limit exit");
             PanelModel::whereIn('ansar_id', $data)->update(['locked' => 1]);
-            $this->dispatch(new OfferQueue($data, $district_id, Auth::user(), $userOffer,$offer_type));
+            $this->dispatch(new OfferQueue($data, $district_id, Auth::user(), $userOffer, $offer_type));
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -252,7 +252,7 @@ class OfferController extends Controller
                 $ansar = PersonalInfo::where('ansar_id', $ansar_ids[$i])->first();
                 $panel_date = Carbon::now()->format("Y-m-d H:i:s");
                 $offered_ansar = $ansar->offer_sms_info;
-                $os = OfferSMSStatus::where('ansar_id',$ansar_ids[$i])->first();
+                $os = OfferSMSStatus::where('ansar_id', $ansar_ids[$i])->first();
                 if (!$offered_ansar) $received_ansar = $ansar->receiveSMS;
                 if ($offered_ansar && $offered_ansar->come_from == 'rest') {
                     $ansar->status()->update([
@@ -261,23 +261,23 @@ class OfferController extends Controller
                     ]);
                 } else {
                     $pa = $ansar->panel;
-                    if(!$pa){
+                    if (!$pa) {
                         $panel_log = $ansar->panelLog()->first();
                         $ansar->panel()->save(new PanelModel([
-                            'memorandum_id'=>$panel_log->old_memorandum_id,
-                            'panel_date'=>$os&&$os->isGlobalOfferRegion()?$panel_date:$panel_log->panel_date,
-                            're_panel_date'=>$os&&$os->isRegionalOfferRegion()?$panel_date:$panel_log->re_panel_date,
-                            'come_from'=>'OfferCancel',
-                            'ansar_merit_list'=>1,
-                            'action_user_id'=>auth()->user()->id,
+                            'memorandum_id' => $panel_log->old_memorandum_id,
+                            'panel_date' => $os && $os->isGlobalOfferRegion() ? $panel_date : $panel_log->panel_date,
+                            're_panel_date' => $os && $os->isRegionalOfferRegion() ? $panel_date : $panel_log->re_panel_date,
+                            'come_from' => 'OfferCancel',
+                            'ansar_merit_list' => 1,
+                            'action_user_id' => auth()->user()->id,
                         ]));
 
-                    }else{
+                    } else {
                         $pa->locked = 0;
                         $pa->come_from = 'OfferCancel';
-                        if($os&&$os->isGlobalOfferRegion()){
+                        if ($os && $os->isGlobalOfferRegion()) {
                             $pa->panel_date = $panel_date;
-                        }elseif($os&&$os->isRegionalOfferRegion()){
+                        } elseif ($os && $os->isRegionalOfferRegion()) {
                             $pa->re_panel_date = $panel_date;
                         }
                         $pa->save();
@@ -291,14 +291,14 @@ class OfferController extends Controller
                     'offer_cancel_date' => Carbon::now()
                 ]));
 
-                if($os){
-                    $ot = explode(",",$os->offer_type);
-                    $ou = explode(",",$os->last_offer_units);
-                    $ot = array_slice($ot,0,count($ot)-1);
-                    $ou = array_slice($ou,0,count($ou)-1);
-                    $os->offer_type = implode(",",$ot);
-                    $os->last_offer_units = implode(",",$ou);
-                    $os->last_offer_unit = !count($ou)?"":$ou[count($ou)-1];
+                if ($os) {
+                    $ot = explode(",", $os->offer_type);
+                    $ou = explode(",", $os->last_offer_units);
+                    $ot = array_slice($ot, 0, count($ot) - 1);
+                    $ou = array_slice($ou, 0, count($ou) - 1);
+                    $os->offer_type = implode(",", $ot);
+                    $os->last_offer_units = implode(",", $ou);
+                    $os->last_offer_unit = !count($ou) ? "" : $ou[count($ou) - 1];
                     $os->save();
                 }
                 if ($offered_ansar) {
@@ -308,7 +308,7 @@ class OfferController extends Controller
                         'offered_district' => $offered_ansar->district_id,
                         'action_user_id' => auth()->user()->id,
                         'reply_type' => 'No Reply',
-                        'comment'=>'Offer Cancel'
+                        'comment' => 'Offer Cancel'
                     ]));
                     $offered_ansar->delete();
                 } else {
@@ -318,7 +318,7 @@ class OfferController extends Controller
                         'action_user_id' => auth()->user()->id,
                         'action_date' => Carbon::now(),
                         'reply_type' => 'Yes',
-                        'comment'=>'Offer Cancel'
+                        'comment' => 'Offer Cancel'
                     ]));
                     $received_ansar->delete();
                 }
@@ -335,7 +335,7 @@ class OfferController extends Controller
                 return response(collect(['type' => 'error', 'message' => $e->getMessage()]), 400, ['Content-Type' => 'application\json']);
             }
         }
-        if(count($ansar_ids)){
+        if (count($ansar_ids)) {
             $this->dispatch(new RearrangePanelPositionGlobal());
             $this->dispatch(new RearrangePanelPositionLocal());
         }
@@ -357,7 +357,46 @@ class OfferController extends Controller
             return response(collect(['type' => 'error', 'message' => 'Invalid request']), 400, ['Content-Type' => 'application\json']);
         }
         $district_id = Input::get('district_id');
-        return Response::json(CustomQuery::getOfferSMSInfo($district_id));
+        $gender = Input::get('gender');
+        $rank = Input::get('rank');
+        $offer_noreply_ansar = DB::table('tbl_sms_offer_info')
+            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_offer_info.ansar_id')
+            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+            ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
+            ->where('tbl_sms_offer_info.district_id', '=', $district_id);
+        $offer_accepted_ansar = DB::table('tbl_sms_receive_info')
+            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_sms_receive_info.ansar_id')
+            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+            ->join('tbl_units', 'tbl_ansar_parsonal_info.unit_id', '=', 'tbl_units.id')
+            ->where('tbl_sms_receive_info.offered_district', '=', $district_id);
+
+        if (isset($gender) && ($gender == 'Male' || $gender == 'Female' || $gender == 'Other')) {
+            $offer_noreply_ansar = $offer_noreply_ansar->where('tbl_ansar_parsonal_info.sex', '=', $gender);
+            $offer_accepted_ansar = $offer_accepted_ansar->where('tbl_ansar_parsonal_info.sex', '=', $gender);
+        }
+        if (isset($rank) && !empty($rank) && is_numeric($rank)) {
+            $offer_noreply_ansar = $offer_noreply_ansar->where('tbl_designations.id', '=', $rank);
+            $offer_accepted_ansar = $offer_accepted_ansar->where('tbl_designations.id', '=', $rank);
+        }
+
+        $clone_offer_noreply_ansar = clone $offer_noreply_ansar;
+        $clone_offer_accepted_ansar = clone $offer_accepted_ansar;
+
+        $count_offer_noreply_ansar = $clone_offer_noreply_ansar->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        $count_offer_accepted_ansar = $clone_offer_accepted_ansar->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        $a1 = collect($count_offer_noreply_ansar->get())->pluck('t', 'code')->toArray();
+        $a2 = collect($count_offer_accepted_ansar->get())->pluck('t', 'code')->toArray();
+
+        $sums = [];
+        foreach (array_keys($a1 + $a2) as $key) {
+            $sums[$key] = (isset($a1[$key]) ? $a1[$key] : 0) + (isset($a2[$key]) ? $a2[$key] : 0);
+        }
+
+        $offer_noreply_ansar = $offer_noreply_ansar->select('tbl_sms_offer_info.ansar_id', 'tbl_sms_offer_info.sms_send_datetime', 'tbl_sms_offer_info.sms_end_datetime', 'tbl_sms_offer_info.district_id', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng', 'tbl_units.unit_name_bng');
+        $offer_accepted_ansar = $offer_accepted_ansar->select('tbl_sms_receive_info.ansar_id', 'tbl_sms_receive_info.sms_send_datetime', 'tbl_sms_receive_info.sms_end_datetime', 'tbl_sms_receive_info.offered_district', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_ansar_parsonal_info.sex', 'tbl_designations.name_bng', 'tbl_units.unit_name_bng');
+        $list = $offer_noreply_ansar->unionAll($offer_accepted_ansar);
+
+        return Response::json(['list' => $list->get(), 'tCount' => $sums]);
     }
 
     function testSmsPurpose()
