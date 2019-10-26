@@ -145,11 +145,11 @@ class FreezeController extends Controller
         if ($valid->fails()) {
             return response($valid->messages()->toJson(), 422, ['Content-Type' => 'application/json']);
         }
-        $data = CustomQuery::getFreezeList($request->range, $request->unit, $request->thana, $request->kpi,($request->limit?$request->limit:50),$request->q,$request->export);
-        if($request->exists('export')&&$request->export==1){
-            return  Excel::create('freeze_report',function ($excel) use($data){
-                $excel->sheet('sheet1',function ($sheet) use ($data){
-                    $sheet->loadView('HRM::export.freezelist',['allFreezeAnsar'=>$data]);
+        $data = CustomQuery::getFreezeListWithRankGender($request->range, $request->unit, $request->thana, $request->kpi, ($request->limit ? $request->limit : 50), $request->q, $request->export, $request->rank, $request->gender);
+        if ($request->exists('export') && $request->export == 1) {
+            return Excel::create('freeze_report', function ($excel) use ($data) {
+                $excel->sheet('sheet1', function ($sheet) use ($data) {
+                    $sheet->loadView('HRM::export.freezelist', ['allFreezeAnsar' => $data]);
                 });
             })->export('xlsx');
         }
@@ -169,8 +169,8 @@ class FreezeController extends Controller
                     $frezeInfo = FreezingInfoModel::where('ansar_id', $ansarid)->first();
                     if (!$frezeInfo) throw new \Exception("{$ansarid} is invalid");
                     $kpi = $frezeInfo->kpi;
-                    if(!$kpi) throw new \Exception("invalid kpi");
-                    if($kpi&&$kpi->withdraw_status==1&&$kpi->status_of_kpi==0&&!$kpi->details->kpi_withdraw_date)throw new \Exception("{$kpi->kpi_name} already withdrawn");
+                    if (!$kpi) throw new \Exception("invalid kpi");
+                    if ($kpi && $kpi->withdraw_status == 1 && $kpi->status_of_kpi == 0 && !$kpi->details->kpi_withdraw_date) throw new \Exception("{$kpi->kpi_name} already withdrawn");
                     $updateEmbodiment = $frezeInfo->embodiment;
                     $freezed_ansar_embodiment_detail = $frezeInfo->freezedAnsarEmbodiment;
 //                    return $updateEmbodiment;

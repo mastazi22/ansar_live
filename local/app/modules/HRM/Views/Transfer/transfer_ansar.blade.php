@@ -1,5 +1,3 @@
-{{--Ansar Transfer Complete--}}
-
 @extends('template.master')
 @section('title','Transfer Ansars')
 @section('breadcrumb')
@@ -7,7 +5,7 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller("TransferController", function ($scope, $http, $timeout,$rootScope) {
+        GlobalApp.controller("TransferController", function ($scope, $http, $timeout, $rootScope) {
             $scope.ansars = [];
             $scope.tsPC = 0;
             $scope.tsAPC = 0;
@@ -26,13 +24,13 @@
                 ansar: {
                     given: 0, current: 0
                 }
-            }
+            };
             $scope.noAnsar = true;
             $scope.loadingAnsar = false;
             $scope.ansars = [];
-            $scope.allDistrict = []
-            $scope.allThana = []
-            $scope.allKPI = []
+            $scope.allDistrict = [];
+            $scope.allThana = [];
+            $scope.allKPI = [];
             $scope.selectedAnsar = [];
             $scope.selectAnsar = [];
             $scope.memorandumId = "";
@@ -51,7 +49,7 @@
                     $scope.selectAll = false;
                     $scope.selectedAnsar = [];
                     $scope.selectAnsar = [];
-                    $scope.ansars = []
+                    $scope.ansars = [];
                     $scope.loadingAnsar = false;
                     return;
                 }
@@ -69,119 +67,101 @@
                 }, function (response) {
                     $scope.loadingAnsar = false;
                 })
-            }
-            $scope.$watch('results', function (newValue,oldValue ) {
-
-                if(newValue!==undefined&&newValue.constructor===Array&&newValue.length!==undefined) $scope.selectAnsar = Array.apply(null, new Array(newValue.length)).map(Boolean.prototype.valueOf, $scope.selectAll);
-            },true)
+            };
+            $scope.$watch('results', function (newValue, oldValue) {
+                if (newValue !== undefined && newValue.constructor === Array && newValue.length !== undefined) $scope.selectAnsar = Array.apply(null, new Array(newValue.length)).map(Boolean.prototype.valueOf, $scope.selectAll);
+            }, true);
             $scope.changeSelectAnsar = function (i) {
                 var index = $scope.selectedAnsar.indexOf($scope.results[i]);
                 if ($scope.selectAnsar[i]) {
                     if (index == -1) {
                         $scope.selectedAnsar.push($scope.results[i])
                     }
-                }
-                else {
+                } else {
                     $scope.selectedAnsar.splice(index, 1);
                 }
                 $scope.selectAll = $scope.selectedAnsar.length == $scope.results.length;
-            }
+            };
             $scope.$watch('selectAnsar', function (n, o) {
                 n.forEach(function (e, i, a) {
                     $scope.changeSelectAnsar(i);
                 })
-            })
+            });
             $scope.changeSelectAll = function () {
                 $scope.selectAnsar = Array.apply(null, new Array($scope.results.length)).map(Boolean.prototype.valueOf, $scope.selectAll);
-            }
-            $scope.letterOption={
-                id:$scope.memorandumId,
-                unit:$scope.trans.unit
-            }
-            $scope.pl = false
+            };
+            $scope.letterOption = {
+                id: $scope.memorandumId,
+                unit: $scope.trans.unit
+            };
+            $scope.pl = false;
             $scope.confirmTransferAnsar = function () {
                 var ansar_id = [];
-                $scope.letterOption={
-                    id:$rootScope.user.district_id?$rootScope.user.district_id:angular.copy($scope.memorandumId),
-                    unit:angular.copy($scope.trans.unit),
-                    option:'memorandumNo',
-                    type:'TRANSFER',
-                    status:false,
-                }
-                $scope.pl = false
+                $scope.letterOption = {
+                    id: $rootScope.user.district_id ? $rootScope.user.district_id : angular.copy($scope.memorandumId),
+                    unit: angular.copy($scope.trans.unit),
+                    option: 'memorandumNo',
+                    type: 'TRANSFER',
+                    status: false
+                };
+                $scope.pl = false;
                 $scope.modalOpen = false;
                 $scope.selectedAnsar.forEach(function (a) {
                     ansar_id.push({ansar_id: a.ansar_id, joining_date: a.transfered_date});
-                })
-                console.log(ansar_id)
+                });
                 $scope.allLoading = true;
                 var data = {
                     memorandum_id: $scope.memorandumId,
                     transfer_date: $scope.joinDate,
-                    kpi_id: [$scope.params.kpi,$scope.trans.kpi],
+                    kpi_id: [$scope.params.kpi, $scope.trans.kpi],
                     transferred_ansar: ansar_id,
                     unit: $scope.trans.unit,
-                    mem_date:$scope.memDate
-                }
+                    mem_date: $scope.memDate
+                };
                 $http({
                     url: '{{URL::route('complete_transfer_process')}}',
                     data: angular.toJson(data),
                     method: 'post'
                 }).then(function (response) {
-
-                    $scope.allLoading = false
-                    console.log(response.data)
+                    $scope.allLoading = false;
                     $scope.result = response.data;
-
                     $scope.q = '';
                     if ($scope.result.data.success.count > 0) {
                         $scope.loadAnsar();
                         $scope.letterOption.status = true
                     }
-
-
                 }, function (response) {
-                    console.log(response.data);
                     $scope.allLoading = false;
                     return;
-                    $scope.result = {
-                        status: false,
-                        message: 'A Server error occur<br> ERROR CODE : ' + response.status
-                    }
                 })
-            }
+            };
             $scope.verifyMemorandumId = function () {
                 var data = {
                     memorandum_id: $scope.memorandumId
-                }
+                };
                 $scope.isVerified = false;
                 $scope.isVerifying = true;
                 $http.post('{{action('UserController@verifyMemorandumId')}}', data).then(function (response) {
                     $scope.isVerified = response.data.status;
                     $scope.isVerifying = false;
                 }, function (response) {
-
                 })
             }
-           /* $scope.$watch('trans',function (n,o) {
-                console.log(n)
-            },true)*/
-
-        })
+        });
         GlobalApp.directive('openHideModal', function () {
             return {
                 restrict: 'AC',
                 link: function (scope, elem, attr) {
-                    $(elem).tooltip({title: "Select at least an ansar", trigger: 'manual'})
+                    $(elem).tooltip({title: "Select at least an ansar", trigger: 'manual'});
                     $(elem).on('click', function () {
                         if (scope.selectedAnsar.length <= 0) {
                             $(this).tooltip('show');
                             setTimeout(function () {
                                 $(elem).tooltip('hide');
-                            }, 1000)
+                            }, 1000);
                             return;
                         }
-                        $("#transfer-option").modal("toggle")
+                        $("#transfer-option").modal("toggle");
                         $("#transfer-option").on('show.bs.modal', function () {
                             scope.resetValue = false;
                             scope.result = [];
@@ -189,8 +169,7 @@
                             scope.joinDate = "";
                             scope.showKpiStatus = false;
                             scope.$apply()
-
-                        })
+                        });
                         $("#transfer-option").on('hide.bs.modal', function () {
                             modalOpen = false;
                             scope.resetValue = true;
@@ -199,7 +178,7 @@
                     })
                 }
             }
-        })
+        });
         GlobalApp.directive('notificationMessage', function (notificationService) {
             return {
                 restrict: 'ACE',
@@ -210,34 +189,28 @@
                                 notificationService.notify('error', newValue.message)
                             }
                             if (newValue.data.success.count > 0) {
-
-                                for (i=0;i<newValue.data.success.count;i++){
+                                for (i = 0; i < newValue.data.success.count; i++) {
                                     notificationService.notify(
-                                        'success', "Ansar("+newValue.data.success.data[i]+") successfully transfered"
+                                        'success', "Ansar(" + newValue.data.success.data[i] + ") successfully transfered"
                                     )
                                 }
-
-                            }else{
+                            } else {
                                 scope.pl = false;
                             }
-                            if(newValue.data.error.count>0) {
-                                for (i=0;i<newValue.data.error.count;i++){
+                            if (newValue.data.error.count > 0) {
+                                for (i = 0; i < newValue.data.error.count; i++) {
                                     notificationService.notify(
-                                        'error',newValue.data.error.data[i]
-                                )
+                                        'error', newValue.data.error.data[i]
+                                    )
                                 }
                             }
                         }
                     })
                 }
             }
-        })
-        $(document).ready(function () {
-            $("#join_date_in_tk").datepicker({                dateFormat:'dd-M-yy'            })(false);
-        })
+        });
     </script>
     <div notification-message ng-controller="TransferController">
-
         <section class="content">
             <div class="box box-solid">
                 <div class="overlay" ng-if="allLoading">
@@ -252,8 +225,7 @@
                             kpi-change="loadAnsar()"
                             start-load="range"
                             field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
-                            data = "params"
-                    ></filter-template>
+                            data="params"></filter-template>
                     <div class="table-responsive">
                         <table class="table table-bordered" id="pc-table">
                             <caption>
@@ -268,6 +240,7 @@
                                 <th>District</th>
                                 <th>KPI Name</th>
                                 <th>Embodiment Date</th>
+                                <th>Last Transfer Date</th>
                                 <th>
                                     <div class="styled-checkbox">
                                         <input ng-disabled="ansars.length<=0" type="checkbox" id="all"
@@ -287,6 +260,7 @@
                                 <td>[[ansar.division_name_bng]]</td>
                                 <td>[[ansar.unit_name_bng]]</td>
                                 <td>[[ansar.kpi_name]]</td>
+                                <td>[[ansar.joining_date|dateformat:'DD-MMM-YYYY']]</td>
                                 <td>[[ansar.transfered_date|dateformat:'DD-MMM-YYYY']]</td>
                                 <td>
                                     <div class="styled-checkbox">
@@ -319,7 +293,8 @@
                         <div class="modal-header">
                             <strong>Transfer Option</strong>
                             <button type="button" class="close" data-dismiss="modal"
-                                    ng-click="modalOpen = false">&times;</button>
+                                    ng-click="modalOpen = false">&times;
+                            </button>
                         </div>
                         <div class="modal-body">
                             <div class="register-box" style="margin: 0;width: auto">
@@ -330,38 +305,31 @@
                                             start-load="range"
                                             kpi-disabled="params.kpi"
                                             field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
-                                            data = "trans"
+                                            data="trans"
                                     ></filter-template>
 
                                     <div class="row">
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-6">
                                             <div class="form-group">
-                                                <label class="control-label">Memorandum no. & Date&nbsp;&nbsp;&nbsp;<span
+                                                <label class="control-label">Memorandum no.&nbsp;&nbsp;&nbsp;<span
                                                             ng-show="isVerifying"><i class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span>
                                                     <span class="text-danger"
                                                           ng-if="isVerified">This id already taken</span></label>
-
-                                                <div class="row">
-                                                    <div class="col-md-7" style="padding-right: 0"><input ng-blur="verifyMemorandumId()"
-                                                                                 ng-model="memorandumId"
-                                                                                 type="text" class="form-control"
-                                                                                 name="memorandum_id"
-                                                                                 placeholder="Enter memorandum id">
-                                                    </div>
-                                                    <div class="col-md-5">
-                                                        <input date-picker ng-model="memDate"
-                                                               type="text" class="form-control" name="mem_date"
-                                                               placeholder="Memorandum Date" required>
-                                                    </div>
-                                                </div>
+                                                <input ng-blur="verifyMemorandumId()" ng-model="memorandumId"
+                                                       type="text" class="form-control" name="memorandum_id"
+                                                       placeholder="Enter memorandum id">
                                             </div>
-                                        </div>
-                                        <div class="col-sm-4">
                                             <div class="form-group">
-                                                <label class="control-label">Embodiment date in transferred kpi.</label>
-                                                <input type="text" ng-model="joinDate" id="join_date_in_tk"
-                                                       class="form-control"
-                                                       name="memorandum_id">
+                                                <datepicker-separate-fields label="Memorandum Date:"
+                                                                            notify="memoInvalidDate"
+                                                                            rdata="memDate"></datepicker-separate-fields>
+                                                <input ng-value="memDate" type="hidden" name="mem_date">
+                                            </div>
+                                            <div class="form-group">
+                                                <datepicker-separate-fields label="Embodiment date in transferred kpi."
+                                                                            notify="joinInvalidDate"
+                                                                            rdata="joinDate"></datepicker-separate-fields>
+                                                <input type="hidden" ng-value="joinDate" name="memorandum_id">
                                             </div>
                                         </div>
                                     </div>
@@ -393,7 +361,7 @@
                                         </table>
                                     </div>
                                     <button class="btn btn-primary pull-right" open-hide-modal
-                                            ng-disabled="selectedAnsar.length<=0||!memorandumId||!joinDate||!trans.kpi||isVerified||isVerifying"
+                                            ng-disabled="joinInvalidDate||memoInvalidDate||selectedAnsar.length<=0||!memorandumId||!joinDate||!trans.kpi||isVerified||isVerifying"
                                             ng-click="confirmTransferAnsar()">
                                         <i class="fa fa-check"></i>&nbsp;Confirm
                                     </button>

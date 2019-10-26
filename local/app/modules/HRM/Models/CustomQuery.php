@@ -554,6 +554,69 @@ class CustomQuery
 
     }
 
+    public static function getFreezeListWithRankGender($division, $unit, $thana, $kpi, $limit = 50, $q = null, $export = 0, $rank, $gender)
+    {
+        $freeze_em = DB::table('tbl_freezing_info')
+            ->join('tbl_ansar_parsonal_info', 'tbl_freezing_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+            ->join('tbl_division', 'tbl_division.id', '=', 'tbl_ansar_parsonal_info.division_id')
+            ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
+            ->join('tbl_embodiment', 'tbl_embodiment.ansar_id', '=', 'tbl_freezing_info.ansar_id')
+            ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+            ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
+            ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.father_name_bng', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_embodiment.reporting_date',
+                'tbl_units.unit_name_bng', 'tbl_division.division_name_bng', 'tbl_thana.thana_name_bng', 'village_name', 'union_name_eng', 'village_name_bng', 'union_name_bng', 'tbl_designations.name_bng', 'tbl_freezing_info.freez_date', 'tbl_freezing_info.freez_reason', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status', 'tbl_ansar_parsonal_info.post_office_name', 'tbl_ansar_parsonal_info.post_office_name_bng');
+        $freeze_emm = DB::table('tbl_freezing_info')
+            ->join('tbl_ansar_parsonal_info', 'tbl_freezing_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->join('tbl_designations', 'tbl_ansar_parsonal_info.designation_id', '=', 'tbl_designations.id')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+            ->join('tbl_division', 'tbl_division.id', '=', 'tbl_ansar_parsonal_info.division_id')
+            ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
+            ->join('tbl_freezed_ansar_embodiment_details', 'tbl_freezed_ansar_embodiment_details.ansar_id', '=', 'tbl_freezing_info.ansar_id')
+            ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_freezed_ansar_embodiment_details.freezed_kpi_id')
+            ->join('tbl_kpi_detail_info', 'tbl_kpi_detail_info.kpi_id', '=', 'tbl_kpi_info.id')
+            ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.father_name_bng', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_freezed_ansar_embodiment_details.reporting_date',
+                'tbl_units.unit_name_bng', 'tbl_division.division_name_bng', 'tbl_thana.thana_name_bng', 'village_name', 'union_name_eng', 'village_name_bng', 'union_name_bng', 'tbl_designations.name_bng', 'tbl_freezing_info.freez_date', 'tbl_freezing_info.freez_reason', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id', 'tbl_kpi_detail_info.kpi_withdraw_date as withdraw_date', 'tbl_kpi_info.withdraw_status', 'tbl_ansar_parsonal_info.post_office_name', 'tbl_ansar_parsonal_info.post_office_name_bng');
+        if ($division && $division != 'all') {
+            $freeze_em->where('tbl_kpi_info.division_id', $division);
+            $freeze_emm->where('tbl_kpi_info.division_id', $division);
+        }
+        if ($unit && $unit != 'all') {
+            $freeze_em->where('tbl_kpi_info.unit_id', $unit);
+            $freeze_emm->where('tbl_kpi_info.unit_id', $unit);
+        }
+        if ($thana && $thana != 'all') {
+            $freeze_em->where('tbl_kpi_info.thana_id', $thana);
+            $freeze_emm->where('tbl_kpi_info.thana_id', $thana);
+        }
+        if ($kpi && $kpi != 'all') {
+            $freeze_em->where('tbl_kpi_info.id', $kpi);
+            $freeze_emm->where('tbl_kpi_info.id', $kpi);
+        }
+        if (isset($gender) && !empty($gender) && $gender != 'all') {
+            $freeze_em->where('tbl_ansar_parsonal_info.sex', '=', $gender);
+            $freeze_emm->where('tbl_ansar_parsonal_info.sex', '=', $gender);
+        }
+        if (isset($rank) && !empty($rank) && is_numeric($rank)) {
+            $freeze_em->where('tbl_designations.id', '=', $rank);
+            $freeze_emm->where('tbl_designations.id', '=', $rank);
+        }
+        $query = $freeze_em->unionAll($freeze_emm);
+        $dataQ = DB::table(DB::Raw("(" . $query->toSql() . ") t"))->mergeBindings($query);
+        $view = null;
+        if (!$export) {
+            if ($q) {
+                $dataQ->where('ansar_id', $q);
+            }
+            $data = $dataQ->orderBy('freez_date', 'desc')->paginate($limit);
+            $view = view("HRM::Freeze.pagination", compact('data'))->render();
+        } else {
+            $data = $dataQ->orderBy('freez_date', 'desc')->get();
+        }
+        return ['data' => $data, 'view' => "$view"];
+    }
+
     public static function sendSMS($ansar_id)
     {
         $phone_no = PersonalInfo::where('ansar_id', $ansar_id)->first()->mobile_no_self;
