@@ -1,5 +1,3 @@
-{{--Ansar Transfer Complete--}}
-
 @extends('template.master')
 @section('title','Disembodied period correction')
 @section('breadcrumb')
@@ -7,36 +5,35 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller("DisembodiedPeriodCorrectionController", function ($scope, $http, $timeout,$rootScope) {
+        GlobalApp.controller("DisembodiedPeriodCorrectionController", function ($scope, $http, $timeout, $rootScope) {
             $scope.reasons = [];
-            $scope.params={};
-            $scope.reset={};
-            $scope.embodimentData={};
+            $scope.params = {};
+            $scope.reset = {};
+            $scope.embodimentData = {};
             $http({
-                method:'get',
-                url:'{{URL::route('load_disembodiment_reason')}}'
+                method: 'get',
+                url: '{{URL::route('load_disembodiment_reason')}}'
             }).then(function (response) {
                 $scope.reasons = response.data;
-            },function (response) {
+            }, function (response) {
                 $scope.reasons = [];
-            })
+            });
             $scope.loadAnsar = function () {
                 $http({
-                    method:'post',
-                    url:window.location.href,
-                    data:$scope.params
+                    method: 'post',
+                    url: window.location.href,
+                    data: $scope.params
                 }).then(function (response) {
                     $scope.ansars = response.data;
-                },function (response) {
+                }, function (response) {
                     $scope.ansars = [];
                 })
-            }
+            };
             $scope.embodiedAnsar = function (id) {
-
                 $scope.embodimentData['ansar_id'] = id;
-                $("#embodied-option").modal('show')
+                $("#embodied-option").modal('show');
                 $scope.reset.reset();
-            }
+            };
             $scope.postEmbodimentData = function () {
                 console.log($scope.embodimentData)
             }
@@ -44,7 +41,6 @@
 
     </script>
     <div notification-message ng-controller="DisembodiedPeriodCorrectionController">
-
         <section class="content">
             <div class="box box-solid">
                 <div class="overlay" ng-if="allLoading">
@@ -59,7 +55,7 @@
                             kpi-change="loadAnsar()"
                             start-load="range"
                             field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
-                            data = "params"
+                            data="params"
                             call-func="reset"
                     ></filter-template>
                     <div class="row">
@@ -124,15 +120,15 @@
                         <div class="clearfix"></div>
                     </div>
                 </div>
-
             </div>
             <div id="embodied-option" class="modal fade" role="dialog">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
                             <strong>Embodiment Option</strong>
-                            <button type="button" class="close" data-dismiss="modal"
-                                    ng-click="modalOpen = false">&times;</button>
+                            <button type="button" class="close" data-dismiss="modal" ng-click="modalOpen = false">
+                                &times;
+                            </button>
                         </div>
                         <div class="modal-body">
                             <div class="register-box" style="margin: 0;width: auto">
@@ -142,36 +138,29 @@
                                             type="single"
                                             start-load="range"
                                             layout-vertical="true"
-                                            data = "embodimentData"
+                                            data="embodimentData"
                                     ></filter-template>
-
                                     <div class="form-group">
-                                        <label class="control-label">Memorandum no. & Date&nbsp;&nbsp;&nbsp;<span
+                                        <label for="memId" class="control-label">Memorandum no.: <span
                                                     ng-show="isVerifying"><i class="fa fa-spinner fa-pulse"></i>&nbsp;Verifying</span>
                                             <span class="text-danger"
                                                   ng-if="isVerified">This id already taken</span></label>
-
-                                        <div class="row">
-                                            <div class="col-md-7" style="padding-right: 0"><input ng-blur="verifyMemorandumId()"
-                                                                                                  ng-model="embodimentData.memorandumId"
-                                                                                                  type="text" class="form-control"
-                                                                                                  name="memorandum_id"
-                                                                                                  placeholder="Enter memorandum id">
-                                            </div>
-                                            <div class="col-md-5">
-                                                <input date-picker ng-model="memDate"
-                                                       type="text" class="form-control" name="mem_date"
-                                                       placeholder="Memorandum Date" required>
-                                            </div>
-                                        </div>
+                                        <input ng-blur="verifyMemorandumId()" type="text" class="form-control"
+                                               ng-model="embodimentData.memorandumId" name="memorandum_id"
+                                               id="memId" placeholder="Enter memorandum id">
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label">Embodiment date</label>
-                                        <input type="text" date-picker ng-model="embodimentData.joinDate" id="join_date_in_tk"
-                                               class="form-control"
-                                               name="memorandum_id">
+                                        <datepicker-separate-fields label="Memorandum Date:" notify="memoInvalidDate"
+                                                                    rdata="memDate"></datepicker-separate-fields>
+                                        <input ng-model="memDate" type="hidden" name="mem_date">
                                     </div>
-                                    <button class="btn btn-primary pull-right" ng-click="postEmbodimentData()">
+                                    <div class="form-group">
+                                        <datepicker-separate-fields label="Embodiment date:" notify="emboInvalidDate"
+                                                                    rdata="embodimentData.joinDate"></datepicker-separate-fields>
+                                        <input type="hidden" ng-value="embodimentData.joinDate" name="memorandum_id">
+                                    </div>
+                                    <button class="btn btn-primary pull-right" ng-click="postEmbodimentData()"
+                                            ng-disabled="memoInvalidDate || emboInvalidDate">
                                         <i class="fa fa-check"></i>&nbsp;Confirm
                                     </button>
                                 </div>
