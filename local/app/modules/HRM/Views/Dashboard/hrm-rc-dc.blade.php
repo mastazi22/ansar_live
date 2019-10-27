@@ -13,10 +13,9 @@
             $scope.loadAnsar = function () {
                 $http({
                     url: "{{URL::to('HRM/getTotalAnsar')}}",
-                    method: 'get',
+                    method: 'get'
                 }).then(function (response) {
                     $scope.allAnsar = formatNumber(response.data);
-                    console.log(response.data);
                     $scope.loadingAnsar = false;
                 }, function (response) {
                     $scope.loadingAnsar = false;
@@ -45,20 +44,13 @@
                 })
             };
             $scope.loadAnsar();
-
             $scope.loadRecentAnsar = function () {
-
                 $http({
                     url: "{{URL::to('HRM/getrecentansar')}}",
-                    method: 'get',
+                    method: 'get'
                 }).then(function (response) {
-//                alert(JSON.stringify(response.data));
                     $scope.recentAnsar = formatNumber(response.data);
-                    console.log(response.data);
-//                $scope.loadingAnsar = false;
                 }, function (response) {
-//                $scope.loadingAnsar = false;
-                    console.log(response)
                     switch (response.status) {
                         case 404:
                             response.data = "Not found(404)";
@@ -82,16 +74,14 @@
 
                     }
                 })
-            }
+            };
             $scope.loadRecentAnsar();
-
-
             $scope.progressInfo = [];
             $scope.loadingProgressInfo = true;
             $scope.progressData = function () {
                 $http({
                     url: "{{URL::to('HRM/progress_info')}}",
-                    method: 'get',
+                    method: 'get'
                 }).then(function (response) {
                     $scope.progressInfo = formatNumber(response.data);
                     $scope.loadingProgressInfo = false;
@@ -108,11 +98,10 @@
                     $scope.progressInfo = {
                         totalServiceEndedInThreeYears: response.data,
                         totalAnsarReachedFiftyYearsOfAge: response.data,
-                        totalNotInterestedMembersUptoTenTimes: response.data,
-
+                        totalNotInterestedMembersUptoTenTimes: response.data
                     }
                 })
-            }
+            };
             $scope.fiveDaysOffer = function () {
                 $http({
                     url: "{{URL::route('offer_accept_last_5_day_data')}}",
@@ -131,7 +120,7 @@
                 }, function (response) {
                     $scope.loadingProgressInfo = false;
                 })
-            }
+            };
 
             function sum(t) {
                 var s = 0;
@@ -148,25 +137,16 @@
             $scope.fiveDaysOffer();
             $http({
                 url: "{{URL::to('HRM/graph_embodiment')}}",
-                method: 'get',
+                method: 'get'
             }).then(function (response) {
                 $scope.graphData = response.data
-            })
+            });
             $scope.graphDisembodiment = [];
 
-            {{--$scope.graphDisembodimentData = function () {--}}
-            {{--$http({--}}
-            {{--url: "{{URL::to('graph_disembodiment')}}",--}}
-            {{--method: 'get',--}}
-            {{--}).then(function (response) {--}}
-            {{--$scope.graphData.push({d:response.data})--}}
-            {{--})--}}
-            {{--}--}}
-            {{--$scope.graphDisembodimentData();--}}
             function formatNumber(data) {
                 Object.keys(data).forEach(function (key) {
                     data[key] = data[key].toLocaleString();
-                })
+                });
                 return data;
             }
         });
@@ -225,6 +205,7 @@
     <section class="content" ng-controller="TotalAnsar">
         <div class="row">
             <div class="col-md-3 col-sm-6 col-xs-12"></div>
+
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="line-bar-top"></div>
                 <div class="info-box bg-aqua">
@@ -291,6 +272,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="info-box bg-aqua">
                     <span class="info-box-icon"><img src="{{asset('dist/img/ansars.png')}}"></span>
@@ -379,6 +361,8 @@
                     </div>
                 </div>
             </div>
+
+
             <div class="col-md-3 col-sm-6 col-xs-12"></div>
             <div class="col-md-3 col-sm-6 col-xs-12">
                 <div class="line-bar-bottom"></div>
@@ -406,6 +390,27 @@
             </div>
             <div class="col-md-3 line-bar-middle col-sm-6 col-xs-12">
                 <div class="info-box bg-aqua">
+                    <span class="info-box-icon"><img src="{{asset('dist/img/freeze.png')}}"></span>
+                    <div class="info-box-content">
+                        <a href="{{URL::to('HRM/show_ansar_list')}}/freezed_ansar_other"
+                           class="btn-link" style="color: #FFFFFF !important;">
+                            <span class="info-box-text">@if(Auth::user()->type==22) @lang('title.tfrdo') @else @lang('title.tfrrro') @endif</span>
+                            <span class="info-box-number">[[allAnsar.totalFreezeOther]]
+                                <img src="{{asset('dist/img/facebook-white.gif')}}" width="20" ng-show="loadingAnsar">
+                            </span>
+                        </a>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 70%"></div>
+                        </div>
+                        <a href="{{URL::to('HRM/show_recent_ansar_list')}}/freezed_ansar_other"
+                           style="color:#FFFFFF" class="btn-link">
+                            <span class="progress-description">Recent-[[recentAnsar.recentFreezeOther]]</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 line-bar-middle col-sm-6 col-xs-12">
+                <div class="info-box bg-aqua">
                     <span class="info-box-icon"><img src="{{asset('dist/img/blacklist.png')}}"></span>
                     <div class="info-box-content">
                         <a href="{{URL::to('HRM/show_ansar_list')}}/blacked_ansar"
@@ -425,7 +430,10 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 line-bar-middle col-sm-6 col-xs-12">
+
+            <div class="col-md-3 col-sm-6 col-xs-12"></div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="line-bar-bottom2"></div>
                 <div class="info-box bg-aqua">
                     <span class="info-box-icon"><img src="{{asset('dist/img/blocklist.png')}}"></span>
                     <div class="info-box-content">
@@ -446,9 +454,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6 col-xs-12"></div>
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <div class="line-bar-bottom2"></div>
+            <div class="col-md-3 line-bar-middle col-sm-6 col-xs-12">
                 <div class="info-box bg-aqua">
                     <span class="info-box-icon">
                         <img src="{{asset('dist/img/queue.png')}}">

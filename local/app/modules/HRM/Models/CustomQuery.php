@@ -1074,6 +1074,46 @@ class CustomQuery
         return ['total' => collect($total->get())->pluck('t', 'code'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'freeze'];
     }
 
+    public static function getTotalOtherFreezedAnsarList($offset, $limit, $unit, $thana, $division = null, $sex = 'all', $time, $rank, $q)
+    {
+        $ansarQuery = DB::table('tbl_ansar_parsonal_info')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+            ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
+            ->join('tbl_freezing_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_freezing_info.ansar_id')
+            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+            ->join('tbl_kpi_info', 'tbl_freezing_info.kpi_id', '=', 'tbl_kpi_info.id')
+            ->where('tbl_ansar_status_info.freezing_status', 1)
+            ->where('tbl_ansar_status_info.block_list_status', 0);
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_kpi_info.division_id', $division);
+        }
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_kpi_info.id', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_kpi_info.id', $thana);
+        }
+        if ($sex != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
+        }
+        if ($rank != 'all') {
+            $ansarQuery->where('tbl_designations.id', $rank);
+        }
+        if ($time == self::RECENT) {
+            $recentTime = Carbon::now();
+            $backTime = Carbon::now()->subDays(7);
+            $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
+        }
+        if ($q) {
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+        }
+        $total = clone $ansarQuery;
+        $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
+        $ansars = $ansarQuery->distinct()->orderBy('tbl_freezing_info.freez_date', 'asc')->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
+            'tbl_designations.name_bng as rank', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_freezing_info.freez_reason', 'tbl_freezing_info.freez_date')->skip($offset)->limit($limit)->get();
+        return ['total' => collect($total->get())->pluck('t', 'code'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'freeze'];
+    }
 
 // Dashboard blocked ansar list
     public static function getTotalBlockedAnsarList($offset, $limit, $unit, $thana, $division = null, $sex = 'all', $time, $rank, $q)
@@ -1333,6 +1373,44 @@ class CustomQuery
 //        return DB::getQueryLog();
     }
 
+    public static function ansarListForServiceEndedWithRankGender($offset, $limit, $unit, $thana, $division = null, $interval = 2, $rank, $gender, $q)
+    {
+        $ansarQuery = DB::table('tbl_embodiment')
+            ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_embodiment.ansar_id')
+            ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
+            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_kpi_info.unit_id')
+            ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_kpi_info.thana_id')
+            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
+            ->where('tbl_ansar_status_info.block_list_status', 0)
+            ->where('tbl_ansar_status_info.black_list_status', 0)
+            ->where('tbl_embodiment.emboded_status', '=', 'Emboded')
+            ->whereRaw("service_ended_date between NOW() and DATE_ADD(NOW(),INTERVAL {$interval} MONTH)");
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_kpi_info.division_id', '=', $division);
+        }
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_kpi_info.unit_id', '=', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_kpi_info.thana_id', '=', $thana);
+        }
+        if (isset($gender) && !empty($gender) && $gender != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', '=', $gender);
+        }
+        if (isset($rank) && !empty($rank) && is_numeric($rank)) {
+            $ansarQuery->where('tbl_designations.id', '=', $rank);
+        }
+        if ($q) {
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+        }
+        $total = clone $ansarQuery;
+        $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_embodiment.ansar_id') as total"), 'tbl_designations.code');
+        $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_designations.name_bng as rank', 'tbl_kpi_info.kpi_name as kpi', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana',
+            'tbl_embodiment.joining_date as j_date', 'tbl_embodiment.service_ended_date as se_date', 'tbl_embodiment.created_at')->skip($offset)->limit($limit)->get();
+        return ['total' => collect($total->get())->pluck('total', 'code'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars];
+    }
+
 
     public static function ansarListWithFiftyYears($offset, $limit, $unit, $thana, $division, $q, $selected_date = 3, $custom_date = "", $rank = 'all')
     {
@@ -1407,6 +1485,84 @@ class CustomQuery
         $total = DB::table(DB::raw("(" . $query->toSql() . ") t"))->mergeBindings($query);
         $total->groupBy('code')->select(DB::raw("count('id') as total"), 'code');
 //        $ansars = $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.name_bng as rank', 'tbl_ansar_parsonal_info.sex', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana')->skip($offset)->limit($limit)->get();
+        $ansars = DB::table(DB::raw("(" . $query->toSql() . ") t"))->mergeBindings($query)->skip($offset)->limit($limit)->get();
+        return ['total' => collect($total->get())->pluck('total', 'code'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars];
+    }
+
+    public static function ansarListWithFiftyYearsWithRankGender($offset, $limit, $unit, $thana, $division, $q, $selected_date = 3, $custom_date = "", $rank = 'all', $gender = 'all')
+    {
+        $ansarQuery = DB::table('tbl_ansar_parsonal_info')
+            ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+            ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
+            ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
+            ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id');
+        if ($division && $division != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.division_id', '=', $division);
+        }
+        if ($unit != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.unit_id', '=', $unit);
+        }
+        if ($thana != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.thana_id', '=', $thana);
+        }
+        if (isset($gender) && !empty($gender) && $gender != 'all') {
+            $ansarQuery->where('tbl_ansar_parsonal_info.sex', '=', $gender);
+        }
+        if ($q) {
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+        }
+        $ansarQuery->where('tbl_ansar_status_info.retierment_status', 0);
+        $total = clone $ansarQuery;
+        $pcQuery = clone $ansarQuery;
+        $apcQuery = clone $ansarQuery;
+        $pcQuery->where('tbl_designations.id', 3);
+        $apcQuery->where('tbl_designations.id', 2);
+        $ansarQuery->where('tbl_designations.id', 1);
+        $value = 3;
+        $interval = "MONTH";
+        if ($selected_date > -1 || !$selected_date) {
+            $value = $selected_date ? $selected_date : 3;
+            $interval = "MONTH";
+        } else {
+            $custom = json_decode($custom_date, true);
+            switch ($custom['type']) {
+                case 1:
+                    $interval = "DAY";
+                    break;
+                case 2:
+                    $interval = "WEEK";
+                    break;
+                case 3:
+                    $interval = "MONTH";
+                    break;
+                case 4:
+                    $interval = "YEAR";
+                    break;
+            }
+            if (!isset($custom['custom'])) {
+                $interval = "MONTH";
+                $value = 3;
+            } else {
+                $value = $custom['custom'];
+            }
+        }
+        $ansarQuery->where(DB::raw("TIMESTAMPDIFF(YEAR,data_of_birth,DATE_ADD(NOW(),INTERVAL $value $interval))"), ">=", 47);
+        $pcQuery->where(DB::raw("TIMESTAMPDIFF(YEAR,data_of_birth,DATE_ADD(NOW(),INTERVAL $value $interval))"), ">=", 52);
+        $apcQuery->where(DB::raw("TIMESTAMPDIFF(YEAR,data_of_birth,DATE_ADD(NOW(),INTERVAL $value $interval))"), ">=", 52);
+        $ansarQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.code', 'tbl_designations.name_bng as rank', 'tbl_ansar_parsonal_info.sex', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana');
+        $pcQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.code', 'tbl_designations.name_bng as rank', 'tbl_ansar_parsonal_info.sex', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana');
+        $apcQuery->select('tbl_ansar_parsonal_info.ansar_id as id', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date', 'tbl_designations.code', 'tbl_designations.name_bng as rank', 'tbl_ansar_parsonal_info.sex', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana');
+        if ($rank == 'all') {
+            $query = $ansarQuery->unionAll($pcQuery)->unionAll($apcQuery);
+        } else if ($rank == 'PC') {
+            $query = $pcQuery;
+        } else if ($rank == 'APC') {
+            $query = $apcQuery;
+        } else {
+            $query = $ansarQuery;
+        }
+        $total = DB::table(DB::raw("(" . $query->toSql() . ") t"))->mergeBindings($query);
+        $total->groupBy('code')->select(DB::raw("count('id') as total"), 'code');
         $ansars = DB::table(DB::raw("(" . $query->toSql() . ") t"))->mergeBindings($query)->skip($offset)->limit($limit)->get();
         return ['total' => collect($total->get())->pluck('total', 'code'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars];
     }
