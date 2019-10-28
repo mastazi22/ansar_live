@@ -114,13 +114,16 @@
                                     <th>Form Status</th>
                                     <th>To Status</th>
                                     <th>Active Date</th>
+                                    <th>Action User Id</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr>
                                     <td>[[ansarDetail['future'].from_status]]</td>
                                     <td>[[ansarDetail['future'].to_status]]</td>
-                                    <td>[[convertDateObj(ansarDetail['future'].activation_date) | date:'mediumDate']]</td>
+                                    <td>[[convertDateObj(ansarDetail['future'].activation_date) | date:'mediumDate']]
+                                    </td>
+                                    <td>[[ansarDetail['future'].action_by]]</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -225,6 +228,7 @@
                                     <th>Regional Panel Position</th>
                                     <th>Come From</th>
                                     <th>Memorandum</th>
+                                    <th>Action User Id</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -235,6 +239,7 @@
                                     <td>[[ansarDetail['cPanel'].re_panel_position]]</td>
                                     <td>[[ansarDetail['cPanel'].come_from]]</td>
                                     <td>[[ansarDetail['cPanel'].memorandum_id]]</td>
+                                    <td>[[ansarDetail['cPanel'].action_user_id]]</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -286,6 +291,7 @@
                                     <th>Reason</th>
                                     <th>Memorandum</th>
                                     <th>Comment</th>
+                                    <th>Action User Id</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -296,6 +302,7 @@
                                     <td>[[ansarDetail['cRest'].reason.reason_in_bng]]</td>
                                     <td>[[ansarDetail['cRest'].memorandum_id]]</td>
                                     <td>[[ansarDetail['cRest'].comment]]</td>
+                                    <td>[[ansarDetail['cRest'].action_user_id]]</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -316,6 +323,7 @@
                                     <th>Move To</th>
                                     <th>Memorandum</th>
                                     <th>Comment</th>
+                                    <th>Action User Id</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -328,6 +336,7 @@
                                     <td>[[lrest.move_to]]</td>
                                     <td>[[lrest.old_memorandum_id]]</td>
                                     <td>[[lrest.comment]]</td>
+                                    <td>[[lrest.action_user_id]]</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -351,6 +360,7 @@
                                     <th>Service End Date</th>
                                     <th>KPI</th>
                                     <th>Memorandum</th>
+                                    <th>Action User Id</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -364,6 +374,7 @@
                                     </td>
                                     <td>[[getKPIInfo(ansarDetail['cEmbodiment'].kpi)]]</td>
                                     <td>[[ansarDetail['cEmbodiment'].memorandum_id]]</td>
+                                    <td>[[ansarDetail['cEmbodiment'].action_user_id]]</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -383,6 +394,7 @@
                                     <th>Comment</th>
                                     <th>KPI</th>
                                     <th>Memorandum</th>
+                                    <th>Action User Id</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -394,6 +406,7 @@
                                     <td>[[lembodiment.comment]]</td>
                                     <td>[[getKPIInfo(lembodiment.kpi)]]</td>
                                     <td>[[lembodiment.old_memorandum_id]]</td>
+                                    <td>[[lembodiment.action_user_id]]</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -416,6 +429,7 @@
                                     <th>Comment On Freeze</th>
                                     <th>KPI</th>
                                     <th>Memorandum</th>
+                                    <th>Action User Id</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -425,6 +439,7 @@
                                     <td>[[ansarDetail['cFreeze'].comment_on_freez]]</td>
                                     <td>[[getKPIInfo(ansarDetail['cFreeze'].kpi)]]</td>
                                     <td>[[ansarDetail['cFreeze'].memorandum_id]]</td>
+                                    <td>[[ansarDetail['cFreeze'].action_user_id]]</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -443,6 +458,7 @@
                                     <th>Freeze Date</th>
                                     <th>Freeze Reason</th>
                                     <th>Freeze Comment</th>
+                                    <th>Action User Id</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -453,6 +469,7 @@
                                     <td>[[convertDateObj(lfreeze.freez_date) | date:'mediumDate']]</td>
                                     <td>[[lfreeze.freez_reason]]</td>
                                     <td>[[lfreeze.comment_on_freez]]</td>
+                                    <td>[[lfreeze.action_user_id]]</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -476,6 +493,7 @@
                                     <th>Transfer KPI</th>
                                     <th>Transfer KPI Embodiment Date</th>
                                     <th>Memorandum</th>
+                                    <th>Action User Id</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -485,6 +503,7 @@
                                     <td>[[getKPIInfo(transfer.transfer_kpi)]]</td>
                                     <td>[[convertDateObj(transfer.transfered_kpi_join_date) | date:'mediumDate']]</td>
                                     <td>[[transfer.transfer_memorandum_id]]</td>
+                                    <td>[[transfer.action_by]]</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -508,6 +527,7 @@
                                     <th>Block Reason</th>
                                     <th>Unblock Date</th>
                                     <th>Unblock Reason</th>
+                                    <th>Action User Id</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -517,6 +537,7 @@
                                     <td>[[block.comment_for_block]]</td>
                                     <td>[[convertDateObj(block.date_for_unblock) | date:'mediumDate']]</td>
                                     <td>[[block.comment_for_unblock]]</td>
+                                    <td>[[block.action_user_id]]</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -537,15 +558,17 @@
                                     <th>Black Status Date</th>
                                     <th>Come From</th>
                                     <th>Comment</th>
+                                    <th>Action User Id</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>[[convertDateObj(ansarDetail['cBlack'].black_listed_date) |
-                                        date:'mediumDate']]
+                                    <td>[[convertDateObj(ansarDetail['cBlack'].black_listed_date) | date:'mediumDate']]
                                     </td>
                                     <td>[[ansarDetail['cBlack'].black_list_from]]</td>
                                     <td>[[ansarDetail['cBlack'].black_list_comment]]</td>
+                                    <td>[[ansarDetail['cBlack'].black_list_comment]]</td>
+                                    <td>[[ansarDetail['cBlack'].action_user_id]]</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -565,6 +588,7 @@
                                     <th>Unblack Reason</th>
                                     <th>Move Date</th>
                                     <th>Move To</th>
+                                    <th>Action User Id</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -576,6 +600,7 @@
                                     <td>[[lblack.unblacklist_comment]]</td>
                                     <td>[[convertDateObj(lblack.move_date) | date:'mediumDate']]</td>
                                     <td>[[lblack.move_to]]</td>
+                                    <td>[[lblack.action_user_id]]</td>
                                 </tr>
                                 </tbody>
                             </table>
