@@ -170,6 +170,7 @@
                                     <th>Offer district</th>
                                     <th>Offer type</th>
                                     <th>Reply type</th>
+                                    <th>Action User Id</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -178,6 +179,7 @@
                                     <td>[[getUnitAddress(loffer.district)]]</td>
                                     <td>[[loffer.offerType]]</td>
                                     <td>[[loffer.reply_type]]</td>
+                                    <td>[[loffer.action_user_id]]</td>
                                 </tr>
                                 </tbody>
                             </table>
