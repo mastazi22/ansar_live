@@ -1,4 +1,5 @@
 <?php
+
 use App\Helper\Facades\GlobalParameterFacades;
 use App\Helper\GlobalParameter;
 use App\Jobs\RearrangePanelPositionGlobal;
@@ -25,28 +26,26 @@ Route::group(['prefix' => 'HRM', 'middleware' => 'manageDatabase', 'namespace' =
 Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
     Route::group(['namespace' => '\App\modules\HRM\Controllers', 'middleware' => ['auth', 'manageDatabase', 'checkUserType', 'permission']], function () {
 
-
         Route::get('download/file/{dataJob}', ['as' => 'download_file', 'uses' => 'DownloadController@downloadFile']);
         Route::get('download/file/name/{file}', ['as' => 'download_file_by_name', 'uses' => 'DownloadController@downloadFileByName']);
         Route::get('delete/file/{dataJob}', ['as' => 'delete_file', 'uses' => 'DownloadController@deleteFiles']);
         Route::post('generate/file/{dataJob}', ['as' => 'generate_file', 'uses' => 'DownloadController@generatingFile']);
 
-
         Route::get('view_image/{type}/{file}', ['as' => 'view_image', 'uses' => 'FormSubmitHandler@getImage']);
         //DASHBOARD
         Route::get('/tesst', function () {
             $ansars = AnsarRetireHistory::all();
-            foreach ($ansars as $a){
-                if($a->retire_from=="panel"){
-                    $pl = PanelInfoLogModel::where('ansar_id',$a->ansar_id)->orderBy('created_at','desc')->first();
-                    if($pl){
+            foreach ($ansars as $a) {
+                if ($a->retire_from == "panel") {
+                    $pl = PanelInfoLogModel::where('ansar_id', $a->ansar_id)->orderBy('created_at', 'desc')->first();
+                    if ($pl) {
                         $data = [
-                            'memorandum_id'=>$pl->old_memorandum_id,
-                            'panel_date'=>$pl->panel_date,
-                            're_panel_date'=>$pl->re_panel_date,
-                            'come_from'=>'After Retier',
-                            'ansar_merit_list'=>$pl->merit_list,
-                            'action_user_id'=>$pl->action_user_id
+                            'memorandum_id' => $pl->old_memorandum_id,
+                            'panel_date' => $pl->panel_date,
+                            're_panel_date' => $pl->re_panel_date,
+                            'come_from' => 'After Retier',
+                            'ansar_merit_list' => $pl->merit_list,
+                            'action_user_id' => $pl->action_user_id
                         ];
                         $a->data = json_encode($data);
                         $a->save();
@@ -77,12 +76,11 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::get('/show_recent_ansar_list/{type}', ['as' => 'show_recent_ansar_list', 'uses' => 'HrmController@showRecentAnsarList']);
         Route::get('/get_recent_ansar_list', ['as' => 'get_recent_ansar_list', 'uses' => 'HrmController@getRecentAnsarList']);
 
-
         Route::get('/ansar_detail_info', ['as' => 'ansar_detail_info', 'uses' => 'HrmController@getAnsarInfoinExcel']);
         Route::post('/ansar_detail_info', ['as' => 'generate_ansar_detail_info', 'uses' => 'HrmController@generateAnsarInfoExcel']);
 
         //END DASHBOARD
-//Start Panel
+        //Start Panel
         Route::get('/panel_view', ['as' => 'view_panel_list', 'uses' => 'PanelController@panelView']);
         Route::post('/save-panel-entry', ['as' => 'save-panel-entry', 'uses' => 'PanelController@savePanelEntry']);
         Route::get('/search_panel_by_id', ['as' => 'search_panel', 'uses' => 'PanelController@searchPanelByID']);
@@ -134,24 +132,19 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::post('upload/signature/store', ['as' => 'signature_store', 'uses' => 'PhotoUploadController@storeSignature']);
         Route::post('upload/original_front/store', ['as' => 'original_front', 'uses' => 'PhotoUploadController@storeOriginalFrontInfo']);
         Route::post('upload/original_back/store', ['as' => 'original_back', 'uses' => 'PhotoUploadController@storeOriginalBackInfo']);
-
         //END UPLOAD IMAGES
 
 
         //ORGINAL INFO
-
         route::get('originalinfo', ['as' => 'orginal_info', 'uses' => 'EntryFormController@ansarOriginalInfo']);
         route::any('entryInfo', ['as' => 'entry_info', 'uses' => 'EntryFormController@entryInfo']);
         route::post('idsearch', ['as' => 'idsearch', 'uses' => 'FormSubmitHandler@idSearch']);
-
         //END ORGINAL INFO
 
         //ANSAR ID CARD
-
         Route::get('/print_card_id_view', ['as' => 'print_card_id_view', 'uses' => 'ReportController@ansarPrintIdCardView']);
         Route::post('/print_card_id', ['as' => 'print_card_id', 'uses' => 'ReportController@printIdCard']);
         Route::get('/id_card_history', ['as' => 'id_card_history', 'uses' => 'ReportController@getAnsarIDHistory']);
-
         //END ANSAR ID CARD
         //END ANSAR ENTRY
 
@@ -179,12 +172,10 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::any('/update_offer_quota', ['as' => 'update_offer_quota', 'uses' => 'OfferController@updateOfferQuota']);
         Route::get('rejected_offer_list', ['as' => 'rejected_offer_list', 'uses' => 'ReportController@rejectedOfferListView']);
         Route::get('get_rejected_ansar_list', ['as' => 'get_rejected_ansar_list', 'uses' => 'ReportController@getRejectedAnsarList']);
-        Route::resource('offer_zone','OfferZoneController');
+        Route::resource('offer_zone', 'OfferZoneController');
         //END OFFER ROUTE
-
         Route::resource('offer_rollback', 'OfferBlockController');
         //SESSION
-
         Route::get('/session', ['as' => 'create_session', 'uses' => 'SessionController@index']);
         Route::post('/save-session-entry', ['as' => 'save-session-entry', 'uses' => 'SessionController@saveSessionEntry']);
         Route::get('/session_view', ['as' => 'session_view', 'uses' => 'SessionController@sessionView']);
@@ -192,10 +183,8 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::get('/session-edit/{id}/{page}', ['as' => 'edit_session', 'uses' => 'SessionController@sessionEdit'])->where('id', '[0-9]+')->where('page', '[0-9]+');
         Route::post('/session-update', ['as' => 'session-update', 'uses' => 'SessionController@sessionUpdate']);
         route::get('/session_name', 'SessionController@SessionName');
-
         //END SESSION
         //GENERAL SETTING
-
         Route::get('/thana_form', ['as' => 'thana_form', 'uses' => 'GeneralSettingsController@thanaIndex']);
         Route::get('/thana_view', ['as' => 'thana_view', 'uses' => 'GeneralSettingsController@thanaView']);
         Route::get('/thana_view_details', ['as' => 'thana_details', 'uses' => 'GeneralSettingsController@thanaViewDetails']);
@@ -209,7 +198,6 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::post('disease_entry', ['as' => 'disease_entry', 'uses' => 'GeneralSettingsController@diseaseEntry']);
         Route::get('/disease_edit/{id}', ['as' => 'disease_edit', 'uses' => 'GeneralSettingsController@diseaseEdit']);
         Route::post('/disease_update', ['as' => 'disease_update', 'uses' => 'GeneralSettingsController@updateDisease']);
-
 
         Route::get('/skill_view', ['as' => 'skill_view', 'uses' => 'GeneralSettingsController@skillView']);
         Route::get('/add_skill', ['as' => 'add_skill_view', 'uses' => 'GeneralSettingsController@addSkillName']);
@@ -225,10 +213,8 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::resource('main_training', 'MainTrainingInfoController');
         Route::get('sub_training/all/{id}', ['as' => 'HRM.main_training.all', 'uses' => 'SubTrainingInfoController@getAllTraining']);
         Route::resource('sub_training', 'SubTrainingInfoController');
-
         //END GENERAL SETTING
         //REPORT
-
         Route::get('/guard_report', ['as' => 'guard_report', 'uses' => 'ReportController@reportGuardSearchView']);
         Route::get('/guard_list', ['as' => 'guard_list', 'uses' => 'ReportController@reportAllGuard']);
         Route::get('/localize_report', ['as' => 'localize_report', 'uses' => 'ReportController@localizeReport']);
@@ -246,7 +232,6 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::get('/check_file', ['as' => 'check_file', 'uses' => 'ReportController@checkFile']);
         Route::get('/blocklist_view', ['as' => 'blocklist_view', 'uses' => 'ReportController@blockListView']);
         Route::get('/blocklisted_ansar_info', ['as' => 'blocklisted_ansar_info', 'uses' => 'ReportController@blockListedAnsarInfoDetails']);
-
         Route::get('/blacklist_view', ['as' => 'blacklist_view', 'uses' => 'ReportController@blackListView']);
         Route::get('/blacklisted_ansar_info', ['as' => 'blacklisted_ansar_info', 'uses' => 'ReportController@blackListedAnsarInfoDetails']);
 //End Block and BlackList Report
@@ -272,7 +257,6 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
 
         Route::get('/ansar_history', ['as' => 'ansar_history', 'uses' => 'ReportController@ansarHistoryView']);
         Route::post('/get_ansar_history', ['as' => 'get_ansar_history', 'uses' => 'ReportController@getAnsarHistory']);
-
         //DG ROUTE
 
         Route::get('/direct_offer', ['as' => 'direct_offer', 'uses' => 'DGController@directOfferView']);
@@ -301,7 +285,6 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::post('/blocklist_entry', ['as' => 'blocklist_entry', 'uses' => 'BlockBlackController@blockListEntry']);
         Route::any('/user_action_log/{id?}', ['as' => 'user_action_log', 'uses' => 'DGController@viewUserActionLog']);
         Route::post('/multi_blocklist_entry', ['as' => 'multi_blocklist_entry', 'uses' => 'BlockBlackController@arrayBlockListEntry']);
-
 
         Route::get('/unblocklist_entry_view', ['as' => 'unblocklist_entry_view', 'uses' => 'BlockBlackController@unblockListEntryView']);
         Route::get('/unblocklist_ansar_details', ['as' => 'unblocklist_ansar_details', 'uses' => 'BlockBlackController@loadAnsarDetailforUnblock']);
@@ -346,8 +329,8 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::get('get_offered_ansar', ['as' => 'get_offered_ansar', 'uses' => 'ReportController@getOfferedAnsar']);
         Route::get('over_aged_ansar', ['as' => 'over_aged_ansar', 'uses' => 'ReportController@ansarOverAgedInfo']);
         Route::get('/view_ansar_history', ['as' => 'view_ansar_history', 'uses' => 'ReportController@viewAnsarHistory']);
-        Route::get('/ansar_scheduled_jobs',['as'=>'ansar_scheduled_jobs','uses'=>'ReportController@viewAnsarScheduleJobs']);
-        Route::get('/ansar_scheduled_jobs_report',['as'=>'ansar_scheduled_jobs_report','uses'=>'ReportController@viewAnsarScheduleJobsReport']);
+        Route::get('/ansar_scheduled_jobs', ['as' => 'ansar_scheduled_jobs', 'uses' => 'ReportController@viewAnsarScheduleJobs']);
+        Route::get('/ansar_scheduled_jobs_report', ['as' => 'ansar_scheduled_jobs_report', 'uses' => 'ReportController@viewAnsarScheduleJobsReport']);
         Route::get('/view_ansar_history_report}', ['as' => 'view_ansar_history_report', 'uses' => 'ReportController@viewAnsarHistoryReport']);
 //        Route::any('unfrozen_report',['as'=>'unfrozen_report','uses'=>'ReportController@unfrozenAnsarReport']);
         //END REPORT ROUTE
@@ -458,37 +441,37 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
 
             DB::connection('hrm')->beginTransaction();
             try {
-                $data = \App\modules\HRM\Models\PanelModel::with(['ansarInfo'=>function($q){
-                    $q->select('ansar_id','sex','designation_id','division_id');
+                $data = \App\modules\HRM\Models\PanelModel::with(['ansarInfo' => function ($q) {
+                    $q->select('ansar_id', 'sex', 'designation_id', 'division_id');
                     $q->with('designation');
-                }])->whereHas('ansarInfo',function($q){
+                }])->whereHas('ansarInfo', function ($q) {
                     $q->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"');
-                    $q->whereHas('status',function($q){
-                        $q->where('pannel_status',1);
-                        $q->where('block_list_status',0);
-                        $q->where('black_list_status',0);
+                    $q->whereHas('status', function ($q) {
+                        $q->where('pannel_status', 1);
+                        $q->where('block_list_status', 0);
+                        $q->where('black_list_status', 0);
                     });
-                })->select('ansar_id','re_panel_date','id')->orderBy('re_panel_date','asc')->orderBy('id','asc')->get();
+                })->select('ansar_id', 're_panel_date', 'id')->orderBy('re_panel_date', 'asc')->orderBy('id', 'asc')->get();
 //                return $ansars;
-                $ansars =  collect($data)->groupBy('ansarInfo.division_id',true)->toArray();
+                $ansars = collect($data)->groupBy('ansarInfo.division_id', true)->toArray();
                 $globalPosition = [];
-                foreach ($ansars as $k=>$ansar){
-                    $values = collect(array_values($ansar))->groupBy('ansar_info.designation.code',true)->toArray();
-                    if(!isset($globalPosition[$k])){
+                foreach ($ansars as $k => $ansar) {
+                    $values = collect(array_values($ansar))->groupBy('ansar_info.designation.code', true)->toArray();
+                    if (!isset($globalPosition[$k])) {
                         $globalPosition[$k] = [];
                     }
-                    foreach ($values as $key=>$v){
-                        if(!isset($globalPosition[$k][$key])){
+                    foreach ($values as $key => $v) {
+                        if (!isset($globalPosition[$k][$key])) {
                             $globalPosition[$k][$key] = [];
                         }
-                        $vvalues = collect(array_values($v))->groupBy("ansar_info.sex",true)->toArray();
-                        foreach ($vvalues as $kk=>$vv){
-                            if(!isset($globalPosition[$k][$key][$kk])){
+                        $vvalues = collect(array_values($v))->groupBy("ansar_info.sex", true)->toArray();
+                        foreach ($vvalues as $kk => $vv) {
+                            if (!isset($globalPosition[$k][$key][$kk])) {
                                 $globalPosition[$k][$key][$kk] = [];
                             }
                             $value = array_values($vv);
-                            $i=1;
-                            foreach ($value as $p){
+                            $i = 1;
+                            foreach ($value as $p) {
                                 $globalPosition[$k][$key][$kk][$p['ansar_id']] = $i++;
 //                                $globalPosition[$k][$key][$kk][$i++] =$p['ansar_id'];
                             }
@@ -497,12 +480,12 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
                     }
                 }
 //                return $globalPosition;
-                foreach ($globalPosition as $k=>$v){
-                    foreach ($v as $k1=>$v1){
-                        foreach ($v1 as $key=>$value){
-                            foreach ($value as $key1=>$value1){
-                                $p = PanelModel::where('ansar_id',$key1)->first();
-                                if($p){
+                foreach ($globalPosition as $k => $v) {
+                    foreach ($v as $k1 => $v1) {
+                        foreach ($v1 as $key => $value) {
+                            foreach ($value as $key1 => $value1) {
+                                $p = PanelModel::where('ansar_id', $key1)->first();
+                                if ($p) {
                                     $p->re_panel_position = $value1;
                                     $p->save();
                                 }
@@ -514,9 +497,9 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
 //                return $globalPosition;
                 DB::connection('hrm')->commit();
                 echo "done";
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 echo $e;
-                Log::info("ansar_block_for_age:".$e->getMessage());
+                Log::info("ansar_block_for_age:" . $e->getMessage());
                 DB::connection('hrm')->rollback();
             }
 
@@ -525,40 +508,40 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
 
             DB::connection('hrm')->beginTransaction();
             try {
-                $data = \App\modules\HRM\Models\PanelModel::with(['ansarInfo'=>function($q){
-                    $q->select('ansar_id','sex','designation_id','division_id');
+                $data = \App\modules\HRM\Models\PanelModel::with(['ansarInfo' => function ($q) {
+                    $q->select('ansar_id', 'sex', 'designation_id', 'division_id');
                     $q->with('designation');
-                }])->whereHas('ansarInfo',function($q){
+                }])->whereHas('ansarInfo', function ($q) {
                     $q->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^01[0-9]{9}$"');
-                    $q->whereHas('status',function($q){
-                        $q->where('block_list_status',0);
-                        $q->where('black_list_status',0);
+                    $q->whereHas('status', function ($q) {
+                        $q->where('block_list_status', 0);
+                        $q->where('black_list_status', 0);
                     });
-                })->select('ansar_id','re_panel_date','id','locked')->orderBy('re_panel_date','asc')->orderBy('id','asc')->get();
+                })->select('ansar_id', 're_panel_date', 'id', 'locked')->orderBy('re_panel_date', 'asc')->orderBy('id', 'asc')->get();
 //                return $ansars;
-                $ansars =  collect($data)->groupBy('ansarInfo.division_id',true)->toArray();
+                $ansars = collect($data)->groupBy('ansarInfo.division_id', true)->toArray();
                 $globalPosition = [];
-                foreach ($ansars as $k=>$ansar){
-                    $values = collect(array_values($ansar))->groupBy('ansar_info.designation.code',true)->toArray();
-                    if(!isset($globalPosition[$k])){
+                foreach ($ansars as $k => $ansar) {
+                    $values = collect(array_values($ansar))->groupBy('ansar_info.designation.code', true)->toArray();
+                    if (!isset($globalPosition[$k])) {
                         $globalPosition[$k] = [];
                     }
-                    foreach ($values as $key=>$v){
-                        if(!isset($globalPosition[$k][$key])){
+                    foreach ($values as $key => $v) {
+                        if (!isset($globalPosition[$k][$key])) {
                             $globalPosition[$k][$key] = [];
                         }
-                        $vvalues = collect(array_values($v))->groupBy("ansar_info.sex",true)->toArray();
-                        foreach ($vvalues as $kk=>$vv){
-                            if(!isset($globalPosition[$k][$key][$kk])){
+                        $vvalues = collect(array_values($v))->groupBy("ansar_info.sex", true)->toArray();
+                        foreach ($vvalues as $kk => $vv) {
+                            if (!isset($globalPosition[$k][$key][$kk])) {
                                 $globalPosition[$k][$key][$kk] = [];
                             }
                             $value = array_values($vv);
-                            $i=1;
-                            foreach ($value as $p){
-                                $offerStatus = OfferSMSStatus::where('ansar_id',$p['ansar_id'])
+                            $i = 1;
+                            foreach ($value as $p) {
+                                $offerStatus = OfferSMSStatus::where('ansar_id', $p['ansar_id'])
                                     ->select(DB::raw('SUBSTRING_INDEX(SUBSTRING_INDEX(offer_type,\',\',LENGTH(offer_type)-LENGTH(REPLACE(offer_type,\',\',\'\'))+1),\',\',-1) as last_offer_region'))
                                     ->first();
-                                if((!$offerStatus||strcasecmp($offerStatus->last_offer_region,'RE'))&&!$p['locked']){
+                                if ((!$offerStatus || strcasecmp($offerStatus->last_offer_region, 'RE')) && !$p['locked']) {
                                     $globalPosition[$k][$key][$kk][$p['ansar_id']] = $i++;
                                 }
 //                                $globalPosition[$k][$key][$kk][$i++] =$p['ansar_id'];
@@ -568,12 +551,12 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
                     }
                 }
 //                return $globalPosition;
-                foreach ($globalPosition as $k=>$v){
-                    foreach ($v as $k1=>$v1){
-                        foreach ($v1 as $key=>$value){
-                            foreach ($value as $key1=>$value1){
-                                $p = PanelModel::where('ansar_id',$key1)->first();
-                                if($p){
+                foreach ($globalPosition as $k => $v) {
+                    foreach ($v as $k1 => $v1) {
+                        foreach ($v1 as $key => $value) {
+                            foreach ($value as $key1 => $value1) {
+                                $p = PanelModel::where('ansar_id', $key1)->first();
+                                if ($p) {
                                     $p->re_panel_position = $value1;
                                     $p->save();
                                 }
@@ -585,7 +568,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
 //                return $globalPosition;
                 DB::connection('hrm')->commit();
                 echo "done";
-            }catch(\DaveJamesMiller\Breadcrumbs\Exception $e){
+            } catch (\DaveJamesMiller\Breadcrumbs\Exception $e) {
                 echo $e;
                 DB::connection('hrm')->rollback();
             }
@@ -595,31 +578,31 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
 
             DB::connection('hrm')->beginTransaction();
             try {
-                $ansars = \App\modules\HRM\Models\PanelModel::with(['ansarInfo'=>function($q){
+                $ansars = \App\modules\HRM\Models\PanelModel::with(['ansarInfo' => function ($q) {
                     $q->with('status');
-                }])->whereHas('ansarInfo',function($q){
-                    $q->where(function($q){
+                }])->whereHas('ansarInfo', function ($q) {
+                    $q->where(function ($q) {
                         $q->whereNull('mobile_no_self');
                         $q->orWhereRaw('mobile_no_self REGEXP "^(/+88)?01[0-9]{9}$"=0');
                     });
-                    $q->whereHas('status',function($q){
-                        $q->where('block_list_status',0);
-                        $q->where('pannel_status',1);
-                        $q->where('black_list_status',0);
+                    $q->whereHas('status', function ($q) {
+                        $q->where('block_list_status', 0);
+                        $q->where('pannel_status', 1);
+                        $q->where('black_list_status', 0);
                     });
                 })->get();
 //                return $ansars;
-                foreach ($ansars as $ansar){
+                foreach ($ansars as $ansar) {
                     $ansar->ansarInfo->status->update([
-                        'pannel_status'=>0
+                        'pannel_status' => 0
                     ]);
                     $ansar->ansarInfo->update([
-                        'verified'=>0
+                        'verified' => 0
                     ]);
                 }
                 DB::connection('hrm')->commit();
                 echo "done";
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 echo $e;
                 DB::connection('hrm')->rollback();
             }
@@ -629,11 +612,11 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
 
             DB::connection('hrm')->beginTransaction();
             try {
-                $ansars = PanelModel::whereHas('ansarInfo.status',function($q){
-                    $q->where('offer_sms_status',1);
+                $ansars = PanelModel::whereHas('ansarInfo.status', function ($q) {
+                    $q->where('offer_sms_status', 1);
                 })->get();
 //                return $ansars;
-                foreach ($ansars as $pa){
+                foreach ($ansars as $pa) {
                     $pa->panelLog()->save(new PanelInfoLogModel([
                         'ansar_id' => $pa->ansar_id,
                         'merit_list' => $pa->ansar_merit_list,
@@ -649,9 +632,9 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
                 }
                 DB::connection('hrm')->commit();
                 echo "done";
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 echo $e;
-                Log::info("ansar_block_for_age:".$e->getMessage());
+                Log::info("ansar_block_for_age:" . $e->getMessage());
                 DB::connection('hrm')->rollback();
             }
 
@@ -662,219 +645,206 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
             dispatch(new RearrangePanelPositionGlobal());
 
         });
-       /* Route::get('manual_offer_to_panel', function () {
-            Log::info("called : Ansar Block For Age");
-
-            DB::connection('hrm')->beginTransaction();
-            try {
-                $ansars = \App\modules\HRM\Models\SmsReceiveInfoModel::whereIn('ansar_id',[2987, 11146, 14747, 16059, 31927, 45981, 50300, 62734, 67475])->get();
-                $s_ansar = \App\modules\HRM\Models\AnsarStatusInfo::whereIn('ansar_id',[2987, 11146, 14747, 16059, 31927, 45981, 50300, 62734, 67475])->get();
-                $p_ansars = \App\modules\HRM\Models\PanelInfoLogModel::whereIn('ansar_id',[2987, 11146, 14747, 16059, 31927, 45981, 50300, 62734, 67475])->groupBy('ansar_id')->orderBy('panel_date','desc')->get();
-                foreach ($p_ansars as $id){
-                    $p = PanelModel::where('ansar_id',$id->ansar_id);
-                    if($p->exists()) continue;
-                    $panel_entry = new PanelModel;
-                    $panel_entry->ansar_id = $id->ansar_id;
-                    $panel_entry->come_from = "Offer";
-                    $panel_entry->panel_date = $id->panel_date;
-                    $panel_entry->memorandum_id = $id->old_memorandum_id;
-                    $panel_entry->ansar_merit_list = $id->merit_list;
-                    $panel_entry->action_user_id = Auth::user()->id;
-                    $panel_entry->save();
-                }
-                foreach ($s_ansar as $id){
-
-                    $id->offer_sms_status = 0;
-                    $id->pannel_status = 1;
-                    $id->save();
-                }
-                foreach ($ansars as $id){
-
-                    $id->saveLog();
-                    $id->delete();
-                }
-                echo "done!!!";
-                DB::connection('hrm')->commit();
-            }catch(\Exception $e){
-                Log::info("ansar_block_for_age:".$e->getMessage());
-                DB::connection('hrm')->rollback();
-            }
-        });
-        Route::get('manual_panel_to_rest', function () {
-            echo "manual_panel_to_rest<br>";
-
-            DB::connection('hrm')->beginTransaction();
-            try {
-                $ansars = \App\modules\HRM\Models\RestInfoLogModel::whereRaw("TIMESTAMPDIFF(MONTH,`tbl_rest_info_log`.`rest_date`,`tbl_rest_info_log`.`move_date`)<6 AND move_to = 'Panel' AND YEAR(created_at) = 2019")->get();
-                foreach ($ansars as $ansar){
-                    $rd = \Carbon\Carbon::parse($ansar->rest_date);
-                    echo $ansar->rest_date."   ".\Carbon\Carbon::now()."<br>";
-                    echo "ansar-id:".$ansar->ansar_id."   diff".$rd->diffInMonths(\Carbon\Carbon::now(),true)."<br>";
-                    if($rd->diffInMonths(\Carbon\Carbon::now(),true)>=6){
-
-                        continue;
-                    }
-                    $panel_entry = PanelModel::where('ansar_id',$ansar->ansar_id)->where('come_from','Rest')->first();
-                    if($panel_entry){
-                        $log = \App\modules\HRM\Models\PanelInfoLogModel::where('ansar_id',$ansar->ansar_id)->orderBy('panel_date','desc')->first();
-                        $date = $log?$log->panel_date:\Carbon\Carbon::now();
-                        $panel_entry->saveLog("Rest",$date,"manual move to rest on request made by russel ahmed");
-                        $panel_entry->delete();
-                        $status = \App\modules\HRM\Models\AnsarStatusInfo::where('ansar_id',$ansar->ansar_id)->first();
-                        $status->pannel_status = 0;
-                        $status->rest_status = 1;
-                        $status->save();
-                        $r = new \App\modules\HRM\Models\RestInfoModel;
-                        $r->ansar_id = $ansar->ansar_id;
-                        $r->rest_date = $ansar->rest_date;
-                        $r->active_date = $rd->addMonths(6);
-                        $r->disembodiment_reason_id = $ansar->disembodiment_reason_id;
-                        $r->total_service_days = $ansar->total_service_days;
-                        $r->rest_form = $ansar->rest_type;
-                        $r->comment = $ansar->comment;
-                        $r->memorandum_id = $ansar->old_memorandum_id;
-                        $r->action_user_id = $ansar->action_user_id;
-                        $r->old_embodiment_id = $ansar->old_embodiment_id;
-                        $r->save();
-                        echo "done!!!!!!!!!!!<br>";
-                    }
-                }
-                echo "done!!!";
-                DB::connection('hrm')->commit();
-            }catch(\Exception $e){
-                Log::info("ansar_block_for_age:".$e->getMessage());
-                DB::connection('hrm')->rollback();
-            }
-        });
-        Route::get('set_panel_position_global', function () {
-            //echo "set_panel_position<br>";
-
-            DB::connection('hrm')->beginTransaction();
-            try {
-                $data = \App\modules\HRM\Models\PanelModel::with(['ansarInfo'=>function($q){
-                    $q->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"');
-                    $q->select('ansar_id','sex','designation_id');
-                    $q->with('designation');
-                }])->whereHas('ansarInfo.status',function($q){
-                    $q->where('pannel_status',1);
-                    $q->where('block_list_status',0);
-                    $q->where('black_list_status',0);
-                })->select('ansar_id','panel_date')->orderBy('panel_date','asc')->get();
-//                return $ansars;
-                $ansars =  collect($data)->groupBy('ansarInfo.designation.code',true)->toArray();
-                $globalPosition = [];
-                ob_implicit_flush(true);
-                ob_end_flush();
-                foreach ($ansars as $k=>$ansar){
-                    $values = collect(array_values($ansar))->groupBy('ansar_info.sex',true)->toArray();
-                    if(!isset($globalPosition[$k])){
-                        $globalPosition[$k] = [];
-                    }
-                    foreach ($values as $key=>$v){
-                        if(!isset($globalPosition[$k][$key])){
-                            $globalPosition[$k][$key] = [];
-                        }
-                        $value = array_values($v);
-                        $i=1;
-                        foreach ($value as $p){
-                            $globalPosition[$k][$key][$p['ansar_id']] = $i++;
-                        }
-
-                    }
-                }
-                foreach ($globalPosition as $k=>$v){
-                    foreach ($v as $k1=>$v1){
-                        foreach ($v1 as $key=>$value){
-                            $p = PanelModel::where('ansar_id',$key)->first();
-                            if($p){
-                                $p->go_panel_position = $value;
-                                $p->save();
-                            }
-                        }
-                    }
-                }
-
-//                return $globalPosition;
-                DB::connection('hrm')->commit();
-                echo "done";
-            }catch(\Exception $e){
-                echo $e;
-                Log::info("ansar_block_for_age:".$e->getMessage());
-                DB::connection('hrm')->rollback();
-            }
-        });
-        Route::get('set_panel_position_regional', function () {
-            //echo "set_panel_position<br>";
-
-            DB::connection('hrm')->beginTransaction();
-            try {
-                $data = \App\modules\HRM\Models\PanelModel::with(['ansarInfo'=>function($q){
-                    $q->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"');
-                    $q->select('ansar_id','sex','designation_id','division_id');
-                    $q->with('designation');
-                }])->whereHas('ansarInfo.status',function($q){
-                    $q->where('pannel_status',1);
-                    $q->where('block_list_status',0);
-                    $q->where('black_list_status',0);
-                })->select('ansar_id','panel_date')->orderBy('panel_date','asc')->get();
-//                return $ansars;
-                $ansars =  collect($data)->groupBy('ansarInfo.division_id',true)->toArray();
-                $globalPosition = [];
-                ob_implicit_flush(true);
-                ob_end_flush();
-                foreach ($ansars as $k=>$ansar){
-                    $values = collect(array_values($ansar))->groupBy('ansar_info.designation.code',true)->toArray();
-                    if(!isset($globalPosition[$k])){
-                        $globalPosition[$k] = [];
-                    }
-                    foreach ($values as $key=>$v){
-                        if(!isset($globalPosition[$k][$key])){
-                            $globalPosition[$k][$key] = [];
-                        }
-                        $vvalues = collect(array_values($v))->groupBy("ansar_info.sex",true)->toArray();
-                        foreach ($vvalues as $kk=>$vv){
-                            if(!isset($globalPosition[$k][$key][$kk])){
-                                $globalPosition[$k][$key][$kk] = [];
-                            }
-                            $value = array_values($vv);
-                            $i=1;
-                            foreach ($value as $p){
-                                $globalPosition[$k][$key][$kk][$p['ansar_id']] = $i++;
-//                                $globalPosition[$k][$key][$kk][$i++] =$p['ansar_id'];
-                            }
-                        }
-
-                    }
-                }
-//                return $globalPosition;
-                foreach ($globalPosition as $k=>$v){
-                    foreach ($v as $k1=>$v1){
-                        foreach ($v1 as $key=>$value){
-                            foreach ($value as $key1=>$value1){
-                                $p = PanelModel::where('ansar_id',$key1)->first();
-                                if($p){
-                                    echo "ansar id: ".$p->ansar_id;
-                                    $p->re_panel_position = $value1;
-                                    $p->save();
-                                }
-                            }
-                        }
-                    }
-                }
-
-//                return $globalPosition;
-                DB::connection('hrm')->commit();
-                echo "done";
-            }catch(\Exception $e){
-                echo $e;
-                Log::info("ansar_block_for_age:".$e->getMessage());
-                DB::connection('hrm')->rollback();
-            }
-        });*/
-        Route::resource('retire_ansar_management','RetireAnsarManagementController',['only'=>['index','update']]);
-
+        /* Route::get('manual_offer_to_panel', function () {
+             Log::info("called : Ansar Block For Age");
+             DB::connection('hrm')->beginTransaction();
+             try {
+                 $ansars = \App\modules\HRM\Models\SmsReceiveInfoModel::whereIn('ansar_id',[2987, 11146, 14747, 16059, 31927, 45981, 50300, 62734, 67475])->get();
+                 $s_ansar = \App\modules\HRM\Models\AnsarStatusInfo::whereIn('ansar_id',[2987, 11146, 14747, 16059, 31927, 45981, 50300, 62734, 67475])->get();
+                 $p_ansars = \App\modules\HRM\Models\PanelInfoLogModel::whereIn('ansar_id',[2987, 11146, 14747, 16059, 31927, 45981, 50300, 62734, 67475])->groupBy('ansar_id')->orderBy('panel_date','desc')->get();
+                 foreach ($p_ansars as $id){
+                     $p = PanelModel::where('ansar_id',$id->ansar_id);
+                     if($p->exists()) continue;
+                     $panel_entry = new PanelModel;
+                     $panel_entry->ansar_id = $id->ansar_id;
+                     $panel_entry->come_from = "Offer";
+                     $panel_entry->panel_date = $id->panel_date;
+                     $panel_entry->memorandum_id = $id->old_memorandum_id;
+                     $panel_entry->ansar_merit_list = $id->merit_list;
+                     $panel_entry->action_user_id = Auth::user()->id;
+                     $panel_entry->save();
+                 }
+                 foreach ($s_ansar as $id){
+                     $id->offer_sms_status = 0;
+                     $id->pannel_status = 1;
+                     $id->save();
+                 }
+                 foreach ($ansars as $id){
+                     $id->saveLog();
+                     $id->delete();
+                 }
+                 echo "done!!!";
+                 DB::connection('hrm')->commit();
+             }catch(\Exception $e){
+                 Log::info("ansar_block_for_age:".$e->getMessage());
+                 DB::connection('hrm')->rollback();
+             }
+         });
+         Route::get('manual_panel_to_rest', function () {
+             echo "manual_panel_to_rest<br>";
+             DB::connection('hrm')->beginTransaction();
+             try {
+                 $ansars = \App\modules\HRM\Models\RestInfoLogModel::whereRaw("TIMESTAMPDIFF(MONTH,`tbl_rest_info_log`.`rest_date`,`tbl_rest_info_log`.`move_date`)<6 AND move_to = 'Panel' AND YEAR(created_at) = 2019")->get();
+                 foreach ($ansars as $ansar){
+                     $rd = \Carbon\Carbon::parse($ansar->rest_date);
+                     echo $ansar->rest_date."   ".\Carbon\Carbon::now()."<br>";
+                     echo "ansar-id:".$ansar->ansar_id."   diff".$rd->diffInMonths(\Carbon\Carbon::now(),true)."<br>";
+                     if($rd->diffInMonths(\Carbon\Carbon::now(),true)>=6){
+                         continue;
+                     }
+                     $panel_entry = PanelModel::where('ansar_id',$ansar->ansar_id)->where('come_from','Rest')->first();
+                     if($panel_entry){
+                         $log = \App\modules\HRM\Models\PanelInfoLogModel::where('ansar_id',$ansar->ansar_id)->orderBy('panel_date','desc')->first();
+                         $date = $log?$log->panel_date:\Carbon\Carbon::now();
+                         $panel_entry->saveLog("Rest",$date,"manual move to rest on request made by russel ahmed");
+                         $panel_entry->delete();
+                         $status = \App\modules\HRM\Models\AnsarStatusInfo::where('ansar_id',$ansar->ansar_id)->first();
+                         $status->pannel_status = 0;
+                         $status->rest_status = 1;
+                         $status->save();
+                         $r = new \App\modules\HRM\Models\RestInfoModel;
+                         $r->ansar_id = $ansar->ansar_id;
+                         $r->rest_date = $ansar->rest_date;
+                         $r->active_date = $rd->addMonths(6);
+                         $r->disembodiment_reason_id = $ansar->disembodiment_reason_id;
+                         $r->total_service_days = $ansar->total_service_days;
+                         $r->rest_form = $ansar->rest_type;
+                         $r->comment = $ansar->comment;
+                         $r->memorandum_id = $ansar->old_memorandum_id;
+                         $r->action_user_id = $ansar->action_user_id;
+                         $r->old_embodiment_id = $ansar->old_embodiment_id;
+                         $r->save();
+                         echo "done!!!!!!!!!!!<br>";
+                     }
+                 }
+                 echo "done!!!";
+                 DB::connection('hrm')->commit();
+             }catch(\Exception $e){
+                 Log::info("ansar_block_for_age:".$e->getMessage());
+                 DB::connection('hrm')->rollback();
+             }
+         });
+         Route::get('set_panel_position_global', function () {
+             //echo "set_panel_position<br>";
+             DB::connection('hrm')->beginTransaction();
+             try {
+                 $data = \App\modules\HRM\Models\PanelModel::with(['ansarInfo'=>function($q){
+                     $q->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"');
+                     $q->select('ansar_id','sex','designation_id');
+                     $q->with('designation');
+                 }])->whereHas('ansarInfo.status',function($q){
+                     $q->where('pannel_status',1);
+                     $q->where('block_list_status',0);
+                     $q->where('black_list_status',0);
+                 })->select('ansar_id','panel_date')->orderBy('panel_date','asc')->get();
+ //                return $ansars;
+                 $ansars =  collect($data)->groupBy('ansarInfo.designation.code',true)->toArray();
+                 $globalPosition = [];
+                 ob_implicit_flush(true);
+                 ob_end_flush();
+                 foreach ($ansars as $k=>$ansar){
+                     $values = collect(array_values($ansar))->groupBy('ansar_info.sex',true)->toArray();
+                     if(!isset($globalPosition[$k])){
+                         $globalPosition[$k] = [];
+                     }
+                     foreach ($values as $key=>$v){
+                         if(!isset($globalPosition[$k][$key])){
+                             $globalPosition[$k][$key] = [];
+                         }
+                         $value = array_values($v);
+                         $i=1;
+                         foreach ($value as $p){
+                             $globalPosition[$k][$key][$p['ansar_id']] = $i++;
+                         }
+                     }
+                 }
+                 foreach ($globalPosition as $k=>$v){
+                     foreach ($v as $k1=>$v1){
+                         foreach ($v1 as $key=>$value){
+                             $p = PanelModel::where('ansar_id',$key)->first();
+                             if($p){
+                                 $p->go_panel_position = $value;
+                                 $p->save();
+                             }
+                         }
+                     }
+                 }
+ //                return $globalPosition;
+                 DB::connection('hrm')->commit();
+                 echo "done";
+             }catch(\Exception $e){
+                 echo $e;
+                 Log::info("ansar_block_for_age:".$e->getMessage());
+                 DB::connection('hrm')->rollback();
+             }
+         });
+         Route::get('set_panel_position_regional', function () {
+             //echo "set_panel_position<br>";
+             DB::connection('hrm')->beginTransaction();
+             try {
+                 $data = \App\modules\HRM\Models\PanelModel::with(['ansarInfo'=>function($q){
+                     $q->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^[0-9]{11}$"');
+                     $q->select('ansar_id','sex','designation_id','division_id');
+                     $q->with('designation');
+                 }])->whereHas('ansarInfo.status',function($q){
+                     $q->where('pannel_status',1);
+                     $q->where('block_list_status',0);
+                     $q->where('black_list_status',0);
+                 })->select('ansar_id','panel_date')->orderBy('panel_date','asc')->get();
+ //                return $ansars;
+                 $ansars =  collect($data)->groupBy('ansarInfo.division_id',true)->toArray();
+                 $globalPosition = [];
+                 ob_implicit_flush(true);
+                 ob_end_flush();
+                 foreach ($ansars as $k=>$ansar){
+                     $values = collect(array_values($ansar))->groupBy('ansar_info.designation.code',true)->toArray();
+                     if(!isset($globalPosition[$k])){
+                         $globalPosition[$k] = [];
+                     }
+                     foreach ($values as $key=>$v){
+                         if(!isset($globalPosition[$k][$key])){
+                             $globalPosition[$k][$key] = [];
+                         }
+                         $vvalues = collect(array_values($v))->groupBy("ansar_info.sex",true)->toArray();
+                         foreach ($vvalues as $kk=>$vv){
+                             if(!isset($globalPosition[$k][$key][$kk])){
+                                 $globalPosition[$k][$key][$kk] = [];
+                             }
+                             $value = array_values($vv);
+                             $i=1;
+                             foreach ($value as $p){
+                                 $globalPosition[$k][$key][$kk][$p['ansar_id']] = $i++;
+ //                                $globalPosition[$k][$key][$kk][$i++] =$p['ansar_id'];
+                             }
+                         }
+                     }
+                 }
+ //                return $globalPosition;
+                 foreach ($globalPosition as $k=>$v){
+                     foreach ($v as $k1=>$v1){
+                         foreach ($v1 as $key=>$value){
+                             foreach ($value as $key1=>$value1){
+                                 $p = PanelModel::where('ansar_id',$key1)->first();
+                                 if($p){
+                                     echo "ansar id: ".$p->ansar_id;
+                                     $p->re_panel_position = $value1;
+                                     $p->save();
+                                 }
+                             }
+                         }
+                     }
+                 }
+ //                return $globalPosition;
+                 DB::connection('hrm')->commit();
+                 echo "done";
+             }catch(\Exception $e){
+                 echo $e;
+                 Log::info("ansar_block_for_age:".$e->getMessage());
+                 DB::connection('hrm')->rollback();
+             }
+         });*/
+        Route::resource('retire_ansar_management', 'RetireAnsarManagementController', ['only' => ['index', 'update']]);
         Route::any('/bulk-upload-bank-info', ['as' => "bulk_upload_bank_file", 'uses' => "EntryFormController@bulkUploadBankInfo"]);
-
         Route::get('/export_data_for_bank', ['as' => 'export_data_for_bank', 'uses' => 'EntryFormController@exportDataForBank']);
     });
     Route::get('/view_profile/{id}', '\App\Http\Controllers\UserController@viewProfile');
@@ -883,4 +853,25 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
     });
     Route::get('/change_password/{user}', '\App\Http\Controllers\UserController@changeForgetPassword');
     Route::get('/remove_request/{user}', '\App\Http\Controllers\UserController@removePasswordRequest');
+    Route::any('/remove_black_embo_ds', function (\Illuminate\Http\Request $request) {
+        /*
+         * This route was created to remove double status
+         * Block Status & Embodiment Status
+         */
+//        DB::enableQueryLog();
+        $ansars = \App\modules\HRM\Models\AnsarStatusInfo::with("embodiment")->where('block_list_status', 1)->where('embodied_status', 1)->get();
+        if ($ansars->count() > 0) {
+            foreach ($ansars as $ansar) {
+                $ansar->embodiment->saveLog('Blocklist',
+                    Carbon::now()->format('Y-m-d'),
+                    '44.03.0000.048.50.007.18-577 Date:Oct-27-2019',
+                    8);
+                $ansar->updateToBlockState()->save();
+                $ansar->embodiment->delete();
+            }
+        } else {
+            echo "empty";
+        }
+//        dd(DB::getQueryLog());
+    });
 });

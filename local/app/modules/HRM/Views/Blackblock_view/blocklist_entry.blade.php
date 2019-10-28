@@ -1,7 +1,3 @@
-{{--User: Shreya--}}
-{{--Date: 12/14/2015--}}
-{{--Time: 11:28 AM--}}
-
 @extends('template.master')
 @section('title','Add Ansar in Blocklist')
 @section('breadcrumb')
@@ -12,7 +8,7 @@
     <script>
         $(document).ready(function () {
             $('#block_date').datepicker({
-                dateFormat:'dd-M-yy'
+                dateFormat: 'dd-M-yy'
             });
         })
         GlobalApp.controller('BlockController', function ($scope, $http, $sce) {
@@ -27,7 +23,7 @@
                     url: '{{URL::route('blocklist_ansar_details')}}',
                     params: {ansar_id: id}
                 }).then(function (response) {
-                    $scope.ansarDetail = response.data
+                    $scope.ansarDetail = response.data;
                     $scope.loadingAnsar = false;
                     console.log($scope.ansarDetail);
                 })
@@ -36,9 +32,6 @@
     </script>
 
     <div ng-controller="BlockController">
-        {{--<div class="breadcrumbplace">--}}
-            {{--{!! Breadcrumbs::render('add_to_blocklist') !!}--}}
-        {{--</div>--}}
         @if(Session::has('success_message'))
             <div style="padding: 10px 20px 0 20px;">
                 <div class="alert alert-success">
@@ -64,12 +57,15 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label for="ansar_id" class="control-label">Ansar ID</label>
-                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="loadAnsarDetail(ansarId)">
+                                <input type="text" name="ansar_id" id="ansar_id" class="form-control"
+                                       placeholder="Enter Ansar ID" ng-model="ansarId"
+                                       ng-change="loadAnsarDetail(ansarId)">
                                 {!! $errors->first('ansar_id','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <div class="form-group">
                                 <label for="block_date" class="control-label">Blocking Date</label>
-                                <input type="text" name="block_date" id="block_date" class="form-control" ng-model="block_date">
+                                <input type="text" name="block_date" id="block_date" class="form-control"
+                                       ng-model="block_date">
                                 {!! $errors->first('block_date','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <div class="form-group">
