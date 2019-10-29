@@ -652,19 +652,19 @@
         "text": "Applicant Quota Type",
         "actions": [
           {
-            "value": "recruitment.quota.index",
+            "value": "recruitment.quota_type.index",
             "name": "View Quota"
           },
           {
-            "value": "recruitment.quota.create,recruitment.quota.store",
+            "value": "recruitment.quota_type.create,recruitment.quota_type.store",
             "name": "Add Quota"
           },
           {
-            "value": "recruitment.quota.edit,recruitment.quota.update",
+            "value": "recruitment.quota_type.edit,recruitment.quota_type.update",
             "name": "Edit Quota"
           },
           {
-            "value": "recruitment.quota.destroy",
+            "value": "recruitment.quota_type.destroy",
             "name": "Delete Quota"
           }
         ]

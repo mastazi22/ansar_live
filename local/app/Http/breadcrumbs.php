@@ -618,7 +618,11 @@ Breadcrumbs::register('setting', function($breadcrumbs) {
 Breadcrumbs::register('recruitment.setting.applicant_quota', function($breadcrumbs) {
     $breadcrumbs->parent('setting');
     $breadcrumbs->push('Applicant Quota', URL::route('recruitment.quota.index'));
-   // $breadcrumbs->push('Applicant Quota', URL::route('recruitment.quota.index'));
+});
+
+Breadcrumbs::register('recruitment.quota_type.index', function($breadcrumbs) {
+    $breadcrumbs->parent('setting');
+    $breadcrumbs->push('Applicant Quota Type', URL::route('recruitment.quota_type.index'));
 });
 Breadcrumbs::register('recruitment.point.index', function($breadcrumbs) {
     $breadcrumbs->parent('setting');

@@ -618,7 +618,7 @@ return [
                     "icon" => "fa-cog"
                 ],
                 "Applicant Quota Type" => [
-                    "route" => "recruitment.quota.index",
+                    "route" => "recruitment.quota_type.index",
                     "icon" => "fa-cog"
                 ]
 
