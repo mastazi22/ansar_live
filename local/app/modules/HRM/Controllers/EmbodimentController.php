@@ -864,7 +864,7 @@ class EmbodimentController extends Controller
             ->where('tbl_embodiment.ansar_id', $request->get('ansar_id'))
             ->where('tbl_units.id', $request->get('unit'));
         if ($query->exists()) {
-            $query = $query->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id as kpi_id', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_embodiment.joining_date', 'tbl_units.id');
+            $query = $query->select('tbl_ansar_parsonal_info.ansar_name_eng', 'tbl_ansar_parsonal_info.ansar_id', 'tbl_kpi_info.kpi_name', 'tbl_kpi_info.id as kpi_id', 'tbl_units.unit_name_eng', 'tbl_thana.thana_name_eng', 'tbl_embodiment.joining_date', 'tbl_embodiment.transfered_date', 'tbl_units.id');
             return Response::json(['status' => 1, 'data' => $query->first()]);
         } else {
             return Response::json(['status' => 0, 'messages' => ['Ansar id not available']]);
