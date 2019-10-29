@@ -59,7 +59,7 @@ class ApplicantScreeningController extends Controller
                     $q->orWhere('status',$request->status);
                 });*/
             }
-            $summery = $cicular_summery->get();
+            $summery = $cicular_summery->orderBy('created_at','desc')->get();
             Log::info(DB::getQueryLog());
             Log::info($summery);
 //            return "ssddsddds";
