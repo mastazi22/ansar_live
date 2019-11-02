@@ -1124,7 +1124,7 @@ GlobalApp.directive('databaseSearch', function () {
         //<input type="text" ng-model="q" class="form-control" style="margin-bottom: 10px" ng-change="queue.push(1)" placeholder="[[placeHolder?placeHolder:'Search by Ansar ID']]">
         restrict: 'ACE',
         template: '<div class="input-group"><input type="text" ng-model="q" class="form-control" ng-change="resetSearchResult()" ng-keydown="searchOnKeyDown($event)" placeholder="[[placeHolder?placeHolder:\'Search by Ansar ID\']]">' +
-            '<span class="input-group-addon" style="cursor: pointer" ng-click="onChange()">Enter&nbsp;<i class="fa fa-search"></i></span></div>',
+            '<span class="input-group-addon btn-primary" style="cursor: pointer;color:white" ng-click="onChange()">Enter&nbsp;<i class="fa fa-search"></i></span></div>',
         scope: {
             queue: '=',
             q: '=',

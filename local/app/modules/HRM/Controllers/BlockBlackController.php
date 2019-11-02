@@ -528,18 +528,34 @@ class BlockBlackController extends Controller
                     case "not_verified":
                         $ansar->ansar->update(['verified' => 0]);
                         break;
-
                 }
             } else {
-                AnsarFutureState::create([
+                $futureData = [
                     'ansar_id' => $ansar_id,
                     'data' => serialize($ansar_unblock_details),
                     'action_date' => Carbon::now()->format("y-m-d H:i:s"),
                     'activation_date' => $modified_unblock_date,
                     'action_by' => Auth::user()->id,
-                    'from_status' => 'Block',
-                    'to_status' => 'Unverified'
-                ]);
+                    'from_status' => 'Block'
+                ];
+                switch (strtolower($moveStatus)) {
+                    case "free":
+                        $futureData["to_status"] = "Free";
+                        break;
+                    case "rest":
+                        $futureData["to_status"] = "Rest";
+                        break;
+                    case "panel":
+                        $futureData["to_status"] = "Panel";
+                        break;
+                    case "not_verified":
+                        $futureData["to_status"] = "Unverified";
+                        break;
+                    default:
+                        $futureData["to_status"] = "Unverified";
+                        break;
+                }
+                AnsarFutureState::create($futureData);
             }
             CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'UNBLOCKED', 'from_state' => 'BLOCKED', 'to_state' => 'UNVERIFIED', 'action_by' => auth()->user()->id]);
             DB::commit();

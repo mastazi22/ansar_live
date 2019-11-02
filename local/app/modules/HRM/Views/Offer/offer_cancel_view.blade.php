@@ -74,6 +74,7 @@
                 }
             };
             $scope.updateSelected = function () {
+                alert($scope.selectAll);
                 $scope.selectAnsar = Array.apply(null, new Array($scope.selectAnsar.length)).map(Boolean.prototype.valueOf, $scope.selectAll);
             };
             $scope.$watch(function (scope) {
@@ -187,7 +188,7 @@
                                                ng-click="updateSelected()">
                                         <label for="all"></label>
                                     </div>
-                                    &nbsp;&nbsp<span>Select All</span>
+                                    &nbsp;&nbsp;<span>Select All</span>
                                 </th>
                             </tr>
                             <tr ng-show="(noAnsar&&errorLoad==undefined)||results==undefined||results.length<=0"

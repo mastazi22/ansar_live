@@ -725,7 +725,7 @@ class CustomQuery
             $ansarQuery->whereBetween('tbl_ansar_parsonal_info.created_at', [$backTime, $recentTime]);
         }
         if ($q) {
-            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', '=', $q);
         }
         $total = clone $ansarQuery;
         $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
@@ -763,7 +763,7 @@ class CustomQuery
             $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
         }
         if ($q) {
-            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', '=', $q);
         }
         $total = clone $ansarQuery;
         $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
@@ -808,7 +808,7 @@ class CustomQuery
             $ansarQuery->whereBetween('tbl_panel_info.panel_date', [$backTime, $recentTime]);
         }
         if ($q) {
-            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', '=', $q);
         }
         if ($filter_mobile_no) {
             $go_offer_count = +GlobalParameterFacades::getValue('ge_offer_count');
@@ -869,7 +869,7 @@ class CustomQuery
 //            $ansarQuery1->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
         }
         if ($q) {
-            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', '=', $q);
 
 //            $ansarQuery1->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
         }
@@ -915,7 +915,7 @@ class CustomQuery
             $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
         }
         if ($q) {
-            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', '=', $q);
         }
         $currentDate = Carbon::now()->format('Y-m-d');
         $total = clone $ansarQuery;
@@ -993,7 +993,7 @@ class CustomQuery
             $ansarQuery->whereBetween('tbl_rest_info.updated_at', [$backTime, $recentTime]);
         }
         if ($q) {
-            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', '=', $q);
         }
         $total = clone $ansarQuery;
         $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
@@ -1028,7 +1028,7 @@ class CustomQuery
             $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
         }
         if ($q) {
-            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', '=', $q);
         }
         $total = clone $ansarQuery;
         $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
@@ -1065,7 +1065,7 @@ class CustomQuery
             $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
         }
         if ($q) {
-            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', '=', $q);
         }
         $total = clone $ansarQuery;
         $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
@@ -1106,7 +1106,7 @@ class CustomQuery
             $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
         }
         if ($q) {
-            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', '=', $q);
         }
         $total = clone $ansarQuery;
         $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
@@ -1140,7 +1140,7 @@ class CustomQuery
             $ansarQuery->whereBetween('tbl_blocklist_info.date_for_block', [$backTime, $recentTime]);
         }
         if ($q) {
-            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', '=', $q);
         }
         $total = clone $ansarQuery;
         $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
@@ -1177,7 +1177,7 @@ class CustomQuery
             $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
         }
         if ($q) {
-            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', '=', $q);
         }
         $total = clone $ansarQuery;
         $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
@@ -1215,7 +1215,7 @@ class CustomQuery
             $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
         }
         if ($q) {
-            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', '=', $q);
         }
         $total = clone $ansarQuery;
 
@@ -1252,7 +1252,7 @@ class CustomQuery
             $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
         }
         if ($q) {
-            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', '=', $q);
         }
         $total = clone $ansarQuery;
         $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
@@ -1289,7 +1289,7 @@ class CustomQuery
             $ansarQuery->whereBetween('tbl_ansar_status_info.updated_at', [$backTime, $recentTime]);
         }
         if ($q) {
-            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', '=', $q);
         }
 //        return $ansarQuery->toSql();
         $total = clone $ansarQuery;
@@ -1320,7 +1320,7 @@ class CustomQuery
             $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
         }
         if ($q) {
-            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', '=', $q);
         }
         if ($time == self::RECENT) {
             $recentTime = Carbon::now();

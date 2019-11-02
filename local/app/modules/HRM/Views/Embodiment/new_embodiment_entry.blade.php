@@ -162,7 +162,6 @@
                 $scope.eData.splice(index, 1);
             };
             $scope.submitEmbodiment = function () {
-                console.log($scope.eData);
                 $scope.printLetter = [{}, {}];
                 $scope.loading = true;
                 $http({
@@ -175,7 +174,6 @@
                     }),
                     url: '{{URL::route('new-embodiment-entry-multiple')}}'
                 }).then(function (response) {
-                    console.log(response.data);
                     if (response.data.status) {
                         notificationService.notify('success', response.data.message);
                         $("#embodied-modal-mul").modal('hide');
@@ -297,7 +295,7 @@
                 </div>
                 <div class="box-body">
                     <filter-template
-                            show-item="['range','unit','rank','gender']"
+                            show-item="['range','unit']"
                             type="single"
                             data="params"
                             start-load="range"
@@ -306,7 +304,7 @@
                             rank-change="loadAnsarDetail()"
                             gender-change="loadAnsarDetail()"
                             on-load="loadAnsarDetail()"
-                            field-width="{range:'col-sm-3',unit:'col-sm-3',rank:'col-sm-3',gender:'col-sm-3'}">
+                            field-width="{range:'col-sm-3',unit:'col-sm-3'}">
                     </filter-template>
                     <div class="nav-tabs-custom">
                         <ul class="nav nav-tabs">
