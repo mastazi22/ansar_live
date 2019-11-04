@@ -63,7 +63,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
 
-        /*$schedule->call(function () {
+        $schedule->call(function () {
             Log::info("called : send_offer");
             $offered_ansar = OfferSMS::with(['ansar', 'district'])->where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
             foreach ($offered_ansar as $offer) {
@@ -153,7 +153,7 @@ class Kernel extends ConsoleKernel
                 $offer->save();
             }
 
-        })->everyMinute()->name("offer_cancel")->withoutOverlapping();*/
+        })->everyMinute()->name("offer_cancel")->withoutOverlapping();
         $schedule->call(function () {
             Log::info("REVERT OFFER");
             $offeredAnsars = OfferSMS::whereDate('sms_send_datetime', '<=', Carbon::now()->toDateString())->get();
@@ -250,7 +250,7 @@ class Kernel extends ConsoleKernel
             $now = Carbon::now();
             $c = 0;
             foreach ($offeredAnsars as $ansar) {
-                if ($now->diffInSeconds(Carbon::parse($ansar->sms_received_datetime)) >= 1) {
+                if ($now->diffInDays(Carbon::parse($ansar->sms_received_datetime)) >= 7) {
                     $c++;
                     Log::info("CALLED START: OFFER ACCEPTED" . $ansar->ansar_id);
 
@@ -344,8 +344,8 @@ class Kernel extends ConsoleKernel
                 dispatch(new RearrangePanelPositionLocal());
                 dispatch(new RearrangePanelPositionGlobal());
             }
-        })->everyMinute()->name("revert_offer_accepted2")->withoutOverlapping();
-       /* $schedule->call(function () {
+        })->dailyAt("23:55")->name("revert_offer_accepted2")->withoutOverlapping();
+        $schedule->call(function () {
             $withdraw_kpi_ids = KpiDetailsModel::where('kpi_withdraw_date', '<=', Carbon::now())->whereNotNull('kpi_withdraw_date')->get();
             foreach ($withdraw_kpi_ids as $withdraw_kpi_id) {
                 $kpi_info = KpiGeneralModel::find($withdraw_kpi_id->kpi_id);
@@ -453,7 +453,7 @@ class Kernel extends ConsoleKernel
                 DB::connection('recruitment')->rollback();
             }
 
-        })->dailyAt("23:50")->name("disable_circular")->withoutOverlapping();*/
+        })->dailyAt("23:50")->name("disable_circular")->withoutOverlapping();
 
 
      /*   $schedule->call(function () {
@@ -492,11 +492,11 @@ class Kernel extends ConsoleKernel
                     $a->save();
                 }
             }
-
+  																		 
         })->everyMinute()->name("send_sms_to_selected_applicant")->withoutOverlapping();*/
 
 
-        /*$schedule->call(function () {
+        $schedule->call(function () {
             Log::info("called : generate attendance");
             //            DB::enableQueryLog();
             $kpis = KpiGeneralModel::with(['embodiment' => function ($q) {
@@ -549,7 +549,7 @@ class Kernel extends ConsoleKernel
             });
 
 
-        })->dailyAt("00:05")->name("generate_attendance")->withoutOverlapping();*/
+        })->dailyAt("00:05")->name("generate_attendance")->withoutOverlapping();
 //        $schedule->call(function () {
 //            Log::info("called : unblock panel locked");
 //            PanelModel::where('locked', 1)->update(['locked' => 0]);
@@ -602,7 +602,7 @@ class Kernel extends ConsoleKernel
 //
 //
 //        })->everyThirtyMinutes()->name("offer_block_to_panel_6_month")->withoutOverlapping();
-        /*$schedule->call(function () {
+        $schedule->call(function () {
 
             $count = PanelModel::whereHas('ansarInfo.status',function ($q){
                 $q->where('block_list_status',0);
@@ -672,8 +672,8 @@ class Kernel extends ConsoleKernel
             dispatch(new RearrangePanelPositionGlobal());
             dispatch(new RearrangePanelPositionLocal());
 
-
-        })->everyTenMinutes()->name("UnblockRetireAnsar")->withoutOverlapping();*/
+			
+        })->everyTenMinutes()->name("UnblockRetireAnsar")->withoutOverlapping();
         $schedule->call(function(){
             $ansars = AnsarFutureState::where('activation_date',"<=",Carbon::now())->get();
             $panel_count = 0;
