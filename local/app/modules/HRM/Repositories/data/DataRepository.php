@@ -17,7 +17,6 @@ use App\modules\HRM\Models\OfferZone;
 use App\modules\HRM\Models\Thana;
 use App\modules\HRM\Models\Unions;
 use Illuminate\Support\Facades\DB;
-use function PHPSTORM_META\type;
 
 class DataRepository implements DataInterface
 {
