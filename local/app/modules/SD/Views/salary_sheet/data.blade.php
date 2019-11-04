@@ -144,7 +144,7 @@
                 <th>Ansar ID</th>
                 <th>Name</th>
                 <th>Rank</th>
-                <th>Joining Date</th>
+                <th>Embodiment Date</th>
                 <th>Total Bonus</th>
                 <th>Net Amount</th>
                 <th>Bonus For</th>

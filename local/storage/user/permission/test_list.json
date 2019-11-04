@@ -106,8 +106,8 @@
         ]
       },
       {
-        "value":"kpi-withdraw-view,kpi-withdraw-update,kpi-withdraw-action-view",
-        "name":"Withdraw KPI"
+        "value": "kpi-withdraw-view,kpi-withdraw-update,kpi-withdraw-action-view",
+        "name": "Withdraw KPI"
       },
       {
         "text": "KPI Withdraw Cancel",
@@ -222,12 +222,12 @@
         "text": "Offer Rollback",
         "actions": [
           {
-            "value":"HRM.offer_rollback.index",
-            "name":"View All Offer Blocked"
+            "value": "HRM.offer_rollback.index",
+            "name": "View All Offer Blocked"
           },
           {
-            "value":"HRM.offer_rollback.update",
-            "name":"Edit Offer Blocked"
+            "value": "HRM.offer_rollback.update",
+            "name": "Edit Offer Blocked"
           }
         ]
       },
@@ -384,6 +384,14 @@
       {
         "value": "offer_report",
         "name": "Offer Report"
+      },
+      {
+        "value": "view_ansar_history",
+        "name": "View Ansar History"
+      },
+      {
+        "value": "ansar_scheduled_jobs",
+        "name": "Scheduled Jobs"
       }
     ]
   },
@@ -529,7 +537,6 @@
           }
         ]
       }
-
     ]
   },
   {
@@ -645,19 +652,19 @@
         "text": "Applicant Quota Type",
         "actions": [
           {
-            "value": "recruitment.quota.index",
+            "value": "recruitment.quota_type.index",
             "name": "View Quota"
           },
           {
-            "value": "recruitment.quota.create,recruitment.quota.store",
+            "value": "recruitment.quota_type.create,recruitment.quota_type.store",
             "name": "Add Quota"
           },
           {
-            "value": "recruitment.quota.edit,recruitment.quota.update",
+            "value": "recruitment.quota_type.edit,recruitment.quota_type.update",
             "name": "Edit Quota"
           },
           {
-            "value": "recruitment.quota.destroy",
+            "value": "recruitment.quota_type.destroy",
             "name": "Delete Quota"
           }
         ]
@@ -878,8 +885,6 @@
               }
             ]
           }
-
-
         ]
       },
       {

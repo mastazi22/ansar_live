@@ -8,7 +8,7 @@
         <th>Own District</th>
         <th>KPI Name</th>
         <th>KPI Unit</th>
-        <th>Joining Date</th>
+        <th>Embodiment Date</th>
     </tr>
     <?php $i = $index; ?>
     @if(count($ansars)==0)

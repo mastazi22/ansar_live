@@ -77,7 +77,7 @@
                                 <th>Own District</th>
                                 <th>Own Thana</th>
                                 <th>Ansar Reporting Date</th>
-                                <th>Ansar Joining Date</th>
+                                <th>Ansar Embodiment Date</th>
                                 <th>Reduce Reason</th>
                                 <th>Reduce Date</th>
                             </tr>

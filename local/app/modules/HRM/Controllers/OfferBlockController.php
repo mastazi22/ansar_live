@@ -145,6 +145,7 @@ class OfferBlockController extends Controller
             PanelModel::create([
                 'memorandum_id' => $panel_log&&isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
                 'panel_date' => $now,
+                're_panel_date'=>$now,
                 'come_from' => 'Offer Cancel',
                 'ansar_merit_list' => 1,
                 'ansar_id' => $blocked_ansar->ansar_id,

@@ -13,8 +13,11 @@ use App\modules\HRM\Models\AllEducationName;
 use App\modules\HRM\Models\Blood;
 use App\modules\HRM\Models\District;
 use App\modules\HRM\Models\Division;
+use App\modules\HRM\Models\OfferZone;
 use App\modules\HRM\Models\Thana;
 use App\modules\HRM\Models\Unions;
+use Illuminate\Support\Facades\DB;
+use function PHPSTORM_META\type;
 
 class DataRepository implements DataInterface
 {
@@ -46,14 +49,52 @@ class DataRepository implements DataInterface
 
     /**
      * @param string $id
+     * @param string $offer_zone
      * @return mixed
      */
-    public function getDivisions($id='')
+    public function getDivisions($id='',$offer_zone=false)
     {
         $division =  $this->division;
         if($id&&$id!='all'){
             $division = $division->whereEqualIn('id', $id);
         }
+        if($offer_zone){
+            $divisions = collect($division->where('id', '!=', 0)->orderBy('sort_by', 'asc')->get())->groupBy('id');
+            $datas = [];
+            foreach ($divisions as $k=>$div){
+//                return gettype($div[0]);
+                //$av = array_values($div);
+                $of = OfferZone::where('range_id',$k)
+                    ->select(DB::raw('GROUP_CONCAT(DISTINCT(offer_zone_range_id) SEPARATOR "-" ) as offer_zone_range'))
+                    ->groupBy('range_id')->first();
+                if($of){
+                    $r = explode("-",$of->offer_zone_range);
+                    $division_name_bng = $div[0]->division_name_bng;
+                    $division_name_eng = $div[0]->division_name_eng;
+                    $id = $div[0]->id;
+                    $ids  = [$id];
+                    foreach ($r as $rr){
+                        $rv = $divisions[$rr];
+                        $division_name_bng .= " + ".$rv[0]->division_name_bng;
+                        $division_name_eng .= " + ".$rv[0]->division_name_eng;
+                        array_push($ids,$rv[0]->id);
+                    }
+                    sort($ids);
+                    $id = implode(",",$ids);
+                    array_push($datas,compact('id','division_name_bng','division_name_eng'));
+                }
+                else{
+                    array_push($datas,$div[0]);
+                }
+            }
+            $divisions = [];
+            $datas= collect($datas)->groupBy('id')->values()->toArray();
+            foreach ($datas as $d){
+                array_push($divisions,$d[0]);
+            }
+            return $divisions;
+        }
+
         return $division->where('id', '!=', 0)->orderBy('sort_by', 'asc')->get();
     }
 

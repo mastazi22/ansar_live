@@ -23,7 +23,6 @@
                console.log(fs);
 
            }
-           alert(v+" "+t.width())
 //           t.css({fontSize:Math.floor(fs)+"px"})
        })
     </script>

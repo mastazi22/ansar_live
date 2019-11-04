@@ -210,11 +210,17 @@
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header sh">
-            <h3 class="header-title">@yield('title')</h3>
-            @yield('breadcrumb')
-            <h1 class="small-title">
-                <small class="small-title">@yield('small_title')</small>
-            </h1>
+            <div class="row">
+                <div class="col-md-8">
+                    <h3 class="header-title">@yield('title')</h3>
+                </div>
+                <div class="col-md-4">
+                    @yield('breadcrumb')
+                    <h1 class="small-title">
+                        <small class="small-title">@yield('small_title')</small>
+                    </h1>
+                </div>
+            </div>
         </section>
         <div class="fade" ng-if="loadingView" ng-class="{in:loadingView}"
              style="position: absolute;width:100%;height: 100%;z-index:10;background: #ffffff">

@@ -34,7 +34,7 @@
     "past": {
       "header": "Details regarding previous employment",
       "sl_no": "SL No.",
-      "jd": "Joining Date",
+      "jd": "Embodiment Date",
       "rdmi": "Reporting Memorandum & Date",
       "dn": "Unit Name",
       "kn": "Guard Name",
@@ -45,7 +45,7 @@
     "current": {
       "header": "Details regarding present employment",
       "sl_no": "SL No.",
-      "jd": "Joining Date",
+      "jd": "Embodiment Date",
       "rdmi": "Reporting Memorandum & Date",
       "dn": "Unit Name",
       "kn": "Guard Name",

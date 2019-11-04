@@ -18,9 +18,7 @@
         }
     </style>
     <script>
-
-        GlobalApp.controller('freezeController', function ($scope, $http, notificationService,$sce) {
-//        $scope.filter_name = "0";
+        GlobalApp.controller('freezeController', function ($scope, $http, notificationService, $sce) {
             $scope.allLoading = false;
             $scope.allFreezeAnsar = [];
             $scope.printLetter = false;
@@ -31,15 +29,15 @@
             $scope.params = ''
             $scope.units = [];
             $scope.thanas = [];
-            $scope.action = ''
+            $scope.action = '';
             $scope.child = {
                 selectedUnit: ""
-            }
-            $scope.verifyTransfer = false
+            };
+            $scope.verifyTransfer = false;
             $scope.verify = false;
             $scope.kpis = [];
             $scope.selectedKpi = "";
-            $scope.selectedThana = ""
+            $scope.selectedThana = "";
             $scope.isAdmin = false;
             $scope.verifying = false;
             $scope.isDc = false;
@@ -63,9 +61,8 @@
                     text: 'Black'
                 },
                 @endif
-
-            ]
-            var userType = parseInt('{{auth()->user()->type}}')
+            ];
+            var userType = parseInt('{{auth()->user()->type}}');
             $scope.loadKpi = function () {
                 $scope.loadingKpi = true;
                 $http({
@@ -73,14 +70,13 @@
                     params: {id: $scope.selectedThana},
                     method: 'get'
                 }).then(function (response) {
-                    $scope.kpis = response.data
+                    $scope.kpis = response.data;
                     $scope.loadingKpi = false;
                     $scope.selectedKpi = "";
                 }, function (response) {
                     $scope.loadingKpi = false;
                 })
-            }
-
+            };
             $scope.loadUnit = function () {
                 $http({
                     url: '{{URL::to('HRM/DistrictName')}}',
@@ -90,7 +86,7 @@
                 }, function () {
 
                 })
-            }
+            };
             $scope.loadThana = function () {
                 $scope.loadingThana = true;
                 $http({
@@ -100,16 +96,16 @@
                 }).then(function (response) {
                     $scope.thanas = response.data;
                     $scope.loadingThana = false;
-                    $scope.selectedThana = ""
+                    $scope.selectedThana = "";
                     $scope.selectedKpi = "";
                 }, function (response) {
                     $scope.loadingThana = false;
                 })
-            }
+            };
             switch (userType) {
                 case 22:
                     $scope.isDc = true;
-                    $scope.child.selectedUnit = parseInt('{{auth()->user()->district_id}}')
+                    $scope.child.selectedUnit = parseInt('{{auth()->user()->district_id}}');
                     $scope.loadThana();
                     break;
                 case 66:
@@ -130,19 +126,16 @@
                     method: 'get',
                     params: data
                 }).then(function (response) {
-                    $scope.response = response.data.data
+                    $scope.response = response.data.data;
                     $scope.allFreezeAnsar = response.data.data.data;
-                    $scope.view = $sce.trustAsHtml(response.data.view)
+                    $scope.view = $sce.trustAsHtml(response.data.view);
                     $scope.checked = Array.apply(null, Array($scope.allFreezeAnsar.length)).map(Boolean.prototype.valueOf, false);
                     $scope.allLoading = false;
                 }, function (response) {
                     $scope.allLoading = false;
                 })
-            }
-//        $scope.getFreezeList();
-
+            };
             $scope.reEmbodied = function (ansarids, date, ifd) {
-                console.log(ansarids)
                 $scope.submitting = true;
                 $http({
                     url: "{{URL::to('HRM/freezeRembodied')}}",
@@ -153,57 +146,49 @@
                     $scope.submitting = false;
                     if (response.data[0].status) {
                         $("#continueModal").modal('hide');
-                        $scope.unfreeze_date = ''
+                        $scope.unfreeze_date = '';
                         notificationService.notify('success', response.data[0].message);
                         $scope.getFreezeList();
-                    }
-                    else {
+                    } else {
                         notificationService.notify('error', response.data[0].message);
                     }
                 }, function (response) {
                     notificationService.notify('error', "An unexpected error occur. Error code :" + response.status);
                 })
-            }
+            };
             $scope.reEmbodiedChecked = function (ansarids, indexes, date) {
-                console.log(ansarids)
                 $scope.submitting = true;
                 $http({
                     url: "{{URL::to('HRM/freezeRembodied')}}",
                     method: 'post',
                     data: angular.toJson({ansarId: ansarids, unfreeze_date: date})
                 }).then(function (response) {
-                    console.log(response.data);
                     $scope.submitting = false;
-                    var t = true
+                    var t = true;
                     response.data.forEach(function (value, index, array) {
-
                         if (value.status) {
-                            $("#continue-modal").modal('hide')
+                            $("#continue-modal").modal('hide');
                             notificationService.notify('success', value.message);
                             $scope.allFreezeAnsar.splice(indexes[index], 1);
                             $scope.checked.splice($scope.checked.indexOf(indexes[index]), 1);
-                        }
-                        else {
+                        } else {
                             t = false;
                             notificationService.notify('error', value.message);
                         }
-
-                    })
+                    });
                     if (t) {
                         $scope.unfreeze_date = '';
                         $("#continue-modal").modal('hide');
                     }
-
                 }, function (response) {
                     notificationService.notify('error', "An unexpected error occur. Error code :" + response.status);
                 })
-            }
+            };
             $scope.transferAnsar = function (ansarId) {
                 $scope.submitting = true;
                 $scope.transferData['ansarIds'] = ansarId;
                 $scope.printData = '';
                 $scope.printLetter = false;
-                console.log($scope.transferData);
                 $http({
                     url: '{{URL::route('transfer_freezed_ansar')}}',
                     method: 'post',
@@ -212,55 +197,52 @@
                     $scope.submitting = false;
                     if (response.data.status) {
                         notificationService.notify('success', response.data.message);
-                        // $("#re-embodied-model,#re-embodied-model-mul").modal('hide')
                         $scope.printData = {
                             "id": $scope.transferData.memorandum_transfer,
                             "unit": $scope.child.selectedUnit,
                             "view": "full",
                             "type": "TRANSFER"
-                        }
+                        };
                         $scope.printLetter = true;
                         $scope.transferData = {};
                         $scope.getFreezeList();
-                    }
-                    else {
+                    } else {
                         notificationService.notify('error', response.data.message)
                     }
-
                 }, function (response) {
                     $scope.submitting = false;
                     notificationService.notify('error', "An unexpected error occur. Error code :" + response.status);
                 })
-            }
+            };
             $scope.continueChecked = function () {
                 var ansarIds = [];
                 var indexes = [];
                 $scope.checked.forEach(function (value, index, array) {
                     if (value !== false) {
-                        ansarIds.push($scope.allFreezeAnsar[value].ansar_id)
+                        ansarIds.push($scope.allFreezeAnsar[value].ansar_id);
                         indexes.push(value)
                     }
-                })
+                });
                 $scope.reEmbodiedChecked(ansarIds, indexes, $scope.unfreeze_date)
-            }
+            };
             $scope.transChecked = function () {
                 var ansarIds = [];
                 $scope.checked.forEach(function (value, index, array) {
                     if (value !== false) {
                         ansarIds.push($scope.allFreezeAnsar[value].ansar_id)
                     }
-                })
+                });
                 $scope.transferAnsar(ansarIds)
-            }
+            };
             $scope.blackChecked = function () {
                 var ansarIds = [];
                 $scope.checked.forEach(function (value, index, array) {
                     if (value !== false) {
                         ansarIds.push($scope.allFreezeAnsar[value].ansar_id)
                     }
-                })
+                });
                 $scope.blackAnsar(ansarIds)
-            }
+            };
             $scope.checkMemorandum = function (id, type) {
                 $scope.verifying = true;
                 $http({
@@ -270,10 +252,9 @@
                 }).then(function (response) {
                     if (type == 0) $scope.verify = response.data.status;
                     else $scope.verifyTransfer = response.data.status;
-
                     $scope.verifying = false;
                 })
-            }
+            };
             $scope.disEmbodied = function (ansarid) {
                 if (ansarid) {
                     $scope.submitting = true;
@@ -288,13 +269,11 @@
                             ansarId: [$scope.getSingleRow.ansar_id]
                         })
                     }).then(function (response) {
-//                    alert(JSON.stringify(response.data));
                         $scope.submitting = false;
                         if (response.data.status) {
                             notificationService.notify('success', response.data.message);
                             $("#myModal").modal('hide')
-                        }
-                        else {
+                        } else {
                             notificationService.notify('error', response.data.message)
                         }
                         $scope.allFreezeAnsar.splice($scope.allFreezeAnsar.indexOf($scope.getSingleRow), 1)
@@ -303,16 +282,15 @@
                         notificationService.notify('error', "An unexpected error occur. Error code :" + response.status);
                     })
                 }
-            }
+            };
             $scope.disEmbodiedChecked = function () {
                 var ansarIds = [];
                 $scope.checked.forEach(function (value, index, array) {
                     if (value !== false) {
                         ansarIds.push($scope.allFreezeAnsar[value].ansar_id)
                     }
-                })
-                $scope.formData['ansarId'] = ansarIds
-//                console.log($scope.formData);return;
+                });
+                $scope.formData['ansarId'] = ansarIds;
                 $scope.submitting = true;
                 $http({
                     url: "{{URL::to('HRM/freezeDisEmbodied')}}",
@@ -320,28 +298,22 @@
                     data: angular.toJson($scope.formData)
                 }).then(function (response) {
                     console.log(response.data)
-//                    alert(JSON.stringify(response.data));
                     $scope.submitting = false;
                     if (response.data.status) {
                         notificationService.notify('success', response.data.message);
                         $("#dis-embodied-model-multiple").modal('hide')
                         $scope.getFreezeList();
-                    }
-                    else {
+                    } else {
                         notificationService.notify('error', response.data.message)
                     }
-                    //$scope.allFreezeAnsar.splice($scope.allFreezeAnsar.indexOf($scope.getSingleRow), 1)
                 }, function (response) {
                     $scope.submitting = false;
                     notificationService.notify('error', "An unexpected error occur. Error code :" + response.status);
                 })
-
-            }
+            };
             $scope.blackAnsar = function (ansarids) {
                 $scope.blackData['ansarid'] = ansarids;
                 $scope.submitting = true;
-                console.log($scope.blackData);
-//                return;
                 $http({
                     url: "{{URL::to('HRM/freezeblack')}}",
                     method: 'post',
@@ -350,46 +322,42 @@
                     $scope.submitting = false;
                     if (response.data.status) {
                         notificationService.notify('success', response.data.message);
-                        $("#black-modal,#black-modal-mul").modal('hide')
+                        $("#black-modal,#black-modal-mul").modal('hide');
                         $scope.blackData = {};
                         $scope.getFreezeList();
-                    }
-                    else {
+                    } else {
                         notificationService.notify('error', response.data.message)
                     }
-
                 }, function (response) {
                     $scope.submitting = false;
                     notificationService.notify('error', "An unexpected error occur. Error code :" + response.status);
                 })
-            }
+            };
             $scope.doAction = function (i) {
                 var ansar = $scope.allFreezeAnsar[i];
-//                alert($scope.action[i])
                 switch ($scope.action) {
                     case 'continue':
-                        $("#continue-modal").modal('show')
+                        $("#continue-modal").modal('show');
                         break;
                     case 'reembodied':
                         $scope.printLetter = false;
-                        $("#re-embodied-model-mul").modal('show')
+                        $("#re-embodied-model-mul").modal('show');
                         break;
                     case 'disembodied':
-                        $("#dis-embodied-model-multiple").modal('show')
+                        $("#dis-embodied-model-multiple").modal('show');
                         break;
                     case 'black':
-                        $("#black-modal-mul").modal('show')
+                        $("#black-modal-mul").modal('show');
                         break;
-
                 }
-            }
+            };
             $scope.$watch('checked', function (n, o) {
                 if (n.length <= 0) return;
                 var r = n.every(function (i) {
                     return i !== false;
-                })
+                });
                 $scope.checkedAll = r;
-            }, true)
+            }, true);
             $scope.checkAll = function () {
                 if (!$scope.checkedAll) $scope.checked = Array.apply(null, Array($scope.allFreezeAnsar.length)).map(Boolean.prototype.valueOf, false);
                 else {
@@ -397,73 +365,58 @@
                         $scope.checked[index] = index;
                     })
                 }
-                console.log($scope.checked)
-            }
+            };
             $scope.actualValue = function (value, index, array) {
-
                 return value !== false;
-
-            }
+            };
             $scope.modal = function (data) {
                 $scope.printLetter = false;
                 $scope.getSingleRow = data;
             }
-        })
+        });
         $(document).ready(function (e) {
             $("body").on('click', '#action-freeze', function (e) {
                 e.stopPropagation();
                 var sb = '';
-                if ($(this).siblings('.test-dropdown-below').length > 0) sb = $(this).siblings('.test-dropdown-below')
+                if ($(this).siblings('.test-dropdown-below').length > 0) sb = $(this).siblings('.test-dropdown-below');
                 else sb = $(this).siblings('.test-dropdown-above')
                 var cl = $(this).offset().left;
                 var pl = $('.box-body').offset().left;
                 var l = cl - pl - (sb.outerWidth() / 2) + ($(this).outerWidth() / 2);
                 var t = $(this).offset().top + $(this).outerHeight() + sb.outerHeight();
                 if (t > $(window).innerHeight()) {
-                    t = $(this).offset().top - sb.outerHeight() - $('.box-body').offset().top + $(this).outerHeight()
-                    sb.removeClass().addClass('test-dropdown-above')
+                    t = $(this).offset().top - sb.outerHeight() - $('.box-body').offset().top + $(this).outerHeight();
+                    sb.removeClass().addClass('test-dropdown-above');
                     sb.css({
                         top: t + "px"
                     })
-                }
-                else {
-                    sb.attr('style', '')
+                } else {
+                    sb.attr('style', '');
                     sb.removeClass().addClass('test-dropdown-below')
                 }
                 sb.css({
                     left: l + "px",
                     display: "block"
                 })
-                //alert(cl+"  "+pl)
-            })
+            });
             $("body").on('click', '.test-dropdown-below', function (e) {
                 e.stopPropagation();
-            })
+            });
             $("body").on('click', '.test-dropdown-above', function (e) {
                 e.stopPropagation();
-            })
+            });
             $(window).on('click', function (e) {
-                //console.log({class_name:e.target.className})
                 $('.test-dropdown-below,.test-dropdown-above').css('display', 'none');
-                //if(e.target.id=="action-freeze"||e.target.className=="test-dropdown"||$(e.target).parents('.test-dropdown').length>0) return;
-
-            })
+            });
             $(window).resize(function () {
                 $('.test-dropdown-below,.test-dropdown-above').css('display', 'none');
-            })
+            });
             $("#joining_date,#rest_date").datepicker({
                 dateFormat: 'dd-M-yy'
             });
         })
     </script>
-
-
-
-
     <div ng-controller="freezeController">
-        {{--<div class="breadcrumbplace">--}}
-        {{--{!! Breadcrumbs::render('freezelist') !!}--}}
-        {{--</div>--}}
         <section class="content">
             <div>
                 <div class="box box-solid">
@@ -475,15 +428,17 @@
                     <div class="box-body">
                         <div class="box-body" id="change-body">
                             <filter-template
-                                    show-item="['range','unit','thana','kpi']"
+                                    show-item="['range','unit','thana','kpi','rank','gender']"
                                     type="all"
                                     range-change="getFreezeList()"
                                     unit-change="getFreezeList()"
                                     thana-change="getFreezeList()"
                                     kpi-change="getFreezeList()"
+                                    rank-change="getFreezeList()"
+                                    gender-change="getFreezeList()"
                                     on-load="getFreezeList()"
                                     start-load="range"
-                                    field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
+                                    field-width="{range:'col-sm-2',unit:'col-sm-2',thana:'col-sm-2',kpi:'col-sm-2',rank:'col-sm-2',gender:'col-sm-2'}"
                                     data="params"
                             ></filter-template>
                             <div class="loading-data"><i class="fa fa-4x fa-refresh fa-spin loading-icon"></i>
@@ -500,25 +455,23 @@
                                                     <input type="text" class="form-control" ng-model="params.q"
                                                            placeholder="Search here by ansar id">
                                                     <span class="input-group-btn">
-                                                        <button class="btn btn-primary" type="button" ng-click="getFreezeList()">
+                                                        <button class="btn btn-primary" type="button"
+                                                                ng-click="getFreezeList()">
                                                             <i class="fa fa-search"></i>
                                                         </button>
                                                     </span>
                                                 </div>
                                             </div>
                                         </div>
-
                                         <a class="btn btn-primary btn-xs"
                                            href="{{URL::route('getfreezelist',['export'=>1])}}">
                                             <i class="fa fa-file-excel-o"></i> Export
                                         </a>
-
                                     </caption>
                                     <tr>
                                         <th class="text-center"><input type="checkbox" ng-model="checkedAll"
                                                                        ng-change="checkAll()"></th>
                                         <th class="text-center"> ক্রঃ নং</th>
-
                                         <th class="text-center">আইডি</th>
                                         <th class="text-center">পদবি</th>
                                         <th class="text-center">নাম</th>
@@ -528,7 +481,6 @@
                                         <th class="text-center">ফ্রিজকালীন ক্যাম্পের নাম</th>
                                         <th class="text-center">ফ্রিজকরনের কারণ</th>
                                         <th class="text-center" style="width:160px;">কার্যক্রম/Action</th>
-
                                     </tr>
                                     <tr ng-show="allFreezeAnsar.length>0"
                                         ng-repeat="freezeAnsar in allFreezeAnsar">
@@ -551,9 +503,7 @@
                                             <a id="action-freeze" class="btn btn-success btn-xs verification"
                                                title="Re-Embodied">
                                                 <span class="fa fa-check"></span>
-                                                <!--<i class="fa fa-spinner fa-pulse"></i>-->
                                             </a>
-
                                             <div class="test-dropdown-below">
                                                 <ul>
                                                     <li>
@@ -569,21 +519,17 @@
                                                         </button>
                                                     </li>
                                                 </ul>
-
-
                                             </div>
                                             <button class="btn btn-danger btn-xs verification" title="Disembodied"
                                                     modal-show data="freezeAnsar" callback="modal(data)"
                                                     target="#myModal">
                                                 <span class="fa fa-retweet"></span>
-                                                <!--<i class="fa fa-spinner fa-pulse"></i>-->
                                             </button>
                                             @if(UserPermission::userPermissionExists('freezeblack'))
                                                 <a class="btn btn-danger btn-xs verification" title="Add to Blacklist"
                                                    modal-show data="freezeAnsar" callback="modal(data)"
                                                    target="#black-modal">
                                                     <span class="fa fa-remove"></span>
-                                                    <!--<i class="fa fa-spinner fa-pulse"></i>-->
                                                 </a>
                                             @endif
                                         </td>
@@ -596,9 +542,7 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="" class="control-label">
-                                            With Selected
-                                        </label>
+                                        <label for="" class="control-label">With Selected</label>
                                         <select name="" id="" class="form-control" ng-model="action"
                                                 ng-change="doAction()">
                                             <option value="">--Select Action--</option>
@@ -611,7 +555,8 @@
                                 <div class="col-sm-3">
                                     <div class="form-group" ng-init="params.limit = '50'">
                                         <label for="" class="control-label">Load limit</label>
-                                        <select class="form-control" ng-model="params.limit" ng-change="getFreezeList()">
+                                        <select class="form-control" ng-model="params.limit"
+                                                ng-change="getFreezeList()">
                                             <option value="50">50</option>
                                             <option value="100">100</option>
                                             <option value="150">150</option>
@@ -627,13 +572,10 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </section>
         <div id="myModal" class="modal fade" role="dialog">
             <div class="modal-dialog">
-
-                <!-- Modal content-->
                 <div class="box-body modal-content">
                     <form class="form" role="form" method="post" ng-submit="disEmbodied(getSingleRow.ansar_id)">
                         <div class="modal-header">
@@ -641,10 +583,7 @@
                             <h4 class="modal-title">Ansar
                                 ID:[[getSingleRow.ansar_id]],Name:[[getSingleRow.ansar_name_bng]]</h4>
                         </div>
-
                         <div class="modal-body row">
-
-
                             <div class="form-group col-md-offset-1 col-md-10">
                                 <label class="control-label" for="memorandum_id">
                                     *স্বারক নংঃ <span style="font-weight: normal" ng-if="verifying"><i
@@ -653,16 +592,11 @@
                                 <input ng-blur="checkMemorandum(memorandum,0)" type="text" class="form-control"
                                        id="memorandum_id" ng-model="memorandum" name="memorandum_id">
                             </div>
-
                             <div class="form-group col-md-offset-1 col-md-10">
-                                <label class="control-label" for="rest_date">
-                                    *Disembodiment Date:
-                                </label>
-                                <input type="text" class="form-control" id="rest_date" id="memorandum_id"
-                                       ng-model="rest_date"
-                                       name="rest_date">
+                                <datepicker-separate-fields label="*Disembodiment Date:" notify="disEmboInvalidDate"
+                                                            rdata="rest_date"></datepicker-separate-fields>
+                                <input type="hidden" ng-value="rest_date" name="rest_date">
                             </div>
-
                             <div class="form-group col-md-offset-1 col-md-10">
                                 <label class="control-label" for="disembodiment_reason_id">
                                     *Reason:
@@ -682,7 +616,6 @@
                                     <option value=8>অন্যান্য কারনে</option>
                                 </select>
                             </div>
-
                             <div class="form-group col-md-offset-1 col-md-10">
                                 <label class="control-label" for="comment">
                                     Comment:
@@ -690,21 +623,18 @@
                                 <input type="text" class="form-control" id="comment" ng-model="comment" name="comment">
                             </div>
                             <div class="form-group col-md-offset-1 col-md-4">
-                                <button type="submit" class="btn btn-default"
-                                        ng-disabled="!disembodiment_reason_id || !memorandum || !rest_date || verify||submitting">
+                                <button type="submit" class="btn btn-primary"
+                                        ng-disabled="disEmboInvalidDate || !disembodiment_reason_id || !memorandum || !rest_date || verify||submitting">
                                     <i class="fa fa-spinner fa-pulse" ng-if="submitting"></i>Submit
                                 </button>
                             </div>
                         </div>
                     </form>
                 </div>
-
             </div>
         </div>
         <div id="continueModal" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-sm">
-
-                <!-- Modal content-->
+            <div class="modal-dialog modal-md">
                 <div class="box-body modal-content">
                     <form class="form" role="form" method="post"
                           ng-submit="reEmbodied([getSingleRow.ansar_id],unfreeze_date,include_freeze_date)">
@@ -713,15 +643,11 @@
                             <h4 class="modal-title">Ansar
                                 ID:[[getSingleRow.ansar_id]],<br>Name:[[getSingleRow.ansar_name_bng]]</h4>
                         </div>
-
                         <div class="modal-body">
-
                             <div class="form-group">
-                                <label class="control-label" for="unfreeze_date">
-                                    *Unfreeze Date:
-                                </label>
-                                <input type="text" date-picker placeholder="Unfreeze date" class="form-control"
-                                       id="unfreeze_date" ng-model="unfreeze_date" name="unfreeze_date">
+                                <datepicker-separate-fields label="*Unfreeze Date:" notify="unfreezeInvalidDate"
+                                                            rdata="unfreeze_date"></datepicker-separate-fields>
+                                <input type="hidden" ng-value="unfreeze_date" name="unfreeze_date">
                             </div>
                             @if(UserPermission::userPermissionExists('include_freeze_days'))
                                 <div class="form-group">
@@ -736,19 +662,17 @@
                             @endif
                         </div>
                         <div class="modal-footer">
-                            <button class="btn btn-primary" type="submit" ng-disabled="submitting">
+                            <button class="btn btn-primary" type="submit"
+                                    ng-disabled="submitting || unfreezeInvalidDate">
                                 <i ng-show="submitting" class="fa fa-spinner fa-pulse"></i>&nbsp;Continue Service
                             </button>
                         </div>
                     </form>
                 </div>
-
             </div>
         </div>
         <div id="black-modal" class="modal fade" role="dialog">
             <div class="modal-dialog">
-
-                <!-- Modal content-->
                 <div class="box-body modal-content">
                     <form class="form" role="form" method="post" confirm callback="blackAnsar(ansarids)"
                           data="{ansarids:[getSingleRow.ansar_id]}" event="submit"
@@ -761,14 +685,10 @@
                                 ID:[[getSingleRow.ansar_id]],Name:[[getSingleRow.ansar_name_bng]]</h4>
                         </div>
                         <div class="modal-body row">
-
                             <div class="form-group col-md-offset-1 col-md-10">
-                                <label class="control-label" for="black_date">
-                                    *Black Date:
-                                </label>
-                                <input type="text" class="form-control" id="black_date"
-                                       ng-model="blackData.black_date"
-                                       name="black_date">
+                                <datepicker-separate-fields label="*Black Date:" notify="blackInvalidDate"
+                                                            rdata="blackData.black_date"></datepicker-separate-fields>
+                                <input type="hidden" ng-value="blackData.black_date" name="black_date">
                             </div>
 
                             <div class="form-group col-md-offset-1 col-md-10">
@@ -780,7 +700,7 @@
                                        name="black_comment">
                             </div>
                             <div class="form-group col-md-offset-1 col-md-4">
-                                <button type="submit" class="btn btn-default"
+                                <button type="submit" class="btn btn-primary"
                                         ng-disabled=" !blackData.black_date||submitting">
                                     <i class="fa fa-pulse fa-spinner" ng-if="submitting"></i>Submit
                                 </button>
@@ -793,8 +713,6 @@
         </div>
         <div id="black-modal-mul" class="modal fade" role="dialog">
             <div class="modal-dialog">
-
-                <!-- Modal content-->
                 <div class="box-body modal-content">
                     <form class="form" role="form" method="post" confirm callback="blackChecked()" event="submit"
                           message="Are you sure want to Black those ansars">
@@ -827,7 +745,6 @@
                                            ng-model="blackData.black_date"
                                            name="black_date">
                                 </div>
-
                                 <div class="form-group col-md-offset-1 col-md-10">
                                     <label class="control-label" for="comment">
                                         Comment:
@@ -851,8 +768,6 @@
         </div>
         <div id="re-embodied-model" class="modal fade" role="dialog">
             <div class="modal-dialog">
-
-                <!-- Modal content-->
                 <div class="box-body modal-content">
                     <form class="form" role="form" method="post" ng-submit="transferAnsar([getSingleRow.ansar_id])">
                         <div class="modal-header">
@@ -868,7 +783,6 @@
                                 </label>
                             </h4>
                         </div>
-
                         <div class="modal-body row">
                             <div class="form-group required col-md-offset-1 col-md-10" ng-if="isAdmin||isRC">
                                 <label class="control-label" for="disembodiment_reason_id">
@@ -903,12 +817,9 @@
                                 </select>
                             </div>
                             <div class="form-group required col-md-offset-1 col-md-10">
-                                <label class="control-label" for="rest_date">
-                                    যোগদানের তারিখ:
-                                </label>
-                                <input type="text" class="form-control" id="joining_date"
-                                       ng-model="transferData.joining_date"
-                                       name="joining_date">
+                                <datepicker-separate-fields label="যোগদানের তারিখ:" notify="reEmboInvalidDate"
+                                                            rdata="transferData.joining_date"></datepicker-separate-fields>
+                                <input type="hidden" ng-value="transferData.joining_date" name="joining_date">
                             </div>
                             <div class="form-group required col-md-offset-1 col-md-10">
                                 <label class="control-label" for="memorandum_id">
@@ -938,7 +849,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary pull-left"
-                                    ng-disabled="!transferData.memorandum_transfer||!transferData.joining_date||!transferData.selectedKpi||verifyTransfer||verifying||submitting"
+                                    ng-disabled="reEmboInvalidDate || !transferData.memorandum_transfer||!transferData.joining_date||!transferData.selectedKpi||verifyTransfer||verifying||submitting"
                                     ng-if="!printLetter">
                                 <i class="fa fa-pulse fa-spinner" ng-if="submitting"></i>&nbsp;Submit
                             </button>

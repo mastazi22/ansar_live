@@ -248,8 +248,8 @@ class JobCircularController extends Controller
         }
 
         if ($data) {
-            $data = $data->get();
+            $data = $data->orderBy("created_at", "desc")->get();
             return response()->json($data);
-        } else return response()->json(JobCircular::with('category')->get());
+        } else return response()->json(JobCircular::with('category')->orderBy("created_at", "desc")->get());
     }
 }

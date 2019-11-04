@@ -62,6 +62,8 @@ class GlobalParameter
                 return $this->globalParameter->where('param_name', 'offer_unblocked_period')->first()->param_unit;
             case Self::MAXIMUM_OFFER_LIMIT:
                 return $this->globalParameter->where('param_name', 'maximum_offer_limit')->first()->param_unit;
+            default:
+                return $this->globalParameter->where('param_name', $type)->first()->param_unit;
 
         }
     }
@@ -87,6 +89,8 @@ class GlobalParameter
                 return $this->globalParameter->where('param_name', 'offer_unblocked_period')->first()->param_value;
             case Self::MAXIMUM_OFFER_LIMIT:
                 return $this->globalParameter->where('param_name', 'maximum_offer_limit')->first()->param_value;
+            default:
+                return $this->globalParameter->where('param_name', $type)->first()->param_value;
         }
     }
 

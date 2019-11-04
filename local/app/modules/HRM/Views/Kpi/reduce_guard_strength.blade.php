@@ -1,7 +1,3 @@
-{{--User: Shreya--}}
-{{--Date: 1/5/2015--}}
-{{--Time: 12:49 PM--}}
-
 @extends('template.master')
 @section('title','Reduce Ansar In Guard Strength')
 @section('breadcrumb')
@@ -9,30 +5,27 @@
 @endsection
 @section('content')
     <script>
-        $(document).ready(function () {
-            $('#reduce_guard_strength_date').datepicker({                dateFormat:'dd-M-yy'            })(true);
-        })
         GlobalApp.controller('AnsarReduceController', function ($scope, $http, notificationService, $filter) {
-            $scope.isAdmin = parseInt('{{Auth::user()->type}}')
+            $scope.isAdmin = parseInt('{{Auth::user()->type}}');
             $scope.districts = [];
             $scope.thanas = [];
-            $scope.freezeData = {}
-            $scope.transData = {}
+            $scope.freezeData = {};
+            $scope.transData = {};
             $scope.selected = {
-                range:'',
+                range: '',
                 unit: '',
                 thana: '',
                 kpi: ''
-            }
-            $scope.checked = []
-            $scope.checkedAll = false
+            };
+            $scope.checked = [];
+            $scope.checkedAll = false;
             $scope.trans = {
-                range:'',
+                range: '',
                 unit: '',
                 thana: '',
                 kpi: '',
                 open: false
-            }
+            };
             $scope.loadingUnit = false;
             $scope.loadingThana = false;
             $scope.loadingKpi = false;
@@ -40,24 +33,21 @@
             $scope.isVerified = false;
             $scope.isVerifying = false;
             $scope.allLoading = false;
-            var f = "Freeze Ansar for Guard's Strength Reduction"
-
-//
+            $scope.gCount = {};
+            var f = "Freeze Ansar for Guard's Strength Reduction";
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
             $scope.verifyMemorandumId = function (id) {
                 var data = {
                     memorandum_id: id
-                }
+                };
                 $scope.isVerified = false;
                 $scope.isVerifying = true;
                 $http.post('{{URL::to('verify_memorandum_id')}}', data).then(function (response) {
-//                    alert(response.data.status)
                     $scope.isVerified = response.data.status;
                     $scope.isVerifying = false;
                 }, function (response) {
-
                 })
-            }
+            };
             $scope.loadAnsar = function (id) {
                 $scope.allLoading = true;
                 $http({
@@ -65,18 +55,20 @@
                     url: '{{URL::route('ansar_list_for_reduce')}}',
                     params: $scope.selected
                 }).then(function (response) {
-                    $scope.ansars = response.data;
-                    $scope.checked = Array.apply(null, Array($scope.ansars.length)).map(Boolean.prototype.valueOf, false)
-                    $scope.q = ''
+                    $scope.gCount = response.data.tCount;
+                    $scope.gCount['total'] = sum(response.data.tCount);
+                    $scope.ansars = response.data.list;
+                    $scope.checked = Array.apply(null, Array($scope.ansars.length)).map(Boolean.prototype.valueOf, false);
+                    $scope.q = '';
                     $scope.allLoading = false;
                 })
-            }
+            };
             $scope.openSingleFreezeModal = function (i) {
                 $scope.freezeData['ansarId'] = [$scope.ansars[i].ansar_id];
                 $scope.freezeData['kpiId'] = $scope.selected.kpi;
                 $scope.freezeData['reduce_reason'] = f;
                 $("#single-freeze").modal('show')
-            }
+            };
             $scope.openSingleTransModal = function (i) {
                 $scope.transData['transferred_ansar'] = [{
                     ansar_id: $scope.ansars[i].ansar_id,
@@ -85,16 +77,16 @@
                 $scope.transData['kpi_id'] = [$scope.selected.kpi];
                 $scope.trans.open = true;
                 $("#single-trans").modal('show')
-            }
+            };
             $scope.openMulFreezeModal = function (i) {
                 $scope.freezeData['ansarId'] = [];
                 $scope.checked.forEach(function (v) {
                     if (v !== false) $scope.freezeData['ansarId'].push($scope.ansars[v].ansar_id)
-                })
+                });
                 $scope.freezeData['kpiId'] = $scope.selected.kpi;
                 $scope.freezeData['reduce_reason'] = f;
                 $("#multi-freeze").modal('show')
-            }
+            };
             $scope.openMulTransModal = function () {
                 $scope.transData['transferred_ansar'] = [];
                 $scope.checked.forEach(function (v) {
@@ -102,28 +94,24 @@
                         ansar_id: $scope.ansars[v].ansar_id,
                         joining_date: $filter('dateformat')($scope.ansars[v].joining_date, 'DD-MMM-YYYY')
                     });
-                })
+                });
                 $scope.transData['kpi_id'] = [$scope.selected.kpi];
                 $scope.trans.open = true;
-                console.log($scope.transData)
                 $("#multi-trans").modal('show')
-            }
+            };
             $scope.$watch('checked', function (n, o) {
                 if (n.length <= 0) return;
                 var r = n.every(function (i) {
                     return i !== false;
-                })
+                });
                 $scope.checkedAll = r;
-            }, true)
+            }, true);
             $scope.checkAll = function () {
                 if ($scope.checkedAll) {
                     $scope.checked = Array.apply(null, Array($scope.ansars.length)).map(Number.call, Number);
-                }
-                else $scope.checked = Array.apply(null, Array($scope.ansars.length)).map(Boolean.prototype.valueOf, false);
-            }
+                } else $scope.checked = Array.apply(null, Array($scope.ansars.length)).map(Boolean.prototype.valueOf, false);
+            };
             $scope.submitFreezeData = function () {
-                console.log($scope.freezeData);
-//                return;
                 $scope.submitting = true;
                 $http({
                     url: '{{URL::route('ansar-reduce-update')}}',
@@ -133,74 +121,74 @@
                     $scope.submitting = false;
                     if (response.data.status) {
                         notificationService.notify('success', response.data.message);
-                        $("#single-freeze,#multi-freeze").modal('hide')
+                        $("#single-freeze,#multi-freeze").modal('hide');
                         $scope.freezeData = {};
                         $scope.loadAnsar();
-                    }
-                    else {
+                    } else {
                         notificationService.notify('error', response.data.message)
                     }
                 }, function (response) {
                     $scope.submitting = false;
                     notificationService.notify('error', 'An Unknown error occur. Error Code : ' + response.status)
                 })
-            }
+            };
             $scope.submitTransData = function () {
-                $scope.transData['kpi_id'].push($scope.trans.kpi)
-                console.log($scope.transData);
-//                return;
+                $scope.transData['kpi_id'].push($scope.trans.kpi);
                 $scope.submitting = true;
                 $http({
                     url: '{{URL::route('complete_transfer_process')}}',
                     method: 'post',
                     data: angular.toJson($scope.transData)
                 }).then(function (response) {
-                    console.log(response.data)
+                    console.log(response.data);
                     $scope.submitting = false;
                     if (response.data.status) {
                         notificationService.notify('success', "Transfer complete");
-                        $("#single-trans,#multi-trans").modal('hide')
+                        $("#single-trans,#multi-trans").modal('hide');
                         $scope.transData = {};
                         $scope.loadAnsar();
-                    }
-                    else {
+                    } else {
                         notificationService.notify('error', "Invalid Request")
                     }
                 }, function (response) {
                     $scope.submitting = false;
                     notificationService.notify('error', 'An Unknown error occur. Error Code : ' + response.status)
                 })
-            }
+            };
             $scope.resetForm = function () {
                 $scope.trans.open = false;
                 $scope.transData = {};
-                $scope.trans.unit = ''
-                $scope.trans.range = ''
-                $scope.trans.thana = ''
-                $scope.trans.kpi = ''
-                $scope.tthanas = []
-                $scope.gguards = []
-            }
+                $scope.trans.unit = '';
+                $scope.trans.range = '';
+                $scope.trans.thana = '';
+                $scope.trans.kpi = '';
+                $scope.tthanas = [];
+                $scope.gguards = [];
+            };
             $scope.actualValue = function (value, index, array) {
-
                 return value !== false;
+            };
 
+            function sum(t) {
+                var s = 0;
+                for (var i in t) {
+                    s += parseInt(t[i])
+                }
+                return s;
             }
-//            if ($scope.isAdmin == 11) {
-//                $scope.loadDistrict()
-//            }
-//            else {
-//                if (!isNaN($scope.dcDistrict)) {
-//                    $scope.loadThana($scope.dcDistrict)
-//                }
-//            }
 
+            $scope.changeRank = function (i) {
+                $scope.selected["rank"] = i;
+                $scope.loadAnsar()
+            };
         })
     </script>
+    <style>
+        caption h5.text {
+            display: none;
+        }
+    </style>
     <div ng-controller="AnsarReduceController">
-        {{--<div class="breadcrumbplace">--}}
-        {{--{!! Breadcrumbs::render('reduce_guard_strength') !!}--}}
-        {{--</div>--}}
         @if(Session::has('success_message'))
             <div style="padding: 10px 20px 0 20px;">
                 <div class="alert alert-success">
@@ -218,27 +206,36 @@
                 </div>
                 <div class="box-body">
                     <filter-template
-                            show-item="['range','unit','thana','kpi']"
+                            show-item="['range','unit','thana','kpi','gender']"
                             type="single"
                             kpi-change="loadAnsar()"
+                            gender-change="loadAnsar()"
                             start-load="range"
-                            field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
-                            data = "selected"
-                    >
-
-                    </filter-template>
+                            field-width="{range:'col-sm-2',unit:'col-sm-2',thana:'col-sm-2',gender:'col-sm-3',kpi:'col-sm-3'}"
+                            data="selected"></filter-template>
                     <div class="row">
-
+                        <div class="col-md-8" style="position: absolute;z-index: 100;">
+                            <h4 class="text text-bold">
+                                <a class="btn btn-primary text-bold" href="#" ng-click="changeRank('all')">Total
+                                    Ansars ([[gCount.total!=undefined?gCount.total.toLocaleString():0]])</a>&nbsp;
+                                <a class="btn btn-primary text-bold" href="#" ng-click="changeRank(3)">PC
+                                    ([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])</a>&nbsp;
+                                <a class="btn btn-primary text-bold" href="#" ng-click="changeRank(2)">APC
+                                    ([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])</a>&nbsp;
+                                <a class="btn btn-primary text-bold" href="#" ng-click="changeRank(1)">Ansar
+                                    ([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</a>
+                            </h4>
+                        </div>
                         <div class="col-md-12">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="pc-table">
                                     <caption>
                                         <table-search q="q" results="results"></table-search>
-
                                     </caption>
                                     <tr>
                                         <th>
-                                            <input type="checkbox" ng-model="checkedAll" ng-change="checkAll()" ng-disabled="results.length<=0||ansars.length<=0||ansars==undefined">
+                                            <input type="checkbox" ng-model="checkedAll" ng-change="checkAll()"
+                                                   ng-disabled="results.length<=0||ansars.length<=0||ansars==undefined">
                                         </th>
                                         <th>Ansar ID</th>
                                         <th>Ansar Name</th>
@@ -266,14 +263,14 @@
                                         <td>[[a.reporting_date|dateformat:'DD-MMM-YYYY']]</td>
                                         <td>[[a.joining_date|dateformat:'DD-MMM-YYYY']]</td>
                                         <td>
-                                                <a class="btn btn-primary btn-xs" title="Freeze"
-                                                   ng-click="openSingleFreezeModal($index)">
-                                                    <i class="fa fa-cube"></i>
-                                                </a>
-                                                <a class="btn btn-primary btn-xs"
-                                                   ng-click="openSingleTransModal($index)" title="Transfer">
-                                                    <i class="fa fa-envelope-o"></i>
-                                                </a>
+                                            <a class="btn btn-primary btn-xs" title="Freeze"
+                                               ng-click="openSingleFreezeModal($index)">
+                                                <i class="fa fa-cube"></i>
+                                            </a>
+                                            <a class="btn btn-primary btn-xs"
+                                               ng-click="openSingleTransModal($index)" title="Transfer">
+                                                <i class="fa fa-envelope-o"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                     <tr ng-if="ansars==undefined||ansars.length<=0||results.length<=0"
@@ -323,21 +320,9 @@
                                                         ng-if="isVerified&&!memorandumId">Memorandum no. is required.</span><span
                                                         class="text-danger"
                                                         ng-if="isVerified&&memorandumId">This is already taken.</span></label>
-                                            <input ng-blur="verifyMemorandumId(freezeData.memorandumId)"
-                                                   ng-model="freezeData.memorandumId"
-                                                   type="text" class="form-control" name="memorandum_id"
-                                                   placeholder="Enter memorandum id">
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-7 col-centered"
-                                         ng-class="{ 'has-error': kpiReduceForm.reduce_guard_strength_date.$touched && kpiReduceForm.reduce_guard_strength_date.$invalid }">
-                                        <div class="form-group">
-                                            <label class="control-label">Date of
-                                                Withdrawal:&nbsp;&nbsp;&nbsp;<span class="text-danger"
-                                                                                   ng-if="kpiReduceForm.reduce_guard_strength_date.$touched && kpiReduceForm.reduce_guard_strength_date.$error.required">Date is required.</span></label>
-                                            <input type="text" date-picker name="reduce_guard_strength_date"
-                                                   ng-model="freezeData.reduce_guard_strength_date"
-                                                   class="form-control">
+                                            <input ng-blur="verifyMemorandumId(freezeData.memorandumId)" type="text"
+                                                   ng-model="freezeData.memorandumId" placeholder="Enter memorandum id"
+                                                   class="form-control" name="memorandum_id">
                                         </div>
                                     </div>
                                     <div class="col-sm-7 col-centered"
@@ -350,10 +335,16 @@
                                                    ng-model="freezeData.reduce_reason" disabled>
                                         </div>
                                     </div>
+                                    <div class="col-sm-10 col-centered">
+                                        <datepicker-separate-fields label="Date of Withdrawal:"
+                                                                    notify="singleFreezeKPIReduceDateInvalid"
+                                                                    rdata="freezeData.reduce_guard_strength_date"></datepicker-separate-fields>
+                                    </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary pull-right" ng-disabled="submitting">
+                                <button type="submit" class="btn btn-primary pull-right"
+                                        ng-disabled="submitting || singleFreezeKPIReduceDateInvalid || freezeData.memorandumId==''">
                                     <i class="fa fa-pulse fa-spinner" ng-if="submitting"></i>Freeze
                                 </button>
                             </div>
@@ -375,62 +366,9 @@
                                         type="single"
                                         start-load="range"
                                         field-width="{range:'col-sm-7 col-centered',unit:'col-sm-7 col-centered',thana:'col-sm-7 col-centered',kpi:'col-sm-7 col-centered'}"
-                                        data = "trans"
-                                >
-
+                                        data="trans">
                                 </filter-template>
                                 <div class="row">
-                                    {{--<div class="col-sm-7 col-centered" ng-show="isAdmin==11">--}}
-                                        {{--<div class="form-group">--}}
-                                            {{--<label class="control-label">--}}
-                                                {{--@lang('title.unit')&nbsp;&nbsp;--}}
-                                                {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
-                                                     {{--ng-show="loadingUnit">--}}
-                                            {{--</label>--}}
-                                            {{--<select class="form-control"--}}
-                                                    {{--ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
-                                                    {{--ng-model="trans.unit"--}}
-                                                    {{--ng-change="loadThana(trans.unit)">--}}
-                                                {{--<option value="">--@lang('title.unit')--</option>--}}
-                                                {{--<option ng-repeat="d in ddistricts" value="[[d.id]]">[[d.unit_name_bng]]--}}
-                                                {{--</option>--}}
-                                            {{--</select>--}}
-                                        {{--</div>--}}
-                                    {{--</div>--}}
-                                    {{--<div class="col-sm-7 col-centered">--}}
-                                        {{--<div class="form-group">--}}
-                                            {{--<label class="control-label">--}}
-                                                {{--@lang('title.thana')&nbsp;&nbsp;--}}
-                                                {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
-                                                     {{--ng-show="loadingThana">--}}
-                                            {{--</label>--}}
-                                            {{--<select class="form-control"--}}
-                                                    {{--ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
-                                                    {{--ng-model="trans.thana"--}}
-                                                    {{--ng-change="loadGuard(trans.thana)">--}}
-                                                {{--<option value="">--@lang('title.thana')--</option>--}}
-                                                {{--<option ng-repeat="t in tthanas" value="[[t.id]]">[[t.thana_name_bng]]--}}
-                                                {{--</option>--}}
-                                            {{--</select>--}}
-                                        {{--</div>--}}
-                                    {{--</div>--}}
-                                    {{--<div class="col-sm-7 col-centered">--}}
-                                        {{--<div class="form-group">--}}
-                                            {{--<label class="control-label">--}}
-                                                {{--@lang('title.kpi')&nbsp;&nbsp;--}}
-                                                {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
-                                                     {{--ng-show="loadingKpi">--}}
-                                            {{--</label>--}}
-                                            {{--<select class="form-control"--}}
-                                                    {{--ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
-                                                    {{--ng-model="trans.kpi"--}}
-                                                    {{--id="kpi_name_list_for_reduce" name="kpi_name_list_for_reduce">--}}
-                                                {{--<option value="">--@lang('title.kpi')--</option>--}}
-                                                {{--<option ng-repeat="d in gguards" value="[[d.id]]">[[d.kpi_name]]--}}
-                                                {{--</option>--}}
-                                            {{--</select>--}}
-                                        {{--</div>--}}
-                                    {{--</div>--}}
                                     <div class="col-sm-7 col-centered">
                                         <div class="form-group">
                                             <label class="control-label">Memorandum no.&nbsp;&nbsp;&nbsp;<span
@@ -441,25 +379,20 @@
                                                         class="text-danger"
                                                         ng-if="isVerified&&transData.memorandum_id">This is already taken.</span></label>
                                             <input ng-blur="verifyMemorandumId(transData.memorandum_id)"
-                                                   ng-model="transData.memorandum_id"
-                                                   type="text" class="form-control" name="memorandum_id"
-                                                   placeholder="Enter memorandum id">
+                                                   ng-model="transData.memorandum_id" type="text" class="form-control"
+                                                   name="memorandum_id" placeholder="Enter memorandum id">
                                         </div>
                                     </div>
-                                    <div class="col-sm-7 col-centered"
-                                         ng-class="{ 'has-error': kpiReduceForm.reduce_guard_strength_date.$touched && kpiReduceForm.reduce_guard_strength_date.$invalid }">
-                                        <div class="form-group">
-                                            <label class="control-label">Date of
-                                                Transfer:&nbsp;&nbsp;&nbsp;<span class="text-danger"
-                                                                                 ng-if="kpiReduceForm.reduce_guard_strength_date.$touched && kpiReduceForm.reduce_guard_strength_date.$error.required">Date is required.</span></label>
-                                            <input type="text" date-picker name="reduce_guard_strength_date"
-                                                   ng-model="transData.transfer_date" class="form-control">
-                                        </div>
+                                    <div class="col-sm-10 col-centered">
+                                        <datepicker-separate-fields label="Date of Transfer:"
+                                                                    notify="singleTransKPIReduceDateInvalid"
+                                                                    rdata="transData.transfer_date"></datepicker-separate-fields>
                                     </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary pull-right" ng-disabled="submitting">
+                                <button type="submit" class="btn btn-primary pull-right"
+                                        ng-disabled="submitting || singleTransKPIReduceDateInvalid">
                                     <i class="fa fa-pulse fa-spinner" ng-if="submitting"></i>Transfer
                                 </button>
                             </div>
@@ -481,63 +414,10 @@
                                         type="single"
                                         start-load="range"
                                         field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
-                                        data = "trans"
-                                >
-
+                                        data="trans">
                                 </filter-template>
                                 <div class="row">
-                                    {{--<div class="col-sm-4" ng-show="isAdmin==11">--}}
-                                        {{--<div class="form-group">--}}
-                                            {{--<label class="control-label">--}}
-                                                {{--@lang('title.unit')&nbsp;&nbsp;--}}
-                                                {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
-                                                     {{--ng-show="loadingUnit">--}}
-                                            {{--</label>--}}
-                                            {{--<select class="form-control"--}}
-                                                    {{--ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
-                                                    {{--ng-model="trans.unit"--}}
-                                                    {{--ng-change="loadThana(trans.unit)">--}}
-                                                {{--<option value="">--@lang('title.unit')--</option>--}}
-                                                {{--<option ng-repeat="d in ddistricts" value="[[d.id]]">[[d.unit_name_bng]]--}}
-                                                {{--</option>--}}
-                                            {{--</select>--}}
-                                        {{--</div>--}}
-                                    {{--</div>--}}
-                                    {{--<div class="col-sm-4">--}}
-                                        {{--<div class="form-group">--}}
-                                            {{--<label class="control-label">--}}
-                                                {{--@lang('title.thana')&nbsp;&nbsp;--}}
-                                                {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
-                                                     {{--ng-show="loadingThana">--}}
-                                            {{--</label>--}}
-                                            {{--<select class="form-control"--}}
-                                                    {{--ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
-                                                    {{--ng-model="trans.thana"--}}
-                                                    {{--ng-change="loadGuard(trans.thana)">--}}
-                                                {{--<option value="">--@lang('title.thana')--</option>--}}
-                                                {{--<option ng-repeat="t in tthanas" value="[[t.id]]">[[t.thana_name_bng]]--}}
-                                                {{--</option>--}}
-                                            {{--</select>--}}
-                                        {{--</div>--}}
-                                    {{--</div>--}}
-                                    {{--<div class="col-sm-4">--}}
-                                        {{--<div class="form-group">--}}
-                                            {{--<label class="control-label">--}}
-                                                {{--@lang('title.kpi')&nbsp;&nbsp;--}}
-                                                {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
-                                                     {{--ng-show="loadingKpi">--}}
-                                            {{--</label>--}}
-                                            {{--<select class="form-control"--}}
-                                                    {{--ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
-                                                    {{--ng-model="trans.kpi"--}}
-                                                    {{--id="kpi_name_list_for_reduce" name="kpi_name_list_for_reduce">--}}
-                                                {{--<option value="">--@lang('title.kpi')--</option>--}}
-                                                {{--<option ng-repeat="d in gguards" value="[[d.id]]">[[d.kpi_name]]--}}
-                                                {{--</option>--}}
-                                            {{--</select>--}}
-                                        {{--</div>--}}
-                                    {{--</div>--}}
-                                    <div class="col-sm-4">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="control-label">Memorandum no.&nbsp;&nbsp;&nbsp;<span
                                                         ng-show="isVerifying"><i
@@ -552,17 +432,15 @@
                                                    placeholder="Enter memorandum id">
                                         </div>
                                     </div>
-                                    <div class="col-sm-4"
-                                         ng-class="{ 'has-error': kpiReduceForm.reduce_guard_strength_date.$touched && kpiReduceForm.reduce_guard_strength_date.$invalid }">
-                                        <div class="form-group">
-                                            <label class="control-label">Date of
-                                                Transfer:&nbsp;&nbsp;&nbsp;<span class="text-danger"
-                                                                                 ng-if="kpiReduceForm.reduce_guard_strength_date.$touched && kpiReduceForm.reduce_guard_strength_date.$error.required">Date is required.</span></label>
-                                            <input type="text" date-picker name="reduce_guard_strength_date"
-                                                   ng-model="transData.transfer_date" class="form-control">
-                                        </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <datepicker-separate-fields label="Date of Transfer:"
+                                                                    notify="multiTransKPIReduceDateInvalid"
+                                                                    rdata="transData.transfer_date"></datepicker-separate-fields>
                                     </div>
                                 </div>
+
                                 <div class="table-responsive">
                                     <table class="table table-bordered">
                                         <tr>
@@ -596,16 +474,16 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                        <tr colspan="10" ng-if="ansars==undefined||ansars.length<=0||p.length<=0"
+                                        <tr ng-if="ansars==undefined||ansars.length<=0||p.length<=0"
                                             class="warning" id="not-find-info">
                                             <td colspan="10">No Ansar is available for Reduction</td>
                                         </tr>
-                                        </tbody>
                                     </table>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary pull-right" ng-disabled="submitting">
+                                <button type="submit" class="btn btn-primary pull-right"
+                                        ng-disabled="submitting || multiTransKPIReduceDateInvalid">
                                     <i class="fa fa-pulse fa-spinner" ng-if="submitting"></i>Transfer
                                 </button>
                             </div>
@@ -638,16 +516,6 @@
                                                    placeholder="Enter memorandum id">
                                         </div>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label class="control-label">Date of
-                                                Withdrawal:&nbsp;&nbsp;&nbsp;<span class="text-danger"
-                                                                                   ng-if="kpiReduceForm.reduce_guard_strength_date.$touched && kpiReduceForm.reduce_guard_strength_date.$error.required">Date is required.</span></label>
-                                            <input type="text" date-picker name="reduce_guard_strength_date"
-                                                   ng-model="freezeData.reduce_guard_strength_date"
-                                                   class="form-control">
-                                        </div>
-                                    </div>
                                     <div class="col-sm-4"
                                          ng-class="{ 'has-error': kpiReduceForm.reduce_guard_strength_date.$touched && kpiReduceForm.reduce_guard_strength_date.$invalid }">
                                         <div class="form-group">
@@ -657,6 +525,13 @@
                                             <input type="text" class="form-control" name="reduce_reason"
                                                    ng-model="freezeData.reduce_reason" disabled>
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <datepicker-separate-fields label="Date of Withdrawal:"
+                                                                    notify="multiFreezeKPIReduceDateInvalid"
+                                                                    rdata="freezeData.reduce_guard_strength_date"></datepicker-separate-fields>
                                     </div>
                                 </div>
                                 <div class="table-responsive">
@@ -692,16 +567,16 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                        <tr colspan="10" ng-if="ansars==undefined||ansars.length<=0||p.length<=0"
+                                        <tr ng-if="ansars==undefined||ansars.length<=0||p.length<=0"
                                             class="warning" id="not-find-info">
                                             <td colspan="10">No Ansar is available for Reduction</td>
                                         </tr>
-                                        </tbody>
                                     </table>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary pull-right" ng-disabled="submitting">
+                                <button type="submit" class="btn btn-primary pull-right"
+                                        ng-disabled="submitting || multiFreezeKPIReduceDateInvalid">
                                     <i class="fa fa-pulse fa-spinner" ng-if="submitting"></i>freeze
                                 </button>
                             </div>
@@ -709,8 +584,6 @@
                     </form>
                 </div>
             </div>
-            <!--Modal Close-->
-            <!-- /.row -->
         </section>
     </div>
 @stop

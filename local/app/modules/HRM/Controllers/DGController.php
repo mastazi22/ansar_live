@@ -3,10 +3,14 @@
 namespace App\modules\HRM\Controllers;
 
 use App\Helper\Facades\GlobalParameterFacades;
+use App\Helper\GlobalParameter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use App\Jobs\RearrangePanelPositionGlobal;
+use App\Jobs\RearrangePanelPositionLocal;
 use App\models\User;
 use App\modules\HRM\Models\ActionUserLog;
+use App\modules\HRM\Models\AnsarFutureState;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\BlackListInfoModel;
 use App\modules\HRM\Models\BlackListModel;
@@ -19,6 +23,7 @@ use App\modules\HRM\Models\MemorandumModel;
 use App\modules\HRM\Models\OfferCancel;
 use App\modules\HRM\Models\OfferSMS;
 use App\modules\HRM\Models\OfferSmsLog;
+use App\modules\HRM\Models\OfferSMSStatus;
 use App\modules\HRM\Models\PanelInfoLogModel;
 use App\modules\HRM\Models\PanelModel;
 use App\modules\HRM\Models\PersonalInfo;
@@ -223,18 +228,20 @@ class DGController extends Controller
         DB::beginTransaction();
         try {
             $ansar = AnsarStatusInfo::where('ansar_id', $request->ansar_id)->first();
-            if (!$ansar) {
+            if (!$ansar||AnsarFutureState::where('ansar_id',$request->ansar_id)->exists()) {
                 throw new \Exception('This ansar not found in database ');
             }
-            $status = $ansar->getAnsarForDirectEmbodiment();
-            if ($status === false) {
-                throw new \Exception('Ansar ID: ' . $request->ansar_id . ' can`t be embodied. Because he/she not in panel,offer or rest');
-            }
             $kpi = KpiGeneralModel::where('unit_id', $request->unit)->where('thana_id', $request->thana)->where('id', $request->kpi_id)->first();
+
+            /*$embodimentInfo = $kpi->embodiment->count();
+            $kpi_details = $kpi->details;
+            if($embodimentInfo + count($request->ansar_ids) > $kpi_details->total_ansar_given){
+                throw new \Exception("This Ansar Cannot be Embodied. Because the total number of Ansars in this KPI already exceed");
+            }*/
             if (!$kpi) {
                 throw new \Exception('Invalid request for Ansar ID: ' . $request->ansar_id);
             }
-            $kpi->embodiment()->save(new EmbodimentModel([
+            $ansar_embodied_detail = [
                 'ansar_id' => $request->input('ansar_id'),
                 'received_sms_id' => 0,
                 'emboded_status' => 'Emboded',
@@ -244,13 +251,75 @@ class DGController extends Controller
                 'reporting_date' => Carbon::parse($request->input('reporting_date'))->format('Y-m-d'),
                 'transfered_date' => Carbon::parse($request->input('joining_date'))->format('Y-m-d'),
                 'joining_date' => Carbon::parse($request->input('joining_date'))->format('Y-m-d'),
-            ]));
+            ];
+            switch($ansar->getStatus()[0]){
+                case AnsarStatusInfo::PANEL_STATUS:
+                    if(Carbon::parse($request->input('joining_date'))->lte(Carbon::now())){
+                        $kpi->embodiment()->save(new EmbodimentModel($ansar_embodied_detail));
+                        $ansar->panel->saveLog('Emboded');
+                        $ansar->panel->delete();
+                        $ansar->update([
+                            'pannel_status'=>0,
+                            'embodied_status'=>1,
+                        ]);
+                    }else{
+                        AnsarFutureState::create([
+                            'ansar_id'=>$request->input('ansar_id'),
+                            'data'=>serialize($ansar_embodied_detail),
+                            'action_date'=>Carbon::now()->format("y-m-d H:i:s"),
+                            'activation_date'=>Carbon::parse($request->input('joining_date'))->format('Y-m-d'),
+                            'action_by'=>Auth::user()->id,
+                            'from_status'=>'Panel',
+                            'to_status'=>'Embodiment',
+                        ]);
+                    }
+                    break;
+                case AnsarStatusInfo::OFFER_STATUS:
+                    $kpi->embodiment()->save(new EmbodimentModel($ansar_embodied_detail));
+                    if($ansar->offer){
+                        $ansar->offer->saveLog();
+                        $ansar->offer->delete();
+                        $ansar->offer->deleteCount();
+                        $ansar->offer->deleteOfferStatus();
+                    }
+                    else{
+                        $ansar->offerReceived->saveLog();
+                        $ansar->offerReceived->delete();
+                        $ansar->offerReceived->deleteCount();
+                        $ansar->offerReceived->deleteOfferStatus();
+                    }
+                    break;
+                case AnsarStatusInfo::REST_STATUS:
+                    if(Carbon::parse($request->input('joining_date'))->lte(Carbon::now())){
+                        $kpi->embodiment()->save(new EmbodimentModel($ansar_embodied_detail));
+                        $ansar->rest->saveLog();
+                        $ansar->rest->delete();
+                        $ansar->update([
+                            'rest_status'=>0,
+                            'embodied_status'=>1,
+                        ]);
+                    }else{
+                        AnsarFutureState::create([
+                            'ansar_id'=>$request->input('ansar_id'),
+                            'data'=>serialize($ansar_embodied_detail),
+                            'action_date'=>Carbon::now()->format("y-m-d H:i:s"),
+                            'activation_date'=>Carbon::parse($request->input('joining_date'))->format('Y-m-d'),
+                            'action_by'=>Auth::user()->id,
+                            'from_status'=>'Panel',
+                            'to_status'=>'Embodiment',
+                        ]);
+                    }
+                    break;
+                default:
+                    throw new \Exception('Ansar ID: ' . $request->ansar_id . ' can`t be embodied. Because he/she not in panel,offer or rest');
+            }
+
             $memorandum_entry = new MemorandumModel();
             $memorandum_entry->memorandum_id = $request->input('mem_id');
             $memorandum_entry->mem_date = Carbon::parse($request->mem_date);
             $memorandum_entry->save();
 
-            CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DIRECT EMBODIMENT', 'from_state' => $status, 'to_state' => 'EMBODIED', 'action_by' => auth()->user()->id]);
+            CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DIRECT EMBODIMENT', 'from_state' => $ansar->getStatus()[0], 'to_state' => 'EMBODIED', 'action_by' => auth()->user()->id]);
 //            CustomQuery::addDGlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'EMBODIED', 'from_state' => $status, 'to_state' => 'EMBODIED']);
             DB::commit();
         } catch (\Exception $e) {
@@ -283,7 +352,7 @@ class DGController extends Controller
             $embodiment_infos = EmbodimentModel::where('ansar_id', $request->input('ansar_id'))->first();
             $joining_date = Carbon::parse($embodiment_infos->joining_date);
             $service_days = Carbon::parse($request->input('dis_date'))->diffInDays($joining_date);
-            RestInfoModel::create([
+            $ansar_rest_details = [
                 'ansar_id' => $request->ansar_id,
                 'old_embodiment_id' => $embodiment_infos->id,
                 'memorandum_id' => $request->mem_id,
@@ -294,10 +363,23 @@ class DGController extends Controller
                 'rest_form' => 'Regular',
                 'action_user_id' => Auth::user()->id,
                 'comment' => $request->input('comment'),
-            ]);
-            $embodiment_infos->saveLog('Rest', Carbon::parse($request->input('dis_date'))->format("Y-m-d"), $request->input('comment'), $request->reason);
-            AnsarStatusInfo::where('ansar_id', $request->input('ansar_id'))->update(['embodied_status' => 0, 'rest_status' => 1]);
-            $embodiment_infos->delete();
+            ];
+            if(Carbon::parse($request->input('dis_date'))->lte(Carbon::now())){
+                RestInfoModel::create($ansar_rest_details);
+                $embodiment_infos->saveLog('Rest', Carbon::parse($request->input('dis_date'))->format("Y-m-d"), $request->input('comment'), $request->reason);
+                AnsarStatusInfo::where('ansar_id', $request->input('ansar_id'))->update(['embodied_status' => 0, 'rest_status' => 1]);
+                $embodiment_infos->delete();
+            }else{
+                AnsarFutureState::create([
+                    'ansar_id'=>$request->ansar_id,
+                    'data'=>serialize($ansar_rest_details),
+                    'action_date'=>Carbon::now()->format("y-m-d H:i:s"),
+                    'activation_date'=>Carbon::parse($request->input('dis_date'))->format("Y-m-d"),
+                    'action_by'=>Auth::user()->id,
+                    'from_status'=>'Embodiment',
+                    'to_status'=>'Rest',
+                ]);
+            }
             CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DIRECT DISEMBODIMENT', 'from_state' => 'EMBODIED', 'to_state' => 'REST', 'action_by' => auth()->user()->id]);
             DB::commit();
         } catch (\Exception $e) {
@@ -1479,7 +1561,7 @@ class DGController extends Controller
         $ansar_id = $request->input('ansar_id');
         $memorandum_id = $request->input('memorandum_id');
         $direct_panel_date = $request->input('direct_panel_date');
-        $modified_direct_panel_date = Carbon::parse($direct_panel_date)->format('Y-m-d');
+        $modified_direct_panel_date = Carbon::parse($direct_panel_date);
         $direct_panel_comment = $request->input('direct_panel_comment');
 
         DB::beginTransaction();
@@ -1488,39 +1570,69 @@ class DGController extends Controller
             $memorandum_id_save->memorandum_id = $memorandum_id;
             $memorandum_id_save->save();
             $ansar = AnsarStatusInfo::where('ansar_id', $request->ansar_id)->first();
-            if (!$ansar) throw new \Exception('No Ansar available with this ID ' . $request->ansar_id);
+            if (!$ansar||AnsarFutureState::where('ansar_id',$request->ansar_id)->exists()) throw new \Exception('No Ansar available with this ID ' . $request->ansar_id);
 
             switch ($ansar->getStatus()[0]) {
+
                 case AnsarStatusInfo::FREE_STATUS:
-                    PanelModel::create([
+                    $ansar_panel_detail = [
                         'ansar_id' => $ansar_id,
                         'panel_date' => $modified_direct_panel_date,
+                        're_panel_date' => $modified_direct_panel_date,
                         'memorandum_id' => $memorandum_id,
                         'come_from' => "Free",
                         'action_user_id' => Auth::user()->id,
-                    ]);
-                    $ansar->update([
-                        'free_status' => 0,
-                        'pannel_status' => 1,
-                    ]);
+                    ];
+                    if($modified_direct_panel_date->lte(Carbon::now())){
+                        PanelModel::create($ansar_panel_detail);
+                        $ansar->update([
+                            'free_status' => 0,
+                            'pannel_status' => 1,
+                        ]);
+                    }else{
+                        AnsarFutureState::create([
+                            'ansar_id'=>$ansar_id,
+                            'data'=>serialize($ansar_panel_detail),
+                            'action_date'=>Carbon::now()->format("y-m-d H:i:s"),
+                            'activation_date'=>$modified_direct_panel_date,
+                            'action_by'=>Auth::user()->id,
+                            'from_status'=>'Free',
+                            'to_status'=>'Panel',
+                        ]);
+                    }
+
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DIRECT PANEl', 'from_state' => 'FREE', 'to_state' => 'PANELED', 'action_by' => auth()->user()->id]);
                     break;
 
                 case AnsarStatusInfo::REST_STATUS:
-                    $rest_info = RestInfoModel::where('ansar_id', $ansar_id)->first();
-                    $rest_info->saveLog("Panel", $modified_direct_panel_date, $direct_panel_comment);
-                    PanelModel::create([
+                    $ansar_panel_detail = [
                         'ansar_id' => $ansar_id,
                         'panel_date' => $modified_direct_panel_date,
+                        're_panel_date' => $modified_direct_panel_date,
                         'memorandum_id' => $memorandum_id,
                         'come_from' => "Rest",
                         'action_user_id' => Auth::user()->id,
-                    ]);
-                    $ansar->update([
-                        'rest_status' => 0,
-                        'pannel_status' => 1,
-                    ]);
-                    $rest_info->delete();
+                    ];
+                    if($modified_direct_panel_date->lte(Carbon::now())) {
+                        $rest_info = RestInfoModel::where('ansar_id', $ansar_id)->first();
+                        $rest_info->saveLog("Panel", $modified_direct_panel_date, $direct_panel_comment);
+                        PanelModel::create($ansar_panel_detail);
+                        $ansar->update([
+                            'rest_status' => 0,
+                            'pannel_status' => 1,
+                        ]);
+                        $rest_info->delete();
+                    }else{
+                        AnsarFutureState::create([
+                            'ansar_id'=>$ansar_id,
+                            'data'=>serialize($ansar_panel_detail),
+                            'action_date'=>Carbon::now()->format("y-m-d H:i:s"),
+                            'activation_date'=>Carbon::now()->format("y-m-d H:i:s"),
+                            'action_by'=>Auth::user()->id,
+                            'from_status'=>'Rest',
+                            'to_status'=>'Panel',
+                        ]);
+                    }
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DIRECT PANEl', 'from_state' => 'REST', 'to_state' => 'PANELED', 'action_by' => auth()->user()->id]);
                     break;
                 default:
@@ -1528,6 +1640,8 @@ class DGController extends Controller
                     break;
             }
             DB::commit();
+            dispatch(new RearrangePanelPositionGlobal());
+            dispatch(new RearrangePanelPositionLocal());
         } catch (\Exception $e) {
             return Redirect::back()->with('error_message', $e->getMessage());
         }
@@ -1553,6 +1667,11 @@ class DGController extends Controller
             $status = $a->status->getStatus();
             if ((!in_array(AnsarStatusInfo::PANEL_STATUS, $status) && !in_array(AnsarStatusInfo::REST_STATUS, $status)) || in_array(AnsarStatusInfo::BLOCK_STATUS, $status) || in_array(AnsarStatusInfo::BLACK_STATUS, $status)||in_array(AnsarStatusInfo::OFFER_BLOCK_STATUS, $status)) throw new \Exception("This ansar not eligible for offer");
             if (!$a && !preg_match('/^(\+88)?0[0-9]{10}/', $a->mobile_no_self)) throw new Exception("Invalid mobile number");
+            $offer_status = OfferSMSStatus::firstOrCreate(['ansar_id'=>$request->ansar_id]);
+            $offer_limit = +GlobalParameterFacades::getValue(GlobalParameter::MAXIMUM_OFFER_LIMIT);
+            if($offer_status->offer_type&&count(explode(",",$offer_status->offer_type))>=$offer_limit){
+                throw new Exception("Offer limit already exceed");
+            }
             $a->offer_sms_info()->save(new OfferSMS([
                 'sms_send_datetime' => Carbon::parse($request->offer_date)->format("y-m-d H:i:s"),
                 'sms_end_datetime' => Carbon::parse($request->offer_date)->addHours(48)->format("y-m-d H:i:s"),
@@ -1560,6 +1679,26 @@ class DGController extends Controller
                 'action_user_id' => auth()->user()->id,
                 'come_from' => $status[0]
             ]));
+            if(in_array($request->unit_id,Config::get('app.offer'))){
+                $offer_type = 'GB';
+            } else{
+                $offer_type = 'RE';
+            }
+            $t = $offer_status->offer_type;
+            if($t){
+                $t .= ",".$offer_type;
+            } else{
+                $t = $offer_type;
+            }
+            $offer_status->offer_type = $t;
+            $offer_status->last_offer_unit = $request->unit_id;
+            if(!$offer_status->last_offer_units){
+                $offer_status->last_offer_units = $request->unit_id.'';
+            } else{
+                $offer_status->last_offer_units .= ','.$request->unit_id;
+            }
+            $offer_status->save();
+
             switch ($status[0]) {
                 case AnsarStatusInfo::PANEL_STATUS:
                     //$a->panel->saveLog('Offer', Carbon::today());
@@ -1567,7 +1706,20 @@ class DGController extends Controller
                     $pa = $a->panel;
                     $pa->locked = 1;
                     $pa->save();
-                    //$a->panel->delete();
+                    $pa->panelLog()->save(new PanelInfoLogModel([
+                        'ansar_id' => $pa->ansar_id,
+                        'merit_list' => $pa->ansar_merit_list,
+                        'panel_date' => $pa->panel_date,
+                        're_panel_date' => $pa->re_panel_date,
+                        're_panel_position' => $pa->re_panel_position,
+                        'go_panel_position' => $pa->go_panel_position,
+                        'old_memorandum_id' => !$pa->memorandum_id ? "N\A" : $pa->memorandum_id,
+                        'movement_date' => Carbon::today(),
+                        'come_from' => $pa->come_from,
+                        'move_to' => 'Offer',
+                    ]));
+                    $this->dispatch(new RearrangePanelPositionLocal());
+                    $this->dispatch(new RearrangePanelPositionGlobal());
                     CustomQuery::addActionlog(['ansar_id' => $request->input('ansar_id'), 'action_type' => 'DIRECT OFFER', 'from_state' => 'PANEL', 'to_state' => 'OFFER', 'action_by' => auth()->user()->id]);
 
                     break;
@@ -1607,6 +1759,8 @@ class DGController extends Controller
                 throw new \Exception("This Ansar is not in offer status");
             }
             $offered_ansar = $ansar->offer_sms_info;
+            $os = OfferSMSStatus::where('ansar_id',$ansar_ids)->first();
+            $panel_date = Carbon::now()->format("Y-m-d H:i:s");
             if (!$offered_ansar) $received_ansar = $ansar->receiveSMS;
             if($offered_ansar&&$offered_ansar->come_from=='rest'){
                 $ansar->status()->update([
@@ -1620,8 +1774,8 @@ class DGController extends Controller
                     $panel_log = $ansar->panelLog()->first();
                     $ansar->panel()->save(new PanelModel([
                         'memorandum_id'=>$panel_log->old_memorandum_id,
-                        'panel_date'=>$panel_log->panel_date,
-                        're_panel_date'=>$panel_log->re_panel_date,
+                        'panel_date'=>$os&&$os->isGlobalOfferRegion()?$panel_date:$panel_log->panel_date,
+                        're_panel_date'=>$os&&$os->isRegionalOfferRegion()?$panel_date:$panel_log->re_panel_date,
                         'come_from'=>'OfferCancel',
                         'ansar_merit_list'=>1,
                         'action_user_id'=>auth()->user()->id,
@@ -1629,12 +1783,28 @@ class DGController extends Controller
 
                 }else{
                     $pa->locked = 0;
+                    $pa->come_from = 'OfferCancel';
+                    if($os&&$os->isGlobalOfferRegion()){
+                        $pa->panel_date = $panel_date;
+                    }elseif($os&&$os->isRegionalOfferRegion()){
+                        $pa->re_panel_date = $panel_date;
+                    }
                     $pa->save();
                 }
                 $ansar->status()->update([
                     'offer_sms_status'=>0,
                     'pannel_status'=>1,
                 ]);
+            }
+            if($os){
+                $ot = explode(",",$os->offer_type);
+                $ou = explode(",",$os->last_offer_units);
+                $ot = array_slice($ot,0,count($ot)-1);
+                $ou = array_slice($ou,0,count($ou)-1);
+                $os->offer_type = implode(",",$ot);
+                $os->last_offer_units = implode(",",$ou);
+                $os->last_offer_unit = !count($ou)?"":$ou[count($ou)-1];
+                $os->save();
             }
             $ansar->offerCancel()->save(new OfferCancel([
                 'offer_cancel_date'=>Carbon::now()
@@ -1646,6 +1816,7 @@ class DGController extends Controller
                     'offered_district'=>$offered_ansar->district_id,
                     'action_user_id'=>auth()->user()->id,
                     'reply_type'=>'No Reply',
+                    'comment'=>'Offer Cancel'
                 ]));
                 $offered_ansar->delete();
             } else {
@@ -1653,7 +1824,9 @@ class DGController extends Controller
                     'offered_date'=>$received_ansar->sms_send_datetime,
                     'offered_district'=>$received_ansar->offered_district,
                     'action_user_id'=>auth()->user()->id,
+                    'action_date'=>Carbon::now(),
                     'reply_type'=>'Yes',
+                    'comment'=>'Offer Cancel'
                 ]));
                 $received_ansar->delete();
             }
@@ -1668,6 +1841,8 @@ class DGController extends Controller
             DB::rollback();
             return Response::json(['status' => false, 'message' =>$e->getMessage()]);
         }
+        $this->dispatch(new RearrangePanelPositionGlobal());
+        $this->dispatch(new RearrangePanelPositionLocal());
         return Response::json(['status' => true, 'message' => 'Offer cancel successfully']);
     }
 

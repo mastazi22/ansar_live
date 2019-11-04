@@ -1,7 +1,3 @@
-{{--User: Arafat--}}
-{{--Date: 12/24/2015--}}
-{{--Time: 12:52 PM--}}
-
 @extends('template.master')
 @section('title','Withdraw KPI')
 @section('breadcrumb')
@@ -9,8 +5,8 @@
 @endsection
 @section('content')
     <script>
-        GlobalApp.controller('KpiViewController', function ($scope, $http, $sce, httpService,$location,$timeout) {
-            $scope.params = ''
+        GlobalApp.controller('KpiViewController', function ($scope, $http, $sce, httpService, $location, $timeout) {
+            $scope.params = '';
             $scope.total = 0;
             $scope.showLoadingScreen = true;
             $scope.numOfPage = 0;
@@ -32,20 +28,20 @@
                         pageNum: i,
                         offset: i * $scope.itemPerPage,
                         limit: $scope.itemPerPage
-                    })
+                    });
                     $scope.loadingPage[i] = false;
                 }
-            }
+            };
             $scope.loadPage = function (page, $event) {
-                if ($event != undefined)  $event.preventDefault();
-                $scope.currentPage = page==undefined?0:page.pageNum;
+                if ($event != undefined) $event.preventDefault();
+                $scope.currentPage = page == undefined ? 0 : page.pageNum;
                 $scope.loadingPage[$scope.currentPage] = true;
                 $http({
                     url: '{{URL::route('kpi_view_details')}}',
                     method: 'get',
                     params: {
-                        offset: page==undefined?0:page.offset,
-                        limit: page==undefined?$scope.itemPerPage:page.limit,
+                        offset: page == undefined ? 0 : page.offset,
+                        limit: page == undefined ? $scope.itemPerPage : page.limit,
                         division: $scope.params.range,
                         unit: $scope.params.unit,
                         thana: $scope.params.thana,
@@ -53,23 +49,21 @@
                     }
                 }).then(function (response) {
                     $scope.kpis = response.data.kpis;
-                    console.log($scope.kpis)
-//                    $compile($scope.ansars)
-                    $scope.loadingPage[$scope.currentPage ] = false;
+                    $scope.loadingPage[$scope.currentPage] = false;
                     $scope.errorFound = 0;
                     $scope.total = response.data.total;
                     $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
                     $scope.loadPagination();
                     $scope.allLoading = false;
                 })
-            }
+            };
             $scope.filterMiddlePage = function (value, index, array) {
                 var minPage = $scope.currentPage - 3 < 0 ? 0 : ($scope.currentPage > array.length - 4 ? array.length - 8 : $scope.currentPage - 3);
                 var maxPage = minPage + 7;
                 if (value.pageNum >= minPage && value.pageNum <= maxPage) {
                     return true;
                 }
-            }
+            };
             $scope.verify = function (id, i) {
                 $scope.verifying[i] = true;
                 $http({
@@ -77,41 +71,34 @@
                     params: {verified_id: id},
                     method: 'get'
                 }).then(function (response) {
-                    //alert(JSON.stringify(response.data));
                     $scope.verifying[parseInt(i)] = false;
                     $scope.verified[parseInt(i)] = true;
-//                    $scope.verified++;
                 }, function () {
                     $scope.verifying[parseInt(i)] = false;
                     $scope.verified[parseInt(i)] = false;
                 })
-            }
+            };
             $scope.$on('$routeChangeStart', function (event, current, previous) {
-                //alert("start")
-                if(current.$$route!=undefined) {
+                if (current.$$route != undefined) {
                     $("#withdraw-modal").modal('show');
-
-                }
-                else if($('#withdraw-modal').hasClass('in')){
+                } else if ($('#withdraw-modal').hasClass('in')) {
                     $("#withdraw-modal").modal('hide');
                 }
-            })
+            });
             $scope.$on('$routeChangeSuccess', function (event, current, previous) {
-//                alert('sdsddsd')
                 $scope.showLoadingScreen = false
-            })
+            });
             $scope.changeLocation = function () {
-//                alert('ssdsadad')
-                $location.path('/')
+                $location.path('/');
                 $scope.loadPage();
                 $timeout(function () {
                     $scope.$apply();
                 })
-            }
+            };
             $scope.ppp = function () {
                 $scope.showLoadingScreen = true;
-            }
-            $scope.$watch('showLoadingScreen', function (n,o) {
+            };
+            $scope.$watch('showLoadingScreen', function (n, o) {
                 //alert(n)
             })
         })
@@ -133,7 +120,7 @@
                             thana-change="loadPage()"
                             start-load="range"
                             field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
-                            data = "params"
+                            data="params"
                             on-load="loadPage()"
                     ></filter-template>
                     <h4>Total KPI: [[total.toLocaleString()]]</h4>
@@ -197,9 +184,9 @@
                                     <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
                                     <a href="#" ng-click="loadPage(page,$event)"
                                        ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
-                                            <span ng-show="loadingPage[page.pageNum]" style="position: relative"><i
-                                                        class="fa fa-spinner fa-pulse"
-                                                        style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
+                                    <span ng-show="loadingPage[page.pageNum]" style="position: relative"><i
+                                                class="fa fa-spinner fa-pulse"
+                                                style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
                                 </li>
                                 <li ng-class="{disabled:currentPage==pages.length-1}">
                                     <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>
@@ -214,35 +201,35 @@
                 </div>
             </div>
         </section>
-            <div class="modal modal-default fade" role="dialog" id="withdraw-modal">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            <h4 class="modal-title">Withdraw Kpi</h4>
+        <div class="modal modal-default fade" role="dialog" id="withdraw-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title">Withdraw Kpi</h4>
 
-                        </div>
-                        <div class="modal-body">
-                            <div style="width: 100%;height: 200px;" ng-if="showLoadingScreen">
-                                <div style="margin: auto;text-align:center;position: relative;top:50%;transform: translateY(-50%)">
-                                    <i class="fa fa-spinner fa-pulse" style="vertical-align: middle;"></i>&nbsp;<span class="text text-bold">Please Wait...</span>
-                                </div>
+                    </div>
+                    <div class="modal-body">
+                        <div style="width: 100%;height: 200px;" ng-if="showLoadingScreen">
+                            <div style="margin: auto;text-align:center;position: relative;top:50%;transform: translateY(-50%)">
+                                <i class="fa fa-spinner fa-pulse" style="vertical-align: middle;"></i>&nbsp;<span
+                                        class="text text-bold">Please Wait...</span>
                             </div>
-                            <ng-view  ng-if="!showLoadingScreen">
-                                {{--ng route--}}
-                            </ng-view>
                         </div>
+                        <ng-view ng-if="!showLoadingScreen">
+                            {{--ng route--}}
+                        </ng-view>
                     </div>
                 </div>
             </div>
+        </div>
     </div>
 
     <script>
         $(document).ready(function () {
             $("#withdraw-modal").on('hide.bs.modal', function () {
-//                alert('adadsadad');
                 angular.element($(".content")).scope().changeLocation();
             })
         })

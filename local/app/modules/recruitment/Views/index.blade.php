@@ -8,15 +8,16 @@
         table.sm-table, table.sm-table tr, table.sm-table tr td {
             background-color: #ffffff !important;
         }
+
         .box-body .small-box-footer {
             position: relative;
             text-align: center;
             padding: 3px 0;
             color: #fff;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255, 255, 255, 0.8);
             display: block;
             z-index: 10;
-            background: rgba(0,0,0,0.1);
+            background: rgba(0, 0, 0, 0.1);
             text-decoration: none;
         }
     </style>
@@ -93,7 +94,10 @@
     </script>
     <div class="container-fluid" ng-controller="RecruitmentSummary">
         <div class="row" id="summaryResult">
-            <img class="image" style="text-align: center" src="http://ansarerpdev.com/dist/img/loading.gif" width="50">
+            <div class="col-md-4">
+                <img class="image" style="text-align: center" src="/dist/img/loading.gif" width="50" alt="loading">&nbsp;&nbsp;<span
+                        style="font-size: 18px;">Loading</span>
+            </div>
         </div>
     </div>
 @endsection

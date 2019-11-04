@@ -1,7 +1,3 @@
-{{--User: Shreya--}}
-{{--Date: 11/8/2015--}}
-{{--Time: 11:48 AM--}}
-
 @extends('template.master')
 @section('title','Embodiment')
 @section('breadcrumb')
@@ -17,7 +13,6 @@
                 thana_name_eng: $scope.errors.thana_name_eng[0],
                 kpi_id: $scope.errors.kpi_id[0]
             };
-
             $scope.bankDataErrorMessage = "";
             $scope.bank_name = "";
             $scope.prefer_choice = "";
@@ -25,7 +20,6 @@
             $scope.mobile_bank_type = "";
             $scope.account_no = "";
             $scope.branch_name = "";
-
             $scope.clickedAsnar = "";
             $scope.printLetter = [{}, {}];
             $scope.queue = [];
@@ -58,7 +52,6 @@
                 "Standard Chartered Bank", "State Bank of India", "The City Bank Ltd.", "The Hong Kong and Shanghai Banking Corporation. Ltd.",
                 "Trust Bank Limited", "Union Bank Limited", "United Commercial Bank Limited", "Uttara Bank Limited", "Woori Bank"
             ];
-
             $scope.mobileBankType = [
                 "bkash", "rocket"
             ];
@@ -74,19 +67,15 @@
                     else $scope.ee = true;
                     if (n.length === l) {
                         $scope.selectAll = true
-                    }
-                    else $scope.selectAll = false
-                }
-                else $scope.selectAll = false
+                    } else $scope.selectAll = false
+                } else $scope.selectAll = false
             }, true);
             $scope.changeAll = function () {
-
                 if ($scope.selectAll) {
                     $scope.ansarDetail.forEach(function (value, index) {
                         $scope.selected[index] = value.ansar_id;
                     })
-                }
-                else {
+                } else {
                     $scope.selected = Array.apply(null, Array($scope.ansarDetail.length)).map(Boolean.prototype.valueOf, false);
                 }
             };
@@ -94,21 +83,25 @@
                 return value !== false;
             };
             $scope.loadAnsarDetail = function (id) {
-                $("#embodied-modal").modal('hide')
+                $("#embodied-modal").modal('hide');
                 $scope.loadingAnsar = true;
                 $scope.resetData();
                 $http({
                     method: 'get',
                     url: '{{URL::route('check-ansar')}}',
-                    params: {ansar_id: $scope.q, unit: $scope.params.unit}
+                    params: {
+                        ansar_id: $scope.q,
+                        unit: $scope.params.unit,
+                        rank: $scope.params.rank == undefined ? 'all' : $scope.params.rank,
+                        gender: $scope.params.gender == undefined ? 'all' : $scope.params.gender
+                    }
                 }).then(function (response) {
                     $scope.queue.shift();
                     if ($scope.queue.length > 1) $scope.loadAnsarDetail();
-                    $scope.ansarDetail = response.data.apd ? response.data.apd : []
-                    $scope.auid = $scope.ansarDetail.length > 0 ? angular.copy($scope.ansarDetail[0]) : $scope.auid
-                    $scope.selected = Array.apply(null, Array($scope.ansarDetail.length)).map(Boolean.prototype.valueOf, false)
+                    $scope.ansarDetail = response.data.apd ? response.data.apd : [];
+                    $scope.auid = $scope.ansarDetail.length > 0 ? angular.copy($scope.ansarDetail[0]) : $scope.auid;
+                    $scope.selected = Array.apply(null, Array($scope.ansarDetail.length)).map(Boolean.prototype.valueOf, false);
                     $scope.loadingAnsar = false;
-                    // console.log($scope.ansarDetail)
                     $scope.totalLength--;
                     $scope.loadingAnsar = false;
                 }, function () {
@@ -129,14 +122,14 @@
                 })
             };
             $scope.addToCart = function () {
-                $("#cart-modal").modal('hide')
+                $("#cart-modal").modal('hide');
                 var exists = 0;
                 $scope.listedAnsar.forEach(function (v, i) {
                     if (v.ansar_id == $scope.multipleAnsar[0].ansar_id) {
                         exists = 1;
                         return;
                     }
-                })
+                });
                 if (exists == 1) {
                     notificationService.notify("error", "This Ansar already added to list")
                     return;
@@ -147,29 +140,28 @@
                     rank: $scope.multipleAnsar[0].name_bng,
                     join_date: $scope.joining_datee,
                     kpi_name: $scope.kpiName
-                })
+                });
                 $scope.eData.push({
                     ansar_id: $scope.multipleAnsar[0].ansar_id,
                     joining_date: $scope.joining_datee,
                     reporting_date: $scope.reporting_datee,
                     kpi_id: $scope.paramm.kpi
-                })
+                });
                 $scope.reset = {unit: true, thana: true, kpi: true};
 
-                $scope.joining_datee = ''
-                $scope.reporting_datee = ''
+                $scope.joining_datee = '';
+                $scope.reporting_datee = '';
                 $scope.multipleAnsar = undefined;
-                $scope.ansar = ''
+                $scope.ansar = '';
                 $timeout(function () {
                     $scope.$apply();
                 })
-            }
+            };
             $scope.removeFromCart = function (index) {
                 $scope.listedAnsar.splice(index, 1);
                 $scope.eData.splice(index, 1);
-            }
+            };
             $scope.submitEmbodiment = function () {
-                console.log($scope.eData);
                 $scope.printLetter = [{}, {}];
                 $scope.loading = true;
                 $http({
@@ -182,7 +174,6 @@
                     }),
                     url: '{{URL::route('new-embodiment-entry-multiple')}}'
                 }).then(function (response) {
-                    console.log(response.data)
                     if (response.data.status) {
                         notificationService.notify('success', response.data.message);
                         $("#embodied-modal-mul").modal('hide');
@@ -191,16 +182,15 @@
                         $scope.listedAnsar = [];
                         $scope.multipleAnsar = [];
                         $scope.ansar = '';
-                        $scope.memorandumIdm = ''
-                        $scope.memDatee = ''
+                        $scope.memorandumIdm = '';
+                        $scope.memDatee = '';
                         $scope.printLetter[1] = response.data.letterData;
                         $timeout(function () {
                             $scope.$apply();
-                        })
+                        });
                         $scope.loading = false;
                         $scope.loadAnsarDetail();
-                    }
-                    else {
+                    } else {
                         notificationService.notify('error', response.data.message);
                         $scope.loading = false;
                         $scope.printLetter = [{}, {}];
@@ -210,27 +200,26 @@
                     $scope.loading = false;
                     $scope.printLetter = [{}, {}];
                 })
-
-            }
+            };
             $scope.resetData = function () {
                 $scope.eData = [];
                 $scope.listedAnsar = [];
                 $scope.multipleAnsar = [];
                 $scope.ansar = '';
-                $scope.memorandumIdm = ''
-                $scope.memDatee = ''
+                $scope.memorandumIdm = '';
+                $scope.memDatee = '';
                 $scope.loading = false;
                 $scope.printLetter = [{}, {}];
-            }
+            };
             $scope.ppppp = function () {
                 $scope.reset = {};
-            }
+            };
             $scope.$watch('responseData', function (newVal, oldVal) {
                 $scope.selected = [];
                 if (newVal !== undefined && newVal.constructor === Object) {
                     $scope.printLetter[0] = newVal.printData;
                 }
-            }, true)
+            }, true);
             $scope.setAnsarId = function (ansar) {
                 $scope.clickedAsnar = ansar.ansar_id;
             };
@@ -252,8 +241,7 @@
                     } else {
                         $scope.bankDataErrorMessage = "You choose general banking. All fields related with general banking are required."
                     }
-                }
-                else if ($scope.prefer_choice === 'mobile') {
+                } else if ($scope.prefer_choice === 'mobile') {
                     if ($scope.mobile_bank_type && $scope.mobile_bank_account_no) {
                         isSubmit = true;
                     } else {
@@ -269,7 +257,7 @@
                         params: formData
                     }).then(function (response) {
                         $("#bank-account-modal").modal("toggle");
-                        notificationService.notify(response.data.status, response.data.message)
+                        notificationService.notify(response.data.status, response.data.message);
                         if (response.data.status === "success") {
                             angular.element(document.querySelector('#a-' + $scope.clickedAsnar)).css('display', 'inline-block');
                             angular.element(document.querySelector('#checkbox-' + $scope.clickedAsnar)).css('display', 'inline-block');
@@ -287,15 +275,13 @@
                         notificationService.notify("error", "An error occur while saving code: " + error.status)
                     })
                 }
-            }
+            };
             $scope.cancelBankAccount = function () {
                 $("#bank-account-modal").modal("toggle");
                 angular.element(document.querySelector('#a-' + $scope.clickedAsnar)).css('display', 'inline-block');
                 angular.element(document.querySelector('#checkbox-' + $scope.clickedAsnar)).css('display', 'inline-block');
                 angular.element(document.querySelector('#button-' + $scope.clickedAsnar)).css('display', 'none');
                 angular.element(document.querySelector('#button1-' + $scope.clickedAsnar)).css('display', 'none');
-
-
             }
         })
     </script>
@@ -315,9 +301,10 @@
                             start-load="range"
                             unit-load="resetData()"
                             unit-change="loadAnsarDetail()"
+                            rank-change="loadAnsarDetail()"
+                            gender-change="loadAnsarDetail()"
                             on-load="loadAnsarDetail()"
-                            field-width="{range:'col-sm-4',unit:'col-sm-4'}"
-                    >
+                            field-width="{range:'col-sm-3',unit:'col-sm-3'}">
                     </filter-template>
                     <div class="nav-tabs-custom">
                         <ul class="nav nav-tabs">
@@ -380,18 +367,15 @@
                                         </tr>
                                     </table>
                                 </div>
-
                                 {!! Form::open(['route'=>'print_letter','target'=>'_blank','class'=>'pull-left']) !!}
                                 <input type="hidden" ng-repeat="(k,v) in printLetter[0]" name="[[k]]" value="[[v]]">
-                                <button ng-show="printLetter[0].status" class="btn btn-primary"><i
-                                            class="fa fa-print"></i>&nbsp;Print Embodied Letter
+                                <button ng-show="printLetter[0].status" class="btn btn-primary">
+                                    <i class="fa fa-print"></i>&nbsp;Print Embodied Letter
                                 </button>
                                 {!! Form::close() !!}
                                 <a href="#" class="btn btn-primary pull-right" ng-disabled="ee"
-                                   data-target="#embodied-modal" data-toggle="modal">
-                                    Embodied
+                                   data-target="#embodied-modal" data-toggle="modal">Embodied
                                 </a>
-
                                 <div class="clearfix"></div>
                             </div>
                             <div class="tab-pane" id="multiple-kpi">
@@ -455,7 +439,7 @@
                                             <th>Ansar ID</th>
                                             <th>Name</th>
                                             <th>Rank</th>
-                                            <th>Joining Date</th>
+                                            <th>Embodiment Date</th>
                                             <th>KPI Name</th>
                                             <th>Action</th>
                                         </tr>
@@ -474,17 +458,15 @@
                                             </td>
                                         </tr>
                                         <tr ng-if="listedAnsar.length<=0">
-                                            <td colspan="7" class="warning">
-                                                No Ansar selected
-                                            </td>
+                                            <td colspan="7" class="warning">No Ansar selected</td>
                                         </tr>
                                     </table>
                                 </div>
                                 <div>
                                     {!! Form::open(['route'=>'print_letter','target'=>'_blank','class'=>'pull-left']) !!}
                                     <input type="hidden" ng-repeat="(k,v) in printLetter[1]" name="[[k]]" value="[[v]]">
-                                    <button ng-show="printLetter[1].status" class="btn btn-primary"><i
-                                                class="fa fa-print"></i>&nbsp;Print Embodied Letter
+                                    <button ng-show="printLetter[1].status" class="btn btn-primary">
+                                        <i class="fa fa-print"></i>&nbsp;Print Embodied Letter
                                     </button>
                                     {!! Form::close() !!}
                                     <button class="btn btn-primary pull-right" ng-disabled="listedAnsar.length<=0"
@@ -509,7 +491,6 @@
                                            value="[[s]]">
                                     <div class="form-group required">
                                         <label class="control-label">Memorandum no. & Date</label>
-
                                         <div class="row">
                                             <div class="col-md-7" style="padding-right: 0">
                                                 <input ng-model="memorandumId"
@@ -521,7 +502,6 @@
                                                        type="text" class="form-control" name="mem_date"
                                                        placeholder="Memorandum Date" required>
                                             </div>
-
                                         </div>
                                         <p class="text-danger" ng-if="errors.memorandum_id!=undefined">
                                             [[errors.memorandum_id[0] ]]</p>
@@ -538,8 +518,6 @@
                                         <p class="text-danger" ng-if="errors.joining_date!=undefined">
                                             [[errors.joining_date[0] ]]</p>
                                     </div>
-                                    <!---->
-                                    <!---->
                                     <filter-template
                                             show-item="['unit','thana','kpi']"
                                             type="single"
@@ -548,9 +526,7 @@
                                             layout-vertical="1"
                                             field-name="{unit:'division_name_eng',thana:'thana_name_eng',kpi:'kpi_id'}"
                                             error-key="{unit:'division_name_eng',thana:'thana_name_eng',kpi:'kpi_id'}"
-                                            error-message="eMessage"
-                                    >
-
+                                            error-message="eMessage">
                                     </filter-template>
                                 </div>
                                 <div class="modal-footer">
@@ -571,19 +547,15 @@
                                 <div class="modal-body">
                                     <div class="form-group required">
                                         <label class="control-label">Memorandum no. & Date</label>
-
                                         <div class="row">
                                             <div class="col-md-7" style="padding-right: 0">
-                                                <input ng-model="memorandumIdm"
-                                                       type="text" class="form-control"
+                                                <input ng-model="memorandumIdm" type="text" class="form-control"
                                                        placeholder="Enter Memorandum no." required>
                                             </div>
                                             <div class="col-md-5">
-                                                <input date-picker ng-model="memDatee"
-                                                       type="text" class="form-control" name="mem_date"
-                                                       placeholder="Memorandum Date" required>
+                                                <input date-picker ng-model="memDatee" type="text" class="form-control"
+                                                       name="mem_date" placeholder="Memorandum Date" required>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
@@ -617,8 +589,6 @@
                                         <p class="text-danger" ng-if="errors.joining_date!=undefined">
                                             [[errors.joining_date[0] ]]</p>
                                     </div>
-                                    <!---->
-                                    <!---->
                                     <filter-template
                                             show-item="['unit','thana','kpi']"
                                             type="single"
@@ -629,15 +599,12 @@
                                             get-kpi-name="kpiName"
                                             field-name="{unit:'division_name_eng',thana:'thana_name_eng',kpi:'kpi_id'}"
                                             error-key="{unit:'division_name_eng',thana:'thana_name_eng',kpi:'kpi_id'}"
-                                            error-message="{division_name_eng:errors.division_name_eng[0],thana_name_eng:errors.thana_name_eng[0],kpi_id:errors.kpi_id[0]}"
-                                    >
-
+                                            error-message="{division_name_eng:errors.division_name_eng[0],thana_name_eng:errors.thana_name_eng[0],kpi_id:errors.kpi_id[0]}">
                                     </filter-template>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="submit" class="btn btn-primary pull-right" ng-click="addToCart()"
-                                            ng-disabled="loading">
-                                        <i class="fa fa-check"></i>Confirm
+                                            ng-disabled="loading"><i class="fa fa-check"></i>Confirm
                                     </button>
                                 </div>
                             </div>
@@ -678,8 +645,7 @@
                                             </div>
                                         </div>
                                         <div class="form-horizontal col-md-12 form-group">
-                                            <label class="control-label col-sm-3" for="email">অ্যাকাউন্ট
-                                                নম্বর:</label>
+                                            <label class="control-label col-sm-3" for="email">অ্যাকাউন্ট নম্বর:</label>
                                             <div class="col-sm-9">
                                                 <input type="text" class="form-control" id="branch_name"
                                                        ng-model="account_no" placeholder="ব্যাংক অ্যাকাউন্ট নম্বর"/>
@@ -702,8 +668,8 @@
                                             <label class="control-label col-sm-3" for="email">অ্যাকাউন্ট
                                                 নম্বর:</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="branch_name"
-                                                       ng-model="mobile_bank_account_no" value=""
+                                                <input type="text" class="form-control" id="branch_name" value=""
+                                                       ng-model="mobile_bank_account_no"
                                                        placeholder="ব্যাংক অ্যাকাউন্ট নম্বর"/>
                                             </div>
                                         </div>
@@ -720,12 +686,14 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="modal-footer" style="display: flex;align-items: flex-end;justify-content: center;flex-wrap: wrap;flex-direction: row">
+                                <div class="modal-footer"
+                                     style="display: flex;align-items: flex-end;justify-content: center;flex-wrap: wrap;flex-direction: row">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                     <button type="button" class="btn btn-primary" ng-click="saveBankInfo()">Save
-                                        <button type="button" class="btn btn-danger" ng-click="cancelBankAccount()">I
-                                            don`t have a bank account now
-                                        </button>
+                                    </button>
+                                    <button type="button" class="btn btn-danger" ng-click="cancelBankAccount()">I
+                                        don`t have a bank account now
+                                    </button>
                                 </div>
                             </div>
                         </div>

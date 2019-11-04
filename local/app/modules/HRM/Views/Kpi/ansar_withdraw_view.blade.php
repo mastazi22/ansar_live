@@ -1,29 +1,25 @@
-{{--User: Shreya--}}
-{{--Date: 10/15/2015--}}
-{{--Time: 10:49 AM--}}
-
 @extends('template.master')
 @section('title','Withdraw Ansar')
 @section('breadcrumb')
     {!! Breadcrumbs::render('ansar_withdraw_view') !!}
-    @endsection
+@endsection
 @section('content')
     <script>
         $(document).ready(function () {
             $('#kpi_withdraw_date').datepicker({
-                dateFormat:'dd-M-yy'
+                dateFormat: 'dd-M-yy'
             });
         })
         GlobalApp.controller('ReportGuardSearchController', function ($scope, $http, $sce) {
             $scope.ansars = [];
             $scope.reportType = 'eng';
             $scope.memorandumId = "";
-            $scope.params = ''
+            $scope.params = '';
             $scope.isVerified = false;
             $scope.isVerifying = false;
             $scope.allLoading = false;
             $scope.kpi_withdraw_reason = "Freeze Ansar for Withdrawal";
-            $scope.kpi_withdraw_date="";
+            $scope.kpi_withdraw_date = "";
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
             $scope.errorMessage = '';
             $scope.errorFound = 0;
@@ -33,59 +29,49 @@
             $scope.verifyMemorandumId = function () {
                 var data = {
                     memorandum_id: $scope.memorandumId
-                }
+                };
                 $scope.isVerified = false;
                 $scope.isVerifying = true;
                 $http.post('{{action('UserController@verifyMemorandumId')}}', data).then(function (response) {
-//                    alert(response.data.status)
                     $scope.isVerified = response.data.status;
                     $scope.isVerifying = false;
                 }, function (response) {
-
                 })
-            }
+            };
             $scope.reset = function () {
                 $scope.allSelected = false;
                 $scope.selectedAnsar = [];
                 $scope.ansars = [];
                 $scope.selected = []
-            }
+            };
             $scope.changeSelected = function (i) {
                 var a = 0;
-                if($scope.selected[i]===false){
+                if ($scope.selected[i] === false) {
                     var i = $scope.selectedAnsar.indexOf($scope.ansars[i]);
-                    $scope.selectedAnsar.splice(i,1);
-                }
-                else {
+                    $scope.selectedAnsar.splice(i, 1);
+                } else {
                     $scope.selectedAnsar.push($scope.ansars[$scope.selected[i]])
                 }
-                $scope.selected.forEach(function (value,index) {
-
-                    if(value!==false) {
-
+                $scope.selected.forEach(function (value, index) {
+                    if (value !== false) {
                         a++
                     }
-                })
-                console.log($scope.selectedAnsar)
-                $scope.allSelected = a==$scope.ansars.length;
-            }
+                });
+                $scope.allSelected = a == $scope.ansars.length;
+            };
             $scope.changeAll = function () {
-                if($scope.allSelected){
-                    $scope.selectedAnsar = []
-                    $scope.ansars.forEach(function (value,index) {
-
-                            $scope.selectedAnsar.push(value);
-                            $scope.selected[index] = index;
-
-                    })
-                }
-                else{
+                if ($scope.allSelected) {
                     $scope.selectedAnsar = [];
-                    $scope.selected = Array.apply(null,Array($scope.ansars.length)).map(Boolean.prototype.valueOf,false);
+                    $scope.ansars.forEach(function (value, index) {
+                        $scope.selectedAnsar.push(value);
+                        $scope.selected[index] = index;
+                    })
+                } else {
+                    $scope.selectedAnsar = [];
+                    $scope.selected = Array.apply(null, Array($scope.ansars.length)).map(Boolean.prototype.valueOf, false);
                 }
-            }
+            };
             $scope.loadAnsar = function (param) {
-                console.log(param)
                 $scope.allLoading = true;
                 $http({
                     method: 'get',
@@ -95,26 +81,24 @@
                     $scope.errorFound = 0;
                     $scope.ansars = response.data;
                     $scope.allLoading = false;
-                    $scope.selected = Array.apply(null,Array($scope.ansars.length)).map(Boolean.prototype.valueOf,false);
-                },function(response){
+                    $scope.selected = Array.apply(null, Array($scope.ansars.length)).map(Boolean.prototype.valueOf, false);
+                }, function (response) {
                     $scope.allLoading = false;
                     $scope.errorFound = 1;
                     $scope.ansars = [];
                     $scope.guardDetail = [];
-                    $scope.errorMessage = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
+                    $scope.errorMessage = $sce.trustAsHtml("<tr class='warning'><td colspan='" + $('.table').find('tr').find('th').length + "'>" + response.data + "</td></tr>");
                 })
             }
-
-        })
+        });
         GlobalApp.directive('openHideModal', function () {
             return {
                 restrict: 'AC',
                 link: function (scope, elem, attr) {
                     $(elem).on('click', function () {
-                        //alert("hh")
                         scope.memorandumId = "";
                         scope.kpi_withdraw_date = "";
-                        scope.$digest()
+                        scope.$digest();
                         $("#withrdaw-option").modal("toggle")
                     })
                 }
@@ -122,9 +106,6 @@
         })
     </script>
     <div ng-controller="ReportGuardSearchController">
-        {{--<div class="breadcrumbplace">--}}
-            {{--{!! Breadcrumbs::render('ansar_withdraw_view') !!}--}}
-        {{--</div>--}}
         @if(Session::has('success_message'))
             <div style="padding: 10px 20px 0 20px;">
                 <div class="alert alert-success">
@@ -164,7 +145,6 @@
                         <div class="col-md-12">
                             <div class="table-responsive">
                                 <table class="table table-bordered">
-
                                     <tr>
                                         <th>Sl No.</th>
                                         <th>Ansar ID</th>
@@ -188,10 +168,11 @@
                                         <td>[[a.reporting_date|dateformat:'DD-MMM-YYYY']]</td>
                                         <td>[[a.joining_date|dateformat:'DD-MMM-YYYY']]</td>
                                         <td>
-                                            <input type="checkbox" ng-model="selected[$index]" ng-change="changeSelected($index)" ng-true-value="[[$index]]" ng-false-value="false">
+                                            <input type="checkbox" ng-model="selected[$index]"
+                                                   ng-change="changeSelected($index)" ng-true-value="[[$index]]"
+                                                   ng-false-value="false">
                                         </td>
                                     </tr>
-
                                     <tr colspan="7" class="warning" ng-if="ansars.length<=0">
                                         <td colspan="10">No Ansar is available to Withdraw</td>
                                     </tr>
@@ -203,20 +184,21 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <button class="pull-right btn btn-primary" id="withdraw-guard-confirmation" ng-disabled="ansars.length<=0||!params.kpi" open-hide-modal>
+                    <button class="pull-right btn btn-primary" id="withdraw-guard-confirmation"
+                            ng-disabled="ansars.length<=0||!params.kpi" open-hide-modal>
                         Withdraw Ansar
                     </button>
                 </div>
             </div>
-            <!--Modal Open-->
             {!! Form::open(array('route' => 'ansar-withdraw-update', 'name' => 'kpiWithdrawForm', 'id'=> 'kpi-form', 'ng-app' => 'myValidateApp', 'novalidate')) !!}
             {!! Form::hidden('kpi_id_withdraw','[[params.kpi]]') !!}
             <div id="withrdaw-option" class="modal fade" role="dialog">
                 <div class="modal-dialog" style="width: 80%;overflow: auto;">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal"
-                                    ng-click="modalOpen = false">&times;</button>
+                            <button type="button" class="close" data-dismiss="modal" ng-click="modalOpen = false">
+                                &times;
+                            </button>
                             <h3 class="modal-title">Ansars' Withdrawal Confirmation</h3>
                         </div>
                         <div class="modal-body">
@@ -226,7 +208,6 @@
                                         <div class="col-md-12">
                                             <div class="table-responsive">
                                                 <table class="table table-bordered">
-
                                                     <tr>
                                                         <th>Sl No.</th>
                                                         <th>Ansar ID</th>
@@ -247,16 +228,14 @@
                                                         <td>[[a.unit_name_bng]]</td>
                                                         <td>[[a.reporting_date|dateformat:'DD-MMM-YYYY']]</td>
                                                         <td>[[a.joining_date|dateformat:'DD-MMM-YYYY']]</td>
-
                                                     </tr>
-
-                                                    <tr colspan="7" class="warning" ng-if="ansars.length<=0">
+                                                    <tr class="warning" ng-if="ansars.length<=0">
                                                         <td colspan="10">No Ansar is available to Withdraw</td>
                                                     </tr>
                                                 </table>
                                             </div>
                                         </div>
-                                        <div class="col-sm-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label class="control-label">Memorandum no.&nbsp;&nbsp;&nbsp;<span
                                                             ng-show="isVerifying"><i
@@ -269,15 +248,11 @@
                                                        type="text" class="form-control" name="memorandum_id"
                                                        placeholder="Enter memorandum id" required>
                                             </div>
-                                        </div>
-                                        <div class="col-sm-4">
                                             <div class="form-group">
-                                                <label class="control-label">Date of
-                                                    Withdrawal:&nbsp;&nbsp;&nbsp;</label>
-                                                {!! Form::text('kpi_withdraw_date', $value = "", $attributes = array('class' => 'form-control', 'id' => 'kpi_withdraw_date', 'ng_model' => 'kpi_withdraw_date', 'required')) !!}
+                                                <datepicker-separate-fields label="Date of Withdrawal:" notify="withdrawalInvalidDate"
+                                                                            rdata="kpi_withdraw_date"></datepicker-separate-fields>
+                                                <input type="hidden" name="kpi_withdraw_date" ng-value="kpi_withdraw_date">
                                             </div>
-                                        </div>
-                                        <div class="col-sm-4">
                                             <div class="form-group">
                                                 <label class="control-label">Reason for
                                                     Withdrawal:&nbsp;&nbsp;&nbsp;</label>
@@ -286,19 +261,16 @@
                                         </div>
                                     </div>
                                     <button class="btn btn-primary pull-right"
-                                            ng-disabled="!kpi_withdraw_date||!kpi_withdraw_reason||!memorandumId||isVerified||isVerifying">
+                                            ng-disabled="withdrawalInvalidDate||!kpi_withdraw_date||!kpi_withdraw_reason||!memorandumId||isVerified||isVerifying">
                                         Confirm
                                     </button>
                                     {!! Form::close() !!}
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
-            <!--Modal Close-->
-            <!-- /.row -->
         </section>
     </div>
 @stop

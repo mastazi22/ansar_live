@@ -24,4 +24,12 @@ class OfferSMSStatus extends Model
     public function panel(){
         return $this->hasOne(PanelModel::class,'ansar_id','ansar_id');
     }
+    public function isRegionalOfferRegion(){
+        $offer_region = explode(",",$this->offer_type);
+        return !strcasecmp($offer_region[count($offer_region)-1],"RE");
+    }
+    public function isGlobalOfferRegion(){
+        $offer_region = explode(",",str_replace("DG","GB",str_replace("CG","GB",$this->offer_type)));
+        return !strcasecmp($offer_region[count($offer_region)-1],"GB");
+    }
 }

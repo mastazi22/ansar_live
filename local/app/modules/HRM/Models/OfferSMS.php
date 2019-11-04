@@ -4,6 +4,7 @@ namespace App\modules\HRM\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class OfferSMS extends Model
@@ -12,6 +13,7 @@ class OfferSMS extends Model
     protected $connection = 'hrm';
     protected $table = 'tbl_sms_offer_info';
     protected $guarded = [];
+    protected $appends = array('offerType');
     public function ansar(){
         return $this->belongsTo(PersonalInfo::class,'ansar_id','ansar_id');
     }
@@ -84,5 +86,14 @@ class OfferSMS extends Model
         $oba->last_offer_unit = $this->district_id;
         $oba->blocked_date = Carbon::now()->format('Y-m-d');
         $oba->save();
+    }
+
+    public function getOfferTypeAttribute()
+    {
+        $globalOfferDistrict = Config::get("app.offer");
+        if (in_array($this->offered_district, $globalOfferDistrict)) {
+            return "Global";
+        }
+        return "Regional";
     }
 }

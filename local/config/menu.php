@@ -251,6 +251,14 @@ return [
                     "route" => "offer_report",
                     "icon" => "fa-file-pdf-o",
                 ],
+                "View Ansar History"=>[
+                    "route" => "view_ansar_history",
+                    "icon" => "fa-file-pdf-o",
+                ],
+                "Scheduled Jobs"=>[
+                    "route" => "ansar_scheduled_jobs",
+                    "icon" => "fa-file-pdf-o",
+                ]
             ]
         ],
         "DG Forms" => [
@@ -610,7 +618,7 @@ return [
                     "icon" => "fa-cog"
                 ],
                 "Applicant Quota Type" => [
-                    "route" => "recruitment.quota.index",
+                    "route" => "recruitment.quota_type.index",
                     "icon" => "fa-cog"
                 ]
 

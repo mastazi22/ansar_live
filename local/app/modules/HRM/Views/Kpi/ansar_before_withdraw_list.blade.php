@@ -1,7 +1,3 @@
-{{--User: Shreya--}}
-{{--Date: 11/05/2015--}}
-{{--Time: 11:00 AM--}}
-
 @extends('template.master')
 @section('title','List Of Ansar Before Guard Withdraw')
 @section('breadcrumb')
@@ -11,12 +7,14 @@
 @section('content')
     <script>
         GlobalApp.controller('GuardBeforeWithdrawController', function ($scope, $http, $sce) {
-            $scope.isAdmin = parseInt('{{Auth::user()->type}}')
-            $scope.ansars="";
-            $scope.params = ''
+            $scope.isAdmin = parseInt('{{Auth::user()->type}}');
+            $scope.ansars = "";
+            $scope.params = '';
+            $scope.rank = '';
             $scope.allLoading = false;
             $scope.errorFound = 0;
-            $scope.errorMessage='';
+            $scope.errorMessage = '';
+            $scope.gCount = {};
             $scope.loadAnsar = function () {
                 $scope.allLoading = true;
                 $http({
@@ -24,29 +22,41 @@
                     url: '{{URL::route('load_ansar_before_withdraw')}}',
                     params: {
                         kpi_id: $scope.params.kpi,
-                        division_id:$scope.params.range,
-                        unit_id:$scope.params.unit,
-                        thana_id:$scope.params.thana
+                        division_id: $scope.params.range,
+                        unit_id: $scope.params.unit,
+                        thana_id: $scope.params.thana,
+                        gender: $scope.params.gender == undefined ? 'all' : $scope.params.gender,
+                        q: $scope.q,
+                        rank: $scope.rank
                     }
                 }).then(function (response) {
                     $scope.errorFound = 0;
-                    $scope.ansars = response.data;
+                    $scope.gCount = response.data.tCount;
+                    $scope.gCount['total'] = sum(response.data.tCount);
+                    $scope.ansars = response.data.list;
                     $scope.allLoading = false;
-                },function(response){
+                }, function (response) {
                     $scope.errorFound = 1;
                     $scope.ansars = [];
-                    $scope.errorMessage = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
+                    $scope.errorMessage = $sce.trustAsHtml("<tr class='warning'><td colspan='" + $('.table').find('tr').find('th').length + "'>" + response.data + "</td></tr>");
                     $scope.allLoading = false;
                 })
-            }
-//            $scope.loadAnsar();
-        })
+            };
+            $scope.changeRank = function (i) {
+                $scope.rank = i;
+                $scope.loadAnsar()
+            };
 
+            function sum(t) {
+                var s = 0;
+                for (var i in t) {
+                    s += parseInt(t[i])
+                }
+                return s;
+            }
+        });
     </script>
     <div ng-controller="GuardBeforeWithdrawController">
-        {{--<div class="breadcrumbplace">--}}
-            {{--{!! Breadcrumbs::render('ansar_before_withdraw_list') !!}--}}
-        {{--</div>--}}
         <section class="content">
             <div class="box box-solid">
                 <div class="overlay" ng-if="allLoading">
@@ -56,87 +66,36 @@
                 </div>
                 <div class="box-body">
                     <filter-template
-                            show-item="['range','unit','thana','kpi']"
+                            show-item="['range','unit','thana','kpi','gender']"
                             type="all"
                             range-change="loadAnsar()"
                             unit-change="loadAnsar()"
                             thana-change="loadAnsar()"
                             kpi-change="loadAnsar()"
+                            gender-change="loadAnsar()"
                             start-load="range"
                             on-load="loadAnsar()"
                             kpi-type="all"
-                            field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
-                            data = "params"
-                    >
-
-                    </filter-template>
-                    {{--<div class="row">--}}
-                        {{--<div class="col-sm-3" ng-show="isAdmin==11||isAdmin==33">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<label class="control-label">--}}
-                                    {{--@lang('title.range')&nbsp;&nbsp;--}}
-                                    {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
-                                         {{--ng-show="loadingDiv">--}}
-                                {{--</label>--}}
-                                {{--<select class="form-control" ng-disabled="loadingDiv||loadingUnit||loadingThana||loadingKpi"--}}
-                                        {{--ng-model="selectedDivision"--}}
-                                        {{--ng-change="loadDistrict()" name="division_id">--}}
-                                    {{--<option value="all">All</option>--}}
-                                    {{--<option ng-repeat="d in divisions" value="[[d.id]]">[[d.division_name_bng]]--}}
-                                    {{--</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                        {{--<div class="col-sm-3" ng-show="isAdmin==11||isAdmin==33||isAdmin==66">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<label class="control-label">--}}
-                                    {{--@lang('title.unit')&nbsp;&nbsp;--}}
-                                    {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
-                                         {{--ng-show="loadingUnit">--}}
-                                {{--</label>--}}
-                                {{--<select class="form-control" ng-disabled="loadingUnit||loadingThana||loadingKpi"--}}
-                                        {{--ng-model="selectedDistrict"--}}
-                                        {{--ng-change="loadThana(selectedDistrict)" name="unit_id">--}}
-                                    {{--<option value="all">All</option>--}}
-                                    {{--<option ng-repeat="d in districts" value="[[d.id]]">[[d.unit_name_bng]]--}}
-                                    {{--</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                        {{--<div class="col-sm-3">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<label class="control-label">--}}
-                                    {{--@lang('title.thana')&nbsp;&nbsp;--}}
-                                    {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
-                                         {{--ng-show="loadingThana">--}}
-                                {{--</label>--}}
-                                {{--<select class="form-control" ng-disabled="loadingDiv||loadingUnit||loadingThana||loadingKpi"--}}
-                                        {{--ng-model="selectedThana"--}}
-                                        {{--ng-change="loadGuard(selectedThana)" name="thana_id">--}}
-                                    {{--<option value="all">All</option>--}}
-                                    {{--<option ng-repeat="t in thanas" value="[[t.id]]">[[t.thana_name_bng]]--}}
-                                    {{--</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                        {{--<div class="col-sm-3">--}}
-                            {{--<div class="form-group">--}}
-                                {{--<label class="control-label">--}}
-                                    {{--@lang('title.kpi')&nbsp;&nbsp;--}}
-                                    {{--<img src="{{asset('dist/img/facebook.gif')}}" style="width: 16px;"--}}
-                                         {{--ng-show="loadingKpi">--}}
-                                {{--</label>--}}
-                                {{--<select class="form-control" ng-disabled="loadingDiv||loadingUnit||loadingThana||loadingKpi"--}}
-                                        {{--ng-model="selectedKpi"--}}
-                                        {{--ng-change="loadAnsar(selectedKpi)">--}}
-                                    {{--<option value="all">All</option>--}}
-                                    {{--<option ng-repeat="d in guards" value="[[d.id]]">[[d.kpi_name]]--}}
-                                    {{--</option>--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
-                        {{--</div>--}}
-                    {{--</div>--}}
-                    <h4>Total Ansar : [[ansars.length]]</h4>
+                            field-width="{range:'col-sm-2',unit:'col-sm-2',thana:'col-sm-2',kpi:'col-sm-3',gender:'col-sm-3'}"
+                            data="params"
+                    ></filter-template>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4 class="text text-bold">
+                                <a class="btn btn-primary text-bold" href="#" ng-click="changeRank('all')">Total
+                                    Ansars ([[gCount.total!=undefined?gCount.total.toLocaleString():0]])</a>&nbsp;
+                                <a class="btn btn-primary text-bold" href="#" ng-click="changeRank(3)">PC
+                                    ([[gCount.PC!=undefined?gCount.PC.toLocaleString():0]])</a>&nbsp;
+                                <a class="btn btn-primary text-bold" href="#" ng-click="changeRank(2)">APC
+                                    ([[gCount.APC!=undefined?gCount.APC.toLocaleString():0]])</a>&nbsp;
+                                <a class="btn btn-primary text-bold" href="#" ng-click="changeRank(1)">Ansar
+                                    ([[gCount.ANSAR!=undefined?gCount.ANSAR.toLocaleString():0]])</a>
+                            </h4>
+                        </div>
+                        <div class="col-md-4" style="padding-top: 1%;">
+                            <database-search q="q" queue="queue" on-change="loadAnsar()"></database-search>
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr>
@@ -148,7 +107,7 @@
                                 <th>Own Thana</th>
                                 <th>Kpi Name</th>
                                 <th>Ansar Reporting Date</th>
-                                <th>Ansar Joining Date</th>
+                                <th>Ansar Embodiment Date</th>
                                 <th>Withdraw Reason</th>
                                 <th>Withdraw Date</th>
                             </tr>
@@ -199,5 +158,4 @@
             </div>
         </section>
     </div>
-
 @stop

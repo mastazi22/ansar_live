@@ -174,13 +174,13 @@
                             <span ng-if="submitError.shortKpi" class="text-danger text-bold">[[submitError.shortKpi[0] ]]</span>
                         </div>
                         <div class="form-group">
-                            <label for="join_date" class="control-label">Joining Date(<span class="text-danger">required</span>):</label>
-                            <input id="join_date" placeholder="joining date" type="text" ng-model="submitData.joining_date" class="form-control" date-picker/>
+                            <label for="join_date" class="control-label">Embodiment Date(<span class="text-danger">required</span>):</label>
+                            <input id="join_date" placeholder="embodiment date" type="text" ng-model="submitData.joining_date" class="form-control" date-picker/>
                             <span ng-if="submitError.joining_date" class="text-danger text-bold">[[submitError.joining_date[0] ]]</span>
                         </div>
                         <div class="form-group">
                             <label for="duration" class="control-label">Duration of embodiment(in days)(<span class="text-danger">required</span>):</label>
-                            <input id="duration" placeholder="joining date" type="text" ng-model="submitData.duration" class="form-control" />
+                            <input id="duration" placeholder="embodiment date" type="text" ng-model="submitData.duration" class="form-control" />
                             <span ng-if="submitError.duration" class="text-danger text-bold">[[submitError.duration[0] ]]</span>
                         </div>
                         <div class="form-group">

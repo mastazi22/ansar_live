@@ -4,7 +4,7 @@
 Homestead.yaml
 Homestead.json
 storage/DemandSheet/
-/.idea/
+/.idea/*
 storage/drafts/
 storage/user/img/14.jpg
 storage/user/img/33.jpg

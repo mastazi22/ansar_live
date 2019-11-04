@@ -2,6 +2,7 @@
  * Created by arafat on 10/25/2016.
  */
 var prefix = '';
+// var prefix = 'ansarerp/';
 var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], function ($interpolateProvider, $httpProvider, $sceProvider, $routeProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
@@ -232,19 +233,55 @@ GlobalApp.directive('confirm', function () {
 GlobalApp.directive('datePicker', function () {
     return {
         restrict: 'AC',
-        link: function (scope, element, attrs) {
+        require:"?ngModel",
+        link: function (scope, element, attrs,ngModel) {
             //alert(scope.event)
             var data = attrs.datePicker
             var format = attrs.dateFormat || 'dd-M-yy';
+            var addTime=+attrs.addTime===1
             console.log(data)
             if (data) {
                 $(element).val(eval(data));
+                if(ngModel){
+                    ngModel.$setViewValue(eval(data))
+                }
 
             }
 
-            $(element).datepicker({
-                dateFormat: format
-            })
+            if(addTime){
+                $(element).datepicker({
+                    dateFormat: format,
+                    onSelect: function(datetext) {
+                        var d = new Date(); // for now
+
+                        var h = d.getHours();
+                        h = (h < 10) ? ("0" + h) : h ;
+
+                        var m = d.getMinutes();
+                        m = (m < 10) ? ("0" + m) : m ;
+
+                        var s = d.getSeconds();
+                        s = (s < 10) ? ("0" + s) : s ;
+
+                        datetext = datetext + " " + h + ":" + m + ":" + s;
+
+                        $(element).val(datetext);
+                        if(ngModel){
+                            ngModel.$setViewValue(datetext)
+                        }
+                    }
+                })
+            }else{
+                $(element).datepicker({
+                    dateFormat: format,
+                    onSelect: function(datetext) {
+                        $(element).val(datetext);
+                        if(ngModel){
+                            ngModel.$setViewValue(datetext)
+                        }
+                    }
+                })
+            }
 
         }
     }
@@ -378,10 +415,12 @@ GlobalApp.directive('modalShow', function ($timeout) {
 GlobalApp.factory('httpService', function ($http) {
 
     return {
-        range: function () {
+        range: function (id,oz) {
+            oz = oz?oz:0;
             return $http({
                 method: 'get',
-                url: '/' + prefix + 'HRM/DivisionName'
+                url: '/' + prefix + 'HRM/DivisionName',
+                params: {oz: oz}
             }).then(function (response) {
                 return response.data
             }, function (response) {
@@ -407,6 +446,7 @@ GlobalApp.factory('httpService', function ($http) {
             return http.then(function (response) {
                 return response.data
             }, function (response) {
+
                 return response
             })
 
@@ -648,6 +688,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
             getShortKpiName: '=?',
             getUnitName: '=?',
             getThanaName: '=?',
+            enableOfferZone:'@',
             data: '=?',
             errorKey: '=?',
             reset: '=?',
@@ -749,7 +790,7 @@ GlobalApp.directive('filterTemplate', function ($timeout, $rootScope) {
 
                 if (!$scope.show('range')) return;
                 $scope.loading.range = true;
-                httpService.range().then(function (data) {
+                httpService.range('',$scope.enableOfferZone).then(function (data) {
                     console.log(data);
                     $scope.loading.range = false;
                     if (data.status != undefined) {
@@ -1080,22 +1121,36 @@ GlobalApp.directive('tableSearch', function () {
 })
 GlobalApp.directive('databaseSearch', function () {
     return {
+        //<input type="text" ng-model="q" class="form-control" style="margin-bottom: 10px" ng-change="queue.push(1)" placeholder="[[placeHolder?placeHolder:'Search by Ansar ID']]">
         restrict: 'ACE',
-        template: '<input type="text" ng-model="q" class="form-control" style="margin-bottom: 10px" ng-change="queue.push(1)" placeholder="[[placeHolder?placeHolder:\'Search by Ansar ID\']]">',
+        template: '<div class="input-group"><input type="text" ng-model="q" class="form-control" ng-change="resetSearchResult()" ng-keydown="searchOnKeyDown($event)" placeholder="[[placeHolder?placeHolder:\'Search by Ansar ID\']]">' +
+            '<span class="input-group-addon btn-primary" style="cursor: pointer;color:white" ng-click="onChange()">Enter&nbsp;<i class="fa fa-search"></i></span></div>',
         scope: {
             queue: '=',
             q: '=',
             placeHolder: '@',
             onChange: '&'
         },
-        controller: function ($scope) {
-            $scope.$watch('queue', function (n, o) {
-                //alert(n)
-                if (n.length === 1) {
+        controller: function ($scope, $timeout) {
+            $scope.searchOnKeyDown = function(event){
+                if(event.which === 13){
                     $scope.onChange();
                 }
-
-            }, true)
+            };
+            $scope.resetSearchResult = function(){
+                if(!$scope.q){
+                    $timeout(function(){
+                        $scope.onChange();
+                    });
+                }
+            };
+            // $scope.$watch('queue', function (n, o) {
+            //     //alert(n)
+            //     if (n.length === 1) {
+            //         $scope.onChange();
+            //     }
+            //
+            // }, true)
         }
     }
 })
@@ -1800,3 +1855,84 @@ GlobalApp.directive("calender", function (notificationService) {
                         `
     }
 })
+GlobalApp.directive('datepickerSeparateFields',function(){
+    return {
+        restrict: 'E',
+        scope: {
+            label: '@',
+            notify: '=',
+            rdata: '='
+        },
+        controller: function ($scope) {
+            $scope.months = {
+                'Jan': 'January',
+                'Feb': 'February',
+                'Mar': 'March',
+                'Apr': 'April',
+                'May': 'May',
+                'Jun': 'June',
+                'Jul': 'July',
+                'Aug': 'August',
+                'Sep': 'September',
+                'Oct': 'October',
+                'Nov': 'November',
+                'Dec': 'December'
+            };
+
+            $scope.picker_day = new Date().getDate() + "";
+            $scope.picker_month = Object.keys($scope.months)[new Date().getMonth()];
+            $scope.picker_year = new Date().getFullYear() + "";
+            $scope.rdata = $scope.picker_day + '-' + $scope.picker_month + '-' + $scope.picker_year;
+            $scope.getYears = function () {
+                var years = [];
+                var endYear = new Date().getFullYear() + 10;
+                for (var startYear = new Date().getFullYear() - 20; startYear <= endYear; startYear++) {
+                    years.push(startYear);
+                }
+                return years;
+            };
+            $scope.getDates = function () {
+                var days = [];
+                for (var start = 1; start <= 31; start++) {
+                    days.push(start);
+                }
+                return days;
+            };
+
+            $scope.dateChangeEvent = function ($event) {
+                var selectedDateStr = $scope.picker_day + '-' + $scope.picker_month + '-' + $scope.picker_year;
+                var d = new Date(selectedDateStr);
+                var month = Object.keys($scope.months)[d.getMonth()];
+                if (d.getFullYear() == $scope.picker_year && month == $scope.picker_month && d.getDate() == $scope.picker_day) {
+                    $scope.rdata = selectedDateStr;
+                    $scope.notify = false;
+                } else {
+                    $scope.rdata = '';
+                    $scope.notify = true;
+                }
+            };
+        },
+        template: '<div class="row"><div class="col-md-12"><label class="control-label">{{label}}' +
+            '                        <span class="text-danger" ng-if="notify">&nbsp;Invalid Date</span></label></div>' +
+            '                <div class="col-md-4"><div class="form-group"><label for="daySelect">Day</label>' +
+            '                        <select ng-model="picker_day" ng-change="dateChangeEvent($event)"' +
+            '                                class="form-control" id="daySelect" required>' +
+            '                            <option ng-repeat="day in getDates()" value="{{day}}">{{day}}</option>' +
+            '                        </select></div>' +
+            '                </div>' +
+            '                <div class="col-md-4" style="padding: 0"><div class="form-group">' +
+            '                        <label for="monthSelect">Month</label>' +
+            '                        <select ng-model="picker_month" ng-change="dateChangeEvent($event)"' +
+            '                                class="form-control" id="monthSelect" required>' +
+            '                            <option ng-repeat="(Key, value) in months" value="{{Key}}">{{value}}' +
+            '                            </option>' +
+            '                        </select></div>' +
+            '                </div>' +
+            '                <div class="col-md-4"><div class="form-group"><label for="yearSelect">Year</label>' +
+            '                        <select ng-model="picker_year" ng-change="dateChangeEvent($event)"' +
+            '                                class="form-control" id="yearSelect" required>' +
+            '                            <option ng-repeat="year in getYears()" value="{{year}}">{{year}}</option>' +
+            '                        </select></div>' +
+            '                </div></div>'
+    };
+});

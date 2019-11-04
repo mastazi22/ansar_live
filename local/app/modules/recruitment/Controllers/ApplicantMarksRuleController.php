@@ -121,6 +121,14 @@ class ApplicantMarksRuleController extends Controller
         $keys = array_map('trim',array_keys($data['quota']));
         $values = array_values($data['quota']);
         $data['quota'] = array_combine($keys,$values);
+        if(is_array($data['quota'])){
+            $object = new \stdClass();
+            foreach ($data['quota'] as $key => $value)
+            {
+                $object->$key = $value;
+            }
+            $data['quota'] = json_encode($object);
+        }
         $valid = Validator::make($data,$rules);
         if($valid->fails()){
             return redirect()->back()->withInput()->withErrors($valid->errors())->with(['json_error'=>json_encode($valid->errors()),'json_input'=>json_encode($data['quota'])]);

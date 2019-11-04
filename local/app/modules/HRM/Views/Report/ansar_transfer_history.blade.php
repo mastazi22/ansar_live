@@ -133,7 +133,7 @@
                                         <th>To KPI</th>
                                         <th>District</th>
                                         <th>Thana</th>
-                                        <th>Joining Date</th>
+                                        <th>Embodiment Date</th>
                                         <th>Transfer Date</th>
                                     </tr>
                                     <tr ng-show="ansars.length==0">

@@ -91,7 +91,7 @@ class FreezeController extends Controller
             if ($request->exists('unit') && $embodiment_info->kpi->unit_id != $request->unit) throw new \Exception("Invalid Ansar for freeze");
             if ($request->exists('range') && $embodiment_info->kpi->division_id != $request->range) throw new \Exception("Invalid Ansar for freeze");
             if (!$embodiment_info && $embodiment_info->emboded_status == "freeze") throw new \Exception("Invalid Ansar for freeze");
-            if (Carbon::parse($embodiment_info->joining_date)->gt($modifed_freeze_date)) throw new \Exception("Freeze date must be greater then joining date");
+            if (Carbon::parse($embodiment_info->joining_date)->gt($modifed_freeze_date)) throw new \Exception("Freeze date must be greater then embodiment date");
             $freeze_info = new FreezingInfoModel();
             $freeze_info->ansar_id = $ansar_id;
             $freeze_info->freez_reason = $request->freeze_reason;
@@ -145,11 +145,11 @@ class FreezeController extends Controller
         if ($valid->fails()) {
             return response($valid->messages()->toJson(), 422, ['Content-Type' => 'application/json']);
         }
-        $data = CustomQuery::getFreezeList($request->range, $request->unit, $request->thana, $request->kpi,($request->limit?$request->limit:50),$request->q,$request->export);
-        if($request->exists('export')&&$request->export==1){
-            return  Excel::create('freeze_report',function ($excel) use($data){
-                $excel->sheet('sheet1',function ($sheet) use ($data){
-                    $sheet->loadView('HRM::export.freezelist',['allFreezeAnsar'=>$data]);
+        $data = CustomQuery::getFreezeListWithRankGender($request->range, $request->unit, $request->thana, $request->kpi, ($request->limit ? $request->limit : 50), $request->q, $request->export, $request->rank, $request->gender);
+        if ($request->exists('export') && $request->export == 1) {
+            return Excel::create('freeze_report', function ($excel) use ($data) {
+                $excel->sheet('sheet1', function ($sheet) use ($data) {
+                    $sheet->loadView('HRM::export.freezelist', ['allFreezeAnsar' => $data]);
                 });
             })->export('xlsx');
         }
@@ -168,6 +168,9 @@ class FreezeController extends Controller
                 try {
                     $frezeInfo = FreezingInfoModel::where('ansar_id', $ansarid)->first();
                     if (!$frezeInfo) throw new \Exception("{$ansarid} is invalid");
+                    $kpi = $frezeInfo->kpi;
+                    if (!$kpi) throw new \Exception("invalid kpi");
+                    if ($kpi && $kpi->withdraw_status == 1 && $kpi->status_of_kpi == 0 && !$kpi->details->kpi_withdraw_date) throw new \Exception("{$kpi->kpi_name} already withdrawn");
                     $updateEmbodiment = $frezeInfo->embodiment;
                     $freezed_ansar_embodiment_detail = $frezeInfo->freezedAnsarEmbodiment;
 //                    return $updateEmbodiment;

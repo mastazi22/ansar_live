@@ -1,25 +1,14 @@
-{{--User: Shreya--}}
-{{--Date: 12/14/2015--}}
-{{--Time: 11:28 AM--}}
-
 @extends('template.master')
 @section('title','Add Ansar in Blocklist')
 @section('breadcrumb')
     {!! Breadcrumbs::render('add_to_blocklist') !!}
 @endsection
 @section('content')
-
     <script>
-        $(document).ready(function () {
-            $('#block_date').datepicker({
-                dateFormat:'dd-M-yy'
-            });
-        })
         GlobalApp.controller('BlockController', function ($scope, $http, $sce) {
             $scope.ansarId = "";
             $scope.ansarDetail = {};
             $scope.loadingAnsar = false;
-
             $scope.loadAnsarDetail = function (id) {
                 $scope.loadingAnsar = true;
                 $http({
@@ -27,18 +16,13 @@
                     url: '{{URL::route('blocklist_ansar_details')}}',
                     params: {ansar_id: id}
                 }).then(function (response) {
-                    $scope.ansarDetail = response.data
+                    $scope.ansarDetail = response.data;
                     $scope.loadingAnsar = false;
-                    console.log($scope.ansarDetail);
                 })
             }
         })
     </script>
-
     <div ng-controller="BlockController">
-        {{--<div class="breadcrumbplace">--}}
-            {{--{!! Breadcrumbs::render('add_to_blocklist') !!}--}}
-        {{--</div>--}}
         @if(Session::has('success_message'))
             <div style="padding: 10px 20px 0 20px;">
                 <div class="alert alert-success">
@@ -64,12 +48,15 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label for="ansar_id" class="control-label">Ansar ID</label>
-                                <input type="text" name="ansar_id" id="ansar_id" class="form-control" placeholder="Enter Ansar ID" ng-model="ansarId" ng-change="loadAnsarDetail(ansarId)">
+                                <input type="text" name="ansar_id" id="ansar_id" class="form-control"
+                                       placeholder="Enter Ansar ID" ng-model="ansarId"
+                                       ng-change="loadAnsarDetail(ansarId)">
                                 {!! $errors->first('ansar_id','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <div class="form-group">
-                                <label for="block_date" class="control-label">Blocking Date</label>
-                                <input type="text" name="block_date" id="block_date" class="form-control" ng-model="block_date">
+                                <datepicker-separate-fields label="Blocking Date:" notify="blockInvalidDate"
+                                                            rdata="block_date"></datepicker-separate-fields>
+                                <input type="hidden" name="block_date" ng-value="block_date">
                                 {!! $errors->first('block_date','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <div class="form-group">
@@ -77,7 +64,9 @@
                                 {!! Form::textarea('block_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'block_comment', 'size' => '30x4', 'placeholder' => "Write Reason", 'ng-model' => 'block_comment')) !!}
                                 {!! $errors->first('block_comment','<p class="text text-danger">:message</p>') !!}
                             </div>
-                            <button id="block-ansar" type="submit" class="btn btn-primary">Block Ansar</button>
+                            <button id="block-ansar" type="submit" class="btn btn-primary"
+                                    ng-disabled="blockInvalidDate">Block Ansar
+                            </button>
                         </div>
                         <div class="col-sm-6 col-sm-offset-2"
                              style="min-height: 400px;border-left: 1px solid #CCCCCC">

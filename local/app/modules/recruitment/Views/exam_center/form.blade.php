@@ -117,7 +117,7 @@
     </div>
         <div class="form-group" id="roll_exam_center">
             <label style="margin-bottom: 10px">Add Roll Based Exam center&nbsp;<button type="button" class="btn btn-primary btn-sm" id="add-roll-exam">Add</button></label>
-            @if($data)
+            @if(isset($data))
                 <?php $exam_roll_place = $data->exam_place_roll_wise?json_decode($data->exam_place_roll_wise,true):[];$i=0; ?>
                 @foreach($exam_roll_place as $ex)
                         <div class="row eeee" style="margin-bottom: 10px">

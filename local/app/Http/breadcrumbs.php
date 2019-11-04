@@ -618,7 +618,11 @@ Breadcrumbs::register('setting', function($breadcrumbs) {
 Breadcrumbs::register('recruitment.setting.applicant_quota', function($breadcrumbs) {
     $breadcrumbs->parent('setting');
     $breadcrumbs->push('Applicant Quota', URL::route('recruitment.quota.index'));
-   // $breadcrumbs->push('Applicant Quota', URL::route('recruitment.quota.index'));
+});
+
+Breadcrumbs::register('recruitment.quota_type.index', function($breadcrumbs) {
+    $breadcrumbs->parent('setting');
+    $breadcrumbs->push('Applicant Quota Type', URL::route('recruitment.quota_type.index'));
 });
 Breadcrumbs::register('recruitment.point.index', function($breadcrumbs) {
     $breadcrumbs->parent('setting');
@@ -665,4 +669,12 @@ Breadcrumbs::register('recruitment.edit_applicants_details_for_hrm', function($b
 Breadcrumbs::register('recruitment.print_applicants_id_card', function($breadcrumbs) {
     $breadcrumbs->parent('recruitment');
     $breadcrumbs->push('Print Applicants ID Card', '#');
+});
+Breadcrumbs::register('view_ansar_history', function($breadcrumbs) {
+    $breadcrumbs->parent('report');
+    $breadcrumbs->push('View Ansar History', URL::route('view_ansar_history'));
+});
+Breadcrumbs::register('ansar_scheduled_jobs', function($breadcrumbs) {
+    $breadcrumbs->parent('report');
+    $breadcrumbs->push('Scheduled Jobs', URL::route('ansar_scheduled_jobs'));
 });

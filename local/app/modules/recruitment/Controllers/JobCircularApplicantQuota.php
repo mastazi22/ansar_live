@@ -78,9 +78,9 @@ class JobCircularApplicantQuota extends Controller
             DB::commit();
         }catch(\Exception $e){
             DB::rollback();
-            return redirect()->route('recruitment.quota.index')->with('error_message',$e->getMessage());
+            return redirect()->route('recruitment.quota_type.index')->with('error_message',$e->getMessage());
         }
-        return redirect()->route('recruitment.quota.index')->with('success_message','New Quota Type Created Successfully');
+        return redirect()->route('recruitment.quota_type.index')->with('success_message','New Quota Type Created Successfully');
     }
 
     /**
@@ -155,9 +155,9 @@ class JobCircularApplicantQuota extends Controller
             DB::commit();
         }catch(\Exception $e){
             DB::rollback();
-            return redirect()->route('recruitment.quota.index')->with('error_message',$e->getMessage());
+            return redirect()->route('recruitment.quota_type.index')->with('error_message',$e->getMessage());
         }
-        return redirect()->route('recruitment.quota.index')->with('success_message','Quota Type Updated Successfully');
+        return redirect()->route('recruitment.quota_type.index')->with('success_message','Quota Type Updated Successfully');
 
     }
 
@@ -183,9 +183,9 @@ class JobCircularApplicantQuota extends Controller
             DB::commit();
         }catch(\Exception $e){
             DB::rollback();
-            return redirect()->route('recruitment.quota.index')->with('error_message',$e->getMessage());
+            return redirect()->route('recruitment.quota_type.index')->with('error_message',$e->getMessage());
         }
-        return redirect()->route('recruitment.quota.index')->with('success_message','Quota Type Deleted Successfully');
+        return redirect()->route('recruitment.quota_type.index')->with('success_message','Quota Type Deleted Successfully');
 
     }
 }

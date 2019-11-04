@@ -11,6 +11,7 @@ use App\Jobs\BlockForAge;
 use App\Jobs\RearrangePanelPositionGlobal;
 use App\Jobs\RearrangePanelPositionLocal;
 use App\Jobs\UnblockRetireAnsar;
+use App\modules\HRM\Models\AnsarFutureState;
 use App\modules\HRM\Models\AnsarRetireHistory;
 use App\modules\HRM\Models\AnsarStatusInfo;
 use App\modules\HRM\Models\EmbodimentModel;
@@ -155,8 +156,8 @@ class Kernel extends ConsoleKernel
         })->everyMinute()->name("offer_cancel")->withoutOverlapping();
         $schedule->call(function () {
             Log::info("REVERT OFFER");
-            $offeredAnsars = OfferSMS::where('sms_end_datetime', '<=', Carbon::now())->get();
-            $c = OfferSMS::where('sms_end_datetime', '<=', Carbon::now())->count();
+            $offeredAnsars = OfferSMS::whereDate('sms_send_datetime', '<=', Carbon::now()->toDateString())->get();
+            $c = OfferSMS::whereDate('sms_send_datetime', '<=', Carbon::now()->toDateString())->count();
             foreach ($offeredAnsars as $ansar) {
                 Log::info("CALLED START: OFFER NO REPLY" . $ansar->ansar_id);
                 DB::beginTransaction();
@@ -198,13 +199,14 @@ class Kernel extends ConsoleKernel
                             if(is_array($t)){
                                 $len = count($t);
                                 if(strcasecmp($t[$len-1],"RE")==0){
-                                    $pa->re_panel_date = Carbon::now()->format('Y-m-d');
+                                    $pa->re_panel_date = Carbon::now()->format('Y-m-d H:i:s');
                                 }else if(strcasecmp($t[$len-1],"GB")==0||strcasecmp($t[$len-1],"DG")==0||strcasecmp($t[$len-1],"CG")==0){
-                                    $pa->panel_date = Carbon::now()->format('Y-m-d');
+                                    $pa->panel_date = Carbon::now()->format('Y-m-d H:i:s');
                                 }
 
                             }
                             $pa->locked = 0;
+                            $pa->come_from = "Offer";
                             $pa->save();
                             $pi->status()->update([
                                 'pannel_status' => 1,
@@ -221,8 +223,8 @@ class Kernel extends ConsoleKernel
                             ]);
                             $ansar->panel()->save(new PanelModel([
                                 'memorandum_id' => isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
-                                'panel_date' => Carbon::now(),
-                                're_panel_date' => Carbon::now(),
+                                'panel_date' => Carbon::now()->format('Y-m-d H:i:s'),
+                                're_panel_date' => Carbon::now()->format('Y-m-d H:i:s'),
                                 'come_from' => 'Offer',
                                 'ansar_merit_list' => 1,
                                 'go_panel_position' => 0,
@@ -291,18 +293,19 @@ class Kernel extends ConsoleKernel
                                     if(is_array($t)){
                                         $len = count($t);
                                         if($len>0&&strcasecmp($t[$len-1],"RE")==0){
-                                            $pa->re_panel_date = Carbon::now()->format('Y-m-d');
+                                            $pa->re_panel_date = Carbon::now()->format('Y-m-d H:i:s');
                                         }else if($len>0&&(strcasecmp($t[$len-1],"GB")==0||strcasecmp($t[$len-1],"DG")==0||strcasecmp($t[$len-1],"CG")==0)){
-                                            $pa->panel_date = Carbon::now()->format('Y-m-d');
+                                            $pa->panel_date = Carbon::now()->format('Y-m-d H:i:s');
                                         }
 
                                     }
                                 }elseif(!in_array($ansar->offered_district, Config::get('app.offer'))){
-                                    $pa->re_panel_date = Carbon::now()->format('Y-m-d');
+                                    $pa->re_panel_date = Carbon::now()->format('Y-m-d H:i:s');
                                 }else{
-                                    $pa->panel_date = Carbon::now()->format('Y-m-d');
+                                    $pa->panel_date = Carbon::now()->format('Y-m-d H:i:s');
                                 }
                                 $pa->locked = 0;
+                                $pa->come_from = "Offer";
                                 $pa->save();
                                 $ansar->status()->update([
                                     'pannel_status' => 1,
@@ -318,10 +321,10 @@ class Kernel extends ConsoleKernel
                                 ]);
                                 $ansar->panel()->save(new PanelModel([
                                     'memorandum_id' => isset($panel_log->old_memorandum_id) ? $panel_log->old_memorandum_id : 'N\A',
-                                    'panel_date' => Carbon::now(),
+                                    'panel_date' => Carbon::now()->format('Y-m-d H:i:s'),
                                     'come_from' => 'Offer',
                                     'ansar_merit_list' => 1,
-                                    're_panel_date' => Carbon::now(),
+                                    're_panel_date' => Carbon::now()->format('Y-m-d H:i:s'),
                                     'go_panel_position' => 0,
                                     're_panel_position' => 0
                                 ]));
@@ -453,44 +456,44 @@ class Kernel extends ConsoleKernel
         })->dailyAt("23:50")->name("disable_circular")->withoutOverlapping();
 
 
-//        $schedule->call(function () {
-//            Log::info("called : send_sms_to_accepted_applicant");
-//            $messID = uniqid('SB_');
-//            $messageID = $messID;
-//            $apiUser = 'join_ans_vdp';
-//            $apiPass = 'shurjoSM123';
-//            $applicants = JobAcceptedApplicant::with('applicant')->whereHas('applicant', function ($q) {
-//                $q->where('status', 'accepted');
-//            })->where('message_status', 'pending')->where('sms_status', 'on')->limit(10)->get();
-//            foreach ($applicants as $a) {
-//                if ($a->applicant) {
-//                    $sms_data = http_build_query(
-//                        array(
-//                            'API_USER' => $apiUser,
-//                            'API_PASSWORD' => $apiPass,
-//                            'MOBILE' => $a->applicant->mobile_no_self,
-//                            'MESSAGE' => $a->message,
-//                            'MESSAGE_ID' => $messageID
-//                        )
-//                    );
-//
-//                    $ch = curl_init();
-//                    $url = "https://shurjobarta.shurjorajjo.com.bd/barta_api/api.php";
-//                    curl_setopt($ch, CURLOPT_URL, $url);
-//                    curl_setopt($ch, CURLOPT_POST, 1);                //0 for a get request
-//                    curl_setopt($ch, CURLOPT_POSTFIELDS, $sms_data);
-//                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
-//                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-//                    $response = curl_exec($ch);
-//                    curl_close($ch);
-//                    var_dump($response);
-//                    $a->message_status = 'send';
-//                    $a->save();
-//                }
-//            }
-//
-//        })->everyMinute()->name("send_sms_to_selected_applicant")->withoutOverlapping();
+     /*   $schedule->call(function () {
+            Log::info("called : send_sms_to_accepted_applicant");
+            $messID = uniqid('SB_');
+            $messageID = $messID;
+            $apiUser = 'join_ans_vdp';
+            $apiPass = 'shurjoSM123';
+            $applicants = JobAcceptedApplicant::with('applicant')->whereHas('applicant', function ($q) {
+                $q->where('status', 'accepted');
+            })->where('message_status', 'pending')->where('sms_status', 'on')->limit(10)->get();
+            foreach ($applicants as $a) {
+                if ($a->applicant) {
+                    $sms_data = http_build_query(
+                        array(
+                            'API_USER' => $apiUser,
+                            'API_PASSWORD' => $apiPass,
+                            'MOBILE' => $a->applicant->mobile_no_self,
+                            'MESSAGE' => $a->message,
+                            'MESSAGE_ID' => $messageID
+                        )
+                    );
+
+                    $ch = curl_init();
+                    $url = "https://shurjobarta.shurjorajjo.com.bd/barta_api/api.php";
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    curl_setopt($ch, CURLOPT_POST, 1);                //0 for a get request
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $sms_data);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+                    $response = curl_exec($ch);
+                    curl_close($ch);
+                    var_dump($response);
+                    $a->message_status = 'send';
+                    $a->save();
+                }
+            }
+  																		 
+        })->everyMinute()->name("send_sms_to_selected_applicant")->withoutOverlapping();*/
 
 
         $schedule->call(function () {
@@ -669,8 +672,51 @@ class Kernel extends ConsoleKernel
             dispatch(new RearrangePanelPositionGlobal());
             dispatch(new RearrangePanelPositionLocal());
 
-
+			
         })->everyTenMinutes()->name("UnblockRetireAnsar")->withoutOverlapping();
-
+        $schedule->call(function(){
+            $ansars = AnsarFutureState::where('activation_date',"<=",Carbon::now())->get();
+            $panel_count = 0;
+            DB::beginTransaction();
+            try{
+                foreach ($ansars as $ansar){
+                    switch ($ansar->to_status){
+                        case "Panel":
+                            $panel_count++;
+                            $ansar->moveToPanel();
+                            $ansar->delete();
+                            break;
+                        case "Embodiment":
+                            $ansar->moveToEmbodiment();
+                            $ansar->delete();
+                            break;
+                        case "Rest":
+                            $ansar->moveToRest();
+                            $ansar->delete();
+                            break;
+                        case "Unverified":
+                            $ansar->moveToUnverified();
+                            $ansar->delete();
+                            break;
+                        case "Free":
+                            $ansar->moveToFree();
+                            $ansar->delete();
+                            break;
+                        case "Block":
+                            $ansar->moveToBlock();
+                            $ansar->delete();
+                            break;
+                    }
+                }
+                if($panel_count>0){
+                    dispatch(new RearrangePanelPositionLocal());
+                    dispatch(new RearrangePanelPositionGlobal());
+                }
+                DB::commit();
+            }catch(\Exception $e){
+                DB::rollBack();
+                echo $e->getTraceAsString();
+            }
+        })->dailyAt("00:05")->name("ansar_future_state_execute")->withoutOverlapping();
     }
 }

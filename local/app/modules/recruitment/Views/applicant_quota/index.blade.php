@@ -1,7 +1,7 @@
 @extends('template.master')
 @section('title','Applicant Quota')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('recruitment.quota.index') !!}
+    {!! Breadcrumbs::render('recruitment.setting.applicant_quota') !!}
 @endsection
 @section('content')
     <script>
@@ -17,7 +17,7 @@
             var loadAll = function () {
                 $scope.allLoading = true;
                 $q.all([
-                    httpService.circular({circular_status: 'running'}),
+                    httpService.circular({circular_status: 'running'})
                 ]).then(function (response) {
                     $scope.editing = [];
                     $scope.circulars = response[0].data;
@@ -25,7 +25,7 @@
                 }, function (response) {
                     $scope.allLoading = false;
                 })
-            }
+            };
             $scope.loadQuota = function () {
                 $scope.allLoading = true;
                 httpService.applicantQuota({job_circular_id: $scope.circular, type: $scope.type})
@@ -36,14 +36,26 @@
                     }, function (error) {
                         $scope.allLoading = false;
                     })
-            }
+            };
             $scope.submitData = function (index, male, female) {
                 $scope.allLoading = true;
                 var data = {};
-                if($scope.type=="range"){
-                    data = {type:$scope.type,range_id: $scope.applicantQuota[index].id, male: male, female: female,job_circular_quota_id:$scope.cq}
-                } else{
-                    data = {type:$scope.type,district: $scope.applicantQuota[index].id, male: male, female: female,job_circular_quota_id:$scope.cq}
+                if ($scope.type == "range") {
+                    data = {
+                        type: $scope.type,
+                        range_id: $scope.applicantQuota[index].id,
+                        male: male,
+                        female: female,
+                        job_circular_quota_id: $scope.cq
+                    }
+                } else {
+                    data = {
+                        type: $scope.type,
+                        district: $scope.applicantQuota[index].id,
+                        male: male,
+                        female: female,
+                        job_circular_quota_id: $scope.cq
+                    }
                 }
                 $http({
                     method: 'post',
@@ -51,23 +63,21 @@
                     url: '{{URL::route('recruitment.quota.update')}}'
                 }).then(function (response) {
                     $scope.allLoading = false;
-                    console.log(response.data)
                     if (response.data.status) {
-                        notificationService.notify('success', response.data.message)
+                        notificationService.notify('success', response.data.message);
                         if (!$scope.applicantQuota[index].applicant_quota) {
                             $scope.applicantQuota[index].applicant_quota = {};
                         }
                         $scope.applicantQuota[index].applicant_quota['male'] = male;
                         $scope.applicantQuota[index].applicant_quota['female'] = female;
                         $scope.editing[index] = false;
-                    }
-                    else {
+                    } else {
                         notificationService.notify('error', response.data.message)
                     }
                 }, function (response) {
                     $scope.allLoading = false;
                 })
-            }
+            };
             loadAll();
         })
     </script>

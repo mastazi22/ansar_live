@@ -1,7 +1,7 @@
 @extends('template.master')
 @section('title','Applicant Quota Type')
 @section('breadcrumb')
-    {!! Breadcrumbs::render('recruitment.setting.applicant_quota') !!}
+    {!! Breadcrumbs::render('recruitment.quota_type.index') !!}
 @endsection
 @section('content')
     <section class="content">
@@ -21,7 +21,7 @@
                         <h3>All Applicant Quota Type</h3>
                     </div>
                     <div class="col-sm-6">
-                        <a href="{{URL::route('recruitment.quota.create')}}" class="btn btn-info btn-sm pull-right"
+                        <a href="{{URL::route('recruitment.quota_type.create')}}" class="btn btn-info btn-sm pull-right"
                            style="margin-top: 20px">Create New TYpe</a>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                                 <td>{{$quota->quota_name_bng}}</td>
                                 @if($quota->trashed())
                                     <td>
-                                        {!! Form::model($quota,['method'=>'delete','route'=>['recruitment.quota.destroy',$quota],'style'=>'float:left;margin-right:5px']) !!}
+                                        {!! Form::model($quota,['method'=>'delete','route'=>['recruitment.quota_type.destroy',$quota],'style'=>'float:left;margin-right:5px']) !!}
                                         <input type="hidden" name="type" value="1"/>
                                         <button class="btn btn-danger btn-xs">Delete Permanently</button>
                                         {!! Form::close() !!}
@@ -60,11 +60,11 @@
                                         <a href="{{URL::route('recruitment.quota.edit',['id'=>$quota->id])}}"
                                            class="btn btn-info btn-xs pull-left" style="margin-right:5px;margin-top: 1.4px;">Edit Quota
                                             Type</a>
-                                        {!! Form::model($quota,['method'=>'delete','route'=>['recruitment.quota.destroy',$quota],'style'=>'float:left;margin-right:5px']) !!}
+                                        {!! Form::model($quota,['method'=>'delete','route'=>['recruitment.quota_type.destroy',$quota],'style'=>'float:left;margin-right:5px']) !!}
                                         <input type="hidden" name="type" value="0"/>
                                         <button class="btn btn-danger btn-xs">Delete</button>
                                         {!! Form::close() !!}
-                                        {!! Form::model($quota,['method'=>'delete','route'=>['recruitment.quota.destroy',$quota],'style'=>'float:left']) !!}
+                                        {!! Form::model($quota,['method'=>'delete','route'=>['recruitment.quota_type.destroy',$quota],'style'=>'float:left']) !!}
                                         <input type="hidden" name="type" value="1"/>
                                         <button class="btn btn-danger btn-xs">Delete Permanently</button>
                                         {!! Form::close() !!}

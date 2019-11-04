@@ -9,7 +9,7 @@
         <th>Education</th>
         <th>District</th>
         <th>Embodiment Date</th>
-        <th>Joining Date</th>
+        <th>Embodiment Date</th>
     </tr>
     @forelse($ansars as $a)
         <tr>

@@ -1,7 +1,3 @@
-{{--User: Shreya--}}
-{{--Date: 12/22/2015--}}
-{{--Time: 11:40 AM--}}
-
 @extends('template.master')
 @section('title','View Disembodied Report')
 @section('breadcrumb')
@@ -9,7 +5,6 @@
 @endsection
 @section('content')
     <script>
-
         GlobalApp.controller('ReportAnsarDisembodiment', function ($scope, $http, $sce) {
             $scope.total = 0;
             $scope.numOfPage = 0;
@@ -28,7 +23,6 @@
             $scope.dcDistrict = parseInt('{{Auth::user()->district_id}}');
             $scope.from_date = moment().subtract(1, 'years').format("D-MMM-YYYY");
             $scope.to_date = moment().format("D-MMM-YYYY");
-
             $scope.loadPagination = function () {
                 $scope.pages = [];
                 for (var i = 0; i < $scope.numOfPage; i++) {
@@ -36,25 +30,28 @@
                         pageNum: i,
                         offset: i * $scope.itemPerPage,
                         limit: $scope.itemPerPage
-                    })
+                    });
                     $scope.loadingPage[i] = false;
                 }
-            }
+            };
             $scope.loadPage = function (page, $event) {
-                if ($event != undefined)  $event.preventDefault();
-                $scope.currentPage = page==undefined?0:page.pageNum;
+                if ($event != undefined) $event.preventDefault();
+                $scope.currentPage = page == undefined ? 0 : page.pageNum;
                 $scope.loadingPage[$scope.currentPage] = true;
                 $http({
                     url: '{{URL::route('disemboded_ansar_info')}}',
                     method: 'get',
                     params: {
-                        offset: page==undefined?0:page.offset,
-                        limit: page==undefined?$scope.itemPerPage:page.limit,
-                        unit_id:$scope.param.unit,
-                        division_id:$scope.param.range,
+                        offset: page == undefined ? 0 : page.offset,
+                        limit: page == undefined ? $scope.itemPerPage : page.limit,
+                        unit_id: $scope.param.unit,
+                        division_id: $scope.param.range,
                         thana_id: $scope.param.thana,
                         from_date: $scope.from_date,
                         to_date: $scope.to_date,
+                        rank: $scope.param.rank == undefined ? 'all' : $scope.param.rank,
+                        gender: $scope.param.gender == undefined ? 'all' : $scope.param.gender,
+                        q: $scope.q,
                         view: 'view'
                     }
                 }).then(function (response) {
@@ -64,14 +61,14 @@
                     $scope.numOfPage = Math.ceil($scope.total / $scope.itemPerPage);
                     $scope.loadPagination();
                 })
-            }
+            };
             $scope.filterMiddlePage = function (value, index, array) {
                 var minPage = $scope.currentPage - 3 < 0 ? 0 : ($scope.currentPage > array.length - 4 ? array.length - 8 : $scope.currentPage - 3);
                 var maxPage = minPage + 7;
                 if (value.pageNum >= minPage && value.pageNum <= maxPage) {
                     return true;
                 }
-            }
+            };
             $scope.loadReportData = function (reportName, type) {
                 $scope.allLoading = true;
                 $http({
@@ -79,69 +76,66 @@
                     url: '{{URL::route('localize_report')}}',
                     params: {name: reportName, type: type}
                 }).then(function (response) {
-                    //console.log(response.data)
                     $scope.report = response.data;
                     $scope.allLoading = false;
                 })
-            }
-            $scope.loadReportData("ansar_disembodiment_report", "eng")
+            };
+            $scope.loadReportData("ansar_disembodiment_report", "eng");
             $scope.exportData = function (type) {
                 var page = $scope.exportPage;
-                if(type=='page')$scope.export_page = true;
+                if (type == 'page') $scope.export_page = true;
                 else $scope.export_all = true;
                 $http({
                     url: '{{URL::route('disemboded_ansar_info')}}',
                     method: 'get',
                     params: {
-                        offset: type=='all'?-1:(page == undefined ? 0 : page.offset),
-                        limit: type=='all'?-1:(page == undefined ? $scope.itemPerPage : page.limit),
-                        unit_id:$scope.param.unit,
-                        division_id:$scope.param.range,
+                        offset: type == 'all' ? -1 : (page == undefined ? 0 : page.offset),
+                        limit: type == 'all' ? -1 : (page == undefined ? $scope.itemPerPage : page.limit),
+                        unit_id: $scope.param.unit,
+                        division_id: $scope.param.range,
                         thana_id: $scope.param.thana,
-                        from_date:$scope.from_date,
-                        to_date:$scope.to_date,
-                        export:type
+                        from_date: $scope.from_date,
+                        to_date: $scope.to_date,
+                        export: type
                     }
                 }).then(function (res) {
                     $scope.export_data = res.data;
                     $scope.generating = true;
                     generateReport();
-                    $scope.export_page =  $scope.export_all = false;
-                },function (res) {
-                    $scope.export_page =  $scope.export_all = false;
+                    $scope.export_page = $scope.export_all = false;
+                }, function (res) {
+                    $scope.export_page = $scope.export_all = false;
                 })
-            }
+            };
             $scope.file_count = 1;
-            function generateReport(){
+
+            function generateReport() {
                 $http({
-                    url: '{{URL::to('HRM/generate/file')}}/'+$scope.export_data.id,
-                    method: 'post',
+                    url: '{{URL::to('HRM/generate/file')}}/' + $scope.export_data.id,
+                    method: 'post'
                 }).then(function (res) {
-                    if($scope.export_data.total_file>$scope.file_count){
-                        setTimeout(generateReport,1000);
-                        if(res.data.status) $scope.file_count++;
-                    }
-                    else{
+                    if ($scope.export_data.total_file > $scope.file_count) {
+                        setTimeout(generateReport, 1000);
+                        if (res.data.status) $scope.file_count++;
+                    } else {
                         $scope.generating = false;
                         $scope.file_count = 1;
-                        window.open($scope.export_data.download_url,'_blank')
+                        window.open($scope.export_data.download_url, '_blank')
                     }
-                },function (res) {
-                    if($scope.export_data.file_count>$scope.file_count){
-                        setTimeout(generateReport,1000)
+                }, function (res) {
+                    if ($scope.export_data.file_count > $scope.file_count) {
+                        setTimeout(generateReport, 1000)
                     }
                 })
             }
-
-        })
+        });
         $(function () {
             $("#print-report").on('click', function (e) {
                 e.preventDefault();
                 $("#print-area").remove();
-//                console.log($("body").find("#print-body").html())
                 var content = $("#print_ansar_disembodiment_report").clone(true);
-                $(content).find("table").removeAttr('class')
-                $('body').append('<div id="print-area">'+$(content).html()+'</div>')
+                $(content).find("table").removeAttr('class');
+                $('body').append('<div id="print-area">' + $(content).html() + '</div>');
                 window.print();
                 $("#print-area").remove()
             })
@@ -176,17 +170,17 @@
                     </div>
                     <br>
                     <filter-template
-                            show-item="['range','unit','thana']"
+                            show-item="['range','unit','thana','rank','gender']"
                             type="all"
                             range-change="loadPage()"
                             unit-change="loadPage()"
                             thana-change="loadPage()"
+                            rank-change="loadPage()"
+                            gender-change="loadPage()"
                             start-load="range"
-                            field-width="{range:'col-sm-4',unit:'col-sm-4',thana:'col-sm-4'}"
+                            field-width="{range:'col-sm-2',unit:'col-sm-2',thana:'col-sm-3',rank:'col-sm-2',gender:'col-sm-3'}"
                             data="param"
-                            on-load="loadPage()"
-                    >
-
+                            on-load="loadPage()">
                     </filter-template>
                     <div class="row">
                         <div class="col-md-6 col-sm-12 col-xs-12">
@@ -194,39 +188,51 @@
                                 <label class="control-label">
                                     Select Date Range
                                 </label></br>
-                                <div class="col-md-5 col-sm-12 col-xs-12" style="margin-left: 0px; padding-left: 0px;margin-right: 0px; padding-right: 0px">
-                                    <input type="text" name="from_date" id="from_date" date-picker="" class="form-control"
-                                           placeholder="From Date" ng-model="from_date" ng-change="resetValues()">
+                                <div class="col-md-4 col-sm-12 col-xs-12"
+                                     style="margin-left: 0px; padding-left: 0px;margin-right: 0px; padding-right: 0px">
+                                    <input type="text" name="from_date" id="from_date" date-picker=""
+                                           class="form-control" placeholder="From Date" ng-model="from_date"
+                                           ng-change="resetValues()">
                                 </div>
-                                <div class="col-md-1 col-sm-12 col-xs-12" style="margin-left: 0px; padding-left: 0px;margin-right: 0px; padding-right: 0px;">
-                                    {{--<button class="btn pull-left" style="border: none; background: #ffffff;">to</button><br>--}}
+                                <div class="col-md-1 col-sm-12 col-xs-12"
+                                     style="margin-left: 0px; padding-left: 0px;margin-right: 0px; padding-right: 0px;">
                                     <div class="" style="text-align: center; padding:5px">to</div>
                                 </div>
-                                <div class="col-md-5 col-sm-12 col-xs-12" style="margin-right: 0px; padding-right: 0px;margin-left: 0px; padding-left: 0px">
+                                <div class="col-md-4 col-sm-12 col-xs-12"
+                                     style="margin-right: 0px; padding-right: 0px;margin-left: 0px; padding-left: 0px">
                                     <input type="text" name="to_date" id="to_date" date-picker="" class="form-control"
                                            placeholder="To Date" ng-model="to_date" ng-change="resetValues()">
                                 </div>
+                                <div class="col-md-2 col-sm-12 col-xs-12">
+                                    <a class="btn btn-primary" ng-click="loadPage()">Load Result</a>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-2 col-sm-12 col-xs-12" style="margin-top: 25px">
-                            <a class="btn btn-primary pull-right" ng-click="loadPage()">Load Result</a>
+                        <div class="col-md-6 col-sm-12 col-xs-12">
+                            <div class="btn-group btn-group-sm pull-right print-hide">
+                                <button id="print-report" class="btn btn-default">
+                                    <i class="fa fa-print"></i>&nbsp;Print
+                                </button>
+                                <button id="export-report" ng-disabled="export_page||export_all"
+                                        ng-click="exportData('page')" class="btn btn-default ">
+                                    <i ng-show="!export_page" class="fa fa-file-excel-o"></i>
+                                    <i ng-show="export_page" class="fa fa-spinner fa-pulse"></i>&nbsp;Export this page
+                                </button>
+                                <button ng-disabled="export_page||export_all" ng-click="exportData('all')"
+                                        id="export-report-all" class="btn btn-default">
+                                    <i ng-show="!export_all" class="fa fa-file-excel-o"></i>
+                                    <i ng-show="export_all" class="fa fa-spinner fa-pulse"></i>&nbsp;Export all
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div id="print_ansar_disembodiment_report">
-                        <h3 id="report-header">[[report.header]]([[total]])&nbsp;&nbsp;
-                            <div class="btn-group btn-group-sm pull-right print-hide">
-                                <button id="print-report" class="btn btn-default"><i
-                                            class="fa fa-print"></i>&nbsp;Print
-                                </button>
-                                <button id="export-report" ng-disabled="export_page||export_all" ng-click="exportData('page')" class="btn btn-default ">
-                                    <i ng-show="!export_page" class="fa fa-file-excel-o"></i><i ng-show="export_page" class="fa fa-spinner fa-pulse"></i>&nbsp;Export this page
-                                </button>
-                                <button  ng-disabled="export_page||export_all" ng-click="exportData('all')" id="export-report-all" class="btn btn-default">
-                                    <i ng-show="!export_all" class="fa fa-file-excel-o"></i><i ng-show="export_all" class="fa fa-spinner fa-pulse"></i>&nbsp;Export all
-                                </button>
+                        <div class="row">
+                            <div class="col-md-8"><h3 id="report-header">[[report.header]]([[total]])</h3></div>
+                            <div class="col-md-4" style="padding-top: 20px;padding-bottom: 10px;">
+                                <database-search q="q" queue="queue" on-change="loadPage()"></database-search>
                             </div>
-                        </h3>
-
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-bordered full">
                                 <tr>
@@ -254,18 +260,16 @@
                                     <td>[[a.re_date|dateformat:'DD-MMM-YYYY']]</td>
                                 </tr>
                                 <tr ng-if="ansars.ansars==undefined||ansars.ansars.length<=0">
-                                    <td colspan="9" class="warning">
-                                        No Ansar available
-                                    </td>
+                                    <td colspan="9" class="warning">No Ansar available</td>
                                 </tr>
                             </table>
-
                         </div>
                     </div>
                     <div class="row print-hide">
                         <div class="col-sm-4">
                             <label for="item_par_page">Show :</label>
-                            <select name="item_per_page" ng-change="loadPage()" id="item_par_page" ng-model="itemPerPage">
+                            <select name="item_per_page" ng-change="loadPage()" id="item_par_page"
+                                    ng-model="itemPerPage">
                                 <option value="20" ng-selected="true">20</option>
                                 <option value="40">40</option>
                                 <option value="60">60</option>
@@ -287,8 +291,11 @@
                                     <li ng-repeat="page in pages|filter:filterMiddlePage"
                                         ng-class="{active:page.pageNum==currentPage&&!loadingPage[page.pageNum],disabled:!loadingPage[page.pageNum]&&loadingPage[currentPage]}">
                                         <span ng-show="currentPage == page.pageNum&&!loadingPage[page.pageNum]">[[page.pageNum+1]]</span>
-                                        <a href="#" ng-click="loadPage(page,$event)" ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
-                                        <span ng-show="loadingPage[page.pageNum]"  style="position: relative"><i class="fa fa-spinner fa-pulse" style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
+                                        <a href="#" ng-click="loadPage(page,$event)"
+                                           ng-hide="currentPage == page.pageNum||loadingPage[page.pageNum]">[[page.pageNum+1]]</a>
+                                        <span ng-show="loadingPage[page.pageNum]" style="position: relative"><i
+                                                    class="fa fa-spinner fa-pulse"
+                                                    style="position: absolute;top:10px;left: 50%;margin-left: -9px"></i>[[page.pageNum+1]]</span>
                                     </li>
                                     <li ng-class="{disabled:currentPage==pages.length-1}">
                                         <a href="#" ng-click="loadPage(pages[currentPage+1],$event)">&raquo;</a>

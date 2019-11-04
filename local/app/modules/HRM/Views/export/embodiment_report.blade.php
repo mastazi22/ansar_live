@@ -9,7 +9,7 @@
         <th>KPI Range</th>
         <th>KPI Unit</th>
         <th>Reporting Date</th>
-        <th>Joining Date</th>
+        <th>Embodiment Date</th>
         <th>Service ended date</th>
     </tr>
     @forelse($ansars as $a)

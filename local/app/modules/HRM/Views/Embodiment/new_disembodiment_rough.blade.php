@@ -1,7 +1,3 @@
-{{--User: Shreya--}}
-{{--Date: 11/05/2015--}}
-{{--Time: 11:00 AM--}}
-
 @extends('template.master')
 @section('title','Disembodiment')
 @section('breadcrumb')
@@ -11,7 +7,7 @@
     <script>
         $(document).ready(function () {
             $('#disembodiment_date').datepicker({dateFormat: 'dd-M-yy'});
-        })
+        });
         GlobalApp.controller('NewDisembodimentController', function ($scope, $http, notificationService) {
             $scope.isAdmin = parseInt('{{Auth::user()->type}}');
             $scope.queue = [];
@@ -40,7 +36,6 @@
                     method: 'get',
                     params: $scope.param
                 }).then(function (response) {
-                    console.log(response.data)
                     $scope.queue.shift();
                     if ($scope.queue.length > 1) $scope.loadAnsar();
                     $scope.allLoading = false;
@@ -49,21 +44,19 @@
                     }
                     $scope.ansars = response.data;
                 })
-            }
+            };
             $scope.verifyMemorandumId = function () {
                 var data = {
                     memorandum_id: $scope.memorandumId
-                }
+                };
                 $scope.isVerified = false;
                 $scope.isVerifying = true;
                 $http.post('{{action('UserController@verifyMemorandumId')}}', data).then(function (response) {
-//                    alert(response.data.status)
                     $scope.isVerified = response.data.status;
                     $scope.isVerifying = false;
                 }, function (response) {
-
                 })
-            }
+            };
             $scope.showFormData = function () {
                 $scope.allLoading = true;
                 $scope.submitData = [];
@@ -76,7 +69,7 @@
                     }
                     $scope.submitData.push($scope.formData[i])
                 }
-                $scope.newParam = JSON.parse(JSON.stringify($scope.param))
+                $scope.newParam = JSON.parse(JSON.stringify($scope.param));
                 $scope.printLetter = false;
                 $http({
                     url: '{{URL::to('HRM/disembodiment-entry')}}',
@@ -86,7 +79,7 @@
                         memorandum_id: $scope.memorandumId,
                         mem_date: $scope.memDate,
                         disembodiment_comment: $scope.disembodiment_comment,
-                        disembodiment_date: $scope.disembodiment_date,
+                        disembodiment_date: $scope.disembodiment_date
                     })
                 }).then(function (response) {
                     if (response.data.status) {
@@ -95,8 +88,7 @@
                         $scope.ch = []
                         $scope.formData = [];
                         $scope.printLetter = true;
-                    }
-                    else {
+                    } else {
                         notificationService.notify('error', response.data.message);
                     }
                     $scope.allLoading = false;
@@ -104,46 +96,31 @@
                     $scope.allLoading = false;
                     notificationService.notify('error', 'An unknown error occur. Error code : ' + response.status);
                 })
-            }
+            };
             $scope.disabledOption = function (id, date) {
                 if (id == 1) {
                     var current = moment();
                     var d = moment(date);
-                    //console.log(current.format("DD-MMM-YYYY")+" "+d.format("DD-MMM-YYYY"));
                     return current.diff(d, 'years') >= 3;
                 }
                 return true;
             }
-        })
+        });
         GlobalApp.directive('openHideModal', function () {
             return {
                 restrict: 'AC',
                 link: function (scope, elem, attr) {
                     $(elem).on('click', function () {
-                        //alert("hh")
                         scope.memorandumId = "";
-                        //scope.disembodiment_date = "";
                         scope.disembodiment_comment = "";
                         scope.$digest();
-                        $("#disembodiment-option").modal("toggle")
-//                        $("#withrdaw-option").on('show.bs.modal', function () {
-//                            alert("hh")
-//                            scope.memorandumId = "";
-//                            scope.kpi_withdraw_reason = "";
-//                            scope.kpi_withdraw_date = "";
-//                        })
-//                        $("#withrdaw-option").on('hide.bs.modal', function () {
-//                            //modalOpen = false;
-//                        })
+                        $("#disembodiment-option").modal("toggle");
                     })
                 }
             }
         })
     </script>
     <div ng-controller="NewDisembodimentController">
-        {{--<div class="breadcrumbplace">--}}
-        {{--{!! Breadcrumbs::render('disembodiment_entry') !!}--}}
-        {{--</div>--}}
         @if(Session::has('success_message'))
             <div style="padding: 10px 20px 0 20px;">
                 <div class="alert alert-success">
@@ -166,13 +143,10 @@
                             data="param"
                             start-load="range"
                             kpi-change="loadAnsar()"
-                            field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
-                    >
-
+                            field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}">
                     </filter-template>
                     <div class="row">
-                        <div class="col-sm-8">
-                            <h4>Total Ansars&nbsp;[[ansars.ansar_infos.length]]</h4>
+                        <div class="col-sm-8"><h4>Total Ansars:&nbsp;[[ansars.ansar_infos.length?ansars.ansar_infos.length:0]]</h4>
                         </div>
                         <div class="col-sm-4">
                             <database-search q="param.q" queue="queue" on-change="loadAnsar()"></database-search>
@@ -180,7 +154,6 @@
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered">
-
                             <tr>
                                 <th>#</th>
                                 <th>Ansar ID</th>
@@ -236,33 +209,26 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label class="control-label">Memorandum no. & Date</label>
-
-                                <div class="row">
-                                    <div class="col-md-6" style="padding-right: 0">
-                                        <input
-                                                ng-model="memorandumId"
-                                                type="text" class="form-control"
-                                                name="memorandum_id"
-                                                placeholder="Enter Memorandum no."
-                                                required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <input date-picker ng-model="memDate"
-                                               type="text" class="form-control" name="mem_date"
-                                               placeholder="Memorandum Date" required>
-                                    </div>
-                                </div>
+                                <label class="control-label">Dis Embodiment Date&nbsp;&nbsp;&nbsp;<span
+                                            class="text-danger"
+                                            ng-if="newDisembodimentForm.disembodiment_date.$touched && newDisembodimentForm.disembodiment_date.$error.required">Date is required.</span>
+                                </label>
+                                {!! Form::text('disembodiment_date', $value = null, $attributes = array('class' => 'form-control', 'id' => 'disembodiment_date',  'ng-model'=> 'disembodiment_date', 'disabled')) !!}
                             </div>
                         </div>
                         <div class="col-sm-4">
                             <div class="form-group">
-                                <label class="control-label">Date&nbsp;&nbsp;&nbsp;<span
-                                            class="text-danger"
-                                            ng-if="newDisembodimentForm.disembodiment_date.$touched && newDisembodimentForm.disembodiment_date.$error.required">Date is required.</span>
-                                </label>
-
-                                {!! Form::text('disembodiment_date', $value = null, $attributes = array('class' => 'form-control', 'id' => 'disembodiment_date',  'ng-model'=> 'disembodiment_date', 'disabled')) !!}
+                                <label class="control-label">Memorandum no. & Date</label>
+                                <div class="row">
+                                    <div class="col-md-6" style="padding-right: 0">
+                                        <input ng-model="memorandumId" type="text" class="form-control" required
+                                               name="memorandum_id" placeholder="Enter Memorandum no.">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input date-picker ng-model="memDate" type="text" class="form-control"
+                                               name="mem_date" placeholder="Memorandum Date" required>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-sm-4">
@@ -270,15 +236,12 @@
                                 <label class="control-label">Comment
                                     &nbsp;&nbsp;&nbsp;<span class="text-danger"
                                                             ng-if="newDisembodimentForm.disembodiment_comment.$touched && newDisembodimentForm.disembodiment_comment.$error.required">Comment is required.</span></label>
-
                                 {!! Form::text('disembodiment_comment', $value = null, $attributes = array('class' => 'form-control', 'id' => 'disembodiment_comment', 'ng-model'=> 'disembodiment_comment', 'placeholder'=> 'Write Comment')) !!}
-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="row">
                 <div class="col-md-12">
                     {!! Form::open(['route'=>'print_letter','target'=>'_blank','ng-if'=>'printLetter','class'=>'pull-left']) !!}
@@ -298,7 +261,6 @@
                     </button>
                 </div>
             </div>
-
         </section>
     </div>
 

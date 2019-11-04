@@ -1,6 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
 /local/vendor/
-/.idea/
+.idea/*
 /local/storage/app
 /local/storage/data
 /local/storage/DemandSheet

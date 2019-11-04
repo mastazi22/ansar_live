@@ -1,5 +1,25 @@
 <div class="row">
-    <div class="col-md-7">
+    <div class="col-md-12">
+        <div class="alert alert-danger" ng-if="error!=undefined&&error.id!=undefined">
+            <i class="fa fa-warning"></i>&nbsp; Invalid request
+        </div>
+        <form ng-submit="submitForm()">
+            <input type="hidden" ng-model="formData.id" ng-init="formData.id=info.id">
+            <div class="form-group">
+                <label for="">Memorandum No.</label>
+                <input type="text" ng-model="formData.mem_id" placeholder="Memorandum No." class="form-control"
+                       required>
+                <p class="text text-danger" ng-if="error!=undefined&&error.mem_id!=undefined">[[error.mem_id[0] ]]</p>
+            </div>
+            <datepicker-separate-fields label="Withdraw Date:" notify="kpiWithdrawInvalidDate"
+                                        rdata="formData.date"></datepicker-separate-fields>
+            <button class="btn btn-primary pull-right" type="submit"
+                    ng-disabled="isSubmitting || kpiWithdrawInvalidDate">
+                <i class="fa fa-spinner fa-pulse" ng-if="isSubmitting"></i>&nbsp;Withdraw Kpi
+            </button>
+        </form>
+    </div>
+    <div class="col-md-12" style="margin-top: 1%;">
         <div class="table-responsive">
             <table class="table table-bordered table-striped">
                 <tr>
@@ -25,35 +45,7 @@
             </table>
         </div>
     </div>
-    <div class="col-md-5">
-        <div class="alert alert-danger" ng-if="error!=undefined&&error.id!=undefined">
-            <i class="fa fa-warning"></i>&nbsp; Invalid request
-        </div>
-        <form ng-submit="submitForm()">
-            <input type="hidden" ng-model="formData.id" ng-init="formData.id=info.id">
-            <div class="form-group" ng-class="{'has-error':error!=undefined&&error.date!=undefined}">
-                <label for="">Withdraw Date</label>
-                <input type="text" class="form-control"  ng-model="formData.date" id="date-picker" placeholder="Withdraw Date">
-                <p class="text text-danger" ng-if="error!=undefined&&error.date!=undefined">[[error.date[0] ]]</p>
-            </div>
-            <div class="form-group">
-                <label for="">Memorandum No.</label>
-                <input type="text" ng-model="formData.mem_id" placeholder="Memorandum No." class="form-control">
-                <p class="text text-danger" ng-if="error!=undefined&&error.mem_id!=undefined">[[error.mem_id[0] ]]</p>
-            </div>
-            <button class="btn btn-primary pull-right" type="submit" ng-disabled="isSubmitting">
-                <i class="fa fa-spinner fa-pulse" ng-if="isSubmitting"></i>&nbsp;Withdraw Kpi
-            </button>
-        </form>
-    </div>
-
 </div>
 <script>
-    $("#date-picker").datepicker(
-        {
-            dateFormat:'dd-M-yy'
-        }
-
-        )
+    $("#date-picker").datepicker({dateFormat: 'dd-M-yy'});
 </script>
-
