@@ -220,7 +220,7 @@
                                     data="formData"
                             ></filter-template>
                             <div class="form-group">
-                                <datepicker-separate-fields label="Embodiment Date:" notify="addToTrnsInvalidDate"
+                                <datepicker-separate-fields label="Transfer Date:" notify="addToTrnsInvalidDate"
                                                             rdata="tempJoiningDate"></datepicker-separate-fields>
                                 <input type="hidden"
                                        ng-value="tempJoiningDate" name="joining_date">
