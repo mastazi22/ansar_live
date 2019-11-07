@@ -35,14 +35,14 @@
             $scope.quotaLoading = true;
             $scope.data = {offeredDistrict: ""};
             $scope.selectedAnsar = [];
-            $scope.result = {}
-            $scope.countDown = 10
-            $scope.buttonText = "Send Offer"
+            $scope.result = {};
+            $scope.countDown = 10;
+            $scope.buttonText = "Send Offer";
             $scope.offerQuota = 0;
             $scope.negateDistrictId = null;
             var promis;
-            $scope.districtId = '{{Auth::user()->district_id}}'
-            var userType = '{{Auth::user()->type}}'
+            $scope.districtId = '{{Auth::user()->district_id}}';
+            var userType = '{{Auth::user()->type}}';
             if (parseInt(userType) == 11 || parseInt(userType) == 33 || parseInt(userType) == 77) {
                 $scope.isAdmin = true;
                 $http({
@@ -57,18 +57,18 @@
             }
             $scope.removeDistrict = function () {
                 for (var i = 0; i < $scope.removedDistrict.length; i++) {
-                    $scope.allDistrict.push($scope.updatedDistrict[$scope.removedDistrict[i] - i])
+                    $scope.allDistrict.push($scope.updatedDistrict[$scope.removedDistrict[i] - i]);
                     $scope.updatedDistrict.splice($scope.removedDistrict[i] - i, 1)
                 }
                 $scope.removedDistrict = [];
-            }
+            };
             $scope.loadAnsar = function () {
                 var total = parseInt($scope.kpiPCMale) + parseInt($scope.kpiPCFemale) + parseInt($scope.kpiAPCMale) + parseInt($scope.kpiAPCFemale) + parseInt($scope.kpiAnsarMale) + parseInt($scope.kpiAnsarFemale);
                 if (total > $scope.offerQuota) {
                     alert("Your offer limit exit total number of offer you want to send");
                     return;
                 }
-                $scope.buttonText = "Loading Ansar"
+                $scope.buttonText = "Loading Ansar";
                 $scope.showLoadScreen = false;
                 var data = {
                     pc_male: $scope.kpiPCMale || 0,
@@ -81,8 +81,7 @@
                         return v != undefined;
                     }),
                     exclude_district: (parseInt(userType) == 11 ? null : $scope.districtId)
-                }
-                // alert($scope.selectedDistrict);
+                };
                 $scope.showLoadingAnsar = true;
                 $scope.modalStyle = {'display': 'block'};
                 $http({
@@ -105,7 +104,6 @@
 //                    }
 
                 }, function (response) {
-                    //alert('Error!! ' + response.status)
                     if (response.status == 400) {
                         $scope.alerts = [];
                         $scope.alerts.push(response.data);
@@ -114,10 +112,10 @@
                     $scope.showLoadingAnsar = false;
                     $scope.buttonText = "Send Offer"
                 })
-            }
+            };
             $scope.sendOffer = function () {
                 $scope.showLoadingAnsar = true;
-                $scope.buttonText = "Sending Offer..."
+                $scope.buttonText = "Sending Offer...";
                 $http({
                     url: '{{URL::to('HRM/send_offer')}}',
                     data: angular.toJson({
@@ -138,13 +136,11 @@
                     method: 'post'
                 }).then(
                     function (response) {
-                        console.log(response.data)
-                        //alert(response.data.success + " Success," + response.data.fail + " Fails");
                         $scope.showLoadScreen = true;
                         $scope.alerts = [];
                         $scope.alerts.push(response.data);
-                        $scope.buttonText = "Send Offer"
-                        notificationService.notify(response.data.type, response.data.message)
+                        $scope.buttonText = "Send Offer";
+                        notificationService.notify(response.data.type, response.data.message);
                         $scope.kpiPCMale = '';
                         $scope.kpiPCFemale = '';
                         $scope.kpiAPCMale = '';
@@ -154,11 +150,8 @@
                         $scope.getOfferCount();
                     },
                     function (response) {
-                        // $scope.error = response.data;
-                        //alert(JSON.stringify(response));
-                        console.log(response.data);
                         $scope.alerts = [];
-                        notificationService.notify(response.data.type, response.data.message)
+                        notificationService.notify(response.data.type, response.data.message);
                         $scope.showLoadScreen = true;
                         $scope.buttonText = "Send Offer"
                     }
@@ -175,18 +168,16 @@
                 }, function (response) {
 
                 })
-            }
+            };
             $scope.checkDistrict = function (a, b) {
                 var s = false;
                 a.forEach(function (a) {
                     if (a.id == b.id) {
                         s = true;
                     }
-                })
-                //console.log(s)
+                });
                 return s;
-
-            }
+            };
             $scope.getOfferCount();
             $scope.getInt = function (a) {
                 if (isNaN(a)) {
@@ -199,14 +190,13 @@
                 promis = $interval(function () {
                     $scope.countDown = $scope.countDown - 1
                 }, 1000)
-            }
+            };
             $scope.$watch('countDown', function (n, o) {
                 if (n <= 0) {
                     $interval.cancel(promis);
                     window.location.assign('{{URL::previous()}}')
                 }
-
-            })
+            });
             $scope.closeAlert = function () {
                 $scope.alerts = [];
             };
@@ -228,13 +218,7 @@
 
     </script>
     <div ng-controller="OfferController" id="offer-view">
-        {{--<div class="breadcrumbplace">--}}
-        {{--{!! Breadcrumbs::render('offer_information') !!}--}}
-        {{--</div>--}}
         <section class="content">
-            {{--<div class="alert alert-warning">
-                <i class="fa fa-warning"></i>&nbsp; Offer option has been temporarily  suspended. It will be activated on next Sunday again
-            </div>--}}
             @if($isFreeze)
                 <h3 style="text-align: center">You have <span class="text-warning">{{$isFreeze}}</span> freezed ansar in
                     your district.Unfreeze them then you are eligible to send offer
@@ -269,6 +253,11 @@
                                     <div ng-class="{'col-md-8':isAdmin,'col-md-12':!isAdmin}">
                                         <ul class="nav mb-3 nav-tabs" id="pills-tab" role="tablist">
                                             <li class="nav-item active">
+                                                <a class="nav-link" id="pills-ansar-tab" data-toggle="pill"
+                                                   href="#pills-ansar" role="tab" aria-controls="pills-ansar"
+                                                   aria-selected="false">Ansar</a>
+                                            </li>
+                                            <li class="nav-item">
                                                 <a class="nav-link" id="pills-pc-tab" data-toggle="pill"
                                                    href="#pills-pc" role="tab" aria-controls="pills-pc"
                                                    aria-selected="true">PC</a>
@@ -278,14 +267,9 @@
                                                    href="#pills-apc" role="tab" aria-controls="pills-apc"
                                                    aria-selected="false">APC</a>
                                             </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" id="pills-ansar-tab" data-toggle="pill"
-                                                   href="#pills-ansar" role="tab" aria-controls="pills-ansar"
-                                                   aria-selected="false">Ansar</a>
-                                            </li>
                                         </ul>
                                         <div class="tab-content" id="pills-tabContent">
-                                            <div class="tab-pane fade active in" id="pills-pc" role="tabpanel"
+                                            <div class="tab-pane fade" id="pills-pc" role="tabpanel"
                                                  aria-labelledby="pills-pc-tab" style="padding: 3% 0 0 0">
                                                 <div class="row">
                                                     <div class="col-md-6">
@@ -361,7 +345,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="tab-pane fade" id="pills-ansar" role="tabpanel"
+                                            <div class="tab-pane fade active in" id="pills-ansar" role="tabpanel"
                                                  aria-labelledby="pills-ansar-tab" style="padding: 3% 0 0 0">
                                                 <div class="row">
                                                     <div class="col-md-6">
