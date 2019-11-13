@@ -5,8 +5,7 @@
 @endsection
 @section('content')
     <script>
-
-        GlobalApp.controller("OfferBlockController",function ($scope, $http, $sce,notificationService) {
+        GlobalApp.controller("OfferBlockController", function ($scope, $http, $sce, notificationService) {
             var emptyTemplate = `<div class="table-responsive">
                         <table class="table table-bordered table-condensed">
                             <caption>
@@ -31,73 +30,75 @@
                                 </td>
                             </tr>
                         </table>
-                    </div>`
-            $scope.param = {}
+                    </div>`;
+            $scope.param = {};
             $scope.template = $sce.trustAsHtml(emptyTemplate);
             $scope.loadData = function (url) {
-                console.log($scope.param);
+                if (!url) {
+                    url = '{{URL::route('HRM.offer_rollback.index')}}';
+                }
+                if ($scope.param.ansar_id) {
+                    url = url + "?ansar_id=" + $scope.param.ansar_id;
+                }
                 $scope.allLoading = true;
                 $http({
-                    method:'get',
-                    url:url||'{{URL::route('HRM.offer_rollback.index')}}'
+                    method: 'get',
+                    url: url
                 }).then(function (response) {
                     $scope.template = $sce.trustAsHtml(response.data);
                     $scope.allLoading = false;
-                },function (response) {
+                }, function (response) {
                     $scope.template = $sce.trustAsHtml(emptyTemplate);
                     $scope.allLoading = false;
                 })
-            }
+            };
             $scope.clearSearch = function (event) {
                 $scope.param = {};
                 $scope.loadData();
-            }
+            };
             $scope.rollback = function (id) {
                 $scope.param['_method'] = 'patch';
                 $scope.param['type'] = 'rollback';
                 $scope.updateStatus(id);
-            }
+            };
             $scope.sendToPanel = function (id) {
                 $scope.param['_method'] = 'patch';
                 $scope.param['type'] = 'sendtopanel';
                 $scope.updateStatus(id);
-            }
+            };
             $scope.updateStatus = function (id) {
                 $scope.allLoading = true;
                 $http({
-                    method:'post',
-                    data:$scope.param,
-                    url:'{{URL::to('/HRM/offer_rollback')}}/'+id
+                    method: 'post',
+                    data: $scope.param,
+                    url: '{{URL::to('/HRM/offer_rollback')}}/' + id
                 }).then(function (response) {
-                    if(response.data.status){
+                    if (response.data.status) {
                         $scope.allLoading = false;
-                        notificationService.notify("success",response.data.message);
+                        notificationService.notify("success", response.data.message);
                         $scope.loadData();
-                    } else{
+                    } else {
                         $scope.allLoading = false;
-                        notificationService.notify("error",response.data.message);
+                        notificationService.notify("error", response.data.message);
                     }
-
-                },function (response) {
+                }, function (response) {
                     $scope.allLoading = false;
                 })
-            }
+            };
             $scope.loadData();
-        })
+        });
         GlobalApp.directive('compileHtml', function ($compile) {
             return {
                 restrict: 'A',
                 link: function (scope, elem, attr) {
                     var newscope;
                     scope.$watch('template', function (n) {
-
                         if (attr.ngBindHtml) {
-                            if(newscope) newscope.$destroy();
+                            if (newscope) newscope.$destroy();
                             newscope = scope.$new();
                             $compile(elem[0].children)(newscope);
                         }
                     })
-
                 }
             }
         })

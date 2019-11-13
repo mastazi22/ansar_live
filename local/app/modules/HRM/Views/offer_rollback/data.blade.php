@@ -12,7 +12,6 @@
                     <button class="btn btn-default" ng-click="clearSearch()">
                         <i class="fa fa-close"></i>
                     </button>
-
                 </span>
             </div>
         </caption>
@@ -39,7 +38,8 @@
                 <td>{{$ansar->blocked_date}}</td>
                 <td>
                     <button class="btn btn-primary btn-xs" ng-click="rollback('{{$ansar->id}}')">Rollback offer</button>
-                    <button class="btn btn-primary btn-xs" ng-click="sendToPanel('{{$ansar->id}}')">Send to panel</button>
+                    <button class="btn btn-primary btn-xs" ng-click="sendToPanel('{{$ansar->id}}')">Send to panel
+                    </button>
                 </td>
             </tr>
         @empty
