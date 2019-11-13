@@ -1903,7 +1903,11 @@ GlobalApp.directive('datepickerSeparateFields',function(){
                 var selectedDateStr = $scope.picker_day + '-' + $scope.picker_month + '-' + $scope.picker_year;
                 var d = new Date(selectedDateStr);
                 var month = Object.keys($scope.months)[d.getMonth()];
-                if (d.getFullYear() == $scope.picker_year && month == $scope.picker_month && d.getDate() == $scope.picker_day) {
+                var tempYear = d.getFullYear()+"";
+                if(tempYear.indexOf("-")>=0){
+                    tempYear=tempYear.substr(1);
+                }
+                if (tempYear == $scope.picker_year && month == $scope.picker_month && d.getDate() == $scope.picker_day) {
                     $scope.rdata = selectedDateStr;
                     $scope.notify = false;
                 } else {
