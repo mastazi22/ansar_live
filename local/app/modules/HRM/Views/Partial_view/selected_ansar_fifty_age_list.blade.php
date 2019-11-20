@@ -1,6 +1,5 @@
 <table class="table table-bordered">
     <tr>
-        <th>SL. No</th>
         <th>Ansar ID</th>
         <th>Name</th>
         <th>Rank</th>
@@ -10,7 +9,6 @@
         <th>Gender</th>
     </tr>
     <tr ng-repeat="ansar in data.ansars">
-        <td>[[data.index+$index]]</td>
         <td>[[ansar.id]]</td>
         <td>[[ansar.name]]</td>
         <td>[[ansar.rank]]</td>

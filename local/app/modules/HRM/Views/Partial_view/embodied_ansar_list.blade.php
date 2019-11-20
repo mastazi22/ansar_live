@@ -1,6 +1,5 @@
 <table class="table table-bordered">
     <tr>
-        <th>SL. No</th>
         <th>Ansar ID</th>
         <th>Rank</th>
         <th>Name</th>
@@ -10,11 +9,9 @@
         <th>Kpi Name</th>
         <th>Embodiment Date</th>
         <th>Embodiment Id</th>
-
     </tr>
     <tbody>
     <tr ng-repeat="ansar in data.ansars">
-        <td>[[data.index+$index]]</td>
         <td><a href="{{URL::to('HRM/entryreport')}}/[[ansar.id]]">[[ansar.id]]</a></td>
         <td>[[ansar.rank]]</td>
         <td>[[ansar.name]]</td>
