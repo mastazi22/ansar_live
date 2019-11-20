@@ -114,7 +114,10 @@ class EmbodimentController extends Controller
             ->groupBy('t.ansar_id')
             ->select('t.panel_date', 't.memorandum_id', 't.ansar_id')->get());
         $apd = [];
+        $temp_ansar_id = [];
         foreach ($detail as $d) {
+            if(in_array($d->ansar_id, $temp_ansar_id))continue;
+            array_push($temp_ansar_id, $d->ansar_id);
             $data = PanelModel::where('ansar_id', $d->ansar_id)->first();
             if (!$data) {
                 $data = $ansarPanelInfo->where('ansar_id', $d->ansar_id)->first();
