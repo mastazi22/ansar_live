@@ -91,7 +91,7 @@ class OfferSMS extends Model
     public function getOfferTypeAttribute()
     {
         $globalOfferDistrict = Config::get("app.offer");
-        if (in_array($this->offered_district, $globalOfferDistrict)) {
+        if (in_array($this->district_id, $globalOfferDistrict)) {
             return "Global";
         }
         return "Regional";
