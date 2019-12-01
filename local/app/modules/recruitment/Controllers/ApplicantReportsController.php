@@ -16,6 +16,8 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ApplicantReportsController extends Controller
@@ -479,35 +481,51 @@ class ApplicantReportsController extends Controller
 
     public function applicantFormDownload(Request $request)
     {
-        DB::enableQueryLog();
+        ini_set('max_execution_time', '0');
         if (strcasecmp($request->method(), 'post') == 0) {
-            $applicants = JobAppliciant::with(['division', 'district', 'thana']);
-            if ($request->exists('job_circular_id') && !empty($request->job_circular_id)) {
-                $applicants->where('job_circular_id', $request->job_circular_id);
-            } else {
-                return response()->json(['error' => "Please select a circular."]);
-            }
-            if ($request->exists('status') && !empty($request->status)) {
-                $applicants->where('status', $request->status);
-            } else {
-                return response()->json(['error' => "Please select a status."]);
-            }
+            $applicants = JobAppliciant::with(['circular.constraint', 'district', 'thana', 'present_district', 'present_thana', 'quotaType', 'education']);
             if ($request->exists('applicant_id') && !empty($request->applicant_id)) {
                 $applicants->where('applicant_id', $request->applicant_id);
-            }
-            $path = storage_path('applicant_form');
-            if (!File::exists($path)) File::makeDirectory($path, 0775, true);
-            $applicants = $applicants->get();
-//            dd($path . '\\test_form.pdf');
-            foreach ($applicants as $applicant) {
-                try{
-                    SnappyPdf::loadView('recruitment::reports.app_form_template')->save($path . '\\test_form.pdf');
-                }catch (\Exception $e){
-                    dd($e);
+            } else {
+                if ($request->exists('job_circular_id') && !empty($request->job_circular_id)) {
+                    $applicants->where('job_circular_id', $request->job_circular_id);
+                } else {
+                    return response()->json(['error' => "Please select a circular."]);
                 }
-                break;
+                if ($request->exists('status') && !empty($request->status)) {
+                    $applicants->where('status', $request->status);
+                } else {
+                    return response()->json(['error' => "Please select a status."]);
+                }
             }
-            return response()->json(['error' => "Please select a status."]);
+            ob_implicit_flush(true);
+            ob_end_flush();
+            $zip = new \ZipArchive();
+            $savePath = public_path('download/applicant_form');
+            $downloadPath = public_path('download/applicant_form_download');
+            if (!File::exists($savePath)) File::makeDirectory($savePath, 0775, true);
+            if (!File::exists($downloadPath)) File::makeDirectory($downloadPath, 0775, true);
+            $files = [];
+            $applicants = $applicants->get();
+            $zipPath = "download/applicant_form_download/circular_" . $applicants[0]->circular->id . ".zip";
+            $zip->open(public_path($zipPath), \ZipArchive::CREATE);
+            foreach ($applicants as $applicant) {
+                $tempFilePath = $savePath . '\\' . $applicant->applicant_id . '.pdf';
+                try {
+                    SnappyPdf::loadView('recruitment::reports.app_form_template', compact('applicant'))
+                        ->setOrientation('portrait')->setOption('page-size', 'a4')
+                        ->save($tempFilePath);
+                    array_push($files, $tempFilePath);
+                    $zip->addFile($tempFilePath, $applicant->applicant_id . '.pdf');
+                } catch (\Exception $e) {
+                    Log::info('[' . $e->getCode() . '] "' . $e->getMessage() . '" on line ' . $e->getTrace()[0]['line'] . ' of file ' . $e->getTrace()[0]['file']);
+                }
+            }
+            $zip->close();
+            foreach ($files as $file) {
+                unlink($file);
+            }
+            return response()->json(['file' => 'applicant_forms.zip', 'download' => '/' . $zipPath]);
         }
         return view('recruitment::reports.applicant_form_download');
     }
