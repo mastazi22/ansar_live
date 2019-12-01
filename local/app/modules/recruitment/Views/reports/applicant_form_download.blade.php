@@ -12,6 +12,8 @@
             $scope.allLoading = false;
             $scope.jobCategories = [];
             $scope.jobCirculars = [];
+            $scope.downloadable = "";
+            $scope.dFileName = "";
             $scope.loadAllCategories = function () {
                 $scope.allLoading = true;
                 $q.all([
@@ -47,8 +49,11 @@
                     },
                     method: 'post'
                 }).then(function (response) {
-                    $scope.allLoading = false;
-                    console.log(response);
+                    if(response.data.file){
+                        $scope.allLoading = false;
+                        $scope.downloadable = response.data.download;
+                        $scope.dFileName = response.data.file;
+                    }
                 }, function (response) {
                     $scope.allLoading = false;
                     alert("Error Occurred.");
@@ -113,6 +118,11 @@
                     <div class="col-sm-3">
                         <label for="" class="control-label" style="display:block">&nbsp;</label>
                         <button class="btn btn-primary" ng-click="generateApplicantForm()">Generate All</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>Download&nbsp;<a ng-if="downloadable!=''" href="[[downloadable]]" download>[[dFileName]]</a></p>
                     </div>
                 </div>
             </div>
