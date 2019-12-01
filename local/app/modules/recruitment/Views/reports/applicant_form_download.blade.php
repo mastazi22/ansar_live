@@ -121,8 +121,8 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
-                        <p>Download&nbsp;<a ng-if="downloadable!=''" href="[[downloadable]]" download>[[dFileName]]</a></p>
+                    <div class="col-md-12" ng-if="downloadable!=''">
+                        <p>Download&nbsp;<a href="[[downloadable]]" download>[[dFileName]]</a></p>
                     </div>
                 </div>
             </div>
