@@ -40,6 +40,7 @@
                 })
             };
             $scope.generateApplicantForm = function () {
+                $scope.allLoading = true;
                 $http({
                     url: '/' + prefix + 'recruitment/reports/applicant_form_download',
                     data: {
