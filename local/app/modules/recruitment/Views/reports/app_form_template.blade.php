@@ -34,7 +34,7 @@
         }
     </style>
 </head>
-<body style="font-family: 'Siyamrupali';color: #000000">
+<body style="font-family: 'Siyamrupali';color: #000000;font-size: 12px;">
 <div style="width: 100%;margin: auto;">
     <div style="display: inline-block;width:100%;margin-bottom: 10px;position:relative;">
         <img style="width: 100px;height: 100px;display:inline-block;float:left;"
