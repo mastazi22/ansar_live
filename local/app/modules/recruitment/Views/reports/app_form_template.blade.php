@@ -222,7 +222,7 @@
     <table class="r2" border="1" cellpadding="0" cellspacing="0" style="width: 100%;margin-top: 5px">
         <tbody>
         <tr>
-            <th rowspan="3" style="width: 10px;">১৮.</th>
+            <th rowspan="{{count($applicant->education)+2}}" style="width: 10px;">১৮.</th>
             <th colspan="6" style="text-align: center !important;">শিক্ষাগত যোগ্যতা</th>
         </tr>
         <tr>
