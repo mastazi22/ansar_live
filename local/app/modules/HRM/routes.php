@@ -284,6 +284,7 @@ Route::group(['prefix' => 'HRM', 'middleware' => ['hrm']], function () {
         Route::get('/blocklist_ansar_details', ['as' => 'blocklist_ansar_details', 'uses' => 'BlockBlackController@loadAnsarDetailforBlock']);
         Route::post('/blocklist_entry', ['as' => 'blocklist_entry', 'uses' => 'BlockBlackController@blockListEntry']);
         Route::any('/user_action_log/{id?}', ['as' => 'user_action_log', 'uses' => 'DGController@viewUserActionLog']);
+        Route::any('/user_request_log', ['as' => 'user_request_log', 'uses' => 'DGController@viewUserRequestLog']);
         Route::post('/multi_blocklist_entry', ['as' => 'multi_blocklist_entry', 'uses' => 'BlockBlackController@arrayBlockListEntry']);
 
         Route::get('/unblocklist_entry_view', ['as' => 'unblocklist_entry_view', 'uses' => 'BlockBlackController@unblockListEntryView']);

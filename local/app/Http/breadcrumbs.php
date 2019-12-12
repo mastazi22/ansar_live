@@ -381,6 +381,10 @@ Breadcrumbs::register('user_action_log', function($breadcrumbs) {
     $breadcrumbs->parent('dg');
     $breadcrumbs->push('User Action Log', URL::route('user_action_log'));
 });
+Breadcrumbs::register('user_request_log', function($breadcrumbs) {
+    $breadcrumbs->parent('dg');
+    $breadcrumbs->push('User Request Log', URL::route('user_request_log'));
+});
 Breadcrumbs::register('direct_unblock', function($breadcrumbs) {
     $breadcrumbs->parent('dg_block');
     $breadcrumbs->push('Remove Ansar from Blocklist', URL::route('dg_unblocklist_entry_view'));

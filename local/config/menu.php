@@ -297,6 +297,10 @@ return [
                     "route" => "user_action_log",
                     "icon" => "fa-file",
                 ],
+                "User Request Log" => [
+                    "route" => "user_request_log",
+                    "icon" => "fa-file",
+                ],
 
 //                "Direct Blacklist" => [
 //                    "route" => "#",
