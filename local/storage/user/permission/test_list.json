@@ -429,6 +429,10 @@
       {
         "value": "user_action_log",
         "name": "User Action Log"
+      },
+      {
+        "value": "user_request_log",
+        "name": "User Request Log"
       }
     ]
   },

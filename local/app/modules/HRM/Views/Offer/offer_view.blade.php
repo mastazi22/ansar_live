@@ -214,6 +214,26 @@
             $scope.$watch("[kpiPCMale,kpiPCFemale,kpiAPCMale,kpiAPCFemale,kpiAnsarMale,kpiAnsarFemale]", function (n, o) {
                 $scope.message = $scope.getMessageString();
             }, true)
+
+            //checkbox watch
+            $scope.$watch("kpiPCMaleStatus", function (n, o) {
+                if (!n) $scope.kpiPCMale = '';
+            });
+            $scope.$watch("kpiPCFemaleStatus", function (n, o) {
+                if (!n) $scope.kpiPCFemale = '';
+            });
+            $scope.$watch("kpiAPCMaleStatus", function (n, o) {
+                if (!n) $scope.kpiAPCMale = '';
+            });
+            $scope.$watch("kpiAPCFemaleStatus", function (n, o) {
+                if (!n) $scope.kpiAPCFemale = '';
+            });
+            $scope.$watch("kpiAnsarMaleStatus", function (n, o) {
+                if (!n) $scope.kpiAnsarMale = '';
+            });
+            $scope.$watch("kpiAnsarFemaleStatus", function (n, o) {
+                if (!n) $scope.kpiAnsarFemale = '';
+            });
         })
 
     </script>

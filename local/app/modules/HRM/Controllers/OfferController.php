@@ -147,6 +147,7 @@ class OfferController extends Controller
             }
             RequestDumper::create([
                 'user_id' => auth()->user()->id,
+                'request_ip' => $request->ip(),
                 'request_url' => $request->url(),
                 'request_data' => serialize($request->all())
             ]);
