@@ -510,7 +510,7 @@ class ApplicantReportsController extends Controller
             $zipPath = "download/applicant_form_download/circular_" . $applicants[0]->circular->id . ".zip";
             $zip->open(public_path($zipPath), \ZipArchive::CREATE);
             foreach ($applicants as $applicant) {
-                $tempFilePath = $savePath . '\\' . $applicant->applicant_id . '.pdf';
+                $tempFilePath = $savePath . '/' . $applicant->applicant_id . '.pdf';
                 try {
                     SnappyPdf::loadView('recruitment::reports.app_form_template', compact('applicant'))
                         ->setOrientation('portrait')->setOption('page-size', 'a4')
