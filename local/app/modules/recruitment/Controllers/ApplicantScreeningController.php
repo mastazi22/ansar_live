@@ -1203,38 +1203,45 @@ class ApplicantScreeningController extends Controller
     }
     public function generateApplicantRoll(Request $request)
     {
+        DB::enableQueryLog();
+        ini_set('max_execution_time', '0');
         if ($request->ajax() && strcasecmp($request->method(), 'post') == 0) {
-//            return $request->all();
             $rules = [
                 'job_circular_id' => 'required',
                 'status' => 'required'
             ];
             $this->validate($request, $rules);
-            DB::beginTransaction();
-            try {
-                $circular = JobCircular::with(['appliciant' => function ($q) use ($request) {
-                    $q->whereIn('status', array_filter($request->status))->orderBy('id');
-                    $q->select('applicant_id','job_circular_id','roll_no','status');
-                }])->find($request->job_circular_id);
-                $applicantCount = JobAppliciant::where('job_circular_id', $request->job_circular_id)
-                    ->whereIn('status', array_filter($request->status))->count();
-                $len = strlen("$applicantCount");
-                $i = 1;
-                $rolls = [];
-                foreach ($circular->appliciant as $applicant) {
-                    $roll_last_part = sprintf("%0" . $len . "d", $i);
-                    $roll_no = $circular->circular_code . "" . $roll_last_part;
-                    array_push($rolls, $roll_no);
-                    $i++;
-                    $applicant->update(compact('roll_no'));
+            $response = ['status' => true, 'message' => "Complete", 'code' => 200];
+            $applicantCount = JobAppliciant::where('job_circular_id', $request->job_circular_id)
+                ->whereIn('status', $request->status)->count();
+            $len = strlen("$applicantCount");
+            $units = DB::connection('hrm')->table('tbl_units')->get();
+            if(count($units)>0){
+                foreach ($units as $unit){
+                    try{
+                        $applicants = JobAppliciant::with('circular')
+                            ->where('job_circular_id', $request->job_circular_id)
+                            ->where('unit_id', $unit->id)
+                            ->whereIn('status', $request->status)->orderBy('id')->get();
+                        if($applicants->count() == 0) continue;
+                        $i = 1;
+                        foreach ($applicants as $applicant) {
+                            $unitCode = sprintf("%02d", $unit->unit_code);
+                            $roll_last_part = sprintf("%0" . $len . "d", $i);
+                            $roll_no = $applicant->circular->circular_code . $unitCode . $roll_last_part;
+                            $applicant->update(compact('roll_no'));
+                            $i++;
+                        }
+                    }catch(\Exception $e){
+                        $response = ['status' => false, 'message' => $e->getMessage(), 'code' => 500];
+                        break;
+                    }
+                    sleep(3);
                 }
-                DB::commit();
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
+            }else {
+                $response = ['status' => true, 'message' => "Unit not found", 'code' => 200];
             }
-
-            return response()->json(['status' => true]);
+            return response()->json($response, $response['code']);
         }
         return view('recruitment::applicant.generate_applicant_roll');
     }
