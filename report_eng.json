@@ -19,6 +19,8 @@
       "education": "Education",
       "rank": "Rank",
       "district": "Own District",
+      "mobile": "Mobile",
+      "avub_share_id": "Share Id",
       "embodiment_date": "Embodiment date",
       "join_date": "Transfer date"
     }
