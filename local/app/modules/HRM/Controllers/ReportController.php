@@ -84,7 +84,7 @@ class ReportController extends Controller
                 ->where('tbl_ansar_status_info.embodied_status', '=', 1)
                 ->groupBy('tbl_ansar_parsonal_info.ansar_id')
                 ->select('tbl_ansar_parsonal_info.ansar_id', 'tbl_ansar_parsonal_info.data_of_birth as dob', DB::raw('CONCAT(hight_feet," feet ",hight_inch," inch") as height'), 'tbl_ansar_parsonal_info.sex', 'tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_designations.name_bng',
-                    'tbl_units.unit_name_bng', 'tbl_embodiment.transfered_date', 'tbl_embodiment.joining_date'
+                    'tbl_units.unit_name_bng', 'tbl_embodiment.transfered_date', 'tbl_embodiment.joining_date', 'tbl_ansar_parsonal_info.avub_share_id', 'tbl_ansar_parsonal_info.mobile_no_self'
                     , DB::raw("IF(tbl_education_info.id!=0,tbl_education_info.education_deg_bng,tbl_ansar_education_info.name_of_degree) AS education"))->orderBy('tbl_embodiment.joining_date', 'desc')->get();
             //return DB::getQueryLog();
             $guards = DB::table('tbl_kpi_info')

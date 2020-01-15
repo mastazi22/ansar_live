@@ -12,7 +12,7 @@
             $scope.loadingThana = false;
             $scope.loadingKpi = false;
             $scope.report = {};
-            $scope.errorFound=0;
+            $scope.errorFound = 0;
             $scope.reportType = 'eng';
             $scope.loadAnsar = function () {
                 $scope.allLoading = true;
@@ -26,18 +26,17 @@
                         division: $scope.param.range
                     }
                 }).then(function (response) {
-                    $scope.errorFound=0;
+                    $scope.errorFound = 0;
                     $scope.allLoading = false;
                     $scope.ansars = response.data.ansars;
                     $scope.guardDetail = response.data.guard;
-                },function(response){
-                    $scope.errorFound=1;
+                }, function (response) {
+                    $scope.errorFound = 1;
                     $scope.allLoading = false;
                     $scope.guardDetail = [];
-                    $scope.ansars = $sce.trustAsHtml("<tr class='warning'><td colspan='"+$('.table').find('tr').find('th').length+"'>"+response.data+"</td></tr>");
-                    //alert($(".table").html())
+                    $scope.ansars = $sce.trustAsHtml("<tr class='warning'><td colspan='" + $('.table').find('tr').find('th').length + "'>" + response.data + "</td></tr>");
                 })
-            }
+            };
             $scope.exportData = function (type) {
                 $scope.allLoading = true;
                 $http({
@@ -48,40 +47,39 @@
                         unit: $scope.param.unit,
                         thana: $scope.param.thana,
                         division: $scope.param.range,
-                        export:type
+                        export: type
                     }
                 }).then(function (res) {
                     $scope.allLoading = false;
                     $scope.export_data = res.data;
                     $scope.generating = true;
                     generateReport();
-
-                },function (res) {
+                }, function (res) {
                     $scope.allLoading = false;
                 })
-            }
+            };
             $scope.file_count = 1;
-            function generateReport(){
+
+            function generateReport() {
                 $http({
-                    url: '{{URL::to('HRM/generate/file')}}/'+$scope.export_data.id,
+                    url: '{{URL::to('HRM/generate/file')}}/' + $scope.export_data.id,
                     method: 'post',
                 }).then(function (res) {
-                    if($scope.export_data.total_file>$scope.file_count){
-                        setTimeout(generateReport,1000);
-                        if(res.data.status) $scope.file_count++;
-                    }
-                    else{
+                    if ($scope.export_data.total_file > $scope.file_count) {
+                        setTimeout(generateReport, 1000);
+                        if (res.data.status) $scope.file_count++;
+                    } else {
                         $scope.generating = false;
                         $scope.file_count = 1;
-//                        window.open($scope.export_data.download_url,'_blank')
-                        window.location.href=$scope.export_data.download_url;
+                        window.location.href = $scope.export_data.download_url;
                     }
-                },function (res) {
-                    if($scope.export_data.file_count>$scope.file_count){
-                        setTimeout(generateReport,1000)
+                }, function (res) {
+                    if ($scope.export_data.file_count > $scope.file_count) {
+                        setTimeout(generateReport, 1000)
                     }
                 })
             }
+
             $scope.loadReportData = function (reportName, type) {
                 $scope.allLoading = true;
                 $http({
@@ -89,31 +87,29 @@
                     url: '{{URL::route('localize_report')}}',
                     params: {name: reportName, type: type}
                 }).then(function (response) {
-                    console.log(response.data)
                     $scope.report = response.data;
                     $scope.allLoading = false;
                 })
-            }
-            $scope.dateConvert=function(date){
+            };
+            $scope.dateConvert = function (date) {
                 return (moment(date).format('DD-MMM-Y'));
-            }
+            };
             $scope.loadReportData("ansar_in_guard_report", "eng")
-
-        })
+        });
         $(function () {
             $("#print-report").on('click', function (e) {
                 e.preventDefault();
                 $('#print-guard-in-ansar-report table tr td a').each(function () {
                     var v = $(this).text();
-                    $(this).parents('td').append('<span>' + v + '</span>')
+                    $(this).parents('td').append('<span>' + v + '</span>');
                     $(this).css('display', 'none')
-                })
+                });
                 $("#print-area").remove();
-                $('body').append('<div id="print-area">'+$("#print-guard-in-ansar-report").html()+'</div>')
+                $('body').append('<div id="print-area">' + $("#print-guard-in-ansar-report").html() + '</div>');
                 window.print();
-                $("#print-area").remove()
+                $("#print-area").remove();
                 $('#print-guard-in-ansar-report table tr td a').each(function () {
-                    $(this).parents('td').children('span').remove()
+                    $(this).parents('td').children('span').remove();
                     $(this).css('display', 'block')
                 })
             })
@@ -144,16 +140,15 @@
                                              class="radio-inline" style="margin: 0 !important;" value="bng"
                                              ng-model="reportType">&nbsp;<b>বাংলা</b>
                             </span>
-                    </div><br>
+                    </div>
+                    <br>
                     <filter-template
                             show-item="['range','unit','thana','kpi']"
                             type="single"
                             kpi-change="loadAnsar()"
                             start-load="range"
                             data="param"
-                            field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}"
-                    >
-
+                            field-width="{range:'col-sm-3',unit:'col-sm-3',thana:'col-sm-3',kpi:'col-sm-3'}">
                     </filter-template>
                     <div id="print-guard-in-ansar-report">
                         <h3 style="text-align: center" id="report-header">[[report.report_header]]&nbsp;&nbsp;
@@ -179,7 +174,9 @@
                                     <div>
                                         <ul class="guard-detail">
                                             <li class="guard-list-item-header">[[report.guard.kpi_address]]</li>
-                                            <li>[[guardDetail.kpi_address]], [[guardDetail.thana_name_bng]], [[guardDetail.unit_name_bng]]&nbsp;</li>
+                                            <li>[[guardDetail.kpi_address]], [[guardDetail.thana_name_bng]],
+                                                [[guardDetail.unit_name_bng]]&nbsp;
+                                            </li>
                                         </ul>
                                     </div>
                                     <div>
@@ -210,7 +207,8 @@
                         </div>
                         <div class="table-responsive">
                             <table class="table table-bordered">
-                                <caption class="table-caption" style="text-align: center;font-size: 1.5em;font-weight: bold">
+                                <caption class="table-caption"
+                                         style="text-align: center;font-size: 1.5em;font-weight: bold">
                                     [[report.ansar.ansar_title]]([[ansars.length]])
                                 </caption>
                                 <tr>
@@ -222,47 +220,28 @@
                                     <th>[[report.ansar.height]]</th>
                                     <th>[[report.ansar.education]]</th>
                                     <th>[[report.ansar.district]]</th>
+                                    <th>[[report.ansar.mobile]]</th>
+                                    <th>[[report.ansar.avub_share_id]]</th>
                                     <th>[[report.ansar.embodiment_date]]</th>
                                     <th>[[report.ansar.join_date]]</th>
                                 </tr>
                                 <tr ng-show="ansars.length==0">
-                                    <td colspan="8" class="warning no-ansar">
-                                        No Ansar is available to show
-                                    </td>
+                                    <td colspan="12" class="warning no-ansar">No Ansar is available to show</td>
                                 </tr>
                                 <tbody ng-if="errorFound==1" ng-bind-html="ansars"></tbody>
                                 <tr ng-show="ansars.length>0" ng-repeat="a in ansars">
-                                    <td>
-                                        [[$index+1]]
-                                    </td>
-                                    <td>
-                                        <a href="{{URL::to('HRM/entryreport')}}/[[a.ansar_id]]">[[a.ansar_id]]</a>
-                                    </td>
-                                    <td>
-                                        [[a.name_bng]]
-                                    </td>
-                                    <td>
-                                        [[a.ansar_name_bng]]
-                                    </td>
-                                    <td>
-                                        [[a.dob|dateformat:"DD MMM, YYYY"]]
-                                    </td>
-                                    <td>
-                                        [[a.height]]
-                                    </td>
-                                    <td>
-                                        [[a.education]]
-                                    </td>
-
-                                    <td>
-                                        [[a.unit_name_bng]]
-                                    </td>
-                                    <td>
-                                        [[dateConvert(a.joining_date)]]
-                                    </td>
-                                    <td>
-                                        [[a.transfered_date?dateConvert(a.transfered_date):'--']]
-                                    </td>
+                                    <td>[[$index+1]]</td>
+                                    <td><a href="{{URL::to('HRM/entryreport')}}/[[a.ansar_id]]">[[a.ansar_id]]</a></td>
+                                    <td>[[a.name_bng]]</td>
+                                    <td>[[a.ansar_name_bng]]</td>
+                                    <td>[[a.dob|dateformat:"DD MMM, YYYY"]]</td>
+                                    <td>[[a.height]]</td>
+                                    <td>[[a.education]]</td>
+                                    <td>[[a.unit_name_bng]]</td>
+                                    <td>[[a.mobile_no_self]]</td>
+                                    <td>[[a.avub_share_id]]</td>
+                                    <td>[[dateConvert(a.joining_date)]]</td>
+                                    <td>[[a.transfered_date?dateConvert(a.transfered_date):'--']]</td>
                                 </tr>
                             </table>
                         </div>
@@ -271,5 +250,4 @@
             </div>
         </section>
     </div>
-
 @stop
