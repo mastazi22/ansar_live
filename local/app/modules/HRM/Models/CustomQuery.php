@@ -1402,7 +1402,7 @@ class CustomQuery
             $ansarQuery->where('tbl_designations.id', '=', $rank);
         }
         if ($q) {
-            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', $q);
         }
         $total = clone $ansarQuery;
         $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_embodiment.ansar_id') as total"), 'tbl_designations.code');
@@ -1509,7 +1509,7 @@ class CustomQuery
             $ansarQuery->where('tbl_ansar_parsonal_info.sex', '=', $gender);
         }
         if ($q) {
-            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', $q);
         }
         $ansarQuery->where('tbl_ansar_status_info.retierment_status', 0);
         $total = clone $ansarQuery;
@@ -2451,7 +2451,7 @@ class CustomQuery
             /*$ansarQuery1->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
             $ansarQuery2->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');*/
 
-            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', 'LIKE', '%' . $q . '%');
+            $ansarQuery->where('tbl_ansar_parsonal_info.ansar_id', $q);
         }
         $totalQuery = clone $ansarQuery;
         if ($type == 'view') {
