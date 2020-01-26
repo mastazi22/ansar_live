@@ -300,37 +300,56 @@ class ApplicantReportsController extends Controller
                 $files = [];
                 $c->each(function ($applicant_list, $key) use ($category_type, $request, $total, &$counter, $file_path, &$files) {
                     sleep(1);
-                    $file = Excel::create('applicant_list_' . $counter, function ($excel) use ($applicant_list, $request, $category_type, $counter) {
-                        $excel->getDefaultStyle()
-                            ->getAlignment()
-                            ->applyFromArray(array(
-                                'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
-                                'vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,
-                                'wrap' => TRUE
-                            ));
-                        $excel->sheet('sheet1', function ($sheet) use ($applicant_list, $category_type, $counter, $request) {
-                            $sheet->setColumnFormat(array(
-                                'G' => '@'
-                            ));
-                            $sheet->mergeCells("K1:N1");
-                            $sheet->mergeCells("A1:A2");
-                            $sheet->mergeCells("B1:B2");
-                            $sheet->mergeCells("C1:C2");
-                            $sheet->mergeCells("D1:D2");
-                            $sheet->mergeCells("E1:E2");
-                            $sheet->mergeCells("F1:F2");
-                            $sheet->mergeCells("G1:G2");
-                            $sheet->mergeCells("H1:H2");
-                            $sheet->mergeCells("I1:I2");
-                            $sheet->mergeCells("J1:J2");
-                            $sheet->mergeCells("O1:O2");
-                            $sheet->mergeCells("P1:P2");
-                            $sheet->mergeCells("Q1:Q2");
-                            $sheet->mergeCells("R1:R2");
-                            $sheet->setWidth('A', 5);
-                            $sheet->loadView('recruitment::reports.excel_data_batt', ['index' => (($counter - 1) * 300) + 1, 'applicants' => $applicant_list, 'status' => $request->status, 'ctype' => $category_type]);
-                        });
-                    })->store('xls', $file_path, true);
+                    if(isset($request->export_template) && $request->export_template=="2"){
+                        $file = Excel::create('applicant_list_' . $counter, function ($excel) use ($applicant_list, $request, $category_type, $counter) {
+                            $excel->getDefaultStyle()
+                                ->getAlignment()
+                                ->applyFromArray(array(
+                                    'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                                    'vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,
+                                    'wrap' => TRUE
+                                ));
+                            $excel->sheet('sheet1', function ($sheet) use ($applicant_list, $category_type, $counter, $request) {
+                                $sheet->setColumnFormat(array(
+                                    'G' => '@'
+                                ));
+                                $sheet->setWidth('A', 5);
+                                $sheet->loadView('recruitment::reports.excel_data_battalion', ['index' => (($counter - 1) * 300) + 1, 'applicants' => $applicant_list, 'status' => $request->status, 'ctype' => $category_type]);
+                            });
+                        })->store('xls', $file_path, true);
+                    }else{
+                        $file = Excel::create('applicant_list_' . $counter, function ($excel) use ($applicant_list, $request, $category_type, $counter) {
+                            $excel->getDefaultStyle()
+                                ->getAlignment()
+                                ->applyFromArray(array(
+                                    'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                                    'vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,
+                                    'wrap' => TRUE
+                                ));
+                            $excel->sheet('sheet1', function ($sheet) use ($applicant_list, $category_type, $counter, $request) {
+                                $sheet->setColumnFormat(array(
+                                    'G' => '@'
+                                ));
+                                $sheet->mergeCells("K1:N1");
+                                $sheet->mergeCells("A1:A2");
+                                $sheet->mergeCells("B1:B2");
+                                $sheet->mergeCells("C1:C2");
+                                $sheet->mergeCells("D1:D2");
+                                $sheet->mergeCells("E1:E2");
+                                $sheet->mergeCells("F1:F2");
+                                $sheet->mergeCells("G1:G2");
+                                $sheet->mergeCells("H1:H2");
+                                $sheet->mergeCells("I1:I2");
+                                $sheet->mergeCells("J1:J2");
+                                $sheet->mergeCells("O1:O2");
+                                $sheet->mergeCells("P1:P2");
+                                $sheet->mergeCells("Q1:Q2");
+                                $sheet->mergeCells("R1:R2");
+                                $sheet->setWidth('A', 5);
+                                $sheet->loadView('recruitment::reports.excel_data_batt', ['index' => (($counter - 1) * 300) + 1, 'applicants' => $applicant_list, 'status' => $request->status, 'ctype' => $category_type]);
+                            });
+                        })->store('xls', $file_path, true);
+                    }
                     array_push($files, $file);
                     echo "Processed $counter of $total";
                     $counter++;

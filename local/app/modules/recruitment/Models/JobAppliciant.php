@@ -10,6 +10,7 @@ use App\modules\HRM\Models\PersonalInfo;
 use App\modules\HRM\Models\Thana;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Intervention\Image\Facades\Image;
 class JobAppliciant extends Model
@@ -347,5 +348,19 @@ class JobAppliciant extends Model
         $d2 = new \DateTime($d2);
         $diff = $d1->diff($d2);
         return $diff->y+($diff->m/12)+($diff->d/365);
+    }
+
+    public function getQuotaDetailsAttribute($value){
+        $quotaObj = json_decode($value);
+        if(isset($quotaObj->quota) && $quotaObj->quota=='0') return "কোটা নাই";
+        else{
+            $quota = DB::table('job_circular_applicant_quota')
+                ->where('job_circular_applicant_quota.id', $quotaObj->quota)->first();
+            if($quota){
+                return $quota->quota_name_bng;
+            }else{
+                return "";
+            }
+        }
     }
 }
