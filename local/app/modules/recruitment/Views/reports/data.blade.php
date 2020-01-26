@@ -19,6 +19,15 @@
                     <i class="fa fa-file-excel-o"></i>&nbsp; Export all
                 </button>
             </form>
+            <form action="{{URL::route('report.applicants.status_export')}}" method="post" export-all-form
+                  style="display: inline;margin-left:10px">
+                {!! csrf_field() !!}
+                <input type="hidden" name="export_template" value="2">
+                <input type="hidden" ng-repeat="(k,v) in param" ng-if="k!='page'" name="[[k]]" value="[[v]]">
+                <button class="btn btn-primary btn-xs">
+                    <i class="fa fa-file-excel-o"></i>&nbsp; Export all(Template 2)
+                </button>
+            </form>
             <form action="{{URL::route('report.applicants.status_export_pdf')}}" method="post" export-all-form-pdf
                   style="display: inline;margin-left:10px">
                 {!! csrf_field() !!}
