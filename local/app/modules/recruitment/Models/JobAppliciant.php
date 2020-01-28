@@ -351,6 +351,7 @@ class JobAppliciant extends Model
     }
 
     public function getQuotaDetailsAttribute($value){
+        if(!isset($value)||empty($value)) return "";
         $quotaObj = json_decode($value);
         if(isset($quotaObj->quota) && $quotaObj->quota=='0') return "কোটা নাই";
         else{
