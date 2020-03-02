@@ -6,10 +6,9 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#from-date').datepicker({                dateFormat:'dd-M-yy'            })();
-            $("#to-date").datepicker({                dateFormat:'dd-M-yy'            })();
-
-        })
+            $('#from-date').datepicker({dateFormat:'dd-M-yy'});
+            $("#to-date").datepicker({dateFormat:'dd-M-yy'});
+        });
         GlobalApp.controller('AnsarIdCard', function ($scope,$http) {
             $scope.ansars = [];
             $scope.loading = [];

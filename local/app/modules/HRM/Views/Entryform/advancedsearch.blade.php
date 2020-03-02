@@ -6,11 +6,8 @@
 @section('content')
     <script>
         $(document).ready(function () {
-            $('#birth_from_name').datepicker({                dateFormat:'dd-M-yy'            })({
-                defaultValue:false,
-                editable:false
-            });
-        })
+            $('#birth_from_name').datepicker({dateFormat:'dd-M-yy'});
+        });
         GlobalApp.controller('advancedEntrySearch', function ($scope, $http, httpService,$location,$anchorScroll) {
             $scope.searchOption = {
                 division_id: {compare: '=', value: ''},
