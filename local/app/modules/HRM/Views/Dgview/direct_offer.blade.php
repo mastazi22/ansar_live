@@ -33,11 +33,14 @@
                     url:'{{URL::route('ansar_detail_info')}}',
                     params:{ansar_id:id}
                 }).then(function (response) {
-                    $scope.ansarDetail = response.data
+                    $scope.ansarDetail = response.data;
                     $scope.loadingAnsar = false;
                     $scope.totalLength--;
-                })
-            }
+                }, function(error){
+                    $scope.ansarDetail = null;
+                    $scope.loadingAnsar = false;
+                });
+            };
             $scope.makeQueue = function (id) {
                 $scope.ansar_ids.push(id);
                 $scope.totalLength +=  1;
