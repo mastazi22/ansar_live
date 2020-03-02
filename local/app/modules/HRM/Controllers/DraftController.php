@@ -42,6 +42,7 @@ class DraftController extends Controller
 
         $count = 0;
         $dir = storage_path() . '/drafts/';
+        $array = array();
         if (is_dir($dir)) {
             if ($dh = opendir($dir)) {
                 while (($file = readdir($dh)) !== false) {
