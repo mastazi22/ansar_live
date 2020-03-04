@@ -1633,7 +1633,7 @@ class DGController extends Controller
                             'ansar_id' => $ansar_id,
                             'data' => serialize($ansar_panel_detail),
                             'action_date' => Carbon::now()->format("y-m-d H:i:s"),
-                            'activation_date' => Carbon::now()->format("y-m-d H:i:s"),
+                            'activation_date' => $modified_direct_panel_date,
                             'action_by' => Auth::user()->id,
                             'from_status' => 'Rest',
                             'to_status' => 'Panel',
