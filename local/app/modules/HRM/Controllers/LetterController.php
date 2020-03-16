@@ -99,21 +99,22 @@ class LetterController extends Controller
         $mem = DB::table('tbl_memorandum_id')
             ->join('tbl_transfer_ansar','tbl_transfer_ansar.transfer_memorandum_id','=','tbl_memorandum_id.memorandum_id')
             ->distinct('tbl_memorandum_id.memorandum_id')->orderBy('tbl_memorandum_id.created_at','desc')->select('tbl_memorandum_id.memorandum_id as memorandum_id', 'mem_date as created_at');
-        //$mem = TransferAnsar::where('transfer_memorandum_id', $id)->select('transfer_memorandum_id', 'created_at')->first();
-
         $user = DB::table('tbl_user')
             ->join('tbl_user_details', 'tbl_user_details.user_id', '=', 'tbl_user.id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_user.district_id')
             ->join('tbl_division', 'tbl_units.division_id', '=', 'tbl_division.id')
-            ->where('tbl_user.district_id', $unit)->select('tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.mobile_no', 'tbl_user_details.email', 'tbl_units.unit_name_bng as unit','tbl_division.division_name_eng as division','tbl_division.division_name_bng as division_bng')->first();
+            ->where('tbl_user.id', 57)->select('tbl_units.unit_name_eng as unit_eng','tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.mobile_no', 'tbl_user_details.email', 'tbl_units.unit_name_bng as unit','tbl_division.division_name_eng as division','tbl_division.division_name_bng as division_bng')->first();
+//            ->where('tbl_user.district_id', $unit)->select('tbl_units.unit_name_eng as unit_eng','tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.mobile_no', 'tbl_user_details.email', 'tbl_units.unit_name_bng as unit','tbl_division.division_name_eng as division','tbl_division.division_name_bng as division_bng')->first();
         $result = DB::table('tbl_transfer_ansar')
             ->join('tbl_kpi_info as pk', 'tbl_transfer_ansar.present_kpi_id', '=', 'pk.id')
             ->join('tbl_kpi_info as tk', 'tbl_transfer_ansar.transfered_kpi_id', '=', 'tk.id')
+            ->join('tbl_thana as tk_thana', 'tk_thana.id', '=', 'tk.thana_id')
+            ->join('tbl_thana as pk_thana', 'pk_thana.id', '=', 'pk.thana_id')
             ->join('tbl_ansar_parsonal_info', 'tbl_transfer_ansar.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-            ->where('pk.unit_id',$unit)
+//            ->where('pk.unit_id',$unit)
             ->orderBy('tbl_transfer_ansar.created_at','desc')
-            ->select('tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'pk.kpi_name as p_kpi_name', 'tk.kpi_name as t_kpi_name');
+            ->select('pk_thana.thana_name_bng as pk_thana','tk_thana.thana_name_bng as tk_thana','pk.unit_id','tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'pk.kpi_name as p_kpi_name', 'tk.kpi_name as t_kpi_name');
         if($option=='smartCardNo'){
             $l  = strlen($id.'');
             if($l>6) $id = substr($id.'',6);
@@ -126,11 +127,13 @@ class LetterController extends Controller
         }
         $result = DB::table(DB::raw('('.$result->toSql().') x'))->mergeBindings($result)->groupBy('x.ansar_id')->get();
         $mem = $mem->first();
-//        return DB::getQueryLog();
-//        return $mem->toSql();
+        if($user->unit_eng=="CHITTAGONGNORTH" || $user->unit_eng=="CHITTAGONGSOUTH")
+            $user->unit_short="চট্টগ্রাম";
+        elseif ($user->unit_eng=="DHAKAADMIN"||$user->unit_eng=="DHAKAEAST"||$user->unit_eng=="DHAKAWEST"||$user->unit_eng=="DHAKASOUTH"||$user->unit_eng=="DHAKANORTH")
+            $user->unit_short = "ঢাকা";
+        else $user->unit_short = $user->unit;
         if ($mem && $result) {
             return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'result' => $result, 'view' => 'print_transfer_letter']);
-//            else return View::make('HRM::Letter.print_transfer_letter')->with(['mem' => $mem, 'user' => $user, 'ta' => $result]);
         } else {
             return View::make('HRM::Letter.no_mem_found')->with(['id' => $id]);
         }
@@ -138,7 +141,6 @@ class LetterController extends Controller
 
     function embodimentLetterPrint($id, $unit, $v,$option)
     {
-//        $mem = MemorandumModel::where('memorandum_id', $id)->select('memorandum_id', 'mem_date as created_at')->first();
         $mem = DB::table('tbl_embodiment')
             ->leftJoin('tbl_memorandum_id','tbl_memorandum_id.memorandum_id','=','tbl_embodiment.memorandum_id')
             ->select('tbl_memorandum_id.memorandum_id', 'tbl_memorandum_id.mem_date as created_at');
@@ -146,7 +148,7 @@ class LetterController extends Controller
             ->join('tbl_user_details', 'tbl_user_details.user_id', '=', 'tbl_user.id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_user.district_id')
             ->join('tbl_division', 'tbl_units.division_id', '=', 'tbl_division.id')
-            ->where('tbl_user.district_id', $unit)->select('tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.mobile_no', 'tbl_user_details.email', 'tbl_units.unit_name_bng as unit','tbl_division.division_name_eng as division','tbl_division.division_name_bng as division_bng')->first();
+            ->where('tbl_user.district_id', $unit)->select('tbl_units.unit_name_eng as unit_eng','tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.mobile_no', 'tbl_user_details.email', 'tbl_units.unit_name_bng as unit','tbl_division.division_name_eng as division','tbl_division.division_name_bng as division_bng')->first();
         $result = DB::table('tbl_embodiment')
             ->join('tbl_kpi_info', 'tbl_kpi_info.id', '=', 'tbl_embodiment.kpi_id')
             ->join('tbl_ansar_parsonal_info', 'tbl_embodiment.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
@@ -168,9 +170,13 @@ class LetterController extends Controller
         }
         $result = $result->get();
         $mem = $mem->first();
+        if($user->unit_eng=="CHITTAGONGNORTH" || $user->unit_eng=="CHITTAGONGSOUTH")
+            $user->unit_short="চট্টগ্রাম";
+        elseif ($user->unit_eng=="DHAKAADMIN"||$user->unit_eng=="DHAKAEAST"||$user->unit_eng=="DHAKAWEST"||$user->unit_eng=="DHAKASOUTH"||$user->unit_eng=="DHAKANORTH")
+            $user->unit_short = "ঢাকা";
+        else $user->unit_short = $user->unit;
         if ($mem && $result) {
             return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'result' => $result, 'view' => 'print_embodiment_letter']);
-//            else return View::make('HRM::Letter.print_embodiment_letter')->with(['result' => $result, 'user' => $user, 'mem' => $mem]);
         } else {
             return View::make('HRM::Letter.no_mem_found')->with('id', $id);
         }
@@ -183,13 +189,11 @@ class LetterController extends Controller
             ->join('tbl_memorandum_id', 'tbl_memorandum_id.memorandum_id', '=', 'tbl_rest_info.memorandum_id')
             ->join('tbl_disembodiment_reason', 'tbl_disembodiment_reason.id', '=', 'tbl_rest_info.disembodiment_reason_id')
             ->select('tbl_disembodiment_reason.reason_in_bng as reason', 'tbl_memorandum_id.memorandum_id', 'tbl_memorandum_id.mem_date as created_at');
-
-        //return Response::json($mem);
         $user = DB::table('tbl_user')
             ->join('tbl_user_details', 'tbl_user_details.user_id', '=', 'tbl_user.id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_user.district_id')
             ->join('tbl_division', 'tbl_units.division_id', '=', 'tbl_division.id')
-            ->where('tbl_user.district_id', $unit)->select('tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.mobile_no', 'tbl_user_details.email', 'tbl_units.unit_name_bng as unit','tbl_division.division_name_eng as division','tbl_division.division_name_bng as division_bng')->first();
+            ->where('tbl_user.district_id', $unit)->select('tbl_units.unit_name_eng as unit_eng','tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.mobile_no', 'tbl_user_details.email', 'tbl_units.unit_name_bng as unit','tbl_division.division_name_eng as division','tbl_division.division_name_bng as division_bng')->first();
         $result = DB::table('tbl_embodiment_log')
             ->join('tbl_rest_info', 'tbl_rest_info.ansar_id', '=', 'tbl_embodiment_log.ansar_id')
             ->join('tbl_memorandum_id', 'tbl_memorandum_id.memorandum_id', '=', 'tbl_rest_info.memorandum_id')
@@ -197,17 +201,11 @@ class LetterController extends Controller
             ->join('tbl_ansar_parsonal_info', 'tbl_embodiment_log.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
             ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
+            ->join('tbl_thana as kpi_thana', 'kpi_thana.id', '=', 'tbl_kpi_info.thana_id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
             ->whereRaw('tbl_embodiment_log.release_date=tbl_rest_info.rest_date')
             ->where('tbl_kpi_info.unit_id',$unit)
-            ->select('tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'tbl_kpi_info.kpi_name as kpi_name', 'tbl_ansar_parsonal_info.village_name as village_name', 'tbl_ansar_parsonal_info.post_office_name as pon', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_embodiment_log.joining_date', 'tbl_embodiment_log.release_date')->orderBy('tbl_embodiment_log.id','DESC');
-
-//        $r =  $result->get();
-//        return DB::getQueryLog();
-
-//        return $result->toSql();
-
-//        return $result;
+            ->select('kpi_thana.thana_name_bng as kpi_thana','tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'tbl_kpi_info.kpi_name as kpi_name', 'tbl_ansar_parsonal_info.village_name_bng as village_name', 'tbl_ansar_parsonal_info.post_office_name_bng as pon', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_embodiment_log.joining_date', 'tbl_embodiment_log.release_date')->orderBy('tbl_embodiment_log.id','DESC');
         if($option=='smartCardNo'){
             $l  = strlen($id.'');
             if($l>6) $id = substr($id.'',6);
@@ -218,7 +216,6 @@ class LetterController extends Controller
             $result->where('tbl_memorandum_id.memorandum_id', $id);
             $mem->where('tbl_memorandum_id.memorandum_id', $id);
         }
-//        return "exists:-".$result->get();
         if(!$result->exists()){
             $result = DB::table('tbl_embodiment_log')
                 ->join('tbl_rest_info_log as tbl_rest_info', 'tbl_rest_info.ansar_id', '=', 'tbl_embodiment_log.ansar_id')
@@ -227,10 +224,11 @@ class LetterController extends Controller
                 ->join('tbl_ansar_parsonal_info', 'tbl_embodiment_log.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
                 ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
+                ->join('tbl_thana as kpi_thana', 'kpi_thana.id', '=', 'tbl_kpi_info.thana_id')
                 ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
                 ->whereRaw('tbl_embodiment_log.release_date=tbl_rest_info.rest_date')
                 ->where('tbl_kpi_info.unit_id',$unit)
-                ->select('tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'tbl_kpi_info.kpi_name as kpi_name', 'tbl_ansar_parsonal_info.village_name as village_name', 'tbl_ansar_parsonal_info.post_office_name as pon', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_embodiment_log.joining_date', 'tbl_embodiment_log.release_date')->orderBy('tbl_embodiment_log.id','DESC');
+                ->select('kpi_thana.thana_name_bng as kpi_thana','tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'tbl_kpi_info.kpi_name as kpi_name', 'tbl_ansar_parsonal_info.village_name as village_name', 'tbl_ansar_parsonal_info.post_office_name as pon', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_embodiment_log.joining_date', 'tbl_embodiment_log.release_date')->orderBy('tbl_embodiment_log.id','DESC');
             if($option=='smartCardNo'){
                 $l  = strlen($id.'');
                 if($l>6) $id = substr($id.'',6);
@@ -254,13 +252,16 @@ class LetterController extends Controller
                 $mem->where('tbl_memorandum_id.memorandum_id', $id);
             }
         }
-
         $mem = $mem->first();
         $result = DB::table(DB::raw("({$result->toSql()}) x"))->mergeBindings($result)->groupBy('ansar_id')->get();
-//        return DB::getQueryLog();
+        if($user->unit_eng=="CHITTAGONGNORTH" || $user->unit_eng=="CHITTAGONGSOUTH")
+            $user->unit_short="চট্টগ্রাম";
+        elseif ($user->unit_eng=="DHAKAADMIN"||$user->unit_eng=="DHAKAEAST"||$user->unit_eng=="DHAKAWEST"||$user->unit_eng=="DHAKASOUTH"||$user->unit_eng=="DHAKANORTH")
+            $user->unit_short = "ঢাকা";
+        else $user->unit_short = $user->unit;
+
         if ($mem && $result) {
             return View::make('HRM::Letter.master')->with(['mem' => $mem, 'user' => $user, 'result' => $result, 'view' => 'print_disembodiment_letter']);
-//            else return View::make('HRM::Letter.print_disembodiment_letter')->with(['result' => $result, 'user' => $user, 'mem' => $mem]);
         } else {
             return View::make('HRM::Letter.no_mem_found')->with('id', $id);
         }
