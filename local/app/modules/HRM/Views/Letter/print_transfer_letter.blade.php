@@ -41,7 +41,7 @@
     </div>
     <div class="letter-body">
         <div class="body-top"><h4>“অফিস আদেশ”</h4></div>
-        <p class="letter-content-top">প্রশাসনিক কার্যক্রমের অংশ হিসেবে এবং ক্যাম্পের শৃঙ্খলার মানসমুন্নত রাখার
+        <p class="letter-content-top">প্রশাসনিক কার্যক্রমের অংশ হিসেবে এবং ক্যাম্পের শৃঙ্খলার মান সমুন্নত রাখার
             স্বার্থে বাংলাদেশ আনসার ও গ্রাম প্রতিরক্ষা বাহিনী,
             @if($user&&(trim($user->division)=="DMA"||trim($user->division)=="CMA"))
                 {{$user?$user->unit:''}} জোনের&nbsp;
@@ -58,7 +58,7 @@
                     <th style="width: 1%">পদবী</th>
                     <th>নাম ও<br>পিতার নাম</th>
                     <th>বর্তমান সংস্থার নাম ও<br>উপজেলা/থানা</th>
-                    <th>বদলিক্রিত সংস্থার নাম ও<br>উপজেলা/থানা</th>
+                    <th>বদলিকৃত সংস্থার নাম ও<br>উপজেলা/থানা</th>
                 </tr>
                 <?php $ii = 1; ?>
                 @for($j=0;$j<count($result);$j++)

@@ -103,8 +103,7 @@ class LetterController extends Controller
             ->join('tbl_user_details', 'tbl_user_details.user_id', '=', 'tbl_user.id')
             ->join('tbl_units', 'tbl_units.id', '=', 'tbl_user.district_id')
             ->join('tbl_division', 'tbl_units.division_id', '=', 'tbl_division.id')
-            ->where('tbl_user.id', 57)->select('tbl_units.unit_name_eng as unit_eng','tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.mobile_no', 'tbl_user_details.email', 'tbl_units.unit_name_bng as unit','tbl_division.division_name_eng as division','tbl_division.division_name_bng as division_bng')->first();
-//            ->where('tbl_user.district_id', $unit)->select('tbl_units.unit_name_eng as unit_eng','tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.mobile_no', 'tbl_user_details.email', 'tbl_units.unit_name_bng as unit','tbl_division.division_name_eng as division','tbl_division.division_name_bng as division_bng')->first();
+            ->where('tbl_user.district_id', $unit)->select('tbl_units.unit_name_eng as unit_eng','tbl_user_details.first_name', 'tbl_user_details.last_name', 'tbl_user_details.mobile_no', 'tbl_user_details.email', 'tbl_units.unit_name_bng as unit','tbl_division.division_name_eng as division','tbl_division.division_name_bng as division_bng')->first();
         $result = DB::table('tbl_transfer_ansar')
             ->join('tbl_kpi_info as pk', 'tbl_transfer_ansar.present_kpi_id', '=', 'pk.id')
             ->join('tbl_kpi_info as tk', 'tbl_transfer_ansar.transfered_kpi_id', '=', 'tk.id')
@@ -112,7 +111,7 @@ class LetterController extends Controller
             ->join('tbl_thana as pk_thana', 'pk_thana.id', '=', 'pk.thana_id')
             ->join('tbl_ansar_parsonal_info', 'tbl_transfer_ansar.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-//            ->where('pk.unit_id',$unit)
+            ->where('pk.unit_id',$unit)
             ->orderBy('tbl_transfer_ansar.created_at','desc')
             ->select('pk_thana.thana_name_bng as pk_thana','tk_thana.thana_name_bng as tk_thana','pk.unit_id','tbl_ansar_parsonal_info.ansar_id as ansar_id', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.father_name_bng as father_name', 'tbl_designations.name_bng as rank', 'pk.kpi_name as p_kpi_name', 'tk.kpi_name as t_kpi_name');
         if($option=='smartCardNo'){
