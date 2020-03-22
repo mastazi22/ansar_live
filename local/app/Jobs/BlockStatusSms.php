@@ -36,7 +36,7 @@ class BlockStatusSms extends Job implements SelfHandling, ShouldQueue
     public function handle()
     {
         //
-        $user = env('SSL_USER_ID');
+/*        $user = env('SSL_USER_ID');
         $pass = env('SSL_PASSWORD');
         $sid = env('SSL_SID');
         $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
@@ -58,6 +58,6 @@ class BlockStatusSms extends Job implements SelfHandling, ShouldQueue
             curl_close($crl);
             $r = Parser::xml($response);
             Log::info($r);
-        }
+        }*/
     }
 }

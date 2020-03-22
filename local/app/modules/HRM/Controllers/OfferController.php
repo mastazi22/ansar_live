@@ -58,6 +58,8 @@ class OfferController extends Controller
 
     function getKpi(Request $request)
     {
+        /*We failed to determine its functionality and where this function is used.[22/03/2020-Sabbir & Ayman]*/
+        return response(collect(['type' => 'error', 'message' => "Internal Server Error!!"])->toJson(), 400, ['Content-Type' => 'application/json']);
         $rules = [];
         $rules['pc_male'] = 'required|numeric|regex:/^[0-9]+$/|min:0';
         $rules['pc_female'] = 'required|numeric|regex:/^[0-9]+$/|min:0';
@@ -111,51 +113,52 @@ class OfferController extends Controller
             Log::info($valid->messages()->toArray());
             return response(collect(['type' => 'error', 'message' => 'Invalid request'])->toJson(), 400, ['Content-Type' => 'application/json']);
         }
-        $district_id = $request->get('district_id');
         DB::beginTransaction();
         try {
             if (UserOfferQueue::where('user_id', Auth::user()->id)->exists()) {
                 throw new \Exception("Your have one pending offer.Please wait until your offer is complete");
             }
-            $userOffer = UserOfferQueue::create([
-                'user_id' => Auth::user()->id
-            ]);
+//            $userOffer = UserOfferQueue::create([
+//                'user_id' => Auth::user()->id
+//            ]);
             $user = Auth::user();
+            if ($user->type == 22) {
+                $district_id = $user->district_id;
+                if (in_array($district_id, Config::get('app.offer'))) {
+                    $offer_type = 'GB';
+                } else {
+                    $offer_type = 'RE';
+                }
+            } else {
+                $district_id = $request->get('district_id');
+                if (in_array($district_id, Config::get('app.offer'))) {
+                    $offer_type = 'GB';
+                } else {
+                    $offer_type = 'RE';
+                }
+            }
             $offerZone = OfferZone::where('unit_id', $user->district_id)->pluck('offer_zone_unit_id')->toArray();
             $data = CustomQuery::getAnsarInfo(
                 ['male' => $request->get('pc_male'), 'female' => $request->get('pc_female')],
                 ['male' => $request->get('apc_male'), 'female' => $request->get('apc_female')],
                 ['male' => $request->get('ansar_male'), 'female' => $request->get('ansar_female')],
                 $request->get('district'),
-                $request->get('exclude_district'), $user, $offerZone);
+                $request->get('exclude_district'), $user, $offerZone, $offer_type, $district_id);
 //            return $data;
             Log::info($request->all());
-            $user = Auth::user();
-            if ($user->type == 22) {
-
-                if (in_array($user->district_id, Config::get('app.offer'))) {
-                    $offer_type = 'GB';
-                } else {
-                    $offer_type = 'RE';
-                }
-            } else {
-                if (in_array($request->get('district'), Config::get('app.offer'))) {
-                    $offer_type = 'GB';
-                } else {
-                    $offer_type = 'RE';
-                }
-            }
             RequestDumper::create([
                 'user_id' => auth()->user()->id,
                 'request_ip' => $request->ip(),
                 'request_url' => $request->url(),
-                'request_data' => serialize($request->all())
+                'request_data' => serialize($request->all()),
+                'header'=>serialize($request->header()),
+                'response_data' => serialize($data)
             ]);
             $quota = Helper::getOfferQuota(Auth::user());
             if ($quota !== false && $quota < count($data)) throw new \Exception("Your offer quota limit exit");
             PanelModel::whereIn('ansar_id', $data)->update(['locked' => 1]);
-            $this->dispatch(new OfferQueue($data, $district_id, Auth::user(), $userOffer, $offer_type));
-            DB::commit();
+//            $this->dispatch(new OfferQueue($data, $district_id, Auth::user(), $userOffer, $offer_type));
+//            DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
             return response(collect(['status' => 'error', 'message' => $e->getMessage()])->toJson(), 400, ['Content-Type' => 'application/json']);

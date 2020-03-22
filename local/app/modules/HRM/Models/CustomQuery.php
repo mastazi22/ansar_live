@@ -27,21 +27,16 @@ class CustomQuery
     const RECENT = 2;
     protected $connection = 'hrm';
 
-    public static function getAnsarInfo($pc = array('male' => 0, 'female' => 0), $apc = array('male' => 0, 'female' => 0), $ansar = array('male' => 0, 'female' => 0), $unit_id = [], $exclude_district = null, $user, $offerZone = [])
+    public static function getAnsarInfo($pc = array('male' => 0, 'female' => 0), $apc = array('male' => 0, 'female' => 0),
+                                        $ansar = array('male' => 0, 'female' => 0), $unit_id = [],
+                                        $exclude_district = null, $user, $offerZone = [],
+                                        $offer_type = false, $district_id = null)
     {
-//        return $offerZone;
         $ansar_retirement_age = Helper::getAnsarRetirementAge() - 3;
         $pc_apc_retirement_age = Helper::getPcApcRetirementAge() - 3;
         $go_offer_count = +GlobalParameterFacades::getValue('ge_offer_count');
         $re_offer_count = +GlobalParameterFacades::getValue('re_offer_count');
         DB::enableQueryLog();
-//        $eid = DB::connection('recruitment')->table('job_applicant')
-//            ->join('job_circular','job_circular.id','=','job_applicant.job_circular_id')
-//            ->join('job_category','job_category.id','=','job_circular.job_category_id')
-//            ->where('job_applicant.status','selected')->where(function ($q){
-//               $q->where('job_category.category_type','apc_training');
-//               $q->orWhere('job_category.category_type','pc_training');
-//            })->pluck('ansar_id');
         $query = DB::table('tbl_ansar_parsonal_info')
             ->leftJoin('tbl_offer_status', 'tbl_offer_status.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
             ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
@@ -56,28 +51,24 @@ class CustomQuery
             ->where('tbl_ansar_status_info.block_list_status', 0)
             ->where('tbl_ansar_status_info.offer_block_status', 0);
 //            ->whereNotIn('tbl_ansar_parsonal_info.ansar_id', $eid);
-        if ($user->type == 22) {
 
-            $maximum_offer_limit = (int)GlobalParameterFacades::getValue(\App\Helper\GlobalParameter::MAXIMUM_OFFER_LIMIT);
-            $query->where(function ($q) use ($user) {
-//                $q->where('tbl_offer_status.last_offer_unit', '!=',$user->district_id);
-                $q->whereRaw("NOT FIND_IN_SET('" . $user->district_id . "',tbl_offer_status.last_offer_units)");
-                $q->orWhereNull("tbl_offer_status.last_offer_units");
+        $query->where(function ($q) use ($district_id) {
+            $q->whereRaw("NOT FIND_IN_SET('" . $district_id . "',tbl_offer_status.last_offer_units)");
+            $q->orWhereNull("tbl_offer_status.last_offer_units");
+        });
+
+        if ($offer_type == "GB") {
+            $query->where(function ($q) use ($go_offer_count) {
+                $q->whereRaw("ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"DG\",\"\")))/CHAR_LENGTH(\"DG\"))+ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"CG\",\"\")))/CHAR_LENGTH(\"CG\"))+ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"GB\",\"\")))/CHAR_LENGTH(\"GB\"))<$go_offer_count");
+                $q->orWhereNull("tbl_offer_status.offer_type");
             });
-
-            if (in_array($user->district_id, Config::get('app.offer'))) {
-                $query->where(function ($q) use ($go_offer_count) {
-//                    $q->whereRaw("NOT FIND_IN_SET('DG',tbl_offer_status.offer_type)");
-                    $q->whereRaw("ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"DG\",\"\")))/CHAR_LENGTH(\"DG\"))+ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"CG\",\"\")))/CHAR_LENGTH(\"CG\"))+ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"GB\",\"\")))/CHAR_LENGTH(\"GB\"))<$go_offer_count");
-                    $q->orWhereNull("tbl_offer_status.offer_type");
-                });
-            } else {
-                $query->where(function ($q) use ($re_offer_count) {
-//                    $q->whereRaw("NOT FIND_IN_SET('RE',tbl_offer_status.offer_type)");
-                    $q->whereRaw("ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"RE\",\"\")))/CHAR_LENGTH(\"RE\"))<$re_offer_count");
-                    $q->orWhereNull("tbl_offer_status.offer_type");
-                });
-            }
+        } elseif ($offer_type == "RE") {
+            $query->where(function ($q) use ($re_offer_count) {
+                $q->whereRaw("ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"RE\",\"\")))/CHAR_LENGTH(\"RE\"))<$re_offer_count");
+                $q->orWhereNull("tbl_offer_status.offer_type");
+            });
+        } else {
+           return [];
         }
         // as per request RUSSEL VAI(24-07-2019)
         /*        if(auth()->user()->id==343){
@@ -126,6 +117,7 @@ class CustomQuery
         } else if ($user->type == 11 || $user->type == 33 || $user->type == 66) {
             if (is_array($unit_id)) {
                 $query = $query->whereIn('pu.id', $unit_id);
+                $fquery = $fquery->whereIn('pu.id', $unit_id);
             }
         }
 
@@ -143,7 +135,7 @@ class CustomQuery
             $ansar_female->whereRaw('tbl_ansar_parsonal_info.hight_feet*12+tbl_ansar_parsonal_info.hight_inch>=64');
             $ansar_female->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<33');
         }*/
-        if (($user->type == 22 && !in_array($exclude_district, Config::get('app.offer'))) || !in_array($exclude_district, Config::get('app.offer'))) {
+        if ($offer_type == "RE") {
             $pc_male->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
                 ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<' . $pc_apc_retirement_age)
                 ->orderBy('tbl_panel_info.re_panel_date')->orderBy('tbl_panel_info.id')
@@ -173,7 +165,7 @@ class CustomQuery
                 ->where('tbl_ansar_parsonal_info.sex', '=', 'Female')->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<' . $pc_apc_retirement_age)
                 ->orderBy('tbl_panel_info.re_panel_date')->orderBy('tbl_panel_info.id')
                 ->select('tbl_ansar_parsonal_info.ansar_id')->take($apc['female']);
-        } else {
+        } elseif ($offer_type == "GB") {
             $pc_male->where('tbl_ansar_parsonal_info.designation_id', '=', 3)
                 ->where('tbl_ansar_parsonal_info.sex', '=', 'Male')->whereRaw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW())<' . $pc_apc_retirement_age)
                 ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
@@ -208,6 +200,8 @@ class CustomQuery
 //        $b = $ansar_male->get();
         $b = $pc_male->unionAll($pc_female)->unionAll($apc_male)->unionAll($apc_female)->unionAll($ansar_male)->unionAll($ansar_female)->pluck('ansar_id');
 //        return DB::getQueryLog();
+        $test = DB::getQueryLog();
+        dd();
         return $b;
     }
 
