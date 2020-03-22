@@ -1,17 +1,17 @@
 <div class="letter-footer">
     <div class="footer-top">
-        <ul class="pull-right" style="margin-top: 60px;width:35%">
+        <ul class="pull-right" style="margin-top: 50px;width:35%">
             <li>{{$user?$user->first_name.' '.$user->last_name:''}}</li>
             <li>
                 @if($user&&(trim($user->division)=="DMA"||trim($user->division)=="CMA"))
-                    জোন অধিনায়ক,&nbsp;
+                    জোন অধিনায়ক,<br>
                 @else
-                    জেলা কমান্ড্যান্ট,&nbsp;
+                    জেলা কমান্ড্যান্ট,<br>
                 @endif
                 @if($user&&(trim($user->division)=="DMA"||trim($user->division)=="CMA"))
                     {{$user?preg_replace('/\).+/',')',preg_replace('/.+\(/',$user->division_bng.'(',$user->unit)):''}}
                 @else
-                    {{$user?$user->unit:''}}
+                        বাংলাদেশ আনসার ও গ্রাম প্রতিরক্ষা বাহিনী, {{$user?$user->unit_short:''}}
                 @endif
             </li>
             <li id="mobile">মোবাইলঃ&nbsp;<span
@@ -86,7 +86,7 @@
                 </table>
             </li>
             <li style="margin-top: 7%">সদয় অবগতির জন্য</li>
-            <li class="ppp" style="margin-top: 20%;line-height: 40px;">&nbsp;&nbsp;"<br>&nbsp;&nbsp;"<br></li>
+            <li class="ppp" style="margin-top: 10%;line-height: 40px;">&nbsp;&nbsp;"<br>&nbsp;&nbsp;"<br></li>
             @if($user&&!(trim($user->division)=="DMA"||trim($user->division)=="CMA"))
                 <li class="ppp">&nbsp;&nbsp;"</li>
             @endif

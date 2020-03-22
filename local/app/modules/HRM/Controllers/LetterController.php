@@ -126,7 +126,7 @@ class LetterController extends Controller
         }
         $result = DB::table(DB::raw('('.$result->toSql().') x'))->mergeBindings($result)->groupBy('x.ansar_id')->get();
         $mem = $mem->first();
-        if($user->unit_eng=="CHITTAGONGNORTH" || $user->unit_eng=="CHITTAGONGSOUTH")
+        if($user->unit_eng=="CHITTAGONGNORTH" || $user->unit_eng=="CHITTAGONGSOUTH" || $user->unit_eng=="CHITTAGONGADMIN")
             $user->unit_short="চট্টগ্রাম";
         elseif ($user->unit_eng=="DHAKAADMIN"||$user->unit_eng=="DHAKAEAST"||$user->unit_eng=="DHAKAWEST"||$user->unit_eng=="DHAKASOUTH"||$user->unit_eng=="DHAKANORTH")
             $user->unit_short = "ঢাকা";
@@ -169,7 +169,7 @@ class LetterController extends Controller
         }
         $result = $result->get();
         $mem = $mem->first();
-        if($user->unit_eng=="CHITTAGONGNORTH" || $user->unit_eng=="CHITTAGONGSOUTH")
+        if($user->unit_eng=="CHITTAGONGNORTH" || $user->unit_eng=="CHITTAGONGSOUTH" || $user->unit_eng=="CHITTAGONGADMIN")
             $user->unit_short="চট্টগ্রাম";
         elseif ($user->unit_eng=="DHAKAADMIN"||$user->unit_eng=="DHAKAEAST"||$user->unit_eng=="DHAKAWEST"||$user->unit_eng=="DHAKASOUTH"||$user->unit_eng=="DHAKANORTH")
             $user->unit_short = "ঢাকা";
@@ -253,7 +253,7 @@ class LetterController extends Controller
         }
         $mem = $mem->first();
         $result = DB::table(DB::raw("({$result->toSql()}) x"))->mergeBindings($result)->groupBy('ansar_id')->get();
-        if($user->unit_eng=="CHITTAGONGNORTH" || $user->unit_eng=="CHITTAGONGSOUTH")
+        if($user->unit_eng=="CHITTAGONGNORTH" || $user->unit_eng=="CHITTAGONGSOUTH" || $user->unit_eng=="CHITTAGONGADMIN")
             $user->unit_short="চট্টগ্রাম";
         elseif ($user->unit_eng=="DHAKAADMIN"||$user->unit_eng=="DHAKAEAST"||$user->unit_eng=="DHAKAWEST"||$user->unit_eng=="DHAKASOUTH"||$user->unit_eng=="DHAKANORTH")
             $user->unit_short = "ঢাকা";
