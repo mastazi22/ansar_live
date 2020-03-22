@@ -200,8 +200,6 @@ class CustomQuery
 //        $b = $ansar_male->get();
         $b = $pc_male->unionAll($pc_female)->unionAll($apc_male)->unionAll($apc_female)->unionAll($ansar_male)->unionAll($ansar_female)->pluck('ansar_id');
 //        return DB::getQueryLog();
-        $test = DB::getQueryLog();
-        dd();
         return $b;
     }
 

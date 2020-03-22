@@ -118,9 +118,9 @@ class OfferController extends Controller
             if (UserOfferQueue::where('user_id', Auth::user()->id)->exists()) {
                 throw new \Exception("Your have one pending offer.Please wait until your offer is complete");
             }
-//            $userOffer = UserOfferQueue::create([
-//                'user_id' => Auth::user()->id
-//            ]);
+            $userOffer = UserOfferQueue::create([
+                'user_id' => Auth::user()->id
+            ]);
             $user = Auth::user();
             if ($user->type == 22) {
                 $district_id = $user->district_id;
@@ -157,8 +157,8 @@ class OfferController extends Controller
             $quota = Helper::getOfferQuota(Auth::user());
             if ($quota !== false && $quota < count($data)) throw new \Exception("Your offer quota limit exit");
             PanelModel::whereIn('ansar_id', $data)->update(['locked' => 1]);
-//            $this->dispatch(new OfferQueue($data, $district_id, Auth::user(), $userOffer, $offer_type));
-//            DB::commit();
+            $this->dispatch(new OfferQueue($data, $district_id, Auth::user(), $userOffer, $offer_type));
+            DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
             return response(collect(['status' => 'error', 'message' => $e->getMessage()])->toJson(), 400, ['Content-Type' => 'application/json']);
