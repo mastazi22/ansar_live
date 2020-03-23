@@ -681,7 +681,7 @@ class Kernel extends ConsoleKernel
 			
         })->everyTenMinutes()->name("UnblockRetireAnsar")->withoutOverlapping();
         $schedule->call(function(){
-            $ansars = AnsarFutureState::where('activation_date',"<=",Carbon::now())->get();
+            $ansars = AnsarFutureState::where('activation_date',"<=",Carbon::now()->toDateTimeString())->get();
             $panel_count = 0;
             DB::beginTransaction();
             try{

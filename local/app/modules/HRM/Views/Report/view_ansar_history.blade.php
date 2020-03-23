@@ -100,7 +100,7 @@
                                     <td>[[ansarDetail['status'].join()]]</td>
                                     <td>[[ansarDetail['ansar'].mobile_no_self]]</td>
                                     <td>[[ansarDetail['ansar'].sex]]</td>
-                                    <td><img src="http://bdansarerp.gov.bd/image?file=[[ansarDetail['ansar'].profile_pic]]" style="width: 80px;height: 80px"
+                                    <td><img src="/image?file=[[ansarDetail['ansar'].profile_pic]]" style="width: 80px;height: 80px"
                                              alt="[[ansarDetail['ansar'].ansar_name_bng]]"/></td>
                                 </tr>
                                 </tbody>

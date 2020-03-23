@@ -39,19 +39,15 @@ class BlockStatusSms extends Job implements SelfHandling, ShouldQueue
         $send_sms_env = env("SEND_SMS", false);
         $test_mobile = env("TEST_SMS_NUMBER", null);
         $phone_number = "";
-
         $ansar = PersonalInfo::where('ansar_id', $this->ansar_id)->select('mobile_no_self')->first();
-
         if ($send_sms_env == false && !empty($test_mobile) && $ansar) {
             //Test SMS SEND config=
             $phone_number = $test_mobile;
-
         } elseif ($send_sms_env == true && $ansar) {
             $phone_number = $ansar->mobile_no_self;
         } else {
             return null;
         }
-
         $user = env('SSL_USER_ID');
         $pass = env('SSL_PASSWORD');
         $sid = env('SSL_SID');
