@@ -50,11 +50,12 @@ class RearrangePanelPositionLocal extends Job implements ShouldQueue
                 ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                 ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
                 ->leftJoin('tbl_sms_offer_info', 'tbl_sms_offer_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                ->leftJoin('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                 ->where('tbl_ansar_status_info.block_list_status', 0)
                 ->where('tbl_ansar_status_info.black_list_status', 0)
                 ->whereRaw('tbl_ansar_parsonal_info.mobile_no_self REGEXP "^(/+88)?01[0-9]{9}$"')
                 ->select('tbl_panel_info.ansar_id', 'tbl_panel_info.come_from', 're_panel_date', 'tbl_panel_info.id', 'tbl_panel_info.re_panel_position',
-                    'locked', 'sex', 'division_id', 'tbl_designations.code', 'tbl_sms_offer_info.district_id',
+                    'locked', 'sex', 'division_id', 'tbl_designations.code', 'tbl_sms_offer_info.district_id', 'tbl_sms_receive_info.offered_district',
                     DB::raw('SUBSTRING_INDEX(SUBSTRING_INDEX(offer_type,\',\',LENGTH(offer_type)-LENGTH(REPLACE(offer_type,\',\',\'\'))+1),\',\',-1) as last_offer_region'), 'offer_type')
                 ->get();
 
@@ -101,21 +102,22 @@ class RearrangePanelPositionLocal extends Job implements ShouldQueue
                             $locked_region = " (" . $p['last_offer_region'] . ") ";
                         }
                         if ($p['offer_type'] == null || $p['offer_type'] == "") {
+//                        offer type is null when first panel entry or empty string when last offer is ongoing.
                             if ($p['locked'] == 0) {
                                 $query .= "WHEN " . $p['ansar_id'] . " THEN $i ";
                                 Log::info('UPDATE_REGIONAL_ANSAR: FIRST_PANEL_ENTRY ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . ', current regional position:' . $p['re_panel_position'] . ' future re position:' . $i);
                                 $i++;
-                            } elseif (!in_array($p['district_id'], Config::get('app.offer'))) {
+                            } elseif (in_array($p['district_id'], Config::get('app.offer')) || in_array($p['offered_district'], Config::get('app.offer'))) {
+                                $query .= "WHEN " . $p['ansar_id'] . " THEN NULL ";
+                                Log::info('UPDATE_REGIONAL_ANSAR:LAST_GB_OFFER ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . ', current regional position:' . $p['re_panel_position'] . ' future re position:null');
+                            } else {
                                 $query .= "WHEN " . $p['ansar_id'] . " THEN $i ";
                                 Log::info('UPDATE_REGIONAL_ANSAR:LAST_RE_OFFER ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . ', current regional position:' . $p['re_panel_position'] . ' future re position:' . $i);
                                 $i++;
-                            } else {
-                                $query .= "WHEN " . $p['ansar_id'] . " THEN NULL ";
-                                Log::info('UPDATE_REGIONAL_ANSAR:LAST_GB_OFFER ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . ', current regional position:' . $p['re_panel_position'] . ' future re position:null');
-
                             }
 
                         } elseif (substr_count($p['offer_type'], 'RE') < $re_offer_count) {
+//                       global offer quota is not filled up yet. so, locked unlocked doesn't matter to update regional position
                             $query .= "WHEN " . $p['ansar_id'] . " THEN $i ";
                             Log::info('UPDATE_REGIONAL_ANSAR ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . $locked_region . ', current regional position:' . $p['re_panel_position'] . ' future re position:' . $i);
                             $i++;
@@ -125,6 +127,7 @@ class RearrangePanelPositionLocal extends Job implements ShouldQueue
                                 Log::info('UPDATE_REGIONAL_ANSAR ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . $locked_region . ', current regional position:' . $p['re_panel_position'] . ' future re position:' . $i);
                                 $i++;
                             } else {
+//                            all regional offer filled up. so, set position null
                                 $query .= "WHEN " . $p['ansar_id'] . " THEN NULL ";
                                 Log::info('UPDATE_REGIONAL_ANSAR ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . ', current regional position:' . $p['re_panel_position'] . ' future re position:null');
                             }
