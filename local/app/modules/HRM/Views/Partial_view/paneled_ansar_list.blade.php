@@ -1,17 +1,17 @@
 <table class="table table-bordered">
     <tr>
-        <th>Ansar ID</th>
+        <th>Ansar<br>ID</th>
         <th>Rank</th>
         <th>Name</th>
-        <th>Birth Date</th>
-        <th>Home District</th>
+        <th>Birth<br>Date</th>
+        <th>Home<br>District</th>
         <th>Thana</th>
-        <th ng-click="sortList('panel_date')">Global Panel Date & Time</th>
-        <th ng-click="sortList('re_panel_date')">Regional Panel Date & Time</th>
+        <th ng-click="sortList('panel_date')">Global Panel<br>Date & Time</th>
+        <th ng-click="sortList('re_panel_date')">Regional Panel<br>Date & Time</th>
         @if(Auth::user()->type==11)
-            <th>Global Position</th>
-            <th>Regional Position</th>
-            <th>Last Offer Region</th>
+            <th>Global<br>Position</th>
+            <th>Regional<br>Position</th>
+            <th>Offer<br>Count</th>
         @endif
     </tr>
     <tbody>
@@ -25,10 +25,12 @@
         <td>[[ansar.panel_date|dateformat:"DD-MMM-YYYY"]]</td>
         <td>[[ansar.re_panel_date|dateformat:"DD-MMM-YYYY"]]</td>
         @if(Auth::user()->type==11)
-            <td>
-                [[ansar.offer_type.split('DG').join('GB').split('CG').join('GB').split('GB').length-1>=3?'NIL':ansar.go_panel_position]]
+            <td ng-style="(ansar.locked==1 && ansar.last_offer_region=='GB')? {'background': 'red','color':'white'} : (ansar.offer_type.split('DG').join('GB').split('CG').join('GB').split('GB').length-1>=3) ? {'background': 'orange','color':'white'} : {'background': 'transparent'}">
+                [[ansar.offer_type.split('DG').join('GB').split('CG').join('GB').split('GB').length-1>=3?'Offer Blocked':ansar.go_panel_position]]
             </td>
-            <td>[[ansar.offer_type.split('RE').length-1>=3?'NIL':ansar.re_panel_position]]</td>
+            <td ng-style="(ansar.locked==1 && ansar.last_offer_region=='RE')? {'background': 'red','color':'white'} : (ansar.offer_type.split('RE').length-1>=3) ? {'background': 'orange','color':'white'} : {'background': 'transparent'}">
+                [[ansar.offer_type.split('RE').length-1>=3?'Offer Blocked':ansar.re_panel_position]]
+            </td>
             <td>[[ansar.offer_type.split('DG').join('GB').split('CG').join('GB')]]</td>
         @endif
     </tr>

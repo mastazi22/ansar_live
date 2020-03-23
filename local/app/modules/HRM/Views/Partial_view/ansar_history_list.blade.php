@@ -88,7 +88,11 @@
                         <td>[[data.api.panel_date?(data.api.panel_date|dateformat:'DD-MMMM-YYYY':'bn'):"--"]]</td>
                         <td>[[data.api.re_panel_date?(data.api.re_panel_date|dateformat:'DD-MMMM-YYYY':'bn'):"--"]]</td>
                         <td>[[data.api.memorandum_id?data.api.memorandum_id:"--"]]</td>
-                        <td>[[data.status]]</td>
+                        <td>
+                            <span>[[data.status]]</span>
+                            <span ng-if="data.apid.go_offer_count>=3">(গ্লোবাল ব্লক)</span>
+                            <span ng-if="data.apid.re_offer_count>=3">(রিজিওনাল ব্লক)</span>
+                        </td>
                         <td>[[data.aod.offerDate?(data.aod.offerDate|dateformat:'DD-MMMM-YYYY':'bn'):'--']] ([[data.offer_zone]])</td>
                         <td>[[data.aod.offerUnit?data.aod.offerUnit:'--']]</td>
                         <td>[[data.aoci.offerCancel?(data.aoci.offerCancel|dateformat:'DD-MMMM-YYYY':'bn'):'--']]</td>

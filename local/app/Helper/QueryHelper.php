@@ -50,12 +50,18 @@ class QueryHelper
             case self::PANEL:
                 $ansarQuery = DB::table('tbl_ansar_parsonal_info')->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
                     ->leftJoin('tbl_offer_status', 'tbl_offer_status.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                    ->leftJoin('tbl_sms_offer_info', 'tbl_sms_offer_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                    ->leftJoin('tbl_sms_receive_info', 'tbl_sms_receive_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                     ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
                     ->join('tbl_panel_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
                     ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                     ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.pannel_status', 1)
-                    ->where('tbl_ansar_status_info.block_list_status', 0);
+                    ->where(function ($q) {
+                        $q->where('tbl_ansar_status_info.pannel_status', 1)
+                            ->orWhere('tbl_ansar_status_info.offer_sms_status', 1);
+                    })
+                    ->where('tbl_ansar_status_info.block_list_status', 0)
+                    ->where('tbl_ansar_status_info.black_list_status', 0);
                 break;
             case self::OFFER:
                 $ansarQuery = DB::table('tbl_ansar_parsonal_info')
@@ -181,7 +187,7 @@ class QueryHelper
                     ->join('tbl_thana', 'tbl_ansar_parsonal_info.thana_id', '=', 'tbl_thana.id')
                     ->join('tbl_ansar_status_info', 'tbl_ansar_status_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                     ->join('tbl_designations', 'tbl_designations.id', '=', 'tbl_ansar_parsonal_info.designation_id')
-                    ->where('tbl_ansar_status_info.retierment_status',1)
+                    ->where('tbl_ansar_status_info.retierment_status', 1)
                     ->where('tbl_ansar_status_info.block_list_status', 0)
                     ->whereNull('tbl_ansar_retirement_history.deleted_at');
                 break;
