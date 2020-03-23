@@ -4,9 +4,9 @@
             <li>{{$user?$user->first_name.' '.$user->last_name:''}}</li>
             <li>
                 @if($user&&(trim($user->division)=="DMA"||trim($user->division)=="CMA"))
-                    জোন অধিনায়ক,<br>
+                    জোন অধিনায়ক,&nbsp;
                 @else
-                    জেলা কমান্ড্যান্ট,<br>
+                    জেলা কমান্ড্যান্ট<br>
                 @endif
                 @if($user&&(trim($user->division)=="DMA"||trim($user->division)=="CMA"))
                     {{$user?preg_replace('/\).+/',')',preg_replace('/.+\(/',$user->division_bng.'(',$user->unit)):''}}
