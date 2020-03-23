@@ -3,6 +3,9 @@
 namespace App\Console;
 
 use App\Console\Commands\NotificationServer;
+use App\Console\Commands\RedistributeGlobalPositions;
+use App\Console\Commands\RedistributeLocalPosition;
+use App\Console\Commands\RemoveUnverified;
 use App\Helper\Facades\GlobalParameterFacades;
 use App\Helper\Helper;
 use App\Helper\GlobalParameter;
@@ -48,6 +51,9 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\Inspire::class,
         NotificationServer::class,
+        RedistributeGlobalPositions::class,
+        RedistributeLocalPosition::class,
+        RemoveUnverified::class,
     ];
 
     /**
