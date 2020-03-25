@@ -55,7 +55,7 @@ class RemoveUnverified extends Command
             ->orWhere('tbl_ansar_status_info.early_retierment_status', 1)
             ->orWhere('tbl_ansar_status_info.rest_status', 1)
             ->orWhere('tbl_ansar_status_info.expired_status', 1)
-            ->select('tbl_panel_info.go_panel_position','tbl_panel_info.re_panel_position', 'tbl_ansar_parsonal_info.*')
+            ->select('tbl_panel_info.go_panel_position','tbl_panel_info.re_panel_position', 'tbl_ansar_status_info.*')
             ->get();
         if ($ansar_panels->count() > 0) {
 
@@ -67,7 +67,7 @@ class RemoveUnverified extends Command
                     . ' early_retirement_status-'.$panel->early_retierment_status.' rest_status-'.$panel->rest_status
                     . ' expired_status-'.$panel->expired_status
                     .', current g panel position:' . $panel->go_panel_position . ' current re panel position:' . $panel->re_panel_position);
-                $panel->delete();
+                PanelModel::where('ansar_id', $panel->ansar_id)->delete();
             }
         }
         echo $ansar_panels->count();
