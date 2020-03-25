@@ -17,6 +17,7 @@ trait SMSTrait
         $send_sms_env = env("SEND_SMS", false);
         $test_mobile = env("TEST_SMS_NUMBER", null);
 
+
         if ($send_sms_env == false && !empty($test_mobile)) {
             //Test SMS SEND config=
             $mobile_no = "88" . $test_mobile;

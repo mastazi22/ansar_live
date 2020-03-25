@@ -407,6 +407,7 @@ class OfferController extends Controller
 
     function testSmsPurpose()
     {
+        return null;
         $user = "ansarvdp_test";
         $pass = " ssl@123";
         $sid = "ANSARVDPTEST ";

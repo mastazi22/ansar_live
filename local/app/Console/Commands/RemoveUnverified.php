@@ -48,12 +48,25 @@ class RemoveUnverified extends Command
             ->where('tbl_ansar_parsonal_info.verified', 0)
             ->orWhere('tbl_ansar_status_info.block_list_status', 1)
             ->orWhere('tbl_ansar_status_info.black_list_status', 1)
-            ->select('tbl_panel_info.*', 'tbl_ansar_parsonal_info.verified', 'tbl_ansar_status_info.block_list_status', 'tbl_ansar_status_info.block_list_status')
+            ->orWhere('tbl_ansar_status_info.free_status', 1)
+            ->orWhere('tbl_ansar_status_info.embodied_status', 1)
+            ->orWhere('tbl_ansar_status_info.offer_block_status', 1)
+            ->orWhere('tbl_ansar_status_info.freezing_status', 1)
+            ->orWhere('tbl_ansar_status_info.early_retierment_status', 1)
+            ->orWhere('tbl_ansar_status_info.rest_status', 1)
+            ->orWhere('tbl_ansar_status_info.expired_status', 1)
+            ->select('tbl_panel_info.go_panel_position','tbl_panel_info.re_panel_position', 'tbl_ansar_parsonal_info.*')
             ->get();
         if ($ansar_panels->count() > 0) {
 
             foreach ($ansar_panels as $panel) {
-                Log::info('DELETE_PANEL ansar id:' . $panel->ansar_id . ' verified-' . $panel->verified . ' black_status-'.$panel->black_list_status.' block_status-'.$panel->block_list_status.', current g panel position:' . $panel->go_panel_position . ' current re panel position:' . $panel->re_panel_position);
+                Log::info('DELETE_PANEL ansar id:' . $panel->ansar_id . ' verified-' . $panel->verified
+                    . ' black_status-'.$panel->black_list_status.' block_status-'.$panel->block_list_status
+                    . ' free_status-'.$panel->free_status.' embodied_status-'.$panel->embodied_status
+                    . ' offer_block_status-'.$panel->offer_block_status.' freezing_status-'.$panel->freezing_status
+                    . ' early_retirement_status-'.$panel->early_retierment_status.' rest_status-'.$panel->rest_status
+                    . ' expired_status-'.$panel->expired_status
+                    .', current g panel position:' . $panel->go_panel_position . ' current re panel position:' . $panel->re_panel_position);
                 $panel->delete();
             }
         }

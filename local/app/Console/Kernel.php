@@ -106,7 +106,7 @@ class Kernel extends ConsoleKernel
                 }
             }
 
-        })->everyMinute()->name("send_offer_sms_2")->withoutOverlapping();
+        })->everyMinute()->name("send_offer_sms_2");
         $schedule->call(function () {
             Log::info("called : send_failed_offer");
             $offered_ansar = OfferSMS::with(['ansar', 'district'])->where('sms_status', 'Failed')->take(10)->get();
