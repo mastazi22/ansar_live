@@ -806,7 +806,7 @@ class CustomQuery
         if ($filter_mobile_no) {
             $go_offer_count = +GlobalParameterFacades::getValue('ge_offer_count');
             $ansarQuery->where(function ($q) use ($go_offer_count) {
-                $q->whereRaw("ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"DG\",\"\")))/CHAR_LENGTH(\"DG\"))+ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"CG\",\"\")))/CHAR_LENGTH(\"CG\"))+ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"GB\",\"\")))/CHAR_LENGTH(\"GB\"))<=$go_offer_count");
+                $q->whereRaw("ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"DG\",\"\")))/CHAR_LENGTH(\"DG\"))+ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"CG\",\"\")))/CHAR_LENGTH(\"CG\"))+ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"GB\",\"\")))/CHAR_LENGTH(\"GB\"))<$go_offer_count");
                 $q->where('tbl_panel_info.go_panel_position','<>', null);
                 $q->orWhereNull("tbl_offer_status.offer_type");
             });
@@ -814,7 +814,7 @@ class CustomQuery
         if ($filter_age) {
             $re_offer_count = +GlobalParameterFacades::getValue('re_offer_count');
             $ansarQuery->where(function ($q) use ($re_offer_count) {
-                $q->whereRaw("ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"RE\",\"\")))/CHAR_LENGTH(\"RE\"))<=$re_offer_count");
+                $q->whereRaw("ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"RE\",\"\")))/CHAR_LENGTH(\"RE\"))<$re_offer_count");
                 $q->where('tbl_panel_info.re_panel_position','<>', null);
                 $q->orWhereNull("tbl_offer_status.offer_type");
             });
