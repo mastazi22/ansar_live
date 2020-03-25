@@ -25,11 +25,11 @@
         <td style="text-align: center">[[ansar.panel_date|dateformat:"DD-MMM-YYYY"]]</td>
         <td style="text-align: center">[[ansar.re_panel_date|dateformat:"DD-MMM-YYYY"]]</td>
         @if(Auth::user()->type==11)
-            <td style="text-align: center;width: 10px;" ng-style="(ansar.locked==1 && ansar.last_offer_region=='GB')? {'background': 'red','color':'white'} : (ansar.offer_type.split('DG').join('GB').split('CG').join('GB').split('GB').length-1>=3) ? {'background': 'orange','color':'white'} : {'background': 'transparent'}">
-                [[(ansar.locked==0 && ansar.offer_type.split('DG').join('GB').split('CG').join('GB').split('GB').length-1>=3)?'Offer Blocked':ansar.go_panel_position]]
+            <td style="text-align: center;width: 10px;" ng-style="(ansar.locked==1 && ansar.last_offer_region=='GB')? {'background': 'red','color':'white'} : (ansar.go_panel_position==null) ? {'background': 'orange','color':'white'} : {'background': 'transparent'}">
+                [[(ansar.go_panel_position==null)?'Offer Blocked':ansar.go_panel_position]]
             </td>
-            <td style="text-align: center;width: 10px;" ng-style="(ansar.locked==1 && ansar.last_offer_region=='RE')? {'background': 'red','color':'white'} : (ansar.offer_type.split('RE').length-1>=3) ? {'background': 'orange','color':'white'} : {'background': 'transparent'}">
-                [[(ansar.locked==0 && ansar.offer_type.split('RE').length-1>=3)?'Offer Blocked':ansar.re_panel_position]]
+            <td style="text-align: center;width: 10px;" ng-style="(ansar.locked==1 && ansar.last_offer_region=='RE')? {'background': 'red','color':'white'} : (ansar.re_panel_position==null) ? {'background': 'orange','color':'white'} : {'background': 'transparent'}">
+                [[(ansar.re_panel_position==null)?'Offer Blocked':ansar.re_panel_position]]
             </td>
             <td style="text-align: center">[[ansar.offer_type.split('DG').join('GB').split('CG').join('GB')]]</td>
         @endif

@@ -771,7 +771,7 @@ class CustomQuery
 
 
 // Dashboard panel ansar list
-    public static function getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division = null, $sex, $time, $rank, $filter_mobile_no, $filter_age, $q, $sort = "panel_date")
+    public static function getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division = null, $sex, $time, $rank, $filter_mobile_no, $filter_age, $q, $sort = "go_panel_position")
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::PANEL);
         if ($rank != 'all') {
@@ -779,14 +779,14 @@ class CustomQuery
         }
         if ($division && $division != 'all') {
             $ansarQuery->whereEqualIn('tbl_ansar_parsonal_info.division_id', explode(',', $division));
-            $sort = "re_panel_date";
+            $sort = "re_panel_position";
         }
         if ($unit != 'all') {
             $ansarQuery->where('tbl_units.id', $unit);
         }
         if ($thana != 'all') {
             $ansarQuery->where('tbl_thana.id', $thana);
-            $sort = "re_panel_date";
+            $sort = "re_panel_position";
         }
         if ($sex != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
@@ -821,7 +821,7 @@ class CustomQuery
         }
         $total = clone $ansarQuery;
         $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
-        $ansars = $ansarQuery->orderBy($sort ? $sort : 'tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')->select('tbl_ansar_parsonal_info.ansar_id as id',
+        $ansars = $ansarQuery->orderBy($sort ? $sort : 'tbl_panel_info.go_panel_position')->orderBy('tbl_panel_info.id')->select('tbl_ansar_parsonal_info.ansar_id as id',
             'tbl_ansar_parsonal_info.father_name_bng', 'tbl_ansar_parsonal_info.mother_name_bng', 'tbl_ansar_parsonal_info.mobile_no_self',
             'post_office_name', 'village_name', 'union_name_bng', 'tbl_ansar_parsonal_info.national_id_no', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_panel_info.panel_date', 'tbl_panel_info.re_panel_date', 'tbl_panel_info.memorandum_id',
