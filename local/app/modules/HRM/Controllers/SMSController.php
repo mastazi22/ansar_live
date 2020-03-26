@@ -118,7 +118,6 @@ class SMSController extends Controller
                                 $offered_ansar->deleteCount();
                                 $offered_ansar->deleteOfferStatus();
                                 $offered_ansar->blockAnsarOffer();
-                                $offered_ansar->saveLog();
                                 $offered_ansar->status()->update([
                                     'offer_sms_status' => 0,
                                     'offer_block_status' => 1,
@@ -134,7 +133,8 @@ class SMSController extends Controller
                                         'come_from' => $pa->come_from,
                                         'move_to' => 'Offer',
                                         'go_panel_position' => $pa->go_panel_position,
-                                        're_panel_position' => $pa->re_panel_position
+                                        're_panel_position' => $pa->re_panel_position,
+                                        'comment' => "Last Offer SMS Reply:NO.Moved to offer block status "
                                     ]));
                                     $pa->delete();
                                 }
@@ -182,6 +182,8 @@ class SMSController extends Controller
                             $offered_ansar->saveLog('No');
                             $offered_ansar->delete();
                             DB::commit();
+                            dispatch(new RearrangePanelPositionLocal());
+                            dispatch(new RearrangePanelPositionGlobal());
                             return "Your offer is cancelled";
                         }
                     } catch (\Exception $e) {
@@ -313,7 +315,7 @@ class SMSController extends Controller
                 }
             }
             return 'Global position : ' . $go_panel_pos . " Regional position : " . $re_panel_pos;
-        }else{
+        } else {
             return 'Your panel position not found. May be tou are over aged or invalid mobile no';
         }
     }
