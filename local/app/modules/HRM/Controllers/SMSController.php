@@ -301,8 +301,8 @@ class SMSController extends Controller
             $go_offer_count = +GlobalParameterFacades::getValue('ge_offer_count');
             $re_offer_count = +GlobalParameterFacades::getValue('re_offer_count');
             $offerStatus = OfferSMSStatus::where('ansar_id', $id)->first();
-            $re_panel_pos = "NIL";
-            $go_panel_pos = "NIL";
+            $re_panel_pos = "Blocked";
+            $go_panel_pos = "Blocked";
             if (!$offerStatus) {
                 $re_panel_pos = $ansar->panel->re_panel_position;
                 $go_panel_pos = $ansar->panel->go_panel_position;
