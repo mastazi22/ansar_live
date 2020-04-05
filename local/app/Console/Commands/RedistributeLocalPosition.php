@@ -72,7 +72,9 @@ class RedistributeLocalPosition extends Command
                     $r = explode("-", $of->offer_zone_range);
                     $values = [];
                     foreach ($r as $rr) {
-                        $values = array_merge($values, array_values($ansars[$rr]));
+                        if(isset($ansars[$rr])){
+                            $values = array_merge($values, array_values($ansars[$rr]));
+                        }
                     }
                     $values = collect(array_merge($values, array_values($ansar)))->groupBy(function ($item) {
                         return $item->code . "-" . $item->sex;
