@@ -2,7 +2,7 @@
 <title>Ansar &amp; VDP ERP</title>
 <!-- Tell the browser to be responsive to screen width -->
 <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-
+<script sync src="{{asset('dist/js/angularjs.js')}}" type="text/javascript"></script> <!---just loading the angular js from local-->
 <link rel="shortcut icon" href=" {{asset('dist/img/favicon.ico')}}">
 <!-- Bootstrap 3.3.4 -->
 <link href="{{asset('bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css"/>
@@ -42,7 +42,6 @@
 {{--<script src="{{asset('dist/js/angular.js')}}" type="text/javascript"></script>--}}
 {{--<script src="{{asset('node_modules/angular/angular.js')}}" type="text/javascript"></script>--}}
 {{--<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.6/angular.js" type="text/javascript"></script>--}}
-<script src="{{asset('dist/js/angularjs.js')}}" type="text/javascript"></script> <!---just loading the angular js from local-->
 <script src="{{asset('dist/js/sortTable.js')}}" type="text/javascript"></script>
 <script src="{{asset('dist/js/notify.js')}}" type="text/javascript"></script>
 <script src="{{asset('dist/js/alertify.js')}}" type="text/javascript"></script>
