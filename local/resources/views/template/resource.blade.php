@@ -48,9 +48,6 @@
 <script src="{{asset('dist/js/alertify.js')}}" type="text/javascript"></script>
 <script src="{{asset('dist/js/ajaxsubmit.js')}}"></script>
 <script src="{{asset('dist/js/viewer.min.js')}}"></script>
-<script src="{{asset('dist/js/angular-filter.js')}}"></script>
-<script src="{{asset('dist/js/angular-app.js')}}?version={{uniqid("av_")}}"></script>
-<script src="{{asset('dist/js/angular-route.js')}}"></script>
 <script src="{{asset('dist/js/jquery.noty.packaged.min.js')}}"></script>
 <script src="{{asset('dist/js/jquery.cookie.js')}}"></script>
 <script src="{{asset('dist/js/moment.min.js')}}"></script>
@@ -59,9 +56,13 @@
 <script src="{{asset('dist/js/datePicker.js')}}"></script>
 <script src="{{asset('dist/js/dropzone.js')}}"></script>
 <script src="{{asset('node_modules/noty/lib/noty.min.js')}}"></script>
-<script src="{{asset('node_modules/angular-cookies/angular-cookies.js')}}"></script>
 <script src="{{asset('dist/js/jquery-ui.multidatespicker.js')}}" ></script>
 <script src="{{asset('dist/js/fileinput.min.js')}}" ></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 {{--<script src="https://cdn.rawgit.com/dubrox/Multiple-Dates-Picker-for-jQuery-UI/master/jquery-ui.multidatespicker.js"></script>--}}
+
+<script src="{{asset('dist/js/angular-filter.js')}}"></script>
+<script src="{{asset('dist/js/angular-app.js')}}?version={{uniqid("av_")}}"></script>
+<script src="{{asset('dist/js/angular-route.js')}}"></script>
+<script src="{{asset('node_modules/angular-cookies/angular-cookies.js')}}"></script>
