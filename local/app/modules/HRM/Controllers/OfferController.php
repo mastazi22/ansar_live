@@ -60,6 +60,7 @@ class OfferController extends Controller
     {
         /*We failed to determine its functionality and where this function is used.[22/03/2020-Sabbir & Ayman]*/
         return response(collect(['type' => 'error', 'message' => "Internal Server Error!!"])->toJson(), 400, ['Content-Type' => 'application/json']);
+
         $rules = [];
         $rules['pc_male'] = 'required|numeric|regex:/^[0-9]+$/|min:0';
         $rules['pc_female'] = 'required|numeric|regex:/^[0-9]+$/|min:0';
@@ -165,6 +166,7 @@ class OfferController extends Controller
         }
         return Response::json(['type' => 'success', 'message' => "Offer Send Successfully"]);
     }
+
 
     function removeFromPanel($ansar)
     {
@@ -405,6 +407,7 @@ class OfferController extends Controller
 
     function testSmsPurpose()
     {
+        return null;
         $user = "ansarvdp_test";
         $pass = " ssl@123";
         $sid = "ANSARVDPTEST ";

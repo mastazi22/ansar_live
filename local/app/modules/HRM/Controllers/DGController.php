@@ -90,6 +90,7 @@ class DGController extends Controller
 
             $ansarPersonalDetail = DB::table('tbl_ansar_parsonal_info')
                 ->leftJoin('tbl_ansar_bank_account_info', 'tbl_ansar_bank_account_info.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
+                ->leftJoin('tbl_offer_status', 'tbl_offer_status.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
                 ->join('tbl_units', 'tbl_units.id', '=', 'tbl_ansar_parsonal_info.unit_id')
                 ->join('tbl_blood_group', 'tbl_blood_group.id', '=', 'tbl_ansar_parsonal_info.blood_group_id')
                 ->join('tbl_thana', 'tbl_thana.id', '=', 'tbl_ansar_parsonal_info.thana_id')
@@ -98,7 +99,9 @@ class DGController extends Controller
                 ->select('tbl_ansar_parsonal_info.ansar_name_bng', 'tbl_ansar_parsonal_info.profile_pic', 'tbl_ansar_parsonal_info.ansar_id',
                     'tbl_units.unit_name_bng', 'tbl_units.id as unit_id', 'tbl_ansar_parsonal_info.data_of_birth', 'tbl_designations.name_bng', 'tbl_ansar_parsonal_info.mobile_no_self',
                     DB::raw('TIMESTAMPDIFF(YEAR,tbl_ansar_parsonal_info.data_of_birth,NOW()) as age'), 'tbl_ansar_parsonal_info.data_of_birth as dob', 'tbl_ansar_bank_account_info.mobile_bank_account_no',
-                    'tbl_ansar_bank_account_info.bank_name', 'tbl_ansar_bank_account_info.prefer_choice', 'tbl_ansar_bank_account_info.mobile_bank_type', 'tbl_ansar_bank_account_info.account_no', 'avub_share_id', 'tbl_thana.thana_name_bng', 'tbl_blood_group.blood_group_name_bng')->first();
+                    'tbl_ansar_bank_account_info.bank_name', 'tbl_ansar_bank_account_info.prefer_choice', 'tbl_ansar_bank_account_info.mobile_bank_type', 'tbl_ansar_bank_account_info.account_no', 'avub_share_id', 'tbl_thana.thana_name_bng', 'tbl_blood_group.blood_group_name_bng',
+                    DB::raw('ROUND((CHAR_LENGTH(REPLACE(offer_type,",",""))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,",",""),"DG","")))/CHAR_LENGTH("DG"))+ROUND((CHAR_LENGTH(REPLACE(offer_type,",",""))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,",",""),"CG","")))/CHAR_LENGTH("CG"))+ROUND((CHAR_LENGTH(REPLACE(offer_type,",",""))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,",",""),"GB","")))/CHAR_LENGTH("GB")) as go_offer_count'),
+                    DB::raw('ROUND((CHAR_LENGTH(REPLACE(offer_type,",",""))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,",",""),"RE","")))/CHAR_LENGTH("RE")) as re_offer_count'))->first();
 
             $ansarStatusInfo = AnsarStatusInfo::where('ansar_id', $ansar_id)->first();
             $ansarStatusInfo = AnsarStatusInfo::where('ansar_id', $ansar_id)->first();

@@ -1,20 +1,31 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: shuvo
+ * Date: 2/11/2018
+ * Time: 11:58 AM
+ */
 
 namespace App\Helper;
+
 
 trait SMSTrait
 {
     public function sendSMS($mobile_no, $message)
     {
+
         $send_sms_env = env("SEND_SMS", false);
         $test_mobile = env("TEST_SMS_NUMBER", null);
-        $phone_number = "";
+
+
         if ($send_sms_env == false && !empty($test_mobile)) {
             //Test SMS SEND config=
             $mobile_no = "88" . $test_mobile;
+
         } elseif ($send_sms_env == false) {
             return null;
         }
+
         $user = env('SSL_USER_ID', 'ansarapi');
         $pass = "75@5S01j";
         $sid = env('SSL_SID', 'ANSARVDP');

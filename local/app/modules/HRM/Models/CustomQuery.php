@@ -27,6 +27,7 @@ class CustomQuery
     const RECENT = 2;
     protected $connection = 'hrm';
 
+
     public static function getAnsarInfo($pc = array('male' => 0, 'female' => 0), $apc = array('male' => 0, 'female' => 0),
                                         $ansar = array('male' => 0, 'female' => 0), $unit_id = [],
                                         $exclude_district = null, $user, $offerZone = [],
@@ -68,7 +69,7 @@ class CustomQuery
                 $q->orWhereNull("tbl_offer_status.offer_type");
             });
         } else {
-           return [];
+            return [];
         }
         // as per request RUSSEL VAI(24-07-2019)
         /*        if(auth()->user()->id==343){
@@ -196,10 +197,10 @@ class CustomQuery
                 ->orderBy('tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')
                 ->select('tbl_ansar_parsonal_info.ansar_id')->take($apc['female']);
         }
-//            $b = $pc_male->get();
-//        $b = $ansar_male->get();
+
         $b = $pc_male->unionAll($pc_female)->unionAll($apc_male)->unionAll($apc_female)->unionAll($ansar_male)->unionAll($ansar_female)->pluck('ansar_id');
 //        return DB::getQueryLog();
+//        $test = DB::getQueryLog();
         return $b;
     }
 
@@ -770,7 +771,7 @@ class CustomQuery
 
 
 // Dashboard panel ansar list
-    public static function getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division = null, $sex, $time, $rank, $filter_mobile_no, $filter_age, $q, $sort = "panel_date")
+    public static function getTotalPaneledAnsarList($offset, $limit, $unit, $thana, $division = null, $sex, $time, $rank, $filter_mobile_no, $filter_age, $q, $sort = "go_panel_position")
     {
         $ansarQuery = QueryHelper::getQuery(QueryHelper::PANEL);
         if ($rank != 'all') {
@@ -778,14 +779,14 @@ class CustomQuery
         }
         if ($division && $division != 'all') {
             $ansarQuery->whereEqualIn('tbl_ansar_parsonal_info.division_id', explode(',', $division));
-            $sort = "re_panel_date";
+            $sort = "re_panel_position";
         }
         if ($unit != 'all') {
             $ansarQuery->where('tbl_units.id', $unit);
         }
         if ($thana != 'all') {
             $ansarQuery->where('tbl_thana.id', $thana);
-            $sort = "re_panel_date";
+            $sort = "re_panel_position";
         }
         if ($sex != 'all') {
             $ansarQuery->where('tbl_ansar_parsonal_info.sex', $sex);
@@ -806,24 +807,43 @@ class CustomQuery
             $go_offer_count = +GlobalParameterFacades::getValue('ge_offer_count');
             $ansarQuery->where(function ($q) use ($go_offer_count) {
                 $q->whereRaw("ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"DG\",\"\")))/CHAR_LENGTH(\"DG\"))+ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"CG\",\"\")))/CHAR_LENGTH(\"CG\"))+ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"GB\",\"\")))/CHAR_LENGTH(\"GB\"))<$go_offer_count");
+                $q->where('tbl_panel_info.go_panel_position','<>', null);
                 $q->orWhereNull("tbl_offer_status.offer_type");
             });
         }
         if ($filter_age) {
             $re_offer_count = +GlobalParameterFacades::getValue('re_offer_count');
             $ansarQuery->where(function ($q) use ($re_offer_count) {
-//                    $q->whereRaw("NOT FIND_IN_SET('RE',tbl_offer_status.offer_type)");
                 $q->whereRaw("ROUND((CHAR_LENGTH(REPLACE(offer_type,\",\",\"\"))-CHAR_LENGTH(REPLACE(REPLACE(offer_type,\",\",\"\"),\"RE\",\"\")))/CHAR_LENGTH(\"RE\"))<$re_offer_count");
+                $q->where('tbl_panel_info.re_panel_position','<>', null);
                 $q->orWhereNull("tbl_offer_status.offer_type");
             });
         }
         $total = clone $ansarQuery;
         $total->groupBy('tbl_designations.id')->select(DB::raw("count('tbl_ansar_parsonal_info.ansar_id') as t"), 'tbl_designations.code');
-        $ansars = $ansarQuery->orderBy($sort ? $sort : 'tbl_panel_info.panel_date')->orderBy('tbl_panel_info.id')->select('tbl_ansar_parsonal_info.ansar_id as id',
+        $ansars = $ansarQuery->orderBy($sort ? $sort : 'tbl_panel_info.go_panel_position')->orderBy('tbl_panel_info.id')->select('tbl_ansar_parsonal_info.ansar_id as id',
             'tbl_ansar_parsonal_info.father_name_bng', 'tbl_ansar_parsonal_info.mother_name_bng', 'tbl_ansar_parsonal_info.mobile_no_self',
             'post_office_name', 'village_name', 'union_name_bng', 'tbl_ansar_parsonal_info.national_id_no', 'tbl_ansar_parsonal_info.ansar_name_bng as name', 'tbl_ansar_parsonal_info.data_of_birth as birth_date',
             'tbl_designations.name_bng as rank', 'tbl_ansar_parsonal_info.mobile_no_self', 'tbl_units.unit_name_bng as unit', 'tbl_thana.thana_name_bng as thana', 'tbl_panel_info.panel_date', 'tbl_panel_info.re_panel_date', 'tbl_panel_info.memorandum_id',
-            'tbl_offer_status.offer_type', 're_panel_position', 'go_panel_position')->skip($offset)->limit($limit)->get();
+            'tbl_offer_status.offer_type', 're_panel_position', 'go_panel_position','locked', 'tbl_sms_offer_info.district_id as sms_offer_district', 'tbl_sms_receive_info.offered_district',
+            DB::raw('REPLACE(REPLACE(SUBSTRING_INDEX(SUBSTRING_INDEX(offer_type,\',\',LENGTH(offer_type)-LENGTH(REPLACE(offer_type,\',\',\'\'))+1),\',\',-1),"DG","GB"),"CG","GB") as last_offer_region'))->skip($offset)->limit($limit)->get();
+        foreach($ansars as $key=>$ansar){
+            if(empty($ansar->last_offer_region)){
+                if(!empty($ansar->offered_district) && is_numeric($ansar->offered_district)){//offer reply "yes"
+                    if(in_array($ansar->offered_district, Config::get('app.offer'))){
+                        $ansar->last_offer_region = "GB";
+                    }else{
+                        $ansar->last_offer_region = "RE";
+                    }
+                }elseif(!empty($ansar->sms_offer_district) && is_numeric($ansar->sms_offer_district)){//wait till 48 hours
+                    if(in_array($ansar->sms_offer_district, Config::get('app.offer'))){
+                        $ansar->last_offer_region = "GB";
+                    }else{
+                        $ansar->last_offer_region = "RE";
+                    }
+                }
+            }
+        }
         return ['total' => collect($total->get())->pluck('t', 'code'), 'index' => ((ceil($offset / $limit)) * $limit) + 1, 'ansars' => $ansars, 'type' => 'pannel'];
     }
 
