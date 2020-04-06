@@ -237,10 +237,10 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>[[convertDateObj(ansarDetail['cPanel'].panel_date) | date:'mediumDate']]</td>
-                                    <td>[[ansarDetail['cPanel'].go_panel_position]]</td>
-                                    <td>[[convertDateObj(ansarDetail['cPanel'].re_panel_date) | date:'mediumDate']]</td>
-                                    <td>[[ansarDetail['cPanel'].re_panel_position]]</td>
+                                    <td>[[convertDateObj(ansarDetail['cPanel'].panel_date) | date:'medium']]</td>
+                                    <td>[[ansarDetail['cPanel'].go_panel_position==null?"Blocked":ansarDetail['cPanel'].go_panel_position]]</td>
+                                    <td>[[convertDateObj(ansarDetail['cPanel'].re_panel_date) | date:'medium']]</td>
+                                    <td>[[ansarDetail['cPanel'].re_panel_position==null?"Blocked":ansarDetail['cPanel'].re_panel_position]]</td>
                                     <td>[[ansarDetail['cPanel'].come_from]]</td>
                                     <td>[[ansarDetail['cPanel'].memorandum_id]]</td>
                                     <td>[[ansarDetail['cPanel'].action_user_id]]</td>
@@ -266,9 +266,9 @@
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="lpanel in ansarDetail['lPanel']">
-                                    <td>[[convertDateObj(lpanel.panel_date) | date:'mediumDate']]</td>
+                                    <td>[[convertDateObj(lpanel.panel_date) | date:'medium']]</td>
                                     <td>[[lpanel.go_panel_position]]</td>
-                                    <td>[[convertDateObj(lpanel.re_panel_date) | date:'mediumDate']]</td>
+                                    <td>[[convertDateObj(lpanel.re_panel_date) | date:'medium']]</td>
                                     <td>[[lpanel.re_panel_position]]</td>
                                     <td>[[lpanel.come_from]]</td>
                                     <td>[[lpanel.old_memorandum_id]]</td>
