@@ -97,7 +97,11 @@
                                     <td><a href="/HRM/entryreport/[[ansarDetail['ansar'].ansar_id]]">[[ansarDetail['ansar'].ansar_name_bng]]</a>
                                     </td>
                                     <td>[[ansarDetail['ansar'].designation.name_bng]]</td>
-                                    <td>[[ansarDetail['status'].join()]]</td>
+                                    <td>
+                                        [[ansarDetail['status'].join()]]&nbsp;
+                                        <span ng-if="ansarDetail && ansarDetail['cPanel'] && ansarDetail['cPanel'].go_panel_position==null">(Global Blocked)</span>
+                                        <span ng-if="ansarDetail && ansarDetail['cPanel'] && ansarDetail['cPanel'].re_panel_position==null">(Regional Blocked)</span>
+                                    </td>
                                     <td>[[ansarDetail['ansar'].mobile_no_self]]</td>
                                     <td>[[ansarDetail['ansar'].sex]]</td>
                                     <td><img src="/image?file=[[ansarDetail['ansar'].profile_pic]]" style="width: 80px;height: 80px"
