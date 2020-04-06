@@ -837,6 +837,30 @@ class ReportController extends Controller
         //panel information
         $result["cPanel"] = $ansar->panel()->first();
         $result["lPanel"] = $ansar->panelLog()->orderBy("panel_date", "desc")->get();
+        if (!empty($result["cPanel"]) && !empty($result["lOffer"])) {
+            if ($result["cPanel"]->go_panel_position == null) {
+                $found = false;
+                foreach ($result["lOffer"] as $key => $value) {
+                    if ($value->offerType == "Global" && !$found) {
+                        $found = true;
+                        $result["lOffer"][$key]->offerBlocked = true;
+                    } else {
+                        $result["lOffer"][$key]->offerBlocked = false;
+                    }
+                }
+            }
+            if ($result["cPanel"]->re_panel_position == null) {
+                $found = false;
+                foreach ($result["lOffer"] as $key => $value) {
+                    if ($value->offerType == "Regional" && !$found) {
+                        $found = true;
+                        $result["lOffer"][$key]->offerBlocked = true;
+                    } else {
+                        $result["lOffer"][$key]->offerBlocked = false;
+                    }
+                }
+            }
+        }
 
         //rest information
         $result["cRest"] = $ansar->rest()->with("reason")->first();
