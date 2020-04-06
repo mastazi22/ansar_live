@@ -183,11 +183,11 @@
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="loffer in ansarDetail['lOffer']">
-                                    <td ng-style="loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">[[convertDateObj(loffer.offered_date) | date:'mediumDate']]</td>
-                                    <td ng-style="loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">[[getUnitAddress(loffer.district)]]</td>
-                                    <td ng-style="loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">[[loffer.offerType]]</td>
-                                    <td ng-style="loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">[[loffer.reply_type]]</td>
-                                    <td ng-style="loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">[[loffer.action_user_id]]</td>
+                                    <td ng-style="loffer.offerBlocked && loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">[[convertDateObj(loffer.offered_date) | date:'mediumDate']]</td>
+                                    <td ng-style="loffer.offerBlocked && loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">[[getUnitAddress(loffer.district)]]</td>
+                                    <td ng-style="loffer.offerBlocked && loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">[[loffer.offerType]]</td>
+                                    <td ng-style="loffer.offerBlocked && loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">[[loffer.reply_type]]</td>
+                                    <td ng-style="loffer.offerBlocked && loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">[[loffer.action_user_id]]</td>
                                 </tr>
                                 </tbody>
                             </table>

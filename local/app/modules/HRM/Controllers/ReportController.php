@@ -838,7 +838,11 @@ class ReportController extends Controller
         $result["cPanel"] = $ansar->panel()->first();
         $result["lPanel"] = $ansar->panelLog()->orderBy("panel_date", "desc")->get();
         if (!empty($result["cPanel"]) && !empty($result["lOffer"])) {
-            if ($result["cPanel"]->go_panel_position == null) {
+            if ($result["cPanel"]->go_panel_position == null && $result["cPanel"]->re_panel_position == null) {
+                foreach ($result["lOffer"] as $key => $value) {
+                    $result["lOffer"][$key]->offerBlocked = false;
+                }
+            } else if ($result["cPanel"]->go_panel_position == null) {
                 $found = false;
                 foreach ($result["lOffer"] as $key => $value) {
                     if ($value->offerType == "Global" && !$found) {
@@ -848,8 +852,7 @@ class ReportController extends Controller
                         $result["lOffer"][$key]->offerBlocked = false;
                     }
                 }
-            }
-            if ($result["cPanel"]->re_panel_position == null) {
+            } else if ($result["cPanel"]->re_panel_position == null) {
                 $found = false;
                 foreach ($result["lOffer"] as $key => $value) {
                     if ($value->offerType == "Regional" && !$found) {
