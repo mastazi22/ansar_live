@@ -183,11 +183,21 @@
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="loffer in ansarDetail['lOffer']">
-                                    <td ng-style="loffer.offerBlocked && loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">[[convertDateObj(loffer.offered_date) | date:'mediumDate']]</td>
-                                    <td ng-style="loffer.offerBlocked && loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">[[getUnitAddress(loffer.district)]]</td>
-                                    <td ng-style="loffer.offerBlocked && loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">[[loffer.offerType]]</td>
-                                    <td ng-style="loffer.offerBlocked && loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">[[loffer.reply_type]]</td>
-                                    <td ng-style="loffer.offerBlocked && loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">[[loffer.action_user_id]]</td>
+                                    <td ng-style="loffer.offerBlocked && loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">
+                                        [[convertDateObj(loffer.offered_date) | date:'mediumDate']]
+                                    </td>
+                                    <td ng-style="loffer.offerBlocked && loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">
+                                        [[getUnitAddress(loffer.district)]]
+                                    </td>
+                                    <td ng-style="loffer.offerBlocked && loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">
+                                        [[loffer.offerType]]
+                                    </td>
+                                    <td ng-style="loffer.offerBlocked && loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">
+                                        [[loffer.reply_type]]
+                                    </td>
+                                    <td ng-style="loffer.offerBlocked && loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">
+                                        [[loffer.action_user_id]]
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -227,28 +237,38 @@
                             <table class="table table-bordered table-striped" ng-if="ansarDetail['cPanel']">
                                 <thead>
                                 <tr>
-                                    <th>Global Panel Date</th>
-                                    <th>Global Panel Position</th>
-                                    <th>Regional Panel Date</th>
-                                    <th>Regional Panel Position</th>
+                                    <th>Global Panel<br>Date & Time</th>
+                                    <th>Global Panel<br>Position</th>
+                                    <th>Regional Panel<br>Date & Time</th>
+                                    <th>Regional Panel<br>Position</th>
                                     <th>Come From</th>
                                     <th>Memorandum</th>
-                                    <th>Action User Id</th>
+                                    <th>Action User<br>Id</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td ng-style="ansarDetail['cPanel'].locked==1?{'background': 'red','color':'white'}:''">[[convertDateObj(ansarDetail['cPanel'].panel_date) | date:'medium']]</td>
-                                    <td ng-style="ansarDetail['cPanel'].locked==1?{'background': 'red','color':'white'}:ansarDetail['cPanel'].go_panel_position==null? {'background': 'orange','color':'white'}:''">
-                                        [[ansarDetail['cPanel'].go_panel_position==null?"Offer Blocked":ansarDetail['cPanel'].go_panel_position]]
+                                    <td ng-style="ansarDetail['cPanel'].locked==1?{'background': 'red','color':'white'}:''">
+                                        [[convertDateObj(ansarDetail['cPanel'].panel_date) | date:'medium']]
                                     </td>
-                                    <td ng-style="ansarDetail['cPanel'].locked==1?{'background': 'red','color':'white'}:''">[[convertDateObj(ansarDetail['cPanel'].re_panel_date) | date:'medium']]</td>
-                                    <td ng-style="ansarDetail['cPanel'].locked==1?{'background': 'red','color':'white'}:ansarDetail['cPanel'].re_panel_position==null? {'background': 'orange','color':'white'}:''">
-                                        [[ansarDetail['cPanel'].re_panel_position==null?"Offer Blocked":ansarDetail['cPanel'].re_panel_position]]
+                                    <td ng-style="ansarDetail['cPanel'].locked==1 ? {'background': 'red','color':'white'} : ansarDetail['cPanel'].go_panel_position==null? {'background': 'orange','color':'white'}:''">
+                                        [[ansarDetail['cPanel'].go_panel_position==null ? "Offer Blocked" : ansarDetail['cPanel'].go_panel_position]]
                                     </td>
-                                    <td ng-style="ansarDetail['cPanel'].locked==1?{'background': 'red','color':'white'}:''">[[ansarDetail['cPanel'].come_from]]</td>
-                                    <td ng-style="ansarDetail['cPanel'].locked==1?{'background': 'red','color':'white'}:''">[[ansarDetail['cPanel'].memorandum_id]]</td>
-                                    <td ng-style="ansarDetail['cPanel'].locked==1?{'background': 'red','color':'white'}:''">[[ansarDetail['cPanel'].action_user_id]]</td>
+                                    <td ng-style="ansarDetail['cPanel'].locked==1?{'background': 'red','color':'white'}:''">
+                                        [[convertDateObj(ansarDetail['cPanel'].re_panel_date) | date:'medium']]
+                                    </td>
+                                    <td ng-style="ansarDetail['cPanel'].locked==1 ? {'background': 'red','color':'white'} : ansarDetail['cPanel'].re_panel_position==null? {'background': 'orange','color':'white'}:''">
+                                        [[ansarDetail['cPanel'].re_panel_position==null ? "Offer Blocked" : ansarDetail['cPanel'].re_panel_position]]
+                                    </td>
+                                    <td ng-style="ansarDetail['cPanel'].locked==1?{'background': 'red','color':'white'}:''">
+                                        [[ansarDetail['cPanel'].come_from]]
+                                    </td>
+                                    <td ng-style="ansarDetail['cPanel'].locked==1?{'background': 'red','color':'white'}:''">
+                                        [[ansarDetail['cPanel'].memorandum_id]]
+                                    </td>
+                                    <td ng-style="ansarDetail['cPanel'].locked==1?{'background': 'red','color':'white'}:''">
+                                        [[ansarDetail['cPanel'].action_user_id]]
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -261,10 +281,10 @@
                                    ng-if="ansarDetail['lPanel'] && ansarDetail['lPanel'].length>0">
                                 <thead>
                                 <tr>
-                                    <th>Global Panel Date</th>
-                                    <th>Global Panel Position</th>
-                                    <th>Regional Panel Date</th>
-                                    <th>Regional Panel Position</th>
+                                    <th>Global Panel<br>Date & Time</th>
+                                    <th>Global Panel<br>Position</th>
+                                    <th>Regional Panel<br>Date & Time</th>
+                                    <th>Regional Panel<br>Position</th>
                                     <th>Come From</th>
                                     <th>Memorandum</th>
                                 </tr>
@@ -374,8 +394,10 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>[[convertDateObj(ansarDetail['cEmbodiment'].reporting_date) |
+                                    <td>
+                                        [[convertDateObj(ansarDetail['cEmbodiment'].reporting_date) |
                                         date:'mediumDate']]
+                                    </td>
                                     <td>[[convertDateObj(ansarDetail['cEmbodiment'].joining_date) | date:'mediumDate']]
                                     </td>
                                     <td>[[convertDateObj(ansarDetail['cEmbodiment'].service_ended_date) |
@@ -396,10 +418,10 @@
                                    ng-if="ansarDetail['lEmbodiment'] && ansarDetail['lEmbodiment'].length>0">
                                 <thead>
                                 <tr>
-                                    <th>Reporting Date</th>
-                                    <th>Embodiment Date</th>
-                                    <th>Disembodiment Date</th>
-                                    <th>Disembodiment Reason</th>
+                                    <th>Reporting<br>Date</th>
+                                    <th>Embodiment<br>Date</th>
+                                    <th>Disembodiment<br>Date</th>
+                                    <th>Disembodiment<br>Reason</th>
                                     <th>Comment</th>
                                     <th>KPI</th>
                                     <th>Memorandum</th>
