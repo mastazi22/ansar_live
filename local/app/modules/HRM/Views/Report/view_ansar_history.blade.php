@@ -251,13 +251,13 @@
                                     <td>
                                         [[convertDateObj(ansarDetail['cPanel'].panel_date) | date:'medium']]
                                     </td>
-                                    <td ng-style="ansarDetail['cPanel'].locked==0 && ansarDetail['cPanel'].go_panel_position==null? {'background': 'orange','color':'white'}:''">
+                                    <td ng-style="ansarDetail['cPanel'].go_panel_position==null? {'background': 'orange','color':'white'}:''">
                                         [[ansarDetail['cPanel'].go_panel_position==null ? "Offer Blocked" : ansarDetail['cPanel'].go_panel_position]]
                                     </td>
                                     <td>
                                         [[convertDateObj(ansarDetail['cPanel'].re_panel_date) | date:'medium']]
                                     </td>
-                                    <td ng-style="ansarDetail['cPanel'].re_panel_position==null && ansarDetail['cPanel'].locked==0? {'background': 'orange','color':'white'}:''">
+                                    <td ng-style="ansarDetail['cPanel'].re_panel_position==null? {'background': 'orange','color':'white'}:''">
                                         [[ansarDetail['cPanel'].re_panel_position==null ? "Offer Blocked" : ansarDetail['cPanel'].re_panel_position]]
                                     </td>
                                     <td>
