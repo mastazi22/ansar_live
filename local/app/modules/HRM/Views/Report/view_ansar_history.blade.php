@@ -248,25 +248,25 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td ng-style="ansarDetail['cPanel'].locked==1?{'background': 'red','color':'white'}:''">
+                                    <td>
                                         [[convertDateObj(ansarDetail['cPanel'].panel_date) | date:'medium']]
                                     </td>
-                                    <td ng-style="ansarDetail['cPanel'].locked==1 ? {'background': 'red','color':'white'} : ansarDetail['cPanel'].go_panel_position==null? {'background': 'orange','color':'white'}:''">
+                                    <td ng-style="ansarDetail['cPanel'].locked==0 && ansarDetail['cPanel'].go_panel_position==null? {'background': 'orange','color':'white'}:''">
                                         [[ansarDetail['cPanel'].go_panel_position==null ? "Offer Blocked" : ansarDetail['cPanel'].go_panel_position]]
                                     </td>
-                                    <td ng-style="ansarDetail['cPanel'].locked==1?{'background': 'red','color':'white'}:''">
+                                    <td>
                                         [[convertDateObj(ansarDetail['cPanel'].re_panel_date) | date:'medium']]
                                     </td>
-                                    <td ng-style="ansarDetail['cPanel'].locked==1 ? {'background': 'red','color':'white'} : ansarDetail['cPanel'].re_panel_position==null? {'background': 'orange','color':'white'}:''">
+                                    <td ng-style="ansarDetail['cPanel'].re_panel_position==null && ansarDetail['cPanel'].locked==0? {'background': 'orange','color':'white'}:''">
                                         [[ansarDetail['cPanel'].re_panel_position==null ? "Offer Blocked" : ansarDetail['cPanel'].re_panel_position]]
                                     </td>
-                                    <td ng-style="ansarDetail['cPanel'].locked==1?{'background': 'red','color':'white'}:''">
+                                    <td>
                                         [[ansarDetail['cPanel'].come_from]]
                                     </td>
-                                    <td ng-style="ansarDetail['cPanel'].locked==1?{'background': 'red','color':'white'}:''">
+                                    <td>
                                         [[ansarDetail['cPanel'].memorandum_id]]
                                     </td>
-                                    <td ng-style="ansarDetail['cPanel'].locked==1?{'background': 'red','color':'white'}:''">
+                                    <td>
                                         [[ansarDetail['cPanel'].action_user_id]]
                                     </td>
                                 </tr>
