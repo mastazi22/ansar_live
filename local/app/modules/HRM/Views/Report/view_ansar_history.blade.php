@@ -146,7 +146,7 @@
                             <table class="table table-bordered table-striped" ng-if="ansarDetail['cOffer']">
                                 <thead>
                                 <tr>
-                                    <th>Offer Date</th>
+                                    <th>Offer Date & Time</th>
                                     <th>Offer District</th>
                                     <th>Offer Type</th>
                                     <th>Come From</th>
@@ -156,7 +156,7 @@
                                 <tbody>
                                 <tr>
                                     <td>[[convertDateObj(ansarDetail['cOffer'].sms_send_datetime) |
-                                        date:'mediumDate']]
+                                        date:'medium']]
                                     </td>
                                     <td>[[getUnitAddress(ansarDetail['cOffer'].district)]]</td>
                                     <td>[[ansarDetail['cOffer'].offerType]]</td>
@@ -174,7 +174,7 @@
                                    ng-if="ansarDetail['lOffer'] && ansarDetail['lOffer'].length>0">
                                 <thead>
                                 <tr>
-                                    <th>Offer date</th>
+                                    <th>Offer Date & Time</th>
                                     <th>Offer district</th>
                                     <th>Offer type</th>
                                     <th>Reply type</th>
@@ -184,7 +184,7 @@
                                 <tbody>
                                 <tr ng-repeat="loffer in ansarDetail['lOffer']">
                                     <td ng-style="loffer.offerBlocked && loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">
-                                        [[convertDateObj(loffer.offered_date) | date:'mediumDate']]
+                                        [[convertDateObj(loffer.offered_date) | date:'medium']]
                                     </td>
                                     <td ng-style="loffer.offerBlocked && loffer.offerBlocked==true?{'background': 'orange','color':'white'}:''">
                                         [[getUnitAddress(loffer.district)]]
