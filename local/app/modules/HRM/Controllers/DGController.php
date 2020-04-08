@@ -1683,7 +1683,7 @@ class DGController extends Controller
             }
             $a->offer_sms_info()->save(new OfferSMS([
                 'sms_send_datetime' => Carbon::parse($request->offer_date)->format("y-m-d H:i:s"),
-                'sms_end_datetime' => Carbon::parse($request->offer_date)->addHours(24)->format("y-m-d H:i:s"),
+                'sms_end_datetime' => Carbon::parse($request->offer_date)->addHours(48)->format("y-m-d H:i:s"),
                 'district_id' => $request->unit_id,
                 'action_user_id' => auth()->user()->id,
                 'come_from' => $status[0]
@@ -1710,10 +1710,18 @@ class DGController extends Controller
 
             switch ($status[0]) {
                 case AnsarStatusInfo::PANEL_STATUS:
+                    $go_offer_count = +GlobalParameterFacades::getValue('ge_offer_count');
+                    $re_offer_count = +GlobalParameterFacades::getValue('re_offer_count');
                     //$a->panel->saveLog('Offer', Carbon::today());
                     $a->status->update(['pannel_status' => 0, 'offer_sms_status' => 1]);
                     $pa = $a->panel;
                     $pa->locked = 1;
+                    // repositioning to the last if gets offer from offer blocked status
+                    if ($offer_type=='GB' && (substr_count($t, 'GB') + substr_count($t, 'DG') + substr_count($t, 'CG')) > $go_offer_count){
+                        $pa->panel_date = Carbon::now()->format('Y-m-d H:i:s');
+                    }elseif ($offer_type=='RE' && substr_count($t, 'RE') > $re_offer_count){
+                        $pa->re_panel_date = Carbon::now()->format('Y-m-d H:i:s');
+                    }
                     $pa->save();
                     $pa->panelLog()->save(new PanelInfoLogModel([
                         'ansar_id' => $pa->ansar_id,

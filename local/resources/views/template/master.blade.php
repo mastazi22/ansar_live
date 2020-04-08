@@ -37,16 +37,7 @@
             })
         });
 
-        GlobalApp.controller('MenuController', function ($scope, $rootScope) {
-            $scope.menu = [];
-            var permission = '{{auth()->user()->userPermission->permission_list?auth()->user()->userPermission->permission_list:""}}'
-            var p_type = parseInt('{{auth()->user()->userPermission->permission_type}}')
-            if (permission) $scope.menu = JSON.parse(permission.replace(/&quot;/g, '"'))
-            //alert($scope.menu.indexOf('reduce_guard_strength')>=0||p_type==1)
-            $scope.checkMenu = function (value) {
-                return $scope.menu.indexOf(value) >= 0 || p_type == 1
-            }
-        })
+
     </script>
     <script src="{{asset('dist/js/app.min.js')}}" type="text/javascript"></script>
 
@@ -248,8 +239,7 @@
                 //console.log({beforeurl:$.cookie('ftt')})
                 $.cookie('ftt', null);
                 $.cookie('ftt', url);
-            }
-            else {
+            } else {
                 var s = $.cookie();
                 p = $('a[href="' + s.ftt + '"]')
             }
@@ -262,10 +252,21 @@
                         p.parents('li').eq(0).addClass('active-submenu');
                     }
                     p.parents('li').not(':eq(0)').addClass('active');
-                }
-                else {
+                } else {
                     p.parents('li').addClass('active');
                 }
+            }
+        })
+    </script>
+    <script>
+        GlobalApp.controller('MenuController', function ($scope, $rootScope) {
+            $scope.menu = [];
+            var permission = '{{auth()->user()->userPermission->permission_list?auth()->user()->userPermission->permission_list:""}}'
+            var p_type = parseInt('{{auth()->user()->userPermission->permission_type}}')
+            if (permission) $scope.menu = JSON.parse(permission.replace(/&quot;/g, '"'))
+            //alert($scope.menu.indexOf('reduce_guard_strength')>=0||p_type==1)
+            $scope.checkMenu = function (value) {
+                return $scope.menu.indexOf(value) >= 0 || p_type == 1
             }
         })
     </script>

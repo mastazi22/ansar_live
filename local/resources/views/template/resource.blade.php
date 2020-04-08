@@ -2,7 +2,7 @@
 <title>Ansar &amp; VDP ERP</title>
 <!-- Tell the browser to be responsive to screen width -->
 <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-
+<script sync src="{{asset('dist/js/angularjs.js')}}" type="text/javascript"></script> <!---just loading the angular js from local-->
 <link rel="shortcut icon" href=" {{asset('dist/img/favicon.ico')}}">
 <!-- Bootstrap 3.3.4 -->
 <link href="{{asset('bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css"/>
@@ -38,18 +38,15 @@
 <script src="{{asset('plugins/jQueryUI/jquery-ui.min.js')}}" type="text/javascript"></script>
 <script src="{{asset('bootstrap/js/bootstrap.min.js')}}" type="text/javascript"></script>
 <script src="{{asset('plugins/iCheck/icheck.min.js')}}" type="text/javascript"></script>
+<script src="{{asset('dist/js/jquery-ui.min.js')}}" type="text/javascript"></script>
 {{--<script src="{{asset('dist/js/angular.js')}}" type="text/javascript"></script>--}}
 {{--<script src="{{asset('node_modules/angular/angular.js')}}" type="text/javascript"></script>--}}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.6/angular.js" type="text/javascript"></script>
-<script src="{{asset('dist/js/jquery-ui.min.js')}}" type="text/javascript"></script>
+{{--<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.6/angular.js" type="text/javascript"></script>--}}
 <script src="{{asset('dist/js/sortTable.js')}}" type="text/javascript"></script>
 <script src="{{asset('dist/js/notify.js')}}" type="text/javascript"></script>
 <script src="{{asset('dist/js/alertify.js')}}" type="text/javascript"></script>
 <script src="{{asset('dist/js/ajaxsubmit.js')}}"></script>
 <script src="{{asset('dist/js/viewer.min.js')}}"></script>
-<script src="{{asset('dist/js/angular-filter.js')}}"></script>
-<script src="{{asset('dist/js/angular-app.js')}}?version={{uniqid("av_")}}"></script>
-<script src="{{asset('dist/js/angular-route.js')}}"></script>
 <script src="{{asset('dist/js/jquery.noty.packaged.min.js')}}"></script>
 <script src="{{asset('dist/js/jquery.cookie.js')}}"></script>
 <script src="{{asset('dist/js/moment.min.js')}}"></script>
@@ -58,9 +55,13 @@
 <script src="{{asset('dist/js/datePicker.js')}}"></script>
 <script src="{{asset('dist/js/dropzone.js')}}"></script>
 <script src="{{asset('node_modules/noty/lib/noty.min.js')}}"></script>
-<script src="{{asset('node_modules/angular-cookies/angular-cookies.js')}}"></script>
 <script src="{{asset('dist/js/jquery-ui.multidatespicker.js')}}" ></script>
 <script src="{{asset('dist/js/fileinput.min.js')}}" ></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 {{--<script src="https://cdn.rawgit.com/dubrox/Multiple-Dates-Picker-for-jQuery-UI/master/jquery-ui.multidatespicker.js"></script>--}}
+
+<script src="{{asset('dist/js/angular-filter.js')}}"></script>
+<script src="{{asset('dist/js/angular-app.js')}}?version={{uniqid("av_")}}"></script>
+<script src="{{asset('dist/js/angular-route.js')}}"></script>
+<script src="{{asset('node_modules/angular-cookies/angular-cookies.js')}}"></script>
