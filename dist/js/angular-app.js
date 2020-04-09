@@ -1,8 +1,9 @@
 /**
  * Created by arafat on 10/25/2016.
  */
+
 var prefix = '';
-// var prefix = 'ansarerp/';
+// var prefix = 'ansarErp/';
 var GlobalApp = angular.module('GlobalApp', ['angular.filter', 'ngRoute'], function ($interpolateProvider, $httpProvider, $sceProvider, $routeProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
@@ -1106,12 +1107,12 @@ GlobalApp.directive('tableSearch', function () {
     return {
         restrict: 'ACE',
         template: '<div class="row" style="margin: 0">' +
-        '<div class="col-sm-8" style="padding-left: 0">' +
-        '<h5 class="text text-bold" style="color:black;font-size:1.1em">Total : [[results==undefined?0:results.length]]</h5>' +
-        '</div> <div class="col-sm-4" style="padding-right: 0">' +
-        '<input type="text" class="form-control" ng-model="q" placeholder="[[placeHolder?placeHolder:\'Search Ansar in this table\']]">' +
-        '</div>' +
-        '</div>',
+            '<div class="col-sm-8" style="padding-left: 0">' +
+            '<h5 class="text text-bold" style="color:black;font-size:1.1em">Total : [[results==undefined?0:results.length]]</h5>' +
+            '</div> <div class="col-sm-4" style="padding-right: 0">' +
+            '<input type="text" class="form-control" ng-model="q" placeholder="[[placeHolder?placeHolder:\'Search Ansar in this table\']]">' +
+            '</div>' +
+            '</div>',
         scope: {
             q: '=',
             results: '=',
@@ -1333,8 +1334,8 @@ GlobalApp.controller('jobCircularConstraintController', function ($scope, $filte
         var keys1 = Object.keys(d);
         var keys2 = Object.keys(constraint);
         if (keys1.length === keys2.length && keys1.sort().every(function (value, index) {
-                return value === keys2.sort()[index]
-            })) {
+            return value === keys2.sort()[index]
+        })) {
             $scope.applicationRules[0] = d;
         }
         else $scope.applicationRules = d;
@@ -1558,8 +1559,8 @@ GlobalApp.directive("calender", function (notificationService) {
                 var j = 0;
                 $scope.calender[0] = new Array(7);
                 var lastWeekDay = moment().date($scope.previousMonth.totalDays)
-                        .month($scope.previousMonth.month)
-                        .year($scope.previousMonth.year).day() % 6;
+                    .month($scope.previousMonth.month)
+                    .year($scope.previousMonth.year).day() % 6;
                 console.log(lastWeekDay)
                 for (var i = $scope.previousMonth.totalDays - lastWeekDay; i <= $scope.previousMonth.totalDays; i++) {
                     $scope.calender[0][j++] = {

@@ -3,6 +3,9 @@
 namespace App\Console;
 
 use App\Console\Commands\NotificationServer;
+use App\Console\Commands\RedistributeGlobalPositions;
+use App\Console\Commands\RedistributeLocalPosition;
+use App\Console\Commands\RemoveUnverified;
 use App\Helper\Facades\GlobalParameterFacades;
 use App\Helper\Helper;
 use App\Helper\GlobalParameter;
@@ -48,6 +51,9 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\Inspire::class,
         NotificationServer::class,
+        RedistributeGlobalPositions::class,
+        RedistributeLocalPosition::class,
+        RemoveUnverified::class,
     ];
 
     /**
@@ -156,8 +162,8 @@ class Kernel extends ConsoleKernel
         })->everyMinute()->name("offer_cancel")->withoutOverlapping();
         $schedule->call(function () {
             Log::info("REVERT OFFER");
-            $offeredAnsars = OfferSMS::whereDate('sms_end_datetime', '<=', Carbon::now()->toDateTimeString())->get();
-            $c = OfferSMS::whereDate('sms_end_datetime', '<=', Carbon::now()->toDateTimeString())->count();
+            $offeredAnsars = OfferSMS::where('sms_end_datetime', '<=', Carbon::now()->toDateTimeString())->get();
+            $c = OfferSMS::where('sms_end_datetime', '<=', Carbon::now()->toDateTimeString())->count();
             foreach ($offeredAnsars as $ansar) {
                 Log::info("CALLED START: OFFER NO REPLY" . $ansar->ansar_id);
                 DB::beginTransaction();
@@ -165,13 +171,12 @@ class Kernel extends ConsoleKernel
                     $count = $ansar->getOfferCount();
                     $pi = $ansar->ansar;
                     $pa = $pi->panel;
-                    $maximum_offer_limit = (int)GlobalParameterFacades::getValue(GlobalParameter::MAXIMUM_OFFER_LIMIT)-1;
+                    $maximum_offer_limit = (int)GlobalParameterFacades::getValue(GlobalParameter::MAXIMUM_OFFER_LIMIT) - 1;
                     if ($count >= $maximum_offer_limit) {
                         $ansar->deleteCount();
                         $ansar->deleteOfferStatus();
                         $ansar->blockAnsarOffer();
-                        $ansar->saveLog('No Reply');
-                        if($pa){
+                        if ($pa) {
                             $ansar->status()->update([
                                 'offer_sms_status' => 0,
                                 'offer_block_status' => 1,
@@ -186,24 +191,23 @@ class Kernel extends ConsoleKernel
                                 'come_from' => $pa->come_from,
                                 'move_to' => 'Offer',
                                 'go_panel_position' => $pa->go_panel_position,
-                                're_panel_position' => $pa->re_panel_position
+                                're_panel_position' => $pa->re_panel_position,
+                                'comment' => 'Move to offer block. No reply within 48 hours, Offer_ds:' . $ansar->district_id
                             ]));
                             $pa->delete();
                         }
-                        $ansar->delete();
                     } else {
                         $ansar->saveCount();
-                        $offer_status = OfferSMSStatus::where(['ansar_id'=>$ansar->ansar_id])->first();
-                        if($pa){
-                            $t = explode(",",$offer_status->offer_type);
-                            if(is_array($t)){
+                        $offer_status = OfferSMSStatus::where(['ansar_id' => $ansar->ansar_id])->first();
+                        if ($pa) {
+                            $t = explode(",", $offer_status->offer_type);
+                            if (is_array($t)) {
                                 $len = count($t);
-                                if(strcasecmp($t[$len-1],"RE")==0){
+                                if (strcasecmp($t[$len - 1], "RE") == 0) {
                                     $pa->re_panel_date = Carbon::now()->format('Y-m-d H:i:s');
-                                }else if(strcasecmp($t[$len-1],"GB")==0||strcasecmp($t[$len-1],"DG")==0||strcasecmp($t[$len-1],"CG")==0){
+                                } else if (strcasecmp($t[$len - 1], "GB") == 0 || strcasecmp($t[$len - 1], "DG") == 0 || strcasecmp($t[$len - 1], "CG") == 0) {
                                     $pa->panel_date = Carbon::now()->format('Y-m-d H:i:s');
                                 }
-
                             }
                             $pa->locked = 0;
                             $pa->come_from = "Offer";
@@ -212,11 +216,8 @@ class Kernel extends ConsoleKernel
                                 'pannel_status' => 1,
                                 'offer_sms_status' => 0,
                             ]);
-                            $ansar->saveLog('No Reply');
-                        }
-                        else{
+                        } else {
                             $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
-                            $ansar->saveLog('No Reply');
                             $ansar->status()->update([
                                 'offer_sms_status' => 0,
                                 'pannel_status' => 1,
@@ -227,25 +228,25 @@ class Kernel extends ConsoleKernel
                                 're_panel_date' => Carbon::now()->format('Y-m-d H:i:s'),
                                 'come_from' => 'Offer',
                                 'ansar_merit_list' => 1,
-                                'go_panel_position' => 0,
-                                're_panel_position' => 0
+                                'go_panel_position' => null,
+                                're_panel_position' => null
                             ]));
                         }
-                        $ansar->delete();
                     }
+                    $ansar->saveLog('No Reply');
+                    $ansar->delete();
                     DB::commit();
                 } catch (\Exception $e) {
                     DB::rollback();
                     Log::info("ERROR: " . $e->getMessage());
                 }
             }
-            if($c>0){
-               dispatch(new RearrangePanelPositionLocal());
-               dispatch(new RearrangePanelPositionGlobal());
+            if ($c > 0) {
+                dispatch(new RearrangePanelPositionLocal());
+                dispatch(new RearrangePanelPositionGlobal());
             }
         })->everyMinute()->name("revert_offer_2")->withoutOverlapping();
         $schedule->call(function () {
-
             $offeredAnsars = SmsReceiveInfoModel::all();
             $now = Carbon::now();
             $c = 0;
@@ -253,23 +254,20 @@ class Kernel extends ConsoleKernel
                 if ($now->diffInDays(Carbon::parse($ansar->sms_received_datetime)) >= 7) {
                     $c++;
                     Log::info("CALLED START: OFFER ACCEPTED" . $ansar->ansar_id);
-
                     DB::beginTransaction();
                     try {
-//                        $pi = $ansar->ansar;
                         $pa = $ansar->panel;
                         $count = $ansar->getOfferCount();
-                        $maximum_offer_limit = (int)GlobalParameterFacades::getValue(GlobalParameter::MAXIMUM_OFFER_LIMIT)-1;
+                        $maximum_offer_limit = (int)GlobalParameterFacades::getValue(GlobalParameter::MAXIMUM_OFFER_LIMIT) - 1;
                         if ($count >= $maximum_offer_limit) {
                             $ansar->deleteCount();
                             $ansar->deleteOfferStatus();
                             $ansar->blockAnsarOffer();
-                            $ansar->saveLog();
                             $ansar->status()->update([
                                 'offer_sms_status' => 0,
                                 'offer_block_status' => 1,
                             ]);
-                            if($pa){
+                            if ($pa) {
                                 $pa->panelLog()->save(new PanelInfoLogModel([
                                     'ansar_id' => $pa->ansar_id,
                                     'merit_list' => $pa->ansar_merit_list,
@@ -280,28 +278,28 @@ class Kernel extends ConsoleKernel
                                     'come_from' => $pa->come_from,
                                     'move_to' => 'Offer',
                                     'go_panel_position' => $pa->go_panel_position,
-                                    're_panel_position' => $pa->re_panel_position
+                                    're_panel_position' => $pa->re_panel_position,
+                                    'comment' => 'Move to offer block. reply: yes, wait: 7 days. Offer_ds:' . $ansar->offered_district
                                 ]));
                                 $pa->delete();
                             }
                         } else {
                             $ansar->saveCount();
-                            $offer_status = OfferSMSStatus::where(['ansar_id'=>$ansar->ansar_id])->first();
-                            if($pa){
-                                if($offer_status){
-                                    $t = explode(",",$offer_status->offer_type);
-                                    if(is_array($t)){
+                            $offer_status = OfferSMSStatus::where(['ansar_id' => $ansar->ansar_id])->first();
+                            if ($pa) {
+                                if ($offer_status) {
+                                    $t = explode(",", $offer_status->offer_type);
+                                    if (is_array($t)) {
                                         $len = count($t);
-                                        if($len>0&&strcasecmp($t[$len-1],"RE")==0){
+                                        if ($len > 0 && strcasecmp($t[$len - 1], "RE") == 0) {
                                             $pa->re_panel_date = Carbon::now()->format('Y-m-d H:i:s');
-                                        }else if($len>0&&(strcasecmp($t[$len-1],"GB")==0||strcasecmp($t[$len-1],"DG")==0||strcasecmp($t[$len-1],"CG")==0)){
+                                        } else if ($len > 0 && (strcasecmp($t[$len - 1], "GB") == 0 || strcasecmp($t[$len - 1], "DG") == 0 || strcasecmp($t[$len - 1], "CG") == 0)) {
                                             $pa->panel_date = Carbon::now()->format('Y-m-d H:i:s');
                                         }
-
                                     }
-                                }elseif(!in_array($ansar->offered_district, Config::get('app.offer'))){
+                                } elseif (!in_array($ansar->offered_district, Config::get('app.offer'))) {
                                     $pa->re_panel_date = Carbon::now()->format('Y-m-d H:i:s');
-                                }else{
+                                } else {
                                     $pa->panel_date = Carbon::now()->format('Y-m-d H:i:s');
                                 }
                                 $pa->locked = 0;
@@ -311,10 +309,8 @@ class Kernel extends ConsoleKernel
                                     'pannel_status' => 1,
                                     'offer_sms_status' => 0,
                                 ]);
-                            }
-                            else{
+                            } else {
                                 $panel_log = PanelInfoLogModel::where('ansar_id', $ansar->ansar_id)->select('old_memorandum_id')->first();
-
                                 $ansar->status()->update([
                                     'offer_sms_status' => 0,
                                     'pannel_status' => 1,
@@ -325,8 +321,8 @@ class Kernel extends ConsoleKernel
                                     'come_from' => 'Offer',
                                     'ansar_merit_list' => 1,
                                     're_panel_date' => Carbon::now()->format('Y-m-d H:i:s'),
-                                    'go_panel_position' => 0,
-                                    're_panel_position' => 0
+                                    'go_panel_position' => null,
+                                    're_panel_position' => null
                                 ]));
                             }
                         }
@@ -338,9 +334,8 @@ class Kernel extends ConsoleKernel
                         Log::info("ERROR: " . $e->getMessage());
                     }
                 }
-
             }
-            if($c>0){
+            if ($c > 0) {
                 dispatch(new RearrangePanelPositionLocal());
                 dispatch(new RearrangePanelPositionGlobal());
             }
@@ -675,7 +670,7 @@ class Kernel extends ConsoleKernel
 			
         })->everyTenMinutes()->name("UnblockRetireAnsar")->withoutOverlapping();
         $schedule->call(function(){
-            $ansars = AnsarFutureState::where('activation_date',"<=",Carbon::now())->get();
+            $ansars = AnsarFutureState::where('activation_date',"<=",Carbon::now()->toDateTimeString())->get();
             $panel_count = 0;
             DB::beginTransaction();
             try{

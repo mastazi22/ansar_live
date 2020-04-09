@@ -1,15 +1,17 @@
 .letter {
-    width: 850px;
+    width: 65%;
     margin: 10px auto;
     background: #f8ffe0;
 }
-body{
+
+body {
     font-family: "Times New Roman", sans-serif;
+    font-size: 12px;
 }
+
 .letter-header, .letter-body, .letter-footer {
     width: 100%;
     padding: 5px;
-    font-size: 1em;
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -29,19 +31,15 @@ body{
     margin-bottom: 0;
     text-align: center;
     line-height: 20px;
-    font-size: 1em;
 }
 
 .body-top h4, .letter-content-middle h4 {
-    font-size: 1.1em;
-    font-weight: bold;
     text-decoration: underline;
     text-align: center;
 }
 
 .letter-header .header-bottom {
     padding: 5px;
-    font-size: 1em;
 }
 
 .letter-header .header-bottom::after {
@@ -53,14 +51,16 @@ body{
 .letter-body .letter-content-top, .letter-body .letter-content-last, .letter-body .letter-content-middle {
     padding: 0 5px;
     text-align: justify;
-    font-size: 1em;
 }
-.pull-left{
+
+.pull-left {
     float: left !important;
 }
-.pull-right{
+
+.pull-right {
     float: right !important;
 }
+
 .letter-footer .footer-top ul, .letter-footer .footer-bottom ul, .letter-content-middle ul {
     padding: 0;
     margin: 0;
@@ -72,79 +72,82 @@ body{
 .letter-footer .footer-top ul li, .letter-footer .footer-bottom ul li, .letter-content-middle ul li {
     padding: 3px;
     text-align: left;
-    font-size: 1em;
 }
-.body-top h4{
+
+.header-top h4, .body-top h4 {
     margin: 0 !important;
 }
+
 .letter-footer .footer-bottom ul.pull-left {
     width: 40%;
 }
 
 .letter-content-middle table {
-    font-size: 14px;
-    border: 1px solid #ababab;
     border-collapse: collapse;
     width: 100%;
 }
-.letter-content-middle table td,.letter-content-middle table th{
-    border: 1px solid #ababab;
+
+.letter-content-middle table td, .letter-content-middle table th {
+    border: 1px solid #000;
     border-collapse: collapse;
 }
+
 .letter-content-middle table tr th, .letter-content-middle table tr td {
     text-align: center;
     vertical-align: middle;
 }
-.ppp{
+
+.ppp {
     font-size: 20px !important;
-    padding-left: 50px !important;
+    padding-left: 65px !important;
 }
+
+.mujib-logo {
+    width: 100px;
+    position: absolute;
+    top: 5px;
+    right: 55px;
+}
+
 @media print {
-    .letter{
+    body {
+        font-size: 11px !important;
+    }
+
+    .header-top h4 span, div.footer-top ul li#email span, div.footer-top ul li#mobile span {
+        font-size: 15px !important;
+    }
+
+    div.header-bottom .pull-right table td, div.footer-bottom ul.pull-right li table td {
+        font-size: 9px !important;
+    }
+
+    .letter {
         width: 100% !important;
         position: relative !important;
-        /*float: none;*/
-
-        /*page-break-before: always;*/
     }
-    .letter:not(:last-child){
+
+    .letter:not(:last-child) {
         page-break-after: always;
     }
-    .letter-body,.letter{
+
+    .letter-body, .letter {
         float: none !important;
     }
-    .print-hide{
+
+    .print-hide {
         display: none !important;
     }
+
     @page {
         size: a4;
-        margin: 0cm;
     }
-    .letter-content-middle table{
-        font-size: 12px !important;
-    }
-    .letter-content-top,.letter-content-last{
-        font-size: 12px !important;
-    }
-    .header-top h4,.body-top h4{
+
+    .header-top h4, .body-top h4 {
         margin-top: 0 !important;
     }
-    .body-top{
+
+    .body-top {
         padding: 0 !important;
-    }
-    .header-top h4,.body-top h4,.letter-content-middle h4{
-        font-size: 14px !important;
-    }
-    .header-bottom span{
-        font-size: 12px !important;
-    }
-    ul li:not(.ppp){
-        font-size: 12px !important;
-    }
-    ul li.ppp{
-        font-size: 16px !important;
-    }
-    table td,table th{
-        font-size: 10px !important;
     }
 }

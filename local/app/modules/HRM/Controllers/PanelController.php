@@ -344,6 +344,8 @@ class PanelController extends Controller
 
     public function getCentralPanelList()
     {
+        /*didn't identify who & why use this functionality. called from sms route.[25-03-2020->sabbir]*/
+        return null;
         $pcMale = DB::table('tbl_panel_info')
             ->join('tbl_ansar_parsonal_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_panel_info.ansar_id')
             ->join('tbl_ansar_status_info', 'tbl_ansar_parsonal_info.ansar_id', '=', 'tbl_ansar_status_info.ansar_id')
