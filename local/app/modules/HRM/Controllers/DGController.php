@@ -1660,6 +1660,12 @@ class DGController extends Controller
 
     public function directOfferSend(Request $request)
     {
+
+        $send_offer_enabled = env('SEND_OFFER_ENABLED', false);
+        if (!$send_offer_enabled) {
+            return response(collect(['type' => 'error', 'message' => "Sending offer is disabled! Please contact with admin."])->toJson(), 200, ['Content-Type' => 'application/json']);
+        }
+
         $rules = [
             'ansar_id' => 'required|regex:/^[0-9]+$/',
             'unit_id' => 'required|regex:/^[0-9]+$/',
@@ -1717,9 +1723,9 @@ class DGController extends Controller
                     $pa = $a->panel;
                     $pa->locked = 1;
                     // repositioning to the last if gets offer from offer blocked status
-                    if ($offer_type=='GB' && (substr_count($t, 'GB') + substr_count($t, 'DG') + substr_count($t, 'CG')) > $go_offer_count){
+                    if ($offer_type == 'GB' && (substr_count($t, 'GB') + substr_count($t, 'DG') + substr_count($t, 'CG')) > $go_offer_count) {
                         $pa->panel_date = Carbon::now()->format('Y-m-d H:i:s');
-                    }elseif ($offer_type=='RE' && substr_count($t, 'RE') > $re_offer_count){
+                    } elseif ($offer_type == 'RE' && substr_count($t, 'RE') > $re_offer_count) {
                         $pa->re_panel_date = Carbon::now()->format('Y-m-d H:i:s');
                     }
                     $pa->save();

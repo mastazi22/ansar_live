@@ -96,6 +96,11 @@ class OfferController extends Controller
 
     function sendOfferSMS(Request $request)
     {
+        $send_offer_enabled = env('SEND_OFFER_ENABLED', false);
+        if (!$send_offer_enabled){
+            return response(collect(['type' => 'error', 'message' => "Sending offer is disabled! Please contact with admin."])->toJson(), 200, ['Content-Type' => 'application/json']);
+        }
+
         $rules = [];
         $rules['pc_male'] = 'required|numeric|regex:/^[0-9]+$/|min:0';
         $rules['pc_female'] = 'required|numeric|regex:/^[0-9]+$/|min:0';
