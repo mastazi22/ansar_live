@@ -1663,7 +1663,7 @@ class DGController extends Controller
 
         $send_offer_enabled = env('SEND_OFFER_ENABLED', false);
         if (!$send_offer_enabled) {
-            return response(collect(['type' => 'error', 'message' => "Sending offer is disabled! Please contact with admin."])->toJson(), 200, ['Content-Type' => 'application/json']);
+            return Response::json(['status' => false, 'message' => "Sending offer is disabled! Please contact with developer."]);
         }
 
         $rules = [
