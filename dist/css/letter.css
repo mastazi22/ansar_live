@@ -39,7 +39,7 @@ body {
 }
 
 .letter-header .header-bottom {
-    padding: 5px;
+    padding: 2px 5px;
 }
 
 .letter-header .header-bottom::after {
@@ -49,7 +49,7 @@ body {
 }
 
 .letter-body .letter-content-top, .letter-body .letter-content-last, .letter-body .letter-content-middle {
-    padding: 0px 5px;
+    padding: 2px 5px;
     text-align: justify;
 }
 
