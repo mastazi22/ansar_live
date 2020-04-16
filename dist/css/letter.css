@@ -11,14 +11,14 @@ body {
 
 .letter-header, .letter-body, .letter-footer {
     width: 100%;
-    padding: 5px;
+    padding: 0px 5px;
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
 }
 
 .letter-header .header-top, .letter-body .body-top, .letter-footer .footer-top, .letter-footer .footer-bottom {
-    padding: 10px 5px;
+    padding: 3px 5px;
 }
 
 .letter-footer .footer-top::after, .letter-footer .footer-bottom::after {
@@ -39,7 +39,7 @@ body {
 }
 
 .letter-header .header-bottom {
-    padding: 5px;
+    padding: 2px 5px;
 }
 
 .letter-header .header-bottom::after {
@@ -49,7 +49,7 @@ body {
 }
 
 .letter-body .letter-content-top, .letter-body .letter-content-last, .letter-body .letter-content-middle {
-    padding: 0 5px;
+    padding: 2px 5px;
     text-align: justify;
 }
 
@@ -75,7 +75,7 @@ body {
 }
 
 .header-top h4, .body-top h4 {
-    margin: 0 !important;
+    margin: 0px !important;
 }
 
 .letter-footer .footer-bottom ul.pull-left {
