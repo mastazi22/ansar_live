@@ -1,6 +1,6 @@
 <div class="letter-footer">
     <div class="footer-top">
-        <ul class="pull-right" style="margin-top: 10px;width:35%">
+        <ul class="pull-right" style="margin-top: 20px;width:35%">
             <li>{{$user?$user->first_name.' '.$user->last_name:''}}</li>
             <li>
                 @if($user&&(trim($user->division)=="DMA"||trim($user->division)=="CMA"))
@@ -85,18 +85,18 @@
                     </tr>
                 </table>
             </li>
-            <li style="margin-top: 7%">সদয় অবগতির জন্য</li>
-            <li class="ppp" style="margin-top: 10%;line-height: 40px;">&nbsp;&nbsp;"<br>&nbsp;&nbsp;"<br></li>
+            <li style="margin-top: 5%">সদয় অবগতির জন্য</li>
+            <li class="ppp" style="margin-top: 8%;line-height: 35px;">&nbsp;&nbsp;"<br>&nbsp;&nbsp;"<br></li>
             @if($user&&!(trim($user->division)=="DMA"||trim($user->division)=="CMA"))
                 <li class="ppp">&nbsp;&nbsp;"</li>
             @endif
             <li>অবগতি ও কার্যক্রমের জন্য</li>
-            <li class="ppp" style="line-height: 40px;margin-top: 5%;">&nbsp;&nbsp;"<br>&nbsp;&nbsp;"</li>
+            <li class="ppp" style="line-height: 30px;margin-top: 5%;">&nbsp;&nbsp;"<br>&nbsp;&nbsp;"</li>
 
         </ul>
     </div>
     <div class="footer-bottom">
-        <ul class="pull-right" style="width: 33% !important;">
+        <ul class="pull-right" style="width: 33% !important; margin-top: 20px;">
             <li>
                 @if($user&&(trim($user->division)=="DMA"||trim($user->division)=="CMA"))
                     জোন অধিনায়ক<br>
