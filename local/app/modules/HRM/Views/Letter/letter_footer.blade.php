@@ -1,6 +1,6 @@
 <div class="letter-footer">
     <div class="footer-top">
-        <ul class="pull-right" style="margin-top: 10px;width:35%">
+        <ul class="pull-right" style="margin-top: 15px;width:35%">
             <li>{{$user?$user->first_name.' '.$user->last_name:''}}</li>
             <li>
                 @if($user&&(trim($user->division)=="DMA"||trim($user->division)=="CMA"))
