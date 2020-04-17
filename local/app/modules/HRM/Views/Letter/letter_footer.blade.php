@@ -86,7 +86,7 @@
                 </table>
             </li>
             <li style="margin-top: 5%">সদয় অবগতির জন্য</li>
-            <li class="ppp" style="margin-top: 10%;line-height: 35px;">&nbsp;&nbsp;"<br>&nbsp;&nbsp;"<br></li>
+            <li class="ppp" style="margin-top: 8%;line-height: 35px;">&nbsp;&nbsp;"<br>&nbsp;&nbsp;"<br></li>
             @if($user&&!(trim($user->division)=="DMA"||trim($user->division)=="CMA"))
                 <li class="ppp">&nbsp;&nbsp;"</li>
             @endif
