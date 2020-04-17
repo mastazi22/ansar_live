@@ -96,7 +96,7 @@
         </ul>
     </div>
     <div class="footer-bottom">
-        <ul class="pull-right" style="width: 33% !important;">
+        <ul class="pull-right" style="width: 33% !important; margin-top: 5px;">
             <li>
                 @if($user&&(trim($user->division)=="DMA"||trim($user->division)=="CMA"))
                     জোন অধিনায়ক<br>
