@@ -91,7 +91,7 @@
                 <li class="ppp">&nbsp;&nbsp;"</li>
             @endif
             <li>অবগতি ও কার্যক্রমের জন্য</li>
-            <li class="ppp" style="line-height: 35px;margin-top: 5%;">&nbsp;&nbsp;"<br>&nbsp;&nbsp;"</li>
+            <li class="ppp" style="line-height: 30px;margin-top: 5%;">&nbsp;&nbsp;"<br>&nbsp;&nbsp;"</li>
 
         </ul>
     </div>
