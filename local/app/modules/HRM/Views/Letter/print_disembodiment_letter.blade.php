@@ -10,12 +10,12 @@
         <div class="body-top">
             <h4>“অফিস আদেশ”</h4>
         </div>
-        <p class="letter-content-top">
+        <div class="letter-content-top">
             আনসার বাহিনী আইন ১৯৯৫ এর ধারা ৬ (৪) বাংলাদেশ আনসার ও গ্রাম প্রতিরক্ষা বাহিনী সদর দপ্তরের স্মারক নং-আইন-৫১ আনস,
             তারিখ-২৪.০৩.১৯৯৬ খ্রিঃ, স্মারক নং-অপাঃ কেপিআই ৮৮০(৩)/১২৯ আনস, তারিখঃ ০৩.০৩.২০০৯ খ্রিঃ এর পরিপ্রেক্ষিতে
             নিম্নবর্ণিত আনসার সদস্যকে তার অদ্য তারিখ হতে <span
                     style="border-bottom: 1px dashed #000000">"{{$mem->reason}}"</span> কারনে অ-অঙ্গীভূত করা হলো।
-        </p>
+        </div>
         <div class="letter-content-middle">
             <h4>“তফসিল "ক" (অ-অঙ্গীভূত)”</h4>
             <table class="table table-bordered">

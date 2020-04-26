@@ -1,6 +1,6 @@
 <div class="letter-footer">
     <div class="footer-top">
-        <ul class="pull-right" style="margin-top: 23px;width:35%">
+        <ul class="pull-right" style="margin-top: 25px;width:35%">
             <li>{{$user?$user->first_name.' '.$user->last_name:''}}</li>
             <li>
                 @if($user&&(trim($user->division)=="DMA"||trim($user->division)=="CMA"))
@@ -96,7 +96,7 @@
         </ul>
     </div>
     <div class="footer-bottom">
-        <ul class="pull-right" style="width: 33% !important; margin-top: 20px;">
+        <ul class="pull-right" style="width: 33% !important; margin-top: 25px;">
             <li>
                 @if($user&&(trim($user->division)=="DMA"||trim($user->division)=="CMA"))
                     জোন অধিনায়ক<br>
