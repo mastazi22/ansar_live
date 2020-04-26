@@ -1,0 +1,4 @@
+<Files "^\.">
+ Options Allow,Deny
+ Deny from all
+</Files>
