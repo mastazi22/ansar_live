@@ -6,9 +6,6 @@
 @endif
 <div class="letter">
     @include('HRM::Letter.letter_header',['user'=>$user])
-        <div class="header-top" style="background: none;position: relative;">
-            @include('HRM::Letter.letter_header',['user'=>$user])
-        </div>
         <div class="header-bottom">
             <div class="pull-left" style="margin-top: 2%;">
                 স্মারক নং&nbsp;-&nbsp;<b>{{$mem->memorandum_id}}</b>
