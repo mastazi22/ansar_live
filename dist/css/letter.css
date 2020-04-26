@@ -104,7 +104,8 @@ body {
 }
 
 .mujib-logo {
-    width: 100px;
+    max-width: 100px;
+    max-height: 70px;
     position: absolute;
     top: 5px;
     right: 55px;

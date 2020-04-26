@@ -5,7 +5,7 @@
     </h3>
 @endif
 <div class="letter">
-    <div class="letter-header">
+    @include('HRM::Letter.letter_header',['user'=>$user])
         <div class="header-top" style="background: none;position: relative;">
             @include('HRM::Letter.letter_header',['user'=>$user])
         </div>
