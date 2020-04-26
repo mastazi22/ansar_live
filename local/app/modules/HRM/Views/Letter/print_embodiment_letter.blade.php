@@ -5,47 +5,15 @@
     </h3>
 @endif
 <div class="letter">
-    <div class="letter-header">
-        <div class="header-top" style="background: none !important;position: relative;">
-            @include('HRM::Letter.letter_header',['user'=>$user])
-        </div>
-        <div class="header-bottom">
-            <div class="pull-left" style="margin-top: 2%;">
-                স্মারক নং-{{$mem->memorandum_id}}
-            </div>
-            <div class="pull-right">
-                <table border="0" width="100%">
-                    <tr>
-                        <td rowspan="2" width="10px">তারিখঃ</td>
-                        <td style="border-bottom: solid 1px #000;text-align: center;" class="jsDateConvert">
-                            @if($mem->created_at)
-                                <span>{{\Carbon\Carbon::parse($mem->created_at)->format('d/m/Y')}}</span> বঙ্গাব্দ
-                            @else
-                                <span>{{\Carbon\Carbon::now()->format('d/m/Y')}}</span> বঙ্গাব্দ
-                            @endif
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: center;">
-                            @if($mem->created_at)
-                                {{LanguageConverter::engToBngWS(\Carbon\Carbon::parse($mem->created_at)->format('d/m/Y'))}}
-                                খ্রিষ্টাব্দ
-                            @else
-                                {{LanguageConverter::engToBngWS(\Carbon\Carbon::now()->format('d/m/Y'))}} খ্রিষ্টাব্দ
-                            @endif
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
+    @include('HRM::Letter.letter_header',['user'=>$user])
+
     <div class="letter-body">
         <div class="body-top">
             <h4>“অফিস আদেশ”</h4>
         </div>
-        <p class="letter-content-top">আনসার বাহিনী আইন ১৯৯৫ খ্রিঃ এর ধারা ৬ (৪), আনসার ও গ্রাম প্রতিরক্ষা বাহিনী সদর
+        <div class="letter-content-top">আনসার বাহিনী আইন ১৯৯৫ খ্রিঃ এর ধারা ৬ (৪), আনসার ও গ্রাম প্রতিরক্ষা বাহিনী সদর
             দপ্তরের স্মারক নং-আইন-৫১/আনস, তারিখঃ ২৪/০৩/১৯৯৬ খ্রিঃ, স্মারক নং-অপাঃ/কেপিআই/৮৮০(৩)/১২৯/আনস, তারিখঃ
-            ০৩/০৩/২০০৯ খ্রিঃ এর পরিপ্রেক্ষিতে নিম্নবর্ণিত আনসার সদস্যকে অঙ্গীভূত করা হলো।</p>
+            ০৩/০৩/২০০৯ খ্রিঃ এর পরিপ্রেক্ষিতে নিম্নবর্ণিত আনসার সদস্যকে অঙ্গীভূত করা হলো।</div>
         <div class="letter-content-middle">
             <h4>“তফসিল "ক" (অঙ্গীভূত)”</h4>
             <table class="table table-bordered table-condensed">
