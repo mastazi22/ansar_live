@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="{{asset('dist/css/letter.css?v=3.4.31')}}">
+    <link rel="stylesheet" href="{{asset('dist/css/letter.css?v=3.4.1')}}">
     <link href="{{asset('dist/css/font-awesome.min.css')}}" rel="stylesheet" type="text/css"/>
 </head>
 <body>
