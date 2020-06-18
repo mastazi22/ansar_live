@@ -96,7 +96,7 @@ class OfferController extends Controller
 
     function sendOfferSMS(Request $request)
     {
-        $send_offer_enabled = env('SEND_OFFER_ENABLED', true);
+        $send_offer_enabled = env('SEND_OFFER_ENABLED', false);
         if (!$send_offer_enabled){
             return response(collect(['type' => 'error', 'message' => "Sending offer is disabled! Please contact with admin."])->toJson(), 200, ['Content-Type' => 'application/json']);
         }
@@ -164,8 +164,9 @@ class OfferController extends Controller
 
         if ($quota !== false && $quota < count($data)) throw new \Exception("Your offer quota limit exit");
             PanelModel::whereIn('ansar_id', $data)->update(['locked' => 1]);
-            $this->dispatch(new OfferQueue($data, $district_id, Auth::user(), $userOffer, $offer_type));           
-            DB::commit();
+            $this->dispatch(new OfferQueue($data, $district_id, Auth::user(), $userOffer, $offer_type));
+           
+ DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
             return response(collect(['status' => 'error', 'message' => $e->getMessage()])->toJson(), 400, ['Content-Type' => 'application/json']);

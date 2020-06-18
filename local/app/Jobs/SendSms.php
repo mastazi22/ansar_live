@@ -34,7 +34,7 @@ class SendSms extends Job implements SelfHandling, ShouldQueue
      */
     public function handle()
     {
-        $send_sms_env = env("SEND_SMS", false);
+        $send_sms_env = env("SEND_SMS", true);
         $test_mobile = env("TEST_SMS_NUMBER", null);
         $phone_number = "";
         $user = env('SSL_USER_ID');

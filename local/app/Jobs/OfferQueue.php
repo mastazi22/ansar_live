@@ -53,6 +53,7 @@ class OfferQueue extends Job implements ShouldQueue
 //        die;
         $district_id = $this->district_id;
         $ansar_ids = $this->data;
+//print_r($ansar_ids);exit;
         $user = $this->user;
         for ($i = 0; $i < count($ansar_ids); $i++) {
             if(!DB::connection('hrm')->getDatabaseName()){

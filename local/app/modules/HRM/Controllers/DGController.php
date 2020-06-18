@@ -1661,7 +1661,7 @@ class DGController extends Controller
     public function directOfferSend(Request $request)
     {
 
-        $send_offer_enabled = env('SEND_OFFER_ENABLED', false);
+        $send_offer_enabled = env('SEND_OFFER_ENABLED', true);
         if (!$send_offer_enabled) {
             return Response::json(['status' => false, 'message' => "Sending offer is disabled! Please contact with developer."]);
         }

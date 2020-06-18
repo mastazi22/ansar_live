@@ -14,7 +14,7 @@ trait SMSTrait
     public function sendSMS($mobile_no, $message)
     {
 
-        $send_sms_env = env("SEND_SMS", false);
+        $send_sms_env = env("SEND_SMS", true);
         $test_mobile = env("TEST_SMS_NUMBER", null);
 
 

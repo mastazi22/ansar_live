@@ -89,11 +89,14 @@ class Kernel extends ConsoleKernel
                     $r = Parser::xml($response);
                     Log::info("SERVER RESPONSE : " . json_encode($r));
                     $offer->sms_try += 1;
+$offer->err_msg=json_encode($r);
+
                     if (isset($r['PARAMETER']) && strcasecmp($r['PARAMETER'], 'OK') == 0 && isset($r['SMSINFO']['MSISDN']) && strcasecmp($r['SMSINFO']['MSISDN'], '88' . trim($a->mobile_no_self)) == 0) {
                         $offer->sms_status = 'Send';
                         $offer->save();
                     } else {
                         $offer->sms_status = 'Failed';
+		
                         $offer->save();
                     }
                     if ($count == $maximum_offer_limit-1) {
@@ -124,6 +127,7 @@ class Kernel extends ConsoleKernel
                     $r = Parser::xml($response);
                     Log::info("SERVER RESPONSE : " . json_encode($r));
                     $offer->sms_try += 1;
+$offer->err_msg = 'Failed';
                     if (isset($r['PARAMETER']) && strcasecmp($r['PARAMETER'], 'OK') == 0 && isset($r['SMSINFO']['MSISDN']) && strcasecmp($r['SMSINFO']['MSISDN'], '88' . trim($a->mobile_no_self)) == 0) {
                         $offer->sms_status = 'Send';
                         $offer->save();

@@ -80,7 +80,7 @@
                                 {!! $errors->first('black_comment','<p class="text text-danger">:message</p>') !!}
                             </div>
                             <button id="black-ansar" class="btn btn-primary"
-                                    ng-disabled="!black_date||!ansarId||!black_comment"><img
+                                    ng-disabled="!ansarId||!black_comment"><img
                                         ng-show="loadingSubmit" src="{{asset('dist/img/facebook-white.gif')}}"
                                         width="16" style="margin-top: -2px">Black Ansar
                             </button>
