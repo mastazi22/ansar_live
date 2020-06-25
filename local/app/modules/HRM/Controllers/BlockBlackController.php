@@ -514,6 +514,37 @@ class BlockBlackController extends Controller
                         $ansar->updateToRestState()->save();
                         break;
                     case "panel":
+                    $myansar=DB::table('tbl_ansar_parsonal_info')->where('ansar_id',$ansar_id)->first();
+                        $gender=$myansar->sex;
+                        $designation=$myansar->designation_id;
+
+                        if($designation==1)
+                        {
+                            $max_go_panel_position= DB::table('tbl_panel_info')
+                            ->join('tbl_ansar_parsonal_info', 'tbl_panel_info.ansar_id', '=','tbl_ansar_parsonal_info.ansar_id')
+                            ->where('tbl_ansar_parsonal_info.designation_id', $designation)
+                            ->where('tbl_ansar_parsonal_info.sex', $gender)
+                            ->max('go_panel_position')+1;
+                            
+                            $max_re_panel_position= DB::table('tbl_panel_info')
+                            ->join('tbl_ansar_parsonal_info', 'tbl_panel_info.ansar_id', '=','tbl_ansar_parsonal_info.ansar_id')
+                            ->where('tbl_ansar_parsonal_info.designation_id', $designation)
+                            ->where('tbl_ansar_parsonal_info.sex', $gender)
+                            ->max('re_panel_position')+1;
+                        }
+                        else
+                        {
+                            $max_go_panel_position= DB::table('tbl_panel_info')
+                            ->join('tbl_ansar_parsonal_info', 'tbl_panel_info.ansar_id', '=','tbl_ansar_parsonal_info.ansar_id')
+                            ->where('tbl_ansar_parsonal_info.designation_id', $designation)
+                            ->max('go_panel_position')+1;
+                            
+                            $max_re_panel_position= DB::table('tbl_panel_info')
+                            ->join('tbl_ansar_parsonal_info', 'tbl_panel_info.ansar_id', '=','tbl_ansar_parsonal_info.ansar_id')
+                            ->where('tbl_ansar_parsonal_info.designation_id', $designation)
+                            ->max('re_panel_position')+1;
+                        }
+						
                         PanelModel::create([
                             'ansar_id' => $ansar_id,
                             'come_from' => 'Block',
@@ -522,8 +553,11 @@ class BlockBlackController extends Controller
                             'memorandum_id' => $memorandumId,
                             'ansar_merit_list' => 'N\A',
                             'action_user_id' => auth()->user()->id,
+                            'go_panel_position' => $max_go_panel_position,
+                            're_panel_position' => $max_re_panel_position,
                         ]);
                         $ansar->updateToPanelState()->save();
+
                         break;
                     case "not_verified":
                         $ansar->ansar->update(['verified' => 0]);
@@ -781,6 +815,7 @@ class BlockBlackController extends Controller
 
     public function unblackListEntryView()
     {
+        
         return view('HRM::Blackblock_view.unblacklist_entry');
     }
 
@@ -866,8 +901,8 @@ class BlockBlackController extends Controller
     {
         if (!empty($ansar) && in_array(AnsarStatusInfo::BLOCK_STATUS, $ansar->getStatus())) {
             if (in_array(AnsarStatusInfo::PANEL_STATUS, $ansar->getStatus())) {
-                $ansar->panel->saveLog("Blocklist", Carbon::now()->format('Y-m-d'), '44.03.0000.048.50.007.18-577 Date:Oct-27-2019');
-                $ansar->panel->delete();
+                //$ansar->panel->saveLog("Blocklist", Carbon::now()->format('Y-m-d'), '44.03.0000.048.50.007.18-577 Date:Oct-27-2019');
+                //$ansar->panel->delete();
             } elseif (in_array(AnsarStatusInfo::EMBODIMENT_STATUS, $ansar->getStatus())) {
                 $ansar->embodiment->saveLog('Blocklist', Carbon::now()->format('Y-m-d'), '44.03.0000.048.50.007.18-577 Date:Oct-27-2019', 8);
                 $ansar->embodiment->delete();

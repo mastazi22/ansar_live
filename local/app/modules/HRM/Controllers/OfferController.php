@@ -122,7 +122,7 @@ class OfferController extends Controller
         DB::beginTransaction();
         try {
             if (UserOfferQueue::where('user_id', Auth::user()->id)->exists()) {
-                throw new \Exception("Your have one pending offer.Please wait until your offer is complete");
+              //  throw new \Exception("Your have one pending offer.Please wait until your offer is complete");
             }
             $userOffer = UserOfferQueue::create([
                 'user_id' => Auth::user()->id
