@@ -56,7 +56,7 @@ class BlockForAge extends Job implements ShouldQueue
                 $age = \Carbon\Carbon::parse($dob)->diff($now, true);
                 $ansarRe = GlobalParameterFacades::getValue('retirement_age_ansar') - 3;
                 $pcApcRe = GlobalParameterFacades::getValue('retirement_age_pc_apc') - 3;
-//                Log::info("called : Ansar Block For Age-".$ansar->ansar_id."Age:".$age->y."year ".$age->m."month ".$age->d." days");
+//                ////Log::info("called : Ansar Block For Age-".$ansar->ansar_id."Age:".$age->y."year ".$age->m."month ".$age->d." days");
                 if ($info->designation->code == "ANSAR" && (($age->y >= $ansarRe&&($age->m>0||$age->d>0))||$age->y > $ansarRe)) {
                     $data = (array)$ansar;
                     unset($data['id']);
@@ -91,7 +91,7 @@ class BlockForAge extends Job implements ShouldQueue
             }
             DB::connection('hrm')->commit();
         }catch(\Exception $e){
-            Log::info("ansar_block_for_age:".$e->getMessage());
+            ////Log::info("ansar_block_for_age:".$e->getMessage());
             DB::connection('hrm')->rollback();
         }
     }

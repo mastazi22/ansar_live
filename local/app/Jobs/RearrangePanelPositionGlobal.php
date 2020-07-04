@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Jobs;
 
 use App\Helper\Facades\GlobalParameterFacades;
@@ -35,14 +34,15 @@ class RearrangePanelPositionGlobal extends Job implements ShouldQueue
      */
     public function handle()
     {
+		//Log::info("Global RAR....");
         if (!DB::connection('hrm')->getDatabaseName()) {
-            Log::info("SERVER RECONNECTING....");
+            //Log::info("SERVER RECONNECTING....");
             DB::reconnect('hrm');
         }
-        Log::info("CONNECTION DATABASE : " . DB::connection('hrm')->getDatabaseName());
+        //Log::info("CONNECTION DATABASE : " . DB::connection('hrm')->getDatabaseName());
         DB::connection('hrm')->beginTransaction();
 
-        try {
+        try {	
             $go_offer_count = +GlobalParameterFacades::getValue('ge_offer_count');
             $data = DB::table('tbl_ansar_parsonal_info')
                 ->leftJoin('tbl_offer_status', 'tbl_offer_status.ansar_id', '=', 'tbl_ansar_parsonal_info.ansar_id')
@@ -92,35 +92,35 @@ class RearrangePanelPositionGlobal extends Job implements ShouldQueue
 //                        offer type is null when first panel entry or empty string when last offer is ongoing.
                         if ($p['locked'] == 0) {
                             $query .= "WHEN " . $p['ansar_id'] . " THEN $i ";
-//                            Log::info('UPDATE_GLOBAL_ANSAR: FIRST_PANEL_ENTRY ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . ', current global position:' . $p['go_panel_position'] . ' future g position:' . $i);
+                           ////Log::info('UPDATE_GLOBAL_ANSAR: FIRST_PANEL_ENTRY ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . ', current global position:' . $p['go_panel_position'] . ' future g position:' . $i);
                             $i++;
                         } elseif (in_array($p['district_id'], Config::get('app.offer'))) {
                             $query .= "WHEN " . $p['ansar_id'] . " THEN $i ";
-//                            Log::info('UPDATE_GLOBAL_ANSAR:LAST_GB_OFFER ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . ', current global position:' . $p['go_panel_position'] . ' future g position:' . $i);
+                           ////Log::info('UPDATE_GLOBAL_ANSAR:LAST_GB_OFFER ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . ', current global position:' . $p['go_panel_position'] . ' future g position:' . $i);
                             $i++;
                         } elseif (in_array($p['offered_district'], Config::get('app.offer'))) {
                             $query .= "WHEN " . $p['ansar_id'] . " THEN $i ";
-//                            Log::info('UPDATE_GLOBAL_ANSAR:LAST_GB_OFFER (ACCEPTED) ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . ', current global position:' . $p['go_panel_position'] . ' future g position:' . $i);
+                           ////Log::info('UPDATE_GLOBAL_ANSAR:LAST_GB_OFFER (ACCEPTED) ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . ', current global position:' . $p['go_panel_position'] . ' future g position:' . $i);
                             $i++;
                         } else {
                             $query .= "WHEN " . $p['ansar_id'] . " THEN NULL ";
-//                            Log::info('UPDATE_GLOBAL_ANSAR:LAST_RE_OFFER ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . ', current global position:' . $p['go_panel_position'] . ' future g position:null');
+                           ////Log::info('UPDATE_GLOBAL_ANSAR:LAST_RE_OFFER ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . ', current global position:' . $p['go_panel_position'] . ' future g position:null');
                         }
 
                     } elseif ((substr_count($p['offer_type'], 'GB') + substr_count($p['offer_type'], 'DG') + substr_count($p['offer_type'], 'CG')) < $go_offer_count) {
 //                       global offer quota is not filled up yet. so, locked unlocked doesn't matter to update global position
                         $query .= "WHEN " . $p['ansar_id'] . " THEN $i ";
-//                        Log::info('UPDATE_GLOBAL_ANSAR ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . $locked_region . ', current global position:' . $p['go_panel_position'] . ' future g position:' . $i);
+                       ////Log::info('UPDATE_GLOBAL_ANSAR ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . $locked_region . ', current global position:' . $p['go_panel_position'] . ' future g position:' . $i);
                         $i++;
                     } else {
                         if ($p['last_offer_region'] == 'GB' && $p['locked'] == 1) {
                             $query .= "WHEN " . $p['ansar_id'] . " THEN $i ";
-//                            Log::info('UPDATE_GLOBAL_ANSAR ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . $locked_region . ', current global position:' . $p['go_panel_position'] . ' future g position:' . $i);
+                           ////Log::info('UPDATE_GLOBAL_ANSAR ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . $locked_region . ', current global position:' . $p['go_panel_position'] . ' future g position:' . $i);
                             $i++;
                         } else {
 //                            all global offer filled up. so, set position null
                             $query .= "WHEN " . $p['ansar_id'] . " THEN NULL ";
-//                            Log::info('UPDATE_GLOBAL_ANSAR ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . ', current global position:' . $p['go_panel_position'] . ' future g position:null');
+                           ////Log::info('UPDATE_GLOBAL_ANSAR ansar id:' . $p['ansar_id'] . ' locked-' . $p['locked'] . ', current global position:' . $p['go_panel_position'] . ' future g position:null');
                         }
                     }
                 }
@@ -130,7 +130,7 @@ class RearrangePanelPositionGlobal extends Job implements ShouldQueue
             }
             DB::connection('hrm')->commit();
         } catch (\Exception $e) {
-            Log::info("global panel rearr:" . $e->getMessage());
+            //Log::info("global panel rearr:" . $e->getMessage());
             DB::connection('hrm')->rollback();
         }
         $this->delete();

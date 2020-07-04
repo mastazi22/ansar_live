@@ -83,7 +83,7 @@ class UnblockRetireAnsar extends Job implements ShouldQueue
 
             DB::connection('hrm')->commit();
         }catch(\Exception $e){
-            Log::info("ansar_unblock_for_age:".$e->getMessage());
+            //Log::info("ansar_unblock_for_age:".$e->getMessage());
             DB::connection('hrm')->rollback();
         }
         dispatch(new RearrangePanelPositionGlobal());

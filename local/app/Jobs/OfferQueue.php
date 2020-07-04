@@ -48,8 +48,8 @@ class OfferQueue extends Job implements ShouldQueue
      */
     public function handle()
     {
-
-        Log::info($this->data);
+		////Log::info("Offer //////Log:....");
+        ////Log::info($this->data);
 //        die;
         $district_id = $this->district_id;
         $ansar_ids = $this->data;
@@ -57,10 +57,10 @@ class OfferQueue extends Job implements ShouldQueue
         $user = $this->user;
         for ($i = 0; $i < count($ansar_ids); $i++) {
             if(!DB::connection('hrm')->getDatabaseName()){
-                Log::info("SERVER RECONNECTING....");
+                ////Log::info("SERVER RECONNECTING....");
                 DB::reconnect('hrm');
             }
-            Log::info("CONNECTION DATABASE : ".DB::connection('hrm')->getDatabaseName());
+            ////Log::info("CONNECTION DATABASE : ".DB::connection('hrm')->getDatabaseName());
             DB::connection('hrm')->beginTransaction();
             try {
                 $offer_duration = +GlobalParameterFacades::getValue('offer_duration');
@@ -124,7 +124,7 @@ class OfferQueue extends Job implements ShouldQueue
                     'to_state' => 'OFFER'
                 ]));
                 //array_push($user, ['ansar_id' => $ansar_ids[$i], 'action_type' => 'SEND OFFER', 'from_state' => 'PANEL', 'to_state' => 'OFFER']);
-                Log::info("processed :" . $ansar_ids[$i]);
+                ////Log::info("processed :" . $ansar_ids[$i]);
                 DB::connection('hrm')->commit();
             }
             catch (\Exception $e) {
@@ -134,7 +134,7 @@ class OfferQueue extends Job implements ShouldQueue
                         'locked'=>0
                     ]);
                 }
-                Log::info($e->getTraceAsString());
+                ////Log::info($e->getTraceAsString());
                 //return response(collect(['status' => 'error', 'message' => $e->getMessage()])->toJson(), 400, ['Content-Type' => 'application/json']);
             }
         }

@@ -70,7 +70,7 @@ class Kernel extends ConsoleKernel
     {
 
         $schedule->call(function () {
-            Log::info("called : send_offer");
+            //Log::info("called : send_offer");
             $offered_ansar = OfferSMS::with(['ansar', 'district'])->where('sms_try', 0)->where('sms_status', 'Queue')->take(10)->get();
             foreach ($offered_ansar as $offer) {
                 DB::connection('hrm')->beginTransaction();
@@ -87,9 +87,9 @@ class Kernel extends ConsoleKernel
                     $phone = '88' . trim($a->mobile_no_self);
                     $response = $this->sendSMS($phone, $body);
                     $r = Parser::xml($response);
-                    Log::info("SERVER RESPONSE : " . json_encode($r));
+                    //Log::info("SERVER RESPONSE : " . json_encode($r));
                     $offer->sms_try += 1;
-$offer->err_msg=json_encode($r);
+					$offer->err_msg=json_encode($r);
 
                     if (isset($r['PARAMETER']) && strcasecmp($r['PARAMETER'], 'OK') == 0 && isset($r['SMSINFO']['MSISDN']) && strcasecmp($r['SMSINFO']['MSISDN'], '88' . trim($a->mobile_no_self)) == 0) {
                         $offer->sms_status = 'Send';
@@ -104,14 +104,14 @@ $offer->err_msg=json_encode($r);
                     }
                     DB::connection('hrm')->commit();
                 } catch (\Exception $e) {
-                    Log::info('OFFER SEND ERROR: ' . $e->getTraceAsString());
+                    //Log::info('OFFER SEND ERROR: ' . $e->getTraceAsString());
                     DB::connection('hrm')->rollback();
                 }
             }
 
         })->everyMinute()->name("send_offer_sms_2")->withoutOverlapping();
         $schedule->call(function () {
-            Log::info("called : send_failed_offer");
+            //Log::info("called : send_failed_offer");
             $offered_ansar = OfferSMS::with(['ansar', 'district'])->where('sms_status', 'Failed')->take(10)->get();
             foreach ($offered_ansar as $offer) {
                 DB::connection('hrm')->beginTransaction();
@@ -125,7 +125,7 @@ $offer->err_msg=json_encode($r);
                     $phone = '88' . trim($a->mobile_no_self);
                     $response = $this->sendSMS($phone, $body);
                     $r = Parser::xml($response);
-                    Log::info("SERVER RESPONSE : " . json_encode($r));
+                    //Log::info("SERVER RESPONSE : " . json_encode($r));
                     $offer->sms_try += 1;
 $offer->err_msg = 'Failed';
                     if (isset($r['PARAMETER']) && strcasecmp($r['PARAMETER'], 'OK') == 0 && isset($r['SMSINFO']['MSISDN']) && strcasecmp($r['SMSINFO']['MSISDN'], '88' . trim($a->mobile_no_self)) == 0) {
@@ -142,7 +142,7 @@ $offer->err_msg = 'Failed';
                     }
                     DB::connection('hrm')->commit();
                 } catch (\Exception $e) {
-                    Log::info('OFFER SEND ERROR: ' . $e->getMessage());
+                    //Log::info('OFFER SEND ERROR: ' . $e->getMessage());
                     DB::connection('hrm')->rollback();
                 }
             }
@@ -150,7 +150,7 @@ $offer->err_msg = 'Failed';
         })->everyMinute()->name("send_failed_offer")->withoutOverlapping();
 
         $schedule->call(function () {
-            Log::info("called : offer_cancel");
+            //Log::info("called : offer_cancel");
             $offered_cancel = OfferCancel::where('sms_status', 0)->take(10)->get();
             foreach ($offered_cancel as $offer) {
                 $a = $offer->ansar;
@@ -158,18 +158,18 @@ $offer->err_msg = 'Failed';
                 $phone = '88' . trim($a->mobile_no_self);
                 $response = $this->sendSMS($phone, $body);
                 $r = simplexml_load_string($response);
-                Log::info(json_encode($r));
+              //  Log::info(json_encode($r));
                 $offer->sms_status = 1;
                 $offer->save();
             }
 
         })->everyMinute()->name("offer_cancel")->withoutOverlapping();
         $schedule->call(function () {
-            Log::info("REVERT OFFER");
+           // Log::info("REVERT OFFER");
             $offeredAnsars = OfferSMS::where('sms_end_datetime', '<=', Carbon::now()->toDateTimeString())->get();
             $c = OfferSMS::where('sms_end_datetime', '<=', Carbon::now()->toDateTimeString())->count();
             foreach ($offeredAnsars as $ansar) {
-                Log::info("CALLED START: OFFER NO REPLY" . $ansar->ansar_id);
+              //  Log::info("CALLED START: OFFER NO REPLY" . $ansar->ansar_id);
                 DB::beginTransaction();
                 try {
                     $count = $ansar->getOfferCount();
@@ -242,7 +242,7 @@ $offer->err_msg = 'Failed';
                     DB::commit();
                 } catch (\Exception $e) {
                     DB::rollback();
-                    Log::info("ERROR: " . $e->getMessage());
+                   // Log::info("ERROR: " . $e->getMessage());
                 }
             }
             if ($c > 0) {
@@ -257,7 +257,7 @@ $offer->err_msg = 'Failed';
             foreach ($offeredAnsars as $ansar) {
                 if ($now->diffInDays(Carbon::parse($ansar->sms_received_datetime)) >= 7) {
                     $c++;
-                    Log::info("CALLED START: OFFER ACCEPTED" . $ansar->ansar_id);
+                    //Log::info("CALLED START: OFFER ACCEPTED" . $ansar->ansar_id);
                     DB::beginTransaction();
                     try {
                         $pa = $ansar->panel;
@@ -335,7 +335,7 @@ $offer->err_msg = 'Failed';
                         DB::commit();
                     } catch (\Exception $e) {
                         DB::rollback();
-                        Log::info("ERROR: " . $e->getMessage());
+                        //Log::info("ERROR: " . $e->getMessage());
                     }
                 }
             }
@@ -370,7 +370,7 @@ $offer->err_msg = 'Failed';
         })->dailyAt("00:00")->name('withdraw_kpi')->withoutOverlapping();
         $schedule->call(function () {
             $rest_ansars = RestInfoModel::whereDate('active_date', '<=', Carbon::today()->toDateString())->whereIn('disembodiment_reason_id', [1, 2, 8])->get();
-            Log::info("REST to PANEl : CALLED");
+            //Log::info("REST to PANEl : CALLED");
 
             foreach ($rest_ansars as $ansar) {
 
@@ -394,16 +394,16 @@ $offer->err_msg = 'Failed';
                     $ansar->saveLog('Panel');
                     $ansar->delete();
                     DB::commit();
-                    Log::info("REST to PANEl :" . $ansar->ansar_id);
+                    //Log::info("REST to PANEl :" . $ansar->ansar_id);
                 } catch (\Exception $e) {
                     DB::rollBack();
-                    Log::info("REST to PANEl FAILED:" . $ansar->ansar_id);
+                    //Log::info("REST to PANEl FAILED:" . $ansar->ansar_id);
                 }
             }
         })->twiceDaily(0, 12)->name('rest_to_panel')->withoutOverlapping();
         $schedule->call(function () {
             $rest_ansars = RestInfoModel::whereRaw('FLOOR(DATEDIFF(rest_date,NOW())/365)>=1')->where('disembodiment_reason_id', 5)->get();
-            Log::info("REST to PANEl DICIPLINARY : CALLED");
+            //Log::info("REST to PANEl DICIPLINARY : CALLED");
 
             foreach ($rest_ansars as $ansar) {
 
@@ -427,10 +427,10 @@ $offer->err_msg = 'Failed';
                     $ansar->saveLog('Panel');
                     $ansar->delete();
                     DB::commit();
-                    Log::info("REST to PANEl :" . $ansar->ansar_id);
+                    //Log::info("REST to PANEl :" . $ansar->ansar_id);
                 } catch (\Exception $e) {
                     DB::rollBack();
-                    Log::info("REST to PANEl FAILED:" . $ansar->ansar_id);
+                    //Log::info("REST to PANEl FAILED:" . $ansar->ansar_id);
                 }
             }
         })->twiceDaily(0, 12)->name('rest_to_panel_disciplaney_action')->withoutOverlapping();
@@ -438,7 +438,7 @@ $offer->err_msg = 'Failed';
 
         })->twiceDaily(0, 12)->name("ansar_retirement")->withoutOverlapping();
         $schedule->call(function () {
-            Log::info("called : disable circular");
+            //Log::info("called : disable circular");
             DB::connection('recruitment')->beginTransaction();
             try {
                 $circulars = JobCircular::where('status', 'active')->where('end_date', '<=', Carbon::now()->format('Y-m-d'))->get();
@@ -496,7 +496,7 @@ $offer->err_msg = 'Failed';
 
 
         $schedule->call(function () {
-            Log::info("called : generate attendance");
+            //Log::info("called : generate attendance");
             //            DB::enableQueryLog();
             $kpis = KpiGeneralModel::with(['embodiment' => function ($q) {
                 $q->select('ansar_id', 'kpi_id', 'emboded_status');
@@ -517,7 +517,7 @@ $offer->err_msg = 'Failed';
                 $inserts = [];
                 $bindings = [];
                 foreach ($datas as $data) {
-                    Log::info('KPI_ID : ' . $data->id);
+                    //Log::info('KPI_ID : ' . $data->id);
                     foreach ($data->embodiment as $em) {
                         $qs = [
                             '?',
@@ -608,7 +608,7 @@ $offer->err_msg = 'Failed';
                 $q->where('pannel_status',1);
                 $q->where('black_list_status',0);
             })->count();
-            Log::info("called : Ansar Block For Age".$count);
+            //Log::info("called : Ansar Block For Age".$count);
             for($i=0;$i<$count;$i+=500){
                 dispatch(new BlockForAge($i));
             }
@@ -616,7 +616,7 @@ $offer->err_msg = 'Failed';
 
         })->daily()->name("ansar_block_for_age3")->withoutOverlapping();
         $schedule->call(function () {
-            Log::info("ansar_unblock_for_age:");
+            //Log::info("ansar_unblock_for_age:");
             $ansars = AnsarRetireHistory::all();
             DB::connection('hrm')->beginTransaction();
             try {
@@ -665,7 +665,7 @@ $offer->err_msg = 'Failed';
 
                 DB::connection('hrm')->commit();
             }catch(\Exception $e){
-                Log::info("ansar_unblock_for_age:".$e->getMessage());
+                //Log::info("ansar_unblock_for_age:".$e->getMessage());
                 DB::connection('hrm')->rollback();
             }
             dispatch(new RearrangePanelPositionGlobal());

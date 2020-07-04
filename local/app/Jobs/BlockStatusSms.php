@@ -52,7 +52,7 @@ class BlockStatusSms extends Job implements SelfHandling, ShouldQueue
         $pass = env('SSL_PASSWORD');
         $sid = env('SSL_SID');
         $url = "http://sms.sslwireless.com/pushapi/dynamic/server.php";
-        Log::info("EMBODIED " . $this->ansar_id);
+        //Log::info("EMBODIED " . $this->ansar_id);
         $phone = '88' . trim($phone_number);
         $body = "You are Blocked due to " . $this->reason;
         $param = "user=$user&pass=$pass&sms[0][0]=$phone&sms[0][1]=" . urlencode($body) . "&sid=$sid";
@@ -67,6 +67,6 @@ class BlockStatusSms extends Job implements SelfHandling, ShouldQueue
         $response = curl_exec($crl);
         curl_close($crl);
         $r = Parser::xml($response);
-        Log::info($r);
+        //Log::info($r);
     }
 }

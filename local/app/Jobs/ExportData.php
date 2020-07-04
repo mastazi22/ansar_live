@@ -75,7 +75,7 @@ class ExportData extends Job implements ShouldQueue
                         $r = array_values((array)$r);
                         array_unshift($r, $counter++);
                         array_push($dd, $r);
-                        //Log::info("MODIFYING : ".$counter);
+                        ////Log::info("MODIFYING : ".$counter);
 
 
                     }
@@ -99,7 +99,7 @@ class ExportData extends Job implements ShouldQueue
                     $r = array_values((array)$r);
                     array_unshift($r, $counter++);
                     array_push($dd, $r);
-                   // Log::info($counter);
+                   // //Log::info($counter);
 
 
                 }
@@ -121,7 +121,7 @@ class ExportData extends Job implements ShouldQueue
             $edj->save();
             if($edj->file_completed==$edj->total_file){
                 //do something
-                Log::info("FILE GENERATING COMPLETE. ID : ".$edj->id);
+                //Log::info("FILE GENERATING COMPLETE. ID : ".$edj->id);
                 $client = new Client($edj->notification_url);
                 $client->send(json_encode(['user'=>'server','to'=>$edj->user_id,'message'=>"<h3 style='margin-top: 0'>Data exported complete.</h3><a class='btn btn-xs btn-info' href='".$edj->download_url."'>download</a> or <a class='btn btn-danger btn-xs' href='".$edj->delete_url."'>delete</a>"]));
                 $client->close();
